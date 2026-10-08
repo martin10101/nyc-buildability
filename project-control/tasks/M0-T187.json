@@ -99,7 +99,7 @@
     "directive-compliance-verifier"
   ],
   "status": "awaiting_gate",
-  "progress_percent": 85,
+  "progress_percent": 95,
   "risks": [
     "A further advisory or a younger transitive version could appear between this packet and the workflow run -> the machine gates decide at run time (S3, S6); the packet's registry facts are a reading, not a guarantee",
     "`npm install --package-lock-only` could move packages other than next and its nine packages -> S4 compares the locks entry by entry and stops on any other change",
@@ -108,7 +108,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T00:33:18.229336+00:00",
-  "updated_at": "2026-10-08T00:56:53.791844+00:00",
+  "updated_at": "2026-10-08T01:06:25.889448+00:00",
   "directive_refs": [
     {
       "directive_id": "D-009",
