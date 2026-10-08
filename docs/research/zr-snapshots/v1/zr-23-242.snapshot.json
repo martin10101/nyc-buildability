@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-242",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:13:42Z",
     "http_status": 200,
     "response_bytes": 111695,
     "raw_html_sha256": "317c1516de33d79bb49ddd8903edb6ed918cef1a7ace3fe8f5fa04898870b803",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/22755",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/22755",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:21:59Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "only this section (23-242)",
@@ -54,7 +54,8 @@
     "Further sections this text points to that are NOT captured by this snapshot: 23-21.",
     "Child section of 23-24 'Special Provisions for Certain Areas' (the header is already captured as zr-23-24 and is NOT re-fetched by this task).",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:13:42Z; the print file: 2026-10-08T04:21:59Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "609ee490135a844f7befcbadea8215b11bb5d4409af804b3d2c831553d0e7ac9"
 }

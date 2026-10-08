@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-22",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:14:00Z",
     "http_status": 200,
     "response_bytes": 105306,
     "raw_html_sha256": "85a446eb98d7f94e9e7cde8d3b56d1bde39b6b300cb7090e0e07179235b1728c",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/17544",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/17544",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:22:08Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "the 25-22 subtree (prints 25-221, 25-222); this capture holds ONLY 25-22's own body",
@@ -54,7 +54,8 @@
     "This page is a heading/container: the official page shows the section number, title and Last Amended stamp but no operative body of its own. Child sections the site's contents page lists under it (numbers and titles, not all captured here): 25-221 General provisions; 25-222 Requirements for developments or enlargements in the Outer Transit Zone.",
     "Sibling section 25-221 'General provisions' is already captured as zr-25-221 and is NOT re-fetched; 25-222 is captured by this task.",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:14:00Z; the print file: 2026-10-08T04:22:08Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "9f3cf0aaa88f9ffbe1054d4763bd9b7a1ac9f7cda7717e69a2776e311c8aaf95"
 }

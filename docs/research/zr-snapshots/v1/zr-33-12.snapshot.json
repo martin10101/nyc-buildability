@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-12",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:13:12Z",
     "http_status": 200,
     "response_bytes": 70893,
     "raw_html_sha256": "c2d3ed515ebfddb03f941d5c0d224c7538f3ec391582186ba1fac9b8801f4985",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/17721",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/17721",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:21:45Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "the 33-12 subtree (prints 33-121, 33-122, 33-123, 33-124); this capture holds ONLY 33-12's own body",
@@ -55,7 +55,8 @@
     "Further sections this text points to that are NOT captured by this snapshot: 33-13, 33-14, 33-15, 33-16.",
     "33-12 'Maximum Floor Area Ratio' is NOT heading-only: the site shows an operative body (the general maximum-#floor area ratio# rule and its bonus/limitation provisions) AND the child sections 33-121, 33-122, 33-123 and 33-124 that carry the floor-area-ratio tables by district type. The task lead ('confirm heading-only vs. intro body') is resolved here: it has an intro/general body.",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:13:12Z; the print file: 2026-10-08T04:21:45Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "8f41656cc85f9f570380fa73f833734681224dad3201468dbea0a7079caf1456"
 }

@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-123",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:13:29Z",
     "http_status": 200,
     "response_bytes": 119459,
     "raw_html_sha256": "1a8c9418e48168949d10b770c3deb349ac8e9c629fa3aef23d661e2f3da36b25",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/17724",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/17724",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:21:53Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "only this section (33-123)",
@@ -299,7 +299,8 @@
     "Further sections this text points to that are NOT captured by this snapshot: 24-111, 34-112, 74-903.",
     "PDF text-check is PARTIAL for this section: pdftotext does not reproduce 2 styled table-cell word(s) and 0 prose word(s) (styled cells / line-wraps); those are present in the sha256-pinned HTML (the authoritative channel) - the prose verbatim and every table cell are captured from the HTML. See cross_check.result.",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:13:29Z; the print file: 2026-10-08T04:21:53Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "619a6b5e48bbb098a3ffa4f55f581e0ae9232e1ddd4eaa85638919ec53b43a38"
 }

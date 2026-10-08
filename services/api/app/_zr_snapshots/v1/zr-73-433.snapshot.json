@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-vii/chapter-3/73-433",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:15:17Z",
     "http_status": 200,
     "response_bytes": 108524,
     "raw_html_sha256": "a69ea5d0b1410f168b5a94f972fab92a84e22b0ebbe0fc799f0f05892e90a080",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18853",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18853",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:22:51Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "only this section (73-433)",
@@ -53,7 +53,8 @@
     "Channel: the authoritative, sha256-and-byte-pinned channel is the canonical section HTML (raw_html_sha256 and response_bytes in source). The section's own print/PDF render was fetched once and used ONLY as a text check; per M4-T025 finding F4 (DB-167) the PDF bytes are regenerated per request and are NOT pinned.",
     "Further sections this text points to that are NOT captured by this snapshot: 25-20.",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:15:17Z; the print file: 2026-10-08T04:22:51Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "7ba2ec4938d15ee3f2150839e952b735279651d225bcb8e550a6a525db8aed6e"
 }

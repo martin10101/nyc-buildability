@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/appendix-i",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:15:05Z",
     "http_status": 200,
     "response_bytes": 69635,
     "raw_html_sha256": "4a5ee3969807851625ea2042b8be659e95b677f36c80595d4a0412f403406243",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/21238",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/21238",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:22:45Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "APPENDIX I (the boundary text and the fifteen map images)",
@@ -138,7 +138,8 @@
     "Channel: the authoritative, sha256-and-byte-pinned channel is the canonical APPENDIX I HTML (raw_html_sha256 and response_bytes in source). The appendix print/PDF was fetched once as a text check; per DB-167 the PDF bytes are regenerated per request and are NOT pinned.",
     "APPENDIX I is a list of map IMAGES, not text: one key map plus fifteen numbered transit-zone maps (Maps 1-15), each a raster image whose URL and caption are listed in the 'maps' block. Only the one boundary paragraph and the map captions are text and are in verbatim_excerpt. Because the transit-zone boundaries are drawn on map images, a lot's Inner/Outer/Greater Transit Zone value is a RECORDED value (from a map or the Department of City Planning's ZoLa 'Transit Zones Parking Geographies' layer that the ZR 12-10 transit-zone definitions route to), NOT a reading of this text. No reading is drawn here.",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:15:05Z; the print file: 2026-10-08T04:22:45Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "6887b56d52508d839f60fda6d70be835962d443781b2e38bfd7e33ce108e76d1"
 }

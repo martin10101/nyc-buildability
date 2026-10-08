@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-10",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:13:02Z",
     "http_status": 200,
     "response_bytes": 96161,
     "raw_html_sha256": "2c834b0e61752dcbfd8506da7fbd23edd30757e43c9e3cd61cc5b4d6c55c9b98",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/17719",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/17719",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:21:38Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "the 33-10 subtree (prints 33-11, 33-12, 33-13, 33-14, 33-15, 33-16); this capture holds ONLY 33-10's own body",
@@ -54,7 +54,8 @@
     "This page is a heading/container: the official page shows the section number, title and Last Amended stamp but no operative body of its own. Child sections the site's contents page lists under it (numbers and titles, not all captured here): 33-11 Definitions; 33-12 Maximum Floor Area Ratio; 33-13 Floor Area Bonus for a Public Plaza; 33-14 Floor Area Bonus for Arcades; 33-15 Floor Area Bonus for Front Yards; 33-16 Special Provisions for Zoning Lots Divided by District Boundaries.",
     "This is the 'FLOOR AREA REGULATIONS' heading (subchapter 33-10) in Article III, Chapter 3, the chapter ZR 35-31 points to for the maximum #floor area ratio# of #commercial# and #community facility# #uses#.",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:13:02Z; the print file: 2026-10-08T04:21:38Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "2d28387b88b502463aa1555eb8ab84785cb22cf236647d96fe040271453f71a5"
 }

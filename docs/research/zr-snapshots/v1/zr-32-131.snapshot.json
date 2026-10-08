@@ -11,7 +11,7 @@
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
     "request_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-131",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:15:38Z",
     "http_status": 200,
     "response_bytes": 254725,
     "raw_html_sha256": "4fa41c54c446fb5c53ff6ed88472f32db1b64ad01cca1671360f2d0a11906b77",
@@ -31,7 +31,7 @@
     "role": "text_check_only",
     "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/22456",
     "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/22456",
-    "retrieved_at": "2026-10-08T15:30:00Z",
+    "retrieved_at": "2026-10-08T04:23:11Z",
     "http_status": 200,
     "content_type": "application/pdf",
     "pdf_prints": "only this section (32-131)",
@@ -1837,7 +1837,8 @@
     "PDF text-check is PARTIAL for this section: pdftotext does not reproduce 200 styled table-cell word(s) and 0 prose word(s) (styled cells / line-wraps); those are present in the sha256-pinned HTML (the authoritative channel) - the prose verbatim and every table cell are captured from the HTML. See cross_check.result.",
     "The Use Group tables carry a PRC (Parking Requirement Category) column and NO loading requirement category column. The PRC letter-to-ratio parking tables are in the existing capture zr-36-21 and the required loading berths are in the existing capture zr-36-62 (neither re-fetched here). Captured cell-by-cell from the authoritative HTML; the styled permission symbols are not reliably extracted by pdftotext (cross-check partial).",
     "The pinned raw_html_sha256 and response_bytes are of THIS session's fetch of the whole page. The page's non-body chrome carries a per-render Drupal form token (form_build_id) in the site search form, so the whole-page digest can differ between sessions while the section body is byte-stable; the reproducible semantic pin is content_digest_sha256 over verbatim_excerpt (the stdlib extractor reproduces the committed zr-35-31 capture's verbatim_excerpt byte-for-byte).",
-    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
+    "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:15:38Z; the print file: 2026-10-08T04:23:11Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
   "content_digest_sha256": "568c257513253c16251d32f93097558ad857b026a68ddaf3b3b0e736dcebc35c"
 }
