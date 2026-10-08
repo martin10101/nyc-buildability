@@ -226,7 +226,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T07:03:36.355713+00:00",
-  "updated_at": "2026-10-08T08:30:36.944910+00:00",
+  "updated_at": "2026-10-08T08:41:38.500303+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -289,6 +289,13 @@
       "percent": 90,
       "status": "in_progress",
       "message": "Both independent reviews returned at the frozen head 4ab2238b and passed on their first reading: G3 (data-contract-verifier) fourteen checks confirmed, three notes; G4 (qa-engineer) eleven checks, thirteen mutations, four notes; no blocking finding; no review of this task failed. Both judged the correction of scenario S4 right. The two returns are kept unchanged in project-control/reports/M5-T136-G3G4.md. Orchestrator's runs at the same head: website lint, typecheck, 2429 unit tests, build, 153 browser tests; full api suite 8562 passed, 8 skipped. Evidence map written (eighteen rows)."
+    },
+    {
+      "at": "2026-10-08T08:41:38.500154+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "Rule check (directive-compliance-verifier, an AI agent that produced none of the work) at the gates head 99044e56: PASS for each of the eighteen rows, each for this task's share; binding B1 to B5 confirmed; no correction required; its carry-forward condition is stated in project-control/reports/M5-T136-DCV.md."
     }
   ],
   "scope_corrections": [
