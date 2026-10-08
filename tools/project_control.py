@@ -492,34 +492,45 @@ def _directive_claim_check(t: dict, agent: str):
 
 
 def _pattern_allowed_paths_check(t: dict, task_id: str):
-    """Fail-closed guard (backlog DB-181; D-090-R557): refuse a NEW in-regime packet whose
-    allowed_paths declare a glob/pattern entry. Under GIT_LITERAL_PATHSPECS=1 such an entry
-    binds NO tracked file, so the reviewed content identity would cover less than the packet
-    declares. Returns an error string naming the offending entries, or None.
+    """Fail-closed guard (backlog DB-181; D-090-R557): refuse an in-regime packet whose
+    allowed_paths declare an entry that binds NO tracked file under GIT_LITERAL_PATHSPECS=1
+    (a glob/pattern, an absolute/traversal/backslash/control entry, or an unusual-char entry
+    not tracked at HEAD -- the complete rule in directive_registry.pattern_allowed_paths). The
+    reviewed content identity would otherwise cover less than the packet declares. Returns an
+    error string naming the offending entries, or None.
 
-    Delegates detection and the frozen grandfather allowlist to the shared read-only
-    tools/directive_registry.py so claim, submit and validate_directive_compliance.py can
-    never diverge. A pre-existing pattern-carrying task (in the frozen allowlist) is exempt;
-    its packet is not rewritten by this change. Not-in-regime tasks are not checked here (an
-    enabled regime refuses to claim a not-in-regime task before this point, and the
+    Delegates detection AND the frozen grandfather map to the shared read-only
+    tools/directive_registry.py so claim, submit, ACCEPT and the validator can never diverge.
+    The exemption freezes ENTRIES, not ids (reviewers' note 3): a listed task is exempt for the
+    exact entries it carried at the claim head only; any OTHER offending entry (a NEW one) is
+    refused and named. A non-list allowed_paths is refused (note 4). Not-in-regime tasks are
+    not checked here (an enabled regime refuses to claim a not-in-regime task first, and the
     validator's static catch is likewise regime-scoped)."""
     if not _task_in_regime(t):
         return None
     reg_mod = _resolver()
     if reg_mod is None:
         return ("directive resolver/registry unavailable; an in-regime task's allowed_paths "
-                "cannot be checked for non-binding pattern entries (fail closed).")
-    if task_id in getattr(reg_mod, "PATTERN_ALLOWED_PATHS_GRANDFATHERED", frozenset()):
-        return None
-    offenders = reg_mod.pattern_allowed_paths(t.get("allowed_paths") or [])
-    if offenders:
-        shown = ", ".join(repr(o) for o in offenders)
-        return (f"allowed_paths contain glob/pattern entr{'y' if len(offenders) == 1 else 'ies'} "
-                f"that bind NO tracked file under literal git pathspecs ({shown}); the reviewed "
-                f"content identity would cover less than the packet declares (backlog DB-181). "
-                f"Name the folder or the existing file literally (e.g. 'docs/measurement-basis', "
-                f"not 'docs/measurement-basis/**') so the identity binds the content the packet "
-                f"declares (fail closed; D-090-R557).")
+                "cannot be checked for non-binding entries (fail closed).")
+    ap = t.get("allowed_paths")
+    if ap is not None and not isinstance(ap, (list, tuple)):
+        return (f"allowed_paths must be a list of path strings, got {type(ap).__name__} "
+                f"(fail closed; backlog DB-181 / D-090-R557).")
+    commit, cerr = reg_mod.resolve_commit(ROOT, None)
+    if cerr is not None:
+        return (f"cannot resolve HEAD to check allowed_paths for non-binding entries "
+                f"(fail closed): {cerr}")
+    offenders = reg_mod.pattern_allowed_paths(ap, root=ROOT, commit=commit)
+    frozen = reg_mod.PATTERN_ALLOWED_PATHS_GRANDFATHERED.get(task_id, frozenset())
+    new_offenders = [o for o in offenders if o not in frozen]
+    if new_offenders:
+        shown = ", ".join(repr(o) for o in new_offenders)
+        return (f"allowed_paths entr{'y' if len(new_offenders) == 1 else 'ies'} bind NO tracked "
+                f"file under literal git pathspecs ({shown}); the reviewed content identity would "
+                f"cover less than the packet declares (backlog DB-181). Name the folder or the "
+                f"existing file literally (name 'dir/sub', never 'dir/sub/**'; drop any "
+                f"' (prose note)'; a bracket/brace path is accepted only if it is already "
+                f"tracked) (fail closed; D-090-R557).")
     return None
 
 
@@ -584,6 +595,13 @@ def _directive_accept_reasons(t: dict, task_id: str) -> tuple:
     ev = reg.evaluate_task_refs(t)
     if not ev["ok"]:
         reasons.extend(f"directive refs: {r}" for r in ev["reasons"])
+    # Re-run the non-binding-entry check AT ACCEPT (reviewers' note 1): a pattern entry added
+    # to a packet after a clean submit changes no identity (it binds nothing), so neither the
+    # frozen-evidence identity guard nor the content hash would catch it; only CI would. Running
+    # the same shared detector on the accept path closes that gap. It only ADDS a reason.
+    pperr = _pattern_allowed_paths_check(t, task_id)
+    if pperr:
+        reasons.append(pperr)
     identity, resolved_sha, ierr = _task_git_identity(reg_mod, t)
     if ierr:
         return (reasons + [f"content identity (fail closed): {ierr}"], [])

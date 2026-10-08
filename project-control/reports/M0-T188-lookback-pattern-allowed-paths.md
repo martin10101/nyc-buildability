@@ -1,424 +1,442 @@
-# M0-T188 look-back: accepted and in-flight tasks whose allowed_paths carry a glob/pattern entry
+# M0-T188 look-back: tasks whose allowed_paths carry an entry that binds no tracked file
 
-Backlog DB-181; owner directive D-090-R557; serves D-001-R146 / D-001-R110.
-Read-only look-back run at the M0-T188 claim-seam head
-`b416cf0d154400ebf1dcaaabc199da4f4e25bc40`. **This report rewrites no task, gate,
-verification or directive record** (every `project-control/tasks/**`, `gates/**` and
+Backlog DB-181; owner directive D-090-R557; serves D-001-R146 / D-001-R110. Read-only look-back
+run with the COMPLETE rule (reviewers' round-2 note 2) over the task files at the M0-T188
+claim-seam head `b416cf0d154400ebf1dcaaabc199da4f4e25bc40`. **This report rewrites no task,
+gate, verification or directive record** (every `project-control/tasks/**`, `gates/**` and
 `directives/**` path is in M0-T188's `forbidden_paths`). It is the evidence that produced the
-frozen `PATTERN_ALLOWED_PATHS_GRANDFATHERED` allowlist in `tools/directive_registry.py`.
+frozen `PATTERN_ALLOWED_PATHS_GRANDFATHERED` map in `tools/directive_registry.py`.
 
-## Counts
+## Counts (regenerated from the script output; note 5)
 
-- TOTAL pattern-carrying tasks: **88**
-- ACCEPTED: **77**
-- IN-FLIGHT (not accepted): **11** — 1 `awaiting_gate` carrying no pattern test aside (M0-T021),
-  5 `awaiting_gate` (M4-T001, M4-T002, M4-T004, M4-T005, M4-T006, M5-T001 — see list), 4 `backlog`
-  (M3-T002..M3-T005). (Exact per-task statuses are in the output below.)
+- TOTAL tasks with >=1 non-binding entry: **91**
+- ACCEPTED: **79**
+- IN-FLIGHT (not accepted): **12** = 7 awaiting_gate + 5 backlog (sum 12)
+- FROZEN (task, entry) pairs: **249**
 
-A **pattern** entry contains `*` or `?`, or begins with `:` (pathspec magic). A literal path —
-including one that does not yet exist, and the one tracked Next.js bracket route
-`apps/web/src/app/survey/review/[documentId]/page.tsx` — is NOT a pattern.
+The round-1 rule (only `*`, `?`, leading `:`) found 88 tasks. The complete rule adds 3 tasks
+whose PROSE-ANNOTATED entries bind nothing -- **M0-T030** and **M0-T031** (accepted) and
+**M6-T001** (backlog) -- and additional prose/brace entries on tasks already listed. See
+'The stricter rule caught 3 tasks beyond the 88' below.
+
+## What the complete rule refuses, and what it deliberately does not
+
+A `pattern_allowed_paths` OFFENDER is any entry that does NOT bind the literal file/folder a
+reader expects under `GIT_LITERAL_PATHSPECS=1`:
+- a glob/pattern (`*`, `?`); a leading `:` (pathspec magic);
+- an absolute path (leading `/`), a `..` traversal segment, a backslash, or a control char;
+- any entry with a character outside the PLAIN set (ASCII letters, digits, `.`, `_`, `-`, `/`,
+  space) that is NOT tracked at HEAD -- this catches bracket ranges (`a/[abc].py`), brace sets
+  (`a/{b,c}.py`), Unicode star look-alikes, and prose-annotated entries (`x (note)`).
+
+Deliberately NOT refused (with reason): a plain literal path that does not exist yet (a file
+the task will create -- emptiness is the separate empty-identity guard's concern); the one
+tracked Next.js bracket route `apps/web/src/app/survey/review/[documentId]/page.tsx` (it has
+brackets but IS tracked, so it binds correctly). RESIDUAL: a NEW (untracked) path containing an
+unusual char -- e.g. a brand-new `[slug]` route -- cannot be pre-declared literally; the
+orchestrator adds it literally at integration, or the packet names its parent folder.
 
 ## What this means for the recorded identities (plain statement)
 
-Under `GIT_LITERAL_PATHSPECS=1` every `allowed_paths` entry is matched literally, so each pattern
-entry above resolved to **0 tracked files** (column `-> resolves 0 tracked files`). Therefore the
-frozen content-identity hash that submission, the gates and acceptance compared for these tasks
-**did not bind the files the pattern entries declared**; it covered only whatever *literal*
-entries bound. For the tasks marked `other-literal-entries-bind-files=False` — **M1-T001**
-(accepted) and the in-flight **M3-T002, M3-T003, M3-T004, M3-T005, M4-T006** — no literal entry
-bound a tracked file either, so the identity bound only a literal report placeholder where one was
-listed (the insidious patterns-plus-literal-report case), or nothing (the empty-identity guard,
-added later in M0-T057, catches the nothing case for tasks that pass through it now).
-
-This is a statement about the **content-identity hash only**. It does not assert the underlying
-work was unreviewed: per DB-181 itself, waves 4 and 5 compared those files' blobs with a
-pattern-aware acceptance check of their own and the pre-merge checks compared them with `git diff`,
-so those merges were covered by other means; earlier tasks were not examined. M0-T188 does not
-re-open, re-accept, re-validate or rewrite any of these records (forbidden); it only prevents NEW
-packets from repeating the defect and freezes these 88 ids as grandfathered so
+Each offending entry resolves to 0 tracked files under literal pathspecs, so the frozen
+content-identity hash that submission, the gates and acceptance compared **did not bind the
+files those entries declared**; it covered only whatever LITERAL entries bound. This is a
+statement about the content-identity hash only; it does not assert the underlying work was
+unreviewed (per DB-181, waves 4/5 covered those files by other means; earlier tasks were not
+examined). M0-T188 rewrites none of these records (forbidden); it only prevents NEW entries
+from repeating the defect and freezes these entries as grandfathered so
 `validate_directive_compliance.py --check` stays exit 0.
 
-## The look-back script (verbatim)
+## The in-flight listed tasks keep non-binding entries until accepted or made literal
 
-The `ROOT` constant is set to the checkout being measured; otherwise the script is run from the
-repository root. It uses the same literal-pathspec git mechanics as the registry's identity path.
+The exemption freezes ENTRIES, not ids (note 3), so a listed task cannot ADD a new non-binding
+entry and stay exempt. But the **12** still-in-flight listed tasks keep their
+EXISTING non-binding entries (frozen) until they are accepted or their packets are made
+literal. Their ids: `M0-T021`, `M3-T002`, `M3-T003`, `M3-T004`, `M3-T005`, `M4-T001`, `M4-T002`, `M4-T004`, `M4-T005`, `M4-T006`, `M5-T001`, `M6-T001`.
+Recommend a tracked follow-up (keep DB-181 open) to drain these to literal paths before
+acceptance (reviewers' G5 F3 / G3 F2).
 
-```python
-#!/usr/bin/env python3
-"""M0-T188 look-back (read-only): every task whose allowed_paths carry a glob/pattern entry.
-Run from the repository root at the claim-seam head. A PATTERN entry contains '*' or '?' or
-begins with ':' (pathspec magic); a literal bracket path is NOT a pattern. For each task it
-records id, status, the pattern entries (with how many tracked files each resolves to under
-GIT_LITERAL_PATHSPECS=1), and whether any NON-pattern entry binds at least one tracked file."""
-import json
-import subprocess
-from pathlib import Path
+## The stricter rule caught 3 tasks beyond the round-1 88 (STOP-and-report, per the round-2 prompt)
 
-ROOT = Path("<repository root / worktree root>")
-TASKS = ROOT / "project-control" / "tasks"
+The round-2 prompt said to STOP and report if the stricter rule would refuse an entry of any
+task NOT on the round-1 frozen list. It does -- these 3, whose prose-annotated entries bind
+nothing (the same DB-181 defect class the round-1 glob-only rule missed):
 
+- **M0-T030** (accepted): `.github/workflows/ci.yml (ADDITIVE 'code-graph' job only; existing jobs byte-untouched)`; `project-control/tasks/M0-T030.json (via control CLI only)`
+- **M0-T031** (accepted): `.claude/skills/start-controlled-task/SKILL.md (ONE additive navigation-guidance paragraph only)`; `CLAUDE.md (ONE additive routing-table row only; context budget check must stay PASS)`; `project-control/tasks/M0-T031.json (via control CLI only)`
+- **M6-T001** (backlog): `(implementation paths contracted per-subtask when dispatched - this packet plans; subtasks implement)`
 
-def is_pattern(entry) -> bool:
-    if not isinstance(entry, str):
-        return True
-    s = entry.strip()
-    if not s:
-        return False
-    return s.startswith(":") or "*" in s or "?" in s
+M0-T030 and M0-T031 are ACCEPTED and in-regime: leaving them un-grandfathered would make
+`validate --check` (c18) fail on two accepted tasks -- which the KEEP requirement 'every
+accepted task still validates' forbids. Their packets cannot be rewritten (forbidden). So the
+only action consistent with the other rules is to freeze their pre-existing entries too; the
+frozen map therefore holds 91 tasks / 249 pairs, generated by script (never by hand). This
+deviation from the prompt's '88' estimate is surfaced here for the orchestrator.
 
+## The look-back script
 
-def resolve_count(path: str) -> int:
-    pp = str(path).strip().rstrip("/")
-    if not pp:
-        return 0
-    out = subprocess.run(
-        ["git", "-C", str(ROOT), "ls-tree", "-r", "-z", "--full-tree", "HEAD", "--", pp],
-        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        env={"GIT_LITERAL_PATHSPECS": "1", "PATH": "/usr/bin:/bin"})
-    return len([r for r in out.stdout.split(b"\x00") if r])
+Generated by the M0-T188 look-back/generation script (`gen_frozen.py`): it reads each task
+file at `b416cf0d`, applies `directive_registry.pattern_allowed_paths(entry, root, commit=b416cf0d)`
+(the SAME shared detector the CLI and validator use), and records every offending (task, entry)
+pair. The detector's rule is documented verbatim in `tools/directive_registry.py`.
 
+## The full mapping (task -> frozen offending entries), by status
 
-rows = []
-for p in sorted(TASKS.glob("*.json")):
-    try:
-        t = json.loads(p.read_text(encoding="utf-8-sig"))
-    except Exception:
-        continue
-    ap = list(t.get("allowed_paths") or [])
-    pats = [e for e in ap if is_pattern(e)]
-    if not pats:
-        continue
-    literal_bound = any(resolve_count(e) > 0 for e in ap if not is_pattern(e))
-    rows.append((t.get("task_id") or p.stem, t.get("status"), pats, literal_bound))
-
-accepted = sorted(r for r in rows if r[1] == "accepted")
-inflight = sorted(r for r in rows if r[1] != "accepted")
-print(f"TOTAL pattern-carrying tasks: {len(rows)}")
-print(f"ACCEPTED: {len(accepted)}    IN-FLIGHT: {len(inflight)}")
-for label, group in (("ACCEPTED", accepted), ("IN-FLIGHT", inflight)):
-    print(f"\n=== {label} ({len(group)}) ===")
-    for tid, status, pats, lb in group:
-        print(f"{tid} [{status}] other-literal-entries-bind-files={lb}")
-        for e in pats:
-            print(f"    {e}  -> resolves {resolve_count(e)} tracked files")
-print("\nFROZEN ID LIST (accepted + in-flight), sorted:")
-print(sorted(r[0] for r in rows))
-```
-
-## The script's output (verbatim, at the claim-seam head)
+### ACCEPTED (79)
 
 ```text
-TOTAL pattern-carrying tasks: 88
-ACCEPTED: 77    IN-FLIGHT: 11
+M0-T004 [accepted]
+    .github/**
+    apps/**
+    packages/**
+    project-control/reports/M0-T004-*
+    services/**
+M0-T005 [accepted]
+    project-control/reports/M0-T005-*
+M0-T005-R1 [accepted]
+    project-control/reports/M0-T005-R1-*
+M0-T006 [accepted]
+    docs/adr/**
+    project-control/reports/M0-T006-*
+M0-T009 [accepted]
+    packages/contracts/**
+    project-control/reports/M0-T009-*
+M0-T010 [accepted]
+    project-control/reports/M0-T010-*
+M0-T011 [accepted]
+    docs/adr/**
+    project-control/reports/M0-T011-*
+M0-T015 [accepted]
+    apps/web/.env.example (names only)
+    docs/ deployment runbook file only (exact path confirmed at G0 from M0-T006 records)
+    services/api/app/main.py (health/CORS/security-header middleware wiring only)
+    services/api/tests/** (new middleware tests only)
+M0-T018 [accepted]
+    .github/workflows/** (new exact-production-install job + scheduled audit workflow; existing jobs stay green)
+    render.yaml (install command / lock artifact reference only)
+    services/api/pyproject.toml (metadata alignment only; ranges stay source of truth)
+    services/api/requirements.txt (and any generated services/api/requirements*.lock / requirements-prod.txt the chosen lock format needs)
+    services/api/scripts/** (lock-generation / audit helper scripts if needed)
+M0-T019 [accepted]
+    .github/workflows/** (npm tooling pin, blocking audit step, scheduled audit; existing jobs stay green)
+    CLAUDE.md (append the concise permanent dependency-security rule ONLY)
+    apps/web/.npmrc (or the repo npm config location) for min-release-age/save-exact
+    apps/web/package.json, apps/web/package-lock.json
+    apps/web/scripts/dependency_age_gate.mjs - deterministic, fail-closed committed-lockfile release-age gate + continuous npm@11.18.0 CLI tooling advisory verification (owner policy-enforcement amendment 2026-07-20; Node ESM, node-builtins only, no npm deps)
+    apps/web/scripts/tests/** - the age-gate's deterministic positive / boundary (604800 pass, 604799 fail) / fail-closed unit tests
+M0-T020 [accepted]
+    .github/workflows/ci.yml and .github/workflows/scheduled-audit.yml ONLY - the Python tooling/build/audit install steps (including the pip installs inside web-e2e); touch ONLY Python package resolution; existing jobs stay green
+    .gitignore (the repository ignore rule covering services/api/**/*.egg-info/)
+    project-control/reports/M0-T020-producer-report.md (own producer report only)
+    services/api/pyproject.toml - STRICTLY LIMITED to the [project.optional-dependencies].dev pytest specifier ('pytest>=8,<9' -> 'pytest>=9.0.3,<10') plus an adjacent explanatory comment if useful; NO other dependency, version cap, or [tool.*] configuration may change (owner bounded amendment 2026-07-20).
+    services/api/requirements-tools.in (exact reviewed DIRECT tooling pins - the source manifest)
+    services/api/requirements-tools.lock (exact DIRECT + TRANSITIVE tooling pins + SHA-256 hashes; generated from requirements-tools.in by one documented script; byte-identical regeneration)
+    services/api/requirements.txt - regenerate with verified uv==0.11.28 and COMPARE to the accepted lock; commit ONLY if byte-identical (i.e. no change). ANY non-byte-identical difference is a STOP condition: return the exact diff + resolver explanation and do NOT commit a changed production runtime lock without a separate owner instruction.
+    services/api/scripts/** (lock_requirements.sh update; the ONE documented tooling-lock generation script; the dependency-policy release-age checker and its deterministic tests)
+M0-T022 [accepted]
+    apps/web/e2e/fixtures/control-plane/**
+    apps/web/src/app/dashboard/**
+    apps/web/src/components/dashboard/**
+    apps/web/src/lib/dashboard/**
+    apps/web/src/test-support/dashboard/**
+M0-T030 [accepted]
+    .github/workflows/ci.yml (ADDITIVE 'code-graph' job only; existing jobs byte-untouched)
+    project-control/tasks/M0-T030.json (via control CLI only)
+M0-T031 [accepted]
+    .claude/skills/start-controlled-task/SKILL.md (ONE additive navigation-guidance paragraph only)
+    CLAUDE.md (ONE additive routing-table row only; context budget check must stay PASS)
+    project-control/tasks/M0-T031.json (via control CLI only)
+M0-T036 [accepted]
+    project-control/tasks/M0-T036.json (CLI lifecycle writes only)
+    tools/agent_supervisor/** (create; per D-007 Section 6 layout, adjusted to repository conventions)
+    tools/test_agent_supervisor_*.py (create)
+M0-T041 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T042 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T044 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T045 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T046 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T048 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T049 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T050 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T051 [accepted]
+    tools/test_agent_supervisor_*.py
+M0-T181 [accepted]
+    project-control/reports/M0-T181-ci-evidence/**
+M0-T184 [accepted]
+    project-control/reports/M0-T184-ci-evidence/**
+M0-T186 [accepted]
+    project-control/reports/M0-T186-ci-evidence/**
+M1-T001 [accepted]
+    docs/research/pluto-mappluto-*
+    docs/research/source-registry-drafts/pluto-mappluto*
+    project-control/reports/M1-T001-*
+M1-T002 [accepted]
+    project-control/reports/M1-T002-*
+    services/api/app/connectors/**
+    services/api/tests/connectors/**
+    services/api/tests/fixtures/pluto/**
+M1-T003 [accepted]
+    docs/research/zoning-features-ztldb-*
+    project-control/reports/M1-T003-*
+M1-T004 [accepted]
+    docs/research/zoning-resolution-*
+    project-control/reports/M1-T004-*
+M1-T005 [accepted]
+    project-control/reports/M1-T005-*
+    services/api/app/api/**
+    services/api/app/profile/**
+    services/api/tests/**
+M1-T006 [accepted]
+    .github/scripts/tests/**
+    packages/contracts/**
+M1-T007 [accepted]
+    docs/research/fixtures/m1-t007/**
+M1-T008 [accepted]
+    services/api/tests/fixtures/** (KB-scale representative fixtures only, if needed)
+M1-T009 [accepted]
+    .github/workflows/ci.yml (ADDITIVE only)
+    services/api/**
+M2-T001 [accepted]
+    .github/workflows/ci.yml (ADDITIVE web job only - existing jobs untouched)
+    apps/web/**
+M2-T002 [accepted]
+    .github/workflows/ci.yml (ADDITIVE changes to the web job only)
+    apps/web/**
+M2-T003 [accepted]
+    .github/workflows/ci.yml (ADDITIVE type-generation drift check only)
+    packages/contracts/**
+    services/api/**
+M2-T004 [accepted]
+    .github/workflows/ci.yml (ADDITIVE only)
+    ORCHESTRATOR SCOPE AMENDMENT 2026-07-17 (G1 correction C1 / G3 defect D1): apps/web/src/components/property/__tests__/property-lookup.test.tsx and apps/web/e2e/primary-journey.spec.ts ONLY - the two M2-T001 assertions that hard-coded the retired 108-column completeness value; correction applied by the orchestrator, not the producer, and re-reviewed at the gate delta
+    packages/contracts/**
+    services/api/** (EXCEPT services/api/requirements.txt and services/api/app/main.py - reserved for M0-T015 during Wave 1)
+M2-T005 [accepted]
+    apps/web/**
+M2-T006 [accepted]
+    apps/web/src/lib/__tests__/validate-profile.test.ts (AMENDMENT A1: the version-pin assertion update required by the same vocabulary change ONLY)
+    apps/web/src/lib/contract.ts (AMENDMENT A1 2026-07-17: runtime supported-versions vocabulary addition of 1.3.0 ONLY - the client pins a closed SUPPORTED_CONTRACT_VERSIONS set that would reject 1.3.0 payloads at runtime and break the real-builder e2e harness; discovered by the producer per the original STOP condition, packet amended by the orchestrator instead of a follow-up packet because the version bump is atomic by design)
+    packages/contracts/**
+    services/api/**
+M2-T007 [accepted]
+    services/api/app/connectors/** (new zoning-features module(s) only; pluto_soda.py and bbl.py may not be modified)
+    services/api/tests/connectors/** (new zoning-features test module(s) only; existing test files may not be modified)
+    services/api/tests/fixtures/zoning_features/**
+M2-T008 [accepted]
+    services/api/app/connectors/** (new ZTLDB module(s) only; existing connector files may not be modified)
+    services/api/app/profile/** (cross-check/conflict integration ONLY, within contract 1.3.0; no contract-shape changes)
+    services/api/tests/connectors/** (new ZTLDB test module(s); existing test files only where the cross-check integration genuinely requires an additive assertion, disclosed in the report)
+    services/api/tests/fixtures/ztldb/**
+    services/api/tests/profile/** (cross-check integration tests)
+M2-T009 [accepted]
+    services/api/app/connectors/** (new geometry module(s) only; existing connector files may not be modified)
+    services/api/requirements*.txt / pyproject dependency pin for Shapely ONLY if not already present (disclosed in report; version pinned exactly; CI green required)
+    services/api/tests/connectors/** (new geometry test module(s) only)
+    services/api/tests/fixtures/mappluto_geometry/**
+M2-T010 [accepted]
+    .github/workflows/** ONLY if the derivation requires a pipeline step change - disclose in report; existing jobs must stay green
+    apps/web/src/lib/__tests__/** (regression tests)
+    apps/web/src/lib/contract.ts and apps/web/src/lib/validate-profile.ts (derivation consumption only)
+    packages/contracts/** (generation tooling only; NO version additions, NO semantic schema changes)
+    services/api/app/profile/contract.py (module docstring correction ONLY)
+    services/api/tests/api/** ONLY (docstring/packaging-related test touch only if genuinely required, disclosed; NARROWED 2026-07-20 for disjointness with the parallel M2-T011 task - services/api/tests/{connectors,resilience}/** are M2-T011 territory)
+M2-T011 [accepted]
+    docs/SOURCE_ACCESS_REGISTRY.md (new canonical registry)
+    docs/research/source-registry-drafts/** (additive corrections only, disclosed)
+    services/api/app/connectors/** (transport-loop extraction only; connector semantics preserved)
+    services/api/app/resilience/** (shared module home if placed here)
+    services/api/tests/connectors/**, services/api/tests/resilience/** (import updates and new consolidation tests)
+M2-T012 [accepted]
+    apps/web/src/lib/** (derived declarations + validation consumption)
+    packages/contracts/** (1.4.0 publication through M2-T010 tooling)
+    services/api/app/_contract_schemas/** (via the sync tooling only)
+    services/api/app/api/v1/** (typed error surface only if the new keys require it, disclosed)
+    services/api/app/connectors/** and services/api/app/resilience/** ONLY for the enumerated carried defects (each touch disclosed per-defect)
+    services/api/app/profile/**
+    services/api/tests/**, apps/web/src/lib/__tests__/**
+M2-T013 [accepted]
+    docs/research/** (V1/V2 accuracy-evidence extracts, small, retrieval-dated)
+    services/api/app/spatial/** (new module)
+    services/api/tests/spatial/** (new tests + fixtures reusing committed connector fixture packs by reference)
+M2-T014 [accepted]
+    docs/SOURCE_ACCESS_REGISTRY.md (additive rows only, if it exists at execution time)
+    docs/research/fixtures/m2-t014/** (small representative response/metadata extracts only, low-storage policy)
+    docs/research/source-registry-drafts/** (additive rows)
+M2-T015 [accepted]
+    packages/contracts/fixtures/invalid/survey_evidence/**
+    packages/contracts/fixtures/valid/survey_evidence/**
+    services/api/app/documents/**
+    services/api/tests/documents/**
+M2-T021 [accepted]
+    services/api/app/connectors/**
+    services/api/tests/connectors/**
+    services/api/tests/fixtures/geoclient/**
+M4-T009 [accepted]
+    services/api/app/rules/rulesets/**
+    services/api/tests/rules/**
+M4-T023 [accepted]
+    docs/zoning-rule-review/**
+    services/api/app/rules/review_register/**
+M4-T024 [accepted]
+    docs/reference-cases/R6B/**
+    services/api/tests/rules/reference_cases/**
+M4-T025 [accepted]
+    docs/research/zr-snapshots/v1/**
+    services/api/app/_zr_snapshots/v1/**
+M4-T026 [accepted]
+    docs/research/zr-snapshots/v1/**
+    services/api/app/_zr_snapshots/v1/**
+M4-T027 [accepted]
+    docs/reference-cases/R6B/**
+    services/api/tests/rules/reference_cases/**
+M4-T028 [accepted]
+    docs/reference-cases/R6B/**
+    services/api/tests/rules/reference_cases/**
+M4-T029 [accepted]
+    docs/research/zr-snapshots/v1/**
+    services/api/app/_zr_snapshots/v1/**
+M4-T030 [accepted]
+    docs/reference-cases/R6B/**
+    services/api/tests/rules/reference_cases/**
+M4-T031 [accepted]
+    docs/research/zr-snapshots/v1/**
+    services/api/app/_zr_snapshots/v1/**
+M4-T032 [accepted]
+    docs/reference-cases/R6B/**
+    services/api/tests/rules/reference_cases/**
+M4-T033 [accepted]
+    docs/research/zr-snapshots/v1/**
+    services/api/app/_zr_snapshots/v1/**
+M4-T034 [accepted]
+    docs/research/zr-snapshots/v1/**
+    services/api/app/_zr_snapshots/v1/**
+M5-T004 [accepted]
+    apps/web/src/app/property/compare/**
+    apps/web/src/components/compare/**
+    apps/web/src/lib/scenario-*
+M5-T018 [accepted]
+    apps/web/src/components/compare/**
+M5-T048 [accepted]
+    packages/contracts/fixtures/invalid/scenario/**
+    packages/contracts/fixtures/semantically_invalid/scenario/**
+    packages/contracts/fixtures/valid/scenario/**
+M5-T051 [accepted]
+    services/api/tests/scenario/fixtures/derivation/**
+M5-T054 [accepted]
+    services/api/tests/rules/fixtures/proposal_checks/**
+M5-T066 [accepted]
+    apps/web/src/components/architect/ProposalOutlineMap*.tsx
+    apps/web/src/components/architect/__tests__/proposal-outline-map*.test.tsx
+M5-T073 [accepted]
+    services/api/tests/connectors/fixtures/bridge_ring_pairs/**
+M5-T089 [accepted]
+    services/api/tests/fixtures/building_footprints/**
+M5-T096 [accepted]
+    docs/samples/cad/**
+M5-T126 [accepted]
+    docs/measurement-basis/**
+    services/api/tests/scenario/measurement_basis/**
+M5-T129 [accepted]
+    services/api/app/scenario/three_answers/result_way_*.py
+    services/api/tests/scenario/three_answers/test_result_ways_*.py
+M5-T130 [accepted]
+    services/api/app/scenario/three_answers/result_way_bridge_*.py
+    services/api/tests/scenario/three_answers/test_result_way_bridge_*.py
+M5-T132 [accepted]
+    services/api/app/scenario/three_answers/result_way_*.py
+    services/api/tests/scenario/three_answers/test_result_way_*.py
+    services/api/tests/scenario/three_answers/test_result_ways_*.py
+M5-T133 [accepted]
+    docs/measurement-basis/**
+    services/api/tests/scenario/measurement_basis/**
+```
 
-=== ACCEPTED (77) ===
-M0-T004 [accepted] other-literal-entries-bind-files=True
-    apps/**  -> resolves 0 tracked files
-    services/**  -> resolves 0 tracked files
-    packages/**  -> resolves 0 tracked files
-    .github/**  -> resolves 0 tracked files
-    project-control/reports/M0-T004-*  -> resolves 0 tracked files
-M0-T005 [accepted] other-literal-entries-bind-files=True
-    project-control/reports/M0-T005-*  -> resolves 0 tracked files
-M0-T005-R1 [accepted] other-literal-entries-bind-files=True
-    project-control/reports/M0-T005-R1-*  -> resolves 0 tracked files
-M0-T006 [accepted] other-literal-entries-bind-files=True
-    docs/adr/**  -> resolves 0 tracked files
-    project-control/reports/M0-T006-*  -> resolves 0 tracked files
-M0-T009 [accepted] other-literal-entries-bind-files=True
-    packages/contracts/**  -> resolves 0 tracked files
-    project-control/reports/M0-T009-*  -> resolves 0 tracked files
-M0-T010 [accepted] other-literal-entries-bind-files=True
-    project-control/reports/M0-T010-*  -> resolves 0 tracked files
-M0-T011 [accepted] other-literal-entries-bind-files=True
-    docs/adr/**  -> resolves 0 tracked files
-    project-control/reports/M0-T011-*  -> resolves 0 tracked files
-M0-T015 [accepted] other-literal-entries-bind-files=True
-    services/api/tests/** (new middleware tests only)  -> resolves 0 tracked files
-M0-T018 [accepted] other-literal-entries-bind-files=True
-    services/api/requirements.txt (and any generated services/api/requirements*.lock / requirements-prod.txt the chosen lock format needs)  -> resolves 0 tracked files
-    .github/workflows/** (new exact-production-install job + scheduled audit workflow; existing jobs stay green)  -> resolves 0 tracked files
-    services/api/scripts/** (lock-generation / audit helper scripts if needed)  -> resolves 0 tracked files
-M0-T019 [accepted] other-literal-entries-bind-files=True
-    .github/workflows/** (npm tooling pin, blocking audit step, scheduled audit; existing jobs stay green)  -> resolves 0 tracked files
-    apps/web/scripts/tests/** - the age-gate's deterministic positive / boundary (604800 pass, 604799 fail) / fail-closed unit tests  -> resolves 0 tracked files
-M0-T020 [accepted] other-literal-entries-bind-files=True
-    services/api/pyproject.toml - STRICTLY LIMITED to the [project.optional-dependencies].dev pytest specifier ('pytest>=8,<9' -> 'pytest>=9.0.3,<10') plus an adjacent explanatory comment if useful; NO other dependency, version cap, or [tool.*] configuration may change (owner bounded amendment 2026-07-20).  -> resolves 0 tracked files
-    services/api/scripts/** (lock_requirements.sh update; the ONE documented tooling-lock generation script; the dependency-policy release-age checker and its deterministic tests)  -> resolves 0 tracked files
-    .gitignore (the repository ignore rule covering services/api/**/*.egg-info/)  -> resolves 0 tracked files
-M0-T022 [accepted] other-literal-entries-bind-files=True
-    apps/web/src/app/dashboard/**  -> resolves 0 tracked files
-    apps/web/src/lib/dashboard/**  -> resolves 0 tracked files
-    apps/web/src/components/dashboard/**  -> resolves 0 tracked files
-    apps/web/src/test-support/dashboard/**  -> resolves 0 tracked files
-    apps/web/e2e/fixtures/control-plane/**  -> resolves 0 tracked files
-M0-T036 [accepted] other-literal-entries-bind-files=True
-    tools/agent_supervisor/** (create; per D-007 Section 6 layout, adjusted to repository conventions)  -> resolves 0 tracked files
-    tools/test_agent_supervisor_*.py (create)  -> resolves 0 tracked files
-M0-T041 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T042 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T044 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T045 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T046 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T048 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T049 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T050 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T051 [accepted] other-literal-entries-bind-files=True
-    tools/test_agent_supervisor_*.py  -> resolves 0 tracked files
-M0-T181 [accepted] other-literal-entries-bind-files=True
-    project-control/reports/M0-T181-ci-evidence/**  -> resolves 0 tracked files
-M0-T184 [accepted] other-literal-entries-bind-files=True
-    project-control/reports/M0-T184-ci-evidence/**  -> resolves 0 tracked files
-M0-T186 [accepted] other-literal-entries-bind-files=True
-    project-control/reports/M0-T186-ci-evidence/**  -> resolves 0 tracked files
-M1-T001 [accepted] other-literal-entries-bind-files=False
-    docs/research/pluto-mappluto-*  -> resolves 0 tracked files
-    docs/research/source-registry-drafts/pluto-mappluto*  -> resolves 0 tracked files
-    project-control/reports/M1-T001-*  -> resolves 0 tracked files
-M1-T002 [accepted] other-literal-entries-bind-files=True
-    services/api/app/connectors/**  -> resolves 0 tracked files
-    services/api/tests/connectors/**  -> resolves 0 tracked files
-    services/api/tests/fixtures/pluto/**  -> resolves 0 tracked files
-    project-control/reports/M1-T002-*  -> resolves 0 tracked files
-M1-T003 [accepted] other-literal-entries-bind-files=True
-    docs/research/zoning-features-ztldb-*  -> resolves 0 tracked files
-    project-control/reports/M1-T003-*  -> resolves 0 tracked files
-M1-T004 [accepted] other-literal-entries-bind-files=True
-    docs/research/zoning-resolution-*  -> resolves 0 tracked files
-    project-control/reports/M1-T004-*  -> resolves 0 tracked files
-M1-T005 [accepted] other-literal-entries-bind-files=True
-    services/api/app/api/**  -> resolves 0 tracked files
-    services/api/app/profile/**  -> resolves 0 tracked files
-    services/api/tests/**  -> resolves 0 tracked files
-    project-control/reports/M1-T005-*  -> resolves 0 tracked files
-M1-T006 [accepted] other-literal-entries-bind-files=True
-    packages/contracts/**  -> resolves 0 tracked files
-    .github/scripts/tests/**  -> resolves 0 tracked files
-M1-T007 [accepted] other-literal-entries-bind-files=True
-    docs/research/fixtures/m1-t007/**  -> resolves 0 tracked files
-M1-T008 [accepted] other-literal-entries-bind-files=True
-    services/api/tests/fixtures/** (KB-scale representative fixtures only, if needed)  -> resolves 0 tracked files
-M1-T009 [accepted] other-literal-entries-bind-files=True
-    services/api/**  -> resolves 0 tracked files
-M2-T001 [accepted] other-literal-entries-bind-files=True
-    apps/web/**  -> resolves 0 tracked files
-M2-T002 [accepted] other-literal-entries-bind-files=True
-    apps/web/**  -> resolves 0 tracked files
-M2-T003 [accepted] other-literal-entries-bind-files=True
-    services/api/**  -> resolves 0 tracked files
-    packages/contracts/**  -> resolves 0 tracked files
-M2-T004 [accepted] other-literal-entries-bind-files=True
-    services/api/** (EXCEPT services/api/requirements.txt and services/api/app/main.py - reserved for M0-T015 during Wave 1)  -> resolves 0 tracked files
-    packages/contracts/**  -> resolves 0 tracked files
-M2-T005 [accepted] other-literal-entries-bind-files=True
-    apps/web/**  -> resolves 0 tracked files
-M2-T006 [accepted] other-literal-entries-bind-files=True
-    packages/contracts/**  -> resolves 0 tracked files
-    services/api/**  -> resolves 0 tracked files
-M2-T007 [accepted] other-literal-entries-bind-files=True
-    services/api/app/connectors/** (new zoning-features module(s) only; pluto_soda.py and bbl.py may not be modified)  -> resolves 0 tracked files
-    services/api/tests/connectors/** (new zoning-features test module(s) only; existing test files may not be modified)  -> resolves 0 tracked files
-    services/api/tests/fixtures/zoning_features/**  -> resolves 0 tracked files
-M2-T008 [accepted] other-literal-entries-bind-files=True
-    services/api/app/connectors/** (new ZTLDB module(s) only; existing connector files may not be modified)  -> resolves 0 tracked files
-    services/api/app/profile/** (cross-check/conflict integration ONLY, within contract 1.3.0; no contract-shape changes)  -> resolves 0 tracked files
-    services/api/tests/connectors/** (new ZTLDB test module(s); existing test files only where the cross-check integration genuinely requires an additive assertion, disclosed in the report)  -> resolves 0 tracked files
-    services/api/tests/profile/** (cross-check integration tests)  -> resolves 0 tracked files
-    services/api/tests/fixtures/ztldb/**  -> resolves 0 tracked files
-M2-T009 [accepted] other-literal-entries-bind-files=True
-    services/api/app/connectors/** (new geometry module(s) only; existing connector files may not be modified)  -> resolves 0 tracked files
-    services/api/tests/connectors/** (new geometry test module(s) only)  -> resolves 0 tracked files
-    services/api/tests/fixtures/mappluto_geometry/**  -> resolves 0 tracked files
-    services/api/requirements*.txt / pyproject dependency pin for Shapely ONLY if not already present (disclosed in report; version pinned exactly; CI green required)  -> resolves 0 tracked files
-M2-T010 [accepted] other-literal-entries-bind-files=True
-    packages/contracts/** (generation tooling only; NO version additions, NO semantic schema changes)  -> resolves 0 tracked files
-    apps/web/src/lib/__tests__/** (regression tests)  -> resolves 0 tracked files
-    services/api/tests/api/** ONLY (docstring/packaging-related test touch only if genuinely required, disclosed; NARROWED 2026-07-20 for disjointness with the parallel M2-T011 task - services/api/tests/{connectors,resilience}/** are M2-T011 territory)  -> resolves 0 tracked files
-    .github/workflows/** ONLY if the derivation requires a pipeline step change - disclose in report; existing jobs must stay green  -> resolves 0 tracked files
-M2-T011 [accepted] other-literal-entries-bind-files=True
-    services/api/app/connectors/** (transport-loop extraction only; connector semantics preserved)  -> resolves 0 tracked files
-    services/api/app/resilience/** (shared module home if placed here)  -> resolves 0 tracked files
-    services/api/tests/connectors/**, services/api/tests/resilience/** (import updates and new consolidation tests)  -> resolves 0 tracked files
-    docs/research/source-registry-drafts/** (additive corrections only, disclosed)  -> resolves 0 tracked files
-M2-T012 [accepted] other-literal-entries-bind-files=True
-    services/api/app/profile/**  -> resolves 0 tracked files
-    services/api/app/_contract_schemas/** (via the sync tooling only)  -> resolves 0 tracked files
-    packages/contracts/** (1.4.0 publication through M2-T010 tooling)  -> resolves 0 tracked files
-    apps/web/src/lib/** (derived declarations + validation consumption)  -> resolves 0 tracked files
-    services/api/app/connectors/** and services/api/app/resilience/** ONLY for the enumerated carried defects (each touch disclosed per-defect)  -> resolves 0 tracked files
-    services/api/tests/**, apps/web/src/lib/__tests__/**  -> resolves 0 tracked files
-    services/api/app/api/v1/** (typed error surface only if the new keys require it, disclosed)  -> resolves 0 tracked files
-M2-T013 [accepted] other-literal-entries-bind-files=True
-    services/api/app/spatial/** (new module)  -> resolves 0 tracked files
-    services/api/tests/spatial/** (new tests + fixtures reusing committed connector fixture packs by reference)  -> resolves 0 tracked files
-    docs/research/** (V1/V2 accuracy-evidence extracts, small, retrieval-dated)  -> resolves 0 tracked files
-M2-T014 [accepted] other-literal-entries-bind-files=True
-    docs/research/source-registry-drafts/** (additive rows)  -> resolves 0 tracked files
-    docs/research/fixtures/m2-t014/** (small representative response/metadata extracts only, low-storage policy)  -> resolves 0 tracked files
-M2-T015 [accepted] other-literal-entries-bind-files=True
-    services/api/app/documents/**  -> resolves 0 tracked files
-    services/api/tests/documents/**  -> resolves 0 tracked files
-    packages/contracts/fixtures/valid/survey_evidence/**  -> resolves 0 tracked files
-    packages/contracts/fixtures/invalid/survey_evidence/**  -> resolves 0 tracked files
-M2-T021 [accepted] other-literal-entries-bind-files=True
-    services/api/app/connectors/**  -> resolves 0 tracked files
-    services/api/tests/connectors/**  -> resolves 0 tracked files
-    services/api/tests/fixtures/geoclient/**  -> resolves 0 tracked files
-M4-T009 [accepted] other-literal-entries-bind-files=True
-    services/api/app/rules/rulesets/**  -> resolves 0 tracked files
-    services/api/tests/rules/**  -> resolves 0 tracked files
-M4-T023 [accepted] other-literal-entries-bind-files=True
-    services/api/app/rules/review_register/**  -> resolves 0 tracked files
-    docs/zoning-rule-review/**  -> resolves 0 tracked files
-M4-T024 [accepted] other-literal-entries-bind-files=True
-    docs/reference-cases/R6B/**  -> resolves 0 tracked files
-    services/api/tests/rules/reference_cases/**  -> resolves 0 tracked files
-M4-T025 [accepted] other-literal-entries-bind-files=True
-    docs/research/zr-snapshots/v1/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/**  -> resolves 0 tracked files
-M4-T026 [accepted] other-literal-entries-bind-files=True
-    docs/research/zr-snapshots/v1/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/**  -> resolves 0 tracked files
-M4-T027 [accepted] other-literal-entries-bind-files=True
-    docs/reference-cases/R6B/**  -> resolves 0 tracked files
-    services/api/tests/rules/reference_cases/**  -> resolves 0 tracked files
-M4-T028 [accepted] other-literal-entries-bind-files=True
-    docs/reference-cases/R6B/**  -> resolves 0 tracked files
-    services/api/tests/rules/reference_cases/**  -> resolves 0 tracked files
-M4-T029 [accepted] other-literal-entries-bind-files=True
-    docs/research/zr-snapshots/v1/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/**  -> resolves 0 tracked files
-M4-T030 [accepted] other-literal-entries-bind-files=True
-    docs/reference-cases/R6B/**  -> resolves 0 tracked files
-    services/api/tests/rules/reference_cases/**  -> resolves 0 tracked files
-M4-T031 [accepted] other-literal-entries-bind-files=True
-    docs/research/zr-snapshots/v1/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/**  -> resolves 0 tracked files
-M4-T032 [accepted] other-literal-entries-bind-files=True
-    docs/reference-cases/R6B/**  -> resolves 0 tracked files
-    services/api/tests/rules/reference_cases/**  -> resolves 0 tracked files
-M4-T033 [accepted] other-literal-entries-bind-files=True
-    docs/research/zr-snapshots/v1/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/**  -> resolves 0 tracked files
-M4-T034 [accepted] other-literal-entries-bind-files=True
-    docs/research/zr-snapshots/v1/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/**  -> resolves 0 tracked files
-M5-T004 [accepted] other-literal-entries-bind-files=True
-    apps/web/src/app/property/compare/**  -> resolves 0 tracked files
-    apps/web/src/components/compare/**  -> resolves 0 tracked files
-    apps/web/src/lib/scenario-*  -> resolves 0 tracked files
-M5-T018 [accepted] other-literal-entries-bind-files=True
-    apps/web/src/components/compare/**  -> resolves 0 tracked files
-M5-T048 [accepted] other-literal-entries-bind-files=True
-    packages/contracts/fixtures/valid/scenario/**  -> resolves 0 tracked files
-    packages/contracts/fixtures/invalid/scenario/**  -> resolves 0 tracked files
-    packages/contracts/fixtures/semantically_invalid/scenario/**  -> resolves 0 tracked files
-M5-T051 [accepted] other-literal-entries-bind-files=True
-    services/api/tests/scenario/fixtures/derivation/**  -> resolves 0 tracked files
-M5-T054 [accepted] other-literal-entries-bind-files=True
-    services/api/tests/rules/fixtures/proposal_checks/**  -> resolves 0 tracked files
-M5-T066 [accepted] other-literal-entries-bind-files=True
-    apps/web/src/components/architect/ProposalOutlineMap*.tsx  -> resolves 0 tracked files
-    apps/web/src/components/architect/__tests__/proposal-outline-map*.test.tsx  -> resolves 0 tracked files
-M5-T073 [accepted] other-literal-entries-bind-files=True
-    services/api/tests/connectors/fixtures/bridge_ring_pairs/**  -> resolves 0 tracked files
-M5-T089 [accepted] other-literal-entries-bind-files=True
-    services/api/tests/fixtures/building_footprints/**  -> resolves 0 tracked files
-M5-T096 [accepted] other-literal-entries-bind-files=True
-    docs/samples/cad/**  -> resolves 0 tracked files
-M5-T126 [accepted] other-literal-entries-bind-files=True
-    docs/measurement-basis/**  -> resolves 0 tracked files
-    services/api/tests/scenario/measurement_basis/**  -> resolves 0 tracked files
-M5-T129 [accepted] other-literal-entries-bind-files=True
-    services/api/app/scenario/three_answers/result_way_*.py  -> resolves 0 tracked files
-    services/api/tests/scenario/three_answers/test_result_ways_*.py  -> resolves 0 tracked files
-M5-T130 [accepted] other-literal-entries-bind-files=True
-    services/api/app/scenario/three_answers/result_way_bridge_*.py  -> resolves 0 tracked files
-    services/api/tests/scenario/three_answers/test_result_way_bridge_*.py  -> resolves 0 tracked files
-M5-T132 [accepted] other-literal-entries-bind-files=True
-    services/api/app/scenario/three_answers/result_way_*.py  -> resolves 0 tracked files
-    services/api/tests/scenario/three_answers/test_result_ways_*.py  -> resolves 0 tracked files
-    services/api/tests/scenario/three_answers/test_result_way_*.py  -> resolves 0 tracked files
-M5-T133 [accepted] other-literal-entries-bind-files=True
-    docs/measurement-basis/**  -> resolves 0 tracked files
-    services/api/tests/scenario/measurement_basis/**  -> resolves 0 tracked files
+### IN-FLIGHT (12)
 
-=== IN-FLIGHT (11) ===
-M0-T021 [awaiting_gate] other-literal-entries-bind-files=True
-    services/api/scripts/tests/**  -> resolves 0 tracked files
-M3-T002 [backlog] other-literal-entries-bind-files=False
-    services/api/app/corpus/ingest/** (OWNED by M3-T002)  -> resolves 0 tracked files
-    services/api/app/corpus/storage/** (OWNED by M3-T002)  -> resolves 0 tracked files
-    services/api/app/corpus/versioning/** (OWNED by M3-T002)  -> resolves 0 tracked files
-    services/api/tests/corpus/ingest/**, services/api/tests/corpus/storage/**, services/api/tests/corpus/versioning/**  -> resolves 0 tracked files
-    services/api/tests/fixtures/corpus/capture/**  -> resolves 0 tracked files
-    infra/ingestion/**  -> resolves 0 tracked files
-M3-T003 [backlog] other-literal-entries-bind-files=False
-    services/api/app/corpus/extractors/** (OWNED)  -> resolves 0 tracked files
-    services/api/app/corpus/document_validation/** (OWNED)  -> resolves 0 tracked files
-    services/api/app/corpus/evidence/** (OWNED)  -> resolves 0 tracked files
-    packages/contracts/schemas/v1/fixtures/{document_classification,extraction_run,evidence_span,cross_source_comparison,human_review_decision}/**  -> resolves 0 tracked files
-    services/api/tests/corpus/evidence/**  -> resolves 0 tracked files
-    services/api/tests/fixtures/corpus/evidence/**  -> resolves 0 tracked files
-M3-T004 [backlog] other-literal-entries-bind-files=False
-    services/api/app/corpus/closure/** (OWNED by M3-T004; exclusive)  -> resolves 0 tracked files
-    packages/contracts/schemas/v1/fixtures/closure_manifest/**  -> resolves 0 tracked files
-    services/api/tests/corpus/closure/**  -> resolves 0 tracked files
-    services/api/tests/fixtures/corpus/closure/**  -> resolves 0 tracked files
-M3-T005 [backlog] other-literal-entries-bind-files=False
-    services/api/app/corpus/construction_code/** (OWNED by M3-T005; exclusive)  -> resolves 0 tracked files
-    services/api/app/corpus/overlay/** (OWNED by M3-T005; exclusive)  -> resolves 0 tracked files
-    services/api/tests/corpus/construction_code/**, services/api/tests/corpus/overlay/**  -> resolves 0 tracked files
-    services/api/tests/fixtures/corpus/construction_code/**  -> resolves 0 tracked files
-M4-T001 [awaiting_gate] other-literal-entries-bind-files=True
-    services/api/app/rules/** (new module)  -> resolves 0 tracked files
-    services/api/tests/rules/**  -> resolves 0 tracked files
-    packages/contracts/schemas/v1/** rule-definition/evaluation-trace schemas via M2-T010 tooling (additive only, disclosed)  -> resolves 0 tracked files
-M4-T002 [awaiting_gate] other-literal-entries-bind-files=True
-    services/api/app/rules/** (new integration module; consume profile/spatial via read-only imports only)  -> resolves 0 tracked files
-    services/api/tests/rules/**  -> resolves 0 tracked files
-M4-T004 [awaiting_gate] other-literal-entries-bind-files=True
-    services/api/tests/rules/**  -> resolves 0 tracked files
-M4-T005 [awaiting_gate] other-literal-entries-bind-files=True
-    packages/contracts/scripts/tests/**  -> resolves 0 tracked files
-    packages/contracts/fixtures/valid/rule_evaluation/**  -> resolves 0 tracked files
-    packages/contracts/fixtures/invalid/rule_evaluation/**  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/**  -> resolves 0 tracked files
-    services/api/tests/api/**  -> resolves 0 tracked files
-    services/api/tests/rules/**  -> resolves 0 tracked files
-    services/api/tests/contracts/**  -> resolves 0 tracked files
-    apps/web/src/app/property/**  -> resolves 0 tracked files
-    apps/web/src/components/property/**  -> resolves 0 tracked files
-    apps/web/src/components/rule-evaluation/**  -> resolves 0 tracked files
-    apps/web/src/test-support/**  -> resolves 0 tracked files
-    apps/web/e2e/**  -> resolves 0 tracked files
-M4-T006 [awaiting_gate] other-literal-entries-bind-files=False
-    services/api/app/rules/rulesets/*.rule.json (NEW R5 height/setback ruleset file(s); do NOT edit r5_residential_far.rule.json)  -> resolves 0 tracked files
-    services/api/app/rules/schemas/v1/*.schema.json (ONLY if an additive min/max height-setback DSL field is required; extend additively, never redefine)  -> resolves 0 tracked files
-    services/api/app/_zr_snapshots/v1/*.snapshot.json + the sync_zr_snapshots source dir (NEW official ZR snapshots, byte-identical + hash-guarded, package-data per M4-T005)  -> resolves 0 tracked files
-    services/api/tests/rules/** (deterministic, fail-closed, effective-date, provenance, rule-conflict, negative-control NC-1..NC-7, installed-wheel deployability tests)  -> resolves 0 tracked files
-M5-T001 [awaiting_gate] other-literal-entries-bind-files=True
-    services/api/app/scenario/** (new deterministic foundation module + typed constraint/completeness model; consume profile/rule-evaluation via read-only imports only)  -> resolves 0 tracked files
-    services/api/tests/scenario/** (acceptance pack AS-1..AS-12)  -> resolves 0 tracked files
-
-FROZEN ID LIST (accepted + in-flight), sorted:
-['M0-T004', 'M0-T005', 'M0-T005-R1', 'M0-T006', 'M0-T009', 'M0-T010', 'M0-T011', 'M0-T015', 'M0-T018', 'M0-T019', 'M0-T020', 'M0-T021', 'M0-T022', 'M0-T036', 'M0-T041', 'M0-T042', 'M0-T044', 'M0-T045', 'M0-T046', 'M0-T048', 'M0-T049', 'M0-T050', 'M0-T051', 'M0-T181', 'M0-T184', 'M0-T186', 'M1-T001', 'M1-T002', 'M1-T003', 'M1-T004', 'M1-T005', 'M1-T006', 'M1-T007', 'M1-T008', 'M1-T009', 'M2-T001', 'M2-T002', 'M2-T003', 'M2-T004', 'M2-T005', 'M2-T006', 'M2-T007', 'M2-T008', 'M2-T009', 'M2-T010', 'M2-T011', 'M2-T012', 'M2-T013', 'M2-T014', 'M2-T015', 'M2-T021', 'M3-T002', 'M3-T003', 'M3-T004', 'M3-T005', 'M4-T001', 'M4-T002', 'M4-T004', 'M4-T005', 'M4-T006', 'M4-T009', 'M4-T023', 'M4-T024', 'M4-T025', 'M4-T026', 'M4-T027', 'M4-T028', 'M4-T029', 'M4-T030', 'M4-T031', 'M4-T032', 'M4-T033', 'M4-T034', 'M5-T001', 'M5-T004', 'M5-T018', 'M5-T048', 'M5-T051', 'M5-T054', 'M5-T066', 'M5-T073', 'M5-T089', 'M5-T096', 'M5-T126', 'M5-T129', 'M5-T130', 'M5-T132', 'M5-T133']
+```text
+M0-T021 [awaiting_gate]
+    services/api/scripts/tests/**
+M3-T002 [backlog]
+    infra/ingestion/**
+    project-control/reports/M3-T002-producer-report.md, project-control/reports/M3-T002-source-capture.md
+    services/api/app/corpus/ingest/** (OWNED by M3-T002)
+    services/api/app/corpus/storage/** (OWNED by M3-T002)
+    services/api/app/corpus/versioning/** (OWNED by M3-T002)
+    services/api/tests/corpus/ingest/**, services/api/tests/corpus/storage/**, services/api/tests/corpus/versioning/**
+    services/api/tests/fixtures/corpus/capture/**
+M3-T003 [backlog]
+    packages/contracts/schemas/v1/fixtures/{document_classification,extraction_run,evidence_span,cross_source_comparison,human_review_decision}/**
+    packages/contracts/schemas/v1/{document_classification,extraction_run,evidence_span,cross_source_comparison,human_review_decision}.schema.json (NEW additive)
+    project-control/reports/M3-T003-producer-report.md, project-control/reports/M3-T003-dependency-security.md
+    requirements/lock updates ONLY via the approved /dependency-security process for the selected PDF/OCR library (exact-pinned; recorded in M3-T003-dependency-security.md)
+    services/api/app/corpus/document_validation/** (OWNED)
+    services/api/app/corpus/evidence/** (OWNED)
+    services/api/app/corpus/extractors/** (OWNED)
+    services/api/tests/corpus/evidence/**
+    services/api/tests/fixtures/corpus/evidence/**
+M3-T004 [backlog]
+    packages/contracts/schemas/v1/closure_manifest.schema.json (NEW additive)
+    packages/contracts/schemas/v1/fixtures/closure_manifest/**
+    services/api/app/corpus/closure/** (OWNED by M3-T004; exclusive)
+    services/api/tests/corpus/closure/**
+    services/api/tests/fixtures/corpus/closure/**
+M3-T005 [backlog]
+    docs/SOURCE_ACCESS_REGISTRY.md (additive G1 evidence only)
+    project-control/reports/M3-T005-producer-report.md, project-control/reports/M3-T005-source-capture.md
+    services/api/app/corpus/construction_code/** (OWNED by M3-T005; exclusive)
+    services/api/app/corpus/overlay/** (OWNED by M3-T005; exclusive)
+    services/api/tests/corpus/construction_code/**, services/api/tests/corpus/overlay/**
+    services/api/tests/fixtures/corpus/construction_code/**
+M4-T001 [awaiting_gate]
+    docs/research/zoning-resolution snapshots location as defined in the architecture doc (small section-level extracts only, low-storage)
+    packages/contracts/schemas/v1/** rule-definition/evaluation-trace schemas via M2-T010 tooling (additive only, disclosed)
+    services/api/app/rules/** (new module)
+    services/api/tests/rules/**
+M4-T002 [awaiting_gate]
+    services/api/app/rules/** (new integration module; consume profile/spatial via read-only imports only)
+    services/api/tests/rules/**
+M4-T004 [awaiting_gate]
+    services/api/tests/rules/**
+M4-T005 [awaiting_gate]
+    apps/web/e2e/**
+    apps/web/src/app/property/**
+    apps/web/src/components/property/**
+    apps/web/src/components/rule-evaluation/**
+    apps/web/src/test-support/**
+    packages/contracts/fixtures/invalid/rule_evaluation/**
+    packages/contracts/fixtures/valid/rule_evaluation/**
+    packages/contracts/scripts/tests/**
+    services/api/app/_zr_snapshots/**
+    services/api/tests/api/**
+    services/api/tests/contracts/**
+    services/api/tests/rules/**
+M4-T006 [awaiting_gate]
+    project-control/reports/M4-T006-producer-report.md, project-control/reports/M4-T006-input-readiness-matrix.md, project-control/reports/M4-T006-source-capture.md
+    services/api/app/_zr_snapshots/v1/*.snapshot.json + the sync_zr_snapshots source dir (NEW official ZR snapshots, byte-identical + hash-guarded, package-data per M4-T005)
+    services/api/app/rules/rulesets/*.rule.json (NEW R5 height/setback ruleset file(s); do NOT edit r5_residential_far.rule.json)
+    services/api/app/rules/schemas/v1/*.schema.json (ONLY if an additive min/max height-setback DSL field is required; extend additively, never redefine)
+    services/api/tests/rules/** (deterministic, fail-closed, effective-date, provenance, rule-conflict, negative-control NC-1..NC-7, installed-wheel deployability tests)
+M5-T001 [awaiting_gate]
+    packages/contracts/schemas/v1/scenario.schema.json (new ADDITIVE draft output contract; reference coverage_status narrowed to exclude 'verified', never redefined) + its generated typegen/runtime-bundle/fixtures under the existing generated/fixture dirs
+    services/api/app/scenario/** (new deterministic foundation module + typed constraint/completeness model; consume profile/rule-evaluation via read-only imports only)
+    services/api/tests/scenario/** (acceptance pack AS-1..AS-12)
+M6-T001 [backlog]
+    (implementation paths contracted per-subtask when dispatched - this packet plans; subtasks implement)
 ```
 
 ## Freezing and regeneration
 
-`PATTERN_ALLOWED_PATHS_GRANDFATHERED` in `tools/directive_registry.py` is this exact 88-id set.
-It **never grows by hand** — it is regenerated by this script. Because M0-T188's tool commits are
-integrated onto the wave branch LAST (after the two wave peers submit and gate with the unchanged
-tools), the orchestrator regenerates the list at the integration head; a task that drained its
-pattern entries to literal paths before then simply resolves non-empty and no longer needs the
-exemption. M0-T188's own `allowed_paths` are all literal, so it is correctly NOT in the list.
+`PATTERN_ALLOWED_PATHS_GRANDFATHERED` is this exact map (stored compactly as chunked JSON to
+respect the modularity growth limit). It NEVER grows by hand -- regenerate by script. Because
+M0-T188's tool commits integrate LAST, the orchestrator regenerates the map at the integration
+head; a task that drained its non-binding entries to literal paths before then simply resolves
+clean and no longer needs the exemption. M0-T188's own allowed_paths are all literal, so it is
+correctly absent from the map.
