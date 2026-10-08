@@ -116,7 +116,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 80,
+  "progress_percent": 90,
   "risks": [
     "A section number taken from DB-188 or the draft addresses instead of found on the site -> the targets are named by what they are and the addresses are 2026-10-08 leads; the builder re-reads each page and reports the number/title the site shows (S11).",
     "Appendix I captured as if it were text when it is fifteen map images -> S4 requires the capture and report to say the maps are images and cannot be captured as text, and that a transit-zone value is a recorded value, not a reading.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:02.876435+00:00",
-  "updated_at": "2026-10-08T05:45:38.578911+00:00",
+  "updated_at": "2026-10-08T05:50:26.504847+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -185,6 +185,13 @@
       "percent": 80,
       "status": "in_progress",
       "message": "THE CORRECTING COMMIT, made after the review and the decision were recorded: 7c601b30 (a second legal-corpus-engineer builder in its own worktree; parent d69b5e92; 59 files: the 29 captures, their 29 copies, the report), integrated by fast-forward. Checked by the orchestrator field by field against the head before it: in each of the 29 captures only source.retrieved_at, cross_check.retrieved_at and the notes appended at the end differ (one note; two in zr-36-233); every new time equals the modification time of that capture's saved response (pages 04:13:02 to 04:15:38 UTC, print files 04:21:38 to 04:23:11 UTC on 2026-10-08); no text, table, map block, pin or digest changed; the copies are byte-identical (185 files); 119 focused tests pass; ruff clean. A CORRECTION OF AN EARLIER ENTRY OF THIS LOG: the entry of the first return said the reviewer found 'the nine tables cell by cell' equal; the return says seven tables row by row and, for the two large Use Group tables (32-161, 32-131), the columns and the parking category of eleven named rows, not every cell (the review record's header is corrected to say so). Next: the same reviewer's delta confirmation at the corrected head; the full api suite again."
+    },
+    {
+      "at": "2026-10-08T05:50:26.504737+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "THE SAME REVIEWER'S DELTA CONFIRMATION at the corrected head a6072e1e (05:48 UTC): G3 PASS and G4 PASS, no new finding; only the two retrieval times and the appended notes differ in each of the 29 captures; no text, table, map block, pin or digest changed; none of the 156 older captures touched; it compared the new times of eleven captures with the saved files itself. Kept unchanged in project-control/reports/M4-T036-G3G4.md with the two earlier returns. The full api suite at a6072e1e, run alone: 8550 passed, 8 skipped, exit 0. Evidence map written for the three rows of D-090 bound to this task (project-control/reports/M4-T036-evidence-map.json)."
     }
   ]
 }
