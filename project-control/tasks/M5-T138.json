@@ -181,8 +181,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "BIGGEST RISK: the proven chain (the journey test) TYPES IN the four unsourced engine booleans (overlay_present, special_district_present, within_100_ft, angle) and builds the study_setup with a test helper; no server-side derivation of these booleans from evidence is proven today. If the route must build that derivation, Part A is larger than a thin wiring task. CONTROL: the task sources overlay/special-district from the property profile and within-100-ft/angle from the geometry reach (the same evidence the decision layer reads), never the caller; if a helper to derive them does not exist, the orchestrator decides whether to add it here or split (see path_notes split line). The emitted document's WAYS come from the decision layer's evidence regardless, so a boolean the engine uses for a raw 1.2.0 number is overridden by the transform where the result is withheld/conditional - the tests pin the ways, not the raw booleans.",
     "The route needs a study_setup document to feed study_from_study_setup; study_read builds it with a private _build_document. CONTROL: extract that builder into services/api/app/api/v1/study_setup_document.py and import it from both routes (no fork, modularity law); study_read.py edit is import-only, its tests must stay green.",
@@ -195,7 +195,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T11:40:32.397319+00:00",
-  "updated_at": "2026-10-08T13:30:57.255304+00:00",
+  "updated_at": "2026-10-08T13:30:59.717110+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -288,5 +288,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-08, the same moment] SCENARIO S14 AND RULING R5, A LOT WITHOUT ANY GEOMETRY. The packet expects 'no outline or no geometry: 200, the coverage and the rear yard withheld and named, the floor area shown'. Through the route this holds for a missing prepared OUTLINE only. The provider's one site-geometry object carries BOTH the lot type and the reach; with no geometry at all there is no lot type, and build_evaluator_inputs / the engine's inputs require the lot type (evaluator_inputs.py, _REQUIRED_ENGINE_KEYS: lot area, lot type, zoning district) and are read-only in this task. CORRECTED EXPECTATION: no prepared outline -> 200 with the reach-dependent results withheld; no site geometry -> a typed 503 with a plain reason, never a guessed lot type, never a 500. WHAT STAYS OWED (backlog row DB-203): the work order's test T7 asks that a request with a fact not given be answered normally with only the dependent results withheld; the floor-area figures do not depend on the lot type in law, so a lot without geometry should one day get its floor area and have the rest withheld. That needs the engine's inputs to accept an unknown lot type and is not in this task."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T13:30:59.716932+00:00"
 }
