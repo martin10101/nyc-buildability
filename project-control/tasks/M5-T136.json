@@ -207,14 +207,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "scenario-optimization-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "in_progress",
+  "progress_percent": 20,
   "risks": [
     "SIZE / BLAST RADIUS is the top risk: one behavioural change but ~30 files across services/api, packages, saved drawings, apps/web and the register -> mitigate by keeping engine.py/geometry.py/answers.py read-only (all new logic in the one transform module), changing no schema/copy/generated type, running the heavy suites one at a time, and reviewing each regenerated saved file line by line against section 5",
     "the committed journey fixture is SHARED by server and web and the web harness globs every results fixture -> the reader-safety fix (R556) and the web tests are in the same change; without them CI is red (named open question A, for the orchestrator)",
@@ -226,7 +226,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T07:03:36.355713+00:00",
-  "updated_at": "2026-10-08T07:03:36.772231+00:00",
+  "updated_at": "2026-10-08T07:05:11.199642+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -267,5 +267,14 @@
     "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund   (ONCE in the builder's worktree, before the web checks; lockfile packages only)",
     "CI=true npm run test:e2e in apps/web   (the orchestrator runs it once at the final candidate, with the full api suite)"
   ],
-  "worktree": "/root/project/w-wave9"
+  "worktree": "/root/project/w-wave9",
+  "progress_log": [
+    {
+      "at": "2026-10-08T07:05:11.199525+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 1adaf7f4: three_answers 305 passed 2 skipped; journey + three-ways slot 50 passed; cad + drawings 1366 passed 6 skipped."
+    }
+  ]
 }
