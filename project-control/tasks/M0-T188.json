@@ -137,8 +137,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "The detector false-flags a legitimate literal bracket route -> S9 and the explicit rule: flag only '*', '?', or a leading ':'; never '[' / ']' alone; the one tracked bracket route is a test",
     "The refusal retroactively breaks an already-contracted pattern-carrying task's lifecycle (77 accepted + 11 in-flight) -> the frozen grandfather allowlist built from the look-back exempts exactly those ids; S10 proves validate --check stays exit 0",
@@ -148,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:58.731195+00:00",
-  "updated_at": "2026-10-08T03:12:36.228400+00:00",
+  "updated_at": "2026-10-08T03:12:37.675985+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
