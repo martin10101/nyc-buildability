@@ -168,7 +168,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
     "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T09:24:50.315328+00:00",
-  "updated_at": "2026-10-08T09:26:15.784663+00:00",
+  "updated_at": "2026-10-08T10:20:37.851744+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -218,6 +218,13 @@
       "percent": 20,
       "status": "in_progress",
       "message": "Claimed at the contract head; the builder starts in an isolated worktree reset to the claim-seam head. Baselines at the claim base 42d85651 (figures of the reviewed head of wave 9, whose code is identical): three_answers 324 passed 2 skipped; journey with contracts 559 passed; cad with drawings 1359 passed 6 skipped; website 2,429 unit tests; full api suite 8,562 passed 8 skipped."
+    },
+    {
+      "at": "2026-10-08T10:20:37.851656+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Builder's one commit integrated by cherry-pick as 1aacada9 (tree identical to the builder's 11e73825; 11 files, all inside the allowed paths). On the benchmark the answers and the geometry of the regenerated journey result are identical to the claim head; the five scope lines now state the record or the measurement (the density area: not known, with what the calculation took and what it withholds) and two rule versions are no longer listed. Builder's checks, by its report: three_answers 349 passed 2 skipped; journey, contracts and lot reach 573; cad and drawings 1359 passed 6 skipped; website 2429 unit tests; 9 of 9 mutations caught; no state broke the invariant. Next: G3 and G4 reviews at the frozen head; the website checks, the browser tests and the full api suite by the orchestrator."
     }
   ]
 }
