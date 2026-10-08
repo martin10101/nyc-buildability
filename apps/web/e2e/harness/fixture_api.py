@@ -51,6 +51,7 @@ import os
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
+from random import Random
 from urllib.parse import parse_qs, urlparse
 
 import uvicorn
@@ -68,7 +69,11 @@ from app.api.v1.parity_read import (
 from app.api.v1.properties import get_pluto_fetcher
 from app.api.v1.results_read import get_results_study_inputs_provider
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
-from app.api.v1.study_inputs import pluto_study_inputs_provider
+from app.api.v1.study_inputs import (
+    StudyInputsUnavailableError,
+    assemble_study_inputs,
+    pluto_study_inputs_provider,
+)
 from app.api.v1.study_read import get_study_inputs_provider
 from app.api.v1.transit_parking_read import (
     get_transit_parking_provider,
@@ -84,9 +89,12 @@ from app.config import (
     INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR,
     LANE_FLAG_ENV_VARS,
 )
+from app.connectors.dcm_street_centerline_arcgis import DcmTransport
+from app.connectors.dcm_street_centerline_geometry import parse_segment_geometry_page
 from app.connectors.dof_sales_soda import build_by_bbl_url, build_candidates_url
 from app.connectors.dtm_lot_outline import build_outline_query_url as dtm_outline_query_url
 from app.connectors.geoclient_address import AddressResolution, resolve_address
+from app.connectors.mappluto_geometry_arcgis import fetch_lot_geometry
 from app.connectors.mappluto_lot_outline import (
     LotOutlineTransport,
     build_outline_query_url,
@@ -103,6 +111,13 @@ from app.connectors.pluto_version_probe import (
 )
 from app.main import app
 from app.resilience.transport import TransportResponse as DofTransportResponse
+from app.spatial.site_geometry import (
+    derive_site_geometry,
+    lot_outline_from_mappluto,
+    street_data_from_pages,
+    street_envelope_for_lot,
+)
+from app.spatial.site_geometry.outline import prepare_outline
 
 REPO_ROOT = Path(__file__).resolve().parents[4]
 FIXTURE_DIR = REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "pluto"
@@ -622,36 +637,92 @@ def harness_parity_dof_transport():
     return transport
 
 
+# M5-T141: the results route's study-inputs provider replays the recorded 215-16 Northern
+# benchmark pack through the REAL connectors, reading the pack files BY PATH and importing
+# nothing from the server's test tree, so the harness starts where only the installed ``app``
+# package is on the Python path (GitHub's web-e2e job installs the server with
+# ``pip install --no-deps .``, which packages ``app`` only). It reproduces the canonical
+# recorded-Northern replay the server's own tests use (tests/spatial/_northern_replay.py
+# and the results-route test's ``benchmark_provider``) with the SAME fixed clock, seed and
+# correlation arguments, so the built inputs are equal (proven by the server test
+# services/api/tests/api/test_e2e_harness_results_inputs.py). No response byte is hand-written and
+# no recorded value is retyped: every byte is served from the pack files, the confirmed address is
+# read from the benchmark-lot fixture, and the DCM query envelope is DERIVED from the lot geometry
+# by the production helper ``street_envelope_for_lot`` (never restated).
+
+RESULTS_DCM_FILE = "dcm_street_centerline_lot_envelope_4073340070.json"
+RESULTS_BENCHMARK_LOT_FIXTURE = (
+    REPO_ROOT / "packages" / "contracts" / "fixtures" / "valid" / "benchmark_lot"
+    / "northern_blvd_215_16_queens_4073340070.json"
+)
+# The fixed replay clock _northern_replay uses (distinct from the harness FIXED_CLOCK above), so
+# the connectors' retrieved_at / provenance stamps match the test tree's replay byte-for-byte.
+RESULTS_REPLAY_CLOCK = lambda: datetime(2026, 9, 30, 6, 20, tzinfo=UTC)  # noqa: E731
+
+
+def _results_pack_manifest() -> dict:
+    """The recorded Northern pack's MANIFEST entries keyed by file name (read by path)."""
+    raw = json.loads((STUDY_FIXTURE_DIR / "MANIFEST.json").read_text(encoding="utf-8"))
+    return {entry["file"]: entry for entry in raw["files"]}
+
+
+def _results_pack_transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+    """Serve one recorded pack file to a connector's own fetch code, matched by URL (no network) -
+    the same recorded-bytes-by-URL replay ``_northern_replay._transport`` performs."""
+    by_url = {entry["url"]: name for name, entry in _results_pack_manifest().items()}
+    body = (STUDY_FIXTURE_DIR / by_url[url]).read_bytes().decode("utf-8")
+    return TransportResponse(200, body)
+
+
+def _results_replay_lot_geometry():
+    """The recorded MapPLUTO lot geometry through the real connector (replay_lot_geometry)."""
+    return fetch_lot_geometry(
+        NORTHERN_STUDY_BBL, transport=_results_pack_transport, sleep=lambda _s: None,
+        clock=RESULTS_REPLAY_CLOCK, rng=Random(0), correlation_id="b03-benchmark",
+    )
+
+
+def _results_replay_pluto():
+    """The recorded PLUTO body through the real connector (replay_pluto)."""
+    return fetch_by_bbl(
+        NORTHERN_STUDY_BBL, transport=_results_pack_transport, sleep=lambda _s: None,
+        clock=RESULTS_REPLAY_CLOCK, correlation_id="b03-benchmark",
+        observation_event_id="b03-benchmark",
+    )
+
+
+def _results_replay_dcm_page():
+    """The recorded DCM street page parsed by the real connector (replay_dcm_page)."""
+    entry = _results_pack_manifest()[RESULTS_DCM_FILE]
+    body = (STUDY_FIXTURE_DIR / RESULTS_DCM_FILE).read_bytes().decode("utf-8")
+    transport = DcmTransport(
+        url=entry["url"], status=200, body=body, retrieved_at=entry["retrieved_at"]
+    )
+    return parse_segment_geometry_page(transport, correlation_id="b03-benchmark")
+
+
+def _results_confirmed_address() -> str:
+    """The lot's confirmed address, read from the benchmark-lot fixture's ``identity.address`` (the
+    same file and field the test tree's ``_benchmark_identity_address`` reads; never retyped)."""
+    doc = json.loads(RESULTS_BENCHMARK_LOT_FIXTURE.read_text(encoding="utf-8"))
+    return doc["identity"]["address"]
+
+
 def harness_results_inputs_provider():
     """The results route's study-inputs provider over the recorded 215-16 Northern benchmark pack
     (M5-T140 Part B). It mirrors the accepted results-route test's ``benchmark_provider``:
     ``assemble_study_inputs`` builds the property profile from the recorded PLUTO body and threads
-    the recorded B-03 site geometry, the prepared tax-map outline and the benchmark pack's confirmed
+    the recorded B-03 site geometry, the prepared tax-map outline and the benchmark lot's confirmed
     identity address (a corner lot needs it to pick the front lot line). Built offline through the
-    REAL connectors from the recorded packs - no response byte is hand-written. Served for the
-    Northern subject only; any other BBL is the route's fail-safe 503 (never a fabricated document).
-    The ``tests.*`` imports are the canonical recorded-Northern replay (the journey/results suites
-    use them); importing them inside the function keeps module import decoupled from the test tree."""
-    from app.api.v1.study_inputs import StudyInputsUnavailableError, assemble_study_inputs
-    from app.spatial.site_geometry import (
-        derive_site_geometry,
-        lot_outline_from_mappluto,
-        street_data_from_pages,
-    )
-    from app.spatial.site_geometry.outline import prepare_outline
-    from tests.contracts.test_evaluator_inputs import _benchmark_identity_address
-    from tests.spatial._northern_replay import (
-        DCM_ENVELOPE,
-        replay_dcm_page,
-        replay_lot_geometry,
-        replay_pluto,
-    )
-
-    lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
-    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
+    REAL connectors from the recorded pack read BY PATH - no response byte is hand-written and the
+    module imports nothing from the server's test tree, so the harness starts in CI (M5-T141).
+    Served for the Northern subject only; any other BBL is the route's fail-safe 503."""
+    lot, _unused = lot_outline_from_mappluto(_results_replay_lot_geometry())
+    envelope = street_envelope_for_lot(lot)
+    streets = street_data_from_pages([_results_replay_dcm_page()], envelope=envelope)
     geometry = derive_site_geometry(lot, streets)
     prepared, _reason = prepare_outline(lot)
-    address = _benchmark_identity_address()
+    address = _results_confirmed_address()
 
     def provide(bbl: str, correlation_id: str, *, selected=None):
         if bbl != NORTHERN_STUDY_BBL:
@@ -660,7 +731,7 @@ def harness_results_inputs_provider():
                 reason="not_served",
             )
         return assemble_study_inputs(
-            replay_pluto(),
+            _results_replay_pluto(),
             env={"LANE_B_ENABLED": "1"},
             address=address,
             site_geometry=geometry,
