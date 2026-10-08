@@ -98,8 +98,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "the new parameter becomes a hidden default -> when it is not given the entry behaves exactly as today, pinned by scenario S4 and the unchanged journey result",
     "the transform changes a value or another line -> scenario S5 compares the two documents block by block",
@@ -107,7 +107,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T13:54:17.975356+00:00",
-  "updated_at": "2026-10-08T14:45:07.032958+00:00",
+  "updated_at": "2026-10-08T14:54:44.351674+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -153,5 +153,7 @@
       "status": "in_progress",
       "message": "Both independent reviews returned at the frozen head 82c32742 and passed on their first reading: G3 (data-contract-verifier) eight checks confirmed, three notes; G4 (qa-engineer) eight checks, eleven mutations all caught, three notes; no blocking finding; no correction asked; no review of this task failed. Both returns are kept unchanged in project-control/reports/M5-T139-G3G4.md. Orchestrator's run at the same head: full api suite 8655 passed, 8 skipped. Evidence map written (four rows)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-08T14:54:44.351544+00:00"
 }
