@@ -11,10 +11,10 @@
   the api CI job's first step (wave-10 seam 06db6449 reddened CI until 580d1125).
 - DO run focused web checks on the Linux dev server while developing (owner D-090-R170/R171, R639):
   in `apps/web`, `npx --yes npm@11.18.0 ci --no-audit --no-fund` (once per worktree), `npm run lint`,
-  `typecheck`, touched tests; e2e with ONLY `services/api/app` on `PYTHONPATH` (DB-207). Full suites
-  + security checks must PASS IN CI on the exact head accepted or merged; later code changes need
-  them again. Lockfile packages only; never mark web behavior verified from reasoning alone. NEVER
-  on the owner's PC (thin client).
+  `typecheck`, touched tests; e2e with the lanes venv first on PATH and
+  `PYTHONPATH=<checkout>/services/api`. Full suites + security checks must PASS IN CI on the exact
+  head accepted or merged; later code changes need them again. Lockfile packages only; never mark web
+  behavior verified from reasoning alone. NEVER on the owner's PC (thin client).
 - DO run `python -m ruff check services/api` before any api checkpoint/commit — it is the api
   CI job's first step; a lint miss costs a CI round.
 - DON'T read jsdom `getContext`/WebGL console noise as the failure (MapLibre components spam
