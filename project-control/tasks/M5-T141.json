@@ -1,0 +1,120 @@
+{
+  "task_id": "M5-T141",
+  "title": "The browser-test harness serves the results route from the recorded files by path and imports nothing from the server's test tree, so that it starts where only the installed server package is on the Python path (GitHub's browser-test job); with a static guard and an equality test. It repairs the defect that kept the browser tests from starting in CI on every head of wave 13 after the claim seam. No website source file, no browser spec and no server application file changes (serves D-090-R292/R584; found at the checks of pull request 476)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Repair the browser-test harness so that it starts in CI. Change ONE harness file and add ONE server test file.\n\nFACTS (read by the orchestrator at the claim base; verify each in the source before relying on it).\nFact 1: CI's job `web-e2e` installs the server as a package (`pip install --no-deps .` in `services/api`, `.github/workflows/ci.yml`; `services/api/pyproject.toml` packages only `app*`) and then runs `npm run test:e2e` in `apps/web`, whose Playwright configuration starts `python e2e/harness/fixture_api.py`. The server's TEST tree (`services/api/tests`) is NOT on the Python path there.\nFact 2: task M5-T140 added `harness_results_inputs_provider` to `apps/web/e2e/harness/fixture_api.py`. Inside it: `from tests.contracts.test_evaluator_inputs import _benchmark_identity_address` and `from tests.spatial._northern_replay import DCM_ENVELOPE, replay_dcm_page, replay_lot_geometry, replay_pluto`. `build_app()` calls it at start.\nFact 3: in CI the harness therefore dies at start: `ModuleNotFoundError: No module named 'tests'`, then `Error: Process from config.webServer was not able to start. Exit code: 1`. The job failed on the heads `ec228eae`, `b3e84b3d` and `02600b8f` (CI runs 37812671968, 37816371633, 37821188041, 37821193963; the saved log of one job: the orchestrator's session folder, `ci-web-e2e-02600b8f-push.log`).\nFact 4: on the build machine the documented way to run the browser tests puts the whole folder `services/api` on the Python path (`PYTHONPATH=<checkout>/services/api`), so `tests` is importable and every local run passed. That is why the builder, the orchestrator and four independent checks did not see it.\nFact 5: the harness already serves the study read from recorded FILES read by path (`STUDY_FIXTURE_DIR`, `harness_study_fetcher`): that is the pattern to follow. The recorded pack is `services/api/tests/fixtures/benchmark_215_16_northern/` (its `MANIFEST.json` maps each official URL to its file). What the two test helpers do: `services/api/tests/spatial/_northern_replay.py` (the pack's bytes served to the connectors' OWN fetch and parse code) and `_benchmark_identity_address` in `services/api/tests/contracts/test_evaluator_inputs.py` (the confirmed address read from the benchmark file that `_BENCHMARK` names). The test tree's own provider over the same pack: `benchmark_provider` in `services/api/tests/api/test_results_read_api.py`.\n\nSTEP 1 - THE RED PROOF, before any edit. Reproduce CI's condition: make a scratch folder OUTSIDE the repository that holds only a link named `app` to `<your worktree>/services/api/app`; with `PYTHONPATH` set to that folder ALONE, start the harness from `apps/web` (`python e2e/harness/fixture_api.py`, or import the module and call `build_app()`): it fails with `No module named 'tests'`. Keep the output.\nSTEP 2 - THE REPAIR, in `apps/web/e2e/harness/fixture_api.py` only. Build the SAME inputs with NO import from `tests`: read the recorded files by path; serve the recorded bytes to the REAL connectors' own fetch and parse code (the lot geometry, the street page, the PLUTO body), with the same fixed clock, seed and correlation arguments the test tree's replay uses, so that the outputs are equal; read the confirmed address from the same benchmark file. No response byte is hand-written and no recorded value is retyped. Imports from `app.*` are fine. Keep everything else of the harness as it is: the other providers, the two switches it sets for its own process, the cross-origin settings, the rule that any other lot is the route's fail-safe 503.\nSTEP 3 - ONE NEW SERVER TEST FILE, `services/api/tests/api/test_e2e_harness_results_inputs.py` (it loads the harness the way `services/api/tests/api/test_address_resolution_recorded_geoclient.py` does). Three tests: (a) THE GUARD: no Python file under `apps/web/e2e/harness` imports from `tests` (read the sources; no line that starts, after spaces, with `from tests` or `import tests`); (b) EQUALITY: for the recorded lot the inputs the harness provider returns equal the inputs the test tree's own `benchmark_provider()` returns (compare the two objects field by field, or the two documents the route returns with each provider; if anything must be left out of the comparison, name it and say why); (c) another lot: the provider raises its unavailable error.\nSTEP 4 - THE GREEN PROOF. With `PYTHONPATH` set to the scratch folder ALONE the harness starts, and the two results browser specs pass: from `apps/web`, `CI=true npx playwright test e2e/results.flag-on.spec.ts e2e/results.spec.ts` with the lanes venv first on PATH (nothing else may be listening on ports 3000, 3001, 8000: check first and say so). Then, with the normal path, the server tests named in the commands.\n\nRULES THAT DO NOT BEND. Only the harness file, the new test file and your report change. No file under `apps/web/src`; no browser spec; no Playwright configuration; no server application file; no CI file; no fixture. If the repair cannot be made inside the one harness file, STOP and report; do not add a module. The new test file is plain Python that passes the server's lint (lines of at most 100 characters).\n\nNOT IN THIS TASK: any change to what the screen shows; any change to the results route; any change to how CI installs or starts anything; the other notes of task M5-T140 (backlog row DB-206).",
+  "business_reason": "Step 4 of the owner's sequence asks for proof that a changed input changes every result that depends on it (R292). That proof is the browser journey over the real route. It ran on the build machine and could not even start in CI, so the wave cannot merge: the merge step refuses a failed check. The repair makes the proof run where the project's checks run, and changes no production setting (R584).",
+  "inputs": [
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/playwright.config.ts",
+    ".github/workflows/ci.yml",
+    "services/api/pyproject.toml",
+    "services/api/tests/spatial/_northern_replay.py",
+    "services/api/tests/contracts/test_evaluator_inputs.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_address_resolution_recorded_geoclient.py",
+    "services/api/tests/fixtures/benchmark_215_16_northern/MANIFEST.json",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/app/api/v1/results_read.py",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/results.spec.ts"
+  ],
+  "outputs": [
+    "services/api/tests/api/test_e2e_harness_results_inputs.py"
+  ],
+  "dependencies": [
+    "M5-T140"
+  ],
+  "allowed_paths": [
+    "apps/web/e2e/harness/fixture_api.py",
+    "services/api/tests/api/test_e2e_harness_results_inputs.py",
+    "project-control/reports/M5-T141-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Any file under apps/web/src, any browser spec, apps/web/playwright.config.ts.",
+    "Any file under services/api/app and any existing test or fixture under services/api/tests.",
+    ".github, tools, .claude, render.yaml, any dependency file."
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "red_proof_ci_like_start_fails_before",
+      "input": "The claim head; the Python path holds only the server's `app` package.",
+      "expected": "Starting the harness fails with `No module named 'tests'` (kept output)."
+    },
+    {
+      "id": "S2",
+      "case": "harness_imports_nothing_from_tests",
+      "input": "The sources under apps/web/e2e/harness.",
+      "expected": "No line imports from `tests`; the guard test passes and fails when such a line is put back (mutation proof)."
+    },
+    {
+      "id": "S3",
+      "case": "same_inputs_as_the_test_trees_provider",
+      "input": "The recorded lot (BBL 4073340070).",
+      "expected": "The harness provider's inputs equal the inputs of the test tree's `benchmark_provider()`; whatever is left out of the comparison is named."
+    },
+    {
+      "id": "S4",
+      "case": "another_lot_is_unavailable",
+      "input": "Any other BBL.",
+      "expected": "The provider raises its unavailable error (the route's fail-safe 503); never a made-up document."
+    },
+    {
+      "id": "S5",
+      "case": "ci_like_start_works_and_the_journeys_pass",
+      "input": "The Python path holds only the server's `app` package.",
+      "expected": "The harness starts; `e2e/results.flag-on.spec.ts` and `e2e/results.spec.ts` pass."
+    },
+    {
+      "id": "S6",
+      "case": "nothing_else_moves",
+      "input": "The diff of the task.",
+      "expected": "Only the harness file, the new test file and the report; `tests/api` and `tests/journey` pass with the normal path."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The repaired harness quietly serves different inputs than the tests' provider -> the equality test (S3).",
+    "The import comes back later (it works on every build machine) -> the guard test (S2), which runs in the server suite in CI.",
+    "A local run still hides a missing module -> the builder and the orchestrator run the journeys with a Python path that holds only `app`; the orchestrator reads CI on the pushed head BEFORE any gate is recorded.",
+    "The harness file grows (about 780 lines; it is outside the size check) -> the smallest repair; if a second module is needed, STOP and report."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T18:13:48.746448+00:00",
+  "updated_at": "2026-10-08T18:13:49.107875+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R292",
+        "D-090-R584"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T18:13:48.746674+00:00",
+  "path_notes": "One producer (backend-engineer) in an isolated worktree reset to the claim head. The harness file is Python under apps/web/e2e/harness; server tests load it by adding that folder to the Python path. Baselines at the claim base: `tests/api` and `tests/journey` together 1133 passed; the two results browser specs pass with the whole `services/api` on the path and CANNOT START with only `app` on it (that is the defect). The orchestrator runs the whole browser suite in the CI-like way and the full api suite at the frozen head, and reads the CI runs on the pushed head before recording any gate.",
+  "documented_test_commands": [
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/api tests/journey",
+    "CI-like, from apps/web: PATH=/root/project/lanes-runtime/venv/bin:$PATH PYTHONPATH=<scratch folder holding only a link app -> <worktree>/services/api/app> CI=true npx playwright test e2e/results.flag-on.spec.ts e2e/results.spec.ts",
+    "python3 tools/modularity_check.py --check   # from the repository root",
+    "python3 scripts/lanes/check_lane_paths.py --coverage   # from the repository root"
+  ],
+  "worktree": "/root/project/w-wave13"
+}

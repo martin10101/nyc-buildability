@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T15:25:45+00:00",
+ "updated_at": "2026-10-08T18:13:49+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -649,7 +649,7 @@
   "D-090-R625"
  ],
  "requirements_id_digest_sha256": "e8043d52ee184b0b9f20d69d0123f6a5ef1e1c9266968f4b0aeec5bcb5bee75c",
- "requirements_content_digest_sha256": "94a44e7f405d91e8a1cf6d99f481a491729cb4f605b270577491a582f7923f2a",
+ "requirements_content_digest_sha256": "50d358284d8f66f36c5c7ebfe294252095e46d58e6fc7ad41d978bb20a368b41",
  "sources": [
   {
    "file": "source-001.md",
@@ -1250,7 +1250,8 @@
   "M5-T137",
   "M5-T138",
   "M5-T139",
-  "M5-T140"
+  "M5-T140",
+  "M5-T141"
  ],
  "affected_prs": [
   262,
@@ -1849,6 +1850,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T140 (Results panel on the website behind an off-by-default switch) to R228, R229, R240, R255, R256, R258, R267, R268, R269, R292, R548, R556, R569, R570, R582, R584, R588 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-08T18:13:49+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T141 (The browser-test harness without the server's test tree (repair of wave 13)) to R292, R584 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }
