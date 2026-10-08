@@ -116,8 +116,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "in_progress",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 85,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the case states that agreement is not proof; every row is followable and quotes its capture; 'not sure' where the text does not settle it (S1-S4, S10)",
     "Matching the program's saved output taken as proof, especially for the rear yard -> each worked example is worked by hand from the text; the builder states where it differs and changes no fixture or program code (S5, S7, S8)",
@@ -128,7 +128,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T01:34:57.932655+00:00",
-  "updated_at": "2026-10-08T02:57:25.288233+00:00",
+  "updated_at": "2026-10-08T02:57:26.625462+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
