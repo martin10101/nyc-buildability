@@ -168,7 +168,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 75,
+  "progress_percent": 90,
   "risks": [
     "a stand-in in the wrong direction lets a figure through -> the direction of each stand-in is proved from the rule file and pinned by a mutation proof; scenario S11 forbids any shown result resting on one",
     "the decision step shows a result while a condition it reads is not known -> the builder stops and reports the state; nothing is papered over in the transform",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T09:24:50.315328+00:00",
-  "updated_at": "2026-10-08T10:35:05.298433+00:00",
+  "updated_at": "2026-10-08T11:03:58.997323+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -232,6 +232,13 @@
       "percent": 75,
       "status": "in_progress",
       "message": "One correction BEFORE any review, of the orchestrator's own reading O36: a scope line of a condition that is not known showed the value taken for the calculation ('Special density area Yes assumed ...' on the regenerated drawing); it now shows the words 'Not known' (and 'Not applicable' for the corner conditions of a lot that is not a corner lot). The same builder made the correcting commit, integrated as b6aab84a (7 files, all inside the allowed paths; its checks: three_answers 350 passed 2 skipped; journey, contracts and lot reach 573; cad and drawings 1359 passed 6 skipped; website 2429). The packet's scope_corrections holds the corrected reading. Reviews start at the next commit."
+    },
+    {
+      "at": "2026-10-08T11:03:58.997198+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Both independent reviews returned at the frozen head 3f540bb3 and passed on their first reading: G3 (data-contract-verifier) thirteen checks confirmed, three notes; G4 (qa-engineer) eleven checks, sixteen mutations of which fifteen are caught, four notes; no blocking finding; no review of this task failed. The mutation nothing catches (a lot that is not a corner lot treated as a corner lot inside the new entry) is benign here, nothing being mounted, and is bound into the server route's packet. Both returns are kept unchanged in project-control/reports/M5-T137-G3G4.md. Orchestrator's runs at the same head: website lint, typecheck, 2429 unit tests, build, 153 browser tests; full api suite 8588 passed, 8 skipped. Evidence map written (ten rows)."
     }
   ],
   "scope_corrections": [
