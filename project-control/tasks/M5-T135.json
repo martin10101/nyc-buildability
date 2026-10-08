@@ -155,7 +155,7 @@
     "directive-compliance-verifier"
   ],
   "status": "in_progress",
-  "progress_percent": 70,
+  "progress_percent": 90,
   "risks": [
     "A quote or digest written from memory or copied from this packet rather than read from the capture file -> T3 checks each quote is verbatim in its capture and each digest equals content_digest_sha256; read digests from the capture file itself (M5-T133 FAILED G3 on a stale figure).",
     "An owner recommendation or an orchestrator reading written as if it were the owner's decision -> quote only the verbatim owner fragments of source-057 with their row ids; the reviewer checks each against the owner's words.",
@@ -166,7 +166,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T03:57:03.974050+00:00",
-  "updated_at": "2026-10-08T04:51:17.563300+00:00",
+  "updated_at": "2026-10-08T05:14:24.952749+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -217,6 +217,13 @@
       "percent": 70,
       "status": "in_progress",
       "message": "Independent reviews at c8988873, both on their first reading: G3 PASS (data-contract-verifier; one note) and G4 PASS (qa-engineer; six notes); no review failed. Their returns are committed unchanged in project-control/reports/M5-T135-G3G4.md. THE SESSION WAS HANDED OVER HERE (owner's /session-handoff, 04:38 UTC): the task is NOT yet submitted. Still to do, by the next session: the evidence map (eleven rows), submit, gate G2, the gate records G3 and G4 from that file (the task's files must still have the blob ids of c8988873), the rule check, acceptance. For the backlog at the acceptance sweep: the introduction's 'a 25 percent allowance' is an older shorthand that the owner's decision (the range 0.60 to 0.75) does not use."
+    },
+    {
+      "at": "2026-10-08T05:14:24.952656+00:00",
+      "agent": "scenario-optimization-engineer",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Evidence map written for the eleven rows of D-090 bound to this task (project-control/reports/M5-T135-evidence-map.json). The thirteen allowed-path files still have the blob ids of the reviewed commit c8988873. Orchestrator's checks at the branch head 6526d902 in a new session: ruff clean; tests/scenario/measurement_basis 41 passed; the page check passed. The record names the commercial floor area ratio of Article III Chapter 3 as not captured yet: true at the claim head; the wave's other task captures those sections as source text and nothing has read them, so the phrase is brought in line when they are read (a backlog row at the acceptance sweep)."
     }
   ]
 }

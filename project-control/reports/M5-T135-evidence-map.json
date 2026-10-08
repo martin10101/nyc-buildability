@@ -1,0 +1,78 @@
+{
+ "task_id": "M5-T135",
+ "material_commits": [
+  "c8988873 (the builder's one commit, parent = the claim head, fast-forwarded onto the branch: the record, Example C's data file and page, three of the five test files, the producer report; 7 files) = material head"
+ ],
+ "claim_seam_head": "599f9b0ca0540212f3cdd670d1a4eb4aed78e093",
+ "files_changed": [
+  "docs/measurement-basis/MEASUREMENT_BASIS.md",
+  "docs/measurement-basis/examples/example-c-mixed-use.json",
+  "docs/measurement-basis/examples/example-c-mixed-use.md",
+  "project-control/reports/M5-T135-producer-report.md",
+  "services/api/tests/scenario/measurement_basis/measurement_basis_check.py",
+  "services/api/tests/scenario/measurement_basis/measurement_basis_fit.py",
+  "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py"
+ ],
+ "what_did_not_change": "No program source, no rule file, no capture, no reference case and no other document. No figure of any example: the G3 reviewer parsed Example C's data file at both revisions and found all 126 numeric values identical; Examples A and B are byte-unchanged. No estimator is built.",
+ "known_limit_at_the_wave_head": "The record names the commercial floor area ratio of Article III, Chapter 3 as 'not captured yet' (backlog row DB-188 item 1). That was true at the claim head, which is all this task may quote. The other task of this wave (M4-T036) captures those sections as source text; nothing has read them. Once both are merged the record's phrase is out of date and is brought in line when those captures are read into the reference cases (a backlog row at the acceptance sweep).",
+ "checks_at_material_head": [
+  "orchestrator on the branch at c8988873: ruff clean; the measurement-basis and reference-case tests 113 passed",
+  "G3 reviewer at c8988873: tests/scenario/measurement_basis 41 passed; the page check passed; ten capture digests recomputed and equal",
+  "G4 reviewer at c8988873: 41 passed; the three new tests fail on the record as it was (14, 9 and 18 errors); seven of its eight mutations caught (the eighth: note F2)"
+ ],
+ "requirements": {
+  "D-090-R513": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 6 states shared floor area as 'a required calculation, not a switch and not an optional allowance (R513)', quotes ZR 23-20 word for word with its capture id and digest, says the attribution 'does not necessarily increase the residential figure' and that where the areas are missing the dependent result stays 'not known' or explicitly conditional.",
+   "This task adds the reading of the now-captured mixed-building sections (ZR 35-30, 35-31, 35-32, 35-33), each quote with its capture id and digest, labelled a draft reading by an AI: services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_every_new_law_quote_stands_in_its_capture requires every new quote to stand word for word in its capture and every digest to equal the capture's; services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_no_now_read_text_is_marked_not_captured fails if a now-read text is still called 'not captured yet'.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_shared_floor_area_attribution_is_a_required_step_not_a_switch (re-aimed: Example C's note must not call ZR 35-31 'not captured yet' and must stay withheld or conditional). What stays 'not sure' is named: the commercial floor area ratio and whether the attributed area is added to the residential figure (a question of law).",
+   "the G3 reviewer (data-contract-verifier, at c8988873; project-control/reports/M5-T135-G3G4.md), check 3: every new quote is a verbatim part of its capture; the readings agree with the step-P5 reference case."
+  ],
+  "D-090-R516": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 1d states the eligibility from the captured definitions: a 'fully electrified building' is 'a building existing on December 6, 2023', so a proposed building cannot be one; an 'ultra low energy building' is put forward at plan approval and confirmed only after construction; the exterior-wall exclusion applies to thickness added to a building existing on December 6, 2023, not to a new building's ordinary walls. Each with its capture id and digest.",
+   "The same section says a user's statement 'supports only a conditional result; it never establishes eligibility', that there is no general 'confirm it applies' switch and that no example takes the energy exclusion. Local Law 154 and the energy code are named as not captured (DB-188 item 7).",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_every_new_law_quote_stands_in_its_capture holds the two energy definitions' quotes and digests to their captures; services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_no_now_read_text_is_marked_not_captured fails if either definition is still called 'not captured yet'.",
+   "the G3 reviewer (data-contract-verifier, at c8988873; project-control/reports/M5-T135-G3G4.md), check 3: the wall exclusion is stated only as far as the capture bears out; the two energy readings agree with the step-P5 reference case."
+  ],
+  "D-090-R519": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8c ('How an assumption changes the count, and why floors are not equal (R519)') is unchanged by this task and still says a count of floors times one floorplate is an assumption, with the base and building heights from the captured ZR 23-432 table and the setback sentence of ZR 23-433.",
+   "This task ties the owner's floor heights to it: section 8a item 3 says the 10 ft and 15 ft starting assumptions are 'subject to the actual building envelope' and 'not a licence to count equal floors above the maximum base height (R519, section 8c)'.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires the floor-height decision and its row id in section 8a."
+  ],
+  "D-090-R534": [
+   "The record is corrected by a contracted task of its own (this one), reviewed independently before the record is put to the owner again: the G3 reviewer (data-contract-verifier, at c8988873; project-control/reports/M5-T135-G3G4.md) and the G4 reviewer (qa-engineer, at c8988873; project-control/reports/M5-T135-G3G4.md) both passed on their first reading; no review of this task failed.",
+   "The list of open points holds the owner's choices apart from the questions of law: section 8 now has 8a (the owner's decisions of 2026-10-07) and 8b (questions of law, 'never put to the owner as a preference'); the G3 reviewer (data-contract-verifier, at c8988873; project-control/reports/M5-T135-G3G4.md), check 4.",
+   "Example C's two statements that had become false are corrected with a dated change-log entry and no figure changed (docs/measurement-basis/examples/example-c-mixed-use.json); services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_rendered_pages_are_byte_identical_to_the_renderer."
+  ],
+  "D-090-R539": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8a records the choices as DECIDED BY THE OWNER on 2026-10-07 and quotes the owner: 'approved as preliminary, editable assumptions.' The introduction and section 7 no longer call the starting values 'unapproved'; they call them 'preliminary, editable assumptions'.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions fails while the record still says a choice is 'NOT decided until the owner says so' (red on the old record: 14 errors, reproduced by the G4 reviewer).",
+   "the G3 reviewer (data-contract-verifier, at c8988873; project-control/reports/M5-T135-G3G4.md), check 2: every decision is quoted word for word from the owner's message with the right row id; nothing says more than the owner said. Nothing here builds the estimator."
+  ],
+  "D-090-R540": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8a item 1 quotes the owner ('Use 0.60–0.75 as an unvalidated sensitivity range.') and carries 0.60 to 0.75 as an unvalidated sensitivity range, editable, 'never a validated or expected range'.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires '0.60 to 0.75' and 'unvalidated sensitivity range'; the G4 reviewer's mutations (a) a changed range and (b) the word 'unvalidated' removed both fail it.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_examples_do_not_present_a_typical_percentage (unchanged, passing)."
+  ],
+  "D-090-R541": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8a item 2 quotes the owner ('Use 700 sq ft as the chosen starting apartment size, on the HPD measurement basis.') and says it is editable and 'not a measured or typical average'.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires '700 sq ft' and the HPD measurement basis; the G4 reviewer's mutation (c), 700 changed to 750, fails it."
+  ],
+  "D-090-R542": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8a item 3 quotes the owner ('Use 10 ft residential floors and 15 ft shop ground floors as starting assumptions.'), editable and subject to the actual building envelope, not a licence to count equal floors above the maximum base height.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires both floor heights and the row id."
+  ],
+  "D-090-R543": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md section 8a item 4 quotes the owner's sentence with its two labels: the count is shown as 'Not known' until an option has floors and a shape, then called a 'Preliminary capacity estimate.'",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires both labels as the owner words them; the G4 reviewer's mutation (d), the label changed to 'capacity figure', fails it."
+  ],
+  "D-090-R544": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md sections 4, 5 and 8a quote the owner: 'Use the residential floor area the proposed building actually accommodates.' and 'Keep the legal ceiling separate.' The estimate never starts from the maximum permitted floor area; the formula is unchanged.",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_legal_cap_is_separate_and_recomputes and ::test_mixed_use_uses_the_residential_portion_only (unchanged, passing); services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires the row id in the record."
+  ],
+  "D-090-R545": [
+   "docs/measurement-basis/MEASUREMENT_BASIS.md states in the introduction, in section 7 and in section 8a that the owner's approval 'validates neither the assumptions nor the worked examples', and quotes the owner: 'This approval does not validate the assumptions or the worked examples.'",
+   "services/api/tests/scenario/measurement_basis/test_measurement_basis_examples.py::test_section_8a_records_the_owners_decisions requires that sentence. the G3 reviewer (data-contract-verifier, at c8988873; project-control/reports/M5-T135-G3G4.md), checks 2 and 6: no sentence calls a value validated, expected, realistic or typical; every use of 'validated' is a denial.",
+   "A limit, stated: the tests require the owner's sentence to be present; no test forbids a later sentence that contradicts it (the G4 reviewer's note F2). The delivered record holds no such sentence (read by both reviewers). A backlog row at the acceptance sweep."
+  ]
+ }
+}
