@@ -39,11 +39,14 @@ MUST change is inside the allowed paths; no forbidden/out-of-scope consumer must
 | 500 internal_error / internal_contract_error | "Something went wrong" + "…Nothing was shown." (no stack/path) | results-panel.test.tsx S11; results-api.test.ts W-1 |
 | network failure | "Could not reach the server" + retry | results-panel.test.tsx "S12 … network"; results-api.test.ts W-1 |
 | bad document (200 fails website check) | "The results could not be loaded" + no partial document | results-panel.test.tsx "S12/S21 … fails the website's own check"; results-contract-checks.test.ts S21; results-api.test.ts W-1 |
+| timeout / unexpected response (panel-rendered) | "The results took too long" / "Unexpected response from the server" | results-panel.test.tsx "F3 … timeout and unexpected-response notices" |
+| large height accepted (no upper limit, R4/S9) | 500 ft sent; no field error | results-panel.test.tsx "S9/R4 a large height is accepted" |
+| website check refuses a value settled by silence | available answer with no value_states; a shown value with no entry; a conditional with no conditions | results-contract-checks.test.ts "B1 / B2 / B3" |
 | S4 withheld shows reason not number | "Not known — <reason>", no % | results-panel.test.tsx S4; three-answers.test.ts "S14 RED PROOF" |
 | S5 gap-kind shown | "Not built yet: this part of the program is still owed." / "Missing information about this property." | three-answers.test.ts "gapKindLine …"; three-answers-panel.test.tsx "S5 …" |
 | S6 conditional names assumption | the value + "If <assumption>" line | three-answers-panel.test.tsx / three-answers.test.ts "S14 conditional"; results.flag-on.spec.ts |
 | S13 feasibility/estimate | parking line present; no option called feasible; unit_estimate not shown | results-panel.test.tsx S13 |
-| S14 no internal words | no `this slice`/`Lane A`/`task A-12`/`not encoded`/`not_available`/`rule_not`/snake_case; nothing "maximum for this property" | results-panel.test.tsx S14 |
+| S14 no internal words (WHOLE panel, form included, before and after a result) | no `this slice`/`Lane A`/`task A-12`/`not encoded`/`not_available`/`rule_not`/snake_case; nothing "maximum for this property" | results-panel.test.tsx S14 |
 | S15/W-4 standing label once | panel adds no standing-review-label | results-panel.test.tsx W-4 |
 | S18/W-6 keyboard + a11y | panel has accessible name "Development results"; Escape closes + returns focus | results-panel.test.tsx W-6; results.flag-on.spec.ts |
 | S20 switch threading | absent/false → opener hidden, not-available view, no call; true → form | dashboard-results-flag.test.tsx |
@@ -111,6 +114,11 @@ known."; opener button "Results"; region "Development results"; form region "Res
   green. Output kept in the scratchpad.
 - The reader's headline-withheld red/green (three-answers.test.ts "S14 RED PROOF … R556") is the
   pre-existing proof; my gap-kind change did not disturb it (it stays green).
+- Large-height acceptance (ResultsPanel `parseHeight`, R4/S9, third commit). Adding an upper limit
+  (`value > 100` refused) made results-panel.test.tsx "a large height is accepted" go RED
+  (`expect(calls[0].floor_to_floor_ft).toBe(500)` failed — 500 was refused); reverting → green.
+  Done in place and reverted exactly (JS module resolution makes a true out-of-repo copy run
+  impractical).
 
 ## 6. Mutation proofs (each: mutate production in place → run the pinned test → RED → revert exactly)
 
@@ -201,6 +209,16 @@ conditions and no engine internal word reaches the screen (DB-196(c), DB-199(e),
   the returned housing-program line names the label read from the form's selected option (not
   retyped). A unit test ("say exactly true words") pins the three corrected sentences. Nothing else
   changed.
+- Third commit (reviews: G3 passed with notes, G4 failed on one missing test), on top of a650956d:
+  (A, G4-F1 blocking) added results-panel.test.tsx "a large height is accepted" (500 ft sent, no
+  field error) with its red proof above. (B, G3-F1) tightened results-contract-checks.ts to refuse a
+  value settled by silence — an available answer with values but no value_states map; a shown value
+  with no value_states entry; a conditional with an empty conditions list — with B1/B2/B3 tests;
+  verified NO valid contract-1.3.0 fixture under packages/contracts/fixtures/valid/results/ is
+  refused (only the 1.3.0 journey fixture is subject to these rules and it passes; the pre-1.3.0
+  fixtures are already refused by the existing contract_version check). (C, G4-F3) added the
+  timeout and unexpected-response panel-render test. (D, G4-F4) the S14 text guard now runs over the
+  WHOLE panel (form region included), before a result and after one. No form text tripped it.
 - No ruling was impossible to build as written; nothing was chosen differently.
 - The code-graph impact query was unusable (stale cache, `--no-regen`); I verified every consumer in
   source instead (§1). The harness imports the canonical recorded-Northern replay helpers from

@@ -87,6 +87,11 @@ function checkValueState(problems: Problems, path: string, value: unknown): stri
   checkEnum(problems, `${path}.way`, state.way, VALUE_WAYS);
   if (state.way === "conditional") {
     const conditions = checkBoundedArray(problems, `${path}.conditions`, state.conditions);
+    // A conditional value must NAME at least one condition (schema: conditions minItems 1); an
+    // empty list would show a value as conditional-on-nothing, i.e. settled by silence.
+    if (Array.isArray(state.conditions) && state.conditions.length === 0) {
+      problems.add(`${path}.conditions`, "a conditional value must name at least one condition");
+    }
     conditions?.forEach((condition, index) => {
       const item = checkObject(problems, `${path}.conditions[${index}]`, condition);
       if (item) checkNonEmptyString(problems, `${path}.conditions[${index}].assumption`, item.assumption);
@@ -122,10 +127,33 @@ function checkAnswer(problems: Problems, path: string, value: unknown): void {
         : [],
     );
     const states = answer.value_states;
+    // No value is settled by silence (three_way_document.py: "one entry for every value"; schema:
+    // value_states required on every available 1.3.0 answer). An available answer that SHOWS values
+    // must carry a value_states map (rule 1).
+    if (
+      Array.isArray(answer.values) &&
+      answer.values.length > 0 &&
+      (states === undefined || states === null)
+    ) {
+      problems.add(
+        `${path}.value_states`,
+        "an available answer that shows values must carry a value_states map (no value is settled by silence)",
+      );
+    }
     if (states !== undefined && states !== null) {
       const map = checkObject(problems, `${path}.value_states`, states);
       if (map) {
         const keys = Object.keys(map);
+        // Every shown value must have a value_states entry (rule 2): a value with no state would be
+        // read as settled by silence.
+        for (const shownKey of shownKeys) {
+          if (!(shownKey in map)) {
+            problems.add(
+              `${path}.value_states[${shownKey}]`,
+              "a shown value must carry a value_states entry (settled, conditional or withheld); none is settled by silence",
+            );
+          }
+        }
         if (keys.length > 64) {
           problems.add(`${path}.value_states`, "carries more value states than this screen accepts");
         } else {

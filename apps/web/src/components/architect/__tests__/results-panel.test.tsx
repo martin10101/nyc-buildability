@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { jsonResponse } from "@/test-support/fixtures";
 import { loadResultsFixture } from "@/test-support/results-fixtures";
@@ -172,6 +172,20 @@ describe("ResultsPanel — W-3 / S13 / S14: states and honest text", () => {
     expect(fetchImpl).not.toHaveBeenCalled();
   });
 
+  it("S9/R4: a large height is accepted (the website invents no upper limit)", async () => {
+    const calls: ResultsRequestBody[] = [];
+    const fetchImpl = ((_url: string, init: RequestInit) => {
+      calls.push(JSON.parse(String(init.body)) as ResultsRequestBody);
+      return Promise.resolve(jsonResponse(loadResultsFixture(JOURNEY), 200));
+    }) as unknown as typeof fetch;
+    render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl} />);
+    fireEvent.change(screen.getByTestId("results-floor-to-floor"), { target: { value: "500" } });
+    await pressShow();
+    await screen.findByTestId("results-document");
+    expect(calls[0].floor_to_floor_ft).toBe(500);
+    expect(screen.queryByTestId("results-floor-to-floor-error")).toBeNull();
+  });
+
   it("S4: a withheld value shows its reason with 'Not known' and no number of its own", async () => {
     const doc = loadResultsFixture(JOURNEY);
     const envelope = doc.answers.permitted_envelope;
@@ -203,18 +217,28 @@ describe("ResultsPanel — W-3 / S13 / S14: states and honest text", () => {
     expect(doc.textContent ?? "").not.toContain("maximum for this property");
   });
 
-  it("S14: no engine internal word or snake_case reaches the shown panel", async () => {
+  it("S14: no engine internal word or snake_case reaches the WHOLE panel, before and after a result", async () => {
+    const guardWholePanel = () => {
+      const panel = screen.getByTestId("results-panel");
+      // A ZR ref may legitimately appear only inside the rule-sections surface; strip those once.
+      const sectionTexts = within(panel)
+        .queryAllByTestId<HTMLElement>("answer-section")
+        .map(element => element.textContent ?? "");
+      const text = sectionTexts.reduce((rest, part) => rest.split(part).join(""), panel.textContent ?? "");
+      for (const code of ["this slice", "Lane A", "task A-12", "not encoded", "not_available", "rule_not"]) {
+        expect(text).not.toContain(code);
+      }
+      expect(text).not.toMatch(SNAKE_CASE);
+      expect(text).not.toContain("maximum for this property");
+    };
     render(<ResultsPanel bbl={BBL} fetchImpl={successFetch(loadResultsFixture(JOURNEY))} />);
+    // Before a result: the form region (its labels, options and helper lines) is on the panel.
+    expect(screen.getByTestId("results-form")).toBeInTheDocument();
+    guardWholePanel();
+    // After a result: the form region plus the rendered document.
     await pressShow();
-    const doc = await screen.findByTestId("results-document");
-    const sectionTexts = within(doc)
-      .queryAllByTestId<HTMLElement>("answer-section")
-      .map(element => element.textContent ?? "");
-    const text = sectionTexts.reduce((rest, part) => rest.split(part).join(""), doc.textContent ?? "");
-    for (const code of ["this slice", "Lane A", "task A-12", "not encoded", "not_available", "rule_not"]) {
-      expect(text).not.toContain(code);
-    }
-    expect(text).not.toMatch(SNAKE_CASE);
+    await screen.findByTestId("three-answers-panel");
+    guardWholePanel();
   });
 });
 
@@ -285,6 +309,35 @@ describe("ResultsPanel — W-3 server error states (plain, no stack or path)", (
     await screen.findByTestId("results-failure-notice");
     expect(screen.getByTestId("results-failure-title").textContent).toBe("The results could not be loaded");
     expect(screen.queryByTestId("results-document")).toBeNull();
+  });
+
+  it("F3: the panel renders the timeout and unexpected-response notices with their titles", async () => {
+    // unexpected_response: an undocumented (status, state) pair.
+    render(<ResultsPanel bbl={BBL} fetchImpl={(async () => jsonResponse({ state: "teapot" }, 418)) as typeof fetch} />);
+    await pressShow();
+    expect((await screen.findByTestId("results-failure-title")).textContent).toBe(
+      "Unexpected response from the server",
+    );
+    cleanup();
+
+    // client_timeout: the request never answers; the client's own timer aborts it.
+    vi.useFakeTimers();
+    try {
+      const fetchImpl = ((_url: string, init: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          (init.signal as AbortSignal).addEventListener("abort", () =>
+            reject(new DOMException("aborted", "AbortError")),
+          );
+        })) as unknown as typeof fetch;
+      render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl} />);
+      fireEvent.click(screen.getByTestId("results-show"));
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(12_000);
+      });
+      expect(screen.getByTestId("results-failure-title").textContent).toBe("The results took too long");
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });
 

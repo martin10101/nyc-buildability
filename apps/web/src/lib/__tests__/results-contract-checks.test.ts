@@ -90,6 +90,45 @@ describe("validateResultsDocument — shape of the blocks the panel reads [WIRIN
     }
   });
 
+  it("B1: refuses an available answer that shows values but carries no value_states map", () => {
+    const body = probe(doc => {
+      const allowance = doc.answers.floor_area_allowance;
+      if (allowance.status !== "available") throw new Error("fixture changed");
+      delete (allowance as { value_states?: unknown }).value_states;
+    });
+    const result = validateResultsDocument(body);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes("value_states"))).toBe(true);
+  });
+
+  it("B2: refuses a shown value that has no value_states entry (never settled by silence)", () => {
+    const body = probe(doc => {
+      const allowance = doc.answers.floor_area_allowance;
+      if (allowance.status !== "available" || !allowance.value_states) throw new Error("fixture changed");
+      // max_residential_far is a SHOWN value; drop its state entry.
+      expect(allowance.values.some(v => v.key === "max_residential_far")).toBe(true);
+      delete (allowance.value_states as Record<string, unknown>).max_residential_far;
+    });
+    const result = validateResultsDocument(body);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes("max_residential_far"))).toBe(true);
+  });
+
+  it("B3: refuses a conditional value whose list of conditions is empty", () => {
+    const body = probe(doc => {
+      const allowance = doc.answers.floor_area_allowance;
+      if (allowance.status !== "available" || !allowance.value_states) throw new Error("fixture changed");
+      const state = allowance.value_states.max_residential_far;
+      if (!state || state.way !== "conditional") throw new Error("fixture changed");
+      (state as unknown as { conditions: unknown[] }).conditions = [];
+    });
+    const result = validateResultsDocument(body);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.problems.some(p => p.includes("at least one condition"))).toBe(true);
+    }
+  });
+
   it("refuses an answer with a non-numeric value", () => {
     const body = probe(doc => {
       const allowance = doc.answers.floor_area_allowance;
