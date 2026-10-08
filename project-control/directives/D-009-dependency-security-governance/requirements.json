@@ -4,7 +4,7 @@
   "version": 1,
   "requirement_count": 21,
   "producer": "orchestrator",
-  "updated_at": "2026-10-06T15:24:03+00:00",
+  "updated_at": "2026-10-08T00:33:38+00:00",
   "requirements": [
     {
       "id": "D-009-R001",
@@ -713,7 +713,8 @@
       "applicability": {
         "task_ids": [
           "M0-T019",
-          "M0-T185"
+          "M0-T185",
+          "M0-T187"
         ],
         "task_types": [
           "frontend"

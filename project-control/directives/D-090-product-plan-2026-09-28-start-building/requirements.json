@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 559,
+ "requirement_count": 564,
  "producer": "orchestrator",
- "updated_at": "2026-10-07T22:35:21+00:00",
+ "updated_at": "2026-10-08T00:35:11+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -19013,6 +19013,171 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-07 (message 113).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R560",
+   "text": "'I also,want to work that session hamdoffs should go more smoothly': session handoffs are to go more smoothly: a handoff takes less of the owner's waiting time and less writing and checking, and the next session still starts safely from it. ORCHESTRATOR'S READING: 'hamdoffs' is 'handoffs'; 'I also want' makes this work beside the resumed work, not instead of it.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [],
+   "required_harness": "A later handoff takes measurably less time and text than the one of 2026-10-07 (seq 149), and the session that starts from it passes its start checks.",
+   "required_evidence": "The measured cost of the seq 149 handoff and of a later one (the session notes; the pull requests' times).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R561",
+   "text": "'because it seems each handoff requires so much test to upstate and downstairs' 'since we have to do it often it keeps interrupting the workflow': the reason the owner gives: each handoff needs a great deal done, handoffs are frequent, and so they interrupt the work. ORCHESTRATOR'S READING: the words 'so much test to upstate and downstairs' are kept as typed; they are read as 'so much text to update' (or 'so much testing, up and down'); in either reading it is the amount of writing and checking at each handoff that is to come down. What one handoff costs today is stated from the records (the time from the command to the printed start prompt, the steps, the size of the file and of the start prompt), so a later handoff can be compared with it.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R560"
+   ],
+   "required_harness": "The proposal gives the cost of the seq 149 handoff from the session notes and the pull request's times, not from memory.",
+   "required_evidence": "The proposal shown to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R562",
+   "text": "'I also,want to work that session hamdoffs should go more smoothly': the owner is brought a concrete proposal with a recommendation: what a handoff costs today, which steps and which text would go, stay or move, and which earlier instruction of the owner each change touches. ORCHESTRATOR'S READING: this follows the owner's working guidance (research the decision, bring a recommendation with its basis, move once it is settled); it joins the list of instruction-file moves already owed (R552).",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R552",
+    "D-090-R560"
+   ],
+   "required_harness": "The owner receives the proposal in plain words without a table.",
+   "required_evidence": "The session transcript (the reply that carries the proposal).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R563",
+   "text": "'move or remove nothing in the instruction files before the owner approves the list': the handoff procedure lives in instruction files (the handoff command's text, CLAUDE.md, the injected rule files), and several of its parts are earlier requirements of the owner (the handoff that leaves a finished seam; the section on what 'finished' means, kept in every handoff; the wording rules; tmux before the session starts). ORCHESTRATOR'S READING: none of them is changed, moved or dropped to make a handoff lighter before the owner approves the proposal; where the proposal conflicts with an earlier requirement, the conflict is pointed out and the owner decides.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R552",
+    "D-090-R553"
+   ],
+   "required_harness": "No instruction file and no earlier handoff requirement is changed in the same change as the proposal.",
+   "required_evidence": "The diff of the branch that carries this record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R564",
+   "text": "'Resume as the NYC Buildability orchestrator' 'NEXT ACTION, in order': the rest of the message is the start prompt that the previous session printed at the handover, pasted back by the owner: the session resumes from the repository's evidence in the order it gives (the main line's own run; the corrections to a merge; what is owed to the owner; the next wave; the update). ORCHESTRATOR'S READING: it is orientation and adds no requirement of its own; each stop it lists is already a recorded row; the ledger wins where it and the prompt differ.",
+   "source_ref": "source-058-amendment.md#owner-message-114-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-08"
+   },
+   "dependencies": [
+    "D-090-R500"
+   ],
+   "required_harness": "The session's first actions follow that order; a difference is reported, not assumed.",
+   "required_evidence": "The session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-08 (message 114).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

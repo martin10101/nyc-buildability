@@ -1,0 +1,129 @@
+{
+  "task_id": "M0-T187",
+  "title": "next 15.5.24 -> 15.5.27 (advisories GHSA-4jqv-mc3x-m676 and GHSA-mcj8-r9mp-w47p, medium) under the normal dependency policy, no exception: exact pin, lock regenerated and proven by the workflow (B-031; D-009-R017)",
+  "task_type": "frontend",
+  "milestone_id": "M0",
+  "objective": "The web-dependency-security check fails closed since the night of 2026-10-07 to 2026-10-08 (first seen on the integration run after pull request 467, a handoff document: run 37707415626, job 113084984518, step 'Blocking npm audit (--audit-level=low; dev deps included)', 2026-10-08 about 00:23 UTC; the other 20 jobs of that run succeeded, among them the website's build and its browser tests): `npm audit --audit-level=low` reports 'next 15.0.0 - 15.5.26', '1 moderate severity vulnerability', naming GHSA-4jqv-mc3x-m676 (CVE-2026-94543, 'Next.js has cache poisoning of SSG and ISR pages in self-hosted applications') and GHSA-mcj8-r9mp-w47p (CVE-2026-94484, 'Next.js has cache poisoning in SSG/ISR rendering that leads to cross-user content substitution and persistent denial of service'), each of severity medium (npm audit prints 'moderate'), each affecting next >= 15.0.0, < 15.5.27 (and >= 16.0.0, < 16.3.8), first patched in 15.5.27. The maintainer published them on 2026-09-30 at 16:14:22Z and 16:14:19Z (api.github.com/repos/vercel/next.js/security-advisories/<id>); they entered GitHub's advisory database on 2026-10-07 at 20:32:06Z and 20:31:13Z (api.github.com/advisories/<id>). The dependency check newly picked them up between 2026-10-07 22:53 UTC (the last run in which the same lock passed) and 2026-10-08 00:23 UTC. apps/web/package.json pins \"next\": \"15.5.24\" and apps/web/package-lock.json locks next, @next/env and eight @next/swc-* packages at 15.5.24. Repair it under the NORMAL dependency policy, with no exception of any kind: move the pin to exactly 15.5.27 and regenerate the lock through .github/workflows/generate-lockfile.yml (never by hand, never on a local machine). Registry facts read by the orchestrator on 2026-10-08 at 00:31 UTC from registry.npmjs.org: next 15.5.27 published 2026-09-30T16:19:50.862Z; @next/env 15.5.27 published 2026-09-30T16:08:30.736Z; the eight @next/swc-* platform packages at 15.5.27 published 2026-09-30 between 16:04:32Z and 16:06:50Z; every one more than 604800 seconds old at that reading (the youngest, next itself, 634307 s). Compared with 15.5.24, next 15.5.27 changes only the versions of @next/env and of the eight @next/swc-* packages it names (15.5.24 -> 15.5.27) and the range of its optional dependency sharp ('^0.34.3 || ^0.35.3' -> '^0.34.3 || ^0.35.4'), which the locked sharp 0.35.5 (an exact override) already meets; its peer dependencies and its engines entry are unchanged. No package name is new to the lock. GitHub's advisory database lists no advisory for next 15.5.27 at that reading. The machine gates decide: the workflow's npm audit must report zero findings at every severity and its committed-lock age gate must pass on every package; if either fails, STOP and report - no waiver, no exclusion, no change to .npmrc or to the gate.",
+  "business_reason": "CLAUDE.md principle 15 and the dependency-security directive D-009: no dependency may carry an unresolved advisory affecting the installed version, and audits fail closed (D-009-R002); the web lock is regenerated through the CI workflow and validated there (D-009-R017). Blocker B-031: while the advisories stand, every new run fails the web-dependency-security check, and nothing merges on a run that predates them. The reviewed corrections that wait on this branch (pull request 466) passed their checks at 22:37 UTC, before the check began to report the advisories; they do not merge on that run. Ordinary work under the standing policy (ADR-006 Tier A; the dependency change itself is security-reviewed, gate G5); the fixed version already meets the 7-day rule, so no owner exception is needed or sought. The repair is contracted on the branch of pull request 466 because one ledger-touching branch is open at a time (every ledger command rewrites project-control/state.json); it changes none of that branch's reviewed files and depends on none of them.",
+  "inputs": [
+    "project-control/blockers/B-031-next-advisories-web-dependency-gate.json (this commit)",
+    "apps/web/package.json (dependencies: \"next\": \"15.5.24\") and apps/web/package-lock.json (node_modules/next, node_modules/@next/env and eight node_modules/@next/swc-* at 15.5.24; 397 entries)",
+    "apps/web/.npmrc (min-release-age=7, save-exact) - READ ONLY",
+    "apps/web/scripts/dependency_age_gate.mjs and its tests - READ ONLY (the gate is not changed)",
+    ".github/workflows/generate-lockfile.yml (workflow_dispatch; npm 11.18.0; `npm install --package-lock-only`, `npm ci`, blocking audit, JSON total == 0, age gate, npm CLI advisory check; commits the lock to the branch) and the web-dependency-security job of .github/workflows/ci.yml - READ ONLY",
+    "docs/DEPENDENCY_SECURITY_POLICY.md and .claude/ORCHESTRATION_POLICY.md section G",
+    "project-control/directives/D-009-dependency-security-governance/requirements.json rows D-009-R002 and D-009-R017",
+    "Precedent packet: project-control/tasks/M0-T185.json (a pin moved and the lock regenerated by the workflow), its reports M0-T185-registry-research.md and M0-T185-producer-report.md",
+    "The advisories: https://github.com/advisories/GHSA-4jqv-mc3x-m676 and https://github.com/advisories/GHSA-mcj8-r9mp-w47p; the registry: https://registry.npmjs.org/next and the @next/* packages"
+  ],
+  "outputs": [
+    "apps/web/package.json: the dependency \"next\" set to exactly \"15.5.27\"; no other change",
+    "apps/web/package-lock.json: regenerated by the generate-lockfile workflow on the branch (the workflow's own commit); next, @next/env and the eight @next/swc-* packages moved, nothing else",
+    "project-control/reports/M0-T187-registry-research.md: for every package whose locked version changes, the name, old and new version, the registry publication time, the age in seconds at the time of reading, the integrity value, and the advisory status of the new version, each read from the official registry and the advisory database on the day; for each advisory, the maintainer's publication time and the time it entered GitHub's advisory database, each read at its source",
+    "project-control/reports/M0-T187-producer-report.md: files changed, the lock comparison (every entry that differs between the base lock and the new lock, and a statement that nothing else differs), every check with its DIRECT exit code, the workflow run id"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "project-control/reports/M0-T187-registry-research.md",
+    "project-control/reports/M0-T187-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/.npmrc",
+    "apps/web/scripts/**",
+    "apps/web/src/**",
+    ".github/**",
+    "docs/**",
+    "services/**",
+    "packages/**",
+    "tools/**",
+    "project-control/** except the two reports named in allowed_paths",
+    "any other dependency manifest or lockfile"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "registry_facts_recorded",
+      "input": "every package whose locked version changes, and both advisories",
+      "expected": "M0-T187-registry-research.md lists each package with old and new version, publication time read from registry.npmjs.org, age in seconds at the reading (each at least 604800), integrity, and 'no advisory' for the new version, with the time of the reading; for each advisory it gives the maintainer's publication time and the time of its entry in GitHub's advisory database, each read at its source; nothing is taken from memory or from this packet"
+    },
+    {
+      "id": "S2",
+      "case": "exact_pin_only",
+      "input": "git diff of apps/web/package.json",
+      "expected": "exactly one changed line: the dependency \"next\": \"15.5.24\" becomes \"next\": \"15.5.27\" (an exact version, no range); no other dependency, override or script changes"
+    },
+    {
+      "id": "S3",
+      "case": "lock_regenerated_and_proven_by_the_workflow",
+      "input": "the generate-lockfile workflow run on the branch (dispatched by the orchestrator after the pin commit)",
+      "expected": "the run succeeds: npm ci passes; `npm audit --audit-level=low` reports no finding; the JSON total of vulnerabilities is 0 at every severity; the committed-lock age gate passes; the npm CLI advisory check passes; the workflow's bot commit carries the new lock; run id and the step results are in the producer report"
+    },
+    {
+      "id": "S4",
+      "case": "only_next_moves",
+      "input": "the base lock compared with the new lock, entry by entry",
+      "expected": "the only entries that differ are node_modules/next, node_modules/@next/env and the eight node_modules/@next/swc-* packages (each 15.5.24 -> 15.5.27; inside the entry of next, the versions it names for those nine packages and the range of its optional dependency sharp); the root entry's dependency on next; every other entry is byte-identical in version, resolved URL and integrity; the count of entries is unchanged; no package NAME is new - if one is, STOP: a new package needs a provenance review before it is admitted"
+    },
+    {
+      "id": "S5",
+      "case": "no_exception_no_gate_change",
+      "input": "git diff <claim-seam head>..<final head>",
+      "expected": "apps/web/.npmrc, apps/web/scripts/dependency_age_gate.mjs, its tests, the policy document and every workflow are untouched; no age exception, exclusion or waiver is added; only allowed_paths changed (and ledger records written by the orchestrator)"
+    },
+    {
+      "id": "S6",
+      "case": "failure_mode_stop",
+      "input": "a workflow run in which the audit still reports a finding, or the age gate fails on any package, or the registry is unavailable",
+      "expected": "the task stops and reports the exact output; nothing is retried in a loop, nothing is waived, the lock is not committed by hand"
+    },
+    {
+      "id": "S7",
+      "case": "ci_green_on_the_post_lock_head",
+      "input": "the pull request's head after the workflow's commit",
+      "expected": "every expected check is a completed success, among them web (lint, typecheck, build), web-e2e and web-dependency-security; the run ids are recorded by the orchestrator"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A further advisory or a younger transitive version could appear between this packet and the workflow run -> the machine gates decide at run time (S3, S6); the packet's registry facts are a reading, not a guarantee",
+    "`npm install --package-lock-only` could move packages other than next and its nine packages -> S4 compares the locks entry by entry and stops on any other change",
+    "next is the website's framework; 15.5.27 is three patch releases after 15.5.24 -> the web lint, typecheck, unit tests, build and the browser tests on the post-lock head are the functional check (S7); no behaviour is called verified from reasoning",
+    "The task shares its branch with three accepted tasks -> it touches none of their files; the reviewers confirm their allowed-path files are byte-identical before and after"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T00:33:18.229336+00:00",
+  "updated_at": "2026-10-08T00:33:18.638155+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-009",
+      "requirement_ids": [
+        "D-009-R017"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T00:33:18.229590+00:00",
+  "path_notes": "PRODUCER = frontend-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first). It commits the pin and the registry-research report; the orchestrator integrates that commit onto task/wave6-corrections-after-reviewer-check (worktree /root/project/w-wave6), pushes, dispatches the generate-lockfile workflow on the branch and pulls the workflow's lock commit; the producer then writes the lock comparison and its report from the regenerated lock. No install runs on this server for the purpose of producing the lock (the workflow is the only writer of the lock). Modularity: no handwritten production source changes.",
+  "documented_test_commands": [
+    "generate-lockfile workflow run on the branch (npm install --package-lock-only; npm ci; npm audit --audit-level=low; audit JSON total == 0; node scripts/dependency_age_gate.mjs package-lock.json; --npm-cli-advisory 11.18.0) - orchestrator-dispatched",
+    "a lock comparison (python): the entries that differ between the base lock and the new lock are exactly next, @next/env and the eight @next/swc-* packages (and the root entry's dependency on next)",
+    "ci.yml on the post-lock head: web, web-e2e, web-dependency-security and every other expected check"
+  ],
+  "worktree": "/root/project/w-wave6"
+}

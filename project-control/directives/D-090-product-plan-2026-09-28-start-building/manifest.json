@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-07T22:35:21+00:00",
+ "updated_at": "2026-10-08T00:35:11+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -580,10 +580,15 @@
   "D-090-R556",
   "D-090-R557",
   "D-090-R558",
-  "D-090-R559"
+  "D-090-R559",
+  "D-090-R560",
+  "D-090-R561",
+  "D-090-R562",
+  "D-090-R563",
+  "D-090-R564"
  ],
- "requirements_id_digest_sha256": "58763f0d7c87d6aba45f2eee43362a57b812b40c73c0f22d1d9870a183d998c6",
- "requirements_content_digest_sha256": "76d6f7a2dec8f680056205c151dd216f4e75e543ac538376248be6259fc6f28a",
+ "requirements_id_digest_sha256": "60b693c3aba831459421ce26fbcec3621ca5292351c2799288331d17d40928eb",
+ "requirements_content_digest_sha256": "250c664396639491f6c170f948645fcea66f4d2255c4a99609e49b40bde187ab",
  "sources": [
   {
    "file": "source-001.md",
@@ -1039,6 +1044,14 @@
    "recorded_at": "2026-10-07T22:35:21+00:00",
    "content_digest_sha256": "102c2fe91d872d9af77d64ab13b4bcd7e3ce4d4a0b25df20d866c46768f2108b",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-058-amendment.md",
+   "kind": "amendment",
+   "sequence": 58,
+   "recorded_at": "2026-10-08T00:35:11+00:00",
+   "content_digest_sha256": "b761c8cc47e6f2ddc9ef6e8739483c9552b70a4f04ce59a3e7316a19486ee7ea",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1097,7 +1110,8 @@
   "source-054-amendment.md",
   "source-055-amendment.md",
   "source-056-amendment.md",
-  "source-057-amendment.md"
+  "source-057-amendment.md",
+  "source-058-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1638,6 +1652,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-057 (session 013RaGmC message 113, 2026-10-07: the owner's decisions on the open choices, sent as the text of a /session-handoff command) and requirements D-090-R538 to R559, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-08T00:35:11+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-058 (session 013RaGmC message 114, 2026-10-08: resume, and make session handoffs go more smoothly) and requirements D-090-R560 to R564, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
