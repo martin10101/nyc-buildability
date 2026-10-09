@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 744,
+ "requirement_count": 755,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T06:09:53+00:00",
+ "updated_at": "2026-10-09T06:15:04+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -25237,6 +25237,364 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the reviewer's assessment of the compaction plan, forwarded by the owner).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R745",
+   "text": "'Yes\u2014the third concern is context growing back quickly because saved material gets reread in bulk.': the owner's third concern: the context grows back quickly when saved material is reread in bulk.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R711",
+    "D-090-R736"
+   ],
+   "required_harness": "Saved material is read in bounded pieces, never in bulk, after a compaction as before it.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R746",
+   "text": "'Use the next quiet point with an accurate checkpoint to compact.': the compaction is made at the next quiet point that has an accurate checkpoint. ORCHESTRATOR'S READING: the command is the owner's to type; the session names that point and gives the text with the actual values.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R723"
+   ],
+   "required_harness": "The owner is told when such a point is reached, with the text ready.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R747",
+   "text": "'If the existing checkpoint is still current, reuse it.': a checkpoint that is still current is reused, not written again.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No new checkpoint is written where the last one still holds.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R748",
+   "text": "'Do not interrupt an acceptance or merge operation, but there is no need to wait for reviewers to finish.': an acceptance or a merge operation is never interrupted by a compaction.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No compaction is named or asked for while an acceptance or a merge is under way.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R749",
+   "text": "'Do not interrupt an acceptance or merge operation, but there is no need to wait for reviewers to finish.': reviewers that are still working are no reason to wait.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A quiet point may be named while reviewers run.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R750",
+   "text": "'After compaction, read only the checkpoint and specific material needed for the next action.': after the compaction only the checkpoint and the specific material the next action needs are read.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R736"
+   ],
+   "required_harness": "The first reads after a compaction are the checkpoint and what the next action names; nothing is reread in bulk.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R751",
+   "text": "'Preserve substantive review evidence in the existing records.': substantive review evidence stays in the existing records. It confirms row R738.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R738"
+   ],
+   "required_harness": "Each review record keeps its evidence.",
+   "required_evidence": "The review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R752",
+   "text": "'Keep the small diagnostic with the next normal update.': the small diagnostic stays owed with the next normal update. It confirms row R725.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R725"
+   ],
+   "required_harness": "The next normal update carries it.",
+   "required_evidence": "That update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R753",
+   "text": "'Treat \u201cgrowth is slower\u201d as an expectation until measured.': 'growth is slower' is an expectation, not a fact, until it is measured.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R744"
+   ],
+   "required_harness": "No record or update says the context grows more slowly as a fact before a measurement shows it.",
+   "required_evidence": "The updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R754",
+   "text": "'No further audit or process discussion is needed; continue the building-option work.': no further audit and no further discussion of process is wanted.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R732"
+   ],
+   "required_harness": "None is started by the session.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R755",
+   "text": "'No further audit or process discussion is needed; continue the building-option work.': the building-option work goes on.",
+   "source_ref": "source-071-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R709"
+   ],
+   "required_harness": "The next work is the building option's next step.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
