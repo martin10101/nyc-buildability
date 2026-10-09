@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T05:38:58+00:00",
+ "updated_at": "2026-10-09T05:41:55+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -733,7 +733,7 @@
   "D-090-R709"
  ],
  "requirements_id_digest_sha256": "a87afeb8082ae3e362c52007c231320e24411521053fdb27af2b1b9151bfffdb",
- "requirements_content_digest_sha256": "ec3929a751dc35a369f337541f959e4f2bfdeaff86a09980620e04afc7946dd5",
+ "requirements_content_digest_sha256": "743b5663335be25a391bd8d8f89ea9e7d0c2beacb8d3466e7f66a99916d84cbc",
  "sources": [
   {
    "file": "source-001.md",
@@ -1392,7 +1392,8 @@
   "M5-T141",
   "M5-T142",
   "M5-T143",
-  "M5-T144"
+  "M5-T144",
+  "M4-T037"
  ],
  "affected_prs": [
   262,
@@ -2057,6 +2058,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-068 (session 013RaGmC: the owner's second message of the session after handoff seq 152, 2026-10-09: the first building option compared step by step with an independently worked example; the zoning-rule review register kept current for every rule and calculation by the existing process, with what each detail page shows; legal requirements told apart from design assumptions; combined calculations included and gaps stated; a human verdict only from a named human reviewer; the audit stays finished) and requirements D-090-R685 to R709, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T05:41:55+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T037 (step P6: one independent hand-worked example of a first building option, written into the R6B reference cases) to R291, R519, R545, R650, R651, R664, R686, R687, R688, R689, R690, R699, R700 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }
