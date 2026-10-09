@@ -88,15 +88,15 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The always-loaded budget has about 21 tokens left: the pointer needs room made first (S5).",
     "Writes under .claude/ can be refused by the session's safety check; the owner's words are recorded first (source-079)."
   ],
   "blockers": [],
   "created_at": "2026-10-09T21:52:23.949995+00:00",
-  "updated_at": "2026-10-09T22:01:13.436068+00:00",
+  "updated_at": "2026-10-09T23:29:46.506366+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -140,5 +140,7 @@
       "status": "claimed",
       "message": "built at cc8bc7b9; G3 PASS (code-reviewer); review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T23:29:46.506184+00:00"
 }
