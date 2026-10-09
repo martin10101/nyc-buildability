@@ -52,10 +52,12 @@ from .preliminary_apartment_estimate import (
 
 __all__ = [
     "COVERAGE_LABEL",
+    "CornerPortionAreas",
     "FirstOptionBlocks",
     "FirstOptionInputs",
     "assemble_first_option",
     "max_lot_coverage_value_state",
+    "portions_measurable",
 ]
 
 COVERAGE_LABEL = "Maximum lot coverage"
@@ -77,8 +79,9 @@ _DISAGREE_REASON = (
     "zoning calculation in its place. " + _LAW_BY_PORTION
 )
 _CANNOT_COMPARE_REASON = (
-    "Not shown as a square-foot figure: the tax-map outline area could not be compared with the "
-    "recorded lot area, so the footprint is not known. " + _LAW_BY_PORTION
+    "Not shown as a square-foot figure: the lot's tax-map outline is not available, so the "
+    "corner-lot and interior-lot portions cannot be measured and the footprint is not known; the "
+    "recorded lot area is never used in its place. " + _LAW_BY_PORTION
 )
 _METHOD_LIMIT_REASON = (
     "Not shown: this lot is not a two-street corner the program can split into a corner-lot "
@@ -87,6 +90,10 @@ _METHOD_LIMIT_REASON = (
 )
 _SURVEY_RESOLVED = (
     "A survey or deed dimensions that reconcile the recorded lot area with the tax-map outline."
+)
+_OUTLINE_RESOLVED = (
+    "The lot's tax-map outline (a prepared parcel geometry), or a survey or deed dimensions, so "
+    "the corner-lot and interior-lot portions can be measured."
 )
 _METHOD_RESOLVED = (
     "Working out the by-portion coverage for this lot's frontages and checking it against an "
@@ -154,11 +161,13 @@ def assemble_first_option(inp: FirstOptionInputs) -> FirstOptionBlocks:
 
 
 # --------------------------------------------------------------------------- coverage by portion
-def _portions(inp: FirstOptionInputs) -> tuple[float, float] | None:
+def _portion_areas(
+    corner_areas: CornerPortionAreas | None, lot_type: str | None, outline_area_sqft: float | None,
+) -> tuple[float, float] | None:
     """The (corner-lot-portion, interior-lot-portion) areas, or None when the by-portion split is
     not available: no measurement (the server benchmark path), a lot that is not a measured
     two-street corner, or an interior lot with no outline area (DB-212 b)."""
-    corner = inp.corner_areas
+    corner = corner_areas
     if corner is None:
         return None
     if corner.state == STATE_MEASURED:
@@ -168,11 +177,25 @@ def _portions(inp: FirstOptionInputs) -> tuple[float, float] | None:
         return near, rest
     if (
         corner.state == STATE_ONE_CONFIRMED_STREET
-        and inp.lot_type in _INTERIOR_LOT_TYPES
-        and inp.outline_area_sqft is not None
+        and lot_type in _INTERIOR_LOT_TYPES
+        and outline_area_sqft is not None
     ):
-        return 0.0, inp.outline_area_sqft
+        return 0.0, outline_area_sqft
     return None
+
+
+def _portions(inp: FirstOptionInputs) -> tuple[float, float] | None:
+    return _portion_areas(inp.corner_areas, inp.lot_type, inp.outline_area_sqft)
+
+
+def portions_measurable(
+    corner_areas: CornerPortionAreas | None, lot_type: str | None, outline_area_sqft: float | None,
+) -> bool:
+    """Whether the measured corner-reach areas would yield a by-portion footprint for this lot, so
+    the emitter should pass them to the assembly (then the footprint shows and building A is
+    worked). Mirrors :func:`_portion_areas` exactly; where it is False building B - which needs no
+    outline - still lists (ruling W13)."""
+    return _portion_areas(corner_areas, lot_type, outline_area_sqft) is not None
 
 
 def _coverage(inp: FirstOptionInputs) -> tuple[dict, float | None]:
@@ -196,7 +219,7 @@ def _coverage(inp: FirstOptionInputs) -> tuple[dict, float | None]:
     if inp.areas_agree is False:
         return _coverage_withheld(_DISAGREE_REASON, _MISSING_FACT, _SURVEY_RESOLVED), None
     if inp.areas_agree is None:
-        return _coverage_withheld(_CANNOT_COMPARE_REASON, _MISSING_FACT, _SURVEY_RESOLVED), None
+        return _coverage_withheld(_CANNOT_COMPARE_REASON, _MISSING_FACT, _OUTLINE_RESOLVED), None
     # areas agree but the by-portion split could not be measured: a limit of the method.
     return _coverage_withheld(_METHOD_LIMIT_REASON, _METHOD_LIMIT, _METHOD_RESOLVED), None
 

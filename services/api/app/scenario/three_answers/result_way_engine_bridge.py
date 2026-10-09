@@ -141,7 +141,10 @@ def run_engine_and_result_ways(
         housing_kind=inputs.housing_program,
         special_density_statement=special_density_statement,
     )
-    document = emit_three_way_document(engine_result.document, gathered.ways)
+    document = emit_three_way_document(
+        engine_result.document, gathered.ways,
+        corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
+    )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)
 
 
@@ -234,5 +237,6 @@ def run_engine_and_result_ways_from_evidence(
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         condition_sources=conditions, user_choices=user_choices,
+        corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

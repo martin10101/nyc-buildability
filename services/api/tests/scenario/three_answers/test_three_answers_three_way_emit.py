@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import math
 import re
 import socket
 from pathlib import Path
@@ -70,11 +71,17 @@ from app.scenario.three_answers.three_way_scope_lines import (
     _scope_statement,
     _user_choice_statement,
 )
+from app.spatial.corner_reach_area import (
+    STATE_ONE_CONFIRMED_STREET,
+    STATE_OUTLINE_REFUSED,
+    CornerPortionAreas,
+)
 from app.spatial.site_geometry import (
     derive_site_geometry,
     lot_outline_from_mappluto,
     street_data_from_pages,
 )
+from app.spatial.site_geometry.labels import unknown_value
 from app.spatial.site_geometry.outline import prepare_outline
 from tests.api.test_study_read_api import _TEST_ONLY_OPTION
 from tests.contracts.test_evaluator_inputs import _benchmark_identity_address
@@ -1582,3 +1589,128 @@ def test_db199c_missing_list_drops_rule_table_source_todays_behaviour_not_requir
     assert obj is not None
     kinds = {s["kind"] for s in obj["sources"]}
     assert kinds == {"zoning_resolution"}  # the rule_table source is dropped; only ZR remains
+
+
+# ========================================================================== W13 (M5-T146 part B)
+# The first-building-option case where the two lot areas AGREE, and the case where the outline is
+# NOT available, driven THROUGH the emitter: the measured corner-reach areas and the area
+# comparison now reach emit_three_way_document from result_way_engine_bridge (ruling W13 b).
+# Every expected figure is PARSED from the independent hand-worked example, never retyped.
+_TOL_W13 = 0.01  # the reference records figures to two decimals; the module keeps them unrounded
+
+
+def _p6_numbers_block(row_id: str) -> dict:
+    data = json.loads((_CASES / "step-p6-worked.json").read_text("utf-8"))
+    for row in data["rows"]:
+        if row["row_id"] == row_id:
+            return row["numbers_block"]
+    raise AssertionError(f"row {row_id} not found in step-p6-worked.json")
+
+
+def _made_up_interior_engine_doc():
+    """A made-up interior R6B lot of 10,000 sq ft. It carries the scope block (so the emitter reads
+    the lot type and the floor-to-floor assumption): FAR 2.00 -> allowance 20,000, min/max base
+    30/45 ft - the made-up lot of step-P6 (made-up-footprint-a, made-up-building-a)."""
+    return generate_results(
+        _benchmark_inputs(
+            lot_area_sq_ft=10000.0, lot_type="interior", overlay_present=False,
+            lot_area_fact_id="pluto:made-up:lotarea",
+        ), env=_ON,
+    ).document
+
+
+def _interior_one_street_corner_areas() -> CornerPortionAreas:
+    """A one-confirmed-street measurement for an interior lot: its outline area is a known number
+    but there is no corner to split, so the whole outline is the interior-lot portion (DB-212 b).
+    The same shape the first_option_results S13 test builds."""
+    return CornerPortionAreas(
+        unknown_value("sq ft", "one street"), unknown_value("sq ft", "one street"),
+        STATE_ONE_CONFIRMED_STREET, (),
+    )
+
+
+def test_w13_areas_agree_through_emitter_shows_footprint_and_building_a():
+    """W13 (b) / S13 THROUGH THE EMITTER: an interior made-up lot of 10,000 sq ft whose recorded and
+    outline areas AGREE, with the corner split measured. coverage_by_portion is AVAILABLE with the
+    footprint (the interior ratio on the whole lot, 0.80 x 10,000 = 8,000, DB-212 b) and building A
+    is listed beside building B. Expected building-A figures from step-p6-worked#made-up-building-a;
+    nothing is called feasible."""
+    engine_doc = _made_up_interior_engine_doc()
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.INTERIOR, area=LotAreaFigures(10000.0, AreaAgreement.AGREES, 10000.0),
+        **k20(False),
+    ))
+    emitted = emit_three_way_document(
+        engine_doc, ways,
+        corner_areas=_interior_one_street_corner_areas(),
+        lot_area=LotAreaFigures(10000.0, AreaAgreement.AGREES, 10000.0),
+    )
+    assert emitted["contract_version"] == "1.4.0"
+    cov = emitted["coverage_by_portion"]
+    assert cov["status"] == "available"
+    assert math.isclose(cov["corner_portion_area_sqft"], 0.0, abs_tol=_TOL_W13)
+    assert math.isclose(cov["interior_portion_area_sqft"], 10000.0, abs_tol=_TOL_W13)
+    assert math.isclose(cov["interior_ratio"], 0.80, abs_tol=_TOL_W13)
+    assert math.isclose(cov["corner_ratio"], 1.0, abs_tol=_TOL_W13)
+    block_a = _p6_numbers_block("made-up-building-a")
+    assert math.isclose(
+        cov["footprint_sqft"], float(block_a["footprint_area_sqft"]), abs_tol=_TOL_W13
+    )  # 8,000
+    buildings = {a["building"] for a in emitted["building_alternatives"]}
+    assert buildings == {"A", "B"}  # building A is now listed through the emitter
+    a = next(x for x in emitted["building_alternatives"] if x["building"] == "A")
+    assert a["storey_count"] == int(block_a["storey_count"]) == 2
+    assert math.isclose(a["height_ft"], float(block_a["height_ft"]), abs_tol=_TOL_W13)  # 20
+    assert math.isclose(
+        a["total_floor_area_sqft"], float(block_a["total_floor_area_sqft"]), abs_tol=_TOL_W13
+    )  # 16,000
+    assert math.isclose(
+        a["unused_floor_area_sqft"], float(block_a["unused_floor_area_sqft"]), abs_tol=_TOL_W13
+    )  # 4,000
+    assert a["below_min_base"] is True  # 20 ft < 30 ft
+    assert "fit_note" not in a  # building A's footprint is the coverage footprint; no bound
+    assert "feasible" not in json.dumps(emitted).lower()
+    validate_results_document(emitted)
+
+
+def test_w13_outline_not_available_through_emitter_withholds_coverage_and_lists_building_b():
+    """W13 (b) THROUGH THE EMITTER: where the lot's outline is NOT available (the two areas could
+    not be compared) coverage_by_portion is WITHHELD naming that - a missing fact about the property
+    - and never computed from the recorded area; building B is listed as today and building A is
+    absent."""
+    engine_doc = _made_up_interior_engine_doc()
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.INTERIOR,
+        area=LotAreaFigures(10000.0, AreaAgreement.COULD_NOT_COMPARE, None), **k20(False),
+    ))
+    emitted = emit_three_way_document(
+        engine_doc, ways,
+        corner_areas=CornerPortionAreas(
+            unknown_value("sq ft", "no outline"), unknown_value("sq ft", "no outline"),
+            STATE_OUTLINE_REFUSED, (),
+        ),
+        lot_area=LotAreaFigures(10000.0, AreaAgreement.COULD_NOT_COMPARE, None),
+    )
+    assert emitted["contract_version"] == "1.4.0"
+    cov = emitted["coverage_by_portion"]
+    assert cov["status"] == "withheld"
+    assert cov["gap_kind"] == "missing_information"  # a missing fact about the property
+    assert "outline is not available" in cov["reason"]
+    assert "footprint_sqft" not in cov and "corner_portion_area_sqft" not in cov  # no number
+    assert "recorded lot area is never used in its place" in cov["reason"]
+    assert [a["building"] for a in emitted["building_alternatives"]] == ["B"]  # B lists, A absent
+    validate_results_document(emitted)
+
+
+def test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emitter(benchmark):
+    """W13 (b) / requirement 3: where the two areas DISAGREE (the benchmark) nothing changes. The
+    benchmark fixture now flows through the threaded bridge (run_engine_and_result_ways passes the
+    measured corner-reach areas and the comparison), and its coverage_by_portion and
+    building_alternatives are byte-equal to the committed journey document - proven here beside the
+    journey test's whole-document byte comparison."""
+    doc = benchmark.document
+    committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
+    assert doc["coverage_by_portion"] == committed["coverage_by_portion"]
+    assert doc["building_alternatives"] == committed["building_alternatives"]
+    assert doc["coverage_by_portion"]["status"] == "withheld"
+    assert "footprint_sqft" not in doc["coverage_by_portion"]  # no number on a withheld result

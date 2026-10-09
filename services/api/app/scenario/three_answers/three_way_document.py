@@ -46,9 +46,14 @@ import copy
 from .contract import validate_results_document
 from .engine_conditions import Derived
 from .first_option_results import (
+    # CornerPortionAreas is re-exported by the assembly module; this module reads it from there so
+    # it never names the spatial by-portion measurement module directly (that module's one import
+    # guard permits only the bridge and the assembly to name it).
+    CornerPortionAreas,
     FirstOptionInputs,
     assemble_first_option,
     max_lot_coverage_value_state,
+    portions_measurable,
 )
 from .result_way_inputs import (
     COVERAGE_KEY,
@@ -61,7 +66,9 @@ from .result_way_inputs import (
     UNIT_STANDARD_KEY,
     WORK_OWED,
     AnswerWays,
+    AreaAgreement,
     Conditional,
+    LotAreaFigures,
     ResultWay,
     ResultWays,
     Withheld,
@@ -448,33 +455,42 @@ def _point_building_option_to_alternatives(doc: dict) -> None:
         }
 
 
-def _apply_first_option(doc: dict, ways: ResultWays, document: dict) -> None:
+def _apply_first_option(
+    doc: dict, ways: ResultWays, document: dict, *,
+    corner_areas: CornerPortionAreas | None = None,
+    lot_area: LotAreaFigures | None = None,
+) -> None:
     """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks WHENEVER the
-    floor-area allowance is shown (the engine ran and the recorded lot area is known). Building B
-    (the fewest storeys reaching the minimum base height, whose plan fits the lowest applicable
-    ratio times the RECORDED area) is worked from the recorded area and the allowance alone - it
-    does NOT depend on the tax-map outline - so it is listed CONDITIONAL on every path that has an
-    allowance, whether or not the outline was threaded (the defect this fixes: the live results
-    route carries geometry but not the prepared outline in production/e2e, so the two areas COULD
-    NOT be compared and the floor-area way carried no contradicted-record condition; the old gate
-    then emitted nothing, while the journey path, which threads the outline, found the areas
-    DISAGREE and emitted the blocks). The by-portion footprint needs the outline, so
-    coverage_by_portion is WITHHELD here - a missing fact, worded for the DISAGREE case (the outline
-    is threaded and the areas differ) or the COULD-NOT-COMPARE case (no outline) - and building A,
-    which needs that footprint, is absent. The AGREE case (the outline is threaded and the areas
-    match) would show the footprint and building A, but needs the measured corner-reach areas
-    (``corner_areas``,
-    already gathered on ``GatheredResult`` in ``result_way_bridge``) carried from the caller
-    (``result_way_engine_bridge.run_engine_and_result_ways*``) to this transform; that caller is
-    outside this task's allowed paths, so it is NOT wired end to end here (``first_option_results``
-    does it, proven by its own test); the emit path cannot distinguish agree from could-not-compare
-    without that thread, so it withholds the footprint in both. The engine numbers come from the
-    engine document; the way conditions are reused from the floor-area answer so nothing is
-    invented."""
+    floor-area allowance is shown (the engine ran and the recorded lot area is known).
+
+    Building B (the fewest storeys reaching the minimum base height, whose plan fits the lowest
+    applicable ratio times the RECORDED area) is worked from the recorded area and the allowance
+    alone - never the tax-map outline - so it is listed CONDITIONAL on every path with a shown
+    allowance.
+
+    The by-portion footprint and building A need the outline. When the caller threads the lot-area
+    comparison (``lot_area``, the two area figures and whether they agree) and the measured
+    corner-reach areas (``corner_areas``, gathered on ``GatheredResult`` in ``result_way_bridge``
+    and passed from ``result_way_engine_bridge.run_engine_and_result_ways*``):
+
+    * the two areas AGREE and the corner split was measured -> the footprint is SHOWN
+      (``coverage_by_portion`` available) and building A is listed beside building B;
+    * the two areas DISAGREE -> ``coverage_by_portion`` is WITHHELD, a missing fact (the outline's
+      area is a drawing measure, never used in a zoning calculation in its place), and building A is
+      absent; this is the committed benchmark;
+    * the lot's outline is not available (the two areas could not be compared) ->
+      ``coverage_by_portion`` is WITHHELD naming that (a missing fact), never computed from the
+      recorded area, and building A is absent.
+
+    When no caller threads the comparison (the direct-transform tests), the area agreement is read
+    from the floor-area way's conditions exactly as before: a contradicted-record condition means
+    the areas disagree; otherwise the footprint stays withheld and the block is not emitted, and
+    only building B is listed. Every earlier path, and the committed benchmark document, stays
+    byte-for-byte unchanged. The engine numbers come from the engine document; the way conditions
+    are reused from the floor-area answer so nothing is invented."""
     conditions = _floor_area_conditions(ways)
     if conditions is None:
         return  # no shown floor-area allowance (e.g. the engine lane is off): no building is worked
-    areas_disagree = any(c.kind == KIND_CONTRADICTED_RECORD for c in conditions)
     allowance = _engine_value(document, "floor_area_allowance", _FLOOR_AREA_VALUE_KEY)
     far = _engine_value(document, "floor_area_allowance", _FAR_VALUE_KEY)
     min_base = _engine_value(document, "permitted_envelope", _MIN_BASE_VALUE_KEY)
@@ -485,35 +501,63 @@ def _apply_first_option(doc: dict, ways: ResultWays, document: dict) -> None:
         return
     if floor_to_floor is None:
         return
+    lot_type_str = lot_type if isinstance(lot_type, str) else None
+
+    # The area agreement: the real comparison when a caller threads it (result_way_engine_bridge);
+    # else derived from the floor-area way's conditions - a contradicted-record condition means the
+    # areas disagree (the committed benchmark), any other state leaves it unresolved. Keeping both
+    # the earlier direct-transform paths and the committed benchmark byte-for-byte.
+    if lot_area is not None:
+        agreement = lot_area.agreement
+        outline_area_sqft = lot_area.outline_sq_ft
+        measured = corner_areas
+    elif any(c.kind == KIND_CONTRADICTED_RECORD for c in conditions):
+        agreement = AreaAgreement.DISAGREES
+        outline_area_sqft = None
+        measured = None
+    else:
+        agreement = None
+        outline_area_sqft = None
+        measured = None
+
+    areas_agree = {AreaAgreement.AGREES: True, AreaAgreement.DISAGREES: False}.get(agreement)
+    # Pass the measured corner-reach areas to the assembly ONLY when they would yield the by-portion
+    # footprint (the areas agree and the split was measured): then building A is worked. Otherwise
+    # pass None, so building B - which needs no outline - still lists (ruling W13).
+    show_footprint = areas_agree is True and portions_measurable(
+        measured, lot_type_str, outline_area_sqft
+    )
     blocks = assemble_first_option(FirstOptionInputs(
         allowance_sqft=allowance,
         recorded_lot_area_sqft=allowance / far,
         min_base_ft=min_base,
         max_base_ft=max_base,
         floor_to_floor_ft=floor_to_floor,
-        lot_type=lot_type if isinstance(lot_type, str) else None,
-        # DISAGREE (outline threaded, areas differ) -> the missing-fact "areas disagree" reason;
-        # otherwise (no outline threaded to this transform) -> the missing-fact "could not compare"
-        # reason. The footprint is withheld either way; building B does not depend on it.
-        areas_agree=False if areas_disagree else None,
-        corner_areas=None,
-        outline_area_sqft=None,
+        lot_type=lot_type_str,
+        areas_agree=areas_agree,
+        corner_areas=measured if show_footprint else None,
+        outline_area_sqft=outline_area_sqft if show_footprint else None,
         way_conditions=tuple(c.to_dict() for c in conditions),
     ))
+
+    # coverage_by_portion is emitted whenever the area agreement is determinate: a caller-threaded
+    # comparison (AGREE -> available footprint; DISAGREE or outline-not-available -> withheld), or
+    # the committed benchmark's contradicted-record (DISAGREE, withheld). An UNRESOLVED agreement
+    # (no caller thread, no contradicted-record) emits no block, as before. (Set before
+    # building_alternatives for a stable key order in the committed document.)
+    emit_coverage = agreement in (
+        AreaAgreement.AGREES, AreaAgreement.DISAGREES, AreaAgreement.COULD_NOT_COMPARE
+    )
     changed = False
-    # The by-portion coverage block (and the coverage reconciliation) applies only to the
-    # conflicting-area case the transform can resolve here: the outline is threaded and the two
-    # areas DISAGREE (a contradicted-record condition), so the existing max_lot_coverage value is
-    # withheld and the by-portion footprint is a missing fact. Without a contradicted-record the
-    # transform does not know whether the lot's coverage is a single shown figure (a corner reaching
-    # within the portion, which it must NOT overwrite) or by-portion; the by-portion analysis for
-    # those lots needs the measured corner-reach areas threaded here (STOP - see the docstring), so
-    # no coverage_by_portion is emitted then. (Set before building_alternatives for a stable key
-    # order in the committed document.)
-    if areas_disagree and blocks.coverage_by_portion is not None:
-        doc["coverage_by_portion"] = blocks.coverage_by_portion
-        _reconcile_max_lot_coverage(doc, blocks.coverage_by_portion)
-        _reconcile_envelope_geometry(doc, ways, blocks.coverage_by_portion)
+    if emit_coverage and blocks.coverage_by_portion is not None:
+        block = blocks.coverage_by_portion
+        doc["coverage_by_portion"] = block
+        if block.get("status") == "withheld":
+            # The older max_lot_coverage value and the envelope geometry must AGREE with the
+            # withheld block (ruling W11 a). An AVAILABLE block leaves the shown coverage untouched
+            # (the shown figure and the by-portion footprint already agree).
+            _reconcile_max_lot_coverage(doc, block)
+            _reconcile_envelope_geometry(doc, ways, block)
         changed = True
     if blocks.building_alternatives:
         # Building B is worked from the recorded area + the allowance - not the outline - so it is
@@ -583,6 +627,8 @@ def emit_three_way_document(
     document: dict, ways: ResultWays, *,
     condition_sources: dict[str, Derived] | None = None,
     user_choices: frozenset[str] | None = None,
+    corner_areas: CornerPortionAreas | None = None,
+    lot_area: LotAreaFigures | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
@@ -598,8 +644,15 @@ def emit_three_way_document(
     ``user_choices`` (M5-T139, DB-204 a), when given, names which of the two design-choice scope
     rows the caller's request carried (:data:`USER_CHOICE_KEYS`); the transform rewrites those rows
     to basis 'entered' and a sentence saying the value is the user's choice, touching no value. When
-    None or empty, both stay as the engine made them. The engine, disclosure builder and schema stay
-    read-only."""
+    None or empty, both stay as the engine made them.
+
+    ``lot_area`` and ``corner_areas`` (M5-T146, ruling W13), when the caller threads them (the
+    server entries ``result_way_engine_bridge.run_engine_and_result_ways*`` hand the gathered
+    comparison and the measured by-portion areas), drive the first-building-option blocks:
+    AGREE + a measured corner split shows the footprint and building A; DISAGREE or an outline that
+    is not available withholds the footprint (a missing fact) and lists building B alone. When None,
+    the agreement is read from the floor-area way's conditions as before. The engine, disclosure
+    builder and schema stay read-only."""
     doc = copy.deepcopy(document)
     doc["contract_version"] = CONTRACT_VERSION_THREE_WAY
 
@@ -649,8 +702,9 @@ def emit_three_way_document(
         _rewrite_scope_lines(doc, condition_sources, user_choices)
 
     # The first-building-option blocks (contract 1.4.0 additive; task M5-T146 PART B). Read from the
-    # engine document and the decided ways; emitted only for the conflicting-area case (ruling W1).
-    _apply_first_option(doc, ways, document)
+    # engine document and the decided ways, plus the caller's lot-area comparison and measured
+    # by-portion areas when threaded (ruling W1/W13: AGREE shows the footprint and building A).
+    _apply_first_option(doc, ways, document, corner_areas=corner_areas, lot_area=lot_area)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)

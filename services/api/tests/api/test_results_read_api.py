@@ -359,8 +359,9 @@ def test_m5t146_live_route_lists_building_b_without_the_tax_map_outline(
     threaded - the production/e2e default (geometry present, the prepared outline absent, so the two
     areas could not be compared and the floor-area way carries no contradicted-record condition).
     Before the fix the route returned 1.3.0 with no blocks here; now building B appears on both
-    paths. (The by-portion coverage footprint still needs the outline/corner-reach areas; see the
-    part-B report's STOP.)"""
+    paths. W13 (b): the area comparison now reaches the emitter, so coverage_by_portion is WITHHELD
+    naming that the lot's outline is not available (a missing fact), never computed from the
+    recorded area; building A, which needs that footprint, is absent."""
     _no_network(monkeypatch)
     response = _post(
         app_with(benchmark_provider(outline_on=False)),
@@ -369,9 +370,20 @@ def test_m5t146_live_route_lists_building_b_without_the_tax_map_outline(
     assert response.status_code == 200
     doc = response.json()
     assert doc["contract_version"] == "1.4.0"
-    assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
+    assert [a["building"] for a in doc["building_alternatives"]] == ["B"]  # B lists, A absent
     assert doc["building_alternatives"][0]["capacity_estimate"]["label"] == (
         "Preliminary capacity estimate"
+    )
+    # W13 (b): coverage_by_portion is withheld because the outline is not available, a missing fact;
+    # no square-foot figure, and the recorded area is never used in its place.
+    coverage = doc["coverage_by_portion"]
+    assert coverage["status"] == "withheld"
+    assert coverage["gap_kind"] == "missing_information"
+    assert "outline is not available" in coverage["reason"]
+    assert "footprint_sqft" not in coverage  # no number on a withheld result
+    # the older max_lot_coverage value state agrees with the block (ruling W11 a)
+    assert doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]["reason"] == (
+        coverage["reason"]
     )
 
 

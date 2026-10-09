@@ -335,4 +335,88 @@ RED; the broadened gate is load-bearing.
 - committed document regenerated? NO - it is byte-identical (the benchmark threads the outline, so
   DISAGREE -> the same blocks; the journey/wiring byte-equality tests pass without regeneration).
 
+## Areas agree (fifth orchestrator round: W13 b, the agree case through the emitter)
+
+Producer: rules-engineer (an AI agent). Base (reset HEAD): `7f8d1ce923611e6d6949412c3c524da046e5beef`.
+
+The STOP of the "Live route" section above is now closed. The measured corner-reach areas and the
+area comparison reach the emitter: `result_way_engine_bridge.run_engine_and_result_ways` and
+`...from_evidence` both pass `gathered.corner_areas` and `gathered.inputs.area` to
+`emit_three_way_document`, which carries them to `_apply_first_option`. The agree case (scenario
+S13) is now realised THROUGH the emitter, not only inside the assembly.
+
+What the emitter gives, by the area comparison (W1/W13):
+
+- AGREE and the corner split measured: `coverage_by_portion` is AVAILABLE with its figures (corner
+  and interior portion areas, the two ZR 23-362 ratios, the ZR 12-10 100 ft, the footprint);
+  `building_alternatives` lists building A (the widest footprint) beside building B, none preferred;
+  each carries its way, conditions, what was not checked, and its own preliminary capacity estimate.
+  The older max_lot_coverage value and the envelope geometry are LEFT as the engine made them (the
+  shown coverage figure and the by-portion footprint already agree).
+- Outline NOT available (the two areas could not be compared): `coverage_by_portion` is WITHHELD,
+  kind a missing fact about the property, reason "the lot's tax-map outline is not available ...
+  the recorded lot area is never used in its place"; building B is listed as today; building A is
+  absent (it needs the withheld footprint). The max_lot_coverage value state is reconciled to that
+  same reason (W11 a).
+- DISAGREE (the benchmark): unchanged. The benchmark now flows through the threaded bridge and emits
+  byte-identical blocks; the committed `recorded_215_16_northern_journey.json` is NOT regenerated
+  (byte-identical).
+
+How the measured corner is threaded without dropping building B: building B rests on the recorded
+area and the allowance alone, never the outline, so it lists on every path with a shown allowance.
+The emitter passes the measured corner areas to the assembly ONLY when they would yield the
+by-portion footprint (the areas agree and the split was measured - `first_option_results.
+portions_measurable`); otherwise it passes None, so the assembly's geometry gate never drops building
+B. The "outline not available" reason/resolver were sharpened in `first_option_results` (the
+could-not-compare branch).
+
+Backward compatibility: when no caller threads the comparison (the direct-transform tests) the area
+agreement is still read from the floor-area way's contradicted-record condition exactly as before,
+so every earlier path and the committed benchmark stay byte-for-byte unchanged.
+
+Scenarios / tests (through the emitter):
+
+| Case | Test |
+|---|---|
+| AGREE (interior 10,000, footprint 8,000, building A) | `test_three_answers_three_way_emit.py::test_w13_areas_agree_through_emitter_shows_footprint_and_building_a` |
+| Outline NOT available (withheld, missing fact, building B alone) | `...::test_w13_outline_not_available_through_emitter_withholds_coverage_and_lists_building_b` |
+| DISAGREE unchanged (benchmark blocks byte-equal to committed) | `...::test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emitter` + the journey byte-drift test |
+| Live route, outline off -> withheld coverage + building B | `test_results_read_api.py::test_m5t146_live_route_lists_building_b_without_the_tax_map_outline` |
+
+A LIVE-ROUTE agree test was NOT added: the existing `test_results_read_api.py` helpers only serve the
+recorded benchmark lot, whose recorded (10,075) and outline (~10,388) areas DISAGREE; no helper gives
+a lot whose recorded and outline areas agree, and fabricating synthetic agreeing geometry is beyond
+the existing helpers. The agree case is proven through the emitter (above) and inside the assembly
+(`test_first_option_results.py::test_s13`).
+
+The `_apply_first_option` docstring was rewritten to state what it does now (the agree/missing/
+disagree cases through the threaded comparison) and nothing else; the old "STOP / not wired here"
+wording is removed.
+
+Mutation proofs (scratch script OUTSIDE the repository, `scratchpad/mutate_w13.py`):
+- Requirement 1 (AGREE): force `show_footprint` False (never pass the measured corner areas) -> the
+  agree case no longer shows the footprint and building A drops (buildings = ['B'], coverage
+  withheld) - the agree test would FAIL. The threading is load-bearing.
+- Requirement 2 (outline not available): drop COULD_NOT_COMPARE from `emit_coverage` -> the
+  missing-outline case emits no `coverage_by_portion` - the missing test would FAIL. That emission
+  is load-bearing.
+
+Checks (fifth round, from `services/api` unless noted; the lanes venv), each with a DIRECT exit code:
+- `python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/spatial tests/journey
+  tests/api tests/drawings tests/cad tests/documents/test_pdf_content.py` -> 3468 passed, 8 skipped
+  (exit 0; +3 over the previous round - the two new agree/missing emit tests and the
+  disagree-stability test)
+- `python3 services/api/scripts/sync_contract_schemas.py --check` (from root) -> byte-identical
+  (exit 0)
+- `python3 tools/modularity_check.py --check` (from root) -> exit 0 (0 failures; no warning on a
+  file I touched - three_way_document.py 722 raw lines, below the SLOC warn threshold)
+- `python3 scripts/lanes/check_lane_paths.py --coverage` (from root) -> LANE COVERAGE PASS: 9738
+  files (exit 0)
+- `render_review_register.py --check` -> FAILED, 2 issues (the register records a sha256 of
+  three_way_document.py, which changed): EXPECTED; the register is resynced by its own builder after
+  me. I touched no register file.
+- `.github/scripts/tests` NOT run (the sandbox refuses the `.github` path); the contract schemas and
+  fixtures are unchanged this round and validate_contracts is CI's job.
+
 END-OF-REPORT
