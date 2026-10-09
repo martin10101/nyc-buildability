@@ -103,7 +103,9 @@ def test_s12_entry_emits_the_committed_three_way_fixture(monkeypatch):
     emitted = _emit_from_evidence(monkeypatch)
     document = emitted.document
     validate_results_document(document)
-    assert document["contract_version"] == "1.3.0"  # the three-way document
+    # The three-way document now declares 1.4.0: the first-building-option blocks are attached for
+    # the conflicting-area benchmark (M5-T146 PART B/E).
+    assert document["contract_version"] == "1.4.0"
 
     serialized = (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     assert _FIXTURE_PATH.exists(), f"no committed fixture {_FIXTURE_PATH.name}"

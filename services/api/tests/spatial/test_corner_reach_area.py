@@ -390,13 +390,16 @@ def test_module_names_no_legal_rule_or_threshold():
     assert imported  # sanity: the source really was read
 
 
-def test_no_app_module_imports_corner_reach_area_yet():
-    # Nothing this part adds is reachable from a reported result: no OTHER app module may name
-    # corner_reach_area until the later wiring step connects it.
+def test_only_the_first_option_wiring_imports_corner_reach_area():
+    # The wiring step (task M5-T146 PART B) connects corner_reach_area to the first-building-option
+    # result: the bridge measures the by-portion areas and the first-option assembly reads them.
+    # Only those two app modules may name it; any OTHER app module is an offender. (This supersedes
+    # the M5-T145 "nothing reads it yet" guard, which deliberately anticipated this wiring step.)
+    permitted = {"corner_reach_area.py", "result_way_bridge.py", "first_option_results.py"}
     app_root = pathlib.Path(corner_reach_area.__file__).resolve().parents[1]  # services/api/app
     offenders = [
         str(path) for path in app_root.rglob("*.py")
-        if path.name != "corner_reach_area.py"
+        if path.name not in permitted
         and "corner_reach_area" in path.read_text(encoding="utf-8")
     ]
     assert offenders == [], f"these app modules already reference corner_reach_area: {offenders}"

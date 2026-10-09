@@ -56,6 +56,15 @@ GAP_CODE_NOT_BUILT = "code not built"
 FILL_WIDEST = "widest"
 FILL_TO_MIN_BASE = "to_min_base"
 
+# A tiny tolerance for building A's storey count (DB-212 (d)). The count is the floor of the
+# floor-area allowance divided by the footprint; a floating-point allowance that is an exact
+# multiple of the footprint but not exactly representable (e.g. 3 x 666.7 stored as
+# 2.9999999999999996) would otherwise lose one storey. The tolerance restores the exact
+# multiple without admitting a genuinely short storey (an extra storey needs the allowance to
+# exceed the whole-storey boundary by more than this tolerance). It is a display-rounding guard,
+# not a zoning number.
+_STOREY_COUNT_TOLERANCE = 1e-9
+
 # Plain names of the inputs, for the text of a missing-input not-known state.
 _INPUT_LABELS = {
     "footprint_area": "the footprint",
@@ -190,7 +199,7 @@ def building_a(
     _require_positive("min_base_ft", min_base_ft)
     _require_positive("max_base_ft", max_base_ft)
 
-    storey_count = math.floor(floor_area_allowance / footprint_area)
+    storey_count = math.floor(floor_area_allowance / footprint_area + _STOREY_COUNT_TOLERANCE)
     if storey_count < 1:
         return _code_not_built(
             "A",

@@ -211,14 +211,15 @@ def _all_result_numbers(node) -> list[float]:
 
 
 # =========================================================================== S1
-def test_s1_benchmark_emits_contract_1_3_0(benchmark):
-    """S1: the emitted document validates and declares 1.3.0; floor_area_allowance and
+def test_s1_benchmark_emits_contract_1_4_0(benchmark):
+    """S1: the emitted document validates and declares 1.4.0 (the first-building-option additive
+    blocks are attached for the conflicting-area benchmark, M5-T146); floor_area_allowance and
     permitted_envelope are available and each carries a value_states map; remaining_floor_area is
     still 'Not confirmed'; the shown floor-area and height numbers equal docs/reference-cases/R6B/
     cases/real-lot.json, never the engine's saved output."""
     doc = benchmark.document
     validate_results_document(doc)
-    assert doc["contract_version"] == "1.3.0"
+    assert doc["contract_version"] == "1.4.0"
     fa = doc["answers"]["floor_area_allowance"]
     env = doc["answers"]["permitted_envelope"]
     assert fa["status"] == "available" and "value_states" in fa
@@ -843,7 +844,7 @@ def test_s137_shown_values_and_withheld_set_unchanged_through_evidence(evidence_
     output."""
     doc = evidence_benchmark.document
     validate_results_document(doc)
-    assert doc["contract_version"] == "1.3.0"
+    assert doc["contract_version"] == "1.4.0"  # the first-building-option blocks are attached
     fa = doc["answers"]["floor_area_allowance"]
     env = doc["answers"]["permitted_envelope"]
     assert _ref_value("real-lot", "L1") == 20150
@@ -1207,6 +1208,17 @@ _NO_RESULT_NUMBER_BLOCKS = {
     ),
 }
 
+# The first-building-option blocks (contract 1.4.0, M5-T146 PART B). They carry result numbers, but
+# worked by the step-P6 modules (first_building_options, preliminary_apartment_estimate), NOT by the
+# engine, so they are NOT walked by _all_result_numbers (which checks the emitted numbers come from
+# the engine). No WITHHELD result's number can hide here, so the DB-199 (a) hole cannot open in
+# them: a withheld coverage carries NO number (its withheld branch has no numeric field) and a
+# building that cannot be worked is ABSENT from the list, never a numeric placeholder.
+_FIRST_OPTION_BLOCKS = {
+    "building_alternatives": "worked (shown) alternatives; an unworkable building is absent, no 0",
+    "coverage_by_portion": "available carries the footprint (shown); withheld carries NO number",
+}
+
 # Every key INSIDE an answer other than values[] carries no result number:
 _ANSWER_NO_RESULT_KEYS = {
     "status": "an availability flag string",
@@ -1225,7 +1237,9 @@ def _unclassified_blocks(doc: dict) -> list[str]:
     reason). Return the keys classified as NEITHER - the DB-199 (a) hole, where a new block could
     hide a withheld result's number unseen."""
     bad: list[str] = []
-    classified_top = _RESULT_NUMBER_BLOCKS | set(_NO_RESULT_NUMBER_BLOCKS)
+    classified_top = (
+        _RESULT_NUMBER_BLOCKS | set(_NO_RESULT_NUMBER_BLOCKS) | set(_FIRST_OPTION_BLOCKS)
+    )
     for key in doc:
         if key not in classified_top:
             bad.append(key)

@@ -52,12 +52,14 @@ from dataclasses import dataclass
 from typing import Any
 
 from app.spatial import lot_reach as _lot_reach
+from app.spatial.corner_reach_area import CornerPortionAreas, measure_corner_reach_area
 from app.spatial.site_geometry.outline import PreparedOutline
 from app.spatial.site_geometry.results import SiteGeometry
 
 from .result_way_bridge_overlay import overlay_support_for
 from .result_way_facts import RecordedConditions, gather_recorded_facts
 from .result_way_inputs import (
+    CORNER_PORTION_WITHIN_100_FT,
     AreaAgreement,
     Checked,
     CornerReach,
@@ -83,6 +85,7 @@ __all__ = [
     "compare_lot_area",
     "gather_result_ways",
     "large_lot_answer",
+    "measure_corner_areas",
     "read_site_inputs",
 ]
 
@@ -130,7 +133,13 @@ class LargeLotAnswer:
 
 @dataclass(frozen=True)
 class GatheredResult:
-    """The ways beside the gathered facts and their provenance (the entry function's return)."""
+    """The ways beside the gathered facts and their provenance (the entry function's return).
+
+    ``corner_areas`` is the corner-reach by-portion measurement for the lot (the corner-lot and
+    interior-lot portion areas within 100 ft of each intersecting street line, ZR 12-10), or None
+    when there is no site geometry to measure from. It is the by-portion coverage input the
+    first-building-option assembly (:mod:`first_option_results`) reads; the decision module's ways
+    are unchanged by it (task M5-T146 PART B)."""
 
     ways: ResultWays
     inputs: ResultWayInputs
@@ -139,6 +148,7 @@ class GatheredResult:
     large_lot: LargeLotAnswer
     source_facts: tuple[SourceFact, ...]
     held_back: tuple[str, ...]
+    corner_areas: CornerPortionAreas | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -214,6 +224,20 @@ def _reach_for(
     if geometry is None:
         return None
     return adapt_reach(_lot_reach.measure_lot_reach(outline, geometry))
+
+
+def measure_corner_areas(
+    outline: PreparedOutline | None, geometry: SiteGeometry | None,
+) -> CornerPortionAreas | None:
+    """The corner-reach by-portion areas for the lot - the corner-lot portion within 100 ft of each
+    intersecting street line (ZR 12-10) and the rest - or None when there is no site geometry to
+    measure from. The distance is the captured ZR 12-10 figure held once in the decision module's
+    legal measures (:data:`CORNER_PORTION_WITHIN_100_FT`); this module derives no zoning number.
+    Both portions stay unknown (never a zero) on a lot with no two-street corner; the assembly that
+    reads this names the kind of gap (task M5-T146 PART B)."""
+    if geometry is None:
+        return None
+    return measure_corner_reach_area(outline, geometry, CORNER_PORTION_WITHIN_100_FT.value)
 
 
 # ---------------------------------------------------------------------------
@@ -364,6 +388,7 @@ def gather_result_ways(
         overlay_support=overlay_support,
     )
     ways = decide_result_ways(inputs)
+    corner_areas = measure_corner_areas(outline, geometry)
     return GatheredResult(
         ways=ways,
         inputs=inputs,
@@ -372,4 +397,5 @@ def gather_result_ways(
         large_lot=large_lot,
         source_facts=source_facts,
         held_back=tuple(held),
+        corner_areas=corner_areas,
     )

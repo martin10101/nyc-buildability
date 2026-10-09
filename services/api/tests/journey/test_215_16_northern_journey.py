@@ -213,7 +213,9 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     )
     document = emitted.document
     validate_results_document(document)
-    assert document["contract_version"] == "1.3.0"
+    # M5-T146: the document now declares 1.4.0 - the first-building-option additive blocks are
+    # attached for this conflicting-area benchmark (building B conditional; the footprint withheld).
+    assert document["contract_version"] == "1.4.0"
     # engine.py is unchanged: its own inner document still declares the pre-three-way version.
     assert emitted.engine_result.document["contract_version"] == "1.2.0"
 
@@ -287,8 +289,24 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     )
     assert "overlay" not in rear["reason"].lower()
     assert document["answers"]["building_option"]["status"] == "not_available"
+    # M5-T146 (S8): the single building option points to the worked first-building alternatives list;
+    # it carries no number and no substitute.
+    assert "building_alternatives" in document["answers"]["building_option"]["reason"]
     assert document["unit_estimate"]["status"] == "not_available"
     assert document["unit_estimate"]["reason"].startswith("Not known")
+    # M5-T146 (S21/S9/S10/S7): building_alternatives is building B alone (conditional, with its floor
+    # schedule and preliminary capacity estimate); building A is absent (it needs the withheld
+    # footprint); coverage_by_portion is withheld (the two lot areas disagree), carrying NO number.
+    alternatives = document["building_alternatives"]
+    assert [a["building"] for a in alternatives] == ["B"]
+    building_b = alternatives[0]
+    assert building_b["way"]["way"] == "conditional"
+    assert building_b["storey_count"] == 3
+    assert building_b["capacity_estimate"]["label"] == "Preliminary capacity estimate"
+    coverage_portion = document["coverage_by_portion"]
+    assert coverage_portion["status"] == "withheld"
+    assert coverage_portion["gap_kind"] == "missing_information"
+    assert "footprint_sqft" not in coverage_portion  # no number on a withheld result (S24)
     # No withheld result carries a number anywhere in the emitted document.
     assert document["geometry"]["yards"]["status"] == "not_available"
     assert document["geometry"]["yards"]["reason"] == rear["reason"]  # geometry follows the yard

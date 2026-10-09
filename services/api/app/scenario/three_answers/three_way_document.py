@@ -45,8 +45,10 @@ import copy
 
 from .contract import validate_results_document
 from .engine_conditions import Derived
+from .first_option_results import FirstOptionInputs, assemble_first_option
 from .result_way_inputs import (
     COVERAGE_KEY,
+    KIND_CONTRADICTED_RECORD,
     LABELS,
     MISSING_INFORMATION,
     REASON_KIND_BY_GAP,
@@ -55,6 +57,7 @@ from .result_way_inputs import (
     UNIT_STANDARD_KEY,
     WORK_OWED,
     AnswerWays,
+    Conditional,
     ResultWay,
     ResultWays,
     Withheld,
@@ -72,6 +75,8 @@ from .three_way_scope_lines import (
 __all__ = [
     "ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION",
+    "BUILDING_OPTION_POINTS_TO_ALTERNATIVES",
+    "CONTRACT_VERSION_FIRST_OPTION",
     "CONTRACT_VERSION_THREE_WAY",
     "FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "FLOOR_TO_FLOOR_KEY",
@@ -85,6 +90,25 @@ __all__ = [
 ]
 
 CONTRACT_VERSION_THREE_WAY = "1.3.0"
+# The additive version the document declares once it carries a first-building-option block
+# (building_alternatives and/or coverage_by_portion), M5-T146 task 1.
+CONTRACT_VERSION_FIRST_OPTION = "1.4.0"
+
+# The single building_option answer, on a lot with worked alternatives, stays not_available and
+# points to the list (ruling W3; no number and no substitute, R556/R570).
+BUILDING_OPTION_POINTS_TO_ALTERNATIVES = (
+    "The single building option is not shown; the worked first-building alternatives are listed in "
+    "building_alternatives (none is preferred or a default)."
+)
+
+# The floor-area value whose way carries the lot's area conditions, and the two engine values the
+# first-building-option assembly reads from the engine document.
+_FLOOR_AREA_VALUE_KEY = "max_residential_floor_area"
+_FAR_VALUE_KEY = "max_residential_far"
+_MIN_BASE_VALUE_KEY = "min_base_height"
+_MAX_BASE_VALUE_KEY = "max_base_height"
+_FLOOR_TO_FLOOR_ASSUMPTION_KEY = "floor_to_floor_ft"
+_LOT_TYPE_ASSUMPTION_KEY = "lot_type"
 
 _DWELLING_UNITS_RULE = "r6b-dwelling-units"
 
@@ -357,6 +381,101 @@ def _apply_geometry(doc: dict, ways: ResultWays, *, building_option_withheld: bo
 
 
 # ---------------------------------------------------------------------------
+# the first-building-option blocks (contract 1.4.0 additive; task M5-T146 PART B)
+# ---------------------------------------------------------------------------
+def _engine_value(document: dict, answer_key: str, value_key: str):
+    """One engine value, or None when the answer is not available or the value is absent."""
+    answer = document.get("answers", {}).get(answer_key)
+    if not isinstance(answer, dict) or answer.get("status") != "available":
+        return None
+    for value in answer.get("values", []):
+        if isinstance(value, dict) and value.get("key") == value_key:
+            return value.get("value")
+    return None
+
+
+def _scope_value(document: dict, key: str):
+    """One scope-assumption value, or None when absent."""
+    scope = document.get("scope")
+    if not isinstance(scope, dict):
+        return None
+    for assumption in scope.get("assumptions", []):
+        if isinstance(assumption, dict) and assumption.get("key") == key:
+            return assumption.get("value")
+    return None
+
+
+def _floor_area_conditions(ways: ResultWays) -> tuple | None:
+    """The conditions of the floor-area value's way, when it is conditional (they carry the lot's
+    area conditions the alternatives reuse); None when the floor area is withheld or settled."""
+    answer = ways.floor_area_allowance
+    if answer.whole_answer_not_available is not None:
+        return None
+    row = _row(answer.values, _FLOOR_AREA_VALUE_KEY)
+    if row is None or not isinstance(row.way, Conditional):
+        return None
+    return row.way.conditions
+
+
+def _point_building_option_to_alternatives(doc: dict) -> None:
+    """The single building_option answer stays not_available and points to the list (ruling W3)."""
+    answer = doc["answers"].get("building_option")
+    if isinstance(answer, dict) and answer.get("status") == "not_available":
+        doc["answers"]["building_option"] = {
+            "status": "not_available",
+            "reason": BUILDING_OPTION_POINTS_TO_ALTERNATIVES,
+            "reason_kind": answer.get("reason_kind", "rule_not_implemented"),
+        }
+
+
+def _apply_first_option(doc: dict, ways: ResultWays, document: dict) -> None:
+    """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks for the
+    CONFLICTING-AREA case (ruling W1/W2): where the recorded lot area and the tax-map outline area
+    DISAGREE (the floor-area way then carries a contradicted-record condition), the by-portion
+    footprint is WITHHELD and building B (the fewest storeys reaching the minimum base height, whose
+    plan fits the lowest applicable ratio times the recorded area) is listed CONDITIONAL; building A
+    is absent because it needs the withheld footprint. The engine numbers come from the engine
+    document; the way conditions are reused from the floor-area answer so nothing is invented. Where
+    the areas agree the footprint and building A need the measured corner-reach areas threaded to
+    this transform - that is not wired here (work owed, DB-213) - so no block is emitted then."""
+    conditions = _floor_area_conditions(ways)
+    if conditions is None or not any(c.kind == KIND_CONTRADICTED_RECORD for c in conditions):
+        return
+    allowance = _engine_value(document, "floor_area_allowance", _FLOOR_AREA_VALUE_KEY)
+    far = _engine_value(document, "floor_area_allowance", _FAR_VALUE_KEY)
+    min_base = _engine_value(document, "permitted_envelope", _MIN_BASE_VALUE_KEY)
+    max_base = _engine_value(document, "permitted_envelope", _MAX_BASE_VALUE_KEY)
+    floor_to_floor = _scope_value(document, _FLOOR_TO_FLOOR_ASSUMPTION_KEY)
+    lot_type = _scope_value(document, _LOT_TYPE_ASSUMPTION_KEY)
+    if allowance is None or not far or min_base is None or max_base is None:
+        return
+    if floor_to_floor is None:
+        return
+    blocks = assemble_first_option(FirstOptionInputs(
+        allowance_sqft=allowance,
+        recorded_lot_area_sqft=allowance / far,
+        min_base_ft=min_base,
+        max_base_ft=max_base,
+        floor_to_floor_ft=floor_to_floor,
+        lot_type=lot_type if isinstance(lot_type, str) else None,
+        areas_agree=False,
+        corner_areas=None,
+        outline_area_sqft=None,
+        way_conditions=tuple(c.to_dict() for c in conditions),
+    ))
+    changed = False
+    if blocks.coverage_by_portion is not None:
+        doc["coverage_by_portion"] = blocks.coverage_by_portion
+        changed = True
+    if blocks.building_alternatives:
+        doc["building_alternatives"] = list(blocks.building_alternatives)
+        _point_building_option_to_alternatives(doc)
+        changed = True
+    if changed:
+        doc["contract_version"] = CONTRACT_VERSION_FIRST_OPTION
+
+
+# ---------------------------------------------------------------------------
 # the one public transform
 # ---------------------------------------------------------------------------
 def emit_three_way_document(
@@ -427,6 +546,10 @@ def emit_three_way_document(
     # (M5-T139) rewrite the two design-choice lines the user made. Both read the scope block.
     if condition_sources is not None or user_choices is not None:
         _rewrite_scope_lines(doc, condition_sources, user_choices)
+
+    # The first-building-option blocks (contract 1.4.0 additive; task M5-T146 PART B). Read from the
+    # engine document and the decided ways; emitted only for the conflicting-area case (ruling W1).
+    _apply_first_option(doc, ways, document)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)

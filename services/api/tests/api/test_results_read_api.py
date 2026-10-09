@@ -264,7 +264,15 @@ def test_t3_route_document_equals_the_entry_document(enabled, monkeypatch) -> No
     response = _post(app_with(provider), body)
     assert response.status_code == 200
     route_doc = response.json()
-    assert route_doc["contract_version"] == "1.3.0"
+    # M5-T146 (S23): the route serves the first-building-option blocks - contract 1.4.0, the worked
+    # building-alternatives list and each alternative's preliminary capacity estimate.
+    assert route_doc["contract_version"] == "1.4.0"
+    assert [a["building"] for a in route_doc["building_alternatives"]] == ["B"]
+    assert (
+        route_doc["building_alternatives"][0]["capacity_estimate"]["label"]
+        == "Preliminary capacity estimate"
+    )
+    assert route_doc["coverage_by_portion"]["status"] == "withheld"
     assert "engine_result" not in route_doc  # the inner engine document is never returned
     reference = _reference_document(provider, body)
     assert _blank_identity(route_doc) == _blank_identity(reference)

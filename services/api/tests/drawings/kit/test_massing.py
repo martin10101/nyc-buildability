@@ -31,8 +31,12 @@ from .kit_support import (
     texts,
 )
 
-WITH_PLATES = [p for p in fixture_paths()
-               if load(p)["geometry"]["floor_plates"]["status"] == "available"]
+# A results fixture whose geometry is not_available carries no floor_plates key (the first-building
+# -option synthetic fixtures, contract 1.4.0): tolerate its absence rather than KeyError at import.
+WITH_PLATES = [
+    p for p in fixture_paths()
+    if load(p).get("geometry", {}).get("floor_plates", {}).get("status") == "available"
+]
 IDS = [p.stem for p in WITH_PLATES]
 
 

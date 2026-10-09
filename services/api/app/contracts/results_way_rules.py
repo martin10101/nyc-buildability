@@ -24,11 +24,16 @@ from typing import Any
 __all__ = [
     "ANSWER_KEYS",
     "CONTRACT_VERSION_1_3_0",
+    "CONTRACT_VERSIONS_WITH_WAY_LAYER",
     "WayRuleViolation",
     "results_way_violations",
 ]
 
 CONTRACT_VERSION_1_3_0 = "1.3.0"
+# Every version that carries the value_states way-layer. 1.4.0 (M5-T146) is a strict superset of
+# 1.3.0 - it keeps the same value_states on every available answer and only ADDS the first-building
+# -option blocks - so the same way-layer rule applies; below 1.3.0 the rule does nothing.
+CONTRACT_VERSIONS_WITH_WAY_LAYER = frozenset({"1.3.0", "1.4.0"})
 
 # The three answers that may carry a value_states way-layer (results.schema.json
 # answers: floor_area_allowance, permitted_envelope and the building option).
@@ -59,8 +64,8 @@ def results_way_violations(document: Any) -> list[WayRuleViolation]:
     """Return the way-layer breaches of a results document that already passed the
     schema. An empty list means no breach.
 
-    The rule (applied only when the document declares contract version 1.3.0, in every
-    AVAILABLE answer; below 1.3.0 it does nothing):
+    The rule (applied when the document declares a version that carries the way-layer -
+    1.3.0 or the 1.4.0 superset - in every AVAILABLE answer; below 1.3.0 it does nothing):
 
     1. every shown value (a key of the answer's ``values``) has exactly one way entry in
        ``value_states`` and it is ``settled`` or ``conditional``;
@@ -75,7 +80,7 @@ def results_way_violations(document: Any) -> list[WayRuleViolation]:
     """
     if not isinstance(document, Mapping):
         return []
-    if document.get("contract_version") != CONTRACT_VERSION_1_3_0:
+    if document.get("contract_version") not in CONTRACT_VERSIONS_WITH_WAY_LAYER:
         return []
     answers = document.get("answers")
     if not isinstance(answers, Mapping):

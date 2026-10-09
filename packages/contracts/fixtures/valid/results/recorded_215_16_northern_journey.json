@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.3.0",
+  "contract_version": "1.4.0",
   "results_id": "res-215-16-northern-journey",
   "study_id": "study-215-16-northern-journey",
   "option_id": "opt-test",
@@ -392,10 +392,8 @@
     },
     "building_option": {
       "status": "not_available",
-      "reason": "Every value of this answer is withheld: No building option is shown yet: the building option is below the minimum base height and has not been checked against an independently worked example, and its footprint needs the rear yard, which is not settled.",
-      "reason_kind": "rule_not_implemented",
-      "gap_kind": "work_owed",
-      "resolved_by": "Working out the building-option generator and checking it against an independently worked example."
+      "reason": "The single building option is not shown; the worked first-building alternatives are listed in building_alternatives (none is preferred or a default).",
+      "reason_kind": "rule_not_implemented"
     }
   },
   "remaining_floor_area": {
@@ -727,5 +725,92 @@
         "statement": "A 10-foot floor-to-floor height is used as the default."
       }
     ]
-  }
+  },
+  "coverage_by_portion": {
+    "status": "withheld",
+    "label": "Maximum lot coverage",
+    "reason": "Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).",
+    "gap_kind": "missing_information",
+    "resolved_by": "A survey or deed dimensions that reconcile the recorded lot area with the tax-map outline.",
+    "zr_sections": [
+      "ZR 23-362",
+      "ZR 12-10"
+    ]
+  },
+  "building_alternatives": [
+    {
+      "building": "B",
+      "label": "Building B (the fewest storeys reaching the minimum base height; a plain stack, every storey the same plan). The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan.",
+      "fill_rule": "to_min_base",
+      "floor_schedule": [
+        {
+          "storey": 1,
+          "floor_to_floor_ft": 10.0,
+          "top_ft": 10.0,
+          "plan_area_sqft": 6716.666666666667,
+          "floor_area_sqft": 6716.666666666667,
+          "running_total_sqft": 6716.666666666667
+        },
+        {
+          "storey": 2,
+          "floor_to_floor_ft": 10.0,
+          "top_ft": 20.0,
+          "plan_area_sqft": 6716.666666666667,
+          "floor_area_sqft": 6716.666666666667,
+          "running_total_sqft": 13433.333333333334
+        },
+        {
+          "storey": 3,
+          "floor_to_floor_ft": 10.0,
+          "top_ft": 30.0,
+          "plan_area_sqft": 6716.666666666667,
+          "floor_area_sqft": 6716.666666666667,
+          "running_total_sqft": 20150.0
+        }
+      ],
+      "storey_count": 3,
+      "height_ft": 30.0,
+      "footprint_area_sqft": 6716.666666666667,
+      "floor_area_allowance_sqft": 20150.0,
+      "total_floor_area_sqft": 20150.0,
+      "unused_floor_area_sqft": 0.0,
+      "below_min_base": false,
+      "way": {
+        "way": "conditional",
+        "conditions": [
+          {
+            "kind": "contradicted_record",
+            "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
+            "settled_by": "A survey, or deed dimensions, naming the document"
+          },
+          {
+            "kind": "unchecked_condition",
+            "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+            "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+          }
+        ]
+      },
+      "not_checked": [
+        "The rear yard beyond the corner",
+        "Where the plan sits on the lot",
+        "The street wall",
+        "Parking, loading and bicycle requirements"
+      ],
+      "capacity_estimate": {
+        "label": "Preliminary capacity estimate",
+        "floor_area_sqft": 20150.0,
+        "share_low": 0.6,
+        "share_high": 0.75,
+        "apartment_size_sqft": 700.0,
+        "quotient_low": 17.27,
+        "quotient_high": 21.59,
+        "quotient_low_unrounded": 17.271428571428572,
+        "quotient_high_unrounded": 21.589285714285715,
+        "whole_below_low": 17,
+        "whole_above_low": 18,
+        "whole_below_high": 21,
+        "whole_above_high": 22
+      }
+    }
+  ]
 }

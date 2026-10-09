@@ -235,3 +235,21 @@ def test_s30_building_a_stack_passes_max_base_height() -> None:
     assert "maximum base height" in a.reason
     assert "10 storeys" in a.reason  # 20,000 / 2,000 = 10 storeys, 100 ft high
     assert f"{_MAX_BASE:g}" in a.reason
+
+
+def test_db212d_rounding_edge_does_not_lose_a_storey() -> None:
+    """DB-212 (d): building A's storey count is the floor of the allowance divided by the
+    footprint. An allowance that is an exact multiple of the footprint but not exactly
+    representable (3 x 666.7 is stored as 2.9999999999999996) would lose one storey without a
+    tolerance. The storey-count tolerance restores the exact multiple: the edge input gives 3
+    storeys, not 2. The naive floor (no tolerance) is shown to be 2, so the tolerance is
+    load-bearing. (Mutation proof - removing the tolerance drops this to 2 storeys - run in a
+    temporary copy outside the repository; recorded in the producer report.)"""
+    footprint = 666.7
+    allowance = 2000.1  # 3 x 666.7 mathematically; the float quotient underflows to 3 - epsilon
+    assert math.floor(allowance / footprint) == 2  # the edge is real: naive floor loses a storey
+    a = building_a(footprint, allowance, 10.0, 30.0, _MAX_BASE)
+    assert a.status == STATUS_AVAILABLE, a.reason
+    assert a.storey_count == 3  # the tolerance restores the exact 3rd storey
+    assert len(a.storeys) == 3
+    assert math.isclose(a.height_ft, 30.0, abs_tol=_TOL)
