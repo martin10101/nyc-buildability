@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T122",
+ "material_commit": "b2e833fd (cherry-pick of wt-m5t122 9d9ad38e; 9 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T09:09:24+00:00",
+ "producer": "frontend-engineer (orchestrator-dispatched subagent; worktree wt-m5t122)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the wave-1 seam: 844 files / 18356 nodes / 7841 edges) named every importer of PropertyOverview.tsx (ArchitectEntry, ProfileViews, PropertyFacts, ReportView - CondoRecordsChannelSection + deriveCondoSurface, ScenarioWorkspace - DraftHeadline) and the tests; the producer kept every name re-exported from PropertyOverview.tsx (a facade) and edited no importer. [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-083-R001": [
+   "No claim-class wording added: the producer reports a grep-clean diff for permitted / approved / maximum-allowed wording; the new condo tags are record labels from the P1 spec's C rows ('Reference only', 'City record', 'Human record', 'Zoning missing for N lots', 'Parcels differ'); records never read as allowances. [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-086-R001": [
+   "The assessment and the accepted P1 spec (M5-T114) are used as input only; the ledger task id is orchestrator-assigned; the meaning-change register MR-1..MR-8 is not adopted. [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-086-R002": [
+   "P3b (the second half of the assessment's P3 overview slice: the condo records surface per P1 section 5.4 + the M5-T119 review riders DB-091 a-e) is contracted after the accepted P3a (M5-T119), gated G0/G2/G3/G4 with a human-journey walkthrough. [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-086-R003": [
+   "Preservation: the producer report's ledger proof covers C01-C11, A04, A15 and LS-P16 before -> after with the protected meaning, the proving test and the print path; the condo surface moved verbatim into CondoRecordsSection.tsx behind a facade (condo-resolution-display.test.tsx and report-view.test.tsx pass unchanged); the locked h2 names kept exact ('Reference only' added as a sibling tag - deviation D2); the condo base-lot clause corrects M5-T119's OWN added clause; the identity alert's role and text unchanged (CSS only). [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-086-R004": [
+   "Sequencing honoured: contracted after the accepted P3a (M5-T119, 304th accept). [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R001": [
+   "Capacity unit under D-087 + D-089 (overnight): contracted at 6d5a2623 (G0), claimed at 55276f2d with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint backend packets; no state or gate skipped. [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ],
+  "D-087-R002": [
+   "G0 disjointness EMPTY vs every live packet; the declared-glob overlap with the dormant pre-regime M4-T005 (apps/web/src/app/property/**, apps/web/e2e/**) recorded as excluded per the M5-T077 DCV F1 ruling; one worktree wt-m5t122; the producer commit touches exactly 9 of its 10 allowed paths (condo-resolution-display.test.tsx unchanged), every file MATCH by blob. [ORCH-HARVEST] at the harvested head b2e833fd (cherry-pick b2e833fd; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/next_task.py - above the warning threshold; consider the module boundary before growing it further."
+  ]
+ }
+}

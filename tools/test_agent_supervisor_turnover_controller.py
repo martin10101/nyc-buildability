@@ -37,7 +37,7 @@ from tools.agent_supervisor.model_turnover import (
 )
 from tools.agent_supervisor.turnover_controller import (
     ALLOWED_SUCCESSOR_EFFORT,
-    ALLOWED_SUCCESSOR_MODEL_ID,
+    ApprovedSuccessor,
     LaunchRequest,
     LaunchResult,
     TurnoverContext,
@@ -45,6 +45,32 @@ from tools.agent_supervisor.turnover_controller import (
     TurnoverLayer,
     TurnoverStatus,
 )
+
+
+# --------------------------------------------------------------------------
+# M0-T080 (D-023-R013): the successor is no longer a module constant in the
+# production code. `ALLOWED_SUCCESSOR_MODEL_ID = "claude-opus-4-8"` is GONE,
+# because a model id living in the source is a selection the owner never
+# approved and no launch probe ever proved. `TurnoverController` now takes an
+# injected resolver that names the next OWNER-APPROVED, live-probed model, so
+# these tests state the approved chain THEMSELVES and assert the launch used
+# that id - a strictly stronger claim than "it equals the constant the code
+# also reads", which could not fail even if the id were wrong.
+# --------------------------------------------------------------------------
+
+#: The owner-approved chain these tests pretend the protected config declares.
+APPROVED_CHAIN: tuple[str, ...] = ("claude-fable-5", "claude-opus-4-8")
+#: The entry after the exhausted Fable model - what the resolver must pick.
+APPROVED_SUCCESSOR = "claude-opus-4-8"
+
+
+def _approved_successor(_context: object) -> ApprovedSuccessor:
+    """A `SuccessorResolver` standing in for the approved + live-probed selection."""
+    return ApprovedSuccessor(
+        model_id=APPROVED_SUCCESSOR, effort=ALLOWED_SUCCESSOR_EFFORT,
+        probed_at_utc="2026-08-21T00:00:00+00:00",
+        config_identity="test-config-identity", cli_version="test-cli-version")
+
 
 # --------------------------------------------------------------------------
 # In-memory fakes for every injected dependency
@@ -58,7 +84,7 @@ class FakeLauncher:
     successor id makes a second (forbidden) launch trivially detectable.
     """
 
-    def __init__(self, *, available: bool = True, model_id: str = ALLOWED_SUCCESSOR_MODEL_ID,
+    def __init__(self, *, available: bool = True, model_id: str = APPROVED_SUCCESSOR,
                  successor_id: str | None = None, detail: str = "") -> None:
         self.available = available
         self.model_id = model_id
@@ -165,6 +191,8 @@ def _context(layer: TurnoverLayer = TurnoverLayer.ORCHESTRATOR, *,
         handoff_reference="handoff://durable/ref-1",
         layer=layer,
     )
+
+
     base.update(overrides)
     return TurnoverContext(**base)
 
@@ -176,7 +204,7 @@ def _controller(*, launcher: FakeLauncher | None = None, lock: FakeLock | None =
     audit = audit or FakeAudit()
     controller = TurnoverController(
         launcher=launcher, lock=lock, audit=audit, identity=FakeIdentity(),
-        survivor_detected=survivor)
+        survivor_detected=survivor, successor=_approved_successor)
     return controller, launcher, lock, audit
 
 
@@ -196,7 +224,7 @@ class LaunchOnExhaustionTests(unittest.TestCase):
         self.assertTrue(outcome.turned_over)
         self.assertEqual(len(launcher.calls), 1)
         self.assertEqual(launcher.calls[0].layer, TurnoverLayer.ORCHESTRATOR)
-        self.assertEqual(launcher.calls[0].model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(launcher.calls[0].model_id, APPROVED_SUCCESSOR)
         self.assertEqual(launcher.calls[0].effort, ALLOWED_SUCCESSOR_EFFORT)
         self.assertEqual(outcome.model_id, "claude-opus-4-8")
         self.assertEqual(outcome.effort, "xhigh")
@@ -214,7 +242,7 @@ class LaunchOnExhaustionTests(unittest.TestCase):
         self.assertEqual(launcher.calls[0].layer, TurnoverLayer.WORKER)
         # The SAME bounded unit is redispatched from its safe checkpoint.
         self.assertEqual(launcher.calls[0].safe_checkpoint_id, "ckpt-42")
-        self.assertEqual(launcher.calls[0].model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(launcher.calls[0].model_id, APPROVED_SUCCESSOR)
         self.assertEqual(outcome.safe_checkpoint_id, "ckpt-42")
 
     def test_launch_passes_handoff_reference(self) -> None:

@@ -1,0 +1,17 @@
+{
+  "task_id": "M5-T087",
+  "producer_agent": "official-source-researcher",
+  "report_file": "project-control/reports/M5-T087-producer-report.md",
+  "submitted_at": "2026-09-24T08:05:36.033841+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T087-evidence-map.json",
+  "content_manifest_sha256": "07cf9683e6b5937c8245b30adb68c003b1612bb2d386c3c2050dc7d4b91595ee",
+  "reviewed_sha": "5151c2e42c849c2d42f6a2ad95a65273eecac9d3",
+  "applicable_requirements": [
+    "D-066-R001",
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003"
+  ],
+  "updated_at": "2026-09-24T08:05:37.391059+00:00"
+}

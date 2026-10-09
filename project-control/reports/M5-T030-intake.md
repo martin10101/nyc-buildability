@@ -1,0 +1,23 @@
+# M5-T030 independent G0 and directive intake review
+
+Reviewer: directive-compliance-verifier (/root/directive_verifier)
+Checkpoint: M5-T030-intake
+Reviewed at: 2026-09-15T00:39:27.094621+00:00
+Reviewed HEAD: 546dd09a9541097a5c5e39cd43683c4068ab368d
+Reviewed origin/main: d8b3899f61efa6620e18a26541ced96020f5bef9
+
+Verdict: G0 intake readiness PASS; decision CONTINUE. This is specification completeness and dispatch readiness only. D-062-R001 through D-062-R005 remain pending; no product behavior, acceptance, push, or deployment is approved by this review.
+
+The bounded packet captures the owner request to add lot-specific source links, test a real building, and explain architect value. The source-link problem is recorded separately from clearly labeled inherited context. Source and requirements SHA-256 values match the manifest: source 4d9a8a1c820ad83d6059a4f65dadb8fa4d70fc7b580dba0133341a07de6a9348; requirements 86ac50eb4ca5b0839865fa50913fe0d4390cac2dbe63bdf6d8a22005dcbe096f. Manifest SHA-256 at review is 51a15f5bd44247ee2526b4a5d62ea19fa74e04d6006034b17ad2a734a5d39e45.
+
+R001 covers selected-lot PLUTO navigation and a secondary dataset link. R002 covers preservation of captured evidence and an explicit current/captured distinction. R003 covers observed real-building results and limits. R004 covers the frontend boundary and protected backend, contracts, dependencies, calculations, main, and PR 241. R005 covers a truthful architect-value answer, manual alternatives, and professional judgment. These are independently testable outcomes, source anchored, and all five bind M5-T030. R006 and R007 remain pending delivery obligations bound only to D-062-DELIVERY; their separate verification does not block implementation dispatch and must not be omitted from eventual directive completion.
+
+S1 exercises all intended evidence surfaces and captured metadata. S2 covers identity/source/dataset mismatches, unsafe reflected URLs, and all five boroughs, including red-before-green and wrong-lot mutation evidence. S3 specifies an actual Empire State Building workflow, exact BBL 1008350041, official response comparison, timestamp, and address-alias explanation. S4 preserves required gates and scope. S5 specifies the user-facing architect-value return. The source verification report is at project-control/reports/M5-T030-source-verification.md; the shorter reports/ path supplied in the review request is absent, but the task input is correct.
+
+Existing provenance-link.ts has the correct URL-validation responsibility and currently supplies only dataset links. EvidenceRecord.tsx owns evidence presentation and retains full escaped captured records; its current cross-source dataset fallback is within the defect cluster that S2 and the task path notes explicitly require correcting. The packet keeps URL construction in the existing helper, presentation in existing components, and requires no new dependency or fetch layer. Allowed and forbidden paths are compatible with this bounded frontend change. Run the legacy provenance-disclosure test alongside affected tests if that component changes; the documented full CI remains required.
+
+Commands independently run: git rev-parse HEAD origin/main returned the SHAs above. Read-only Python SHA-256 checks matched both manifest entries. python tools/validate_directive_compliance.py --check exited 1 with exactly one error: c14 [D-062] in-regime affected task M5-T030 has no task_verification row. The returned pending row remedies that intake omission; the orchestrator must persist it and rerun the validator before claim/dispatch. No other blocking finding was identified.
+
+Review limits: the bounded packet does not include the original chat message outside its captured source, so byte identity to the external conversation cannot be independently cross-checked. Prior authorization and M5-T029 acceptance are inherited context supplied by the orchestrator and the packet, not newly granted here. The existing independent source report was inspected; its external HTTP checks were not repeated in this intake review. Implementation, live UI behavior, frozen-head CI, protected remote state, candidate publication, and Render delivery remain for subsequent evidence and independent review. No files, control state, or external records were changed.
+
+The final intake task edit adds all seven modularity boundary answers; the responsibility, module, extraction, public-interface, boundary-test, and submission-gate answers are consistent with the inspected helper and evidence component. The other three production-module line counts were supplied by the orchestrator and were not independently recounted in this bounded review.

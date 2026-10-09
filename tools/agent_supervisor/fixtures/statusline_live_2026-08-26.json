@@ -1,0 +1,125 @@
+{
+ "capture_method": "Live interactive Claude Code 2.1.220 TUI in an isolated scratch project whose project-level settings wired statusLine to a tee script; the two payloads below are the raw stdin JSON the runtime delivered on (1) session start before any API response and (2) the refresh after the first API response. No repository settings were touched; the scratch project was discarded.",
+ "captured_at_utc": "2026-08-26",
+ "doc_url": "https://code.claude.com/docs/en/statusline",
+ "installed_version_proof": {
+  "claude_version_output": "2.1.220 (Claude Code)",
+  "cross_reference": "fixtures/capability_probe_live_2026-08-25.json",
+  "payload_version_field": "2.1.220"
+ },
+ "masking": "home-directory prefixes masked to [HOME] via telemetry_redaction.redact_user_paths (PUBLIC repo); all other content verbatim from the live capture",
+ "payloads": {
+  "post_first_response_with_rate_limits": {
+   "context_window": {
+    "context_window_size": 1000000,
+    "current_usage": {
+     "cache_creation_input_tokens": 39073,
+     "cache_read_input_tokens": 0,
+     "input_tokens": 2,
+     "output_tokens": 4
+    },
+    "remaining_percentage": 96,
+    "total_input_tokens": 39075,
+    "total_output_tokens": 4,
+    "used_percentage": 4
+   },
+   "cost": {
+    "total_api_duration_ms": 4866,
+    "total_cost_usd": 0.7828519999999999,
+    "total_duration_ms": 44521,
+    "total_lines_added": 0,
+    "total_lines_removed": 0
+   },
+   "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\65bbb127-e398-4a72-af11-942df4c2a2ed\\scratchpad\\slcap",
+   "effort": {
+    "level": "xhigh"
+   },
+   "exceeds_200k_tokens": false,
+   "fast_mode": false,
+   "model": {
+    "display_name": "Fable 5",
+    "id": "claude-fable-5"
+   },
+   "output_style": {
+    "name": "default"
+   },
+   "prompt_id": "8f086f63-fb69-4c81-b9a3-78406c3f88cf",
+   "rate_limits": {
+    "five_hour": {
+     "resets_at": 1787721600,
+     "used_percentage": 28.999999999999996
+    },
+    "seven_day": {
+     "resets_at": 1787878800,
+     "used_percentage": 33
+    }
+   },
+   "session_id": "8f7ac3c5-7627-4357-9b39-ddd0dbd6dbe2",
+   "session_name": "Respond with exact acknowledgment",
+   "thinking": {
+    "enabled": true
+   },
+   "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-65bbb127-e398-4a72-af11-942df4c2a2ed-scratchpad-slcap\\8f7ac3c5-7627-4357-9b39-ddd0dbd6dbe2.jsonl",
+   "version": "2.1.220",
+   "workspace": {
+    "added_dirs": [
+     "[HOME]\\.claude",
+     "[HOME]\\AppData\\Local\\Temp",
+     "[HOME]\\Downloads\\nyc zoning",
+     "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\dependency-security",
+     "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\orchestration"
+    ],
+    "current_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\65bbb127-e398-4a72-af11-942df4c2a2ed\\scratchpad\\slcap",
+    "project_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\65bbb127-e398-4a72-af11-942df4c2a2ed\\scratchpad\\slcap"
+   }
+  },
+  "startup_pre_first_response": {
+   "context_window": {
+    "context_window_size": 1000000,
+    "current_usage": null,
+    "remaining_percentage": null,
+    "total_input_tokens": 0,
+    "total_output_tokens": 0,
+    "used_percentage": null
+   },
+   "cost": {
+    "total_api_duration_ms": 0,
+    "total_cost_usd": 0,
+    "total_duration_ms": 30093,
+    "total_lines_added": 0,
+    "total_lines_removed": 0
+   },
+   "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\65bbb127-e398-4a72-af11-942df4c2a2ed\\scratchpad\\slcap",
+   "effort": {
+    "level": "xhigh"
+   },
+   "exceeds_200k_tokens": false,
+   "fast_mode": false,
+   "model": {
+    "display_name": "Fable 5",
+    "id": "claude-fable-5"
+   },
+   "output_style": {
+    "name": "default"
+   },
+   "session_id": "8f7ac3c5-7627-4357-9b39-ddd0dbd6dbe2",
+   "thinking": {
+    "enabled": true
+   },
+   "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-65bbb127-e398-4a72-af11-942df4c2a2ed-scratchpad-slcap\\8f7ac3c5-7627-4357-9b39-ddd0dbd6dbe2.jsonl",
+   "version": "2.1.220",
+   "workspace": {
+    "added_dirs": [
+     "[HOME]\\.claude",
+     "[HOME]\\AppData\\Local\\Temp",
+     "[HOME]\\Downloads\\nyc zoning",
+     "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\dependency-security",
+     "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\orchestration"
+    ],
+    "current_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\65bbb127-e398-4a72-af11-942df4c2a2ed\\scratchpad\\slcap",
+    "project_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\65bbb127-e398-4a72-af11-942df4c2a2ed\\scratchpad\\slcap"
+   }
+  }
+ },
+ "schema": "statusline_live_fixture/v1"
+}

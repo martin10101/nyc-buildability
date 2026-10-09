@@ -1,0 +1,52 @@
+{
+  "snapshot_id": "zr-12-10-qualifying-exterior-wall-thickness",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - qualifying exterior wall thickness",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-07T03:50:00Z",
+    "http_status": 200,
+    "response_bytes": 1316758,
+    "raw_html_sha256": "3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc",
+    "portal_node_id": "18523",
+    "defined_term": "qualifying exterior wall thickness",
+    "defined_term_node_id": "22339",
+    "last_amended_machine_readable": "2023-12-06T12:00:00Z",
+    "last_amended_display": "12/6/2023",
+    "section_last_amended": "2023-12-06",
+    "section_last_amended_source_text": "Last Amended 12/6/2023 (ZR 12-10 term 'qualifying exterior wall thickness', /node/22339)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523) shows Last Amended 3/26/2026, which is the date of the most-recently-amended term on the page ('street, wide'); the operative provenance for THIS term is its own per-term Last Amended stamp (12/6/2023, /node/22339) recorded above.",
+    "capture_method": "M4-T025 in-task capture 2026-10-07 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned 504 (retried) so it could not confirm the list-marker glyphs; this is the documented fallback used by the accepted zr-12-10 capture. The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined term only. Per ADR-007 a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-07T03:50:00Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-07, retried once (~59 s, 504 again) - the same documented behaviour recorded in the accepted zr-12-10 capture. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used. No per-term node is directly reachable: the term node page and its print/PDF both return HTTP 403; the term text is served only within the whole-page HTML. The term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article) and self-checked for word-completeness against the raw HTML bytes (every word of the definition present; only list-position labels added and whitespace normalized).",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "“Qualifying exterior wall thickness” shall refer to the floor space occupied by exterior wall thickness added to a #building# existing on December 6, 2023, where:\n\n(1) for over-cladding projects: such wall thickness is added to a wall existing on December 6, 2023, up to a maximum of 12 inches, provided the added wall thickness has an aggregate thermal resistance (R-value) of at least 1.5 per inch; or\n\n(2) for re-cladding projects: such wall thickness is located within a new wall that replaces a wall existing on December 6, 2023, where the qualifying portion is occupied by additional thickness relative to the previous wall, up to a maximum of 12 additional inches, and provided that the new wall shall comply with the minimum prescriptive and mandatory requirements for building thermal envelopes of the current New York City Energy Conservation Code.\n\n#Qualifying exterior wall thickness# shall also include exterior wall thickness in exterior walls constructed between April 30, 2012 and December 6, 2023 where such exterior wall thickness satisfied the requirements of paragraph (12)(ii) of the definition of #floor area# in effect at the time of construction.\n\n#Qualifying exterior wall thickness# need not exclusively contain insulating materials and may include wall thickness occupied by conduits, ductwork, pipes, or other essential non-insulating building components.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph and each ordered-list item of the defined term's definition body. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. Ordered-list items carry a parenthesized label that is the item's ORDINAL POSITION within its HTML ordered-list, one distinct family per nesting depth so nesting is never ambiguous (depth 1 arabic (1); depth 2 lowercase roman (i); depth 3 lowercase letter (a); depth 4 uppercase letter (A)). Because the §12-10 print/PDF channel is unavailable (504), these labels are a markup-position representation, NOT a transcription of a confirmed label glyph; the item TEXT is verbatim from the sha256-pinned canonical HTML.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined term 'qualifying exterior wall thickness') for the R6B checks / measurement-basis work order (task M4-T025, D-090 R400/R403; discovery DB-156). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523). The whole-page print/PDF completeness channel returned HTTP 504 (retried) - the documented fallback of the accepted zr-12-10 capture - so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel for this term.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "119324c8b82348cd82b354565a36468bb60e5f3680d19143f7bccfb4d16bc7bf"
+}

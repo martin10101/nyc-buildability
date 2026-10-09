@@ -1,0 +1,193 @@
+{
+  "task_id": "M5-T147",
+  "title": "Show the first building option on the results SCREEN (task 2 of 2, ONE PR with task 1; one web part): the panel reads the additive 1.4.0 document and shows building_alternatives as labelled alternatives with their floor schedules and each building's preliminary capacity estimate (editable preliminary assumptions), coverage by portion (withheld on the benchmark, no figure); a withheld result shows withheld with no number and no substitute; nothing feasible; overall label 'Preliminary zoning results'; the web tests that read the committed document are updated for the additive blocks [D-090 R256,R509,R526,R540,R541,R543,R544,R556,R570,R641,R688,R700]",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "TASK 2 of 2 (reviewed at ONE common head with task 1 and merged as ONE pull request). Show on the results SCREEN what task 1 put into the document. PART C: the web panel (ThreeAnswersPanel.tsx, AnswerCard.tsx) reads the additive 1.4.0 contract and shows building_alternatives as a LIST of labelled alternatives, each with its floor schedule and its own preliminary capacity estimate (benchmark: building B alone, 17.27-21.59); coverage by portion as law text with the footprint figure withheld on the benchmark (no number); the legal dwelling-unit limit as withheld with no number and no substitute; nothing feasible, what has not been checked shown; the overall label 'Preliminary zoning results'. Every value is read from the document, never typed. The web source that reads existing blocks is unchanged (additive); the web files that pin the contract version or read the committed document are updated for 1.4.0 and the new blocks (lib/results-contract-checks.ts and lib/study/study-vocabulary.ts if they pin the version; the web content tests journey-215-16-northern.test.tsx, lib/__tests__/results-api.test.ts, and e2e/results.flag-on.spec.ts). The e2e/human-journey walkthrough runs against task 1's regenerated document.",
+  "business_reason": "Task 1 makes the first building option and the preliminary capacity estimate appear in the document and the register; task 2 puts them on the owner's screen, the piece the owner sees, in the owner's order. It is a separate task, a separate builder (frontend-engineer) and a separate review (a human-journey walkthrough of the running screen), reviewed at the same head as task 1 and merged in the same pull request so the whole CI is green once. It edits apps/web only and shares no file with task 1.",
+  "inputs": [
+    "Task 1's additive 1.4.0 contract (packages/contracts/schemas/v1/results.schema.json, generated/results.ts): building_alternatives a list with floor schedules and each building's preliminary capacity estimate; the by-portion coverage fields; a withheld result carries no number.",
+    "Task 1's regenerated committed document packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json (the web content tests read it).",
+    "The web consumers found in the sweep: source apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx, AnswerCard.tsx, three-answers.css; lib/results-contract-checks.ts and lib/study/study-vocabulary.ts (version pins, if any); tests apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx, lib/__tests__/results-api.test.ts, lib/__tests__/results-contract-checks.test.ts; browser test apps/web/e2e/results.flag-on.spec.ts. The other web files read existing blocks and are unchanged under the additive contract.",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json rows real-building-b and real-estimate-b (the benchmark values the panel shows), for the test expectations.",
+    "The owner's standing rules: D-090 R543 (labels), R540/R541/R700/R256 (preliminary, editable), R509/R544/R688 (estimate from the building; legal limit separate), R556/R570 (withheld never a substitute), R526 (nothing feasible), R641 (overall label)."
+  ],
+  "outputs": [
+    "The web panel showing building_alternatives, the floor schedule, each building's preliminary capacity estimate and the by-portion coverage from the document, with the withheld rules kept and nothing called feasible; the web content tests updated for the additive blocks; the e2e/human-journey walkthrough against task 1's regenerated document.",
+    "One part report project-control/reports/M5-T147-part-C.md; the packet report project-control/reports/M5-T147-producer-report.md assembled by the orchestrator."
+  ],
+  "dependencies": [
+    "M4-T038",
+    "M5-T145",
+    "M5-T146"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/answers",
+    "apps/web/src/lib/architect",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "apps/web/src/lib/study/study-vocabulary.ts",
+    "apps/web/src/lib/__tests__",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "project-control/reports/M5-T147-part-C.md",
+    "project-control/reports/M5-T147-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts",
+    "services/api"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "PART C: the panel shows building_alternatives with the floor schedule",
+      "input": "the benchmark document (building_alternatives a list of one, building B)",
+      "expected": "the panel shows building B as a labelled alternative with its floor schedule (3 storeys of 6,716.67, 20,150, 30 ft); it reads the list, so more alternatives would show without a shape change; nothing is called feasible. Basis: step-p6-worked#real-building-b."
+    },
+    {
+      "id": "S2",
+      "case": "PART C: the panel shows each building's preliminary capacity estimate",
+      "input": "the benchmark document (building B's capacity estimate)",
+      "expected": "the panel shows 'Preliminary capacity estimate' 17.27-21.59, with the share 0.60-0.75 and size 700 sq ft shown as editable preliminary assumptions, separate from the legal limit. Basis: step-p6-worked#real-estimate-b; D-090 R540/R541/R688/R700."
+    },
+    {
+      "id": "S3",
+      "case": "PART C: the panel shows coverage by portion withheld with no figure",
+      "input": "the benchmark document (max_lot_coverage withheld)",
+      "expected": "the panel shows the law of coverage by portion (corner 100%, interior 80%, within 100 ft) and that the footprint figure is withheld (a survey or deed would settle it); it shows no square-foot figure (R556/R570)."
+    },
+    {
+      "id": "S4",
+      "case": "PART C: the legal dwelling-unit limit shows withheld",
+      "input": "the benchmark document (legal limit withheld)",
+      "expected": "the panel shows the legal dwelling-unit limit as withheld - no number, no older or substitute value (R556/R570) - separate from the estimate (R688)."
+    },
+    {
+      "id": "S5",
+      "case": "PART C: a withheld result never falls back to a substitute",
+      "input": "a fixture with a withheld coverage result and an earlier value available",
+      "expected": "the panel shows it withheld; a test proves no older or substitute value appears in its place (R570)."
+    },
+    {
+      "id": "S6",
+      "case": "PART C: the panel shows what has not been checked and nothing feasible",
+      "input": "the benchmark document (building B; placement and parking/loading/bicycle not checked)",
+      "expected": "the panel shows the option as a draft shape, lists what has not been checked (placement, street wall, parking/loading/bicycle) and never calls it feasible (R526)."
+    },
+    {
+      "id": "S7",
+      "case": "PART C: the overall label and the web content tests",
+      "input": "task 1's regenerated committed document (1.4.0)",
+      "expected": "the overall results label is 'Preliminary zoning results' (R641); the web content tests (journey-215-16-northern.test.tsx, results-api.test.ts, results-contract-checks.test.ts) pass against the regenerated document and the 1.4.0 version."
+    },
+    {
+      "id": "S8",
+      "case": "PART C: the human-journey walkthrough of the running screen",
+      "input": "the running screen on task 1's regenerated document (e2e/results.flag-on.spec.ts)",
+      "expected": "the screen shows building B with its floor schedule and estimate, the coverage withheld-by-portion and the legal limit withheld (no substitute); nothing is called feasible; the human-journey reviewer confirms the walkthrough."
+    },
+    {
+      "id": "S9",
+      "case": "The walkthrough's F1: no building listed (16 ft)",
+      "input": "a 1.4.0 document with no building listed and buildings_not_worked naming A and B",
+      "expected": "the Building options section shows each building's label, reason and what would resolve it, all from the document; no lead about worked shapes and no empty heading; no false reason anywhere on the screen."
+    },
+    {
+      "id": "S10",
+      "case": "A building not worked beside a listed one",
+      "input": "the regenerated benchmark document (building B listed, building A not worked)",
+      "expected": "building A's name and reason appear after the listed building; nothing in them reads as a figure for the footprint."
+    },
+    {
+      "id": "S11",
+      "case": "The walkthrough's N4: a narrow screen (420 px)",
+      "input": "the floor table at 420 px",
+      "expected": "the table scrolls inside its own named, keyboard-reachable box; the Running total column is reachable; the page does not scroll sideways."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "ONE PR WITH TASK 1: this task is reviewed at the SAME head as task 1 and merged in the SAME pull request; it starts after task 1's PART A (contract) is integrated on the branch, and its content tests and e2e run against task 1's PART E regenerated document. It edits apps/web only and shares no file with task 1 (packages/contracts and services/api are forbidden). Task 1's id is set by the orchestrator (dependencies here hold only existing task ids, W7); the wait on task 1 is stated here, not in dependencies.",
+    "ADDITIVE: the web source that reads existing blocks is unchanged; only the panel (to render the new blocks), the version pins (if any) and the web content tests change. Confirm by rerunning lint, typecheck and the web tests.",
+    "WITHHELD ON THE SCREEN (R556/R570): the panel never shows an older or substitute value for a withheld result - the footprint figure and the legal dwelling-unit limit show as withheld on the benchmark.",
+    "OWNER DECISION pending (DB-210 b): the panel reads building_alternatives as a LIST, so when the owner picks one building the content changes and the panel does not; the benchmark list is building B alone.",
+    "NOTHING FEASIBLE (R526): the panel never calls an option feasible and shows what has not been checked."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T10:47:18.939040+00:00",
+  "updated_at": "2026-10-09T23:29:44.698590+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R256",
+        "D-090-R509",
+        "D-090-R526",
+        "D-090-R540",
+        "D-090-R541",
+        "D-090-R543",
+        "D-090-R544",
+        "D-090-R556",
+        "D-090-R570",
+        "D-090-R641",
+        "D-090-R688",
+        "D-090-R700"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T10:47:18.939277+00:00",
+  "path_notes": "TASK 2 of 2; ONE web part (PART C), one frontend-engineer. Reviewed at ONE common head with task 1 and merged as ONE pull request; it runs IN PARALLEL with task 1's PART B (server) and PART D (register) after task 1's PART A (contract) is integrated - three builders on disjoint folders (apps/web vs services/api/app/scenario vs services/api/app/rules/review_register). Its web content tests and e2e run against task 1's PART E regenerated committed document. It edits apps/web ONLY (src and e2e) and shares NO file with task 1 (packages/contracts and services/api forbidden). The panel reads every value from the document, never typed: building_alternatives as a list of labelled alternatives (benchmark: building B alone) each with its floor schedule and its preliminary capacity estimate (owner labels 'Not known' / 'Preliminary capacity estimate', R543; editable preliminary assumptions, share 0.60-0.75 and size 700, R540/R541/R700/R256); coverage by portion as law text with the footprint figure withheld on the benchmark (R556/R570); the legal dwelling-unit limit withheld, separate from the estimate (R688); nothing feasible, what has not been checked shown (R526); the overall label 'Preliminary zoning results' (R641). Under the additive contract the web source that reads existing blocks is unchanged; update the panel to render the new blocks, the version pins in lib/results-contract-checks.ts and lib/study/study-vocabulary.ts if they list contract versions, and the web content tests journey-215-16-northern.test.tsx, lib/__tests__/results-api.test.ts and lib/__tests__/results-contract-checks.test.ts and e2e/results.flag-on.spec.ts for the 1.4.0 blocks. Web checks on the Linux dev server: npx --yes npm@11.18.0 ci --no-audit --no-fund (once), npm run lint, typecheck, the touched tests, e2e with the lanes venv first on PATH and PYTHONPATH set to the api; never on the owner's PC.\n\nTHE ORCHESTRATOR'S RULINGS (they govern wherever they differ from the text above). W1: where the recorded lot area and the tax-map outline's area DISAGREE (the existing comparison of reading O15; no tolerance is invented), the footprint in square feet by portion is NOT shown: the outline's area is a drawing measure and is never used in a zoning calculation (work order `docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md`, section 6; rows R257, R239). The coverage result stays withheld there, kind 'a missing fact about the property' (a survey or deed dimensions would settle it), and its text gives what the law gives by portion without a square-foot figure. Where the two areas agree, the figure is shown. The owner was asked on 2026-10-09 whether to show it instead as conditional on the outline; until an answer, this rule stands. W2: building B is shown where its plan (the allowance divided by its storeys) is at most the LOWEST coverage ratio that can apply to the lot times the RECORDED lot area (benchmark lot: 0.80 x 10,075 = 8,060 sq ft against 6,716.67). The bound is passed to the module as its footprint input and the text says what it is. It applies only where 80 percent is the lowest applicable ratio (the rule file's lower ratios for large lots stay withheld as today). Building B is CONDITIONAL, never settled or confirmed (row R267): on the recorded lot area being confirmed, on the standing conditions every zoning result carries, and on what was not checked. Building A needs the footprint figure: where that is withheld, building A is not listed and is not known (kind: a missing fact about the property). W3: WHICH buildings an option shows is the owner's open decision (backlog row DB-210 b). Until an answer, the document lists EVERY building that can be worked for the lot as a labelled alternative, none marked preferred or default. W4: the estimate is worked for each listed building from that building's own floor area; label exactly as row R543 says. W5: 'the plan fits the coverage' is not 'the building fits the lot'. Each listed building carries, as data and as plain text, what was NOT checked (the rear yard beyond the corner; where the plan sits on the lot; the street wall; parking, loading and bicycle requirements: rows R526, R548). Nothing is called feasible, complies, validated or legally correct. No placement is worked, so no footprint and no floor plate is drawn for the benchmark lot: the geometry block follows every withheld result it draws (task M5-T144). W6: the two tasks (M5-T146 the document, M5-T147 the screen) are built on ONE branch, reviewed at ONE common head and merged as ONE pull request, because the regenerated document changes what the website's tests read. Order: part A (the contract) alone; then part B (server), part D1 (the register checker's split and the two guards of backlog row DB-211) and part C (the website, task M5-T147) side by side on separate folders; then part D2 (the register's data) and part E (the document and snapshots regenerated ONCE); then the website's content tests against the regenerated document. W7: the share range and the apartment size are SHOWN with the values used and called preliminary assumptions. Letting the user CHANGE them on the screen is not in these two tasks unless the existing input path already carries such a value end to end; it is work owed and is recorded in the backlog. W8: a builder who finds that a file outside its part must change STOPS and reports; it does not widen its scope. A legal figure is quoted only from a capture. No human verdict is entered.\n\nCORRECTION AFTER THE WALKTHROUGH (orchestrator, 2026-10-09; the walkthrough FAILED at head 7cf94e09fcb384677f707b13113cae4f8116c4a9 on F1 and noted N4). W15: (a) The Building options section reads the new list `buildings_not_worked` of task M5-T146 (ruling W14). When no building is listed, the section shows each not-worked building's label, reason and what would resolve it, and no lead that speaks of worked shapes: never an empty heading. When buildings are listed, the not-worked ones are named after the list with their reasons. Every word comes from the document; the screen gives no reason of its own and no false one anywhere (the single Building option card included). (b) At narrow widths (420 px) the floor table scrolls inside its own box, keyboard-reachable and named, with its Running total column reachable; the page itself never scrolls sideways (N4). (c) Tests for the empty-list state, the not-worked names beside a listed building, and the narrow table; the browser test gains a 16 ft run if the live route can give it. No builder stops the owner's preview (ports 3000, 3001, 8000).",
+  "documented_test_commands": [
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund",
+    "cd apps/web && npm run lint",
+    "cd apps/web && npm run typecheck",
+    "cd apps/web && npx vitest run src/components/architect/answers src/lib/__tests__",
+    "cd apps/web && npx playwright test e2e/results.flag-on.spec.ts"
+  ],
+  "worktree": "/root/project/w-wave19",
+  "progress_log": [
+    {
+      "at": "2026-10-09T10:47:36.986858+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed; the website part starts when part A of M5-T146 is integrated."
+    },
+    {
+      "at": "2026-10-09T20:32:49.814395+00:00",
+      "agent": "frontend-engineer",
+      "percent": 70,
+      "status": "claimed",
+      "message": "All parts integrated and checked at 20:32 UTC on the integrated head: server ruff 0; server folders (three_answers, spatial, journey, api, drawings, cad, pdf content, register, reference cases) 3664 passed 8 skipped; register check 0; contract validation 0; .github/scripts/tests 24 passed; bundle check 0; modularity 0; lane coverage 0; website lint 0, typecheck 0, vitest 103 files 2206 tests. The browser test ran green in its builder's worktree; CI runs it on the pushed head. Producers' report assembled from the part reports. Next: push, CI, reviews."
+    },
+    {
+      "at": "2026-10-09T23:15:26.041944+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; corrected after the walkthrough (ruling W15); four delta reviews PASS at f237d0d7; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-09T21:36:48+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, after the walkthrough FAILED at 7cf94e09 (F1, N4)] ruling W15 and scenarios S9 to S11: the screen shows why each building was not worked, from the document, never an empty heading; the floor table scrolls inside its box on narrow screens. No path, gate, reviewer or bound row changed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T23:29:44.698455+00:00"
+}

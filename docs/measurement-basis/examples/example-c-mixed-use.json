@@ -1,0 +1,1213 @@
+{
+  "example_id": "example-c-mixed-use",
+  "title": "Example C - a made-up mixed-use building (retail ground floor, residences above)",
+  "mixed_use": true,
+  "made_up_note": "This layout is made up - a deliberately simple example, not a real property and not a detailed or permit-ready design. Every dimension is stated so each area can be recomputed. The maximum floor area the law allows is used only as a limit to check the layout against, never as the measured space.",
+  "standing_label": "This is a draft reading of the law and a guideline by an AI; it is not professionally reviewed and is not a legal or professional determination. Each statistic links to its source text (ADR-007).",
+  "building": "A made-up five-storey mixed-use building: a retail ground floor (sales floor, a back room and the retail's own walls) beside a residential lobby, a shared utility room and the residential core, with four identical residential floors above (two apartments each, reached off a corridor). The stair and the elevator pass through the ground floor and every residential floor. The apartment estimate uses only the RESIDENTIAL portion's zoning floor area, including the counted residential circulation; the retail floor is not added to it, and the shared utility room is attributed under ZR 23-20 rather than added. On every floor the components, the exterior wall ring among them, add up to exactly the floor's stated outline (ground 44 x 70 = 3,080 sq ft; residential 44 x 58 = 2,552 sq ft).",
+  "assumptions_note": "Design choices are made up and editable. Each component is marked exclusive to one use (residential or commercial) or shared; how the mixed building combines its residential and commercial floor areas is itself a question of law not settled here.",
+  "components": [
+    {
+      "component_id": "apartment-interior",
+      "name": "Apartment net interior floor (rooms within the units)",
+      "portion": "residential",
+      "how_measured": "Finished room areas within the demising walls, from the stated room sizes.",
+      "area_parts": [
+        {
+          "label": "apartment rooms, 4 residential floors",
+          "sign": "add",
+          "width_ft": 43,
+          "depth_ft": 40,
+          "count": 4
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (gross floor space used for dwelling)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Dwelling floor space; counts in full under zoning."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "any other floor space used for dwelling purposes, no matter where located within a building, when not specifically excluded",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "count",
+        "reason": "Measured within the perimeter walls to the finished face; this is the unit area.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 6880
+      },
+      "notes": "The apartments' own usable floor.",
+      "measured_area": 6880,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 1720
+        }
+      ]
+    },
+    {
+      "component_id": "interior-partitions",
+      "name": "Interior partitions within the apartments (non-demising)",
+      "portion": "residential",
+      "how_measured": "Footprint of the non-demising partition walls inside the units.",
+      "area_parts": [
+        {
+          "label": "interior partitions, 4 residential floors",
+          "sign": "add",
+          "width_ft": 1,
+          "depth_ft": 60,
+          "count": 4
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (gross floor space)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Gross floor space; counts under zoning."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "count",
+        "reason": "Internal partitions sit inside the measured perimeter and are included; the model must not subtract all apartment walls.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "All other structural members — including freestanding columns and columns attached to interior partitions — are included in unit area calculations",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 240
+      },
+      "notes": "Shows that apartment-internal partitions stay in HPD unit area.",
+      "measured_area": 240,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 60
+        }
+      ]
+    },
+    {
+      "component_id": "demising-partitions",
+      "name": "Demising / party-wall thickness (between units and unit-to-corridor)",
+      "portion": "residential",
+      "how_measured": "Footprint of the demising wall thickness.",
+      "area_parts": [
+        {
+          "label": "demising partitions, 4 residential floors",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 48,
+          "count": 4
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (measured to exterior/centre lines; gross)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Part of gross floor area; counts under zoning."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Integral components of demising partitions are excluded from unit area (measured to the finished face).",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Structural members that are integral components of exterior walls or demising partitions, as well as all mechanical and plumbing chases, are excluded from unit area calculations",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "A zoning-only component.",
+      "measured_area": 384,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 96
+        }
+      ]
+    },
+    {
+      "component_id": "exterior-walls",
+      "name": "Exterior wall thickness (perimeter ring)",
+      "portion": "residential",
+      "how_measured": "Outer footprint minus the inner (clear) footprint, over the stated floors.",
+      "area_parts": [
+        {
+          "label": "residential-core perimeter wall run, ground floor",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 52,
+          "count": 1
+        },
+        {
+          "label": "outer footprint, 4 residential floors",
+          "sign": "add",
+          "width_ft": 44,
+          "depth_ft": 58,
+          "count": 4
+        },
+        {
+          "label": "inner (clear) footprint, 4 residential floors",
+          "sign": "subtract",
+          "width_ft": 42,
+          "depth_ft": 56,
+          "count": 4
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (measured from the exterior faces of exterior walls)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Gross floor area is measured to the exterior wall face, so wall thickness counts. A qualifying-exterior-wall-thickness portion could be excluded under ZR 12-10 if the over-cladding/energy conditions are met (not shown here)."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Integral components of exterior walls are excluded from unit area.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Structural members that are integral components of exterior walls or demising partitions, as well as all mechanical and plumbing chases, are excluded from unit area calculations",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "The largest zoning-only item; it must NOT be deducted from HPD a second time if a qualifying-wall exclusion were later taken under zoning.",
+      "measured_area": 904,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 104
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 200
+        }
+      ]
+    },
+    {
+      "component_id": "corridor",
+      "name": "Shared corridors",
+      "portion": "residential",
+      "how_measured": "Corridor width times length, over the stated floors.",
+      "area_parts": [
+        {
+          "label": "residential corridor 5 ft x 44 ft, 4 floors",
+          "sign": "add",
+          "width_ft": 5,
+          "depth_ft": 44,
+          "count": 4
+        }
+      ],
+      "zoning": {
+        "treatment": "exclude_if_condition",
+        "provision": "ZR 23-23 / ZR 23-232 (corridor floor-area provisions); ZR 12-10 exclusion",
+        "condition": "50% may be exempted with the termination/daylighting/outdoor-access criteria; another 50% where the corridor is no more than 100 ft; the provisions may combine",
+        "condition_shown": true,
+        "exclusion": {
+          "method": "min_of",
+          "candidates": [
+            {
+              "label": "50 percent of the corridor floor space",
+              "operation": "multiply",
+              "operands": [
+                "880",
+                "0.50"
+              ],
+              "result": 440
+            }
+          ],
+          "note": "The corridor is 44 ft - no more than 100 ft - so the length-based 50 percent (ZR 23-232(b)) is exempt; the daylighting criterion of ZR 23-232(a) is not shown, so that other 50 percent counts."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "23-23",
+            "title": "Special Floor Area Provisions for Multiple Dwelling Residences",
+            "quote": "floor space allocated to building amenities, corridors, refuse storage or disposal, or access to elevated ground floor dwelling units may be exempted from the definition of floor area pursuant to Section 12-10, provided that the provisions of this Section, inclusive, are met",
+            "snapshot_id": "zr-23-23",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-23.snapshot.json",
+            "content_digest": "6dd17af023030a301d6ebcea5f7a18322a57e7b37a6f6d72406cc6f49054961f",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-23",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          },
+          {
+            "kind": "captured",
+            "section": "23-232",
+            "title": "Floor area provisions for corridors",
+            "quote": "Fifty percent of the floor space of a corridor may be exempted from the definition of floor area",
+            "snapshot_id": "zr-23-232",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-232.snapshot.json",
+            "content_digest": "0a79cda6656d8d0c32a10e052cdf5e4b668297af1c411180331139401fc13ad2",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-232",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          },
+          {
+            "kind": "captured",
+            "section": "23-232",
+            "title": "Floor area provisions for corridors",
+            "quote": "where the length of the corridor, as measured from the vertical circulation core to the door of the furthest dwelling unit on the story, does not exceed 100 linear feet",
+            "snapshot_id": "zr-23-232",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-232.snapshot.json",
+            "content_digest": "0a79cda6656d8d0c32a10e052cdf5e4b668297af1c411180331139401fc13ad2",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-232",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          },
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "floor space in buildings containing multiple dwelling residences allocated to building amenities, corridors, refuse storage or disposal, or access to elevated ground floor dwelling units that is provided in accordance with the provisions of Section 23-23, inclusive",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 440
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Circulation between units; not within a dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "The corridor is 44 ft - no more than 100 ft - so the length-based 50 percent is exempt; the daylighting criterion is not shown, so the other 50 percent counts.",
+      "measured_area": 880,
+      "floor_areas": [
+        {
+          "floor_id": "typical-res",
+          "area": 220
+        }
+      ]
+    },
+    {
+      "component_id": "stair",
+      "name": "Stairs / stairwells",
+      "portion": "residential",
+      "how_measured": "Stair footprint over the stated floors.",
+      "area_parts": [
+        {
+          "label": "residential stair, ground + 4 residential floors",
+          "sign": "add",
+          "width_ft": 10,
+          "depth_ft": 18,
+          "count": 5
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (stairwells at each floor, except as excluded)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Counts under zoning; the tall-building stairwell exclusions (over 125 ft / 420 ft or more) do not apply to this low building."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "elevator shafts or stairwells at each floor, except as specifically excluded in this definition",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Shared vertical circulation; not within a dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "A zoning-only component.",
+      "measured_area": 900,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 180
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 180
+        }
+      ]
+    },
+    {
+      "component_id": "elevator",
+      "name": "Elevator shaft",
+      "portion": "residential",
+      "how_measured": "Shaft footprint over the levels it passes.",
+      "area_parts": [
+        {
+          "label": "elevator shaft, ground + 4 residential levels",
+          "sign": "add",
+          "width_ft": 7,
+          "depth_ft": 8,
+          "count": 5
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (elevator shafts at each floor, except as excluded)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Counts under zoning."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "elevator shafts or stairwells at each floor, except as specifically excluded in this definition",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Shared vertical circulation; not within a dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "A zoning-only component.",
+      "measured_area": 280,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 56
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 56
+        }
+      ]
+    },
+    {
+      "component_id": "chases",
+      "name": "Mechanical and plumbing chases",
+      "portion": "residential",
+      "how_measured": "Chase footprint, counted across the floors.",
+      "area_parts": [
+        {
+          "label": "chases, ground + 4 residential floors",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 10,
+          "count": 5
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area (gross floor space; not accessory-mechanical rooms)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "These small chases are gross floor space and count under zoning (they are not the accessory mechanical-equipment room of ZR 12-10, which is excluded)."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "All mechanical and plumbing chases are excluded from unit area.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Structural members that are integral components of exterior walls or demising partitions, as well as all mechanical and plumbing chases, are excluded from unit area calculations",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "Uses the precise HPD term 'mechanical and plumbing chases'.",
+      "measured_area": 100,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 20
+        },
+        {
+          "floor_id": "typical-res",
+          "area": 20
+        }
+      ]
+    },
+    {
+      "component_id": "lobby",
+      "name": "Ground-floor lobby / entry",
+      "portion": "residential",
+      "how_measured": "Lobby footprint.",
+      "area_parts": [
+        {
+          "label": "residential lobby/entry",
+          "sign": "add",
+          "width_ft": 15,
+          "depth_ft": 20,
+          "count": 1
+        }
+      ],
+      "zoning": {
+        "treatment": "count",
+        "provision": "ZR 12-10 floor area; ZR 23-231 (amenity exclusion does NOT cover circulation)",
+        "condition": "",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "The amenity exclusion excludes circulation such as a lobby, so the lobby counts under zoning."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "23-231",
+            "title": "Floor area provisions for amenities",
+            "quote": "amenity space shall not include floor space for circulation through the building, including, corridors or vertical circulation spaces",
+            "snapshot_id": "zr-23-231",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-231.snapshot.json",
+            "content_digest": "81eb95e85b333eb86a0fc55413c78567d0b72d7ba9656041f77457f2263b49d6",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-231",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          },
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Shared entry/circulation; not within a dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "Shows an amenity-type space that does NOT qualify (it is circulation).",
+      "measured_area": 300,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 300
+        }
+      ]
+    },
+    {
+      "component_id": "shared-utility",
+      "name": "Shared utility / service room (serves both the shop and the residences)",
+      "portion": "shared",
+      "how_measured": "Ground-floor room footprint.",
+      "area_parts": [
+        {
+          "label": "shared utility room",
+          "sign": "add",
+          "width_ft": 10,
+          "depth_ft": 12,
+          "count": 1
+        }
+      ],
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 120
+        }
+      ],
+      "zoning": {
+        "treatment": "not_residential_portion",
+        "provision": "Shared floor area; ZR 23-20 proportional attribution",
+        "condition": "shared between the residential and commercial uses; attributed proportionately under ZR 23-20, not added to the residential exclusive zoning floor area here",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Shared floor area is not part of the residential EXCLUSIVE zoning floor area; it is attributed proportionately under ZR 23-20 and carried on the reconciliation as a separate, conditional line."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "23-20",
+            "title": "Floor area regulations",
+            "quote": "Where floor area in a building is shared by multiple uses, the floor area for such shared portion shall be attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot, less any shared floor area",
+            "snapshot_id": "zr-23-20",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-20.snapshot.json",
+            "content_digest": "0685a2e4e7002830a1c007dea23ac68c5c441f1a32eeb2e37b78000c5765d7cc",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-20",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          },
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "A shared service room; not within a dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "The one small SHARED component: its 120 sq ft is split between the uses under ZR 23-20 (see the reconciliation's shared-floor-area line), not added to the residential exclusive floor area.",
+      "measured_area": 120
+    },
+    {
+      "component_id": "retail-sales",
+      "name": "Retail sales floor (commercial)",
+      "portion": "non_residential",
+      "how_measured": "Ground-floor retail footprint.",
+      "area_parts": [
+        {
+          "label": "retail sales floor",
+          "sign": "add",
+          "width_ft": 40,
+          "depth_ft": 40,
+          "count": 1
+        }
+      ],
+      "zoning": {
+        "treatment": "not_residential_portion",
+        "provision": "Commercial floor area (its own FAR calculation)",
+        "condition": "belongs to the commercial portion; counted in the commercial floor-area calculation, not the residential portion",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "A shop floor is not added to the residential zoning floor area; mixed-use FAR and shared-space rules are checked separately."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Not a residential dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "Shows the residential estimate uses the residential portion only.",
+      "measured_area": 1600,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 1600
+        }
+      ]
+    },
+    {
+      "component_id": "retail-walls",
+      "name": "Retail exterior/demising walls (commercial)",
+      "portion": "non_residential",
+      "how_measured": "Retail wall footprint.",
+      "area_parts": [
+        {
+          "label": "retail storefront, demising wall to the core, back-room partition",
+          "sign": "add",
+          "width_ft": 2,
+          "depth_ft": 150,
+          "count": 1
+        }
+      ],
+      "zoning": {
+        "treatment": "not_residential_portion",
+        "provision": "Commercial floor area",
+        "condition": "part of the commercial portion",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Part of the commercial portion."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Not a residential dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "Commercial, excluded from the residential estimate.",
+      "measured_area": 300,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 300
+        }
+      ]
+    },
+    {
+      "component_id": "retail-back",
+      "name": "Retail back/storage room (commercial)",
+      "portion": "non_residential",
+      "how_measured": "Back-room footprint.",
+      "area_parts": [
+        {
+          "label": "retail back room",
+          "sign": "add",
+          "width_ft": 20,
+          "depth_ft": 20,
+          "count": 1
+        }
+      ],
+      "zoning": {
+        "treatment": "not_residential_portion",
+        "provision": "Commercial floor area",
+        "condition": "part of the commercial portion",
+        "condition_shown": false,
+        "exclusion": {
+          "method": "none",
+          "candidates": [],
+          "note": "Part of the commercial portion."
+        },
+        "citations": [
+          {
+            "kind": "captured",
+            "section": "12-10",
+            "title": "Definitions - floor area",
+            "quote": "measured from the exterior faces of exterior walls or from the center lines of walls separating two buildings",
+            "snapshot_id": "zr-12-10-floor-area",
+            "snapshot_file": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+            "content_digest": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9",
+            "official_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+            "last_amended": "2024-12-05",
+            "edition": "",
+            "date_read": "",
+            "status_note": ""
+          }
+        ],
+        "excluded_area": 0
+      },
+      "hpd": {
+        "treatment": "exclude",
+        "reason": "Not a residential dwelling unit.",
+        "citations": [
+          {
+            "kind": "guideline",
+            "section": "",
+            "title": "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION",
+            "quote": "Dwelling unit area is measured within the perimeter walls, from the finished face of all exterior walls and demising partitions",
+            "snapshot_id": "",
+            "snapshot_file": "",
+            "content_digest": "",
+            "official_url": "https://www.nyc.gov/assets/hpd/downloads/pdfs/services/hpd-design-guidelines-for-new-construction-2026.pdf",
+            "last_amended": "",
+            "edition": "2026",
+            "date_read": "2026-10-07",
+            "status_note": "A guideline, not law; it applies to projects developed under HPD loan programs whose design-consultation submission is on or after October 1, 2026."
+          }
+        ],
+        "counted_area": 0
+      },
+      "notes": "Commercial, excluded from the residential estimate.",
+      "measured_area": 400,
+      "floor_areas": [
+        {
+          "floor_id": "ground",
+          "area": 400
+        }
+      ]
+    }
+  ],
+  "legal_unit_cap": {
+    "max_residential_floor_area": 11000,
+    "factor": "680",
+    "raw_quotient": "16.1765",
+    "units_cap": 16,
+    "provision": "ZR 23-52",
+    "note": "The residential density ceiling is a separate figure, not derived from the physical estimate, and uses only the residential floor area; the retail floor area is not added. The measured residential zoning floor area (10,428 sq ft) differs from the 11,000 sq ft the stated FAR would allow.",
+    "citations": [
+      {
+        "kind": "captured",
+        "section": "23-52",
+        "title": "Maximum Number of Dwelling Units",
+        "quote": "the applicable dwelling unit factor shall be 680. Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one dwelling unit",
+        "snapshot_id": "zr-23-52",
+        "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+        "content_digest": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac",
+        "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+        "last_amended": "2024-12-05",
+        "edition": "",
+        "date_read": "",
+        "status_note": ""
+      }
+    ]
+  },
+  "what_it_shows": [
+    "A mixed-use estimate uses the residential portion's zoning floor area, including the counted residential circulation and support space - not the whole building's and not the shop floor's.",
+    "Every component is marked exclusive to one use or shared; the one shared component (the utility room) is attributed proportionately under ZR 23-20 on a separate reconciliation line.",
+    "Every floor fits: on each floor the components, the exterior wall ring among them, add up to exactly the floor's stated outside outline."
+  ],
+  "what_it_does_not_show": [
+    "It does not establish a typical ratio or validate any percentage.",
+    "It does not settle how the mixed building combines its residential and commercial floor areas: ZR 35-31 is now captured and read (M4-T035 step P5), but the shared-space attribution's effect on the residential figure stays withheld because the maximum commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188) and whether the attributed shared floor area is added to the residential figure is a question of law.",
+    "The withdrawn 0.6676 ratio of the earlier version was computed on a floor that did not fit (1,743 sq ft of components on a 1,260 sq ft outline); this rebuilt version gives 0.6828.",
+    "It is not a legal or professional determination."
+  ],
+  "sources": [
+    "The ZR law captures under docs/research/zr-snapshots/v1/, each pinned by its content digest.",
+    "HPD Design Guidelines for New Construction, 2026 edition, UNIT AREA CALCULATION, read 2026-10-07 at the official HPD site."
+  ],
+  "change_log": [
+    {
+      "date": "2026-10-07",
+      "summary": "Example created for the measurement basis record.",
+      "by": "scenario-optimization-engineer"
+    },
+    {
+      "date": "2026-10-07",
+      "summary": "Rebuilt so that every floor has a stated outside outline and the components on each floor add up to it exactly. The earlier version listed 1,743 sq ft of components on an upper floor whose stated outline was 1,260 sq ft (the apartment rooms alone filled the inside outline) and stated no ground-floor outline. The earlier 0.6676 ratio is WITHDRAWN; the rebuilt building gives residential exclusive zoning floor area 10,428, HPD 7,120, ratio 0.6828. A shared utility room and the ZR 23-20 attribution line were added.",
+      "by": "scenario-optimization-engineer"
+    },
+    {
+      "date": "2026-10-08",
+      "summary": "Corrected two now-false statements after ZR 35-31 was captured and read (M4-T035 step P5, a dependency of M5-T135): what_it_does_not_show[1] and shared_floor_area.conditional_note no longer say ZR 35-31 is 'not captured yet' or withheld until it is captured. They now state the effect on the residential figure stays withheld/conditional because the maximum commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188) and whether the attributed shared floor area is added to the residential figure is a question of law. NO figure changed: the ratio stays 0.6828 and the attribution stays 98.32 sq ft residential / 21.68 commercial.",
+      "by": "scenario-optimization-engineer"
+    }
+  ],
+  "reconciliation": {
+    "residential_zoning_floor_area": 10428,
+    "total_hpd_dwelling_unit_area": 7120,
+    "bridge": [
+      {
+        "component_id": "demising-partitions",
+        "direction": "subtract",
+        "area": 384
+      },
+      {
+        "component_id": "exterior-walls",
+        "direction": "subtract",
+        "area": 904
+      },
+      {
+        "component_id": "corridor",
+        "direction": "subtract",
+        "area": 440
+      },
+      {
+        "component_id": "stair",
+        "direction": "subtract",
+        "area": 900
+      },
+      {
+        "component_id": "elevator",
+        "direction": "subtract",
+        "area": 280
+      },
+      {
+        "component_id": "chases",
+        "direction": "subtract",
+        "area": 100
+      },
+      {
+        "component_id": "lobby",
+        "direction": "subtract",
+        "area": 300
+      }
+    ],
+    "ratio": {
+      "numerator": 7120,
+      "denominator": 10428,
+      "value": "0.6828"
+    }
+  },
+  "floors": [
+    {
+      "floor_id": "ground",
+      "label": "Ground floor (retail, residential lobby, shared utility, core)",
+      "count": 1,
+      "outline_parts": [
+        {
+          "width_ft": 44,
+          "depth_ft": 70
+        }
+      ]
+    },
+    {
+      "floor_id": "typical-res",
+      "label": "Typical residential floor (one of four identical)",
+      "count": 4,
+      "outline_parts": [
+        {
+          "width_ft": 44,
+          "depth_ft": 58
+        }
+      ]
+    }
+  ],
+  "shared_floor_area": {
+    "present": true,
+    "shared_component_ids": [
+      "shared-utility"
+    ],
+    "shared_total": 120,
+    "residential_exclusive_floor_area": 10428,
+    "commercial_exclusive_floor_area": 2300,
+    "total_floor_area_zoning_lot": 12848,
+    "attribution_base": 12728,
+    "residential_share_value": "0.8193",
+    "attributed_to_residential": "98.32",
+    "attributed_to_commercial": "21.68",
+    "capture": {
+      "kind": "captured",
+      "section": "23-20",
+      "title": "Floor area regulations",
+      "quote": "Where floor area in a building is shared by multiple uses, the floor area for such shared portion shall be attributed to each use proportionately, based on the percentage each use occupies of the total floor area of the zoning lot, less any shared floor area",
+      "snapshot_id": "zr-23-20",
+      "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-20.snapshot.json",
+      "content_digest": "0685a2e4e7002830a1c007dea23ac68c5c441f1a32eeb2e37b78000c5765d7cc",
+      "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-20",
+      "last_amended": "2024-12-05",
+      "edition": "",
+      "date_read": "",
+      "status_note": ""
+    },
+    "conditional_note": "CONDITIONAL. ZR 23-20 gives the proportional attribution quoted above; ZR 35-31 is now captured and read (M4-T035 step P5) and carries the same attribution plus a separate maximum floor area ratio for each use and one combined whole-lot cap. The effect of this 98.32 sq ft on the residential figure stays WITHHELD because the maximum commercial floor area ratio (Article III, Chapter 3) is still not captured (DB-188), so the whole-building maximum cannot be read, and whether the attributed shared floor area is ADDED to the residential figure the estimate uses is a question of law, not an owner's preference. The ratio below uses the residential EXCLUSIVE floor area (10,428 sq ft) only; the attribution is shown but not added.",
+    "note": "One small component (the 120 sq ft shared utility room) is shared between the shop and the residences. Under ZR 23-20 its floor area is attributed to each use by that use's share of the total floor area of the zoning lot, less the shared floor area."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-existing-zfa",
+  "key": "existing_zoning_floor_area",
+  "lot_bbl": "5999999998",
+  "street": null,
+  "value": 0,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "entered",
+    "label": "Entered"
+  },
+  "source": {
+    "kind": "architect_entry",
+    "dataset": null,
+    "dataset_version": null,
+    "retrieved_at": "2026-09-30T12:03:00Z",
+    "query_ref": null,
+    "document_ref": null,
+    "statement": null
+  },
+  "blocks": [],
+  "editable": true,
+  "_expected_failure": "Existing zoning floor area 0 for a kept building: it is strictly positive (a site without a building uses existing_building_plan 'no_existing_building'), so a 0 can never silently make remaining capacity equal the full allowance (G3 m-1)."
+}

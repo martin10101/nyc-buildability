@@ -1,0 +1,33 @@
+{
+  "contract_version": "1.1.0",
+  "fact_id": "fact-street-width-version-unknown",
+  "key": "street_width",
+  "lot_bbl": null,
+  "street": "Synthetic Street A",
+  "value": 60,
+  "unit": "feet",
+  "measurement": {
+    "rank": "city_records",
+    "label": "City records"
+  },
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic City Map street data",
+    "dataset_version": null,
+    "retrieved_at": "2026-09-30T12:02:00Z",
+    "query_ref": "test-fixture-synthetic://citymap/synthetic-street-a",
+    "document_ref": null,
+    "statement": null,
+    "version_check": {
+      "status": "version_unknown",
+      "label": "Version unknown",
+      "latest_known_version": null,
+      "latest_known_seen_at": null,
+      "latest_known_query_ref": null,
+      "reason": "test-fixture-synthetic City Map street data has no recorded version, so it cannot be shown as current."
+    }
+  },
+  "blocks": [],
+  "editable": true,
+  "note": "Synthetic fixture (test-fixture-synthetic); not a real street. Exercises source.version_check status 'version_unknown' with a null pinned version and null latest-known fields, and a source with a null dataset_version (site_fact contract 1.1.0, request B-1)."
+}

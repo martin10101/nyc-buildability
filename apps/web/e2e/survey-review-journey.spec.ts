@@ -26,6 +26,7 @@ test("SC-S1: accept, correct, reject with audit, recalculation, and honest block
   await expect(page.getByTestId("document-state-badge")).toContainText("Needs review");
 
   // Overlay renders geometry; F4: a non-color status glyph accompanies the mark.
+  await page.getByText("Original document and overlays", { exact: true }).click();
   await expect(page.getByTestId(`overlay-mark-${AREA}`)).toBeVisible();
   await expect(page.getByTestId(`overlay-glyph-${AREA}`)).toBeVisible();
 

@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](../PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside §6.1's product part: "UI and reports clearly show the draft/provisional state" and the architect pilot consuming "draft / needs-review rules with visible status". A draft result shows as "Not available" (plan §5, §5a.3). Also set aside the L69/L135 "delete the merged task branch" instruction (set aside, never delete; merged branches only). Tiers A–D and the G6 split still apply; "required local checks" never means local npm.
+
 # ADR-006 — Autonomy Tiers and GitHub Merge Authority
 
 - **Status:** Accepted (owner-directed, D-010 Section 5 / Section 6)

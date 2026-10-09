@@ -8,6 +8,9 @@ __pycache__/
 
 # Builds and caches
 .next/
+# Written by `next build` / `tsc` when the web checks run on the dev server (D-090-R170).
+next-env.d.ts
+*.tsbuildinfo
 dist/
 build/
 # M0-T020: setuptools writes app.egg-info/ when `pip install ./services/api`
@@ -15,6 +18,8 @@ build/
 # keep that stray build artifact out of git.
 services/api/**/*.egg-info/
 coverage/
+# Real source directory whose name collides with the coverage-tool pattern above (A-01).
+!services/api/app/rules/coverage/
 .cache/
 .pytest_cache/
 .mypy_cache/
@@ -84,3 +89,6 @@ OWNER_DIRECTIVE_DRAFT_dispatch-efficiency-and-graph-wiring.md
 # Transient SQLite journal artifacts from supervisor runtime runs (not evidence)
 *.sqlite3-wal
 *.sqlite3-shm
+
+# D-027 (M0-T100): runtime statusLine telemetry sidecar/journal (M0-T099 report section 4) — never committed
+.claude/telemetry/

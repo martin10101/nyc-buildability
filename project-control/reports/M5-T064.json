@@ -1,0 +1,20 @@
+{
+  "task_id": "M5-T064",
+  "producer_agent": "scenario-optimization-engineer",
+  "report_file": "project-control/reports/M5-T064-producer-report.md",
+  "submitted_at": "2026-09-21T04:00:57.431109+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T064-evidence-map.json",
+  "content_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+  "reviewed_sha": "812a5860c1fc3bd8583992baaa520e4f23be7623",
+  "applicable_requirements": [
+    "D-066-R001",
+    "D-076-R001",
+    "D-076-R002",
+    "D-077-R002",
+    "D-077-R003",
+    "D-082-R001",
+    "D-082-R002"
+  ],
+  "updated_at": "2026-09-21T04:01:04.924674+00:00"
+}

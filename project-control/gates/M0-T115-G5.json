@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T115",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T115-G5-security-delta.md",
+  "reviewed_at": "2026-08-29T06:46:34.103528+00:00",
+  "content_manifest_sha256": "0a2ff0adf0beb2ac7a1fb592448ba5f853b503f596b9cacb3e8c358f052fedf7",
+  "reviewed_sha": "8123104874387f6b1b96837075d11ba16aea5964",
+  "history": [
+    {
+      "reviewer": "security-reviewer",
+      "role": "independent_review",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T115-G5-security.md",
+      "reviewed_at": "2026-08-29T06:27:03.385127+00:00"
+    }
+  ],
+  "updated_at": "2026-08-29T06:46:34.763713+00:00"
+}

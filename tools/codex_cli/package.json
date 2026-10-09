@@ -1,0 +1,10 @@
+{
+  "name": "codex-cli-admission",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Repo-local, dependency-gated admission of the OpenAI Codex CLI (@openai/codex) for the D-091 cloud review loop (ledger task M0-T167). node_modules is git-ignored; only package.json and package-lock.json are committed. See README.md for the full G5 provenance record.",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "@openai/codex": "0.157.0"
+  }
+}

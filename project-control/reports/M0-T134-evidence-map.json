@@ -1,0 +1,47 @@
+{
+  "task_id": "M0-T134",
+  "directive_id": "D-024",
+  "note": "In-regime evidence map (D-001). Maps every requirement applicable to M0-T134 at content identity 1c3078c6 / reviewed_sha ad770ad4 to independently reproduced primary evidence. Producer-submitted; independent PASS is recorded separately in verification.json (verifier != producer).",
+  "requirements": {
+    "D-024-R500": [
+      "Unpiped `python tools/modularity_check.py --check` -> raw exit 0, 0 failures (12 pre-existing warnings, none failures).",
+      "claude_runner.py reduced 1432->1319 SLOC by the checkpoint_extraction.py split; 1319 <= retained 1410 file-exception ceiling.",
+      "tools/modularity_exceptions.json git-blob sha256 dba91e16..1792c7 == 6f5d12a6 (byte-identical restore, NOT a policy edit); modularity_baseline.json 8830a47d..731ca5 == 6f5d12a6. The pass comes from the split, not a policy-file change."
+    ],
+    "D-024-R501": [
+      "schemas/worker_result.schema.json: additionalProperties:false; required exactly {outcome enum COMPLETED|BLOCKED|NEEDS_OWNER, summary 1-4096, requested_next_action 0-1024}.",
+      "mrl_worker_result.WorkerResult.from_provider validates via dependency-free enforcer; ControllerObservedFacts builds ClaudeCheckpoint from controller facts only. test_agent_supervisor_mrl_worker_result.py 15 tests incl. 8-key forged-field loop + controller-authority positive."
+    ],
+    "D-024-R502": [
+      "schemas/review_verdict.schema.json: additionalProperties:false; required exactly {verdict enum APPROVE|REVISE|HALT, rationale 1-4096, evidence_ref_ids array minItems1/maxItems64/uniqueItems, item 1-128}.",
+      "ReviewVerdict.from_provider rejects any evidence_ref_id not in the controller-issued set (R502). test file: non-controller id, dup, cardinality, wrong-type all rejected."
+    ],
+    "D-024-R503": [
+      "Both provider schemas are closed (additionalProperties:false), so a forged run_id/sha/branch/origin/model/gate_result/evidence_digest/task_id is an unknown key -> fail closed.",
+      "Controller constructs every factual field from ControllerObservedFacts / GitBinding; the worker supplies only summary + requested_next_action, the reviewer only verdict/rationale/evidence-refs."
+    ],
+    "D-024-R504": [
+      "build_codex_decision: `decision = COMPLETE if (invariants_ok is True and gates_ok is True) else HOLD` for an APPROVE verdict (strict identity, not truthiness).",
+      "test_truthy_non_bool_gate_does_not_complete asserts 1/'yes'/[1] -> HOLD; failing invariants or gates -> HOLD. APPROVE alone never yields COMPLETE."
+    ],
+    "D-024-R505": [
+      "GitBinding binds normalized_remote_url, expected_base_ref, observed_base_sha, task_branch, task_head_sha, observed_at_utc; expected_base_ref is data (test_option_b_neutral_arbitrary_base_ref); verified_origin_main is provably not a field/attr/as_dict key.",
+      "_validate_git_binding fails closed on malformed SHAs (short/xyz) and empty ref/url; observe_remote yields a fresh 40-hex base SHA or fails closed (empty url/ref, no-sha, non-hex). The live observed-vs-pinned comparison is Tranche B (additive primitive)."
+    ],
+    "D-024-R509": [
+      "Behavior-neutral split: RunnerError/CheckpointError/_event_text/find_checkpoint_candidate/validate_checkpoint/extract_checkpoint/checkpoint_question_decided relocated to checkpoint_extraction.py behind a claude_runner facade.",
+      "Runtime proof: claude_runner.RunnerError/extract_checkpoint/CheckpointError are the SAME objects as checkpoint_extraction (is-identity). Full supervisor suite 3144 passed / 2 skipped / 0 failed at the final tree. One-shot transport (mrl_transport) refuses resume/continue/fork/background and spawns exactly once."
+    ],
+    "D-024-R510": [
+      "gate_runner.run_gate refuses str/bytes argv (shell string), runs a direct no-shell subprocess, and records argv, cwd, start/end timestamps, repo HEAD/tree, executable-chain sha256, raw returncode, stdout/stderr sha256+bytes.",
+      "test_gate_runner.py 11 tests: shell-string refused; real-PowerShell pipe records the child's raw exit; large-stdout does not mask exit; mutation harness exits 0 when mutant killed, 1 for a survivor. Reports generated from the record (render_report)."
+    ],
+    "D-024-R511": [
+      "mrl_exec_identity.sha256_file_complete streams the WHOLE file with no size/mtime cache; bind/verify_executable_chain hashes the ordered wrapper->runtime->entrypoint chain and rejects any change or reorder.",
+      "test_same_size_restored_mtime_replacement_still_rejected: 16-byte v2 over 16-byte v1 with os.utime-restored mtime is still rejected. assert_updater_disabled requires DISABLE_AUTOUPDATER=1 and refuses DISABLE_UPDATES (R280); verify_runtime_reported fails closed on empty/mismatched model/version."
+    ],
+    "D-024-R514": [
+      "Tranche-A acceptance evidence is the gate_runner machine record M0-T134-tranche-a-evidence.json (repo_head 5e89175d, repo_tree f8d3bbd4, returncode 0), the sole MRL acceptance-evidence path; human reports are generated from it. Scope is MRL acceptance evidence, not every repository command."
+    ]
+  }
+}

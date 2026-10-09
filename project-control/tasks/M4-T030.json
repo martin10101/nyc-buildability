@@ -1,0 +1,151 @@
+{
+  "task_id": "M4-T030",
+  "title": "The independent reading of the law text captured by M4-T029 (lot lines, rear yards beyond the corner and for interior and through lots, ZR 23-436, ZR 34-21, special density areas, the base plane, eligible sites, 'residence, or residential'), written into the R6B reference cases - two independent readings from a sealed folder, a value only where both agree, every change with its reason (D-090 R226, R241, R259, R291, R318)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Read independently the law text captured by task M4-T029 (27 texts), and write what the readings settle into the R6B reference cases (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 8: 'capture the missing law text, then read it independently'; backlog row DB-170 item (a)). INPUT MADE BY THE ORCHESTRATOR BEFORE THE BUILDER STARTS: two readings by two different AI helpers that took no part in writing the program's rules, each working alone from a sealed folder (every pinned law capture without its notes, the benchmark lot's recorded official facts and outline, the made-up lots' dimensions, no program output) and with no access to the program or the repository. The readings cover: (1) the ZR 12-10 definitions of the lot lines, lot width and lot depth, applied to the benchmark lot and to a made-up interior lot; (2) the rear yard: the part of a corner lot beyond 100 feet of the corner point, the interior lot under ZR 23-342, and the through lot under the rear yard equivalent of ZR 23-343; (3) ZR 23-436 and what ZR 35-633 brings in for the benchmark lot; (4) ZR 34-21 and what stays open without ZR 34-22 and 34-23; (5) whether the benchmark lot is in the Manhattan Core or the Special Downtown Brooklyn District, from their definitions; (6) from what level heights are measured (the base plane) and which facts that needs; (7) to which zoning lots ZR 23-434 and the different maximum of ZR 23-362(b) apply; (8) the definition of 'residence, or residential' and what the captured allowance sections name as the base of a share of floor area. THE BUILDER then: saves the two returns unchanged under docs/reference-cases/R6B/provenance/; records a value or a yes/no only where BOTH readings give it on the same basis, and 'not known' with the reason and both readings named everywhere else; changes an existing row's expected value only where both readings support the change, with a dated change-log entry (corrected evidence: the text is now captured and read); says, in each row and in the README, 'the readers did not have' a text, never that the repository 'does not hold' it, and brings the case files' older 'not captured' and 'uncaptured' wording into that form where it touches a row it changes (the reviewer's standing observation in DB-170); updates the README; re-renders the pages; extends the test support only as the new rows need. Point (8) is recorded as a reading only: the measurement-basis record is NOT changed by this task. Nothing in a case comes from a program run. No rule file, rule engine, capture, register entry, plan or screen changes.",
+  "business_reason": "Rows of the reference cases stay 'not known' for want of text that is now captured: the through-lot rear yard, what ZR 35-633 adds, the special density areas, the rear yard beyond the corner. Step 3 of the owner's eight steps (R291) and the owner's rule that interpretation is checked with independently worked, source-backed examples kept apart from program output (R226, R241, R259, R318). The engine work of Part 0 tests against these rows.",
+  "inputs": [
+    "The two independent readings (returns saved by the orchestrator; given to the builder with its instructions)",
+    "docs/reference-cases/R6B/ and services/api/tests/rules/reference_cases/ as task M4-T028 left them",
+    "The captures made by task M4-T029 under docs/research/zr-snapshots/v1/ and the earlier captures the rows cite",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md sections 5 and 9; docs/DISCOVERY_BACKLOG.md rows DB-169 and DB-170",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R226, R241, R259, R291, R318"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/provenance/: the two new returns, unchanged, each with a short header",
+    "docs/reference-cases/R6B/cases/*.json and the pages rendered from them: the new readings as rows (a value or a yes/no only where both readings agree; otherwise 'not known' with both named); every change to an existing row with its dated reason",
+    "docs/reference-cases/R6B/README.md brought up to date",
+    "services/api/tests/rules/reference_cases/: the checker, renderer, loader and test extended only as the new rows need",
+    "project-control/reports/M4-T030-producer-report.md"
+  ],
+  "dependencies": [
+    "M4-T028",
+    "M4-T029"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/**",
+    "services/api/tests/rules/reference_cases/**",
+    "project-control/reports/M4-T030-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (no rule file, engine, registry, register or capture copy change)",
+    "docs/research/** (no capture and no helper file), docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "two_independent_readings_kept_unchanged",
+      "input": "docs/reference-cases/R6B/provenance/",
+      "expected": "the two new returns are present unchanged (a test pins their digests)"
+    },
+    {
+      "id": "S2",
+      "case": "a_value_only_where_both_readings_agree",
+      "input": "each added or changed row",
+      "expected": "a value or a yes/no is recorded only where both readings give it on the same basis; otherwise 'not known' with the reason and both readings named; where one reading holds an answer subject to a text the readers did not have, the row says so in its value; the builder resolves no disagreement and adds no reading of its own"
+    },
+    {
+      "id": "S3",
+      "case": "each_row_followable",
+      "input": "each added or changed row",
+      "expected": "facts with their source, the law quoted with its capture id and content digest, why the provision applies, the arithmetic where there is any; a test checks every citation against the live capture"
+    },
+    {
+      "id": "S4",
+      "case": "an_existing_value_changes_only_with_both_readings_and_a_reason",
+      "input": "the existing rows of every case file",
+      "expected": "an existing expected value or kind changes only where both readings support it, with a dated change-log entry of an allowed kind; every other existing row is unchanged"
+    },
+    {
+      "id": "S5",
+      "case": "nothing_from_a_program_run",
+      "input": "the case files and the support code",
+      "expected": "no case file holds a program result; the support code imports nothing from the rule or scenario engine"
+    },
+    {
+      "id": "S6",
+      "case": "what_the_readers_did_not_have_is_named_truthfully",
+      "input": "docs/reference-cases/R6B/README.md and the new and changed rows",
+      "expected": "every text the readings needed and did not have is named with the rows that stay 'not known' because of it, in words that stay true whatever else the repository captures: 'the readers did not have', never 'the repository does not hold'"
+    },
+    {
+      "id": "S7",
+      "case": "scope",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "only allowed_paths changed; ruff and the full services/api pytest pass at the wave's final candidate; pages byte-identical to the renderer's output"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "A legal reading presented as settled because two AI readings agree -> the cases say agreement is not proof (R259); each row is followable",
+    "A reading that fills a gap the captured text does not settle -> S2 and S6",
+    "A 'not known' row turned into a value on one reading only -> S2 and S4",
+    "A statement about what the repository lacks that another task of the same wave makes false (seen in wave 2) -> S6"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T08:45:34.165218+00:00",
+  "updated_at": "2026-10-07T10:58:35.058864+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R226",
+        "D-090-R241",
+        "D-090-R259",
+        "D-090-R291",
+        "D-090-R318"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T08:45:34.165446+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first), started only after the orchestrator holds BOTH independent readings. PART OF PARALLEL WAVE 3 with M5-T128 and M4-T031: the three share no file (M4-T031 only adds new capture files; the readers' sealed folder was made before them). MODULARITY ANSWERS: no handwritten production source changes; documents and test support only (each support file stays under the 600-line warning threshold; split before growing one past it: the checker is at 520 lines).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "the renderer's check mode (pages byte-identical to the data)",
+    "python3 tools/modularity_check.py --check",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)"
+  ],
+  "worktree": "/root/project/w-wave3",
+  "progress_log": [
+    {
+      "at": "2026-10-07T08:46:01.034736+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 3 at the contract head 40019320 (integration head 5743630e); builder rules-engineer in an isolated worktree; see project-control/reports/WAVE3-2026-10-07-concurrency-record.md."
+    },
+    {
+      "at": "2026-10-07T09:50:31.431969+00:00",
+      "agent": "orchestrator",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Independent review (code-reviewer) at f5c2a8f2, before submit: G3 FAIL and G4 FAIL. F1 (must fix): row sections-and-facts-not-had of the new case and the README say both readers did not have ZR 36-64 and ZR 35-71; one reading says they were in its folder (they were: the sealed folder held all 72 captures), so the row records as agreed something the readings do not both say. F2 (must fix): three older rows stay 'not known' beside new rows that give the answer to the same question, and nothing a test reads marks the older rows as superseded. F3 (routed to this task by the orchestrator): the overlay case of task M4-T028 still says 'the repository does not hold' texts that are captured now. 20 of the 21 new rows hold; no existing value or kind changed; the corner-coverage rows did not move. Rework by the same builder; the failed review is kept unchanged in project-control/reports/M4-T030-G3G4.md."
+    },
+    {
+      "at": "2026-10-07T10:20:07.820286+00:00",
+      "agent": "orchestrator",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Rework by the same builder (rules-engineer): commit 25ba6c04 (the 'not had' list holds only what both readings name; eight older rows marked superseded_by and refused by the loader unless asked for as history; earlier sentences that had become false reworded). Re-review by the same reviewer (code-reviewer) at 25ba6c04: G3 PASS, G4 PASS; findings F1, F2 and F3 closed; no expected value or kind changed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T10:58:35.058636+00:00"
+}

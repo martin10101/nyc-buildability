@@ -1,0 +1,40 @@
+12-10
+floor area ratio
+General Definition
+Last Amended
+2/2/2011
+"Floor area ratio" is the total
+floor area
+on a
+zoning lot
+, divided by the
+lot area
+of that
+zoning lot
+. If two or more
+buildings
+are located on the same
+zoning lot
+, the
+floor area ratio
+is the sum of their
+floor areas
+divided by the
+lot area
+. (For example, a
+zoning lot
+of 10,000 square feet with a
+building
+containing 20,000 square feet of
+floor area
+has a
+floor area ratio
+of 2.0, and a
+zoning lot
+of 20,000 square feet with two
+buildings
+containing a total of 40,000 square feet of
+floor area
+also has a
+floor area ratio
+of 2.0)

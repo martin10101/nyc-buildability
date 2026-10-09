@@ -1,0 +1,19 @@
+{
+ "task_id": "M0-T114",
+ "requirements": {
+  "D-024-R258": [
+   "The three residuals carried at Amendment 9 are now executed as the tracked follow-up: residual 1 (telegram_sink _already_queued digest normalization) FIXED with defect-named red->green test + revert-proof; residual 2 (live_observation raw source_record_key) FIXED one-line to the already-computed sanitized value with defect-named test; residual 3 (unit-K boundary-queue write-only/inert) DISPOSITIONED inert-by-design, no code (outside allowed_paths)",
+   "project-control/reports/M0-T114-residual-fixes.md",
+   "CLAIM: SATISFIED - executed exactly as the owner sequenced (carry at Amendment 9, execute in the Amendment-12 window; R247 recert follows at M0-T116)"
+  ],
+  "D-024-R272": [
+   "Executed as its OWN bounded task in the same certification window as M0-T115 (accepted first): own claim (G0), own deliverable commit (only telegram_sink.py + live_observation.py + their two test packs + the report), own control commits, own evidence map and reviewer wave; no broadening (residual 3 left as disposition because its file is outside allowed_paths); M0-T115's file set untouched by this unit",
+   "CLAIM: SATISFIED for this unit's half of the same-window order"
+  ],
+  "D-024-R273": [
+   "Zero runtime-journal writes: both fixes execute only inside future notify_condition/record_observations calls; all tests use temp journals; the live %LOCALAPPDATA% journal untouched",
+   "project-control/reports/M0-T114-residual-fixes.md (evidence summary)",
+   "CLAIM: PROHIBITION HONORED"
+  ]
+ }
+}

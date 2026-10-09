@@ -1,0 +1,32 @@
+{
+  "task_id": "M0-T106",
+  "directive_refs": [{"directive_id": "D-024", "requirement_ids": "ALL"}],
+  "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs at the claim head resolves the applicable set for this packet to exactly D-024-R152, D-024-R162, D-024-R174 (ok=true, missing=[]). R162 (the bounded-canary owner-approval-gate pattern) was discharged live at M0-T103; for this unit it binds the C1 live goal canary to the same R197 exact-command gate - C1 is prepared/flagged owner-gated and NOT executed, exactly as the unit-C/D canaries were handled. The deterministic core satisfies R152/R174 without it.",
+  "requirements": {
+    "D-024-R152": [
+      "tools/agent_supervisor/goal_contract.py",
+      "tools/agent_supervisor/goal_outcomes.py",
+      "tools/agent_supervisor/fixtures/goal_semantics_2_1_247.json",
+      "tools/test_agent_supervisor_goal_integration.py",
+      "project-control/reports/M0-T106-goal-integration.md"
+    ],
+    "D-024-R162": [
+      "project-control/reports/M0-T106-goal-integration.md",
+      "project-control/reports/M0-T103-R162-discharge-2.1.247.md",
+      "tools/agent_supervisor/fixtures/goal_semantics_2_1_247.json"
+    ],
+    "D-024-R174": [
+      "tools/agent_supervisor/goal_contract.py",
+      "tools/agent_supervisor/goal_outcomes.py",
+      "tools/agent_supervisor/goal_checkins.py",
+      "tools/agent_supervisor/event_bus.py",
+      "tools/test_agent_supervisor_goal_integration.py",
+      "project-control/reports/M0-T106-goal-integration.md"
+    ]
+  },
+  "task_evidence": [
+    "project-control/reports/M0-T106-goal-integration.md",
+    "project-control/reports/M0-T106-G2-self-check.md",
+    "project-control/reports/M0-T106-evidence-map.json"
+  ]
+}

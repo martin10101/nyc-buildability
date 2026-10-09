@@ -1,0 +1,123 @@
+{
+ "task_id": "M5-T138",
+ "material_commits": [
+  "9e0ba21b (the builder's first commit, parent = the claim-seam head, cherry-picked with an identical tree: the route, the body reader, the shared study-setup builder, the switch, the mount, the reported list, the tests, three documents, the report; 15 files)",
+  "6b60c9e2 (the same builder's second commit, asked by the orchestrator before any review: six tests for answers that had none, the import guard permitting the route file, one error text; 5 files)",
+  "f0f67244 (the same builder's third commit, after the three reviews: a floor-to-floor height that is not finite is a typed 422; two test additions; 3 files; each reviewer confirmed the delta) = material head"
+ ],
+ "claim_seam_head": "2eb714abff96f08bf3a37b8a25352fc549958631",
+ "files_changed": [
+  "docs/lanes/queues/C.md",
+  "docs/lanes/status/C.md",
+  "docs/plans/JOURNEY_215_16_NORTHERN_2026-10-04.md",
+  "project-control/reports/M5-T138-producer-report.md",
+  "services/api/app/api/v1/build_info.py",
+  "services/api/app/api/v1/results_read.py",
+  "services/api/app/api/v1/results_request.py",
+  "services/api/app/api/v1/study_read.py",
+  "services/api/app/api/v1/study_setup_document.py",
+  "services/api/app/config.py",
+  "services/api/app/main.py",
+  "services/api/tests/api/test_build_info_api.py",
+  "services/api/tests/api/test_results_read_api.py",
+  "services/api/tests/api/test_results_read_law_examples.py",
+  "services/api/tests/api/test_study_live_outline_provider.py",
+  "services/api/tests/scenario/three_answers/test_result_ways.py"
+ ],
+ "what_did_not_change": "Everything under services/api/app/scenario, services/api/app/contracts and services/api/app/rules; every schema, fixture and saved drawing; the study-inputs provider and the live geometry module; every website file; render.yaml, the workflows and the dependency files. study_read.py: only the extraction of its study-setup builder into a shared module, with the old name kept as an alias. No production switch is turned on: the new switch INTERNAL_RESULTS_ENABLED defaults to off and render.yaml does not name it.",
+ "known_limits": [
+  "The route has no sign-in protection, like its sibling (the G5 reviewer's note F2): the switch must stay off until sign-in exists.",
+  "A lot without any geometry gets a typed 503 and no result (the packet's scope correction of scenario S14; backlog row DB-203).",
+  "For an entered floor-to-floor height the returned document still says it 'is used as the default' (the G3 reviewer's note F1; the engine's wording; backlog row DB-204).",
+  "Nothing new is visible on a screen: the website panel is the next piece."
+ ],
+ "checks_at_material_head": [
+  "builder at its third commit: ruff clean; tests/api 1126 passed; three_answers, journey and contracts 909 passed 2 skipped; modularity, contract validation and ownership exit 0",
+  "orchestrator at f8c238f4: the full api suite 8639 passed 8 skipped; website lint, typecheck, 2429 unit tests, build and 153 browser tests, all exit 0; at c3f58843 the full api suite again: 8647 passed 8 skipped, exit 0",
+  "G3 at f8c238f4: its own runs through the route against the reference cases; delta confirmed at c3f58843",
+  "G4 at f8c238f4: tests/api 1118 passed; sixteen mutations; delta confirmed at c3f58843",
+  "G5 at f8c238f4: its own probes of the switch, the guards and the body; delta confirmed at c3f58843"
+ ],
+ "requirements": {
+  "D-090-R167": [
+   "One piece, one builder, built on the two merged pieces before it (M5-T136, M5-T137); the website piece is not started before this one merges (project-control/reports/WAVE11-2026-10-08-concurrency-record.md).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 1: the diff holds only this piece's files; nothing of the website changed."
+  ],
+  "D-090-R213": [
+   "The route is the server half of 'the R6B results connected to the website': it returns the results document for one lot; the website panel is the next piece, then the report, then the PDF.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 10: the three documents now say that the server half is built and the browser half is still owed.",
+   "This task's share is the server route. The website panel that shows the document, the exports and the PDF are later pieces and stay bound to this row."
+  ],
+  "D-090-R228": [
+   "services/api/tests/api/test_results_read_api.py::test_t3_route_document_equals_the_entry_document: the route returns exactly the document the entry emits, the same document the saved journey result and its drawings are made from; nothing is retyped.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 2: its own independent reproduction of the entry for the same evidence equals the route's document, with zero differing keys.",
+   "This task's share is the server route. The website panel that shows the document, the exports and the PDF are later pieces and stay bound to this row."
+  ],
+  "D-090-R229": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t7_fact_not_given_is_a_normal_200: a missing outline is answered with a 200 in which the results that depend on it are withheld and named; services/api/tests/api/test_results_read_law_examples.py::test_t4_recorded_lot_three_ways: no zero stands for a result that is not known.",
+   "A lot without any geometry, or without a property profile, gets a typed 503 that says the recorded facts could not be read, never a made-up document (services/api/tests/api/test_results_read_law_examples.py::test_s14_no_lot_type_geometry_fails_closed_503, services/api/tests/api/test_results_read_law_examples.py::test_s14_missing_profile_is_a_typed_503_never_a_document).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), checks 6 and 7: no zero for a result that is not known; no made-up document for missing evidence; no 500 for any missing-evidence case."
+  ],
+  "D-090-R240": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t7_fact_not_given_is_a_normal_200: only the dependents of the missing fact are withheld; the floor-area figures stay shown.",
+   "A limit, stated: with no site geometry at all the route answers a typed 503 and shows nothing, because the engine's inputs require the lot type (the packet's scope correction of scenario S14; backlog row DB-203).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 7: with no outline the coverage and the rear yard are withheld and the floor area of 20,150 is still shown."
+  ],
+  "D-090-R255": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t8_statement_contradicting_the_record_does_not_override_it: a statement that contradicts a record does not override it; services/api/tests/api/test_results_read_law_examples.py::test_s13_interior_lot_with_geometry_through_route_and_entry: with the statement the unit limit is conditional and names it; services/api/tests/api/test_results_read_law_examples.py::test_s13_interior_lot_without_the_statement_withholds_the_unit_limit.",
+   "services/api/tests/api/test_results_read_api.py::test_t10_example_and_lot_fact_fields_are_refused: the body cannot carry a fact about the lot at all.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 5: every fact of the lot sent in the body is a 422 with the provider not called. the G5 reviewer (security-reviewer; project-control/reports/M5-T138-G3G4G5.md), check 5: the statement is neither stored nor logged."
+  ],
+  "D-090-R256": [
+   "services/api/tests/api/test_results_read_api.py::test_s15_option_built_from_the_body_validates_and_carries_no_lot_fact: the option holds the body's housing program and floor-to-floor height and otherwise neutral values; services/api/tests/api/test_results_read_law_examples.py::test_t6_changed_input_changes_only_its_dependents: a changed floor-to-floor height changes what depends on it and no legal limit.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 4: the floor-to-floor value used is printed in the result (10 by default; 14 when entered). A limit, stated (its note F1): for an entered value the line still says 'used as the default'."
+  ],
+  "D-090-R257": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t4_recorded_lot_three_ways: through the route the floor-area figures of the recorded lot are conditional and name the recorded-area condition.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 6: through the route the floor area of the recorded lot is conditional (20,150 and 24,180)."
+  ],
+  "D-090-R258": [
+   "The route's answers keep the two apart: a typed 503 says that a recorded fact could not be read (missing information); the returned document's estimate block says that the estimate is not built yet (owed work). Neither says 'unsupported'.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 11: every returned text is plain and true; none says 'professional review' or 'unsupported'."
+  ],
+  "D-090-R263": [
+   "services/api/tests/api/test_results_read_api.py::test_t11_switch_defaults_off_and_render_untouched and services/api/tests/api/test_results_read_api.py::test_t1_flag_unset_is_404_byte_identical_to_unmounted: the new switch is off by default and the route is a plain 404 when off; nothing in the change turns a switch on.",
+   "A security review (gate G5) was added to this task; the merge is by the fail-closed step on a fully green run after an independent pre-merge check.",
+   "the G5 reviewer (security-reviewer; project-control/reports/M5-T138-G3G4G5.md), checks 1, 2 and 8: the switch, the order of the guards and what protects the route today; its note F2 states what would be exposed if the switch were turned on."
+  ],
+  "D-090-R267": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t4_recorded_lot_three_ways: through the route no result of the recorded lot is settled while the conditions are unchecked; each is conditional and names them.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 6: the heights of the recorded lot are conditional through the route, never settled."
+  ],
+  "D-090-R268": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t4_recorded_lot_three_ways: the floor area and the heights stay visible as conditional; the coverage, the rear yard, the building option and the unit limits are withheld with their reasons.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 6: coverage, rear yard, building option and unit limit are withheld; floor area and heights stay shown as conditional."
+  ],
+  "D-090-R269": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t4_recorded_lot_three_ways: the heights are conditional and never called the property's maximum.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 6: the heights 30, 45, 55 and 65 ft are conditional and nowhere called the property's maximum."
+  ],
+  "D-090-R292": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t6_changed_input_changes_only_its_dependents: a changed input changes every result that depends on it and nothing else, proved through the route.",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T138-G3G4G5.md), check 3, mutation (k): ignoring the body's floor-to-floor height fails five tests, among them the changed-input test.",
+   "Share: the server half of 'connect one option to the screen'; the screen is the next piece."
+  ],
+  "D-090-R570": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t4_emitted_document_hides_the_inner_engine_figures: nothing of the engine's inner document is returned; services/api/tests/api/test_results_read_api.py::test_emitted_document_contract_failure_is_500_and_not_delivered: a document that fails its contract is not delivered.",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T138-G3G4G5.md), check 3, mutation (h): returning the engine's inner document fails ten tests. the G5 reviewer (security-reviewer; project-control/reports/M5-T138-G3G4G5.md), check 5.",
+   "This task's share is the server route. The website panel that shows the document, the exports and the PDF are later pieces and stay bound to this row."
+  ],
+  "D-090-R582": [
+   "The route is the first half of connecting the agreed results display to the emitted document; the website panel follows after this piece merges.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T138-G3G4G5.md), check 10, and the concurrency record: the website half follows after this piece merges."
+  ],
+  "D-090-R584": [
+   "services/api/tests/api/test_results_read_api.py::test_t1_flag_unset_is_404_byte_identical_to_unmounted, services/api/tests/api/test_results_read_api.py::test_t1_non_true_flag_token_stays_404, services/api/tests/api/test_results_read_api.py::test_t1_path_absent_from_openapi_in_both_flag_states and services/api/tests/api/test_results_read_api.py::test_t11_switch_defaults_off_and_render_untouched: every activation restriction stays; the route exists only behind a switch that is off.",
+   "the G5 reviewer (security-reviewer; project-control/reports/M5-T138-G3G4G5.md), check 1: nothing in render.yaml or the workflows names the switch; off is byte-identical to an unknown path."
+  ],
+  "D-090-R588": [
+   "Nothing of the report is dropped. What stays owed is on record: backlog rows DB-203 (a lot without geometry gets no result), DB-190 b, DB-196, DB-198, DB-199, DB-202 and the notes of this task's reviews.",
+   "The ten notes of the three reviews are named in the review record; what stays open is backlog row DB-204."
+  ]
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "requirements": {
+  "D-026-R001": [
+   "C:/Users/MLFLL/.claude/skills/session-handoff/SKILL.md (sha256 504fabbb301a4764..., 7746 bytes) + .claude/session-handoff-profile.md + .claude/skills/session-handoff/SKILL.md: hybrid delivered; project-control/reports/M0-T098-global-session-handoff.md"
+  ],
+  "D-026-R002": [
+   "git show --stat 722d494: no project-control/directives/D-024-fable-codex-loop file touched (also in forbidden_paths)"
+  ],
+  "D-026-R003": [
+   "minimum record: one directive capture (27 rows) + one task M0-T098 with gates G0/G2/G3 + DCV only"
+  ],
+  "D-026-R004": [
+   "project-control/reports/M0-T098-global-session-handoff.md Resolved-skill-precedence section: personal overrides project; global skill section R deliberately loads <repo-root>/.claude/session-handoff-profile.md"
+  ],
+  "D-026-R005": [
+   "C:/Users/MLFLL/.claude/skills/session-handoff/SKILL.md (sha256 504fabbb301a4764..., 7746 bytes) exists providing /session-handoff [optional reason]"
+  ],
+  "D-026-R006": [
+   "frontmatter validation (report bullet 1): 4 exact keys incl. disable-model-invocation: true; no context:/agent:/allowed-tools; inline-execution intro; DRY-RUN branch; $ARGUMENTS handling"
+  ],
+  "D-026-R007": [
+   "only C:/Users/MLFLL/.claude/skills/session-handoff/ touched outside the repo (an already-approved working directory; no new permission grants requested; G2 self-check)"
+  ],
+  "D-026-R008": [
+   ".claude/session-handoff-profile.md exists at repo root .claude/"
+  ],
+  "D-026-R009": [
+   ".claude/session-handoff-profile.md: all 12 enumerated routing items present (identity/origin, destination docs/SESSION_HANDOFF.md, must-read instructions, ledger+campaign locations, exact verified status + export-handoff commands, commit/push policy, MCP-clean Gate-0 requirements, successor start command, state-overrides-prose files, sub-agent/lease rules, standing owner gates)"
+  ],
+  "D-026-R010": [
+   "grep-verified: profile contains no ctl24/ctl23/worktree path; every location repo-root-relative (project-control/reports/M0-T098-global-session-handoff.md item 2)"
+  ],
+  "D-026-R011": [
+   "skill section R: live git rev-parse show-toplevel/branch/HEAD/origin + worktree list on EVERY run; 'never from memory of an earlier invocation'"
+  ],
+  "D-026-R012": [
+   "section R step 3: read profile COMPLETELY, verify identity (expected origin + markers vs live), resolve every relative path under the detected root; ctl24 dry-run proved it live (report bullet 2)"
+  ],
+  "D-026-R013": [
+   "section R step 3: never write into a different worktree (destination always <show-toplevel>-relative); identity mismatch -> HANDOFF BLOCKED; both proven (report bullets 3 and 7)"
+  ],
+  "D-026-R014": [
+   "section R step 4: established-convention search, prefer existing file, plain git evidence, no project-control assumption; proven in temp repos (report bullets 4-5)"
+  ],
+  "D-026-R015": [
+   "section R step 4 + temp-repo test: no unambiguous destination -> HANDOFF BLOCKED + ask owner; zero writes (report bullet 4)"
+  ],
+  "D-026-R016": [
+   "section R step 2 + non-git test: fatal not-a-git-repo -> BLOCKED, write nothing without owner confirmation (report bullet 6)"
+  ],
+  "D-026-R017": [
+   ".claude/skills/session-handoff/SKILL.md present at 722d494 (not deleted); fallback role stated in its intro"
+  ],
+  "D-026-R018": [
+   "NYC specifics now live ONLY in the profile; both skills' procedure bodies byte-identical from section R onward (programmatic proof); both name the same profile -> no drift"
+  ],
+  "D-026-R019": [
+   "sections A-F preserved verbatim in both copies: stop-new-work, sub-agent care, effect reconciliation, REPLACE semantics, READY/BLOCKED + 4 print items, successor launch command with live root, copy-paste successor prompt"
+  ],
+  "D-026-R020": [
+   "no D-024 file in the diff; campaign record untouched (NEXT still M0-T088)"
+  ],
+  "D-026-R021": [
+   "report bullet 1: frontmatter validation both copies; manually-invocable-only; no forked context"
+  ],
+  "D-026-R022": [
+   "report bullet 2-3: ctl24 dry-run (dynamic root, profile selected, destination = ctl24's own docs/SESSION_HANDOFF.md, zero state changes) + cross-worktree proof + live-root successor command"
+  ],
+  "D-026-R023": [
+   "report bullet 4: disposable temp repo without project-control -> BLOCKED, zero writes; bullet 5: established HANDOFF.md preferred"
+  ],
+  "D-026-R024": [
+   "report bullets 6-7: non-git fatal -> safe BLOCKED; ambiguous/mismatched profile -> BLOCKED"
+  ],
+  "D-026-R025": [
+   "report bullet 8: repo-tracked fallback present with valid frontmatter; loads on machines without the personal skill (registration proven since D-025)"
+  ],
+  "D-026-R026": [
+   "owner report delivered at task close in the session terminal: files, precedence, dry-run results, restart requirement, exact command (content prepared in project-control/reports/M0-T098-global-session-handoff.md)"
+  ],
+  "D-026-R027": [
+   "docs/SESSION_HANDOFF.md unchanged in this task's diff (git show --stat 722d494); no real handoff run"
+  ]
+ }
+}

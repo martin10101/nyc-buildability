@@ -1,0 +1,76 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-037",
+ "version": 1,
+ "requirement_count": 2,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-07T18:19:50+00:00",
+ "requirements": [
+  {
+   "id": "D-037-R001",
+   "text": "Add a PROPORTIONALITY / blocking-threshold rule to the reviewer instruction (prompts/codex_review.md): REVISE (which forces a full worker redo) is reserved for a genuine violation of the current authorized stage acceptance criteria or a real gate - correctness, safety, contract/back-compat, failing tests, or the repo hard CI rules (modularity size limits, security, dependency-security). A minor, non-blocking issue (naming, wording, an optional refinement, a nice-to-have that fails NO gate and NO acceptance criterion) must NOT trigger REVISE; the reviewer records it as a non-blocking advisory carried forward and returns COMPLETE for the stage when the blocking bar is met. The reviewer states, for each REVISE, which specific acceptance criterion or gate it blocks on.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T155"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "codex_review.md diff adding the proportionality rule + the per-REVISE which-gate/criterion requirement; a reviewer-decision test proving a minor non-blocker maps to COMPLETE-with-advisory and a real gate failure maps to REVISE",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-037-R002",
+   "text": "Do NOT weaken any real gate or safety property: the change is guidance about REVISE-vs-COMPLETE proportionality only; correctness/safety/contract/tests/modularity/security/dependency-security stay blocking, HALT_UNSAFE and STOP_FOR_OWNER unchanged, read-only reviewer discipline unchanged, and the consecutive-revision breaker stays as the runaway backstop. Delivered as a bounded supervisor task under the freeze rule (standard gates), then recertified before the running controller uses it.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "M0-T155"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [
+    "D-037-R001"
+   ],
+   "required_harness": "",
+   "required_evidence": "G3/G5 review confirming no gate weakened; freeze-rule recert recorded before install",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

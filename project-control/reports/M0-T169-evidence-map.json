@@ -1,0 +1,19 @@
+{
+  "task_id": "M0-T169",
+  "material_commit": "ef6dcd7c (first version) + 877a405b (advisory-only rework after G3-1 / G5 B1-B2; the shipped design)",
+  "produced_at": "2026-10-02T07:55:00+00:00",
+  "producer": "ai-pipeline-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T169)",
+  "requirements": {
+    "D-091-R003": [
+      "tools/agent_supervisor/review_combiner.py (advisory-only, 877a405b): combines the Codex and Claude reviews of the same frozen head; the combined finding set is the union of both reviews' findings, each tagged codex/claude, and no finding is ever removed; the combined verdict is worst_verdict(codex, claude), computed in code before any model call and never changed; model proposals are recorded only as advisory, evidence-bound disputes on blocking findings (finding stays, verdict unchanged); missing/malformed/empty/timeout/exception reviews are UNVERIFIED and non-disputable; different heads refused; identity collisions and an empty identity refused.",
+      "Tests: tools/test_agent_supervisor_review_combiner.py, 47 passed, including red/green cases (head-sha, unrelated file_line and trivial output disputes rejected; a valid dispute never drops a finding or flips FAIL to PASS; FAIL+PASS is always FAIL)."
+    ],
+    "D-091-R001": [
+      "Part of moving the loop here: the combining stage the D-091 design calls for (docs/D091_CLOUD_LOOP_DESIGN.md sections 2 and 4). The combining model is a required setting with no default (R008 stays the owner's choice): unset refuses before any process. Switch defaults off; nothing in the loop calls it."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 at 8b300649; submitted for G2, G3/G4 (code-reviewer), G5 (security-reviewer) and directive-compliance verification. The model is invoked read-only through claude_reviewer.build_argv (no guessed flag); the live CLI envelope is confirmed by the later recertification before the switch is ever turned on."
+    ]
+  },
+  "orch_corrected": "[ORCH-CORRECTED per DCV M0-T169 N2] refreshed to the shipped advisory-only design; this file is outside allowed_paths, so the material identity is unchanged."
+}

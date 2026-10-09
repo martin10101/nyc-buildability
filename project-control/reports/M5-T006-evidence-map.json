@@ -1,0 +1,14 @@
+{
+  "task_id": "M5-T006",
+  "reviewed_sha": "817815cc9f8205fba152d3e4b684b0b036ab56f0",
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/derive.py hardening (LOW-1/LOW-2/LOW-3) - scenario/optimization-engine PRODUCT domain, not M0 self-infra; milestone M5, backend",
+      "G0 packet PASS; AS-1..AS-6 map to real tests in test_scenario_derive.py; reproduced 124 passed"
+    ],
+    "D-038-R004": [
+      "derive.py imports copy/math/typing/.constants only; negative grep for supabase/geoclient/network/os.environ -> no matches",
+      "pure dict->dict offline function; socket-blocked run -> 70 passed; fixtures only, no Supabase/Geoclient"
+    ]
+  }
+}

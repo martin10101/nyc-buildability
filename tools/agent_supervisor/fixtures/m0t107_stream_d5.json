@@ -1,0 +1,319 @@
+[
+  {
+    "type": "system",
+    "subtype": "init",
+    "session_id": "m0t107-preserved-sid",
+    "model": "claude-fable-5"
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_01",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_1",
+          "name": "Grep",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 330,
+        "cache_read_input_tokens": 5661,
+        "output_tokens": 53
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_02",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_2",
+          "name": "Glob",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 660,
+        "cache_read_input_tokens": 11322,
+        "output_tokens": 107
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_03",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_3",
+          "name": "Read",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 990,
+        "cache_read_input_tokens": 16983,
+        "output_tokens": 161
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_04",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_4",
+          "name": "Grep",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1320,
+        "cache_read_input_tokens": 22645,
+        "output_tokens": 215
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_05",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_5",
+          "name": "Glob",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1650,
+        "cache_read_input_tokens": 28306,
+        "output_tokens": 269
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_06",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_6",
+          "name": "Read",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 1981,
+        "cache_read_input_tokens": 33967,
+        "output_tokens": 323
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_07",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_7",
+          "name": "Grep",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 2311,
+        "cache_read_input_tokens": 39628,
+        "output_tokens": 377
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_08",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_8",
+          "name": "Glob",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 2641,
+        "cache_read_input_tokens": 45290,
+        "output_tokens": 431
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_09",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_9",
+          "name": "Read",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 2971,
+        "cache_read_input_tokens": 50951,
+        "output_tokens": 485
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_10",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_10",
+          "name": "Grep",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 3301,
+        "cache_read_input_tokens": 56612,
+        "output_tokens": 539
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_11",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_11",
+          "name": "Glob",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 3631,
+        "cache_read_input_tokens": 62273,
+        "output_tokens": 593
+      }
+    }
+  },
+  {
+    "type": "assistant",
+    "session_id": "m0t107-preserved-sid",
+    "message": {
+      "id": "msg_turn_12",
+      "model": "claude-fable-5",
+      "stop_reason": "tool_use",
+      "content": [
+        {
+          "type": "tool_use",
+          "id": "tu_12",
+          "name": "Read",
+          "input": {
+            "pattern": "x"
+          }
+        }
+      ],
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 3962,
+        "cache_read_input_tokens": 67935,
+        "output_tokens": 647
+      }
+    }
+  },
+  {
+    "type": "result",
+    "subtype": "success",
+    "session_id": "m0t107-preserved-sid",
+    "is_error": false,
+    "num_turns": 12,
+    "usage": {
+      "input_tokens": 694251,
+      "output_tokens": 0
+    }
+  }
+]

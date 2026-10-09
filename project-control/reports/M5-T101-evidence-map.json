@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T101",
+ "material_commit": "6a0f7f53 (cherry-pick of wt-m5t101 6df9abad; 5 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T22:13:24+00:00",
+ "producer": "geospatial-engineer (orchestrator-dispatched subagent; worktree wt-m5t101)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam) named the connector's only consumer (its test) and the read-only transport/MapPLUTO neighbours; the split keeps every tested name importable from the connector (compatibility re-exports), imports acyclic (connector -> geometry only). [ORCH-HARVEST] at the cherry-picked head 6a0f7f53 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q` (cwd services/api) -> exit 0: 131 passed in 3.51s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Wave-7 capacity unit: contracted at 40169b9c (G0), claimed at 442b2dd2 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T102/T103/T104; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 6a0f7f53 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q` (cwd services/api) -> exit 0: 131 passed in 3.51s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t101; the producer commit touches exactly the 5 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head 6a0f7f53 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q` (cwd services/api) -> exit 0: 131 passed in 3.51s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R003": [
+   "The 3D-context connector is hardened before any wiring: geometry helpers split into building_footprints_geometry.py behind re-exports (117 existing tests unchanged, fixtures byte-identical), a per-geometry vertex cap + cumulative-bytes ceiling (typed resource_exhausted), a caller deadline across paging + a lower interactive max_attempts (typed deadline_exceeded), newline/control-safe correlation-id and class-name logging, the ground-datum semantics disclosed (both official definitions; zero stays a typed unverified value), source text declared untrusted for consumers, and the source_registry draft docs/research/source-registry-drafts/building-footprints.json. [ORCH-HARVEST] at the cherry-picked head 6a0f7f53 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q` (cwd services/api) -> exit 0: 131 passed in 3.51s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; unwired; no route/main.py/web change; app/resilience and the MapPLUTO connector untouched; the connector ends at 865 SLOC (< 1000 hard cap). [ORCH-HARVEST] at the cherry-picked head 6a0f7f53 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q` (cwd services/api) -> exit 0: 131 passed in 3.51s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}

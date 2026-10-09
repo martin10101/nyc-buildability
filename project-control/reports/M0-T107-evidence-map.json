@@ -1,0 +1,198 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T107",
+  "requirements": {
+    "D-024-R179": [
+      "Both unit-J deliverables complete at adoption commit 96f1b89b (docs/D024_PORTABILITY_PLAN.md + project-control/reports/M0-T107-portability-plan.md, blob-identical to task-branch tip 777ef5e4); report s2 maps every R179 clause; NYC exclusions plan s5; non-blocking plan s0.2/s8/s11."
+    ],
+    "D-024-R220": [
+      "Nothing blocked awaiting a natural Fable event: unit J proceeded through the four journey attempts and journey-m0t107-01 to completion; no work waited on quota/refusal observation (M0-T107 progress log)."
+    ],
+    "D-024-R221": [
+      "No deliberate allowance consumption: every provider launch was owner-typed and exactly one per run (audit mrl_one_shot_launched rows); no rerun loops (R394 honored at every stop)."
+    ],
+    "D-024-R223": [
+      "No injected event misrepresented: journey-m0t107-01 evidence is live (one_shot_unit.json); commissioning records label reused/injected evidence explicitly (M0-T140 evidence s2 item 2 'PASS (REUSED)')."
+    ],
+    "D-024-R224": [
+      "pending_live_observation discipline untouched: no natural quota/refusal/model-turnover canary fabricated or claimed in either deliverable or this continuation."
+    ],
+    "D-024-R227": [
+      "No feature graduated by this task: the plan authorizes nothing (plan s11); live-vs-injected graduation discipline unaffected."
+    ],
+    "D-024-R228": [
+      "No safety gate weakened, no unrelated work blocked: plan is non-blocking by construction (s0.2); guards/hooks untouched (task content = two docs files only)."
+    ],
+    "D-024-R348": [
+      "The single authorized post-Amendment-19 attempt is recorded in reports/M0-T107-amendment20-live-journey-2.md; every later journey carried fresh explicit owner authorization (Amendments 27/48/49/50)."
+    ],
+    "D-024-R349": [
+      "S16.7 cumulative owner-touch measurement never reset: progress log 2026-08-30/31 entries carry it forward (excess flagged to the owner, never erased)."
+    ],
+    "D-024-R350": [
+      "Complete preflight re-run before each start: commissioning-journey-3 record (full pre-dispatch gauntlet PASS incl task_authority); journey-m0t107-01 launch_verification.json."
+    ],
+    "D-024-R351": [
+      "Certified recovery + start commands PRESENTED for owner typing (first certified owner-restart HALTED->IDLE recorded in the cycle-2 live-journey report)."
+    ],
+    "D-024-R352": [
+      "Old 640k session never recontacted: journey-2 eight-point proof R352 PASS; all later runs fresh sessions (j3 6786b4b0, journey-01 5bd21dae)."
+    ],
+    "D-024-R353": [
+      "Shed/rotation before provider launch proven in journey-2 (R353 PASS) and by fresh per-run sessions thereafter."
+    ],
+    "D-024-R354": [
+      "Distinct fresh Fable session identity per run: 0835bb80 (j2), 6786b4b0 (j3), run_m0t107_j4 worker, 5bd21dae (journey-01)."
+    ],
+    "D-024-R355": [
+      "Worker launched INSIDE wt-m0t107: journey-01 checkpoint.worktree = wt-m0t107; j4 record same; the j2 primary-checkout defect was repaired and never recurred."
+    ],
+    "D-024-R356": [
+      "Task, lineage, budgets, audit history, exactly-once state preserved at every stop (journal transition/audit-seq counts recorded per assessment; journey-01 audit continuous)."
+    ],
+    "D-024-R357": [
+      "A VALID structured checkpoint reached Codex: first at journey-4 (facts 1-3), again at journey-01 (cp journey-m0t107-01.primary.cp1 reviewed)."
+    ],
+    "D-024-R358": [
+      "Codex COMPLETED independent review: journey-4 (schema-valid HALT_UNSAFE) and journey-01 (schema-valid REVISE, codex_decision.json)."
+    ],
+    "D-024-R359": [
+      "M0-T107 actually advanced: deliverables complete (777ef5e4, adopted 96f1b89b); this wave's gates and acceptance are the advancement record."
+    ],
+    "D-024-R360": [
+      "No --repin-cli-identity, budget reset, history clear, journal edit, PR-241 touch, or policy loosening in any continuation commit (git history: registry + ledger + two docs files only)."
+    ],
+    "D-024-R361": [
+      "Every post-dispatch stop ended with NO restart and one consolidated assessment (cycle2-start-refusal, cycle2-live-journey, amendment20-live-journey-2, commissioning-journey-3, commissioning-journey-4 reports)."
+    ],
+    "D-024-R362": [
+      "Continuous autonomy never claimed: M0-T140 evidence s4 records the GitHub surface unproven; neither deliverable claims autonomy."
+    ],
+    "D-024-R363": [
+      "The Amendment-21 corrected start (--worktree) was presented and owner-typed; journey-2 eight-point proof shows the corrected launch live."
+    ],
+    "D-024-R364": [
+      "Owner ruling recorded verbatim in the amendment and applied: the exit-11 cwd refusal treated non-consuming (progress log)."
+    ],
+    "D-024-R365": [
+      "All four pre-present checks verified (journal PREFLIGHT, wt-m0t107 clean, packet match, task authority) - journey-3 refusal + Option-A verification records."
+    ],
+    "D-024-R366": [
+      "M0-T124 command record corrected append-only; original bytes preserved (Amendment 21/27 records)."
+    ],
+    "D-024-R367": [
+      "validate_directive_compliance --check EXIT=0 at every capture in this chain (Amendment 48/49/50 commits); CI green at the frozen candidate (M0-T140 evidence)."
+    ],
+    "D-024-R368": [
+      "Supervisor source unmodified since the 3f4cee86 byte-verified install; no recertification trigger (no material change)."
+    ],
+    "D-024-R369": [
+      "ONE complete unwrapped owner command presented each time (handoff item 6: single powershell.exe -File line)."
+    ],
+    "D-024-R370": [
+      "The orchestrator never executed a start/journey command: every run owner-typed (audit owner_answer_validated rows; honored again this session)."
+    ],
+    "D-024-R371": [
+      "clear-recovery executed once by the owner (Step 1) and never re-run (journal sequence)."
+    ],
+    "D-024-R374": [
+      "All live evidence preserved byte-for-byte through every owner-decision window (journal/audit/transcripts/worktrees intact; assessments cite preserved seq numbers)."
+    ],
+    "D-024-R375": [
+      "During hold windows: no restart, journal edit, repin, PR-241 merge, policy weakening, or owner-gate crossing (git + journal history)."
+    ],
+    "D-024-R393": [
+      "Autonomy asserted only after the owner-run live commissioning (canary-b5-02r3 all ten R587 items PASS; M0-T140 evidence), never from simulations."
+    ],
+    "D-024-R394": [
+      "Every live commissioning failure stopped without retry and returned ONE consolidated assessment (the four M0-T107 journey assessments; b5-02r2 handled under M0-T143)."
+    ],
+    "D-024-R397": [
+      "Commissioning-command hold honored: commands never executed by the session; owner re-typed after the contradiction was resolved via the recorded Option-A path (journey-3 record)."
+    ],
+    "D-024-R417": [
+      "The one-time narrow R413 lift used solely for the authorized wt-m0t107 fast-forward (Amendment 27 record; task_authority PASS at journey-3 proves the corrected state)."
+    ],
+    "D-024-R418": [
+      "Complete section-2 preflight re-run at the then-current tip and Step-2 re-presented with the single corrected --repo value (journey-3 DISPATCH proves preflight PASS)."
+    ],
+    "D-024-R419": [
+      "Owner re-typed Step 2 only; Step 1 not repeated; the orchestrator executed neither command (journey-3/4 records; audit rows)."
+    ],
+    "D-024-R725": [
+      "cwd_mismatch treated as launcher path-wiring defect only: no accepted task reopened, no stabilization tranche, no controller/production change, guard untouched, no canary rerun, no provider contact (Amendment 48 capture; script-only fix)."
+    ],
+    "D-024-R726": [
+      "Read-only verification of wt-m0t107 existence/cleanliness/branch/task-authority ran and matched the packet before regeneration (Amendment 48 context block)."
+    ],
+    "D-024-R727": [
+      "Journey script regenerated so every worker binding (root/cwd/worktree/branch/HEAD/clean) comes from wt-m0t107 (deployed sha ab051334..., re-verified byte-exact this session)."
+    ],
+    "D-024-R728": [
+      "Only PS parser validation, read-only identity checks, and manifest/start-argument inspection ran; no provider call in the correction window (audit unchanged)."
+    ],
+    "D-024-R729": [
+      "Same activation script atomically replaced; SHA-256 + exactly one owner-run PowerShell command returned (handoff seq 79 items 4/6)."
+    ],
+    "D-024-R730": [
+      "Foreground terminal visibility recorded honestly BEFORE launch (handoff item 7: phase banners + approval prompt only; real-time events via audit.jsonl Get-Content -Wait; no richer display implemented)."
+    ],
+    "D-024-R731": [
+      "The Amendment-48 session response ended with exactly JOURNEY_LAUNCHER_PATH_CORRECTED (handoff seq 79 / commit a8aec2f4 record the completed correction)."
+    ],
+    "D-024-R732": [
+      "Commit ffc77bab on task/M0-T107-plugin-portability adds exactly the two draft files as the authorized starting state (name-status: 2 A rows)."
+    ],
+    "D-024-R733": [
+      "Post-commit blob SHA-256s equal the recorded pre-act hashes 7546d4e9.../b203ebf0... (verified via git show | sha256sum; recorded in Amendment 49 + the 2026-09-03 ledger progress entry)."
+    ],
+    "D-024-R734": [
+      "The starting-state commit touches only the two paths; git status clean immediately after (ledger progress entry)."
+    ],
+    "D-024-R735": [
+      "No upstream configured (rev-parse @{upstream} fails), nothing pushed, PR #241 untouched."
+    ],
+    "D-024-R736": [
+      "The act did not start the journey: journey-01 launch rows post-date the disposition; the owner typed the journey command separately."
+    ],
+    "D-024-R737": [
+      "Clean tree verified and the session response returned ffc77bab + exactly WORKTREE_CLEAN_READY (ledger progress entry 2026-09-03)."
+    ],
+    "D-024-R738": [
+      "Continuation ran from journey-m0t107-01 durable evidence treated as a successful journey (report s6.1 quotes one_shot_unit.json: COMPLETED, rc 0, cleanup proven; codex_decision.json: valid REVISE)."
+    ],
+    "D-024-R739": [
+      "operator_declined classified as the expected one-cycle close (report s6.1); no defect/incident record exists for it."
+    ],
+    "D-024-R740": [
+      "No new incident, stabilization, or controller-repair task opened: ledger delta of this continuation is M0-T107 lifecycle records only."
+    ],
+    "D-024-R741": [
+      "codex_decision.json and both modified allowed-path files were read before adjudication (report s6 derives from all three; session evidence)."
+    ],
+    "D-024-R742": [
+      "All five Codex requests consolidated and adjudicated together in one table (report s6.2, F1-F5)."
+    ],
+    "D-024-R743": [
+      "ONE bounded correction pass: commit 777ef5e4 touches only the report; the worker-revision commit 4047c79c touches only the two allowed files; nothing else changed in wt-m0t107."
+    ],
+    "D-024-R744": [
+      "Targeted verification 10/10 with real command output (report s6.3) followed by this wave's independent G3 (code-reviewer), G4 (qa-engineer), and DCV (directive-compliance-verifier) records at the reviewed head."
+    ],
+    "D-024-R745": [
+      "No journey or canary rerun: the controller runtime mrl/ gained no new run dir after journey-m0t107-01."
+    ],
+    "D-024-R746": [
+      "No controller, model-selection, infrastructure, task-scope, or cwd-guard modification: continuation diffs are the two docs files + registry/ledger records only."
+    ],
+    "D-024-R747": [
+      "No push, PR, merge, or deployment: both branches upstream-less; the candidate-branch adoption commit is local file adoption (no remote/GitHub act); PR #241 untouched."
+    ],
+    "D-024-R748": [
+      "Return report project-control/reports/M0-T107-return-report.md (produced in-wave before accept) + the session response present the Codex findings in plain English, corrections, gate results, and final status."
+    ],
+    "D-024-R749": [
+      "The return report's last line and the session response's final line are exactly the required token."
+    ]
+  }
+}

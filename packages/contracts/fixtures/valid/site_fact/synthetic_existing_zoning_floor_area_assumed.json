@@ -1,0 +1,25 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-existing-zfa",
+  "key": "existing_zoning_floor_area",
+  "lot_bbl": "5999999998",
+  "street": null,
+  "value": 6200,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "assumed",
+    "label": "Assumed"
+  },
+  "source": {
+    "kind": "assumption",
+    "dataset": null,
+    "dataset_version": null,
+    "retrieved_at": "2026-09-30T12:03:00Z",
+    "query_ref": null,
+    "document_ref": null,
+    "statement": "Architect's stated assumption: existing zoning floor area 6,200 sq ft, pending the certificate of occupancy."
+  },
+  "blocks": [],
+  "editable": true,
+  "note": "Synthetic fixture (test-fixture-synthetic)."
+}

@@ -1,0 +1,356 @@
+{
+  "task_id": "M5-T146",
+  "title": "Wire the first building option into the reported DOCUMENT (task 1 of 2, ONE PR with task 2; four parts): A the results contract ADDITIVE version 1.4.0 (a new optional building_alternatives list with floor schedules and each building's preliminary capacity estimate, and the by-portion coverage fields; every existing block keeps its shape and benchmark content); B the server (emit the new blocks; footprint figure withheld where the two lot areas disagree; building B conditional; building A absent on the benchmark; legal unit limit stays withheld; name each gap kind); D the register (split the checker, add the DB-211 guards, update + render); E regenerate the committed document and its snapshots and the two server content tests once. Nothing feasible; no human verdict [D-090 R147,R192,R239,R255,R256,R257,R267,R322,R374,R379,R509,R526,R540,R541,R543,R544,R556,R570,R650,R688,R700,R707]",
+  "task_type": "rule_engineering",
+  "milestone_id": "M5",
+  "objective": "TASK 1 of 2 (reviewed at ONE common head with task 2 and merged as ONE pull request). Connect the four accepted M5-T145 modules to the reported RESULTS DOCUMENT and the register. PART A: extend the contract ADDITIVELY to version 1.4.0, following the 1.1.0/1.2.0/1.3.0 precedent (optional blocks bound by a version allOf; every earlier instance stays valid byte-for-byte; DB-196) - a new optional top-level building_alternatives block (a LIST of worked buildings, each with its floor schedule and its own preliminary capacity estimate, each stating its way and conditions), and the by-portion coverage fields; building_option, unit_estimate, floor_stack, floor_by_floor, max_lot_coverage and geometry KEEP their shape and their benchmark content. PART B: call corner_reach_area (via result_way_bridge), lot_coverage_by_portion, first_building_options and preliminary_apartment_estimate; follow the conflicting-area rule (work order section 6, R257/R239) - the footprint IN SQUARE FEET is shown only where the recorded and outline areas AGREE (compare_lot_area), and WITHHELD where they disagree (benchmark); emit building_alternatives (benchmark: building B alone, conditional on the recorded area; building A absent, it needs the footprint figure); the single building_option block stays not_available with a reason pointing to building_alternatives; name each gap kind (R650); the legal dwelling-unit limit stays withheld; add the DB-212 (d) storey tolerance to first_building_options.py. PART D: update the register (split review_register_calculations.py first, add the DB-211 (a)(b) guards before any six-step verdict moves, update the calc entries' actual sides and render). PART E: regenerate the committed results document, its drawings/CAD snapshots and the two server content tests once. Nothing is called feasible; no human verdict.",
+  "business_reason": "The four modules are built and reviewed but reachable from no reported result. Task 1 makes the first building option (building B on the benchmark) and the preliminary capacity estimate appear in the results DOCUMENT and the register, in the owner's order, with the conflicting-area and withheld rules kept. An ADDITIVE contract keeps every existing block's shape and benchmark content, so the drawings, CAD, PDF and the web source that read existing blocks do not break; only full-document consumers change, and task 1 and task 2 are reviewed at one head and merged together so the whole CI is green once.",
+  "inputs": [
+    "The four accepted modules (imported; only first_building_options.py changed): corner_reach_area.py (measure_corner_reach_area; CornerPortionAreas), lot_coverage_by_portion.py (permitted_footprint_by_portion), first_building_options.py (building_a/building_b -> FloorSchedule), preliminary_apartment_estimate.py.",
+    "The contract precedent: packages/contracts/schemas/v1/results.schema.json - additionalProperties false, contract_version an append-only enum (1.0.0-1.3.0), version-binding allOf; DB-196 (a)-(c) names the homes the new work needs. The by-portion coverage (W1), the building_alternatives list (W3) and the estimate per building (W4) are the 1.4.0 additions.",
+    "The conflicting-area rule: docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 6 (lines 229-251; R257, R239); compare_lot_area in result_way_bridge.py (reading O15: agree iff the outline area rounded to the whole square foot equals the recorded figure; benchmark disagrees, 10,388 vs 10,075; no invented tolerance).",
+    "The lowest-ratio bound (W2): r6b_lot_coverage.rule.json:44 (corner 100 / interior|through 80), :57-58 (ZR 23-362(b) and 23-363 can lower it; the engine already withholds, result_ways.py:204-234). On the benchmark 0.80 x 10,075 = 8,060 >= building B's plan 6,716.67.",
+    "The orchestrator's rulings C1-C18 and the reviews (project-control/reports/M5-T145-G3G4.md); backlog rows DB-210, DB-211, DB-212, DB-196.",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json rows real-lot-recorded-vs-measured-area, real-building-b, real-estimate-b, real-unit-limit, made-up-footprint-a, made-up-building-a; cases/real-lot.json (real-lot#L6 = 29).",
+    "The decision layer and emitter as read-only context: result_way_bridge.py:210-216, result_ways.py:116-119/196-254/489-507/619-641, three_way_document.py:97-100/184-216/219-223, geometry.py:53-59.",
+    "The register: review_register_calculations.py (SLOC ~715), check_review_register.py, register.json, render_review_register.py, docs/zoning-rule-review/; the committed document and its snapshots; the server content test tests/api/test_results_read_api.py."
+  ],
+  "outputs": [
+    "An ADDITIVE 1.4.0 contract with the building_alternatives list and the by-portion coverage fields; the server emitting them with the conflicting-area rule; the register's calc entries updated with the DB-211 guards and the checker split; the committed document, snapshots and the two server content tests regenerated once.",
+    "Four part reports project-control/reports/M5-T146-part-A.md, -part-B.md, -part-D.md, -part-E.md; the packet report project-control/reports/M5-T146-producer-report.md assembled by the orchestrator."
+  ],
+  "dependencies": [
+    "M5-T145",
+    "M4-T038",
+    "M5-T144",
+    "M5-T127"
+  ],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/results.schema.json",
+    "packages/contracts/generated/results.ts",
+    "packages/contracts/fixtures/valid/results",
+    "packages/contracts/fixtures/invalid/results",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/first_building_options.py",
+    "services/api/tests/scenario/three_answers",
+    "services/api/app/rules/review_register",
+    "docs/zoning-rule-review",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "project-control/reports/M5-T146-part-A.md",
+    "project-control/reports/M5-T146-part-B.md",
+    "project-control/reports/M5-T146-part-D.md",
+    "project-control/reports/M5-T146-part-E.md",
+    "project-control/reports/M5-T146-producer-report.md",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "services/api/app/contracts/results_way_rules.py",
+    "services/api/tests/drawings/kit/test_massing.py",
+    "services/api/tests/spatial/test_corner_reach_area.py",
+    "services/api/tests/drawings/kit/snapshots",
+    "services/api/tests/cad/snapshots",
+    "services/api/tests/drawings/kit/kit_support.py",
+    "services/api/tests/drawings/kit/test_adapter.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/tests/api/test_results_read_law_examples.py"
+  ],
+  "forbidden_paths": [
+    "services/api/app/spatial/corner_reach_area.py",
+    "services/api/app/spatial/lot_reach.py",
+    "services/api/app/scenario/three_answers/lot_coverage_by_portion.py",
+    "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
+    "services/api/app/scenario/three_answers/building_option.py",
+    "services/api/app/scenario/three_answers/dwelling_units.py",
+    "apps/web"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "PART A: a 1.4.0 document with building_alternatives validates",
+      "input": "a results fixture declaring contract_version 1.4.0 with a building_alternatives list of one building (building B) carrying its floor schedule and its capacity estimate",
+      "expected": "the schema validates it. Basis: step-p6-worked#real-building-b, #real-estimate-b."
+    },
+    {
+      "id": "S2",
+      "case": "PART A: a building_alternatives entry carries a floor schedule and way",
+      "input": "building B of 3 storeys of 6,716.67, 20,150, 30 ft, way conditional with its conditions",
+      "expected": "the schema validates the floor-schedule rows (storey, top_ft, plan_area, floor_area, running_total), totals, and the entry's way/conditions. Basis: step-p6-worked#real-building-b."
+    },
+    {
+      "id": "S3",
+      "case": "PART A: every earlier fixture stays valid byte-for-byte",
+      "input": "the existing valid results fixtures (1.0.0-1.3.0), unchanged",
+      "expected": "all still validate unchanged (additive); the version enum gains 1.4.0 only. Basis: the 1.1.0/1.2.0/1.3.0 precedent."
+    },
+    {
+      "id": "S4",
+      "case": "PART A: a withheld result carrying a number is rejected",
+      "input": "a withheld coverage or unit-limit result that also carries a numeric value",
+      "expected": "the schema REJECTS it (D-090 R556/R570)."
+    },
+    {
+      "id": "S5",
+      "case": "PART A: a wrong estimate label is rejected",
+      "input": "a capacity estimate labelled other than the two owner labels",
+      "expected": "the schema REJECTS it (D-090 R543)."
+    },
+    {
+      "id": "S6",
+      "case": "PART A: the version-binding allOf",
+      "input": "a document carrying a building_alternatives block but declaring 1.3.0",
+      "expected": "the schema REJECTS it; carrying a 1.4.0 block binds contract_version to 1.4.0 (the allOf), as a non-null scope bound 1.1.0."
+    },
+    {
+      "id": "S7",
+      "case": "PART B: the benchmark footprint is withheld because the areas disagree",
+      "input": "the benchmark lot; recorded 10,075 vs outline 10,387.99 (compare_lot_area: disagree)",
+      "expected": "max_lot_coverage WITHHELD, kind a missing fact; text the law by portion (corner 100%, interior 80%, within 100 ft), no square-foot figure; the outline's area is not used in its place. Basis: work order section 6; step-p6-worked#real-lot-recorded-vs-measured-area."
+    },
+    {
+      "id": "S8",
+      "case": "PART B: the single building_option block stays not_available",
+      "input": "the benchmark lot",
+      "expected": "building_option (the single answer) stays not_available, its reason pointing to building_alternatives; no number, no substitute (R556/R570); no contradiction with the list."
+    },
+    {
+      "id": "S9",
+      "case": "PART B: building_alternatives shows building B, conditional",
+      "input": "the benchmark lot; allowance 20,150; floor-to-floor 10; min/max base 30/45",
+      "expected": "building_alternatives is a list of one, building B (3 storeys of 6,716.67, 20,150, 30 ft), conditional 'If the recorded lot area of 10,075 sq ft is confirmed' + K20; its text says the plan fits even at the lowest ratio (0.80 x 10,075 = 8,060 >= 6,716.67); not called feasible. Basis: step-p6-worked#real-building-b; r6b_lot_coverage.rule.json:44."
+    },
+    {
+      "id": "S10",
+      "case": "PART B: building A is absent on the benchmark",
+      "input": "the benchmark lot; building A needs the footprint figure, which is withheld (S7)",
+      "expected": "building A is not in the list; it is not known, kind a missing fact (carried from the withheld coverage, R650); no footprint figure is invented."
+    },
+    {
+      "id": "S11",
+      "case": "PART B: the benchmark estimate in building B's entry",
+      "input": "building B floor area 20,150; share 0.60-0.75; size 700",
+      "expected": "building B's capacity estimate is 17.27-21.59, labelled 'Preliminary capacity estimate', share/size preliminary and editable, separate from the legal limit. Basis: step-p6-worked#real-estimate-b."
+    },
+    {
+      "id": "S12",
+      "case": "PART B: the legal dwelling-unit limit stays withheld",
+      "input": "the benchmark lot; special density area NOT_GIVEN",
+      "expected": "legal_unit_limit_standard stays withheld (no number); 29 computed, not shown; not a substitute for the estimate. Basis: result_ways.py:489-507; step-p6-worked#real-unit-limit."
+    },
+    {
+      "id": "S13",
+      "case": "PART B: a lot whose areas agree shows the footprint and building A",
+      "input": "a lot where compare_lot_area agrees (an interior made-up lot of 10,000 sq ft)",
+      "expected": "the footprint figure shows (interior ratio on the whole lot = 8,000, DB-212 b) and building A is in the list. Basis: step-p6-worked#made-up-footprint-a, #made-up-building-a."
+    },
+    {
+      "id": "S14",
+      "case": "PART B: no outline or a bent frontage withholds, naming the kind; geometry follows",
+      "input": "a lot whose outline was refused, or a bent frontage (PART A state codes)",
+      "expected": "coverage and building_alternatives are withheld, each naming its kind (missing fact, or method limit); the geometry draws the outline but not the footprint or floor plates (M5-T144 rule, R192); the option states what it has not checked; nothing feasible."
+    },
+    {
+      "id": "S15",
+      "case": "PART D: splitting the checker keeps its behaviour",
+      "input": "review_register_calculations.py split behind a compatibility facade (DB-211 c)",
+      "expected": "the checker's outputs are byte-identical before and after; the modularity check passes. Runs beside PART B (no dependence on B)."
+    },
+    {
+      "id": "S16",
+      "case": "PART D: the calc entries' actual sides updated",
+      "input": "the register source data updated from the engine's new output and rendered",
+      "expected": "calc-lot-coverage-by-portion shows withheld-by-portion (no figure), the building-option page shows building B, calc-preliminary-apartment-estimate shows the estimate - conditional, rendered by render_review_register.py --write; no page edited by hand. Waits for PART B."
+    },
+    {
+      "id": "S17",
+      "case": "PART D: the DB-211 (a) guard binds a verdict to its actual side",
+      "input": "a mutation that changes a step's actual side without its verdict",
+      "expected": "the new guard test FAILS, catching what a fresh render would hide (DB-211 a)."
+    },
+    {
+      "id": "S18",
+      "case": "PART D: the DB-211 (a) guard requires every figure's row",
+      "input": "a six-step figure with no legal-or-design row",
+      "expected": "the new guard test FAILS (DB-211 a)."
+    },
+    {
+      "id": "S19",
+      "case": "PART D: the DB-211 (b) scenario fixes",
+      "input": "the register scenarios S7 (special-density applicability) and S8 (effective date)",
+      "expected": "S7 feeds a lot with a special density area present; S8 derives the effective date from the combined rules' dates (DB-211 b)."
+    },
+    {
+      "id": "S20",
+      "case": "PART D: no human verdict is entered",
+      "input": "the updated register",
+      "expected": "no human-review verdict field is set; the guards check code identity, captures and figures, never a reviewer's answer (R374)."
+    },
+    {
+      "id": "S21",
+      "case": "PART E: the committed document regenerated matches the engine",
+      "input": "recorded_215_16_northern_journey.json regenerated once",
+      "expected": "it declares 1.4.0, carries building B and its estimate; the footprint figure, building A and the legal limit stay withheld/absent; the journey test passes."
+    },
+    {
+      "id": "S22",
+      "case": "PART E: the drawings/CAD snapshots are unchanged",
+      "input": "the site_plan.svg and .dxf regenerated",
+      "expected": "they are byte-identical (the geometry block is unchanged: no footprint, no floor plates); their tests pass, confirming the additive change drew nothing new."
+    },
+    {
+      "id": "S23",
+      "case": "PART E: the results read API serves the new blocks",
+      "input": "tests/api/test_results_read_api.py against the regenerated document",
+      "expected": "the route returns the document with building_alternatives and the estimate; the test passes (updated for the additive blocks)."
+    },
+    {
+      "id": "S24",
+      "case": "PART E: the drawings and document agree on what is withheld",
+      "input": "the regenerated document and its snapshots",
+      "expected": "every layer the drawings omit matches a withheld result; nothing drawn carries a figure the document withholds (R570)."
+    },
+    {
+      "id": "S25",
+      "case": "The walkthrough's F1: no building can be worked (16 ft)",
+      "input": "the benchmark lot at a floor-to-floor height of 16 ft, through the emitter and through the live route",
+      "expected": "no building is listed; buildings_not_worked names building A (footprint withheld: the two lot areas disagree; missing information) and building B (2 storeys would need a plan of 10,075 sq ft each, above the bound of 8,060 sq ft, 80 percent of the recorded lot area), each with its kind and what would resolve it, and no number field; building_option, unit_estimate and floor_stack point to the lists and give no false reason."
+    },
+    {
+      "id": "S26",
+      "case": "Reaching the minimum base height passes the maximum base height (25 ft)",
+      "input": "the benchmark lot at a floor-to-floor height of 25 ft, through the emitter and through the live route",
+      "expected": "no building is listed; buildings_not_worked gives building B's reason (the fewest storeys reaching the minimum base height stand above the maximum base height) and building A's; nothing is called feasible."
+    },
+    {
+      "id": "S27",
+      "case": "A building not worked beside a listed one (10 ft and 14 ft)",
+      "input": "the benchmark lot at 10 ft (the committed document) and at 14 ft",
+      "expected": "building B is listed as before; buildings_not_worked names building A only, with the areas-disagree reason and no figure; each building is in exactly one list; the regenerated benchmark changes only by that entry."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "ONE PR WITH TASK 2 (consumer sweep): the regenerated benchmark document's CONTENT change breaks the web journey/lib tests too, and the panel must render the new blocks; so task 1 and task 2 are reviewed at ONE common head on one branch and merged as ONE pull request - the full CI is green there. Task 1 owns server+contract+register+document+server content tests; task 2 owns apps/web; they share no path.",
+    "ADDITIVE, NOT REPLACE (strategy): append contract_version 1.4.0 with optional blocks; every existing block keeps its shape and benchmark content, so the drawings kit, CAD (read the geometry only), the PDF renderer and the web source that read existing blocks do not break. Verify by rerunning the suites; the only server breaks are the journey test and tests/api/test_results_read_api.py (full-document content).",
+    "CONFLICTING-AREA RULE (W1): on the benchmark the footprint IN SQUARE FEET is withheld (areas disagree), kind a missing fact; use compare_lot_area's existing agree/disagree; invent no tolerance; the figure shows only where the areas agree.",
+    "BUILDINGS AS A LIST (W3) and no contradiction: building_alternatives is a list, none preferred; the single building_option stays not_available with a reason pointing to the list (R556/R570 - no older or substitute value).",
+    "PLAN FITS COVERAGE IS NOT BUILDING FITS LOT (W5): the rear yard beyond the corner stays withheld, no placement is worked (R192); the option states what it has not checked; nothing is called feasible; floor plates are not drawn.",
+    "REGISTER SIZE (DB-211 c): split review_register_calculations.py (SLOC ~715) with a facade before the guards grow it past 750; the DB-212 (d) storey tolerance + test goes in first_building_options.py."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T10:47:16.741586+00:00",
+  "updated_at": "2026-10-09T23:29:42.937995+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R147",
+        "D-090-R192",
+        "D-090-R239",
+        "D-090-R255",
+        "D-090-R256",
+        "D-090-R257",
+        "D-090-R267",
+        "D-090-R322",
+        "D-090-R374",
+        "D-090-R379",
+        "D-090-R509",
+        "D-090-R526",
+        "D-090-R540",
+        "D-090-R541",
+        "D-090-R543",
+        "D-090-R544",
+        "D-090-R556",
+        "D-090-R570",
+        "D-090-R650",
+        "D-090-R688",
+        "D-090-R700",
+        "D-090-R707",
+        "D-090-R773"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T10:47:16.741871+00:00",
+  "path_notes": "TASK 1 of 2, reviewed at ONE common head with task 2 and merged as ONE pull request. FOUR parts; up to THREE builders. ORDER: PART A (contract) FIRST, alone; then PARALLEL {PART B server; PART D register checker split + the two DB-211 guards + the DB-211 b fixes (no dependence on B); and, in task 2, PART C the web panel} - three builders on disjoint folders (services/api/app/scenario, services/api/app/rules/review_register, apps/web); then PART D's calc-entry data update + render (after B) and PART E regenerate the document + snapshots + the two server content tests (after B); task 2's web content tests run against PART E's regenerated document. PROOF no two parallel parts share a path: the parallel window is {B, D, C}; B edits services/api/app/scenario/three_answers/* + services/api/tests/scenario/three_answers; D edits services/api/app/rules/review_register + docs/zoning-rule-review + the register test; C (task 2) edits apps/web only - disjoint. PART A and PART E both touch packages/contracts/fixtures/valid/results but never in parallel.\n\nPART A results contract (ADDITIVE 1.4.0): append '1.4.0' to the contract_version enum and add, as OPTIONAL blocks bound by a version allOf (the 1.1.0/1.2.0/1.3.0 pattern; every earlier instance stays valid byte-for-byte): a top-level building_alternatives array - each entry a labelled building with its fill_rule, floor-schedule rows (storey, floor_to_floor_ft, top_ft, plan_area_sqft, floor_area_sqft, running_total_sqft), storey_count, height_ft, total/unused, below_min_base, its way ('settled'|'conditional'|'withheld') with conditions, and its preliminary capacity estimate (quotient_low/high two decimals and unrounded, whole below/above, share_low/high, apartment_size, label exactly 'Not known' or 'Preliminary capacity estimate'); and the by-portion coverage fields (corner/interior ratios, the 100 ft, and the footprint figure only when the areas agree). A withheld result carries NO number (R556/R570). Keep building_option, unit_estimate, floor_stack, floor_by_floor, max_lot_coverage and geometry unchanged in shape. Regenerate packages/contracts/generated/results.ts; add valid fixtures (a 1.4.0 document with building B) and invalid fixtures (a number on a withheld result; a wrong estimate label; a 1.4.0 block declaring 1.3.0).\n\nPART B server: in result_way_bridge.py:210-216 add measure_corner_reach_area(outline, geometry, 100.0). In result_ways.py _coverage_way (:238-254): use compare_lot_area's agree/disagree - DISAGREE -> withhold max_lot_coverage (kind a missing fact; text the law by portion, no figure); AGREE -> call lot_coverage_by_portion and show the footprint. Building (:116-119, :619-641) and three_way_document.py (:97-100, :219-223): call first_building_options; emit building_alternatives with every building that can be worked (building B whenever its plan <= lowest-ratio x recorded area; building A only when the footprint figure is available), each with its capacity estimate from preliminary_apartment_estimate on that building's floor area; the single building_option stays not_available pointing to the list; the standard unit-limit value object (:184-216) stays withheld; name each not-known's kind from the result that failed to supply the input (R650). geometry.py:53-59: draw the footprint and floor plates only when drawable; else carry the withheld reason (M5-T144). Add the DB-212 (d) storey tolerance + test to first_building_options.py. Nothing feasible; the option states what it has not checked.\n\nPART D register: FIRST split review_register_calculations.py behind a compatibility facade (DB-211 c) and add to check_review_register.py the DB-211 (a) guards (bind each six-step verdict to its actual side; require every figure's legal-or-design row) and the DB-211 (b) scenario fixes - no dependence on PART B. THEN, after PART B, update register.json from the engine's new output and render (calc-lot-coverage-by-portion withheld-by-portion, the building-option page showing building B, calc-preliminary-apartment-estimate showing the estimate); no page by hand; no human verdict (R374); state the DB-212 (c) coverage gap (one floor height, 15 ft shop floor not worked).\n\nPART E regenerate: regenerate recorded_215_16_northern_journey.json (now 1.4.0), the site_plan.svg and .dxf snapshots (expected unchanged - geometry unchanged), and update the two server content tests (the journey test and tests/api/test_results_read_api.py) for the additive blocks; run them. Every expected value traces to a named step-p6-worked/real-lot row, never a program run.\n\nTHE ORCHESTRATOR'S RULINGS (they govern wherever they differ from the text above). W1: where the recorded lot area and the tax-map outline's area DISAGREE (the existing comparison of reading O15; no tolerance is invented), the footprint in square feet by portion is NOT shown: the outline's area is a drawing measure and is never used in a zoning calculation (work order `docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md`, section 6; rows R257, R239). The coverage result stays withheld there, kind 'a missing fact about the property' (a survey or deed dimensions would settle it), and its text gives what the law gives by portion without a square-foot figure. Where the two areas agree, the figure is shown. The owner was asked on 2026-10-09 whether to show it instead as conditional on the outline; until an answer, this rule stands. W2: building B is shown where its plan (the allowance divided by its storeys) is at most the LOWEST coverage ratio that can apply to the lot times the RECORDED lot area (benchmark lot: 0.80 x 10,075 = 8,060 sq ft against 6,716.67). The bound is passed to the module as its footprint input and the text says what it is. It applies only where 80 percent is the lowest applicable ratio (the rule file's lower ratios for large lots stay withheld as today). Building B is CONDITIONAL, never settled or confirmed (row R267): on the recorded lot area being confirmed, on the standing conditions every zoning result carries, and on what was not checked. Building A needs the footprint figure: where that is withheld, building A is not listed and is not known (kind: a missing fact about the property). W3: WHICH buildings an option shows is the owner's open decision (backlog row DB-210 b). Until an answer, the document lists EVERY building that can be worked for the lot as a labelled alternative, none marked preferred or default. W4: the estimate is worked for each listed building from that building's own floor area; label exactly as row R543 says. W5: 'the plan fits the coverage' is not 'the building fits the lot'. Each listed building carries, as data and as plain text, what was NOT checked (the rear yard beyond the corner; where the plan sits on the lot; the street wall; parking, loading and bicycle requirements: rows R526, R548). Nothing is called feasible, complies, validated or legally correct. No placement is worked, so no footprint and no floor plate is drawn for the benchmark lot: the geometry block follows every withheld result it draws (task M5-T144). W6: the two tasks (M5-T146 the document, M5-T147 the screen) are built on ONE branch, reviewed at ONE common head and merged as ONE pull request, because the regenerated document changes what the website's tests read. Order: part A (the contract) alone; then part B (server), part D1 (the register checker's split and the two guards of backlog row DB-211) and part C (the website, task M5-T147) side by side on separate folders; then part D2 (the register's data) and part E (the document and snapshots regenerated ONCE); then the website's content tests against the regenerated document. W7: the share range and the apartment size are SHOWN with the values used and called preliminary assumptions. Letting the user CHANGE them on the screen is not in these two tasks unless the existing input path already carries such a value end to end; it is work owed and is recorded in the backlog. W8: a builder who finds that a file outside its part must change STOPS and reports; it does not widen its scope. A legal figure is quoted only from a capture. No human verdict is entered.\n\nSCOPE CORRECTION BY THE ORCHESTRATOR BEFORE PART B STARTS. W9: one new focused module is added to the scope, `services/api/app/scenario/three_answers/first_option_results.py`: `result_ways.py` has 662 lines and must not grow past the size check's lines; the assembling of coverage by portion, the list of worked buildings and their estimates goes into the new module, and the existing files only call it.\n\nSECOND SCOPE CORRECTION BY THE ORCHESTRATOR, AFTER READING PARTS A, B AND E AND BEFORE ANY REVIEW. W10: six more paths are in scope. FOUR were changed by the builder of parts B and E outside its paths and flagged in its report instead of stopping; the orchestrator read each diff and takes them into the task: the bundled copy of the contract schema inside the server (CI requires it byte-identical to the contract; part A had not synced it), `services/api/app/contracts/results_way_rules.py` (the rule of the way layer must also bind version 1.4.0), `services/api/tests/drawings/kit/test_massing.py` (a fixture filter that broke on a document without floor plates) and `services/api/tests/spatial/test_corner_reach_area.py` (the guard of task M5-T145 that nothing imported the measurement \"until the wiring step\": it now names the two wiring modules). TWO are the snapshot folders of the drawing kit and the CAD export: part A added two valid sample documents and every valid results document needs its snapshots; 36 drawing and CAD tests were red at the integrated head for that reason (the orchestrator had run only the journey and read-route tests on part A: its omission). W11 (what the reading of the regenerated benchmark document found, to be corrected before review): (a) the older value state `max_lot_coverage` still gives the old reason and kind (work owed: computing coverage per portion) beside the new block that gives the true one (the two lot areas disagree: a missing fact): two results about one thing must never give different reasons, kinds or resolvers; (b) the older blocks `unit_estimate` and `floor_stack` still say not built yet and not known while the list of buildings carries an estimate and a floor schedule: when the list carries them, the older blocks say where they are given and claim nothing else; (c) the sentence that says why building B fits stands inside the building label: it goes into a field of its own (`fit_note`) and the label stays a short name.\n\nTHIRD SCOPE CORRECTION BY THE ORCHESTRATOR, BEFORE ANY REVIEW. W12: the two valid sample documents of part A carry no drawable geometry, so the drawing kit has nothing to snapshot for them; the builder of parts B and E narrowed the drawing tests' fixture list to documents whose geometry is available (`services/api/tests/drawings/kit/kit_support.py`, changed outside its paths and flagged; the orchestrator read it: today it leaves out exactly those two documents). Taken into the task, with a guard so that nothing can drop out of the drawing tests unseen: a test pins the list of left-out documents to exactly those whose geometry is not available, and asserts that the drawing kit answers each of them as unavailable instead of failing (`test_adapter.py`).\n\nFOURTH SCOPE CORRECTION BY THE ORCHESTRATOR, BEFORE ANY REVIEW. W13: (a) the live results route had no prepared outline when the live spatial provider is off, so the two lot areas could not be compared and the first building option was not emitted; the fix lists building B on every path where the allowance is shown (it rests on the recorded lot area and the lowest ratio only) and keeps coverage_by_portion to the case where the areas disagree. One test outside the paths had pinned the old version (`services/api/tests/api/test_results_read_law_examples.py`): read and taken in. (b) Scenario S13 (a lot whose areas agree shows the footprint and building A) was met only inside the assembly module, not through the emitter: the measured corner-portion areas and the area comparison must reach the emitter from `result_way_engine_bridge.py`, which is added to the scope for that; a test through the emitter, and one through the live route with a lot whose areas agree if a recorded or synthetic input allows it. Where the outline is missing, coverage by portion is withheld with the reason that the outline is not available (kind: a missing fact about the property), never computed from the recorded area.\n\nCORRECTION AFTER THE WALKTHROUGH (orchestrator, 2026-10-09; the walkthrough of task M5-T147 FAILED at head 7cf94e09fcb384677f707b13113cae4f8116c4a9 on its blocking finding F1: at a floor-to-floor height of 16 ft no building is listed, nothing says why, and the older building-option text says the building is below the minimum base height, which is false there). W14: (a) Wherever the floor-area allowance is shown, the document says, for EACH building of the step-P6 method that is NOT listed in building_alternatives, why it was not worked: an OPTIONAL additive top-level list `buildings_not_worked` in contract 1.4.0 (not yet released, so it is extended, not bumped), each entry {building, label, reason, gap_kind, resolved_by}, the gap kind from the contract's existing vocabulary, and NO number field. A building is in exactly one of the two lists. On the benchmark lot at 10 ft and 14 ft this names building A (its footprint is withheld because the two lot areas disagree: missing information), which ruling W1 already required to be stated as not known. (b) The reasons are plain text. Building A's reason never gives a footprint figure. Building B's reason uses only figures the listed building's fit note already uses (the allowance, the storeys, the plan per storey, and the bound named truly as 80 percent of the recorded lot area, the lowest coverage ratio that can apply): never 'the footprint', which is the calculation module's word for its input. (c) The older building_option block never states a false reason: wherever the first option is applied it points to building_alternatives and buildings_not_worked and claims nothing else, also when no building is listed; the decision module's older text ('below the minimum base height', 'the rear yard') reaches no document where it is false; the older unit_estimate and floor_stack blocks follow ruling W11 (b) when no building is listed. (d) Tests at 16 ft (building B: 2 storeys would need a plan of 10,075 sq ft each, above the bound of 8,060 sq ft) and at 25 ft (building B: reaching the minimum base height would pass the maximum base height) through the emitter and through the live route; the committed benchmark document regenerated (it gains building A's entry and nothing else), its drawing and CAD snapshots unchanged, and the review register resynced. Nothing is called feasible.",
+  "documented_test_commands": [
+    "python packages/contracts/scripts/generate_ts_types.py",
+    "python .github/scripts/validate_contracts.py",
+    "cd services/api && python -m ruff check app/scenario/three_answers app/rules/review_register",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/rules/test_zoning_rule_review_register_calculations.py tests/journey/test_215_16_northern_journey.py tests/api/test_results_read_api.py tests/drawings tests/cad",
+    "python tools/modularity_check.py --check",
+    "python3 services/api/scripts/sync_contract_schemas.py --check",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider tests/cad tests/drawings"
+  ],
+  "worktree": "/root/project/w-wave19",
+  "progress_log": [
+    {
+      "at": "2026-10-09T10:47:36.687528+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed; part A (the contract) is built first, alone (concurrency record WAVE19-2026-10-09-concurrency-record.md)."
+    },
+    {
+      "at": "2026-10-09T20:32:49.538824+00:00",
+      "agent": "rules-engineer",
+      "percent": 70,
+      "status": "claimed",
+      "message": "All parts integrated and checked at 20:32 UTC on the integrated head: server ruff 0; server folders (three_answers, spatial, journey, api, drawings, cad, pdf content, register, reference cases) 3664 passed 8 skipped; register check 0; contract validation 0; .github/scripts/tests 24 passed; bundle check 0; modularity 0; lane coverage 0; website lint 0, typecheck 0, vitest 103 files 2206 tests. The browser test ran green in its builder's worktree; CI runs it on the pushed head. Producers' report assembled from the part reports. Next: push, CI, reviews."
+    },
+    {
+      "at": "2026-10-09T23:15:25.751410+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; corrected after the walkthrough (rulings W14); four delta reviews PASS at f237d0d7; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-09T11:14:05+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before part B started] one new module path added to the scope (first_option_results.py) so that result_ways.py (662 lines) does not have to grow; ruling W9. No gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-09T12:30:48+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, after reading parts A, B and E, before any review] six paths added to the scope (ruling W10): four that the builder of parts B and E changed outside its paths and flagged (each diff read and found necessary and small: the bundled schema copy, the way-layer rule for 1.4.0, two tests), and the two snapshot folders that part A's two new valid sample documents need. Ruling W11 names three corrections the reading of the regenerated document asks for before review. No gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-09T18:34:01+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before any review] two paths added (ruling W12): the drawing tests' fixture list (changed outside its paths by the builder of parts B and E and flagged; read: it leaves out exactly the two sample documents without drawable geometry) and the adapter test that will guard that list. No gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-09T19:47:14+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before any review] two paths added (ruling W13): the engine bridge, so that the measured areas and the area comparison reach the emitter (scenario S13 through the emitter, not only inside the assembly), and one read-route test that pinned contract 1.3.0 for the benchmark lot (changed outside its paths by the builder of part B and flagged; read and taken in). No gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-09T21:36:47+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, after the walkthrough FAILED at 7cf94e09 (F1)] ruling W14 and scenarios S25 to S27: the document says why each building of the method was not worked (an optional additive list in contract 1.4.0, no number field), building B's bound is named truly, and the older building-option block never states a false reason. No path, gate, reviewer or bound row changed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T23:29:42.937848+00:00"
+}

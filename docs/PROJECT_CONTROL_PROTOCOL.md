@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: "Producer agents may update only their own task progress and create reports" and subagents "save the complete report in `project-control/reports/`": producers return reports and the orchestrator saves them. The branch naming (`task/…` vs `lane-<x>/…`) is pending a docs amendment. The rest still applies.
+
 # Project Control Protocol
 
 ## Source of truth

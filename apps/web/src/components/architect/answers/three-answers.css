@@ -1,0 +1,547 @@
+/* Three-answers panel (queue D-05; plan §5a item 5 "Readable by default"): comfortable text
+   size, no small grey print, headline numbers large, status never by colour alone. */
+
+.ta-panel {
+  color: var(--text-primary, #1a1a1a);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.ta-panel-title {
+  margin: 0 0 var(--space-3, 0.75rem);
+  font-size: 1.25rem;
+  font-weight: 650;
+}
+
+.ta-draft-tag {
+  font-weight: 600;
+  color: var(--status-conflict-fg, #8a3b1f);
+}
+
+/* ---- The one status strip ---- */
+
+.ta-strip {
+  margin: 0 0 var(--space-4, 1rem);
+  border: 1px solid var(--border-strong, #c9c9c2);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-inset, #f4f4f1);
+}
+
+.ta-strip-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2, 0.5rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ta-strip-line:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-strip-hint {
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-strip-details {
+  padding: 0 var(--space-4, 1rem) var(--space-3, 0.75rem);
+}
+
+.ta-strip-list {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.ta-notes {
+  margin: var(--space-2, 0.5rem) 0 0;
+  font-weight: 600;
+}
+
+/* ---- The three answers ---- */
+
+.ta-answers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4, 1rem);
+}
+
+.ta-answer {
+  min-width: 0;
+  padding: var(--space-4, 1rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-card, #ffffff);
+}
+
+.ta-answer-title {
+  margin: 0 0 var(--space-2, 0.5rem);
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.ta-headline {
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.ta-headline-label {
+  display: block;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-headline-number {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-headline-unit {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.ta-headline-unit-tight {
+  margin-left: 0.05em;
+}
+
+.ta-rows {
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.ta-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
+  padding: var(--space-1, 0.25rem) 0;
+  border-bottom: 1px solid var(--border-quiet, #e4e4df);
+}
+
+.ta-row dt {
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-row dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The reason line under a not-available value (D-090-R038): its own line, plain weight. */
+.ta-row .ta-supplement-reason {
+  flex-basis: 100%;
+  font-weight: 400;
+}
+
+/* ---- Conditional figures (ruling L1/L3; R229/R267/R269) ----
+   The fixed 'Conditional' marker beside the figure, then one line per condition. Normal weight so
+   the figure is immediately qualified and never reads as confirmed; the state is told by the WORD,
+   never by colour alone. */
+.ta-conditional {
+  flex-basis: 100%;
+  margin: var(--space-1, 0.25rem) 0 0;
+}
+
+.ta-conditional-marker {
+  display: inline-block;
+  font-weight: 400;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-conditions {
+  margin: var(--space-1, 0.25rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-condition {
+  font-weight: 400;
+}
+
+/* ---- A withheld value (R258, R570, ruling R6) ----
+   The reason reads in normal weight (it is inside a bold dd), and the kind-of-gap line sits on its
+   OWN line below the reason — no longer inline-joined to it. */
+.ta-withheld-reason {
+  font-weight: 400;
+}
+
+.ta-gap-kind {
+  display: block;
+  margin-top: var(--space-1, 0.25rem);
+}
+
+.ta-exception {
+  display: inline-block;
+  padding: 0 0.4em;
+  border: 1px solid var(--status-conditional-fg, #6b5416);
+  border-radius: var(--radius-control, 6px);
+  background: var(--status-conditional-bg, #f5f0e4);
+  color: var(--status-conditional-fg, #6b5416);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ta-not-available {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.ta-shortfall {
+  margin: 0 0 var(--space-3, 0.75rem);
+}
+
+.ta-shortfall p {
+  margin: 0;
+}
+
+.ta-shortfall-reasons {
+  margin: var(--space-1, 0.25rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-details summary {
+  cursor: pointer;
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-details summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-sections {
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-measurement {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-completeness {
+  margin: var(--space-4, 1rem) 0 0;
+  font-weight: 600;
+}
+
+/* ---- Building-option draft note (contract 1.2.0, D-090-R132) ---- */
+
+/* A draft reading of the captured zoning text, shown openly under the building-option values and
+   never as a compliance statement. The heading carries the "pending qualified review" wording in
+   plain text — no status is encoded by colour; the border and inset only set the block apart. */
+.ta-option-notes {
+  margin: var(--space-3, 0.75rem) 0 0;
+}
+
+.ta-option-note {
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--border-strong, #c9c9c2);
+  border-radius: var(--radius-control, 6px);
+  background: var(--surface-inset, #f4f4f1);
+}
+
+.ta-option-note + .ta-option-note {
+  margin-top: var(--space-2, 0.5rem);
+}
+
+.ta-option-note-heading {
+  margin: 0;
+  font-weight: 650;
+}
+
+.ta-option-note-kind {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+  font-weight: 600;
+}
+
+.ta-option-note-text {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-option-note-sections {
+  margin: var(--space-2, 0.5rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-option-note-snapshots {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-option-note-snapshots summary {
+  cursor: pointer;
+  color: var(--accent, #1f4f82);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ta-option-note-snapshots summary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-option-note-snapshot-list {
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+/* ---- Scope beside the numbers (contract 1.1.0, D-090-R108) ---- */
+
+.ta-scope {
+  margin: 0 0 var(--space-4, 1rem);
+  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-card, #ffffff);
+}
+
+/* The scope label is a plain-text line, never a coloured chip (owner directive). */
+.ta-scope-label {
+  margin: 0;
+  font-weight: 650;
+}
+
+.ta-scope-lot {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-assumptions {
+  margin: var(--space-3, 0.75rem) 0 0;
+}
+
+/* The assumed conditions are shown open by default (D-090-R119): a plain heading over a real list,
+   nothing hidden behind a disclosure. Not link-styled — it is a heading, not a toggle. */
+.ta-scope-assumptions-heading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.ta-scope-assumption-list {
+  margin: var(--space-2, 0.5rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-scope-assumption {
+  margin: 0 0 var(--space-2, 0.5rem);
+}
+
+.ta-scope-assumption-head {
+  display: block;
+}
+
+.ta-scope-assumption-key {
+  font-weight: 600;
+}
+
+.ta-scope-assumption-basis {
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-assumption-statement {
+  display: block;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-whole-site {
+  margin: var(--space-3, 0.75rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-scope-remaining {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-scope-remaining-label {
+  display: block;
+  font-weight: 600;
+}
+
+.ta-scope-remaining-reason {
+  display: block;
+  color: var(--text-secondary, #4b4b47);
+}
+
+/* ---- First building options (contract 1.4.0, M5-T146/M5-T147) ----
+   The worked building alternatives, each with its floor schedule, conditions, what was not checked
+   and its own preliminary capacity estimate; the legal dwelling-unit limit kept separate; coverage
+   by portion. No status is encoded by colour; the state is told by the words and the markers. */
+
+.ta-options {
+  margin: var(--space-4, 1rem) 0 0;
+  padding: var(--space-4, 1rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-card, #ffffff);
+}
+
+.ta-options-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.ta-options-lead {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-option {
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-control, 6px);
+  background: var(--surface-inset, #f4f4f1);
+}
+
+.ta-option-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.ta-option-summary {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The sentence why the plan fits (contract 1.4.0 fit_note): plain text beside the building; it
+   qualifies the plan against coverage only, never a statement that the building fits the lot. */
+.ta-option-fit-note {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+/* N4: the floor table scrolls INSIDE this box on narrow screens, so the page never scrolls sideways.
+   The box is a keyboard-reachable, named region (role + aria-label + tabindex in the component). */
+.ta-floor-schedule-scroll {
+  margin: var(--space-3, 0.75rem) 0 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ta-floor-schedule-scroll:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-floor-schedule {
+  width: 100%;
+  /* Keep all six columns legible; below this the box (not the page) scrolls sideways. */
+  min-width: 32rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-floor-schedule-caption {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.ta-floor-schedule th,
+.ta-floor-schedule td {
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border-bottom: 1px solid var(--border-quiet, #e4e4df);
+  text-align: right;
+}
+
+.ta-floor-schedule thead th,
+.ta-floor-schedule tbody th {
+  text-align: left;
+  font-weight: 600;
+}
+
+.ta-option-not-checked,
+.ta-capacity {
+  margin: var(--space-3, 0.75rem) 0 0;
+}
+
+.ta-option-not-checked-heading,
+.ta-capacity-assumptions-heading {
+  margin: 0;
+  font-weight: 600;
+}
+
+.ta-option-not-checked-list,
+.ta-capacity-assumptions-list {
+  margin: var(--space-1, 0.25rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-capacity-label {
+  margin: 0;
+  font-weight: 650;
+}
+
+.ta-capacity-range {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-capacity-wholes {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-capacity-assumptions {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-legal-limit,
+.ta-coverage {
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding-top: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--border-quiet, #e4e4df);
+}
+
+.ta-legal-limit-label,
+.ta-coverage-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.ta-legal-limit-value {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-legal-limit-note,
+.ta-coverage-resolved {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-coverage-figures {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-option-sections {
+  margin: var(--space-2, 0.5rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+/* A building of the method that was NOT worked (ruling W14/W15): its reason and what would resolve
+   it, plain text from the document; no figure is a result here. The border only sets it apart. */
+.ta-option-not-worked .ta-withheld-reason {
+  display: block;
+  margin: var(--space-1, 0.25rem) 0 0;
+}
+
+.ta-option-resolved {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}

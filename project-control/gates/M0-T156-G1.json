@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T156",
+  "gate_id": "G1",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T156-G1.md",
+  "reviewed_at": "2026-09-12T09:48:48.510903+00:00",
+  "content_manifest_sha256": "73d2a7504119e1e8d640e7b0ce075649ecfeadfa44deea7ec6fc59ea04e568ce",
+  "reviewed_sha": "3714c1a83631010d7b031f53954a61ee57ae62e0",
+  "updated_at": "2026-09-12T09:48:49.074513+00:00"
+}

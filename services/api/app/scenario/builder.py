@@ -44,6 +44,7 @@ from .models import (
     ScenarioKind,
     most_severe_completeness,
 )
+from .unused_floor_area import build_unused_floor_area_section
 
 __all__ = ["build_scenario"]
 
@@ -308,25 +309,65 @@ def _assemble(
     completeness = most_severe_completeness(
         [DataCompleteness(c["data_completeness"]) for c in constraints]
     )
+    # C1 (D-041): the unused-draft-zoning-floor-area section rides on EVERY
+    # document (preliminary + every no-scenario variant). All C1 logic lives in
+    # unused_floor_area.py; this is a bounded wire-in only. A-03: by default the
+    # section is "Remaining development capacity: Not confirmed" (owner wording
+    # D-090-R038) and never raises professional review; only with the default-off
+    # legacy flag (INTERNAL_LEGACY_UNUSED_FLOOR_AREA_ENABLED) can an over-built (negative)
+    # remainder force the document root professional_review_required true (OR with
+    # the existing rule-evaluation fail-safe trigger).
+    unused_section = build_unused_floor_area_section(
+        property_profile=property_profile,
+        cap_value=cap_value,
+        cap_provenance=cap_provenance,
+    )
+    # D-059-R003: derive the cap label + coverage-matrix family wording from the
+    # rule that ACTUALLY produced the surfaced cap (cap_provenance["rule_id"]),
+    # never a hardcoded district family - None on every no-cap outcome, so both
+    # helpers fall back to their family-/section-agnostic wording.
+    cap_rule_id = (
+        cap_provenance.get("rule_id") if isinstance(cap_provenance, dict) else None
+    )
+    cap_section = _cap_citation_section(cap_provenance)
     document = {
         "contract_version": C.SCENARIO_CONTRACT_VERSION,
         "scenario_kind": scenario_kind.value,
         "coverage_status": coverage_status,
         "data_completeness": completeness.value,
         "needs_review": True,
-        "professional_review_required": professional_review_required,
+        "professional_review_required": (
+            professional_review_required
+            or unused_section["professional_review_required"]
+        ),
         "not_verified_disclaimer": C.NOT_VERIFIED_DISCLAIMER,
         "evaluated_input": _evaluated_input(rule_evaluation, property_profile),
         "constraints": constraints,
         "draft_zoning_floor_area_cap_sq_ft": cap_value,
-        "cap_label": C.DRAFT_CAP_LABEL if cap_value is not None else None,
+        "cap_label": C.draft_cap_label(cap_section) if cap_value is not None else None,
         "cap_provenance": cap_provenance,
         "assumptions": assumptions,
         "reasons": reasons,
-        "coverage_matrix": C.coverage_matrix_rows(),
+        "coverage_matrix": C.coverage_matrix_rows(cap_rule_id),
         "integrity_check": integrity_check,
+        "unused_draft_zoning_floor_area": unused_section,
     }
     return document
+
+
+def _cap_citation_section(cap_provenance: dict | None) -> str | None:
+    """The ACTUAL evaluated rule's cited Zoning Resolution section (the first
+    citation's ``section``, verbatim), or ``None`` when unavailable. D-059-R003:
+    this is what lets the cap label/reasons text name the real section (23-22
+    for R6-R12, 23-21 for R1-R5) instead of a hardcoded one."""
+    if not isinstance(cap_provenance, dict):
+        return None
+    citations = cap_provenance.get("citations")
+    if not isinstance(citations, list) or not citations:
+        return None
+    first = citations[0]
+    section = first.get("section") if isinstance(first, dict) else None
+    return section if isinstance(section, str) and section else None
 
 
 def _integrity_not_performed(note: str) -> dict:
@@ -502,6 +543,9 @@ def build_scenario(
 
     # --- PRELIMINARY: surface the canonical cap VERBATIM -----------------
     cap_prov = _cap_provenance(trace)
+    # D-059-R003: the section named in the label/reason text is the ACTUAL
+    # evaluated rule's own citation (never a hardcoded "ZR 23-21").
+    cap_section = _cap_citation_section(cap_prov)
     constraints = [
         _constraint(
             key="residential_far_cap",
@@ -510,7 +554,7 @@ def build_scenario(
             unit="square_feet",
             completeness=trace_completeness or DataCompleteness.MISSING_NONCRITICAL,
             provenance=cap_prov,
-            note=C.DRAFT_CAP_LABEL,
+            note=C.draft_cap_label(cap_section),
         ),
         _constraint(
             key="lot_area",
@@ -533,14 +577,7 @@ def build_scenario(
     ]
     constraints.extend(_missing_envelope_constraints())
 
-    reasons = [
-        (
-            "Preliminary scenario: surfaced the canonical draft residential "
-            "zoning-floor-area cap (ZR 23-21) from the rule_evaluation trace, "
-            "verbatim. NOT a buildable envelope - see the coverage matrix for the "
-            "rule families still MISSING."
-        )
-    ]
+    reasons = [C.preliminary_cap_reason(cap_section)]
 
     return _assemble(
         scenario_kind=ScenarioKind.PRELIMINARY,

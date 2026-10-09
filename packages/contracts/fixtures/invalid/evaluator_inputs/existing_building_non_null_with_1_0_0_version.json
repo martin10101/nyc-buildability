@@ -1,0 +1,57 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "study-215-16-northern-blvd",
+  "option_id": "option-1",
+  "revision": 1,
+  "inputs": [
+    {
+      "key": "lot_area_sq_ft",
+      "value": 10075,
+      "unit": "square_feet",
+      "fact_id": "northern-blvd-4073340070:lot-area:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "lot_type",
+      "value": "corner",
+      "unit": null,
+      "fact_id": "northern-blvd-4073340070:lot-type:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "zoning_district",
+      "value": "R6B",
+      "unit": null,
+      "fact_id": "northern-blvd-4073340070:zoning-district:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    }
+  ],
+  "site_measurement_rank": "city_records",
+  "depends_on_fact_ids": [
+    "northern-blvd-4073340070:lot-area:city",
+    "northern-blvd-4073340070:lot-type:city",
+    "northern-blvd-4073340070:zoning-district:city"
+  ],
+  "existing_building": {
+    "plan": {
+      "value": "keep",
+      "basis": "entered",
+      "label": "Entered",
+      "statement": "Keep the existing building"
+    },
+    "floor_area": null
+  },
+  "_expected_failure": "a non-null existing_building slot with contract_version '1.0.0': the version-binding allOf requires a document carrying a non-null existing_building to declare '1.1.0' (journey plan §2 step 4, requirement a)."
+}

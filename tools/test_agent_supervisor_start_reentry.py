@@ -44,6 +44,7 @@ sys.path.insert(0, str(REPO))
 from tools.agent_supervisor import loop as lp  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
 from tools.agent_supervisor import recovery as rec  # noqa: E402
+from tools.agent_supervisor import refusals  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.claude_runner import RunnerConfig, RunResult  # noqa: E402
@@ -58,6 +59,36 @@ from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 # --------------------------------------------------------------------------
 
 _FAKE_LAUNCH_CONFIG = RunnerConfig(executable="fake-claude")
+
+
+def make_live_checkout(root: pathlib.Path, *, task_id: str,
+                       status: str = "in_progress") -> pathlib.Path:
+    """A REAL git checkout with a ledger record, for the M0-T079 live probes.
+
+    `start` no longer certifies task authority, the branch, the worktree, or Git
+    state from "the operator named every flag" - that synthetic answer is the
+    defect M0-T079 fixed - so a fixture that DISPATCHES has to be a checkout the
+    probes can actually read. Nothing here is a supervisor concern: it is one
+    empty commit and one ledger record.
+    """
+    import subprocess
+
+    root.mkdir(parents=True, exist_ok=True)
+    tasks = root / "project-control" / "tasks"
+    tasks.mkdir(parents=True, exist_ok=True)
+    (tasks / f"{task_id}.json").write_text(
+        json.dumps({"task_id": task_id, "status": status, "blockers": []}),
+        encoding="utf-8")
+    env = {**os.environ,
+           "GIT_AUTHOR_NAME": "supervisor-test",
+           "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "supervisor-test",
+           "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+    for argv in (["init", "-q", "-b", "main"],
+                 ["commit", "-q", "--allow-empty", "-m", "fixture"]):
+        subprocess.run(["git", *argv], cwd=str(root), check=True,
+                       capture_output=True, env=env)
+    return root
 
 
 def checkpoint(**overrides) -> ClaudeCheckpoint:
@@ -362,6 +393,7 @@ class ContainmentGateTests(unittest.TestCase):
         self.tmp = pathlib.Path(self._tmp.name).resolve()
         self.repo = self.tmp / "repo"
         (self.repo / "tools").mkdir(parents=True)
+        make_live_checkout(self.repo, task_id="M0-T053")
         self.runtime = self.tmp / "runtime"
         self.config = self.tmp / "config.toml"
         self.config.write_text(CONFIG_TOML, encoding="utf-8")
@@ -430,12 +462,19 @@ class ContainmentGateTests(unittest.TestCase):
         # environment input of its own - it reports what the host actually does.
         ok, kind, _ = self.cli.containment_precondition()
         self.assertEqual(kind, self.proc.default_containment_kind())
-        self.assertEqual(ok, kind == self.proc.CONTAINMENT_JOB_OBJECT)
+        # M0-T177 (B-027): the gate accepts the shared kill-on-external-death set
+        # (Windows job_object or a PROVED Linux systemd_cgroup), not job_object alone.
+        self.assertEqual(ok, kind in self.proc.CONTAINMENT_ACCEPT_SET)
 
     def test_a_posix_process_group_host_refuses_to_dispatch(self) -> None:
         with self.host_containment(self.proc.CONTAINMENT_PROCESS_GROUP):
             code, payload = self.run_cli(*self.full_inputs())
-        self.assertEqual(code, 0)
+        # M0-T079: the refusal is unchanged in strength and is now machine
+        # readable. It used to exit 0, which a wrapper script could not tell
+        # apart from a successful run.
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.UNSUPPORTED_PLATFORM])
+        self.assertEqual(payload["refusal"]["outcome"], refusals.UNSUPPORTED_PLATFORM)
+        self.assertEqual(payload["refusal"]["reason_code"], "containment_refused")
         self.assertFalse(payload["dispatched"],
                          "a host without kill-on-close must never spawn a worker")
         self.assertEqual(payload["provider_calls_made"], 0)
@@ -476,6 +515,22 @@ class ContainmentGateTests(unittest.TestCase):
                         "the gate must not block the verified live host shape")
         # sys.executable is not a real worker, so the cycle ends in the honest
         # no_valid_checkpoint stop; what C1 requires is that dispatch RAN.
+        self.assertEqual(payload["stopped_because"], "no_valid_checkpoint")
+        self.assertNotIn("containment_gate_refused", self.audit_events())
+
+    def test_a_proved_systemd_cgroup_host_permits_the_dispatch(self) -> None:
+        # M0-T177 (B-027): a PROVED Linux systemd control group is an accepted
+        # containment, so the start gate dispatches exactly as a job_object host
+        # does. sys.executable is not a real worker, so the cycle ends in the
+        # honest no_valid_checkpoint stop (reached BEFORE the post-cycle
+        # achieved-containment gate); what C1 requires is that dispatch RAN.
+        with self.host_containment(self.proc.CONTAINMENT_SYSTEMD_CGROUP):
+            code, payload = self.run_cli(*self.full_inputs())
+        self.assertEqual(code, 0)
+        self.assertTrue(payload["containment"]["ok"])
+        self.assertEqual(payload["containment"]["kind"], self.proc.CONTAINMENT_SYSTEMD_CGROUP)
+        self.assertTrue(payload["dispatched"],
+                        "a proved systemd_cgroup host must be allowed to dispatch")
         self.assertEqual(payload["stopped_because"], "no_valid_checkpoint")
         self.assertNotIn("containment_gate_refused", self.audit_events())
 

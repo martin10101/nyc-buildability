@@ -1,0 +1,142 @@
+{
+ "task_id": "M5-T140",
+ "material_commits": [
+  "1226da47 (the builder's first commit, parent = the claim-seam head, cherry-picked with an identical tree: the client, the website's check, the switch, the form, the panel, the kind-of-gap line, the workspace wiring, the harness, the browser specs, the tests, the report; 26 files)",
+  "f42a2a23 (the same builder's second commit, asked by the orchestrator before any review: three sentences made true; the journey proves all three program names; 4 files)",
+  "f7a1a1b1 (the same builder's third commit, after the reviews: the test that a large height is accepted, which the G4 review had found missing; the website's check refuses a value shown without its state; two notices and the whole-panel text guard tested; 4 files; G3 confirmed the delta and G4 re-reviewed) = material head"
+ ],
+ "claim_seam_head": "fa93d096778e620f9b8b8bc2d99137d69382a45a",
+ "files_changed": [
+  "apps/web/e2e/harness/fixture_api.py",
+  "apps/web/e2e/results.flag-on.spec.ts",
+  "apps/web/e2e/results.spec.ts",
+  "apps/web/playwright.config.ts",
+  "apps/web/src/app/property/workspace/page.tsx",
+  "apps/web/src/components/architect/ResultsForm.tsx",
+  "apps/web/src/components/architect/ResultsPanel.tsx",
+  "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+  "apps/web/src/components/architect/answers/AnswerCard.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/results-panel.css",
+  "apps/web/src/components/architect/workspace/DashboardEntry.tsx",
+  "apps/web/src/components/architect/workspace/DashboardPanels.tsx",
+  "apps/web/src/components/architect/workspace/DashboardTools.tsx",
+  "apps/web/src/components/architect/workspace/__tests__/dashboard-results-flag.test.tsx",
+  "apps/web/src/components/architect/workspace/__tests__/floating-workspace-window.test.tsx",
+  "apps/web/src/components/architect/workspace/types.ts",
+  "apps/web/src/lib/__tests__/results-api.test.ts",
+  "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+  "apps/web/src/lib/architect/__tests__/results-ui-flag.test.ts",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "apps/web/src/lib/architect/results-ui-flag.ts",
+  "apps/web/src/lib/architect/three-answers.ts",
+  "apps/web/src/lib/results-api.ts",
+  "apps/web/src/lib/results-contract-checks.ts",
+  "project-control/reports/M5-T140-producer-report.md"
+ ],
+ "what_did_not_change": "No file under services/api or packages; no dependency file; no CI, tools or deployment file; ResultsStatusStrip.tsx, ScopeSummary.tsx and globals.css; the other pages of the website. No production switch is turned on: the website switch is set only on the second test server of the browser tests.",
+ "known_limits": [
+  "Nothing is visible to a user: the website switch is off by default and nothing is deployed.",
+  "The first item of the results' status strip reads 'Zoning maximum' above conditional values: the server's words, shown as the document has them; their rewording is owed on the server before the switch is turned on anywhere (backlog row DB-199 d).",
+  "The route behind the screen has no sign-in protection and gives no result for a lot with no outline (backlog rows DB-204 b and DB-203).",
+  "One review of this task failed at first (G4, a missing test), and the walkthrough failed closed at first on the orchestrator's own red run file (a leftover test server of its picture script) and passed after the second run at the same head; the history is in the two records.",
+  "A new result and the failure notices are not announced to a screen-reader user (the walkthrough's advisory finding F2); the busy state is announced and the keyboard works.",
+  "The large figures dominate the conditions written under them, and several conditions follow one another without a break (the walkthrough's advisory finding F4 and the orchestrator's own look at the pictures): a layout pass is owed before the screen is switched on."
+ ],
+ "checks_at_material_head": [
+  "builder at its third commit: lint, typecheck, build exit 0; 2491 unit tests in 116 files",
+  "orchestrator at ec228eae: website lint, typecheck, 2486 unit tests in 116 files, build, 155 browser tests and the full api suite (8655 passed, 8 skipped): all exit 0",
+  "orchestrator at b3e84b3d: in a first run, website lint, typecheck, 2491 unit tests in 116 files and build exit 0, and the pictures and the browser tests could not start (a website test server left on port 3001 by the orchestrator's own picture script); in a second run at the same head, after that leftover was stopped and with no repository file changed, 155 browser tests passed and the full api suite passed (8655 passed, 8 skipped), all exit 0",
+  "G3 at ec228eae: four targeted test files and its own reading; delta confirmed at b3e84b3d",
+  "G4 at ec228eae: eighteen mutations (sixteen caught by unit tests, one by the browser spec, one by nothing: FAIL); at b3e84b3d: 200 focused tests, that mutation and three new ones all caught: PASS",
+  "the walkthrough at b3e84b3d: pictures and texts of eight states of the running screen"
+ ],
+ "requirements": {
+  "D-090-R228": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (the test marked W-2): every settled value, every conditional line and every 'Not known' on the cards is compared with the committed journey document; nothing is retyped.",
+   "apps/web/src/lib/__tests__/results-contract-checks.test.ts and apps/web/src/lib/results-contract-checks.ts: the website shows a returned document only after its own check; the panel holds no number of its own.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), checks 4, 5 and 8: the shown numbers are the document's; the website holds no copy of a server value.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R229": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (S4): a withheld value reads 'Not known' with its reason and no number; apps/web/src/lib/__tests__/results-contract-checks.test.ts (S21): a document that carries a number for a withheld key is refused and nothing of it is rendered.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), checks 4 and 6: no number appears for a withheld key; a document that carries one is refused.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R240": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (S7, S9): the height field is empty at the start and the statement is not made; a request the user makes without them carries neither; no call is made before the button.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 2: a first press sends the housing program only; no default height, no 'false' statement.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R255": [
+   "apps/web/src/components/architect/ResultsForm.tsx: the statement is the user's own, optional, never pre-filled, with a line saying it is not a recorded fact; apps/web/e2e/results.flag-on.spec.ts: with the statement made the standard unit limit of the reference case appears as a conditional result naming the statement.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), checks 2 and 7: the statement is sent only when made and its result is shown as conditional. the walkthrough reviewer (human-journey-reviewer; project-control/reports/M5-T140-HJ.md), journey 5.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R256": [
+   "apps/web/e2e/results.flag-on.spec.ts: an entered height of 14 comes back as 'A 14-foot floor-to-floor height was entered for this run.'; with the field empty the result shows the height used and calls it the default; each of the three programs comes back named as the form names it.",
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx: the website holds no starting height; an input changed after a result shows the stale-inputs line and the numbers do not change until the button is pressed.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), checks 7 and 8: the form's program names equal the server's; the form and the result cannot contradict each other. the G4 reviewer (qa-engineer; project-control/reports/M5-T140-G3G4.md) at the new head: a large height is accepted and sent.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R258": [
+   "apps/web/src/lib/architect/__tests__/three-answers.test.ts and apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx (S5): a withheld result says 'Missing information about this property.' or 'Not built yet: this part of the program is still owed.'; an unknown kind shows no line and no machine word.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 6: each withheld result shows its kind in the packet's two sentences; an unknown kind shows nothing. the walkthrough reviewer (human-journey-reviewer; project-control/reports/M5-T140-HJ.md), journey 2.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R267": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (S14): no line the website writes calls a value confirmed, the maximum for the property or feasible; apps/web/e2e/results.flag-on.spec.ts: the heights and the floor area appear with their 'If ...' lines.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 7 (e): no line the website writes calls a value confirmed, the property's maximum or feasible. the walkthrough reviewer (human-journey-reviewer; project-control/reports/M5-T140-HJ.md), journey 3, gives its reading of the server's strip.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R268": [
+   "apps/web/e2e/results.flag-on.spec.ts: the floor area and the heights stay shown as conditional results; coverage, rear yard and the building option read 'Not known' with their reasons.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 6: conditional values carry the document's own 'If ...' lines; withheld values their reasons.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R269": [
+   "apps/web/e2e/results.flag-on.spec.ts: the heights of the reference case appear conditional, naming the conditions that were not checked.",
+   "A limit, stated: the first item of the results' status strip reads 'Zoning maximum'. Those are the server's words and the panel shows the strip as the document has it (packet ruling R5); their rewording is owed on the server before the website switch is turned on anywhere (backlog row DB-199 d).",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 5: the strip is shown as the document has it, 'Zoning maximum' included; the walkthrough reviewer (human-journey-reviewer; project-control/reports/M5-T140-HJ.md), journey 3: how a user reads it (carried to the server task that owns the wording).",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R292": [
+   "apps/web/e2e/results.flag-on.spec.ts: one option is connected to the screen through the real route; making the statement changes the unit limit, entering a height changes the height's line, choosing a program changes the program's line.",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T140-G3G4.md), check 5: the journey observes a real request to the harness server and the changed results. Its note: that ONLY the unit limit changes is proven on the server, not on the screen.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R548": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (S13): whenever a result is shown the line 'Parking, loading and bicycle requirements are not yet checked for this option. It is not shown as feasible.' stands above it; no option is called feasible.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 5, and the walkthrough reviewer (human-journey-reviewer; project-control/reports/M5-T140-HJ.md), journey 3: the parking line is there; no option is called feasible.",
+   "Capturing the parking, loading and bicycle provisions stays owed (backlog row DB-180)."
+  ],
+  "D-090-R556": [
+   "apps/web/src/lib/architect/__tests__/three-answers.test.ts (the red proof on a withheld headline) still fails against the pre-fix reader and passes now; apps/web/src/lib/__tests__/results-contract-checks.test.ts (S21) refuses a number for a withheld key.",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T140-G3G4.md), mutation (k): a withheld headline that falls back to the first value fails the red-proof test.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R569": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (S13): the estimate block of the document is not shown; the legal unit limit appears under its own legal label in the floor-area answer.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 5: the estimate block is not shown. the walkthrough reviewer (human-journey-reviewer; project-control/reports/M5-T140-HJ.md), journey 5.",
+   "The apartment estimate itself is not built; exports are untouched."
+  ],
+  "D-090-R570": [
+   "apps/web/src/components/architect/__tests__/results-panel.test.tsx (S4) and apps/web/src/lib/__tests__/results-contract-checks.test.ts (S21): a withheld value stays withheld on the screen: no number, no older value, no other value in its place.",
+   "the G4 reviewer (qa-engineer; project-control/reports/M5-T140-G3G4.md), mutation (g): a check that accepts a number for a withheld key fails the S21 test.",
+   "Limit of every row here: the screen is behind a website switch that is off by default and nothing is deployed, so nothing is visible to a user yet; the row stays open for the rest."
+  ],
+  "D-090-R582": [
+   "The results display is connected after the pieces that emit the results document: this task stands on the merged tasks M5-T136, M5-T137, M5-T138 and M5-T139 and changes no server file.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 1: no server file changed; the screen stands on the merged pieces."
+  ],
+  "D-090-R584": [
+   "apps/web/src/lib/architect/__tests__/results-ui-flag.test.ts: the website switch is off unless an explicit true word is set; apps/web/e2e/results.spec.ts: with it off there is no opener and no call; apps/web/src/components/architect/workspace/__tests__/dashboard-results-flag.test.tsx: absent or false gives the plain not-available view.",
+   "No production setting changed: render.yaml, the workflows and the server's config are not in the diff; the website switch is set only on the second test server in apps/web/playwright.config.ts.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T140-G3G4.md), check 9: only an explicit true word enables the website switch; it is set only on the second test server; the harness sets the server's switches for its own process only."
+  ],
+  "D-090-R588": [
+   "Nothing of the report is dropped. What stays owed is on record: backlog rows DB-199 d (the strip's wording), DB-203 (a lot with no outline), DB-204 b (sign-in) and c (an upper limit on the height), and the notes of this task's reviews.",
+   "The notes of the two reviews and of the walkthrough are named in the records; what stays open is backlog row DB-206."
+  ]
+ }
+}

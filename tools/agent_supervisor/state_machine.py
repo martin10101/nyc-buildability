@@ -61,6 +61,28 @@ COMPLETE = "COMPLETE"
 EMERGENCY_STOPPED = "EMERGENCY_STOPPED"
 HALTED = "HALTED"
 
+# D-024 section-3 additions (M0-T092, cited per state; supervisor-freeze
+# qualifying evidence D-024-R102). Each is a distinction R029 requires that no
+# existing state or durable-flag composite could honestly express — see the
+# M0-T092 report §4 for the full 18-distinction mapping proof.
+GRACEFUL_STOPPING = "GRACEFUL_STOPPING"      # R029 "graceful stopping"
+AWAIT_CHILDREN = "AWAIT_CHILDREN"            # R029 "awaiting/reconciling child work"
+CODEX_OUTAGE_BACKOFF = "CODEX_OUTAGE_BACKOFF"  # R033 transient-outage backoff
+NO_ELIGIBLE_WORK = "NO_ELIGIBLE_WORK"        # R029/R033 bounded idle
+
+# D-024 section-8 Phase-E additions (M0-T093; supervisor-freeze qualifying
+# evidence D-024-R103). Two distinctions no existing state expresses:
+# a mechanically RESTRICTED 4.8 continuity bridge is not CLAUDE_RUNNING (the
+# bridge may only finish/collect/checkpoint/handoff, R070 step 3), and a fresh
+# Fable re-entry carrying a RE-PRESENTED refused request under the durable
+# two-attempt cap is not an ordinary START_FRESH_SESSION successor (R071).
+# Both are journaled on every entry/exit like every other state. These states
+# exist for the R595-activated path and are exercised deterministically in
+# tests; on this build the loop's refusal seam records intent and pauses
+# (SHADOW-ONLY) without entering them.
+GUARDRAIL_BRIDGE = "GUARDRAIL_BRIDGE"        # R070 bounded 4.8 continuity bridge
+REPRESENT_FABLE = "REPRESENT_FABLE"          # R071 re-presented Fable re-entry
+
 STATES: tuple[str, ...] = (
     IDLE, RECOVER_BOOT, PREFLIGHT, START_CLAUDE, CLAUDE_RUNNING,
     ROTATION_PENDING, CHECKPOINT_RECEIVED, COLLECT_EVIDENCE, CODEX_REVIEW,
@@ -68,6 +90,8 @@ STATES: tuple[str, ...] = (
     PAUSED_RECOVERY, RECONCILE_EXTERNAL_EFFECT, USAGE_LIMIT_WAIT,
     SCHEDULED_RESUME, PREPARE_ROTATION, VERIFY_HANDOFF, START_FRESH_SESSION,
     COMPLETE, EMERGENCY_STOPPED, HALTED,
+    GRACEFUL_STOPPING, AWAIT_CHILDREN, CODEX_OUTAGE_BACKOFF, NO_ELIGIBLE_WORK,
+    GUARDRAIL_BRIDGE, REPRESENT_FABLE,
 )
 
 #: States in which the supervisor performs NO provider work and NO side effects
@@ -262,6 +286,110 @@ TRANSITIONS: tuple[Transition, ...] = (
        "Escalation from a pause to a full stop."),
     _t(PAUSED_RECOVERY, HALTED, "owner_halt",
        "The owner halted rather than resuming."),
+
+    # --- D-024 unit F additions (M0-T092; D-024-R102) ------------------------
+    # Graceful stop (R026/R027/R029): a durable owner graceful-stop intent
+    # (stop_intent.GRACEFUL_STOP_KEY) lets the unit ALREADY UNDERWAY reach its
+    # seam, lands it, and then stops — it never dispatches queued work.
+    _t(CHECKPOINT_RECEIVED, GRACEFUL_STOPPING, "graceful_stop_intent_set",
+       "A durable owner graceful stop is set and the in-flight unit reached its "
+       "checkpoint: land it and stop; queued work is never dispatched (R026/R029)."),
+    _t(RECOVER_BOOT, GRACEFUL_STOPPING, "recovery_finds_graceful_stop",
+       "Recovery found a durable graceful-stop intent: the stop SURVIVES the restart "
+       "and WINS over queued and recovered work (R026); land what is durable, then stop."),
+    _t(GRACEFUL_STOPPING, IDLE, "graceful_stop_landed",
+       "The landing finished: children reconciled, external effects settled, the "
+       "durable handoff written. The run closes to stopped/inactive (R029)."),
+    _t(GRACEFUL_STOPPING, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Escalation while landing: emergency outranks graceful (R027 precedence)."),
+    _t(GRACEFUL_STOPPING, PAUSED_RECOVERY, "unsafe_condition",
+       "A synchronous-stop condition fired during the graceful landing."),
+
+    # Child drain (R029 'awaiting/reconciling child work'; s6.3/R065): rotation
+    # waits while bounded children finish; no new children, no broadened scope.
+    _t(PREPARE_ROTATION, AWAIT_CHILDREN, "children_still_draining",
+       "Bounded children are still finishing their already-bounded assignments; the "
+       "rotation waits and dispatches nothing new (s6.3, R065)."),
+    _t(AWAIT_CHILDREN, PREPARE_ROTATION, "children_reconciled",
+       "Every child returned a durable handoff and external effects are reconciled; "
+       "the rotation proceeds (s6.3)."),
+    _t(AWAIT_CHILDREN, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop interrupts the drain; child trees terminated, evidence kept."),
+    _t(AWAIT_CHILDREN, PAUSED_RECOVERY, "unsafe_condition",
+       "A synchronous-stop condition fired while children drained."),
+
+    # Transient supervisor outage (R033): bounded backoff with jitter and a
+    # DURABLE retry state (outage_policy.RETRY_KEY) — never a tight loop, never
+    # unlimited, and never new producer work without supervision.
+    _t(CODEX_REVIEW, CODEX_OUTAGE_BACKOFF, "codex_transient_failure",
+       "A transient transport/model/network failure: enter bounded backoff with "
+       "jitter and durable retry state; dispatch nothing new (R033)."),
+    _t(CODEX_OUTAGE_BACKOFF, CODEX_REVIEW, "outage_retry_due",
+       "The durable retry deadline arrived: one bounded retry attempt (R033)."),
+    _t(CODEX_OUTAGE_BACKOFF, WAIT_FOR_OWNER, "outage_blocked_with_handoff",
+       "Auth, billing, revoked access, incompatibility, or the bounded attempts are "
+       "exhausted: blocked-with-handoff for the owner, never a further retry (R033)."),
+    _t(CODEX_OUTAGE_BACKOFF, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop suppresses any pending retry."),
+
+    # Bounded idle (R029 'idle because no eligible authorized task exists';
+    # R028 'no busy loop when there is no eligible work'; R033 bounded idle).
+    _t(POLICY_CHECK, NO_ELIGIBLE_WORK, "no_eligible_authorized_work",
+       "No eligible authorized task exists: dwell until a durable bounded deadline "
+       "(outage_policy.IDLE_KEY); never a busy loop (R028/R033)."),
+    _t(NO_ELIGIBLE_WORK, PREFLIGHT, "idle_recheck_due",
+       "The bounded idle deadline arrived: revalidate through PREFLIGHT (the legal "
+       "cycle-entry state, V1.1 B-2 precedent) before contacting anyone."),
+    _t(NO_ELIGIBLE_WORK, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop while idle."),
+    _t(NO_ELIGIBLE_WORK, HALTED, "owner_halt",
+       "The owner halted the run while it was idle."),
+
+    # --- D-024 unit H1 additions (M0-T093; D-024-R103) -----------------------
+    # The guardrail-refusal bridge (R068-R073): entered ONLY on a narrowly
+    # recognized refusal with the exact allowlisted continuation option
+    # (R069); every edge is journaled. Live actuation of these paths stays
+    # owner-gated (R595 + measured-live C1 shape); the deterministic table is
+    # complete now so activation changes nothing structural.
+    _t(CLAUDE_RUNNING, GUARDRAIL_BRIDGE, "guardrail_refusal_recognized",
+       "A narrowly recognized Fable guardrail refusal (R068) with the EXACT "
+       "allowlisted continue-with-4.8 option (R069): the bounded continuity "
+       "bridge begins - finish/collect/checkpoint/handoff only (R070)."),
+    _t(GUARDRAIL_BRIDGE, PREPARE_ROTATION, "bridge_first_seam_reached",
+       "The bridge finished the smallest atomic operation, reconciled bounded "
+       "children, and validated its checkpoint: retire at the FIRST safe seam "
+       "through the standard rotation/handoff machinery toward a fresh Fable 5 "
+       "session (R070 step 4); it never continues past the seam."),
+    _t(GUARDRAIL_BRIDGE, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop interrupts the bridge; evidence preserved."),
+    _t(GUARDRAIL_BRIDGE, PAUSED_RECOVERY, "unsafe_condition",
+       "A S4.5 synchronous-stop condition fired while the bridge was landing."),
+    _t(START_FRESH_SESSION, REPRESENT_FABLE, "represent_refused_request",
+       "The fresh Fable 5 session is ready and a durably recorded refused "
+       "request is pending: it receives the semantic-preserving re-presented "
+       "request (R071/R073) and the digest-bound durable attempt counter "
+       "increments (at most two attempts, surviving restart)."),
+    _t(REPRESENT_FABLE, CLAUDE_RUNNING, "representation_accepted",
+       "Fable accepted the re-presented request: the durable counter records "
+       "the success and the normal working loop resumes (R071)."),
+    _t(REPRESENT_FABLE, GUARDRAIL_BRIDGE, "refusal_repeated_within_cap",
+       "The re-presented request was refused again and the durable counter is "
+       "below the two-attempt cap: one more bounded bridge carries continuity "
+       "to the next seam for the second and FINAL fresh re-entry (R071)."),
+    _t(REPRESENT_FABLE, START_CLAUDE, "refusal_cap_lower_tier",
+       "Both fresh Fable attempts received the recognized refusal and the "
+       "already-configured lower-tier model passed its stricter workload-fit/"
+       "health profile for the SAME bounded task (R072): continue there, "
+       "returning to Fable 5 at the next safe seam."),
+    _t(REPRESENT_FABLE, WAIT_FOR_OWNER, "refusal_cap_blocked",
+       "Both fresh Fable attempts received the recognized refusal and a live "
+       "higher-precedence policy forbids (or nothing is configured for) the "
+       "narrow lower-tier fallback: blocked, citing the exact conflict for "
+       "the owner to reconcile (R072)."),
+    _t(REPRESENT_FABLE, EMERGENCY_STOPPED, "owner_emergency_stop",
+       "Emergency stop during a re-presentation attempt."),
+    _t(REPRESENT_FABLE, PAUSED_RECOVERY, "unsafe_condition",
+       "A S4.5 synchronous-stop condition fired during a re-presentation."),
 
     # --- exits ---------------------------------------------------------------
     _t(COMPLETE, IDLE, "run_closed",

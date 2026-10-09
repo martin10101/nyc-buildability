@@ -23,6 +23,7 @@ test("the review inbox honours the runtime flag at request time, not build time"
 
   // Rendered at all => the route was not baked as notFound() during the build.
   await expect(page.getByTestId("review-inbox")).toBeVisible();
+  await page.getByText("Internal development build", { exact: true }).click();
   await expect(page.getByTestId("internal-banner")).toBeVisible();
   // The mock inbox is an honest empty queue, so the empty state is the settled view.
   await expect(page.getByTestId("inbox-empty")).toBeVisible();

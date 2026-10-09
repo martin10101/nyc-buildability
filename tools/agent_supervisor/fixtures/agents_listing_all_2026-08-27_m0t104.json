@@ -1,0 +1,58 @@
+{
+ "directive": "D-024",
+ "schema": "native_runtime_agents_listing/v1",
+ "sessions": [
+  {
+   "cwd": "[HOME]\\Downloads\\nyc-zoning",
+   "id": "777b09da",
+   "kind": "background",
+   "name": "Review NYC zoning buildability autonomy activation",
+   "sessionId": "777b09da-[MASKED]",
+   "state": "failed",
+   "status": "waiting",
+   "waitingFor": "permission prompt"
+  },
+  {
+   "cwd": "[HOME]\\Downloads\\nyc-zoning\\ctl24",
+   "kind": "interactive",
+   "name": "ctl24-b7",
+   "sessionId": "da1a8368-[MASKED]",
+   "status": "busy"
+  },
+  {
+   "cwd": "[HOME]\\Downloads\\nyc-ami-calculator-1",
+   "kind": "interactive",
+   "name": "nyc-ami-calculator-1-13",
+   "sessionId": "97aa7d7a-[MASKED]"
+  },
+  {
+   "cwd": "[HOME]\\Downloads\\nyc-ami-calculator-1",
+   "kind": "interactive",
+   "name": "nyc-ami-calculator-1-34",
+   "sessionId": "05519ab5-[MASKED]"
+  },
+  {
+   "cwd": "[HOME]\\Downloads\\nyc-ami-calculator-1",
+   "kind": "interactive",
+   "name": "nyc-ami-calculator-1-08",
+   "sessionId": "cb4656b5-[MASKED]"
+  },
+  {
+   "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\da1a8368-[MASKED]\\scratchpad\\natc247",
+   "id": "50dae126",
+   "kind": "background",
+   "name": "d024-m0-t104-canary-a1",
+   "sessionId": "50dae126-[MASKED]",
+   "state": "stopped"
+  },
+  {
+   "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\da1a8368-[MASKED]\\scratchpad\\natc247",
+   "id": "76fd9c67",
+   "kind": "background",
+   "name": "d024-m0-t104-canary-a2",
+   "sessionId": "76fd9c67-[MASKED]",
+   "state": "done"
+  }
+ ],
+ "task": "M0-T104"
+}

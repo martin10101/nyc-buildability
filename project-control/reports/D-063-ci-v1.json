@@ -1,0 +1,43 @@
+{
+  "reviewed_sha": "b4514d9a338a7ced8bd268b85afd55b12c729fd3",
+  "ci_run_id": 35038721617,
+  "ci_url": "https://github.com/martin10101/nyc-buildability/actions/runs/35038721617",
+  "workflow_results": [
+    {
+      "id": 35038721611,
+      "name": "context-budget",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 35038721623,
+      "name": "secret-scan",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 35038721617,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "test_evidence": [
+    "2026-09-16T00:09:23.1291211Z       Tests  769 passed (769)",
+    "2026-09-16T00:11:37.9535207Z   ✓   50 [chromium] › e2e/development-limits.spec.ts:20:7 › overview: visible city reference, explicit uncalculated bulk and complete evidence (1.4s)",
+    "2026-09-16T00:11:38.9468083Z   ✓   51 [chromium] › e2e/development-limits.spec.ts:20:7 › zoning: visible city reference, explicit uncalculated bulk and complete evidence (960ms)",
+    "2026-09-16T00:11:40.3577642Z   ✓   52 [chromium] › e2e/development-limits.spec.ts:20:7 › report: visible city reference, explicit uncalculated bulk and complete evidence (1.4s)",
+    "2026-09-16T00:11:41.8277170Z   ✓   53 [chromium] › e2e/development-limits.spec.ts:36:5 › source drill-down preserves the exact field, original value and record link (1.4s)",
+    "2026-09-16T00:11:43.2299788Z   ✓   54 [chromium] › e2e/development-limits.spec.ts:50:5 › existing information is retained and keyboard-expandable below development limits (1.4s)",
+    "2026-09-16T00:11:43.8908974Z   ✓   55 [chromium] › e2e/development-limits.spec.ts:64:5 › canonical evaluated FAR stays distinct from the PLUTO reference and the square-foot cap (632ms)",
+    "2026-09-16T00:12:22.9206849Z   106 passed (2.1m)"
+  ],
+  "artifact": {
+    "id": 10424422853,
+    "sha256": "204c1f9ce58962db48767aff3243826c2a1aada5e96cc55e9ca3c410f47fd236",
+    "size_bytes": 110070100,
+    "local_zip": "/workspace/scratch/cfa2464c5c7f/m5t031-playwright-v1.zip",
+    "images": "/workspace/scratch/cfa2464c5c7f/m5t031-ci-images-v1"
+  },
+  "release_status": "WITHHELD: independent G3/G4/G5 found selector defects; source audit G3/G4 found drift gaps. Green existing CI is not task acceptance."
+}

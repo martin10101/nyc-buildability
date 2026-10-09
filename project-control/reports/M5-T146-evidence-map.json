@@ -1,0 +1,173 @@
+{
+ "task_id": "M5-T146",
+ "material_commits": [
+  "b1c3904a (part A: results contract 1.4.0, additive)",
+  "68ffb69b (part D first half: the register checker split and its two guards)",
+  "c3fac7bd (parts B and E: the first building option wired; the document regenerated)",
+  "2355c57a (ruling W11: the older blocks agree)",
+  "9f752c72 (ruling W12: the drawing tests' fixture-list guard)",
+  "a7764239 (part D second half: the register follows the wiring)",
+  "426d53e9 (ruling W13 a: the live route)",
+  "0c048485 (ruling W13 b: the areas-agree case through the emitter)",
+  "b219f8fd (part D third round)",
+  "1796eba6 (the correction after the walkthrough (F1): buildings_not_worked)",
+  "4fe56698 (part D fourth round)",
+  "423aa189 (the correction, second round: the older text gone from the drawing layers)",
+  "5dba465c (part D fifth round)",
+  "f237d0d7 ([ORCH-CORRECTED] one over-long test line wrapped)",
+  "5a1f4d92 (the producers' report reassembled from the part reports (their correction sections included) = material head)"
+ ],
+ "claim_seam_head": "4b9b7f3202dee5c0a3b3e6db009a5177a9900ffe",
+ "files_changed": [
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+  "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+  "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+  "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+  "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+  "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+  "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
+  "packages/contracts/fixtures/invalid/results/building_alternative_estimate_label_wrong.json",
+  "packages/contracts/fixtures/invalid/results/building_alternatives_contract_1_3_0.json",
+  "packages/contracts/fixtures/invalid/results/buildings_not_worked_contract_1_3_0.json",
+  "packages/contracts/fixtures/invalid/results/buildings_not_worked_entry_with_number.json",
+  "packages/contracts/fixtures/invalid/results/buildings_not_worked_entry_without_reason.json",
+  "packages/contracts/fixtures/invalid/results/coverage_by_portion_withheld_with_number.json",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "packages/contracts/fixtures/valid/results/synthetic_building_alternatives_contract_1_4_0.json",
+  "packages/contracts/fixtures/valid/results/synthetic_coverage_by_portion_available_contract_1_4_0.json",
+  "packages/contracts/generated/results.ts",
+  "packages/contracts/schemas/v1/results.schema.json",
+  "project-control/reports/M5-T146-part-A.md",
+  "project-control/reports/M5-T146-part-B.md",
+  "project-control/reports/M5-T146-part-D.md",
+  "project-control/reports/M5-T146-part-E.md",
+  "project-control/reports/M5-T146-producer-report.md",
+  "services/api/app/_contract_schemas/v1/results.schema.json",
+  "services/api/app/contracts/results_way_rules.py",
+  "services/api/app/rules/review_register/calc_checks.py",
+  "services/api/app/rules/review_register/calc_render.py",
+  "services/api/app/rules/review_register/calc_vocab.py",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/rules/review_register/review_register_calculations.py",
+  "services/api/app/scenario/three_answers/first_building_options.py",
+  "services/api/app/scenario/three_answers/first_option_results.py",
+  "services/api/app/scenario/three_answers/result_way_bridge.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/result_ways.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/api/test_results_read_api.py",
+  "services/api/tests/api/test_results_read_law_examples.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/drawings/kit/kit_support.py",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/drawings/kit/test_adapter.py",
+  "services/api/tests/drawings/kit/test_massing.py",
+  "services/api/tests/journey/test_215_16_northern_journey.py",
+  "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+  "services/api/tests/scenario/three_answers/test_first_building_options.py",
+  "services/api/tests/scenario/three_answers/test_first_option_results.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+  "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+  "services/api/tests/spatial/test_corner_reach_area.py"
+ ],
+ "what_did_not_change": "No rule file, no capture, no reference case, no earlier contract version's fixture; the 23 rule entries of the review register and their pages; no human verdict; no production switch.",
+ "known_limits": [
+  "Building A is listed only where the recorded lot area and the outline's area agree. On the benchmark lot they disagree, so the footprint figure and building A stay withheld (ruling W1). The owner's question A1, whether to show the footprint conditional on the outline instead, is open.",
+  "Which building a first option shows is the owner's open question A2. Every building that can be worked is listed; none is preferred.",
+  "One floor-to-floor height for every storey: no 15 ft shop ground floor (row R542), and no storey above the maximum base height with its setback. Building B is reported not worked where those would be needed (16 to 25 ft), as work owed.",
+  "The share range and the apartment size are shown as preliminary assumptions but cannot be changed on the screen (ruling W7); recorded as work owed.",
+  "Placement on the lot, the street wall, parking, loading and bicycle requirements, and the rear yard beyond the corner are not checked; every listed building says so.",
+  "No live-route test for the areas-agree case (no recorded lot whose areas agree); the case is proven through the emitter (G3 and G4 notes).",
+  "No test pins the older unit_estimate and floor_stack texts at the no-building state (G4 delta, mutation D7); the behaviour is correct at the head.",
+  "The older blocks' pointer text and the floor-plates reason name the contract's field names (building_alternatives, buildings_not_worked). The screen shows its own plain pointer; the drawing prints the field names. This is work for the presentation contract (D-090 source-079)."
+ ],
+ "checks_at_material_head": [
+  "ruff exit 0",
+  "focused server suites 3675 passed, 8 skipped",
+  "register renderer check exit 0",
+  "contract validator 23 schemas, 0 failures; its tests 24 passed; schema copy byte-identical",
+  "size check, path coverage, context budget and directive validator exit 0",
+  "website: lint 0, typecheck 0, vitest 1143 passed (answers, lib/architect, lib/__tests__)",
+  "CI run 38001788978 on f237d0d7: 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-090-R147": [
+   "For this task's share: the reported figures on the benchmark lot follow the law and the recorded area, not the competitor's errors. The floor-area allowance uses the recorded lot area; coverage is read by portion (ZR 23-362) and withheld where the two areas disagree; building B's bound is 80 percent of the recorded area. project-control/reports/M5-T146-G3G4.md: G3 check 3, the benchmark key by key against docs/reference-cases/R6B/cases/step-p6-worked.json. Open: the error-guard table itself is unchanged by this task."
+  ],
+  "D-090-R192": [
+   "No footprint or floor plate is drawn for the benchmark lot, because no placement is worked (ruling W5); the drawing layers carry the true reason (services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_w14c_floor_plates_reason_is_the_true_placement_reason_on_the_benchmark). The drawing kit's snapshots are regenerated from the document and guarded (services/api/tests/drawings/kit/test_adapter.py, ruling W12)."
+  ],
+  "D-090-R239": [
+   "Where the two areas disagree, the by-portion footprint is withheld and only the recorded area feeds calculations (ruling W1; work order section 6). Tests: services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emitter, test_w13_areas_agree_through_emitter_shows_footprint_and_building_a, test_w13_outline_not_available_through_emitter_withholds_coverage_and_lists_building_b. project-control/reports/M5-T146-G3G4.md: G3 checks 3 and 5."
+  ],
+  "D-090-R255": [
+   "Building B rests on the recorded lot area and is listed Conditional, with the standing conditions; the entered floor height is a user value used only for that conditional result. services/api/tests/api/test_results_read_api.py: test_w14_s27_live_route_fourteen_ft_building_b_listed_building_a_not_worked. project-control/reports/M5-T146-G3G4.md: G3 check 4."
+  ],
+  "D-090-R256": [
+   "The floor-to-floor height is shown with each storey and can be entered (10, 14, 16 and 25 ft tested through the live route: services/api/tests/api/test_results_read_api.py: test_w14_s25_live_route_sixteen_ft_no_building_both_reasons, test_w14_s26_live_route_twenty_five_ft_building_b_base_passes_max). The share range and the apartment size are shown with the estimate. Open: changing those two on the screen is work owed (ruling W7)."
+  ],
+  "D-090-R257": [
+   "Where the areas disagree no settled footprint is shown: coverage_by_portion is withheld with its reason, kind and resolver, and building A is listed in buildings_not_worked with the same reason (services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_w14_s27_building_b_listed_building_a_not_worked_at_10_and_14_ft). project-control/reports/M5-T146-G3G4.md: G3 delta check 3."
+  ],
+  "D-090-R267": [
+   "Building B is Conditional, never settled; each listed building carries what was not checked (ruling W5); nothing is called feasible, complies, validated, verified, optimal or preferred (services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_w14_no_not_worked_reason_claims_feasible_or_preferred). project-control/reports/M5-T146-G3G4.md: walkthrough, both rounds."
+  ],
+  "D-090-R322": [
+   "A building that cannot be worked is listed with its reason and kind: missing information (building A, the areas disagree) or work owed (building B at 16 ft and 25 ft) (services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_w14_s25_sixteen_ft_no_building_worked_both_reasons_given, test_w14_s26_twenty_five_ft_building_b_base_passes_maximum)."
+  ],
+  "D-090-R374": [
+   "No human verdict entered: every human_review decision stays null at the head; the register's checker refuses a verdict without a named reviewer (services/api/app/rules/review_register/). project-control/reports/M5-T146-G3G4.md: G3 check 6, both rounds."
+  ],
+  "D-090-R379": [
+   "The register is updated inside this task's own commits by its existing process (68ffb69bd, a7764239d, b219f8fd3, 4fe566981, 5dba465c8: register.json and the rendered docs/zoning-rule-review/); the CLAUDE.md instruction stands and the budget check passes. project-control/reports/M5-T146-G3G4.md: G3 check 6."
+  ],
+  "D-090-R509": [
+   "Each listed building's estimate is worked from that building's own floor area (ruling W4): building B's 20,150 sq ft at 10 ft. project-control/reports/M5-T146-G3G4.md: G3 check 3 against step-p6-worked#real-estimate-b."
+  ],
+  "D-090-R526": [
+   "Every listed building carries 'Parking, loading and bicycle requirements' among what was not checked; nothing is called feasible (services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_w14_no_not_worked_reason_claims_feasible_or_preferred)."
+  ],
+  "D-090-R540": [
+   "The share range 0.60 to 0.75 travels with each estimate and is named a preliminary assumption. Open: changing it on the screen is work owed (ruling W7)."
+  ],
+  "D-090-R541": [
+   "700 sq ft travels with each estimate as the chosen starting apartment size on the HPD measurement basis, a preliminary assumption. Open: changing it on the screen is work owed (ruling W7)."
+  ],
+  "D-090-R543": [
+   "The estimate's label is exactly 'Preliminary capacity estimate' for a listed building, and 'Not known' where no building has floors and a shape; the contract admits only these two (packages/contracts/schemas/v1/results.schema.json; an invalid fixture with another label)."
+  ],
+  "D-090-R544": [
+   "The estimate uses the listed building's floor area, and the legal unit limit stays a separate, withheld result. project-control/reports/M5-T146-G3G4.md: G3 check 3 (the legal unit limit withheld, with no number)."
+  ],
+  "D-090-R556": [
+   "A withheld coverage carries no number (contract invalid fixture; project-control/reports/M5-T146-G3G4.md: G3 check 2); the older blocks point to the lists and claim nothing else (ruling W11)."
+  ],
+  "D-090-R570": [
+   "The withheld values stay withheld in the document, the drawing and the CAD snapshots; buildings_not_worked has no number field (schema additionalProperties false; three invalid fixtures). project-control/reports/M5-T146-G3G4.md: G3 delta checks 2 and 7."
+  ],
+  "D-090-R650": [
+   "Each not-worked building names its kind where the result is decided: missing_information (building A: the areas disagree) or work_owed (building B: plan above the bound, or base above the maximum). project-control/reports/M5-T146-G3G4.md: G3 delta check 4."
+  ],
+  "D-090-R688": [
+   "The program's building B, floor schedule and estimate are compared with the independent example step-p6-worked (real-building-b, real-estimate-b) and the made-up rectangle (made-up-footprint-a, made-up-building-a) through the emitter; the legal unit limit stays a separate, withheld step. project-control/reports/M5-T146-G3G4.md: G3 checks 3 and 5, G4 check 5."
+  ],
+  "D-090-R700": [
+   "The share range and the apartment size are labelled as preliminary assumptions in the document and the register's estimate page (docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md)."
+  ],
+  "D-090-R707": [
+   "The register updates arrived in this task's own commits and were reviewed with them (project-control/reports/M5-T146-G3G4.md: G3 check 6, both rounds)."
+  ],
+  "D-090-R773": [
+   "One task of five parts on separate files, built beside task M5-T147 by up to three builders at once: project-control/reports/WAVE19-2026-10-09-concurrency-record.md; run times in the producers' report. Open: a standing way of working for later tasks."
+  ]
+ }
+}

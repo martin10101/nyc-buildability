@@ -1,0 +1,67 @@
+{
+ "task_id": "M0-T123",
+ "note": "Evidence per D-024 requirement applicable to M0-T123 (resolver set, 20 rows: R327-R346). Material identity: work commit 6aada29 + hardening delta 16e1b3b (unconditional runner seam + 19 tests) on control/D-024-fable-codex-loop. Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R327": [
+   "The S16.7 disposition is recorded verbatim (source-019-amendment.md) and referenced in the packet; nothing in this window consumed or relied on any dispositioned allowance."
+  ],
+  "D-024-R328": [
+   "Nothing granted was exercised: no restart, no clear-recovery, no budget change anywhere in the window (G2 row 10; the diff contains no budget/policy/journal-surface change)."
+  ],
+  "D-024-R329": [
+   "Complete touch history preserved: the journal/audit are byte-identical to the G0 baselines (G2 row 2); no touch record altered or removed."
+  ],
+  "D-024-R330": [
+   "Authorization exercised exactly as bounded: this defect task + M0-T124 (recert+presentation, created, held on this task). Qualifying evidence cited in packet + commit (reproduced live defect, M0-T107-cycle2-live-journey.md)."
+  ],
+  "D-024-R331": [
+   "Both live-reproduced dimensions closed in one seam: rotation-ceiling enforcement AND packet-worktree cwd binding (tools/agent_supervisor/launch_seam.py; root-cause traces in the producer report with file:line for both)."
+  ],
+  "D-024-R332": [
+   "EVERY launch/resume path evaluates the ceiling pre-provider: after the gate-wave hardening, enforce_launch runs UNCONDITIONALLY before the sole worker Popen (the G5-SEC-MINOR/G3-F5 co-gating removed; the worktree-less over-ceiling hypothetical now refuses - test_R332_worktree_less_over_ceiling_resume_still_refuses), plus the CLI packet-worktree gate and the unconditional pre-first-dispatch shed; anti-re-wrap AST sweep test detects re-nesting. Dispatcher-set closure proves run_unit is the only worker Popen."
+  ],
+  "D-024-R333": [
+   "At-or-above-400k resume refuses/rotates BEFORE provider contact; exactly-at-threshold counts as at-or-above (AS-2 boundary test); the live 640k shape refuses (AS-1 fixture test)."
+  ],
+  "D-024-R334": [
+   "Rotate-at-safe-seam or fail-closed pre-provider implemented and tested (AS-1 red/green on the seeded cycle-2 durable shape; rotation path via the real loop_turnover mechanism)."
+  ],
+  "D-024-R335": [
+   "cwd bound to the packet's isolated worktree on every launch/resume/rotation (RunnerConfig.cwd binding + seam check; AS-3 incl. Windows path forms)."
+  ],
+  "D-024-R336": [
+   "Primary-checkout or unexpected-cwd launch fails closed pre-provider with a typed refusal (AS-3; the live cycle-2 cwd defect shape refuses on the fixed tree)."
+  ],
+  "D-024-R337": [
+   "Rotation preserves ALL SEVEN owner-named properties, each individually asserted after the hardening round (test_R337_* snapshot-before/after: checkpoint lineage, task identity, budgets, audit history - chain verifies + prior records strict subset + exactly one shed appended, branch, worktree, exactly-once succession via idempotent shed)."
+  ],
+  "D-024-R338": [
+   "Old oversized transcript receives no new events post-rotation; new session identity distinct and starts in the packet worktree (AS-4 transcript-freeze + distinct-identity tests)."
+  ],
+  "D-024-R339": [
+   "Every worker-launch/resume call site enumerated mechanically with the same-seam proof (producer report; the sweep discovers sites from code, not a hand list)."
+  ],
+  "D-024-R340": [
+   "Deterministic bypass-sensitive reachability test: AST removal-sensitivity RED tests (pruning the seam statement fails the invariant) + loop-level RED/GREEN on the seeded cycle-2 shape + runner-level refusal of a 640k --resume before Popen. GREEN on the fixed tree (45 passed, orchestrator-reproduced deterministically)."
+  ],
+  "D-024-R341": [
+   "Committed fixture derived READ-ONLY from the preserved cycle-2 evidence: all four source SHA-256 heads byte-identical before AND after derivation (journal a4acb370..., audit e80c057c..., t1 3a0d1f30..., t2 3c918568... - G0 baselines == G2 re-check). Fixture sanitized; the provenance digest field truncated/renamed by the orchestrator at commit for secret-scanner hygiene (disclosed, G2 row 8; it is a public path digest, not a secret)."
+  ],
+  "D-024-R342": [
+   "All 12 matrix items now have DIRECT named tests after the hardening round: oversized (640k), exactly-at-400k, below-threshold, missing telemetry (fail closed), stale session identities (MatrixR342StaleSessionIdentity - never silently adopted), controller restarts (HALTED-lineage -> shed -> fresh dispatch, no --resume), recovery starts (durable-flag shed), Windows paths (+ UNC and 8.3 fail-closed), cwd mismatch, concurrent controllers (live foreign lock refuses; stale taken over), provider failure at launch (typed seam refusal; the raw missing-exe OSError case asserted as TRUE behavior with zero children - see R344 row), removal sensitivity (site-granular AST-prune + anti-re-wrap)."
+  ],
+  "D-024-R343": [
+   "rc=1 + missing result recorded verbatim in the producer report AND the actual terminal event RECOVERED from primary evidence: max_turns_reached {maxTurns:12, turnCount:13} (cycle-2 transcript records 92-95, with a nested_memory attachment loading the primary checkout's rules - the wrong-cwd re-orientation consumed the turn budget)."
+  ],
+  "D-024-R344": [
+   "No unproven claim stands: the context-limit hypothesis is contradicted and abandoned (terminal event RECOVERED: max_turns_reached 13/12). The count corrections (46->45 misattribution, 2869->2870 early measure) are disclosed in the report with explanations, and the hardening round's counts were re-verified before publication (64 collect+run; full suite 2889/2). A further honest limitation is RECORDED not hidden: a missing-executable Popen raises FileNotFoundError (zero children, no half-record; preflight guards upstream) - re-typing it is a named follow-up candidate, and the test asserts the true behavior."
+  ],
+  "D-024-R345": [
+   "No live-loop restart, no clear-recovery, no journal edit, no budget reset, no PR #241 anywhere in the window (G2 rows 2/10; journal byte-identical; PR #241 untouched)."
+  ],
+  "D-024-R346": [
+   "Standard process: G0 PASS + G2 self-check PASS; gate wave round 1 G3/G4/G5 all PASS (verbatim on file); converged findings closed by the bounded hardening round 16e1b3b with per-reviewer delta attestations; mutation proof (site-granular AST-prune RED tests + anti-re-wrap + red/green); DCV at accept; CI on the pushed tip; full suite at the final identity 2,889 passed / 2 skipped / 0 failed (2,870 + 19 hardening tests; behavior-neutrality of the unwrap proven by the identical 2,870 pre-new-tests run); frozen-identity recertification + manifest verification + R276 preflight = M0-T124 (held)."
+  ]
+ },
+ "updated_at": "2026-08-30T07:51:59.638825+00:00"
+}

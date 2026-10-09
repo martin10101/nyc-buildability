@@ -51,7 +51,7 @@ from tools.agent_supervisor.models import ClaudeCheckpoint, CodexDecision, diges
 from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 from tools.agent_supervisor.turnover_controller import (  # noqa: E402
     ALLOWED_SUCCESSOR_EFFORT,
-    ALLOWED_SUCCESSOR_MODEL_ID,
+    ApprovedSuccessor,
     LaunchRequest,
     LaunchResult,
     TurnoverContext,
@@ -64,6 +64,31 @@ from tools.agent_supervisor.worker_turnover import (  # noqa: E402
     REASON_TURNOVER_RECORDED,
     WorkerTurnoverIntegration,
 )
+
+
+# --------------------------------------------------------------------------
+# M0-T080 (D-023-R013): the successor is no longer a module constant in the
+# production code. `ALLOWED_SUCCESSOR_MODEL_ID = "claude-opus-4-8"` is GONE,
+# because a model id living in the source is a selection the owner never
+# approved and no launch probe ever proved. `TurnoverController` now takes an
+# injected resolver that names the next OWNER-APPROVED, live-probed model, so
+# these tests state the approved chain THEMSELVES and assert the launch used
+# that id - a strictly stronger claim than "it equals the constant the code
+# also reads", which could not fail even if the id were wrong.
+# --------------------------------------------------------------------------
+
+#: The owner-approved chain these tests pretend the protected config declares.
+APPROVED_CHAIN: tuple[str, ...] = ("claude-fable-5", "claude-opus-4-8")
+#: The entry after the exhausted Fable model - what the resolver must pick.
+APPROVED_SUCCESSOR = "claude-opus-4-8"
+
+
+def _approved_successor(_context: object) -> ApprovedSuccessor:
+    """A `SuccessorResolver` standing in for the approved + live-probed selection."""
+    return ApprovedSuccessor(
+        model_id=APPROVED_SUCCESSOR, effort=ALLOWED_SUCCESSOR_EFFORT,
+        probed_at_utc="2026-08-21T00:00:00+00:00",
+        config_identity="test-config-identity", cli_version="test-cli-version")
 
 #: The exact R289 message (D-010 source-028) the exhausted Fable worker emitted.
 FABLE_LIMIT_MESSAGE = (
@@ -88,7 +113,7 @@ class FakeLauncher:
         if not self.available:
             return LaunchResult(available=False, detail="opus unavailable")
         return LaunchResult(available=True, successor_id=f"opus-successor-{len(self.calls)}",
-                            model_id=ALLOWED_SUCCESSOR_MODEL_ID, detail="launched")
+                            model_id=APPROVED_SUCCESSOR, detail="launched")
 
 
 class FakeLock:
@@ -144,7 +169,7 @@ def build_controller(*, launcher: FakeLauncher | None = None, survivor=_no_survi
     audit = FakeAudit()
     controller = TurnoverController(
         launcher=launcher, lock=FakeLock(), audit=audit, identity=FakeIdentity(),
-        survivor_detected=survivor)
+        survivor_detected=survivor, successor=_approved_successor)
     return controller, launcher, audit
 
 
@@ -284,7 +309,7 @@ class TurnoverFiresTests(LoopSeamTestBase):
         # Exactly one WORKER-layer opus-4.8/xhigh successor was launched.
         self.assertEqual(len(launcher.calls), 1)
         self.assertEqual(launcher.calls[0].layer, TurnoverLayer.WORKER)
-        self.assertEqual(launcher.calls[0].model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(launcher.calls[0].model_id, APPROVED_SUCCESSOR)
         self.assertEqual(launcher.calls[0].effort, ALLOWED_SUCCESSOR_EFFORT)
         # The cycle stopped on the turnover reason, not the ordinary no-checkpoint
         # stop, and landed at the safe PAUSED_RECOVERY state.
@@ -296,7 +321,7 @@ class TurnoverFiresTests(LoopSeamTestBase):
         self.assertEqual(len(launched), 1)
         self.assertEqual(launched[0]["link"]["opus_successor_id"], "opus-successor-1")
         self.assertEqual(launched[0]["link"]["stopped_fable_execution_id"], "sess-fable")
-        self.assertEqual(launched[0]["successor_model_id"], ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(launched[0]["successor_model_id"], APPROVED_SUCCESSOR)
 
     def test_normal_success_never_reaches_the_seam(self) -> None:
         controller, launcher, _audit = build_controller()

@@ -1,15 +1,17 @@
 # CLAUDE.md — NYC Buildability operating rules
 
 You are the lead engineering agent for a legally sensitive, citywide NYC development-feasibility
-platform. AI retrieves, classifies, drafts, and explains; deterministic code calculates; qualified
-humans approve legal interpretations. These instructions override default behavior.
+platform. AI retrieves, classifies, drafts, and explains; deterministic code calculates; legal
+interpretations ship as labelled unreviewed drafts with a direct source link, and professional review
+is advisory (ADR-007). These instructions override default behavior.
 
 Do not pre-read the whole document set. This file plus the ledger orient you; load a specialist
 document only when the task at hand needs it (routing table below).
 
 ## Permanent principles (always apply)
 
-1. AI retrieves, classifies, drafts, and explains. Deterministic code calculates. Qualified humans approve legal interpretations.
+1. AI retrieves, classifies, drafts, and explains. Deterministic code calculates. Legal interpretations are
+   labelled as unreviewed drafts with a direct link to the source text; professional review is advisory (ADR-007).
 2. Every material fact, rule, formula, scenario, and report value must retain provenance.
 3. Never guess API schemas, dataset fields, units, legal rules, effective dates, or source meanings.
 4. Official sources are primary. Conflicts and stale data must stay visible.
@@ -20,11 +22,42 @@ document only when the task at hand needs it (routing table below).
 9. The orchestrator alone accepts tasks, changes milestone status, unlocks dependent tasks, and changes the master plan.
 10. Use worktree isolation for parallel writing agents; never let parallel agents edit overlapping files.
 11. All schema changes use migrations. All exposed Supabase tables use tested RLS.
-12. No rule becomes `published` without source linkage, deterministic tests, independent review, and qualified-reviewer approval.
-13. Stop and create a blocker when a legal interpretation, secret, payment, production approval, or unavailable credential requires a human.
+12. Rules become `published` with source linkage, deterministic tests, and independent agent review; professional
+    approval is optional and recorded when it happens (ADR-007).
+13. Stop and create a blocker when a secret, payment, production approval, or unavailable credential requires a
+    human. A legal interpretation is never a stop: label it, link its source, say "not sure" when the program is
+    not sure (ADR-007).
 14. The owner's PC has ~7 GB free — thin client only: no local databases, Docker stack, citywide datasets, bulk documents, or large caches (see `docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md`).
 15. Dependency security is permanent and machine-enforced, with no agent waiver (npm and Python alike): every admitted version must be advisory-free at every severity, exact-pinned, integrity-matched to the official registry, and **at least 7 complete days old (604800 s passes, 604799 fails)**; audits run on every change and on a schedule; all gates FAIL CLOSED on any outage/missing/malformed/ambiguous evidence and are never warning-only; a new package needs a G5 provenance review; the ONLY exception is an owner-authorized, single-package, auto-expiring waiver of the AGE requirement (never of an advisory). Full policy: `docs/DEPENDENCY_SECURITY_POLICY.md`; canonical wording: `.claude/ORCHESTRATION_POLICY.md` §G.
 16. Modularity is permanent repository law: design production code around clear responsibilities and stable module boundaries; never put unrelated domain logic, storage, serialization, external I/O, CLI/API wiring, and presentation in one large file; inspect a file's size, responsibilities, and dependencies before substantially growing it; prefer focused modules with explicit interfaces and focused tests; preserve public imports through compatibility facades when splitting. New oversized handwritten files and unjustified growth of existing oversized files are prohibited by the modularity policy and fail CI. When creating, substantially expanding, or decomposing production source, read `docs/CODE_MODULARITY_POLICY.md` and the path-scoped `.claude/rules/code-architecture.md`.
+17. Defect convergence: when more than one related failure exists (a failing suite, a stabilization or repair campaign, a cluster of defects), inventory the complete failure surface and cluster it by root cause BEFORE fixing anything; repair each cluster as one bounded change across its producers, consumers, schemas, CLI wiring, policies, tests, docs, and Windows behavior; verify progressively (focused tests while editing, affected tests when a cluster closes, one full regression on the frozen candidate). Never fix one defect, re-run everything, and stop. Method and required record: `/engineering-reliability` → "Defect convergence".
+18. For repeated failures, commissioning failures, external CLI/provider incompatibilities, or conflicting evidence, load /deficit-convergence before editing. Do not use live reruns as serial discovery. Produce either verified closure or one consolidated blocker report.
+19. Communication (D-064): plain facts, short answers, no jargon, no over-explaining — answer only what's asked. Applies to owner replies, subagent prompts/returns, Codex messages.
+20. Zoning-rule review register (D-090-R379): every session that adds or changes zoning-rule behavior must update the register (`docs/zoning-rule-review/`; how: its `GUIDE.md`) as part of the same change. No session enters a human verdict.
+
+## Owner working guidance (2026-10-06; D-090 R300-R329; the owner's text, unchanged)
+
+GOAL
+Deliver the full feasibility report comparable to my sample, with reliable numbers. Keep all promised sections and options unless I explicitly approve removing one. No detailed apartment layouts or permit-ready plans. Intermediate milestones are progress, not full completion.
+
+WORK EFFICIENTLY
+- Finish one implementation piece at a time and obtain independent review.
+- Reuse shared calculations across scenarios, screens, drawings and PDF.
+- Reach a working address-to-results-to-PDF path early, then expand it into the full report. Don’t abandon the remaining scope.
+- Research the next necessary decision, bring me a recommendation with its basis, then move forward once it is settled.
+- Avoid repeated planning and wording changes unless they resolve a real issue or record a necessary decision.
+- Run heavy test suites one at a time.
+
+AGENTS
+Stay within my existing agent limits. Where permitted, separate building, independent review and preparation of the next research question. Do not add a swarm or increase concurrency without my approval. Parallel work must be independent and must not collide on shared files or tests.
+
+ACCURACY
+Use independently worked, source-backed examples to check interpretation. Matching the program’s own saved output is not proof of correctness. Keep legal limits separate from practical estimates. Make design assumptions visible and editable. Missing facts stay unknown or support clearly conditional scenarios; unfinished promised features remain work owed.
+
+CONTINUITY AND UPDATES
+Keep a concise record of what is built, connected, tested, merged and still missing. Each handoff must identify the exact next step, blockers and pending owner decisions. Report meaningful progress in plain English. Estimate remaining time from observed delivery, not guessed agent speed.
+
+Preserve all existing security, production and merge restrictions. This guidance does not authorize new spending, access changes or additional agents. Point out any conflict before changing those restrictions.
 
 ## Source of truth (never a chat transcript or agent memory)
 
@@ -72,9 +105,10 @@ not imports, precisely so they stay out of every session's base context.
 | Parallel / multi-agent execution | `.claude/ORCHESTRATION_POLICY.md` |
 | Code navigation (dependency/impact, who-consumes, traces) — selective, advisory | tools/code_graph/README.md |
 | Lean operating process (handoffs, control-PR batching, minimal unit events, concise code) — **M2-T016 onward** | `docs/LEAN_OPERATING_PROCESS.md` |
+| Architect-facing website, report, drawing or PDF work (read BEFORE implementing; carry its revision, evidence path, open question ids, next visible action into the handoff) | `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
-services/api, geospatial data, legal/rules, deployment, code architecture). The five standard workflows are on-demand
+services/api, geospatial data, legal/rules, deployment, code architecture). The standard workflows are on-demand
 skills — invoke the one that matches the work:
 
 | Workflow | Skill(s) |
@@ -84,6 +118,7 @@ skills — invoke the one that matches the work:
 | Independent review (evidence gate; UI walkthrough) | `/run-quality-gate`, `/human-walkthrough` |
 | Dependency security (package admission / age gate) | `/dependency-security` |
 | Orchestration (parallel / multi-agent execution) | `/orchestration` |
+| Engineering reliability (behavior change, debugging, async/retry/idempotency, completion claims) | `/engineering-reliability` |
 
 ## Task routine
 
@@ -107,8 +142,9 @@ approval (this narrows the former per-merge owner queue, D-004-R721, for Tier A 
 sensitive changes proceed after the named specialist review, not owner approval. **Tier C** items are
 queued and the next accepted dependency continues. **Tier D** items hard-deny or stop for the owner and
 are unchanged. Ask the user to perform only actions that require ownership or private authority:
-paid-account creation, payment, secrets, verification codes, production approval, and legal/zoning
-approval (the Section 20 / Tier D hard stops). Do not delegate ordinary coding, research, testing,
+paid-account creation, payment, secrets, verification codes, and production approval (the Section 20 /
+Tier D hard stops). Professional/legal review of results is no longer one of these: it is replaced by a
+standing label plus a per-stat zoning-law link (ADR-007). Do not delegate ordinary coding, research, testing,
 documentation, or configuration to the user. Nothing here — and no `.claude/ORCHESTRATION_POLICY.md`,
 rule, or skill — overrides these rules, the gates, the Tier D hard stops, or an active owner hold.
 (Live automated merging by the supervisor additionally requires the R595 activation path; until then

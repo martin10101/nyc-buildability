@@ -59,7 +59,9 @@ worked around.
 Load only what the task needs: `PRD.md` and the requirements docs for scope;
 `docs/IMPLEMENTATION_SEQUENCE.md` for milestones; `docs/GATES_AND_CHECKPOINTS.md`
 for gates; `docs/PROJECT_CONTROL_PROTOCOL.md` and ADR-005 for lifecycle and
-authority; `docs/ACCEPTANCE_SCENARIO_STANDARD.md` for scenarios. Path-scoped
+authority; `docs/ACCEPTANCE_SCENARIO_STANDARD.md` for scenarios;
+`docs/ENGINEERING_RELIABILITY_STANDARD.md` for debugging method, async/retry/
+idempotency design, verification contexts, and defect triage. Path-scoped
 `AGENTS.md` files under a subtree add only that subtree's rules.
 
 ## Modularity (permanent)

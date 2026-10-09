@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-035",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct-only directive bound to the non-ledger sentinel D-035-BOOTSTRAP (D-029/D-031 pattern); R001/R002/R004 evidence accrues across sessions and is verifiable at handoff seams; R003 is verifiable when the T-B/T-C queue is contracted and the R595 package is presented.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

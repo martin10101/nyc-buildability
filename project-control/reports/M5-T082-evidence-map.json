@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T082",
+ "material_commit": "b9b0d31e (cherry-pick of the wt-m5t082 in-worktree commit 98550d80; every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:20:00+00:00",
+ "producer": "3d-massing-engineer (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t082)",
+ "requirements": {
+  "D-066-R001": [
+   "D-066-R001: the packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 815 files) naming consumers, forbidden neighbours and the `query.py --no-regen impact` instruction; the producer stayed inside the named scope (no forbidden neighbour touched - the cherry-pick diff lists only the allowed paths)."
+  ],
+  "D-087-R001": [
+   "D-087-R001: this packet is one of the seq-128 capacity-ramp units - contracted, claimed and gated like any ledger packet (G0 PASS at 5e704eeb, claim seam f9bfd54d); produced by an orchestrator-dispatched subagent in its own worktree (wt-m5t082) concurrently with the other D-087 units; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t082); the in-worktree commit 98550d80 touches exactly the allowed paths (git diff --name-only 98550d80^ 98550d80); the shared package __init__ files stayed orchestrator-owned and untouched."
+  ],
+  "D-087-R003": [
+   "services/api/app/scenario/massing_model.py builds the architecture's canonical scenario-geometry truth object (docs/3D_MASSING_ENGINE_ARCHITECTURE.md sections 2-4, 10): declared EPSG:2263 / US-survey-foot horizontal+vertical / axis order / local origin near the parcel centroid with the exact transform / precision grid; layers parcel, proposed_massing (closed outward-oriented prisms per floor band, concave-safe ear-clip caps), generated_option (from the engine's as_dict candidate); per-floor plates with 2263 areas; metrics (GFA, total height); provenance (input digests, generator massing-1.0.0); section-10 checks as typed refusals (footprint_outside_lot never clipped). The B0 proposal contract's levels (floor_count x floor_to_floor_ft) feed the floor stack read-only. This is the renderer-agnostic 3D foundation for buildings + lot released by R003."
+  ],
+  "D-087-R009": [
+   "D-087-R009: zero new dependencies (stdlib + already-admitted shapely/numpy only; no requirements/lockfile change), no route/main.py/web change, max-envelope route still unmounted, no Tier D action, PR #241 untouched; ruff + modularity clean at the harvested head."
+  ]
+ }
+}

@@ -1,0 +1,12 @@
+{
+  "task_id": "M4-T009",
+  "producer_agent": "backend-engineer/orchestrator",
+  "report_file": "project-control/reports/M4-T009-producer-report.md",
+  "submitted_at": "2026-09-12T01:19:30.958379+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M4-T009-evidence-map.json",
+  "content_manifest_sha256": "b3dc14fb208476d1a4f7a82f0b3eb66a3b7bfb3dc274f32352f93746ed3b35cf",
+  "reviewed_sha": "ffc6c37ec313489363b8b9a23c1dbfcb06d63297",
+  "applicable_requirements": [],
+  "updated_at": "2026-09-12T01:19:31.634989+00:00"
+}

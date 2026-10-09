@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D024-M0-T089",
+  "timestamp": "2026-08-26T02:15:44.339930+00:00",
+  "commit": "d9960d11177250fcf0158ee8143a2041192bbb2e",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "M0-T089 accepted: D-024 B2 subagent telemetry breadth (subagentStatusLine, SDK feature-detected, hooks+identity, transcript fallback, read-only shadow status) + carried M0-T088 bundle closed; G3/G4/G5 PASS none-blocking (7/7 mutation teeth); DCV 34/34; suite 2006/2/0; amendment 2 captured (R129-R138 -> M0-T099); campaign seq 3 NEXT=M0-T099",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-26T02:15:44.375585+00:00"
+}

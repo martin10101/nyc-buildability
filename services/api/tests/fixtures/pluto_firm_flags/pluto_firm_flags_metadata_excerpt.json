@@ -1,0 +1,70 @@
+{
+  "fixture_id": "pluto_firm_flags_metadata_excerpt",
+  "purpose": "Verbatim excerpt of the publisher's (DCP) official NYC Open Data metadata for the PLUTO dataset, limited to the two FEMA flood-map flag columns (firm07_flag, pfirm15_flag) whose meaning the B-09 flood item relies on. Pins the field descriptions so a metadata change is visible in test (see services/api/tests/profile/test_map_based_rules.py). Research note: docs/research/pluto-firm-flags-2026-10-02.md.",
+  "dataset_id": "64uk-42ks",
+  "dataset_name": "Primary Land Use Tax Lot Output (PLUTO)",
+  "attribution": "Department of City Planning (DCP)",
+  "attribution_link": "https://www.nyc.gov/content/planning/pages/resources/datasets/mappluto-pluto-change",
+  "current_version": "26v2",
+  "source_url": "https://data.cityofnewyork.us/api/views/64uk-42ks.json",
+  "http_status": 200,
+  "http_date": "Fri, 02 Oct 2026 11:51:43 GMT",
+  "retrieved_at": "2026-10-02T11:51:43Z",
+  "rows_updated_at": "2026-08-24T20:48:51Z",
+  "capture_method": "curl GET, keyless, single request; the column objects in 'columns' below are copied byte-faithfully (same JSON values) from the live response body's columns[] array",
+  "full_body_sha256": "e2898060ad159147f2c8c4a333c9689b5e9234cb86239106c5ca48941680d4c2",
+  "full_body_bytes": 202683,
+  "note": "Excerpt only: the full 202,683-byte api/views body is NOT committed (not small); its sha256 is recorded above as full_body_sha256. The 26v1 PLUTO data-dictionary PDF is permissions-encrypted and was not read or bypassed; this machine-readable DCP metadata is the official substitute. The live dataset self-reports current_version 26v2 (one release past the 26v1 PDF); the firm07_flag / pfirm15_flag descriptions are stable across these releases.",
+  "columns": [
+    {
+      "id": 634001117,
+      "name": "firm07_flag",
+      "dataTypeName": "number",
+      "description": "A value of 1 means that some portion of the tax lot falls within the 1% annual chance floodplain as determined by FEMA's 2007 Flood Insurance Rate Map.\n\nNote that buildings on the tax lot may or may not be in the portion of the tax lot that is within the 1% annual chance floodplain.",
+      "fieldName": "firm07_flag",
+      "position": 89,
+      "renderTypeName": "number",
+      "tableColumnId": 94585504,
+      "cachedContents": {
+        "non_null": "34736",
+        "largest": "1",
+        "null": "823548",
+        "top": [
+          {
+            "item": "1",
+            "count": "34736"
+          }
+        ],
+        "smallest": "1",
+        "count": "858284",
+        "cardinality": "858284"
+      },
+      "format": {}
+    },
+    {
+      "id": 634001118,
+      "name": "pfirm15_flag",
+      "dataTypeName": "number",
+      "description": "A value of 1 means that some portion of the tax lot falls within the 1% annual chance floodplain as determined by FEMA's 2015 Preliminary Flood Insurance Rate Map.\n\nNote that buildings on the tax lot may or may not be in the portion of the tax lot that is within the 1% annual chance floodplain.",
+      "fieldName": "pfirm15_flag",
+      "position": 90,
+      "renderTypeName": "number",
+      "tableColumnId": 94585517,
+      "cachedContents": {
+        "non_null": "65826",
+        "largest": "1",
+        "null": "792458",
+        "top": [
+          {
+            "item": "1",
+            "count": "65826"
+          }
+        ],
+        "smallest": "1",
+        "count": "858284",
+        "cardinality": "858284"
+      },
+      "format": {}
+    }
+  ]
+}

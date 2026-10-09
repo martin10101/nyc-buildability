@@ -1,0 +1,117 @@
+{
+  "contract_version": "1.0.0",
+  "document_kind": "address_resolution",
+  "correlation_id": "6839d5a317ec4ad88f3d78b58f8e7584",
+  "status": "resolved",
+  "grc": "00",
+  "grc_reason": null,
+  "grc_message": null,
+  "grc2": "00",
+  "grc2_reason": null,
+  "grc2_message": null,
+  "input_echo": {
+    "house_number": "215-16",
+    "street": "Northern Boulevard",
+    "borough": "Queens",
+    "zip": null
+  },
+  "canonical": {
+    "bbl": "1008350041",
+    "bin": null,
+    "street_name_normalized": "NORTHERN BOULEVARD",
+    "borough_name": "QUEENS",
+    "zip_code": null,
+    "latitude": null,
+    "longitude": null
+  },
+  "suggestions": [],
+  "selection_policy": "caller_selects",
+  "unsanitized_reflected_input": {
+    "fields": [
+      "input_echo",
+      "grc_message",
+      "grc2_message",
+      "suggestions",
+      "canonical.street_name_normalized",
+      "canonical.borough_name",
+      "provenance.request_params",
+      "source_facts[].original_value (street/borough facts)",
+      "source_facts[].normalized_value (street/borough facts)"
+    ],
+    "warning": "UNSANITIZED source text that reflects caller-typed input back (the source echoes the typed street in its messages and suggestions). Transported verbatim by design; every consumer must escape on render and must never log these values verbatim."
+  },
+  "source_facts": [
+    {
+      "provenance_id": "geoclient-address:1178ac2b42e344a4ba289997a3ddec62:bbl",
+      "source_id": "nyc-geoclient",
+      "original_field_name": "bbl",
+      "original_value": "1008350041",
+      "normalized_value": "1008350041",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "geoclient-v2; Geosupport release id not exposed by the /address response",
+      "effective_date": null,
+      "bbl": "1008350041",
+      "confidence": 1.0,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none",
+      "fact_key": "nyc-geoclient:1008350041:bbl",
+      "observation_id": "1178ac2b42e344a4ba289997a3ddec62:bbl",
+      "value_digest": "sha256:47d572fee418c4a682dc11987edee1ccffc117c1b63d21fc01fe02d0eb10f337",
+      "response_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "provenance_id": "geoclient-address:1178ac2b42e344a4ba289997a3ddec62:firstStreetNameNormalized",
+      "source_id": "nyc-geoclient",
+      "original_field_name": "firstStreetNameNormalized",
+      "original_value": null,
+      "normalized_value": "NORTHERN BOULEVARD",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "geoclient-v2; Geosupport release id not exposed by the /address response",
+      "effective_date": null,
+      "bbl": "1008350041",
+      "confidence": 1.0,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none",
+      "fact_key": "nyc-geoclient:1008350041:firstStreetNameNormalized",
+      "observation_id": "1178ac2b42e344a4ba289997a3ddec62:firstStreetNameNormalized",
+      "value_digest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "response_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "provenance_id": "geoclient-address:1178ac2b42e344a4ba289997a3ddec62:firstBoroughName",
+      "source_id": "nyc-geoclient",
+      "original_field_name": "firstBoroughName",
+      "original_value": null,
+      "normalized_value": "QUEENS",
+      "retrieved_at": "2026-07-16T12:00:00Z",
+      "dataset_version": "geoclient-v2; Geosupport release id not exposed by the /address response",
+      "effective_date": null,
+      "bbl": "1008350041",
+      "confidence": 1.0,
+      "user_confirmed_or_overridden": "none",
+      "conflict_status": "none",
+      "fact_key": "nyc-geoclient:1008350041:firstBoroughName",
+      "observation_id": "1178ac2b42e344a4ba289997a3ddec62:firstBoroughName",
+      "value_digest": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "response_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  ],
+  "provenance": {
+    "source_id": "nyc-geoclient",
+    "endpoint": "https://api.nyc.gov/geo/geoclient/v2/address",
+    "request_params": {
+      "houseNumber": "215-16",
+      "street": "Northern Boulevard",
+      "borough": "Queens"
+    },
+    "retrieved_at": "2026-07-16T12:00:00Z",
+    "http_status": 200,
+    "geosupport_return_code": "00",
+    "geosupport_return_code2": "00",
+    "reason_code": null,
+    "reason_code2": null,
+    "response_digest": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "digest_canonicalization": "canonical-json-1",
+    "correlation_id": "1178ac2b42e344a4ba289997a3ddec62"
+  }
+}

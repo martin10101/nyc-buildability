@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T069",
+ "material_commit": "463f98f9 (cherry-pick of the in-worktree commit c96e5387; 4 files, ALL-MATCH LF-normalized digest verification; CI at the pushed head a66cf818 = run 35769445255 SUCCESS - the api job green on BOTH attempts; attempt 1's sole red was the DB-048 accepted-spec vitest flake in apps/web, zero overlap with this api-only task)",
+ "produced_at": "2026-09-21T06:55:00+00:00",
+ "producer": "backend-engineer (loop-2 worker, run persistent2-local-29; closed PAUSED_RECOVERY missing_checkpoint at cycle 5 - S14; the unit was delivered complete UNCOMMITTED with an explicit [BROKER-LIMIT->harvest] recipe (T067 precedent); the orchestrator harvest executed the recipe and elevated every [PREDICTED] row to OBSERVED)",
+ "requirements": {
+  "D-078-R001": [
+   "The site-definition confirmation flow's supersede transition no longer leaks record existence: all three not-found branches (missing id, supersedes_id mismatch, foreign-property scope) raise the SHARED _NOT_FOUND_FOR_ADDRESSED_PROPERTY constant with no id echo (store.py :328/:334/:350), closing the M5-T067 G5-LOW-1 oracle (DB-040(s)); the FROZEN scope-before-status order is preserved (foreign probes 404 before the status read; the 409 stays reachable only on the record's own binding)."
+  ],
+  "D-078-R002": [
+   "Human-only boundary untouched: the change is message unification inside the existing store transitions - no auto-selection, inference, or defaulting was added anywhere; the confirmation flow still requires the professional's explicit input for every site determination."
+  ],
+  "D-066-R001": [
+   "Packet carries the seam navigation block; the producer's consumer sweep (recorded in the report) found no out-of-scope suite pinning any old supersede literal and revoke text is byte-preserved; exactly the packet's four allowed_paths changed."
+  ],
+  "D-077-R002": [
+   "Full lane drill with the broker-boundary honesty class: contract+claim at the 23070a05/527e182c seams -> loop-2 run-29 build (4 validated checkpoints) -> PAUSED_RECOVERY missing-checkpoint close -> 12 stale asks denied BOTH stores -> orchestrator harvest per the producer recipe: ruff clean, 77 passed, SIX-mutation matrix all RED at the predicted first-failing assertions (:878 x4, :907 x2) with hash-verified restores (D_cand 89f998f5), final green - [PREDICTED] elevated to OBSERVED; in-worktree c96e5387 cherry-picked 463f98f9 ALL-MATCH x4 -> submit at the CI-green head a66cf818."
+  ],
+  "D-077-R003": [
+   "Released scope only: exactly the packet's four allowed_paths in the material commit; no forbidden path touched; zero dependency changes; the get/list posture note (DB-040(t)) untouched as contracted."
+  ]
+ }
+}

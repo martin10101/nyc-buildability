@@ -1,0 +1,12 @@
+{
+  "task_id": "M2-T020",
+  "cited_refs": [
+    {
+      "directive_id": "D-032",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "applicable_set": "expected empty (D-032 rows bind to D-032-BOOTSTRAP); resolver re-derived at verification",
+  "requirements": {},
+  "note": "Product task under the D-032 continuous-build queue; produced by supervised loop run persistent-local-05; candidate content-APPROVED by gpt-6-astra (CONTINUE, audit seq 146). Frozen candidate f12e828c, merged HEAD bc106d8d."
+}

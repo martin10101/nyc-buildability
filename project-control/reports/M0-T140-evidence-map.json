@@ -1,0 +1,129 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T140",
+  "requirements": {
+    "D-024-R644": [
+      "Failed b5-01 treated as evidence, never bypassed: project-control/reports/M0-T140-canary-b501-refusal-evidence.md; audit launch_manifest_refused rows preserved; every successor built on preserved evidence."
+    ],
+    "D-024-R645": [
+      "No controller modification/reinstall outside accepted candidates (installs only from accepted 2245de74/f8f0f0c8/3f4cee86 via the bound updater); M0-T136/T138/T139 packets byte-unchanged; no push (branch has no upstream), no merge; R603-R605 exercised only by the owner-typed runs. runtime dir 9aca7075... (C:/SupervisorController): audit.jsonl seq 15-68, supervisor_journal transitions 12-34, mrl/canary-b5-01|02|02r1|02r2|02r3."
+    ],
+    "D-024-R646": [
+      "Clean repository proven at every launch: draft_manifest refuses a dirty tree (clean_status), P0 git status checks in every script; CANARY-UNTRACKED.txt absent since the b5-01 cleanup (no such path tracked or present)."
+    ],
+    "D-024-R647": [
+      "Failed canary preserved verbatim: project-control/reports/M0-T140-canary-b501-refusal-evidence.md + preserved run dirs (no rerun of b5-01; attempt-2/3 refusal reports M0-T140-canary-attempt2-refusal-evidence.md / M0-T140-canary-attempt3-pm-validation-refusal.md)."
+    ],
+    "D-024-R648": [
+      "task_authority requirements + canonical recovery traced: M0-T140-G0.md, docs/CONTROLLER_UPDATE_RUNBOOK.md s9a, the causal traces; live transitions owner_cleared_pause (15,19) and owner_answer_validated (26) exercised exactly per trace."
+    ],
+    "D-024-R649": [
+      "No existing unaccepted task was designated as the canary vehicle (checked at creation; recorded in M0-T140-G0.md) - hence R650."
+    ],
+    "D-024-R650": [
+      "M0-T140 itself: the minimal dedicated read-only canary-execution task under the R587-R589 scope (allowed_paths = two evidence reports only; next unused ID at creation)."
+    ],
+    "D-024-R651": [
+      "M0-T140 stayed claimed from creation through the passing commissioning (ledger history; status claimed until this Amendment-47 closure)."
+    ],
+    "D-024-R652": [
+      "Canary manifest regenerated against M0-T140 + the current clean HEAD at every attempt (P7 drafts; final manifest binds head 37b2c3b6; audit launch_manifest_verified seq 54). project-control/reports/M0-T140-canary-execution-evidence.md s1."
+    ],
+    "D-024-R653": [
+      "Only the temporary external script was replaced across attempts (ctl24-activation superseded-* chain); the accepted controller changed only through the accepted M0-T141/T142/T143 corrective candidates under their own gates."
+    ],
+    "D-024-R655": [
+      "b5-01 refusal proof preserved: launch_manifest_mismatch/clean_status refusal, exit 11, zero provider contact - project-control/reports/M0-T140-canary-b501-refusal-evidence.md; reused as row 2 in r2/r3 readouts (audit rows; no b5-01 one_shot_unit.json)."
+    ],
+    "D-024-R654": [
+      "Canonical recovery included in every script (s9a clear-recovery; resume-after-answer in the m0t143 script); no runtime state deleted or hand-edited (retention/journal untouched; transitions all trigger-driven)."
+    ],
+    "D-024-R656": [
+      "Canonical recovery/revalidation performed before every successor: owner_cleared_pause (transitions 15, 19), owner_answer_validated (transition 26), each followed by full preflight_pass."
+    ],
+    "D-024-R657": [
+      "Exactly one provider one-shot per successor: mrl_one_shot_launched count == 1 for canary-b5-02r2 and canary-b5-02r3 (audit seq 39-43, 57). project-control/reports/M0-T140-canary-execution-evidence.md s1."
+    ],
+    "D-024-R658": [
+      "Complete PASS/FAIL handling for all ten R587 items in every script generation; final commissioning: all ten PASS (project-control/reports/M0-T140-canary-execution-evidence.md s2; owner-attested CANARY_PACKAGE_PASS)."
+    ],
+    "D-024-R659": [
+      "Every deployed script parsed clean under Windows PowerShell 5.1 (0 errors recorded at each deployment); item 1-10 reachable PASS/FAIL handling verified at m0t136-era prep by an independent read-only subagent and re-reviewed in each successor wave (M0-T141/T142/T143 G3 reviews)."
+    ],
+    "D-024-R660": [
+      "No session ever executed a canary script: every run is owner-typed (PS transcript pasted by the owner; deployment records note never-invoked until the owner ran them)."
+    ],
+    "D-024-R661": [
+      "Scope honored: under M0-T140 only the control-plane canary task + external script updates; production-code changes went through their own gated tasks (M0-T141/T142/T143)."
+    ],
+    "D-024-R662": [
+      "Required return tokens delivered and durably captured (CANARY_EXECUTION_READY-era returns; successor tokens CODEX_REVIEW_UNAVAILABLE_TRACE_READY / CODEX_SCHEMA_REPAIR_READY in M0-T143-return-report.md; this closure's token in M0-T140-return-report.md)."
+    ],
+    "D-024-R663": [
+      "No broad audit or implementation tranche was begun under this task (bounded corrective packages only, each singly authorized)."
+    ],
+    "D-024-R673": [
+      "b5-01 PASS reused, never rerun: row 2 REUSED in the r2 and r3 readouts from stored audit evidence; obsolete park/pending-approval assumption removed in the corrected scripts; canonical recovery used instead."
+    ],
+    "D-024-R674": [
+      "M0-T140 remained properly claimed and authorized throughout (ledger; task_authority pre-gate in every script asserted claimed/in_progress/awaiting_gate); no accepted task reopened; R603-R605 never interpreted by a session."
+    ],
+    "D-024-R679": [
+      "No push, no merge, no session-initiated provider call: provider contact happened only inside owner-typed canary runs; branch has no upstream."
+    ],
+    "D-024-R680": [
+      "Post-acceptance owner-run scripts generated + parser-validated for each corrective candidate (m0t141 sha 22077B, m0t142 sha e8c693ae, m0t143 sha 096ee3ea; each PS 5.1 parse 0 errors), fail-fast with backup/install/record-manifest/verify phases. project-control/reports/M0-T140-canary-execution-evidence.md s1."
+    ],
+    "D-024-R681": [
+      "Bound transactional rollback used ONLY on installation/doctor failure (attempt-3 rolled back cleanly); canary product defects preserved evidence and stopped with NO rollback (b5-02r2 handling; owner model switch stood)."
+    ],
+    "D-024-R683": [
+      "No owner-run script was ever executed by a session (R712-verified for m0t143 by the M0-T143 DCV; journey script likewise deployed-not-executed)."
+    ],
+    "D-024-R684": [
+      "Stop-order analysis discharged on preserved artifacts only: project-control/reports/M0-T140-canary-b502r1-causal-trace.md (five FAIL rows adjudicated per the owner framework)."
+    ],
+    "D-024-R685": [
+      "Exactly one bounded corrective package per proven failure (M0-T141 draft-7, M0-T142 settlement identity, M0-T143 codex schema) - no repo-wide audits, no reopened accepted tasks, each accepted under its own gates."
+    ],
+    "D-024-R697": [
+      "The owner-run transactional script with the canonical model switch was prepared, validated, deployed (m0t142, sha e8c693ae), executed by the owner, and its successor chain completed the commissioning."
+    ],
+    "D-024-R699": [
+      "Exact claude-fable-5 proven live twice: argv --model claude-fable-5 + correlation-bound primary model in canary-b5-02r2 AND canary-b5-02r3 units; doctor model_selection row; PV verify-only phase; fallback [] held. project-control/reports/M0-T140-canary-execution-evidence.md s2 row 4, s3 item 1."
+    ],
+    "D-024-R714": [
+      "Commissioning treated successful: all ten R587 items recorded PASS from durable artifacts in project-control/reports/M0-T140-canary-execution-evidence.md s2; no further diagnosis performed."
+    ],
+    "D-024-R715": [
+      "No new diagnostic task created (only this closure of the existing M0-T140); no provider canary rerun (audit ends at seq 68; no new run dirs); operator_declined recorded as the owner's clean settled close; completed verification not repeated (P10 harness not rerun - cited, not re-executed)."
+    ],
+    "D-024-R716": [
+      "Ledger+repo reconciled (project_control status; git clean at 5811d6d2); commissioning evidence captured durably (project-control/reports/M0-T140-canary-execution-evidence.md); the still-required M0-T140 G3/G4/DCV + acceptance completed in this wave WITHOUT rerunning Claude or Codex; accepted tasks untouched."
+    ],
+    "D-024-R717": [
+      "M0-T140 transitioned canonically: evidence-map submit -> independent G3/G4 + DCV -> gate records -> accept, all through tools/project_control.py."
+    ],
+    "D-024-R718": [
+      "Live-proven production path recorded with per-item durable artifacts: project-control/reports/M0-T140-canary-execution-evidence.md s3 (eight owner-named items + the additionally proven recovery/hold/observability surfaces)."
+    ],
+    "D-024-R719": [
+      "GitHub boundary stated honestly: supervised-loop push/PR/CI/merge has ZERO live evidence and is claimed UNPROVEN (project-control/reports/M0-T140-canary-execution-evidence.md s4; doctor push_policy row; audit anchor NOT ACTIVE; no upstream)."
+    ],
+    "D-024-R720": [
+      "M0-T107 selected: existing, claimed by supervisor-loop-fable-producer, dependency M0-T096 accepted, documentation-only two-path deliverable, gates G0/G2/G3 - lowest-risk genuinely ready task; alternatives rejected for risk (M0-T109 security hooks, M0-T133 frozen controller code, M0-T135 8-hour lab). Not a canary, not infrastructure."
+    ],
+    "D-024-R721": [
+      "run_first_supervised_journey.ps1 deployed (sha256 1b636d591dffaba14e1e0cf578eb6f76c7fdbf9ee13291ca15a5ecf5d0e34a65; PS 5.1 parse 0 errors): canonical resume-after-answer exit; -Phase verify-manifest (no install); claude-fable-5 verify-only + doctor row; ONE supervised M0-T107 journey (max-cycles 1 = one Fable worker result + one Codex review); Explore-only 2/2 + bare-deny Bash preserved; Write/Edit scoped by prompt+review to the task's two paths; no push/PR/merge/deployment anywhere; concise final status + evidence paths."
+    ],
+    "D-024-R722": [
+      "The journey script was NOT executed (no journey-m0t107-01 run dir; its own J0 guard refuses overwrites); the owner receives exactly ONE PowerShell command (M0-T140-return-report.md item 7)."
+    ],
+    "D-024-R723": [
+      "No Tranche C or stabilization campaign started; the single remaining GitHub decision identified separately: whether to authorize the first live supervisor-driven GitHub interaction (task-branch push / R595-gated automation + Option-A anchor activation) - M0-T140-return-report.md item 8."
+    ],
+    "D-024-R724": [
+      "Durable return artifact M0-T140-return-report.md ends with the exact token FIRST_REAL_SUPERVISED_RUN_READY; the live final reply reproduces it (the R713 delta-attestation pattern)."
+    ]
+  }
+}

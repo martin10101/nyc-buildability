@@ -42,7 +42,7 @@ from .claude_runner import (
     user_message,
 )
 from .models import to_utc_iso
-from .process import assert_argv_safe, minimal_env
+from .process import assert_argv_safe, claude_child_env
 
 VERIFIED = "VERIFIED"
 UNVERIFIED = "UNVERIFIED"
@@ -133,7 +133,10 @@ def control_response_round_trip(
             text=True,
             encoding="utf-8",
             errors="replace",
-            env=minimal_env(),
+            # D-024-R278/R286: the doctor --live control-response probe launches the
+            # real claude executable inside the certification window, so it carries
+            # the forced DISABLE_AUTOUPDATER=1 like every supervisor-constructed launch.
+            env=claude_child_env(),
         )
     except OSError as exc:
         return ProbeResult("control_response_round_trip", FAILED,

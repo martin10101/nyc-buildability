@@ -1,0 +1,74 @@
+# Frozen CI evidence for discovery row DB-163 (written by the orchestrator on 2026-10-07; read-only)
+run: 37550569613 (workflow CI, event pull_request, run attempt 1)
+job: 112564773659 - supervisor-bridge (pytest tools/test_agent_supervisor_*.py), windows-latest
+head: 3f59363e5ad31bf78704a524168998e0a7031d9e (branch task/M4-T024-r6b-reference-cases, pull request 454; that change touches no file under tools/)
+same head, push run 37550563108, job 112564751760: the same job passed (3957 passed, 60 skipped in 272.38s)
+after this log was read, the one failed job was re-run once by hand: attempt 2, job 112568402226, passed (3957 passed, 60 skipped in 269.53s)
+full log: 55991 bytes, sha256 d8925071e48aad2532fb7dcc849d7daab4125eacdcc9679b5cd449949040483d (downloaded 2026-10-07 through the jobs API)
+excerpt: log lines 483 to 547, unchanged
+----
+2026-10-07T00:21:39.9758180Z ================================== FAILURES ===================================
+2026-10-07T00:21:39.9758799Z ___ HardenScriptTests.test_apply_path_call_sites_carry_full_argument_arrays ___
+2026-10-07T00:21:39.9759165Z 
+2026-10-07T00:21:39.9759641Z self = <test_agent_supervisor_os_acl.HardenScriptTests testMethod=test_apply_path_call_sites_carry_full_argument_arrays>
+2026-10-07T00:21:39.9760159Z 
+2026-10-07T00:21:39.9760319Z     @unittest.skipUnless(
+2026-10-07T00:21:39.9760672Z         IS_WINDOWS and shutil.which("powershell"),
+2026-10-07T00:21:39.9761102Z         "requires Windows PowerShell 5.1 (powershell.exe) for the parser API")
+2026-10-07T00:21:39.9761717Z     def test_apply_path_call_sites_carry_full_argument_arrays(self) -> None:
+2026-10-07T00:21:39.9762983Z         """B1 (R188 + M0-T051/R199): parse the script AST and assert the EIGHT
+2026-10-07T00:21:39.9763633Z         apply-path Invoke-Step call sites carry exactly the expected argument
+2026-10-07T00:21:39.9764256Z         arrays (now including the two `/reset` calls), so the dynamic replay in A2
+2026-10-07T00:21:39.9764935Z         cannot silently drift from the script's real calls."""
+2026-10-07T00:21:39.9765449Z >       sites = self._invoke_step_call_sites(self.script)
+2026-10-07T00:21:39.9765921Z                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-07T00:21:39.9766143Z 
+2026-10-07T00:21:39.9766342Z tools\test_agent_supervisor_os_acl.py:729: 
+2026-10-07T00:21:39.9766897Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-07T00:21:39.9767505Z tools\test_agent_supervisor_os_acl.py:659: in _invoke_step_call_sites
+2026-10-07T00:21:39.9769437Z     proc = subprocess.run(
+2026-10-07T00:21:39.9769951Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:550: in run
+2026-10-07T00:21:39.9770394Z     stdout, stderr = process.communicate(input, timeout=timeout)
+2026-10-07T00:21:39.9770744Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-07T00:21:39.9771170Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1209: in communicate
+2026-10-07T00:21:39.9771623Z     stdout, stderr = self._communicate(input, endtime, timeout)
+2026-10-07T00:21:39.9771977Z                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-10-07T00:21:39.9772311Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-10-07T00:21:39.9772550Z 
+2026-10-07T00:21:39.9773090Z self = <Popen: returncode: 1 args: ['powershell', '-NoProfile', '-NonInteractive', ...>
+2026-10-07T00:21:39.9773530Z input = None, endtime = 811.468, orig_timeout = 60
+2026-10-07T00:21:39.9773710Z 
+2026-10-07T00:21:39.9773894Z     def _communicate(self, input, endtime, orig_timeout):
+2026-10-07T00:21:39.9774283Z         # Start reader threads feeding into a list hanging off of this
+2026-10-07T00:21:39.9774657Z         # object, unless they've already been started.
+2026-10-07T00:21:39.9774991Z         if self.stdout and not hasattr(self, "_stdout_buff"):
+2026-10-07T00:21:39.9775364Z             self._stdout_buff = []
+2026-10-07T00:21:39.9775643Z             self.stdout_thread = \
+2026-10-07T00:21:39.9776004Z                     threading.Thread(target=self._readerthread,
+2026-10-07T00:21:39.9776487Z                                      args=(self.stdout, self._stdout_buff))
+2026-10-07T00:21:39.9776814Z             self.stdout_thread.daemon = True
+2026-10-07T00:21:39.9777136Z             self.stdout_thread.start()
+2026-10-07T00:21:39.9777473Z         if self.stderr and not hasattr(self, "_stderr_buff"):
+2026-10-07T00:21:39.9777844Z             self._stderr_buff = []
+2026-10-07T00:21:39.9778124Z             self.stderr_thread = \
+2026-10-07T00:21:39.9778416Z                     threading.Thread(target=self._readerthread,
+2026-10-07T00:21:39.9778834Z                                      args=(self.stderr, self._stderr_buff))
+2026-10-07T00:21:39.9779164Z             self.stderr_thread.daemon = True
+2026-10-07T00:21:39.9779529Z             self.stderr_thread.start()
+2026-10-07T00:21:39.9779828Z     
+2026-10-07T00:21:39.9780054Z         if self.stdin:
+2026-10-07T00:21:39.9780318Z             self._stdin_write(input)
+2026-10-07T00:21:39.9780638Z     
+2026-10-07T00:21:39.9781052Z         # Wait for the reader threads, or time out.  If we time out, the
+2026-10-07T00:21:39.9781490Z         # threads remain reading and the fds left open in case the user
+2026-10-07T00:21:39.9781853Z         # calls communicate again.
+2026-10-07T00:21:39.9782150Z         if self.stdout is not None:
+2026-10-07T00:21:39.9782486Z             self.stdout_thread.join(self._remaining_time(endtime))
+2026-10-07T00:21:39.9782819Z             if self.stdout_thread.is_alive():
+2026-10-07T00:21:39.9783174Z >               raise TimeoutExpired(self.args, orig_timeout)
+2026-10-07T00:21:39.9785519Z E               subprocess.TimeoutExpired: Command '['powershell', '-NoProfile', '-NonInteractive', '-Command', '$t=$null;$e=$null;$ast=[System.Management.Automation.Language.Parser]::ParseFile(\'D:\\a\\nyc-buildability\\nyc-buildability\\tools\\agent_supervisor\\harden_controller_config.ps1\',[ref]$t,[ref]$e);$calls=$ast.FindAll({param($n) $n -is [System.Management.Automation.Language.CommandAst] -and $n.GetCommandName() -eq \'Invoke-Step\'},$true);foreach($c in $calls){$parts=@();foreach($el in $c.CommandElements){$parts += ($el.Extent.Text -replace "`r`n",\' \' -replace "`n",\' \')};Write-Output ($c.Extent.StartLineNumber.ToString() + \'|\' + ($parts -join \'\\x1f\'))}']' timed out after 60 seconds
+2026-10-07T00:21:39.9787408Z 
+2026-10-07T00:21:39.9787783Z C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1630: TimeoutExpired
+2026-10-07T00:21:39.9788297Z =========================== short test summary info ===========================
+2026-10-07T00:21:39.9790969Z FAILED tools/test_agent_supervisor_os_acl.py::HardenScriptTests::test_apply_path_call_sites_carry_full_argument_arrays - subprocess.TimeoutExpired: Command '['powershell', '-NoProfile', '-NonInteractive', '-Command', '$t=$null;$e=$null;$ast=[System.Management.Automation.Language.Parser]::ParseFile(\'D:\\a\\nyc-buildability\\nyc-buildability\\tools\\agent_supervisor\\harden_controller_config.ps1\',[ref]$t,[ref]$e);$calls=$ast.FindAll({param($n) $n -is [System.Management.Automation.Language.CommandAst] -and $n.GetCommandName() -eq \'Invoke-Step\'},$true);foreach($c in $calls){$parts=@();foreach($el in $c.CommandElements){$parts += ($el.Extent.Text -replace "`r`n",\' \' -replace "`n",\' \')};Write-Output ($c.Extent.StartLineNumber.ToString() + \'|\' + ($parts -join \'\\x1f\'))}']' timed out after 60 seconds
+2026-10-07T00:21:39.9793226Z =========== 1 failed, 3956 passed, 60 skipped in 589.78s (0:09:49) ============

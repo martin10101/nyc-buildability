@@ -17,6 +17,12 @@ silently does something surprising. As of Phase 4 EVERY S12.1 command is live -
     start                   pre-dispatch, and - when executables are named - the
                             real shadow/supervised loop (see below)
     pause / resume / stop   durable flags that beat autostart
+    graceful-stop           durable landing-rule intent: finish only the smallest
+                            safe atomic unit underway, land it, then stop
+                            (unit-F stop_intent; M0-T094)
+    ask                     bounded owner question to the READ-ONLY Codex
+                            supervisor; a timeout returns a durable request id
+                            (M0-T094)
     emergency-stop          child-tree termination, wake cancellation, durable stop
     recovery-status         read-only S11.5 view
     schedule-status         read-only usage-limit/wake view
@@ -25,6 +31,11 @@ silently does something surprising. As of Phase 4 EVERY S12.1 command is live -
     install/uninstall-autostart  owner-approved OS mutation; needs the plan digest
     export-handoff          the stored VERIFIED handoff for a fresh session
     set-codex-model / set-claude-model  the S3.2 rule-6 authenticated path only
+
+THE OWNER INTENT "Start the agent loop" IS THE `start` COMMAND (D-024 R035):
+`python -m tools.agent_supervisor start`. It is idempotent - a running campaign
+is REPORTED, never duplicated - and takes NO duration (R027/R036); the /loop-start
+skill and the pre-model /loop-* interception hook are thin wrappers over it.
 
 `start` in Phase 4. It always performs the pre-dispatch sequence first -
 single-instance lock, the S11.5 RECOVER_BOOT algorithm, journal and audit
@@ -40,9 +51,17 @@ and nothing is defaulted into a provider call.
                        its exact digest. It forwards only a prompt whose digest
                        the operator supplied with `--approve-prompt-digest`.
 
-`start --mode limited-auto` refuses BY NAME, because limited-auto is disabled by
-default and is enabled only by a separate explicit owner activation recorded
-through directive compliance (S12). No code path in this package can turn it on.
+    --mode limited-auto  the bounded UNATTENDED mode (M0-T079, D-023 item 1). It
+                       is implemented and it is OFF: without the explicit
+                       per-launch `--owner-enable-bounded-auto` input it is a
+                       STRUCTURED refusal, and no configuration default, parse
+                       error, migration, or downgrade reaches it. ACTIVATION on
+                       a live host stays a separate explicit owner act under the
+                       R595 pre-activation path (S12; D-023-R033).
+
+EXIT CODES. Refusals are machine readable: `refusals.py` documents one outcome
+and one stable nonzero exit code each, so an unattended wrapper can act on WHY
+the controller refused rather than parse prose. `doctor` prints the contract.
 """
 from __future__ import annotations
 
@@ -59,7 +78,6 @@ from . import CONTROLLER_VERSION, PHASE, PROTOCOL_VERSION, SCHEMA_VERSION
 from .anchor import (
     ANCHOR_BRANCH,
     AnchorError,
-    activation_status,
     assert_no_execution as assert_anchor_no_execution,
     build_publish_plan,
 )
@@ -71,7 +89,7 @@ from .broker import (
     BrokerError,
     build_request,
 )
-from .circuit_breakers import CircuitBreakers
+from .circuit_breakers import BreakerError, CircuitBreakers
 from .claude_runner import (
     CONTROL_RESPONSE_WRAPPER_VERIFIED,
     QUOTA_EXHAUSTION_SIGNAL_VERIFIED,
@@ -88,8 +106,13 @@ from .codex_reviewer import (
     ReviewError,
     build_argv as build_codex_argv,
 )
+from .approved_models import (
+    APPROVED_MODELS_KEY,
+    APPROVED_MODELS_SECTION,
+    approved_models_disclosure,
+    probe_evidence_disclosure,
+)
 from .config import (
-    DEFAULT_ORCHESTRATOR_MODEL_CHAIN,
     ConfigError,
     Limits,
     load_controller_config,
@@ -115,7 +138,6 @@ from .external_effects import ExternalEffectError, spec_for, stable_action_id
 from .loop import (
     ALL_MODE_NAMES,
     DEFAULT_OWNER_TOUCH_BUDGET,
-    MODE_SUPERVISED,
     RUNNABLE_MODES,
     SESSION_ROLE_ORCHESTRATOR,
     LimitedAutoRefused,
@@ -132,7 +154,6 @@ from .manifest import (CONFIG_LOGICAL_NAME, EXCLUDED_NAMES, MANIFEST_FILENAME,
                        generate_manifest, read_manifest, verify_manifest_with_config,
                        write_manifest)
 from .model_change_ipc import (
-    NAMED_PIPE_STATUS,
     Caller,
     IpcError,
     ModelChangeEndpoint,
@@ -143,9 +164,13 @@ from .model_change_ipc import (
     probe_named_pipe_support,
 )
 from .notifications import NotificationError, build_notification
+from . import launch_seam
+from . import next_task
+from . import orientation as orientation_mod
 from . import os_acl
-from .os_acl import evaluate_controller_config_acl
-from .resource_sampling import ResourceSampler
+from .turn_budget import TurnAllowances, TurnBudgetError, budget_for_packet
+from .resource_sampling import build_resource_sampler, posix_memory_ceiling_bytes
+from .restart_channel import register_restart_verbs
 from .policy import (
     ASK,
     AUTO,
@@ -159,13 +184,13 @@ from .policy import (
     validate_documented_test_commands,
 )
 from .preflight import (
-    UNVERIFIED,
     control_response_round_trip,
     probe_record,
     record_probe,
     resolve_canonical_claude,
 )
 from .process import (
+    CONTAINMENT_ACCEPT_SET,
     CONTAINMENT_JOB_OBJECT,
     FORBIDDEN_CREATION_FLAGS,
     FORBIDDEN_JOB_LIMIT_FLAGS,
@@ -175,8 +200,10 @@ from .process import (
     assert_argv_safe,
     assert_no_breakaway,
     default_containment_kind,
+    evaluate_containment_precondition,
     executable_identity,
     job_objects_available,
+    posix_containment_doctor_detail,
     terminate_process_tree,
 )
 from .replay import (
@@ -194,13 +221,43 @@ from .recovery import (
     account_for_children,
     autostart_permitted,
     clear_emergency_stop,
-    interrupted_turn_resumption,
     last_outcome as last_recovery_outcome,
     recover_boot,
     set_emergency_stop,
     set_manual_pause,
 )
+from . import gate_wave, refusals
+from .codex_channel_cli import register_codex_channel_verbs
+from .telegram_sink_cli import register_telegram_verbs
+from .operator_channel_cli import (
+    emit_payload as _emit,
+    open_runtime as _open_runtime,
+    register_operator_verbs,
+)
+from .operator_status import compose_status, render_concise
+from .redaction import redact_structure
 from .remote_approvals import RemoteApprovalRegistry
+from .run_budget import BudgetError, RunBudget, RunBudgetLedger
+from .start_gate import (
+    bounded_mode_gate,
+    deadline_blocks_dispatch,
+    dispatch_inputs_missing,
+    dispatched_run_refusal,
+    emit_refusal,
+    live_revalidation,
+    load_task_packet,
+    loop_refusal,
+    missing_input_refusal,
+    recovery_refusal,
+    revalidation_note,
+    run_dispatched,
+    seal_owner_gate_refusal,
+    start_report_lines,
+    unprobed_revalidation,
+)
+from .mrl_launch_path import apply_launch_manifest, preflight_launch
+from .mrl_one_shot import OneShotRunner
+from .mrl_one_shot_review import OneShotReviewer
 from .resume_scheduler import (
     CODEX_HOLD_KEY,
     LIMIT_CLASSES,
@@ -217,20 +274,10 @@ from .resume_scheduler import (
     wake_suppressed,
 )
 from .retention import RetentionPolicy, file_sha256
-from .models import sha256_hex
 from .worker_turnover import WorkerTurnoverIntegration
-from .model_turnover import TurnoverEvidence, classify_exhaustion
-from .turnover_controller import (
-    TurnoverContext,
-    TurnoverController,
-    TurnoverLayer,
-)
+from .guardrail_refusal import AuthorizedTaskRecord
+from .refusal_bridge import GuardrailBridgeIntegration
 from .turnover_adapters import (
-    HashChainedAuditSink,
-    SingleInstanceContinuationLock,
-    SuccessorLaunchTargets,
-    SupervisorIdentity,
-    SupervisorLauncher,
     make_subprocess_command_runner,
 )
 from .rotation import (
@@ -244,9 +291,10 @@ from .rotation import (
     decide_pre_dispatch,
     export_handoff_payload,
     may_interrupt_in_flight,
-    new_session_id,
+    new_rotation_record_key,
     rotation_pending,
 )
+from .session_continuity import recorded_provider_session
 from .state_machine import (
     INITIAL_STATE,
     IllegalTransitionError,
@@ -480,7 +528,7 @@ def _controller_config_acl_posture(config_path: str | None) -> dict[str, Any]:
                     "OS-ACL boundary posture. A skipped posture is not 'protected'.",
         }
     try:
-        verdict = evaluate_controller_config_acl(config_path)
+        verdict = os_acl.controller_config_acl_verdict(config_path)
     except Exception as exc:  # noqa: BLE001 - any inspection failure fails closed
         return {
             "state": os_acl.UNKNOWN, "protected": False,
@@ -514,6 +562,7 @@ def _check_config(config_path: str | None, selection_path: str | None) -> list[C
                 f"codex allowlist {list(config.codex_allowed_models)}; claude allowlist "
                 f"{list(config.claude_allowed_models)}; default_mode "
                 f"{config.default_mode!r}; no effort key present"))
+            checks.append(_check_approved_models(config))
         except ConfigError as exc:
             checks.append(Check("controller_config", False, str(exc)))
 
@@ -534,6 +583,32 @@ def _check_config(config_path: str | None, selection_path: str | None) -> list[C
         except ConfigError as exc:
             checks.append(Check("model_selection", False, str(exc)))
     return checks
+
+
+def _claude_cli_identity(executable: str) -> str:
+    """The provider CLI identity a probe record is bound to, or "" when unknown.
+
+    Never a PATH search (S13.4 forbids following a discovered path): with no
+    executable named the identity is UNKNOWN, which makes every recorded probe
+    fail the identity match and therefore makes nothing selectable - the
+    fail-closed direction.
+    """
+    if not executable:
+        return ""
+    try:
+        return str(executable_identity(executable, name="claude").digest)
+    except Exception:
+        return ""
+
+
+def _check_approved_models(config: Any) -> Check:
+    """Report the owner-approved model list truthfully, empty included (M0-T080)."""
+    return Check(*approved_models_disclosure(config))
+
+
+def _check_probe_evidence(journal: Any, config: Any, cli_version: str) -> Check:
+    """Disclose which approved models have a recorded successful launch probe."""
+    return Check(*probe_evidence_disclosure(journal, config, cli_version))
 
 
 def _check_protocol_roundtrip() -> Check:
@@ -709,10 +784,13 @@ def _check_model_chain_disclosure() -> Check:
     status = "VERIFIED" if QUOTA_EXHAUSTION_SIGNAL_VERIFIED else "UNVERIFIED"
     return Check(
         "model_chain_availability", True,
-        f"orchestrator-role model selection walks the fixed [model_chain] preference chain "
-        f"(default {list(DEFAULT_ORCHESTRATOR_MODEL_CHAIN)}) and decides availability ONLY by "
+        f"orchestrator-role model selection walks the OWNER-APPROVED list from the immutable "
+        f"controller config ([{APPROVED_MODELS_SECTION}] {APPROVED_MODELS_KEY}, or the legacy "
+        f"[model_chain] orchestrator_preference spelling) and decides availability ONLY by "
         f"an actual launch probe of the exact id - no model picker or menu is read, and an id "
-        f"outside the chain is never selectable. Live-CLI account-quota signal status: "
+        f"outside the approved list is never selectable. There is NO built-in default list: "
+        f"an unpopulated config approves nothing and every model-selection act stops safely "
+        f"(D-023-R013). Live-CLI account-quota signal status: "
         f"{status}. The exact stderr/exit code the installed CLI emits on account-quota "
         f"exhaustion has not been captured from a live exhaustion, so the probe never infers "
         f"that reason: an unclassified failure stays 'unknown', which is not quota exhaustion "
@@ -1108,15 +1186,26 @@ def _check_replay_is_inert() -> Check:
 
 
 def _check_loop_modes() -> Check:
-    """limited-auto is refused BY NAME, and shadow can never forward."""
+    """limited-auto is refused BY NAME without the owner enable; shadow never forwards."""
     try:
         LoopConfig(mode="limited-auto", task_id="probe", stage="probe")
     except LimitedAutoRefused:
         pass
     else:
         return Check("loop_modes", False,
-                     "a LoopConfig with mode='limited-auto' was CONSTRUCTED; it must be "
-                     "refused by name")
+                     "a LoopConfig with mode='limited-auto' was CONSTRUCTED without the "
+                     "explicit owner enable; it must be refused by name")
+    # M0-T079: and the owner enable must not be attachable to any OTHER mode - a
+    # stray flag in a scheduled task's argv must never quietly widen a run.
+    for other in RUNNABLE_MODES:
+        try:
+            LoopConfig(mode=other, task_id="probe", stage="probe",
+                       owner_enabled_bounded_auto=True)
+        except LoopError:
+            continue
+        return Check("loop_modes", False,
+                     f"the bounded-mode owner enable was accepted for mode {other!r}, "
+                     f"which is not owner-gated")
     shadow = LoopConfig(mode="shadow", task_id="probe", stage="probe")
     if shadow.forwards:
         return Check("loop_modes", False, "shadow mode reports that it forwards")
@@ -1157,7 +1246,12 @@ def _check_containment_default() -> Check:
                      "this Windows host refuses a Job Object; the container falls back to "
                      "`taskkill /T /F` and records the fallback reason rather than claiming "
                      "job-strength containment")
-    expected = CONTAINMENT_JOB_OBJECT if os.name == "nt" else "process_group"
+    if os.name != "nt":
+        # M0-T177 (B-027): POSIX doctor REPORTS the proved kind and PASSES; the
+        # detail builder lives in process.py (modularity). The start-path gate,
+        # not doctor, decides dispatch.
+        return Check("containment_default", True, posix_containment_doctor_detail(kind))
+    expected = CONTAINMENT_JOB_OBJECT
     return Check("containment_default", kind == expected,
                  f"default containment on this host is {kind!r} "
                  f"(expected {expected!r}); breakaway limit flags "
@@ -1315,6 +1409,19 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         checks.append(_check_journal(runtime))
         checks.append(_check_audit(runtime))
     checks.extend(_check_config(args.config, args.model_selection))
+    # M0-T080: which approved models actually have a recorded successful launch
+    # probe for THIS config identity. Needs both the config and the durable
+    # journal, so it is assembled here rather than inside `_check_config`.
+    if runtime is not None and runtime_check.ok and args.config:
+        try:
+            probe_config = load_controller_config(args.config)
+        except ConfigError:
+            probe_config = None
+        if probe_config is not None:
+            with DurableJournal(runtime / DB_FILENAME) as probe_journal:
+                checks.append(_check_probe_evidence(
+                    probe_journal, probe_config,
+                    _claude_cli_identity(getattr(args, "claude_executable", "") or "")))
 
     ok = all(check.ok for check in checks)
     acl_posture = _controller_config_acl_posture(args.config)
@@ -1334,8 +1441,18 @@ def cmd_doctor(args: argparse.Namespace) -> int:
         # definitive PROTECTED verdict; a missing/ambiguous/UNKNOWN posture never
         # reads as protected.
         "controller_config_acl": acl_posture,
-        "limited_auto": "NOT IMPLEMENTED and disabled; activation is a separate explicit "
-                        "owner act recorded through directive compliance",
+        # M0-T079 (D-023 item 1): truthful now that the mode exists. It is
+        # IMPLEMENTED (durable owner-controlled run budgets, wired circuit
+        # breakers, live pre-dispatch probes, typed refusals) and OFF: every
+        # launch that does not carry the explicit owner enable is refused by
+        # name, and ACTIVATING it on a live host is still separately owner-gated
+        # (R595 / D-023-R033). Saying "NOT IMPLEMENTED" here would now be false.
+        "limited_auto": "IMPLEMENTED and OFF by default; every launch without the explicit "
+                        "--owner-enable-bounded-auto input is a structured refusal "
+                        "(outcome refused_mode, exit 16), and activation remains a "
+                        "separate explicit owner act recorded through directive compliance",
+        "refusal_contract": list(refusals.document()),
+        "reserved_exit_codes": list(refusals.reserved_exit_codes()),
     }
     if args.json:
         print(json.dumps(payload, indent=2))
@@ -1349,7 +1466,11 @@ def cmd_doctor(args: argparse.Namespace) -> int:
               f"(protected={acl_posture.get('protected', False)}; "
               f"blocks supervised-auto ACTIVATION, not shadow) - {acl_posture.get('note', '')}")
         print(f"\noverall: {'PASS' if ok else 'FAIL'}")
-        print("limited-auto: NOT IMPLEMENTED and disabled.")
+        print("limited-auto: IMPLEMENTED and OFF by default; enabling it is an explicit "
+              "per-launch owner act.")
+        print("exit codes: " + ", ".join(
+            f"{row['outcome']}={row['exit_code']}"
+            for row in (*refusals.reserved_exit_codes(), *refusals.document())))
     return 0 if ok else 1
 
 
@@ -1418,10 +1539,20 @@ def cmd_status(args: argparse.Namespace) -> int:
             "audit_detail": chain.message,
             "mode": journal.get_state("mode", "none"),
             "limited_auto_enabled": False,
+            # M0-T094 (R034/R094/R095): the section-14 fact set, composed
+            # read-only from durable records, every entry labeled with source
+            # + R042 confidence; absent facts are honest unknowns, never zero.
+            "section14": compose_status(journal, checkout=checkout),
         }
 
     if args.json:
-        print(json.dumps(payload, indent=2))
+        # M0-T094 correction C1 (G3 MINOR-1 / G5 MINOR-1): stdout is a
+        # TRANSMISSION (M0-T079 C2 rule), and section14 newly routes durable
+        # owner text (e.g. the graceful-stop reason) through this path - so
+        # the JSON view obeys redaction exactly like emit_payload and the
+        # concise path.
+        print(json.dumps(redact_structure(payload).value, indent=2,
+                         default=str))
     else:
         print(f"state:            {payload['current_state']}")
         print(f"mode:             {payload['mode']}")
@@ -1435,7 +1566,12 @@ def cmd_status(args: argparse.Namespace) -> int:
         if payload["resolved_asks"]:
             print(f"resolved history: {len(payload['resolved_asks'])} "
                   f"(revoked/answered approval requests; not actionable)")
-        print("limited-auto:     disabled (not implemented in this phase)")
+        print("limited-auto:     off for this run (the bounded mode is implemented and "
+              "enabled only per launch by an explicit owner input)")
+        for line in redact_structure(
+                render_concise(payload["section14"])).value:
+            print(line)
+        print("verbose/JSON:     --json carries the full labeled fact set")
     return 0 if payload["journal_ok"] and payload["audit_chain_ok"] else 1
 
 
@@ -1551,7 +1687,8 @@ def cmd_revoke_all(args: argparse.Namespace) -> int:
                           "limited_auto_enabled": False}, indent=2))
     else:
         print(f"revoked {revoked} pending/unconsumed approval(s).")
-        print("limited-auto: disabled (it is not implemented and cannot be enabled here).")
+        print("limited-auto: off (the bounded mode is enabled only per launch by an "
+              "explicit owner input; this command never enables it).")
     return 0
 
 
@@ -1682,21 +1819,8 @@ def cmd_record_manifest(args: argparse.Namespace) -> int:
 # --------------------------------------------------------------------------
 
 
-def _open_runtime(args: argparse.Namespace) -> tuple[pathlib.Path, DurableJournal, AuditLog]:
-    """Open the runtime directory, journal, and audit log for one command."""
-    checkout = pathlib.Path(args.checkout).resolve()
-    runtime = runtime_dir_for(checkout, base=args.runtime_base)
-    journal = DurableJournal(runtime / DB_FILENAME).open()
-    audit = AuditLog(runtime / AUDIT_FILENAME)
-    return runtime, journal, audit
-
-
-def _emit(args: argparse.Namespace, payload: dict[str, Any], lines: Sequence[str]) -> None:
-    if args.json:
-        print(json.dumps(payload, indent=2, default=str))
-    else:
-        for line in lines:
-            print(line)
+# _open_runtime and _emit moved to operator_channel_cli (M0-T094 modularity
+# split); imported above under their established names - call sites unchanged.
 
 
 def cmd_pause(args: argparse.Namespace) -> int:
@@ -2015,7 +2139,8 @@ def cmd_recovery_status(args: argparse.Namespace) -> int:
     lines = [f"state:              {payload['current_state']}",
              f"emergency stop:     {flags.emergency_stop}",
              f"manual pause:       {flags.manual_pause}",
-             f"limited-auto:       {flags.limited_auto_enabled} (never enabled by this build)",
+             f"limited-auto:       {flags.limited_auto_enabled} (a durable flag; the mode is "
+             f"additionally enabled per launch by an explicit owner input)",
              f"autostart:          {'permitted' if permitted else 'REFUSED'} - {why}",
              f"surviving children: {sum(1 for c in children if c.surviving)}",
              f"pending effects:    {len(pending)}"]
@@ -2223,12 +2348,17 @@ def cmd_export_handoff(args: argparse.Namespace) -> int:
         verification = HandoffVerification(
             True, str(stored.get("verified_by_model", "")), "primary", "handoff_verified",
             "stored verified handoff", handoff.digest())
+        # M0-T080: the payload carries the SUPERVISOR-INTERNAL rotation record
+        # key, not a "new session id". The supervisor cannot mint a provider
+        # session identity, and the successor's own id does not exist until the
+        # provider issues it, so the recorded provider session is reported
+        # separately and honestly - as the OUTGOING one.
         payload = export_handoff_payload(
             handoff, verification,
-            new_session=new_session_id(str(journal.get_state("claude_session_identity", {})
-                                           .get("claude_session_id", "")
-                                           if isinstance(journal.get_state(
-                                               "claude_session_identity"), dict) else "")))
+            rotation_record_key=new_rotation_record_key())
+        recorded = recorded_provider_session(journal)
+        payload["outgoing_provider_session_id"] = (
+            recorded.session_id if recorded is not None else "")
         payload["archived_sessions"] = list(ledger.archived_sessions())
         payload["rotation_pending"] = rotation_pending(journal)
     except RotationError as exc:
@@ -2239,7 +2369,9 @@ def cmd_export_handoff(args: argparse.Namespace) -> int:
     _emit(args, {"command": "export-handoff", **payload},
           [f"handoff digest : {payload['handoff_digest']}",
            f"verified by    : {payload['verified_by_model']}",
-           f"new session id : {payload['new_session_id']}",
+           f"rotation key   : {payload['rotation_record_key']} "
+           f"(supervisor-internal; NOT a provider session id)",
+           f"outgoing sess  : {payload['outgoing_provider_session_id'] or '(none recorded)'}",
            f"next action    : {payload['exact_next_authorized_action']}",
            f"first response : {payload['required_first_response']}"])
     return 0
@@ -2339,22 +2471,6 @@ def cmd_replay(args: argparse.Namespace) -> int:
     return 0 if (report.ok and manifest_ok and not provenance_bad) else 1
 
 
-def _dispatch_inputs_missing(args: argparse.Namespace) -> list[str]:
-    """Which explicit inputs `start` still needs before it may dispatch."""
-    required = {
-        "--claude-executable": args.claude_executable,
-        "--codex-executable": args.codex_executable,
-        "--task-packet": args.task_packet,
-        "--config": args.config,
-        "--model-selection": args.model_selection,
-        # M0-T072 (D-017-R044/R045): production dispatch never proceeds without a
-        # recorded manifest that binds the external immutable config; omitting
-        # --manifest used to silently pass controller_manifest=True.
-        "--manifest": args.manifest,
-    }
-    return sorted(name for name, value in required.items() if not value)
-
-
 def containment_precondition() -> tuple[bool, str, str]:
     """The C1 host-containment gate for any run that spawns a live worker.
 
@@ -2367,204 +2483,47 @@ def containment_precondition() -> tuple[bool, str, str]:
     SAME `default_containment_kind()` that `doctor`'s `containment_default` check
     reads, so the two can never disagree.
 
-    Fail closed: only a proven `job_object` permits dispatch. `taskkill`
-    (Windows without a job) and `process_group` (POSIX, incl. Render) terminate
-    the worker from the runner's `finally` block, which an external kill of the
-    supervisor skips - leaving an orphaned worker that a later `start` would
-    launch a second worker over. Anything this function cannot prove is a
-    refusal, never an assumption.
+    Fail closed: only a kill-on-external-death mechanism permits dispatch —
+    exactly `CONTAINMENT_ACCEPT_SET` (the Windows kill-on-close Job Object, or a
+    PROVED Linux systemd service control group; M0-T177/B-027). It reads
+    containment through the SAME `default_containment_kind()` `doctor` reads, so
+    the two can never disagree; the decision and its messages live in `process`
+    (modularity: cli.py is a grandfathered oversized file). `default_containment_kind`
+    is passed by name so a test patching cli's copy still drives the gate.
     """
-    try:
-        kind = default_containment_kind()
-    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
-        return False, "unknown", (
-            f"the host's default containment could not be determined ({exc}); an "
-            f"unprovable containment is a REFUSAL, never an assumption")
-    if kind == CONTAINMENT_JOB_OBJECT:
-        return True, kind, ("the host's default containment is the kill-on-close Job "
-                            "Object, so a worker cannot outlive an externally killed "
-                            "supervisor")
-    return False, kind, (
-        f"this host's default containment is {kind!r}, not {CONTAINMENT_JOB_OBJECT!r}. "
-        f"Without kill-on-close, an external kill of the supervisor skips the runner's "
-        f"termination path and leaves a live orphaned worker, so a later `start` could "
-        f"double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
-        f"Dispatch is REFUSED on this host")
+    return evaluate_containment_precondition(default_containment_kind)
 
 
 # --------------------------------------------------------------------------
-# R595 / M0-T056: owner-authorized turnover ACTUATION channels (worker +
-# orchestrator layers). Both REUSE the accepted M0-T054 controller + adapters
-# UNCHANGED; the successor is always the frozen opus-4-8/xhigh pin. Every launch
-# is fail-closed, single-instance, dedup-exactly-once, audit-linked, and gated on
-# the C1 job-object containment precondition.
+# R595 / M0-T056 turnover actuation channels. The ASSEMBLY moved to
+# `turnover_wiring.py` in M0-T080 (modularity: `cli.py` is a grandfathered
+# oversized file and may not grow materially). `run_orchestrator_watchdog` is
+# re-exported so `cli.run_orchestrator_watchdog` is unchanged for every caller.
 # --------------------------------------------------------------------------
 
+from .turnover_wiring import (  # noqa: E402 - facade re-export
+    approved_model_router,
+    approved_successor_resolver,
+    bind_containment_precondition as _bind_turnover_containment,
+    bind_controller_version as _bind_turnover_controller_version,
+    build_worker_actuation_channel,
+    child_survivor_predicate,
+    orchestrator_exhaustion_event_id,
+    run_orchestrator_watchdog,
+    turnover_continuation_lock,
+)
 
-def _turnover_continuation_lock(checkout: pathlib.Path, runtime_base: str | None
-                                ) -> SingleInstanceLock:
-    """A continuation lock in a DISTINCT `turnover/` runtime subdir.
+_bind_turnover_controller_version(CONTROLLER_VERSION)
+_bind_turnover_containment(containment_precondition)
 
-    It must NOT share the supervisor's own `supervisor.lock` file: that file is
-    already held by the running supervisor (or, for the watchdog, by the dead
-    orchestrator's checkout), and releasing it from the controller's finally block
-    would drop the main single-instance lock. A separate directory gives the
-    turnover attempt its own lock file, so it serializes turnover launches across
-    processes without ever touching the S7 single-instance lock.
-    """
-    turnover_runtime = runtime_dir_for(checkout, base=runtime_base) / "turnover"
-    return SingleInstanceLock(
-        turnover_runtime, checkout_key=checkout_key(checkout),
-        controller_version=CONTROLLER_VERSION)
-
-
-def _child_survivor_predicate(journal: DurableJournal):
-    """A `SurvivorPredicate` wired to M0-T053 production child accounting.
-
-    A surviving recorded worker child blocks a redispatch (the no-duplicate-workers
-    invariant, R347 / AS-4). Unreadable child state fails CLOSED to "survivor
-    present" so an unprovable state never permits a second launch.
-    """
-    def _survivor(_context: TurnoverContext) -> bool:
-        try:
-            accounts = account_for_children(journal)
-        except Exception:
-            return True
-        return any(getattr(account, "surviving", False) for account in accounts)
-    return _survivor
-
-
-def _build_worker_actuation_channel(
-    *, args: argparse.Namespace, journal: DurableJournal, audit: AuditLog,
-    checkout: pathlib.Path, claude_executable: str, max_turns: int,
-    unit_timeout: float,
-) -> tuple[TurnoverController | None, dict[str, Any]]:
-    """Assemble the owner-authorized WORKER-layer actuation channel.
-
-    Returns ``(controller, report)``. The controller is None - keeping the seam
-    RECORD-INTENT-ONLY and byte-identical to the pre-activation path - UNLESS the
-    owner passed ``--authorize-turnover-actuation`` AND the C1 job-object
-    containment gate passes. The real M0-T054 adapters are used UNCHANGED.
-    """
-    if not getattr(args, "authorize_turnover_actuation", False):
-        return None, {
-            "authorized": False, "wired": False,
-            "reason": "owner did not pass --authorize-turnover-actuation; the worker "
-                      "turnover seam stays record-intent-only (byte-identical to the "
-                      "pre-activation path)"}
-    contained, kind, detail = containment_precondition()
-    if not contained:
-        return None, {
-            "authorized": True, "wired": False, "containment_ok": False,
-            "containment_kind": kind,
-            "reason": f"C1 job-object containment gate REFUSES actuation: {detail}"}
-    launcher = SupervisorLauncher(
-        command_runner=make_subprocess_command_runner(
-            new_successor_id=lambda: f"opus-worker-{os.urandom(8).hex()}"),
-        targets=SuccessorLaunchTargets(
-            checkout=str(checkout), claude_executable=claude_executable,
-            max_turns=max_turns, unit_timeout_seconds=unit_timeout))
-    controller = TurnoverController(
-        launcher=launcher,
-        lock=SingleInstanceContinuationLock(
-            _turnover_continuation_lock(checkout, args.runtime_base)),
-        audit=HashChainedAuditSink(audit),
-        identity=SupervisorIdentity(),
-        survivor_detected=_child_survivor_predicate(journal))
-    return controller, {
-        "authorized": True, "wired": True, "containment_ok": True,
-        "containment_kind": kind,
-        "reason": "worker-layer actuation channel wired (M0-T054 adapters + survivor "
-                  "detector); a confirmed FABLE_EXHAUSTED verdict redispatches the same "
-                  "bounded unit on claude-opus-4-8 exactly once through the controller"}
-
-
-def _orchestrator_exhaustion_event_id(signal_text: str, checkout: str) -> str:
-    """A deterministic exhaustion-event id for the SAME orchestrator hard stop.
-
-    Stable in ``(signal_text, checkout)`` so a second watchdog invocation on the
-    SAME captured exhaustion presents the SAME event id; the controller's durable
-    dedup then suppresses a second successor (exactly-once across process
-    restarts).
-    """
-    digest = sha256_hex(f"orchestrator-exhaustion:{checkout}:{signal_text}".encode("utf-8"))
-    return f"orchestrator-exhaustion:{digest[:40]}"
-
-
-def run_orchestrator_watchdog(
-    *, signal_text: str, journal: DurableJournal, audit: AuditLog,
-    checkout: str, orchestrator_argv_prefix: tuple[str, ...],
-    command_runner, handoff_reference: str = "", safe_checkpoint_id: str = "",
-    current_model: str = "claude-fable-5", task_id: str = "",
-    containment_check=None,
-) -> dict[str, Any]:
-    """The ORCHESTRATOR-layer watchdog decision (AS-1), independent of argparse.
-
-    Runs OUTSIDE the Claude session (invoked by the OS scheduler on the
-    orchestrator's terminal output). It CLASSIFIES the captured signal with the
-    frozen M0-T054 detector, and ONLY on a grounded FABLE_EXHAUSTED verdict, and
-    ONLY when the C1 containment gate passes, drives the frozen TurnoverController
-    (layer=ORCHESTRATOR) to launch EXACTLY ONE opus-4-8 successor that loads the
-    durable handoff + safe checkpoint. NOT_EXHAUSTED / AMBIGUOUS_FAIL_CLOSED and an
-    unreadable signal REFUSE and record the reason; they never launch. The
-    ``command_runner`` is injected so tests never spawn a process.
-    """
-    containment_check = containment_check or containment_precondition
-    evidence = TurnoverEvidence(
-        stdout=str(signal_text or ""), exit_code=-1, model_id=current_model)
-    verdict = classify_exhaustion(evidence)
-    payload: dict[str, Any] = {
-        "command": "orchestrator-watchdog", "layer": "orchestrator",
-        "classification": verdict.classification.value, "reason": verdict.reason,
-        "launched": False, "actuated": False, "successor_id": "", "event_id": "",
-        "audit_record_id": "", "successor_model_id": "",
-    }
-    if not verdict.should_turn_over:
-        # FAIL-CLOSED: not a grounded exhaustion. Record the refusal; never launch.
-        record_id = audit.append(
-            "orchestrator_watchdog_no_turnover",
-            detail={"classification": verdict.classification.value,
-                    "reason": verdict.reason}).digest
-        payload.update({"refused": True, "audit_record_id": record_id,
-                        "note": "no grounded Fable exhaustion; fail closed, no successor "
-                                "launched"})
-        return payload
-    contained, kind, detail = containment_check()
-    payload["containment_kind"] = kind
-    if not contained:
-        record_id = audit.append(
-            "orchestrator_watchdog_containment_refused", policy_result="REFUSED",
-            detail={"containment_kind": kind, "required": CONTAINMENT_JOB_OBJECT,
-                    "reason": detail}).digest
-        payload.update({"refused": True, "audit_record_id": record_id,
-                        "note": f"C1 job-object containment gate REFUSES actuation: {detail}"})
-        return payload
-    controller = TurnoverController(
-        launcher=SupervisorLauncher(
-            command_runner=command_runner,
-            targets=SuccessorLaunchTargets(
-                checkout=checkout,
-                orchestrator_argv_prefix=tuple(orchestrator_argv_prefix))),
-        lock=SingleInstanceContinuationLock(
-            _turnover_continuation_lock(pathlib.Path(checkout), None)),
-        audit=HashChainedAuditSink(audit),
-        identity=SupervisorIdentity(),
-        survivor_detected=_child_survivor_predicate(journal))
-    event_id = _orchestrator_exhaustion_event_id(signal_text, checkout)
-    context = TurnoverContext(
-        task_id=task_id, event_id=event_id,
-        failed_fable_execution_id=event_id,
-        safe_checkpoint_id=safe_checkpoint_id,
-        handoff_reference=handoff_reference or event_id,
-        layer=TurnoverLayer.ORCHESTRATOR)
-    outcome = controller.execute(verdict, context)
-    payload.update({
-        "launched": outcome.turned_over, "actuated": outcome.turned_over,
-        "successor_id": outcome.successor_id, "event_id": outcome.event_id,
-        "audit_record_id": outcome.audit_record_id,
-        "successor_model_id": outcome.model_id, "status": outcome.status.value,
-        "reason": outcome.reason})
-    return payload
+#: The pre-split private names, preserved so every existing caller and test
+#: keeps its exact import surface (facade-preserving split).
+_build_worker_actuation_channel = build_worker_actuation_channel
+_turnover_continuation_lock = turnover_continuation_lock
+_child_survivor_predicate = child_survivor_predicate
+_orchestrator_exhaustion_event_id = orchestrator_exhaustion_event_id
+_approved_model_router = approved_model_router
+_approved_successor_resolver = approved_successor_resolver
 
 
 def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
@@ -2572,8 +2531,8 @@ def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
 
     The OS scheduler (Windows Task Scheduler; see the M0-T056 runbook) invokes this
     on the orchestrator's captured terminal output. It reuses the frozen M0-T054
-    detection + controller + adapters to auto-launch exactly one opus-4-8 successor
-    on a grounded orchestrator quota hard stop.
+    detection + controller + adapters to auto-launch exactly one successor - the next
+    OWNER-APPROVED, live-probed model - on a grounded orchestrator quota hard stop.
     """
     signal_path = getattr(args, "exhaustion_signal", "") or ""
     if not signal_path:
@@ -2606,14 +2565,39 @@ def cmd_orchestrator_watchdog(args: argparse.Namespace) -> int:
                         Handoff.from_dict(stored["handoff"]).digest())
             except RotationError:
                 handoff_reference = ""
+        # M0-T080 (D-023-R013): the model is SUPPLIED or READ from the run's own
+        # record - never a literal. The previous hard-coded Fable fallback
+        # let a watchdog attribute an exhaustion to a model the run may never
+        # have been on, which is the attribution the classifier decides on.
+        recorded_session = recorded_provider_session(journal)
+        current_model = (getattr(args, "current_model", "") or ""
+                         or (recorded_session.model_id if recorded_session else ""))
+        controller_config = None
+        if getattr(args, "config", ""):
+            try:
+                controller_config = load_controller_config(args.config)
+            except ConfigError as exc:
+                print(f"controller config unreadable ({exc}); refusing to actuate "
+                      f"(fail-closed).", file=sys.stderr)
+                return 1
         payload = run_orchestrator_watchdog(
             signal_text=signal_text, journal=journal, audit=audit, checkout=checkout,
             orchestrator_argv_prefix=prefix,
             command_runner=make_subprocess_command_runner(
-                new_successor_id=lambda: f"opus-orchestrator-{os.urandom(8).hex()}"),
+                new_successor_id=lambda: f"successor-{os.urandom(8).hex()}"),
             handoff_reference=handoff_reference,
             safe_checkpoint_id=getattr(args, "safe_checkpoint_id", "") or "",
-            current_model=getattr(args, "current_model", "") or "claude-fable-5",
+            current_model=current_model,
+            config=controller_config,
+            # M0-T080 correction U8: the SAME CLI-identity source `start` uses
+            # (`_claude_cli_identity` over the named executable). The watchdog used
+            # to key its ProbeLedger on the empty string while `start` keyed on the
+            # real executable digest, so once the owner wires a real probe, a probe
+            # recorded by `start` could NEVER satisfy the watchdog's identity match
+            # and the R595 orchestrator turnover would refuse forever. The two
+            # paths now share one probe identity.
+            cli_version=_claude_cli_identity(
+                getattr(args, "claude_executable", "") or ""),
             task_id=str(journal.get_state("task_id", "") or ""))
     finally:
         journal.close()
@@ -2655,6 +2639,18 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     packet = json.loads(pathlib.Path(args.task_packet).read_text(encoding="utf-8-sig"))
     repo = pathlib.Path(args.repo or checkout).resolve()
     worktree = pathlib.Path(args.worktree or repo).resolve()
+    # M0-T123 (R335/R336) + M0-T126 (D-024-R372; defect D2): the production
+    # launch-binding gate BEFORE the runner is built. Refuses a worker cwd that
+    # is not the packet's isolated worktree (the reproduced cycle-2 defect that
+    # launched in the primary control checkout), AND refuses an evidence/review
+    # repo that is the primary checkout while the packet declares a worktree (D2:
+    # the collector/reviewer would bind to the control tree). The command-doc
+    # tooth pins --worktree/--repo in presented commands; this is the runtime
+    # backstop. The refusal rides the LoopError -> typed-refusal path.
+    _binding = launch_seam.enforce_launch_bindings(
+        str(worktree), str(repo), str(packet.get("worktree", "") or ""), str(checkout))
+    if _binding is not None:
+        raise LoopError(_binding.code, _binding.message)
     config = load_controller_config(args.config)
     selection = load_model_selection(args.model_selection)
     validate_selection(config, selection)
@@ -2663,14 +2659,43 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
         packet, repo_root=str(repo), worktree=str(worktree),
         branch=args.branch or "", stage=args.stage or str(packet.get("status", "")))
     run_id = args.run_id or f"run_{checkout_key(checkout)[:12]}"
+    # M0-T126 (D-024-R372; property 5 / R380, defect D3): size the worker's
+    # working-turn allowance from its structural workload CLASS under a documented
+    # hard ceiling (turn_budget), replacing the fixed 12-turn bound that produced
+    # the live counted stop. The sized total replaces max_turns, never merely
+    # raises it; an oversized class stays at --max-turns and is surfaced.
+    try:
+        _classification, turn_budget = budget_for_packet(
+            packet, TurnAllowances.from_controller_config(config))
+    except TurnBudgetError as exc:
+        raise LoopError(exc.code, exc.message) from exc
+    sized_max_turns = (turn_budget.total_turns if turn_budget.dispatchable
+                       else args.max_turns)
     machine = StateMachine(journal, audit, run_id)
-    # `start` IS the S7 `start_command` trigger. A brand-new journal sits at IDLE,
-    # and the loop's first cycle begins at PREFLIGHT, so the operator's command is
-    # what moves it there - explicitly, and recorded as a transition like any
-    # other, rather than the loop silently assuming a state.
+    # M0-T126 (D-024-R372; defect D9): a run resting at COMPLETE is closed to
+    # IDLE via the EXISTING `run_closed` edge before the next task starts —
+    # mirroring owner-restart discipline. The reviewed identity had NO caller for
+    # `run_closed`, so COMPLETE (not a CYCLE_ENTRY_STATE) stranded every later
+    # start with `bad_cycle_entry_state`. Closing NEVER merges, accepts, deploys,
+    # or crosses an owner gate; it only returns the checkout to IDLE so the next
+    # bounded task can start. Idempotent: a non-COMPLETE state is left untouched.
+    _close_plan = next_task.plan_close_run(machine.current_state)
+    if _close_plan.should_close:
+        machine.transition(_close_plan.to_state, _close_plan.trigger,
+                           detail={"note": _close_plan.reason, "operator_initiated": True})
+    # `start` IS the S7 `start_command` trigger. A brand-new journal sits at IDLE
+    # (or a just-closed COMPLETE run is now IDLE), and the loop's first cycle
+    # begins at PREFLIGHT, so the operator's command is what moves it there -
+    # explicitly, and recorded as a transition like any other, rather than the
+    # loop silently assuming a state.
     if machine.current_state == INITIAL_STATE:
         machine.transition(PREFLIGHT_STATE, "start_command",
                            detail={"mode": args.mode, "operator_initiated": True})
+    # M0-T136 (D-024-R558..R560): at PREFLIGHT, immediately before the runner is
+    # built, every manifest field is re-OBSERVED independently; any mismatch is a
+    # typed refusal before provider launch. `launch` is None on the legacy path.
+    launch = (preflight_launch(args, run_id=run_id, audit=audit)
+              if getattr(args, "launch_manifest", None) else None)
 
     # D-004-R739: every supervised session launches the worker with an explicit
     # --model = the resolved primary from model_selection. `expected_model` is
@@ -2682,25 +2707,77 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # run on the exhausted model while its records said otherwise, so the launch
     # config is built from the EFFECTIVE model - the pin unless a switch is active.
     launch_model = effective_model(journal, run_id, pinned_model)
+    if launch is not None and launch.manifest.dispatch["claude_model"] != launch_model:
+        raise LoopError("launch_manifest_mismatch", f"dispatch.claude_model "
+                        f"{launch.manifest.dispatch['claude_model']!r} != launch model {launch_model!r}")
     expected_model = args.expected_worker_model or launch_model
     runner_config = RunnerConfig(
         executable=args.claude_executable, cwd=str(worktree),
-        max_turns=args.max_turns, timeout_seconds=args.unit_timeout,
-        model=launch_model, expected_model=expected_model)
+        # M0-T136 C-B4 (D-024-R583): a manifest launch enforces the manifest's own
+        # max_turns as the hard --max-turns; the sized allowance is the legacy path's.
+        max_turns=args.max_turns if launch is not None else sized_max_turns, timeout_seconds=args.unit_timeout,
+        model=launch_model, expected_model=expected_model,
+        # M0-T123 (D-024-R335/R336): bind the runner's pre-Popen launch seam to the
+        # packet's isolated worktree, so EVERY unit dispatch (ordinary, rotation,
+        # resume) fails closed before provider contact if its cwd is not the
+        # worktree - or is the primary control checkout, named specifically.
+        expected_worktree=str(worktree), primary_checkout=str(checkout))
     # M0-T053 (qualifying evidence: M0-T052 G5 SEC-MAJOR, correction C2): the
     # PRODUCTION launch path hands the runner the durable journal, so every
     # worker spawn is recorded and every verified exit clears the record. This
     # single argument is what makes `recover_boot`'s surviving-child fail-closed
     # live in production instead of only in a test that recorded a child by hand.
-    runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id, journal=journal)
-    reviewer = CodexReviewer(
-        args.codex_executable, repo=str(repo),
-        schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
-        config=config, selection=selection, audit=audit, run_id=run_id,
-        timeout_seconds=args.unit_timeout)
+    # M0-T136 C-B4 (D-024-R580..R584): a verified launch manifest selects the MRL
+    # one-shot runner and reviewer (one fresh process, one prompt, one schema-bound
+    # result, total accounting, descendant-zero proof; controller-authoritative
+    # decision bound to a real ls-remote); the legacy pair is untouched otherwise.
+    if launch is not None:
+        runner = OneShotRunner(runner_config, launch=launch, audit=audit, run_id=run_id, journal=journal)
+        reviewer = OneShotReviewer(args.codex_executable, launch=launch, repo=str(repo), config=config,
+                                   selection=selection, audit=audit, run_id=run_id, timeout_seconds=args.unit_timeout)
+    else:
+        runner = ClaudeRunner(runner_config, audit=audit, run_id=run_id, journal=journal)
+        reviewer = CodexReviewer(
+            args.codex_executable, repo=str(repo),
+            schema_path=str(PACKAGE_ROOT / "schemas" / "codex_decision.schema.json"),
+            config=config, selection=selection, audit=audit, run_id=run_id,
+            timeout_seconds=args.unit_timeout)
     collector = EvidenceCollector(repo_root=str(repo))
     approved = set(args.approve_prompt_digest or [])
-    breakers = CircuitBreakers(config.limits)
+    # D-091 TW3 (owner rule D-090-R076): on Linux the memory breaker ceiling is
+    # <=70% of MEASURED RAM from /proc/meminfo (fail closed if unreadable); on
+    # Windows posix_memory_ceiling_bytes returns None and the ceiling is unchanged.
+    _mem_ceiling = posix_memory_ceiling_bytes(config.limits.max_memory_bytes)
+    _limits = config.limits if _mem_ceiling is None else dataclasses.replace(
+        config.limits, max_memory_bytes=_mem_ceiling)
+    breakers = CircuitBreakers(_limits)
+
+    # M0-T079 (D-023 item 1, owner amendment D-023-R037): the DURABLE
+    # owner-controlled run budget. `--run-wall-clock-seconds` is optional and has
+    # NO default and NO ceiling - omitting it means unlimited, and an unlimited
+    # run is never stopped by a timer. The counter bounds come from the
+    # manifest-covered immutable config, so the ledger records every bound the
+    # run is actually held to. `start()` persists it on a first launch and
+    # RELOADS the original start instant and budget on a crash-resume; a launch
+    # naming different bounds for the same run id is refused, not honoured.
+    budget_ledger = RunBudgetLedger(
+        journal, run_id=run_id,
+        budget=RunBudget.from_limits(
+            config.limits,
+            wall_clock_seconds=getattr(args, "run_wall_clock_seconds", None)),
+        # C6 (G5 I5): a budget that starts, resumes, or REFUSES is sealed in the
+        # hash-chained log - `budget_conflict` above all, since it is the
+        # canonical "a run tried to change its own bounds" tamper signal.
+        audit=audit)
+    # M0-T126 (D-024-R372; defect D13): assert the machine can act BEFORE the
+    # durable run budget starts. The reviewed identity started (and RESUMED) the
+    # budget on a start over a HALTED/PAUSED journal because recovery.classify
+    # never reads current_state — mutating durable budget and starting the
+    # owner's wall clock on a start the loop then refused (live seq 32-33).
+    # assert_can_act raises IllegalTransitionError for any blocking state, which
+    # cmd_start reports as a typed refusal; the budget below is never reached.
+    machine.assert_can_act()
+    budget_ledger.start()
 
     # AS-3: wire live resource sampling into the loop for the R207 gauge set. The
     # runtime directory (never inside the repo) is the volume whose free space is
@@ -2709,7 +2786,7 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # on Windows, so the sampler reports them as unknown (never a fabricated OK)
     # and doctor's resource_sampling check discloses which gauges are live.
     _runtime_dir = audit.path.parent
-    resource_sampler = ResourceSampler(
+    resource_sampler = build_resource_sampler(
         disk_path=str(_runtime_dir),
         log_paths=(str(audit.path), str(audit.head_path),
                    str(_runtime_dir / DB_FILENAME)))
@@ -2750,11 +2827,36 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
     # M0-T056 (R595): assemble the owner-authorized WORKER-layer actuation channel.
     # Absent the flag (or on a non-job_object host) this returns None and the seam
     # is byte-identical to the pre-activation record-intent-only path.
-    worker_controller, _worker_actuation_report = _build_worker_actuation_channel(
+    worker_controller, _worker_actuation_report = build_worker_actuation_channel(
         args=args, journal=journal, audit=audit, checkout=checkout,
         claude_executable=args.claude_executable, max_turns=args.max_turns,
-        unit_timeout=args.unit_timeout)
+        unit_timeout=args.unit_timeout,
+        # M0-T080: the successor comes from THIS config's owner-approved list,
+        # proved by a probe recorded under THIS config identity and THIS provider
+        # CLI identity - a probe taken against a different binary proves nothing
+        # about this one.
+        config=config,
+        cli_version=str(runner.executable_identity().get("digest", "")))
     worker_turnover_integration = WorkerTurnoverIntegration(controller=worker_controller)
+
+    # M0-T096 (D-024 Phase H, D-024-R106): construct the accepted H1 refusal
+    # seam for real runs. Until this wiring the loop's `guardrail_bridge`
+    # parameter was never supplied by `start`, so a live guardrail refusal was
+    # never recorded and the Amendment-7 watcher (R226) had nothing to observe.
+    # Task legitimacy comes from the packet the controller already holds; a
+    # packet without authorization/criteria leaves the record unproven and the
+    # classifier fails closed (CONDITION_AUTHORIZATION_UNPROVEN). Either way
+    # this build records intent only - the bridge has no actuation channel.
+    guardrail_bridge = GuardrailBridgeIntegration(
+        journal=journal,
+        authorized_task=AuthorizedTaskRecord(
+            task_id=str(packet.get("task_id", "") or ""),
+            authorization=str(packet.get("authorization", "") or ""),
+            acceptance_criteria=tuple(
+                str(item) for item in
+                (packet.get("acceptance_criteria")
+                 or packet.get("stop_conditions") or ())),
+            purpose=str(packet.get("objective", "") or "")))
 
     loop = SupervisedLoop(
         config=LoopConfig(
@@ -2774,28 +2876,68 @@ def _run_loop(args: argparse.Namespace, checkout: pathlib.Path,
             # path; True is set ONLY by the explicit --authorize-turnover-actuation
             # flag below.
             turnover_actuation_authorized=bool(
-                getattr(args, "authorize_turnover_actuation", False))),
+                getattr(args, "authorize_turnover_actuation", False)),
+            # M0-T079 (R595 / D-023-R033): the owner's EXPLICIT per-launch enable
+            # for the bounded unattended mode, set ONLY by
+            # --owner-enable-bounded-auto. Without it `LoopConfig` refuses
+            # mode="limited-auto" by name, exactly as it always has.
+            owner_enabled_bounded_auto=bool(
+                getattr(args, "owner_enable_bounded_auto", False))),
         journal=journal, audit=audit, machine=machine, authority=authority,
         runner=runner, reviewer=reviewer, run_id=run_id, collector=collector,
         broker=broker, breakers=breakers,
-        pinned_model=pinned_model,
+        # M0-T136 C-B4 (D-024-R581): no reserved-turn injection under a manifest
+        # launch - the one-shot runner refuses any second message by contract.
+        pinned_model=pinned_model, turn_budget=None if launch is not None else turn_budget,
         context_rotation_threshold=context_rotation_threshold,
         # D-004-R751/R758: the FIXED preference chain, straight out of the
         # IMMUTABLE controller config. Owner-editable only; never a runtime value.
-        model_chain=config.model_chain,
-        model_available=model_available,
+        model_chain=config.model_chain, model_available=model_available,
         resource_sampler=resource_sampler,
         # M0-T054 increment 4 (qualifying evidence: reproduced R289 incident,
         # D-010 source-028): the WORKER-layer Fable->Opus turnover seam. M0-T056
         # (R595) supplies the owner-authorized actuation channel above: with
         # --authorize-turnover-actuation AND job_object containment the controller
-        # is real (a confirmed exhaustion redispatches opus-4-8 exactly once);
+        # is real (a confirmed exhaustion redispatches the next owner-approved,
+        # live-probed model exactly once);
         # without it worker_controller is None and the seam is record-intent-only,
         # byte-identical to the pre-activation path. Every non-exhaustion path is
         # unchanged either way.
-        worker_turnover=worker_turnover_integration,
+        worker_turnover=worker_turnover_integration, guardrail_bridge=guardrail_bridge,
+        # M0-T079: the durable run budget. It also carries the breaker tallies
+        # across a crash-resume, so a restarted run cannot earn back model calls,
+        # external writes, or restarts it has already spent.
+        run_budget=budget_ledger,
+        # M0-T080: the review model the S11.3 handoff verification is checked
+        # against (S3.3 reserves it to review_model or deterministic
+        # verification). No live verifier is wired on this SHADOW-ONLY build, so
+        # the supervisor verifies DETERMINISTICALLY and records that it did.
+        review_model=str(getattr(selection.codex, "primary", "") or ""),
+        advisory_model=str(getattr(selection.codex, "advisory_model", "") or ""),
         approval_gate=(lambda digest, _prompt: digest in approved))
-    return loop.run(args.prompt).to_dict()
+    # M0-T126 (D-024-R372; property 1 / R376, defect D3): FRONT-LOAD the
+    # evidence-grounded orientation packet onto a fresh worker's first prompt
+    # (task, lineage, worktree, progress, files, sized cadence, exact required
+    # output) instead of the bare default. Rotated successors are re-oriented by
+    # the rotation seam; an oversized unit runs the raw prompt and is surfaced.
+    # M0-T136 C-B4 (D-024-R581): under a manifest launch the operator's prompt IS
+    # the one prompt (the runner appends the schema-bound result contract); the
+    # multi-turn checkpoint-cadence orientation belongs to the legacy path only.
+    first_prompt = args.prompt if launch is not None else orientation_mod.oriented_first_prompt(
+        args.prompt, packet, turn_budget, run_id=run_id, worktree=str(worktree),
+        branch=args.branch, stage=args.stage, allowed_paths=authority.allowed_paths)
+    # M0-T152 (D-033-R001/R003, seam I1): run the launch and, ONLY under the
+    # per-launch owner enable (gated by name at cmd_start and re-asserted
+    # inside the helper), the post-COMPLETE gate-wave stage. With the flag
+    # absent this call IS `loop.run(first_prompt).to_dict()` - no enable
+    # record, no journal or audit append, no gate_wave machinery (S1). The
+    # stage records gates only - acceptance, queue advance, and integration
+    # stay with the orchestrator (D-033-R005).
+    return gate_wave.run_with_post_complete_stage(
+        args, loop, first_prompt, packet=packet, reviewer=reviewer,
+        collector=collector, journal=journal, audit=audit, run_id=run_id,
+        repo_root=str(repo), worker_worktree=str(worktree),
+        checkout=str(checkout))
 
 
 def cmd_start(args: argparse.Namespace) -> int:
@@ -2807,12 +2949,22 @@ def cmd_start(args: argparse.Namespace) -> int:
     explicitly on the command line, does the loop run. Nothing is discovered from
     PATH; a missing input stops the command and says which one.
     """
-    if args.mode == "limited-auto":
-        raise NotImplementedError(
-            "limited-auto is disabled and is NOT implemented by this build. It is never "
-            "reachable from a configuration default, a parse error, a migration, or a "
-            "downgrade; it is enabled only by a separate explicit owner activation recorded "
-            "through directive compliance (D-007 S12).")
+    gate = bounded_mode_gate(args)
+    if gate is not None:
+        seal_owner_gate_refusal(args, gate, AUDIT_FILENAME)
+        return emit_refusal(args, gate)
+    # M0-T152 (D-033-R003; F6): the managed gate-wave enable is refused BY NAME
+    # unless this launch carries the owner-gated capability that can host it;
+    # a refusal is sealed in the hash-chained audit log (the C6 shape).
+    wave_gate = gate_wave.managed_wave_start_gate(args, seal_audit=AUDIT_FILENAME)
+    if wave_gate is not None:
+        return emit_refusal(args, wave_gate)
+    # M0-T136 (D-024-R557): `--launch-manifest` is THE canonical entrance when
+    # present - it supplies every dispatch input (typed flags that disagree are
+    # refused, not preferred) and is verified at PREFLIGHT in `_run_loop`.
+    _launch, launch_refusal = apply_launch_manifest(args)
+    if launch_refusal is not None:
+        return emit_refusal(args, launch_refusal)
 
     checkout = pathlib.Path(args.checkout).resolve()
     runtime, journal, audit = _open_runtime(args)
@@ -2841,32 +2993,27 @@ def cmd_start(args: argparse.Namespace) -> int:
             manifest_ok = False
         integrity = journal.integrity_check()
         chain = audit.verify_chain()
-        missing_inputs = _dispatch_inputs_missing(args)
+        missing_inputs = dispatch_inputs_missing(args)
         dispatchable = not missing_inputs
-        revalidation = {
-            "controller_manifest": manifest_ok,
-            "journal_integrity": integrity.ok,
-            "audit_chain": chain.ok,
-            # These are established only when the operator named the inputs the
-            # loop needs. Without them `start` reports them NOT established
-            # rather than assuming them true.
-            "task_authority": dispatchable,
-            "branch": dispatchable,
-            "worktree": dispatchable,
-            "git_and_remote_state": dispatchable,
-            "auth": dispatchable,
-            "cli_capability_manifest": dispatchable,
-            "pending_requests": True,
-            "scheduled_deadlines": True,
-            "last_external_effect": True,
-        }
+        manifest_reason = (manifest_verification.reason_code
+                           if manifest_verification is not None else "not_established")
+        probe_report = None
+        packet_error = ""
+        packet: Mapping[str, Any] = {}
+        if dispatchable:
+            packet, packet_error = load_task_packet(str(args.task_packet))
+        if dispatchable and not packet_error:
+            revalidation, probe_report = live_revalidation(
+                args, checkout=checkout, journal=journal, packet=packet,
+                manifest_ok=manifest_ok, manifest_reason=manifest_reason,
+                integrity_ok=integrity.ok, chain_ok=chain.ok, audit=audit)
+        else:
+            revalidation = unprobed_revalidation(
+                manifest_ok=manifest_ok, integrity_ok=integrity.ok,
+                chain_ok=chain.ok)
         outcome = recover_boot(
             journal=journal, lock=lock, revalidation=revalidation, audit=audit,
-            notes=(("every input the loop needs was named explicitly; the pre-dispatch "
-                    "sequence ran before any provider contact",) if dispatchable else
-                   ("`start` was invoked without the inputs the loop needs, so the live "
-                    "task/branch/worktree/git/auth/capability set was not collected and "
-                    "reads as not established",)))
+            notes=(revalidation_note(dispatchable, packet_error),))
         # M0-T052 G5 C1 (M0-T053): the host-containment precondition, evaluated
         # on every `start` and reported whether or not it is the reason for a
         # stop, so the answer is in the record even when something else stops
@@ -2895,11 +3042,22 @@ def cmd_start(args: argparse.Namespace) -> int:
             },
             "stopped_because": "",
         }
+        # M0-T079: what the live probes actually established, in the record, so a
+        # refusal names EVERY fact that was missing rather than only the first.
+        if probe_report is not None:
+            payload["probes"] = probe_report.to_dict()
+        elif dispatchable and packet_error:
+            payload["probes"] = {"probes": [], "failed": ["task_authority"]}
+        refusal: refusals.Refusal | None = None
         if not dispatchable:
-            payload["stopped_because"] = (
-                f"`start` will not dispatch until every input is named explicitly. "
-                f"Missing: {missing_inputs}. Nothing is discovered from PATH and no "
-                f"provider is contacted by default.")
+            refusal = missing_input_refusal(missing_inputs)
+            payload["stopped_because"] = refusal.message
+        elif packet_error:
+            payload["stopped_because"] = f"task_packet_unreadable: {packet_error}"
+            refusal = refusals.refusal(
+                refusals.STALE_STATE, reason_code="task_packet_unreadable",
+                message=packet_error,
+                detail={"task_packet": str(args.task_packet or "")})
         elif outcome.classification != SAFE_CHECKPOINT:
             # NOTE the gate: the CLASSIFICATION, not `resume_permitted`.
             # `resume_permitted` answers "may this run continue AUTOMATICALLY,
@@ -2913,6 +3071,22 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"the pre-dispatch classification is {outcome.classification} "
                 f"({outcome.reason_code}); a run never starts over an unresolved "
                 f"recovery condition. {outcome.reason}")
+            refusal = recovery_refusal(outcome, probe_report)
+        elif (outcome.reason_code in ("safe_but_forbidden", "deadline_restored")
+              and deadline_blocks_dispatch(outcome, DurableFlags.read(journal),
+                                           probe_report)):
+            # The refusal names the flag that ACTUALLY blocks, which is not
+            # always the one `recover_boot` stamped (C9 follow-through).
+            # M0-T079: a SAFE_CHECKPOINT that a durable flag or an UNEXPIRED
+            # usage-limit deadline forbids. `classify` reports these WITH the
+            # SAFE_CHECKPOINT classification, so the gate above let them through
+            # and the run dispatched over an emergency stop, a manual pause, or
+            # an open owner gate. It stops here, naming which one (C9).
+            payload["stopped_because"] = (
+                f"the pre-dispatch check is SAFE_CHECKPOINT but {outcome.reason_code}; "
+                f"{outcome.reason}")
+            refusal = recovery_refusal(outcome, probe_report,
+                                       DurableFlags.read(journal))
         elif not containment_ok:
             # M0-T052 G5 C1: the LAST gate before a live worker is spawned. The
             # refusal is audited, because a host that cannot contain a worker is
@@ -2921,9 +3095,14 @@ def cmd_start(args: argparse.Namespace) -> int:
                 f"containment_refused: {containment_detail}")
             audit.append("containment_gate_refused", policy_result="REFUSED",
                          detail={"containment_kind": containment_kind,
-                                 "required": CONTAINMENT_JOB_OBJECT,
+                                 "accepted": sorted(CONTAINMENT_ACCEPT_SET),
                                  "mode": args.mode,
                                  "reason": containment_detail})
+            refusal = refusals.refusal(
+                refusals.UNSUPPORTED_PLATFORM, reason_code="containment_refused",
+                message=containment_detail,
+                detail={"containment_kind": containment_kind,
+                        "accepted": sorted(CONTAINMENT_ACCEPT_SET)})
         else:
             # V1.1 correction B-2: a loop REFUSAL is a report, not a traceback.
             # This covers both the loop's own refusals (LoopError, e.g.
@@ -2933,8 +3112,8 @@ def cmd_start(args: argparse.Namespace) -> int:
             # (`LimitedAutoRefused` is a LoopError subclass, but limited-auto is
             # already refused by name above, before anything is built.)
             try:
-                run = _run_loop(args, checkout, journal, audit)
-            except (LoopError, IllegalTransitionError) as exc:
+                run = (next_task.run_task_queue(args, checkout, journal, audit, _run_loop) if int(getattr(args, "max_tasks", 1) or 1) > 1 or getattr(args, "packet_queue", None) else _run_loop(args, checkout, journal, audit))
+            except (LoopError, IllegalTransitionError, next_task.NextTaskError) as exc:
                 code = getattr(exc, "code", "illegal_transition")
                 message = getattr(exc, "message", str(exc))
                 payload["loop_refusal"] = {
@@ -2945,43 +3124,81 @@ def cmd_start(args: argparse.Namespace) -> int:
                             "first - the audit log is the authoritative count"}
                 payload["stopped_because"] = (
                     f"the loop refused to run: {code}: {message}")
+                refusal = loop_refusal(code, message, args.mode)
+            except (BudgetError, BreakerError) as exc:
+                # M0-T079 C5: every persisted-state corruption the budget or the
+                # breakers detect leaves as a TYPED refusal - never a traceback.
+                code = getattr(exc, "code", "budget_error")
+                message = getattr(exc, "message", str(exc))
+                payload["stopped_because"] = f"{code}: {message}"
+                refusal = refusals.refusal(
+                    refusals.BUDGET_EXHAUSTED if code == "budget_exhausted"
+                    else refusals.STALE_STATE,
+                    reason_code=code, message=message,
+                    detail={"mode": args.mode, "source": "run_budget"})
+            except ConfigError as exc:
+                # M0-T080 correction U11: `_run_loop` loads and cross-validates the
+                # controller config, so every ConfigError it can raise - including
+                # M0-T080's new `approved_models_conflict` - used to reach the
+                # operator as a raw traceback at exit 1. That is the same defect
+                # T079-C5 fixed for the budget: a refusal is a report, not a crash.
+                code = getattr(exc, "code", "config_rejected")
+                message = getattr(exc, "message", str(exc))
+                payload["stopped_because"] = f"{code}: {message}"
+                refusal = refusals.refusal(
+                    refusals.UNSAFE, reason_code=code, message=message,
+                    detail={"mode": args.mode, "source": "controller_config",
+                            "path": getattr(exc, "path", "") or ""})
             else:
-                payload["dispatched"] = True
+                # D1 (G3 R-2): "the loop was built" is not "a unit ran".
+                payload["dispatched"] = run_dispatched(run)
                 payload["loop"] = run
                 payload["provider_calls_made"] = run.get("provider_calls", 0)
                 payload["stopped_because"] = run.get("stopped", "")
+                payload["limited_auto_enabled"] = bool(run.get("limited_auto_enabled"))
+                payload["run_budget"] = run.get("run_budget")
+                # M0-T079: how a run ended is a machine-readable fact too.
+                refusal = dispatched_run_refusal(args.mode, run)
     finally:
-        lock.release()
-        journal.close()
+        # M0-T096 (D-024 Amendment 7, R226): the passive natural-event scan.
+        # Every `start` session epilogue notices classifier records the run
+        # left behind (refusal/quota/availability/model-turnover) and CAS-
+        # persists at most one sanitized register row per distinct event -
+        # read-only over existing records, no prompt, no worker message.
+        # Bounded: a watcher failure is audited and never breaks `start`, and
+        # the nested finally keeps lock/journal cleanup unconditional even if
+        # a BaseException (interrupt) lands inside the scan (G5 INFO-1).
+        try:
+            try:
+                from .live_observation import record_observations
+                record_observations(journal, session_provenance="live")
+            except Exception as watch_error:
+                try:
+                    audit.append("live_observation_scan_failed",
+                                 detail={"error": type(watch_error).__name__})
+                except Exception:
+                    pass
+        finally:
+            lock.release()
+            journal.close()
 
-    lines = [f"mode:            {args.mode}",
-             f"classification:  {outcome.classification} ({outcome.reason_code})",
-             f"next state:      {outcome.next_state}",
-             f"resume permitted:{outcome.resume_permitted}",
-             f"reason:          {outcome.reason}",
-             ""]
-    if payload["dispatched"]:
-        run = payload["loop"]
-        budget = run["budget"]
-        lines += [
-            f"DISPATCHED in {args.mode} mode. cycles={len(run['cycles'])} "
-            f"final_state={run['final_state']} stopped={run['stopped']}",
-            f"forwarded message ids: {run['forwarded_message_ids'] or '(none)'}",
-            f"owner touches counted: {budget['counted']} of budget {budget['budget']} "
-            f"(within budget: {budget['within_budget']})",
-            "the budget is a measurement and authorizes nothing.",
-        ]
-        if args.mode != MODE_SUPERVISED:
-            lines.append("shadow mode forwarded NOTHING; the recorded plans say what "
-                         "would have happened.")
-    else:
-        lines += ["NOT DISPATCHED. " + payload["stopped_because"],
-                  "no provider was contacted; limited-auto is disabled."]
+    # M0-T126 (M0-T125 D7) annotation preserved; rendering moved to start_gate
+    # (M0-T136, modularity ceiling) - the lines are byte-identical.
+    lines = start_report_lines(args, outcome, payload)
+    if refusal is not None:
+        payload = refusals.merge_into_payload(payload, refusal)
+        lines = [*lines, "", *refusal.lines()]
     _emit(args, payload, lines)
+    if refusal is not None:
+        # M0-T079: the typed, documented exit code. A refusal an unattended
+        # wrapper cannot detect is not a refusal, it is a silent failure.
+        return refusal.exit_code
     if manifest_verification is not None and not manifest_verification.ok:
         # M0-T072 (D-017-R045): a FAILED manifest/config verification is a
         # security halt, not an ordinary not-dispatchable report - callers and
-        # scripts must fail closed on it. Missing-input stops still exit 0.
+        # scripts must fail closed on it. Reached only when no typed refusal
+        # already claimed the exit code above; since C7 a missing input is one
+        # of those (stale_state / 13) rather than the exit 0 it used to be.
         return 1
     return 0
 
@@ -3057,8 +3274,11 @@ def build_parser() -> argparse.ArgumentParser:
 
     start = sub.add_parser(
         "start",
-        help="run the pre-dispatch sequence (lock, RECOVER_BOOT, integrity), then the "
-             "assembled loop when every input is named explicitly. limited-auto never")
+        help="'Start the agent loop' (the documented owner intent, R035): run the "
+             "pre-dispatch sequence (lock, RECOVER_BOOT, integrity), then the "
+             "assembled loop when every input is named explicitly. Idempotent - a "
+             "running campaign is reported, never duplicated; no duration. "
+             "limited-auto never")
     add_common(start)
     start.add_argument("--mode", choices=["shadow", "supervised", "limited-auto"],
                        default="shadow")
@@ -3066,6 +3286,14 @@ def build_parser() -> argparse.ArgumentParser:
                        help="recorded controller manifest - a REQUIRED dispatch input "
                             "(M0-T072); verified together with --config, including the "
                             "external config.toml binding, before any provider contact")
+    start.add_argument("--launch-manifest", default=None,
+                       help="M0-T136 (D-024-R557): ABSOLUTE path to the mrl_launch_manifest/v1 "
+                            "document. When present it is THE canonical entrance: it supplies "
+                            "every dispatch input (a typed flag that disagrees is refused) and "
+                            "every expected value is independently re-observed at PREFLIGHT - "
+                            "repo root, origin, task id, packet digest, worktree, branch, HEAD, "
+                            "tree, clean status, allowed paths, profile identity, mode - with "
+                            "any mismatch refused before provider launch. Never proof by itself")
     start.add_argument("--claude-executable", default=None,
                        help="explicit path to the Claude executable; never a PATH search")
     start.add_argument("--codex-executable", default=None,
@@ -3079,14 +3307,21 @@ def build_parser() -> argparse.ArgumentParser:
     start.add_argument("--worktree", default=None, help="the isolated task worktree")
     start.add_argument("--branch", default=None, help="the task branch")
     start.add_argument("--stage", default=None, help="the authorized stage")
-    start.add_argument("--run-id", default=None)
+    start.add_argument(
+        "--run-id", default=None,
+        help="the run this invocation belongs to (default: derived from the checkout "
+             "path). It is the IDENTITY of the durable run budget: the same id RESUMES "
+             "that run, reloading its original start instant, elapsed time, and spent "
+             "tallies. It is therefore also the escape hatch - a run that has spent its "
+             "owner-set budget is finished, and a genuinely NEW run needs a NEW id. The "
+             "exhausted record is never rewritten; it stays as evidence")
     start.add_argument("--prompt", default="Report a structured checkpoint for the "
                                            "current authorized stage.",
                        help="the first unit's prompt")
-    start.add_argument("--max-cycles", type=int, default=1,
-                       help="hard bound on supervisor cycles for this invocation")
-    start.add_argument("--max-turns", type=int, default=12,
-                       help="--max-turns passed to each bounded Claude unit")
+    start.add_argument("--max-cycles", type=int, default=1, help="hard bound on supervisor cycles for this invocation")
+    start.add_argument("--max-turns", type=int, default=12, help="--max-turns passed to each bounded Claude unit")
+    start.add_argument("--max-tasks", type=int, default=1, help="D-024-R400/R146: hard bound on the number of BOUNDED tasks one owner-typed start advances across (default 1 = the certified single-task shape; >1 with --packet-queue selects successors)")
+    start.add_argument("--packet-queue", default=None, help="D-024-R400: path to the owner-supplied ordered successor queue JSON ({\"tasks\":[{task_id,packet_path,worktree,branch,repo}...]}); consulted ONLY when --max-tasks>1. Successors are eligibility-gated and fail-closed (R405)")
     start.add_argument("--unit-timeout", type=float, default=900.0)
     start.add_argument("--owner-touch-budget", type=int,
                        default=DEFAULT_OWNER_TOUCH_BUDGET,
@@ -3112,9 +3347,10 @@ def build_parser() -> argparse.ArgumentParser:
                             "the worker default. Set to 'orchestrator' ONLY for the "
                             "orchestrator (main) session: when the pinned Fable-5 model's "
                             "quota is exhausted at a rotation seam, an orchestrator-role "
-                            "session walks the FIXED [model_chain] preference chain from the "
-                            "immutable config (default claude-fable-5 -> claude-opus-4-8 -> "
-                            "claude-opus-4-7), decides availability by an ACTUAL LAUNCH "
+                            "session walks the OWNER-APPROVED model list from the immutable "
+                            "config (there is NO built-in default list; an unpopulated "
+                            "config approves nothing and the run stops safely), decides "
+                            "availability by an ACTUAL LAUNCH "
                             "PROBE of each exact id (never by reading a model picker), and "
                             "relaunches EXPLICITLY on the first entry that really launches - "
                             "recorded as a first-class model_substitution event - returning "
@@ -3124,12 +3360,46 @@ def build_parser() -> argparse.ArgumentParser:
                             "worker default, which PAUSES for the owner instead of ever "
                             "substituting a pinned model. Reviewer pins are never affected")
     start.add_argument(
+        "--owner-enable-bounded-auto", action="store_true",
+        help="M0-T079 (D-023 item 1; R595 / D-023-R033): the owner's EXPLICIT per-launch "
+             "enable for the bounded unattended mode. Without it `--mode limited-auto` is "
+             "a STRUCTURED refusal (outcome refused_mode, exit 16) and nothing is built. "
+             "It is a launch input only: no configuration default, parse error, migration, "
+             "downgrade, or model can set it, and it weakens no other gate - the run still "
+             "passes the live pre-dispatch probes, the containment precondition, the "
+             "policy tiers, and every circuit breaker")
+    gate_wave.add_owner_switch_argument(start)
+    start.add_argument(
+        "--run-wall-clock-seconds", type=float, default=None,
+        help="the OWNER-SET wall-clock budget for this run, in seconds. OMIT IT FOR AN "
+             "UNLIMITED RUN: there is no default and no maximum anywhere in this build "
+             "(owner amendment D-023-R037), and an unlimited run is never stopped by a "
+             "timer. When supplied, the budget is persisted durably at run start and a "
+             "crash-resume reloads the ORIGINAL start instant and budget - elapsed time "
+             "never resets, and a relaunch naming different bounds for the same --run-id "
+             "is refused rather than honoured")
+    start.add_argument(
+        "--repin-cli-identity", action="store_true",
+        help="accept a provider CLI whose identity CHANGED since this run was pinned, "
+             "and re-pin it. Drift detection is unchanged and still refuses by default; "
+             "this is the supported remedy for a legitimate update, instead of deleting "
+             "the journal and losing the run's evidence. The new identity is recorded "
+             "with provenance and sealed in the audit chain. A per-launch human act")
+    start.add_argument(
+        "--require-remote-reachable", action="store_true",
+        help="state that this run NEEDS the git remote to answer. The pre-dispatch probe "
+             "then performs a read-only `git ls-remote` and fails closed if it cannot "
+             "prove reachability. Omitted (the default), the probe records the configured "
+             "remote and contacts no network - a local task-branch run does not need one")
+    start.add_argument(
         "--authorize-turnover-actuation", action="store_true",
         help="M0-T056 (R595): the owner's EXPLICIT per-run authorization to ACTUATE a "
-             "WORKER-layer Fable->opus-4-8 turnover. Without it (default) a confirmed "
+             "WORKER-layer turnover onto the next OWNER-APPROVED, live-probed model. "
+             "Without it (default) a confirmed "
              "exhaustion is record-intent-only, byte-identical to the pre-activation "
              "path. With it AND a job_object-contained host, a confirmed FABLE_EXHAUSTED "
-             "verdict redispatches the SAME bounded unit on claude-opus-4-8 exactly once "
+             "verdict redispatches the SAME bounded unit exactly once on the next "
+             "OWNER-APPROVED, live-probed model "
              "through the M0-T054 controller. Never a mode default; never read from the "
              "protected controller config. Weakens no other hold")
     start.set_defaults(func=cmd_start)
@@ -3139,7 +3409,8 @@ def build_parser() -> argparse.ArgumentParser:
         help="M0-T056 (R595): independently-live watchdog that runs OUTSIDE the Claude "
              "session (OS scheduler). It classifies the orchestrator's captured terminal "
              "output and, on a grounded Fable quota hard stop, auto-launches exactly one "
-             "claude-opus-4-8 successor loading the durable handoff + safe checkpoint")
+             "successor - the next OWNER-APPROVED, live-probed model from the immutable "
+             "config - loading the durable handoff + safe checkpoint")
     add_common(watchdog)
     watchdog.add_argument(
         "--exhaustion-signal", required=True,
@@ -3159,8 +3430,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="the safe checkpoint id the successor resumes from")
     watchdog.add_argument(
         "--current-model", default=None,
-        help="the model the just-exhausted orchestrator ran on (default claude-fable-5), "
-             "used only to attribute the exhaustion signal")
+        help="the model the just-exhausted orchestrator ran on, used to attribute the "
+             "exhaustion signal. NO DEFAULT: when omitted it is read from the run's own "
+             "recorded provider session, and when that is unknown the watchdog REFUSES "
+             "rather than assuming a model id (D-023-R013)")
+    watchdog.add_argument(
+        "--config", default=None,
+        help="path to the immutable controller config that names the owner-approved model "
+             "list the successor is chosen from. Without it nothing is approved and a "
+             "grounded exhaustion stops safely instead of launching")
+    watchdog.add_argument(
+        "--claude-executable", default=None,
+        help="explicit path to the canonical Claude executable, used ONLY to compute the "
+             "provider-CLI identity a launch probe is recorded against. It must be the same "
+             "executable `start` was given: probes are keyed on that identity, so a "
+             "different (or missing) one makes every probe `start` recorded unusable here "
+             "and a grounded exhaustion stops safely instead of launching. Never a PATH "
+             "search (S13.4)")
     watchdog.set_defaults(func=cmd_orchestrator_watchdog)
 
     pending = sub.add_parser("pending-approvals",
@@ -3223,6 +3509,11 @@ def build_parser() -> argparse.ArgumentParser:
     stop.add_argument("--clear", action="store_true",
                       help="explicit owner command clearing the durable stop flags")
     stop.set_defaults(func=cmd_stop)
+
+    register_operator_verbs(sub, add_common)
+    register_codex_channel_verbs(sub, add_common)
+    register_telegram_verbs(sub, add_common)
+    register_restart_verbs(sub, add_common)
 
     resume_pp = sub.add_parser(
         "resume-pending-prompt",

@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the continuation rule ("Add new task IDs … Start only unblocked tasks"), the React Three Fiber viewer (3D-020; plan §5c), opportunity search (COMP-004) and the external API (COMP-007). The rest stays under the expansion hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2).
+
 # 3D and Premium UI Execution Plan
 
 ## Continuation rule

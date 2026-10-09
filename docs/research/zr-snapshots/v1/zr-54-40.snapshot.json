@@ -1,0 +1,67 @@
+{
+  "snapshot_id": "zr-54-40",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "54-40",
+  "section_title": "DAMAGE OR DESTRUCTION IN NON-COMPLYING BUILDINGS",
+  "article": "V",
+  "chapter": "4",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-v/chapter-4/54-40",
+    "retrieved_at": "2026-10-04T01:02:19Z",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The site-wide currency banner was not separately captured; the operative provenance is this section's machine-readable per-section Last Amended stamp (<time datetime=\"2011-02-02T12:00:00Z\">2/2/2011</time>) in the raw HTML.",
+    "section_last_amended": "2011-02-02",
+    "section_last_amended_source_text": "Last Amended 2/2/2011",
+    "capture_method": "lane_a_A-07_step1_curl_html_verbatim_plus_printpdf_completeness_2026-10-04",
+    "raw_html_verified": false,
+    "verification_required": "Verbatim text was tag-stripped from the official DCP Zoning Resolution portal HTML (https://zoningresolution.planning.nyc.gov/article-v/chapter-4/54-40) fetched fresh in-task on 2026-10-04 (curl -A Mozilla/5.0 -> HTTP 200); the legal text lives in the field--name-body container and the section carries the per-section Last Amended stamp recorded above. The text was NOT re-verified byte-for-byte at the field level against the raw HTML, so raw_html_verified stays false and extraction_status stays extracted_draft. The legal reading MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+  },
+  "provenance_chain": {
+    "capture_task": "lane-a A-07 step 1 (ZR 54-41 family snapshots; D-090 R103; plan M2-08)",
+    "verbatim_text_channel": {
+      "channel": "canonical_html",
+      "request_url": "https://zoningresolution.planning.nyc.gov/article-v/chapter-4/54-40",
+      "http_status": 200,
+      "byte_count": 71007,
+      "content_sha256": "59a50d1440f6c733b5a39e7cbc9d33a2269da98ac8a32daacce62d89b90bfef0",
+      "retrieved_at": "2026-10-04T01:02:19Z",
+      "note": "Raw HTML bytes of the canonical section page; the verbatim_excerpt was tag-stripped from the field--name-body <p> paragraphs of these bytes (paragraphs joined by blank lines; defined-term bold/italic dropped to plain text)."
+    },
+    "completeness_channel": {
+      "channel": "print_pdf_entityprint",
+      "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18618",
+      "shortlink_node": "/node/18618",
+      "http_status": 200,
+      "content_type": "application/pdf",
+      "byte_count": 50653,
+      "content_sha256": "24c8ebff96df9efcb2e30c873a1b1cb273003153fc2c2a4108990557d286e0d5",
+      "retrieved_at": "2026-10-04T01:02:19Z",
+      "note": "The repo's preferred print/PDF completeness channel returned HTTP 200 application/pdf and its raw bytes are pinned here. No PDF text extractor is available under the thin-client runtime, so the PDF was NOT text-extracted; the verbatim_excerpt is derived from the canonical HTML channel above. The PDF is retained as the pinned completeness artifact."
+    }
+  },
+  "verbatim_excerpt": "For the purposes of this Section, buildings that abutted one another on a single zoning lot on the date of such damage or destruction shall be considered a single building.",
+  "content_digest_sha256": "c24417cfefbdc03fda76ca85ad0e9e46b3b9491f2238fdb463eec1f3b066e679",
+  "extraction_status": "extracted_draft",
+  "capture_does_not_establish": [
+    "This capture does NOT make any legal reading. It records only the group provision under which §54-41 sits: for the purposes of that Section, buildings that abutted one another on a single zoning lot on the date of damage or destruction count as a single building. Whether any two buildings 'abutted' and whether they share one zoning lot are factual/legal determinations left to a rule author and G6."
+  ],
+  "downstream_rule_inputs": {
+    "sections_a_rule_author_needs": [
+      "ZR 54-40 (this capture) - single-building aggregation rule that frames §54-41's 75% test",
+      "ZR 54-41 (captured here) - the operative reconstruction thresholds this provision modifies"
+    ],
+    "cross_references_not_yet_captured": [
+      "No ZR section cross-references appear in the §54-40 body text.",
+      "Defined terms (building, abutted, zoning lot) resolve to §12-10 / Article I - not captured here."
+    ]
+  },
+  "notes": [
+    "Parent/group provision for the 54-40 'Damage or Destruction in Non-Complying Buildings' group; captured so §54-41's 'total floor area of such building' can be read in context (abutting buildings on one zoning lot are treated as a single building).",
+    "Captured fresh in-task as context provenance for the §5b DRAFT comparison rule (M2-08).",
+    "Nothing in this record is a Verified zoning determination. Verified requires a published M-series rule plus G6 qualified-human approval (owner directive item 12); snapshots are source provenance only."
+  ]
+}

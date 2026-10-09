@@ -12,19 +12,21 @@ export function FactList({
   facts,
   selectedEvidenceId,
   onSelect,
+  compact = false,
 }: {
   facts: FactView[];
   selectedEvidenceId: string | null;
   onSelect: (evidenceId: string) => void;
+  compact?: boolean;
 }) {
   const ordered = orderFactsByUrgency(facts);
   return (
     <section className="card" aria-label="Extracted facts to review" data-testid="fact-list">
       <h2 className="section-title">Extracted facts</h2>
       <p className="section-note">
-        Ordered by decision urgency. Each fact is unconfirmed evidence until a
+        {compact ? "Needs attention first · Unconfirmed until professional review." : <>Ordered by decision urgency. Each fact is unconfirmed evidence until a
         designated professional confirms it — nothing here is verified by
-        extraction alone.
+        extraction alone.</>}
       </p>
       {ordered.length === 0 ? (
         <p className="section-note" data-testid="fact-list-empty">

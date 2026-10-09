@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T025",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T025-G4-test-adequacy.md",
+  "reviewed_at": "2026-09-14T06:10:40.634621+00:00",
+  "content_manifest_sha256": "8fa2c7a4610cd2a7efcbdc8bb56943bf2ad167a4b1e5cf62569187b9e6a9b05d",
+  "reviewed_sha": "89de37946a3ad3f8c542c03bbe70183742f048a9",
+  "updated_at": "2026-09-14T06:10:41.385767+00:00"
+}

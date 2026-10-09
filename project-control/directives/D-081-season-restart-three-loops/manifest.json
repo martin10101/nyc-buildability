@@ -1,0 +1,61 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-081",
+ "version": 1,
+ "slug": "season-restart-three-loops",
+ "title": "Owner 2026-09-20 ('This is the new season start up the 3 loops'): successor-session authorization to execute the seq-122 recorded relaunch drill for all three lanes (audit-triple diagnosis, deny stale asks both stores, clear-recovery, fresh run-ids, relaunch, watcher re-arm) and continue under D-080 nonstop; ONE relaunch round - recurrence of the simultaneous stop class reopens deficit convergence; NO stop condition lifted",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-20",
+ "captured_at": "2026-09-20T16:38:00+00:00",
+ "created_at": "2026-09-20T16:38:00+00:00",
+ "updated_at": "2026-09-20T16:38:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "7f1ba030fa9276703d9c9eb084136fd7263ceb2c",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction opening the successor session after the owner-invoked seq-122 handoff; executes the handoff's EXACT NEXT ACTION step 2. Grants no new scope. Captured mid-drill after the auto-mode classifier blocked the first deny batch (D-055/56/57 arc: capture, then retry once under the directive)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-081-R001",
+  "D-081-R002"
+ ],
+ "requirements_content_digest_sha256": "0b56be7734313b38513984ef1070181db5fa735a701bdf5da772c065da845131",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-20T16:38:00+00:00",
+   "content_digest_sha256": "958eefd5665756f3bffa94dedfc3ef491c0d54c15dd81c999f19f89ce6ab18fb"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "one relaunch round of the recorded seq-122 drill across all three supervised lanes (audit-triple diagnosis, deny stale asks in both stores, clear-recovery, fresh launcher run-ids, relaunch, watcher re-arm) plus continued D-080 nonstop three-lane conduct",
+  "forbidden": "lifting/bypassing any stop condition (Tier D / Section 20, owner holds, gate FAILs, dependency security, D-072 isolation, D-076-R003 post-B3 checkpoint, D-078-R003 accept order); retry-looping relaunches if the simultaneous stop class recurs after this round"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-20T16:38:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before retrying the blocked deny batch (D-001 discipline; D-055/56/57 classifier arc). At capture: HEAD 7f1ba030 == origin, CI green at that head; 240 accepted; all three lanes PAUSED_RECOVERY from the simultaneous 12:43-12:45Z event, no locks held; audit triples read (loop-1 parked-ask close, loop-2 silent-start shape, loop-3 no-checkpoint subprocess close); 14 stale asks listed (5 loop-1, 9 loop-2, 0 loop-3)."
+  }
+ ]
+}

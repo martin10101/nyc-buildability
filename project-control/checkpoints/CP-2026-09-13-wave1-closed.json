@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-2026-09-13-wave1-closed",
+  "timestamp": "2026-09-13T06:20:50.614507+00:00",
+  "commit": "31a6c573021f46d913f4c54e8daee9567e223884",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "SEAM LANDING: 198 accepted (this session +4: M5-T024 D-043 checklist w/ RC-1 arc; M5-T023 lot-outline = D-040 CLOSED; M4-T013 street-width research; M4-T014 R3/R4 families w/ the G3 FAIL->PASS (g)-provenance arc). D-045 citywide campaign integrated into M4; D-046/D-047/D-048/D-049 all applied (parallel waves, sonnet producers, named-only->suffix-inheritance R1/R2 arc). NEXT ACTION 1: dispatch the M4-T012 producer (re-claimed on the definitive D-049 scope, worktree wt-m4t012-r2, rules dirs free; FIRST producer step = full-text 23-421 print/PDF proof w/ 9,500-present check - BINDING). NEXT ACTION 2: contract M4-T015 B2 street-width connector build (pins the accepted M4-T013 research; DCM ArcGIS primary; fail-closed-to-narrow parsing; disjoint from rules dirs - runs parallel per D-046/D-047). OWNER RETURN ITEMS: D-043 dashboard execution + live-URL confirm (checklist ready); G6 professional ask ISSUED in docs/ARCHITECT_REVIEW_QUESTIONS.md. KEY EFFICIENCY TIPS recorded in orchestrator memory d045-campaign-and-196-accepted (updated): quote-free commit messages (PS5.1 native-arg mangling); getByLabel exact:true; hold pushes during material CI runs (cancel-in-progress, peer pushes too); verifier conditional restamp pre-authorization UP FRONT + uncommitted restamp->submit->accept dance at frozen HEAD (validator now takes ~440s - budget for it and never leave a slow step between restamp and accept); shared-checkout peer races (fetch before push, expect interleaved commits); producer agent memories must be copied OUT of worktrees before cleanup; excerpt-posture snapshots need explicit channel-limitation disclosures (the 23-421(g) HTML blind spot).",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-13T06:20:50.635395+00:00"
+}

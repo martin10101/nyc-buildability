@@ -1,0 +1,104 @@
+{
+ "requirements": {
+  "D-024-R001": [
+   "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json + tools/agent_supervisor/fixtures/capability_matrix_v1.json: live probes recorded as fixtures BEFORE any control-behavior change (AS-6); no worker-facing assignment or token quota exists in this task's deliverables (grep evidence in G2)",
+   "live-workstation reconciliation performed this session, not inferred from snapshots (project-control/reports/M0-T086-capability-baseline.md section 1)"
+  ],
+  "D-024-R002": [
+   "future-facing readiness row: this task makes NO readiness claim; its capability fixtures are the prerequisite; golden-run/continuity/outage/restart proofs owed by M0-T087/M0-T092/M0-T096 where this row is re-verified"
+  ],
+  "D-024-R003": [
+   "first implementation unit of the campaign executed with tests (16 new + 1870-test suite baseline) and submitted to independent G3/G4/G5+DCV; no completion or activation claim made"
+  ],
+  "D-024-R004": [
+   "no role-semantics code changed; Codex control-plane-lead vs producer boundary documented unchanged in project-control/reports/M0-T086-reuse-register.md (transport section)"
+  ],
+  "D-024-R007": [
+   "this unit was planned and produced from the captured directive + ledger without any owner re-prompt after capture (terminal record); docs/SESSION_HANDOFF.md carries successor continuity"
+  ],
+  "D-024-R008": [
+   "zero owner questions asked during this task (terminal record); all decisions derived from repository, tests, docs, and safest defaults"
+  ],
+  "D-024-R010": [
+   "PR #241 untouched: no merge/close/comment commands run this task; hold restated in project-control/reports/M0-T086-capability-baseline.md section 1 and docs/SESSION_HANDOFF.md item 14"
+  ],
+  "D-024-R013": [
+   "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json: claude 2.1.220 + codex 0.146.0 probed via local help (read-only allowlist); tools/agent_supervisor/fixtures/capability_matrix_v1.json: hook events, UserPromptExpansion/UserPromptSubmit contracts, statusline/subagentStatusLine fields verified against official docs (fetched 2026-08-25) with version-gate checks (>=2.1.191/195/196/205/214 all satisfied); feature-detection encoded as status vocabulary"
+  ],
+  "D-024-R017": [
+   "task packet objective cites D-024-R099 as qualifying evidence; commit message cites it; .claude/rules/supervisor-freeze.md amended (authorized by D-024 section 1) to recognize cited D-024-R### ids; defect-lane/gates/R595 unchanged (AS-5)"
+  ],
+  "D-024-R018": [
+   "project-control/reports/M0-T086-reuse-register.md: full component map with REUSE/EXTEND/GAP verdicts; no duplicate machinery built (this task adds only fixtures/probe/test)"
+  ],
+  "D-024-R020": [
+   "all repository mutations this task performed by the Fable producer session (git author); no external agent wrote anything"
+  ],
+  "D-024-R021": [
+   "Codex not invoked for any control action this task; only read-only --version/--help probes from the fixed allowlist (test_probe_allowlist_is_read_only)"
+  ],
+  "D-024-R022": [
+   "no Codex mutation occurred or was made possible; no Codex process received write tools (no invocation beyond help/version)"
+  ],
+  "D-024-R024": [
+   "project-control/reports/M0-T086-reuse-register.md transport section: accepted D-007 bridge marked REUSE; live probe proves 0.146.0 supports exec/--sandbox/--json/--output-schema/resume (no evidence of unsuitability)"
+  ],
+  "D-024-R025": [
+   "no producer work was dispatched on any Codex decision this task (none requested); fail-closed contract remains a Phase D deliverable per project-control/reports/M0-T086-reuse-register.md"
+  ],
+  "D-024-R026": [
+   "no activation, deployment, protected-branch write, credential, or autonomy-broadening action; owner gates restated in project-control/reports/M0-T086-capability-baseline.md section 3"
+  ],
+  "D-024-R039": [
+   "tools/agent_supervisor/fixtures/capability_matrix_v1.json: evidence-source ladder facts recorded (agent_sdk absent-by-policy; statusline/subagentStatusLine documented; transcript fallback deferred); no telemetry implementation in this task (Phase B owns)"
+  ],
+  "D-024-R040": [
+   "tools/agent_supervisor/fixtures/capability_matrix_v1.json agent_sdk.python = absent-by-policy; no pip/npm install run this task; test suite installs nothing (16.1 clean-skip pattern in tools/test_agent_supervisor_capability_probe.py)"
+  ],
+  "D-024-R045": [
+   "no worker-facing assignment exists in this task's deliverables; probe/test/fixture files contain no token quota/percentage/countdown/conserve language (G2 grep evidence)"
+  ],
+  "D-024-R079": [
+   "graph system untouched: task commit diff contains no tools/code_graph or tools/context_* changes (AS-6 reviewer check)"
+  ],
+  "D-024-R080": [
+   "ledger + git used as sole authority throughout (project-control/reports/M0-T086-capability-baseline.md section 1 methodology); no graph-derived fact treated as authoritative"
+  ],
+  "D-024-R082": [
+   "no graph change -> graph results/ordering/identities unchanged by construction; graph regression matrix owed by graph-touching tasks (row re-verified there)"
+  ],
+  "D-024-R084": [
+   "tools/agent_supervisor/fixtures/capability_matrix_v1.json: UserPromptExpansion documented-supported (command-name matcher, pre-model block) and UserPromptSubmit block+erase contract recorded with exact JSON fields; live behavioral proof explicitly 'unknown' pending the Phase F harness - feature-detection is the recorded approach"
+  ],
+  "D-024-R098": [
+   "no fresh-session-per-task rule imposed: T097 and T086 share this healthy session; seams chosen by workload (capture checkpoint, acceptance boundaries), not task IDs"
+  ],
+  "D-024-R099": [
+   "Phase A share delivered: Gate 0 passed pre-write (D-024 manifest audit_log); live-workstation reconciliation (project-control/reports/M0-T086-capability-baseline.md section 1); component/reuse map (project-control/reports/M0-T086-reuse-register.md); installed-CLI capability probes vs official docs (tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json, tools/agent_supervisor/fixtures/capability_matrix_v1.json); deterministic fixtures BEFORE control-behavior change (AS-6, suite 1870/0); freeze qualifying-evidence path amended (AS-5). Bootstrap-continuity slice = M0-T087 (row binds it; explicitly next)"
+  ],
+  "D-024-R107": [
+   "16.1 share delivered: installed-capability probe fixtures distinguishing supported/not-detected/absent/nullable/unknown + absent-tool clean-skip tests + no-side-effect-install proof (tools/test_agent_supervisor_capability_probe.py, 16 tests); remaining 16.1 telemetry bullets owed by M0-T088/M0-T089 (row binds them)"
+  ],
+  "D-024-R113": [
+   "no graph change this task -> 16.7 preservation trivially holds at this identity; full 16.7 matrix owed by graph-touching tasks (row binds Phase tasks + M0-T096)"
+  ],
+  "D-024-R120": [
+   "no activation occurred; bounded-rule machinery untouched; R595/activation gates restated unchanged (project-control/reports/M0-T086-capability-baseline.md section 3)"
+  ],
+  "D-024-R124": [
+   "section-21 references verified for this task's scope: hooks + statusline official pages fetched 2026-08-25 and reconciled against installed 2.1.220 (tools/agent_supervisor/fixtures/capability_matrix_v1.json primary_sources); remaining section-21 pages (sub-agents, SDK, Codex docs) owed by Phases B/C/D tasks which consume them"
+  ],
+  "D-024-R125": [
+   "Gate 0 launch-root passed and recorded: primary cwd ctl24 (git rev-parse --show-toplevel), branch control/D-024-fable-codex-loop; evidence in D-024 manifest audit_log + M0-T086-G0-readiness.md"
+  ],
+  "D-024-R126": [
+   "MCP-clean proven: /mcp reported 'No MCP servers configured' before any write; recorded in audit_log + G0 report; --strict-mcp-config/--mcp-config measured supported for future launch designs (tools/agent_supervisor/fixtures/capability_probe_live_2026-08-25.json)"
+  ],
+  "D-024-R127": [
+   "no Gate-0 failure occurred this session; fail-closed contract restated for successors in docs/SESSION_HANDOFF.md Gate-0 block (no violation possible to evidence beyond compliance)"
+  ],
+  "D-024-R128": [
+   "adoption rule followed: this session independently passed Gate 0 BEFORE adopting the dead session's uncommitted capture; the adopted work was corrected, never discarded or history-rewritten (D-024 manifest audit_log correction entry)"
+  ]
+ }
+}

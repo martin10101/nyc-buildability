@@ -1,0 +1,13 @@
+M0-T157 CI evidence (captured by the orchestrator)
+
+Material: single commit 14bdcc73 (tools/test_directive_compliance.py one-function fix +
+producer report). Trigger context: the owner's D-042 capture (84caa347) made the hardcoded
+'D-042' fixture id real; control-plane failed at run 34726200121 job 103640653970
+(test_s12_wrong_directive_reference_fails_closed, assertTrue 'does not exist').
+
+Run 34726577993 (head 18ee6b79): control-plane (workflow regression test, ADR-005) SUCCESS -
+the repaired derivation (max registered D-nnn + 500, assertNotIn before use) passes against
+the CURRENT registry containing the real D-042. The run is fully green (every job).
+
+Local: python tools/test_directive_compliance.py ResolverTests -v -> Ran 5 tests OK;
+python -m ruff check tools/test_directive_compliance.py -> All checks passed.

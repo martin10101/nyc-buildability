@@ -1,8 +1,7 @@
+import { SurveyWorkspace } from "@/components/architect/SurveyWorkspace";
 import type { Metadata } from "next";
+import "../../../property/architect.css";
 import { notFound } from "next/navigation";
-import { InternalBanner } from "@/components/property/InternalBanner";
-import { SurveyReviewScreen } from "@/components/survey-review/SurveyReviewScreen";
-import { SurveyReviewClientProvider } from "@/lib/surveyReview/context";
 import { surveyReviewEnabled } from "@/lib/surveyReview/config";
 import "../survey-review.css";
 
@@ -50,11 +49,6 @@ export default async function SurveyReviewPage({
   // information posture identical to the flag-off response (G3 F15).
   if (!/^sha256:[0-9a-f]{64}$/.test(documentDigest)) notFound();
   return (
-    <div className="property-shell">
-      <InternalBanner />
-      <SurveyReviewClientProvider>
-        <SurveyReviewScreen documentDigest={documentDigest} />
-      </SurveyReviewClientProvider>
-    </div>
+    <SurveyWorkspace documentDigest={documentDigest} />
   );
 }

@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by [`LEAN_OPERATING_PROCESS.md`](LEAN_OPERATING_PROCESS.md), where its Phase 1 is done.
+
 # Owner Product-Efficiency Directive — parking + managed execution plan
 
 **Status: PARKED / PROSPECTIVE.** Captured 2026-08-09 while M0-T054 (turnover) + M2-T015 are in

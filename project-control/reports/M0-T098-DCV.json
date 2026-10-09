@@ -1,0 +1,226 @@
+{
+ "report": "M0-T098 DCV verdict",
+ "reviewed_sha": "722d4949e483612a73781dcde8d5d222ac06e449",
+ "verifier": "directive-compliance-verifier",
+ "producer": "orchestrator",
+ "verdict": "PASS",
+ "findings": [],
+ "rows": [
+  {
+   "id": "D-026-R001",
+   "state": "PASS",
+   "evidence": [
+    "hybrid delivered: global skill (sha256 504fabbb...a58, 7746 B) + profile (78 lines) + fallback, all at 722d494"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R002",
+   "state": "PASS",
+   "evidence": [
+    "git show --name-only 722d494: no D-024 file; forbidden/sensitive-path grep NONE"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R003",
+   "state": "PASS",
+   "evidence": [
+    "exactly one directive capture (27 rows) + one task + G0/G2 records; minimal footprint"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R004",
+   "state": "PASS",
+   "evidence": [
+    "fallback L10 states personal-overrides-project; both skills' section R step 3 load <repo-root>/.claude/session-handoff-profile.md; report precedence section"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R005",
+   "state": "PASS",
+   "evidence": [
+    "global skill exists at the exact path providing /session-handoff [reason]"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R006",
+   "state": "PASS",
+   "evidence": [
+    "frontmatter parse: exactly 4 keys incl. disable-model-invocation true; no context/agent/allowed-tools; inline mandate L8-14; DRY-RUN L43-51; $ARGUMENTS L16-17"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R007",
+   "state": "PASS",
+   "evidence": [
+    "ls of the user skill dir: only SKILL.md; no other outside-repo writes; commit contains only in-repo files"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R008",
+   "state": "PASS",
+   "evidence": [
+    ".claude/session-handoff-profile.md present at repo root (78 lines in commit)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R009",
+   "state": "PASS",
+   "evidence": [
+    "all 12 routing items located by line (identity L9-11, destination L17, instructions L22, ledger L28-33, status L36, campaign L37, export-handoff L38-39, policy L44-52, MCP L57-60, successor L55-56, overrides L27-34, agents/leases L62-68, gates L70-78)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R010",
+   "state": "PASS",
+   "evidence": [
+    "grep ctl24|ctl23|wt-|absolute-paths over profile: none; successor cmd uses <detected-repo-root> placeholder"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R011",
+   "state": "PASS",
+   "evidence": [
+    "section R step 1: live git evidence only, never from memory of an earlier invocation"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R012",
+   "state": "PASS",
+   "evidence": [
+    "section R step 3: read COMPLETELY, verify identity, resolve every relative path under detected root"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R013",
+   "state": "PASS",
+   "evidence": [
+    "step 3 prohibitions verbatim (never cross-worktree; mismatch -> HANDOFF BLOCKED); report bullets 3+7 exercises consistent"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R014",
+   "state": "PASS",
+   "evidence": [
+    "step 4: established-convention search, prefer existing, plain git, no project-control assumption; temp-repo exercises consistent"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R015",
+   "state": "PASS",
+   "evidence": [
+    "step 4: no unambiguous destination -> HANDOFF BLOCKED + ask owner, do not guess; temp-repo exercise: zero writes"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R016",
+   "state": "PASS",
+   "evidence": [
+    "step 2: non-git -> write NOTHING + BLOCKED; exercise: fatal not-a-git-repo, nothing written"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R017",
+   "state": "PASS",
+   "evidence": [
+    "project skill present (modified 186 lines, not deleted); fallback role stated"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R018",
+   "state": "PASS",
+   "evidence": [
+    "global skill NYC-leak grep: only generic negation; bodies from '## R. RESOLVE' byte-identical (both sha256 1d9431ac...); both reference the profile"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R019",
+   "state": "PASS",
+   "evidence": [
+    "sections A-F preserved in both copies: stop-new-work, sub-agent care, effect enumeration, REPLACE, READY/BLOCKED + 4 items, live-root successor cmd, successor prompt"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R020",
+   "state": "PASS",
+   "evidence": [
+    "no D-024 file; campaigns untouched in commit"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R021",
+   "state": "PASS",
+   "evidence": [
+    "independent frontmatter parse both copies: 4 keys, disable-model-invocation true, no context: fork"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R022",
+   "state": "PASS",
+   "evidence": [
+    "DRY-RUN section mandates strictly read-only; ctl24 dry-run exercise: dynamic root, profile FOUND+VERIFIED, destination = own docs/SESSION_HANDOFF.md, zero state changes; cross-worktree proof"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R023",
+   "state": "PASS",
+   "evidence": [
+    "step 4 mandates the fallback; temp repo without project-control -> BLOCKED, git status clean"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R024",
+   "state": "PASS",
+   "evidence": [
+    "non-git and ambiguous/mismatch paths both BLOCKED (steps 2/3/4); exercises consistent"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R025",
+   "state": "PASS",
+   "evidence": [
+    "project fallback present with valid frontmatter; only /session-handoff on machines without the personal skill"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R026",
+   "state": "PASS",
+   "evidence": [
+    "producer report durably contains files/precedence/dry-run/restart; exact-command item delivered explicitly in the owner terminal report at close (style nit noted, not a violation)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "D-026-R027",
+   "state": "PASS",
+   "evidence": [
+    "docs/SESSION_HANDOFF.md not in the commit file list; report attests no real handoff; exercises read-only"
+   ],
+   "note": ""
+  }
+ ]
+}

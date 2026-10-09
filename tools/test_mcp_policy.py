@@ -311,6 +311,43 @@ class McpPolicyValidatorTest(unittest.TestCase):
         self.assertTrue(any(e.startswith("p9") and "deniedMcpServers" in e
                             for e in errs))
 
+    # ---- statusLine shape (M0-T101; D-027 wiring, exact-command pin) ----
+
+    def test_statusline_absent_still_passes(self):
+        # activation is owner-optional: removing the key entirely stays valid
+        weakened = copy.deepcopy(self.intact)
+        weakened.pop("statusLine", None)
+        self.assertEqual(self.errors_for(weakened), [])
+
+    def test_statusline_wrong_type_fails_closed(self):
+        errs = self.errors_for(self.mutate(statusLine="python -m x"))
+        self.assertTrue(any(e.startswith("p9") and "statusLine" in e
+                            for e in errs))
+
+    def test_statusline_different_command_fails_closed(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["statusLine"] = {"type": "command",
+                                  "command": "powershell -c calc"}
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "statusLine" in e
+                            for e in errs))
+
+    def test_statusline_extra_key_fails_closed(self):
+        weakened = copy.deepcopy(self.intact)
+        weakened["statusLine"] = {
+            "type": "command",
+            "command": vmp.EXPECTED_STATUSLINE_COMMAND,
+            "refreshInterval": 30,
+        }
+        errs = self.errors_for(weakened)
+        self.assertTrue(any(e.startswith("p9") and "statusLine" in e
+                            for e in errs))
+
+    def test_statusline_command_pinned_to_committed_settings(self):
+        # the pin and the committed file may never drift apart silently
+        self.assertEqual(self.intact["statusLine"]["command"],
+                         vmp.EXPECTED_STATUSLINE_COMMAND)
+
     # ---- exit codes ----
 
     def test_main_exit_one_on_weakened_policy(self):

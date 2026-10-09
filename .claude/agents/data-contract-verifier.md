@@ -4,7 +4,7 @@ description: Independent reviewer for official-source connectors and normalized 
 tools: WebSearch, WebFetch, Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
 model: claude-opus-4-8
-effort: high
+effort: xhigh
 permissionMode: plan
 skills:
   - verify-official-source

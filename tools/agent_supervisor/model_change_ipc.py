@@ -468,7 +468,23 @@ class ModelChangeRequest:
 
 
 def assert_allowlisted(request: ModelChangeRequest, config: Any) -> None:
-    """A model outside its OWN provider's allowlist is refused in every role (rule 4)."""
+    """A model outside its OWN provider's allowlist is refused in every role (rule 4).
+
+    M0-T080 / D-023-R013 adds a SECOND, independent gate for the Claude provider:
+    the new model must also appear on the owner-approved model list in the
+    immutable controller config. The IPC is a NON-CONFIG path into model
+    selection - the one place a model id can arrive from outside protected
+    configuration - so a change requested through it is held to exactly the same
+    approved list every other selection act uses. Both gates must pass; neither
+    can satisfy the other.
+
+    The approved-list gate is scoped to `claude` because that list IS the Claude
+    session/model chain (`[approved_models] models`). A Codex change stays
+    governed by `codex.allowed_models`, its own owner-authored list, which is
+    unchanged. Nothing here touches the process-ancestry gate: `request_change`
+    still runs `assert_caller_allowed` FIRST, and this function is reachable only
+    after that has passed.
+    """
     allowed = tuple(config.allowlist(request.provider))
     if not allowed:
         raise IpcError(
@@ -481,6 +497,31 @@ def assert_allowlisted(request: ModelChangeRequest, config: Any) -> None:
             f"{request.new_model!r} is not in {request.provider}.allowed_models "
             f"{list(allowed)}; a model outside its own provider's list may never be used in "
             f"any role, even if the provider defaults to or suggests it")
+    if request.provider != "claude":
+        return
+    approved = getattr(config, "approved_models", None)
+    if approved is None:
+        raise IpcError(
+            "approved_models_unavailable",
+            "the controller config does not expose an owner-approved model list, so an "
+            "out-of-config model change cannot be validated against it; refusing rather "
+            "than applying an unvalidated selection (D-023-R013)")
+    if not tuple(getattr(approved, "entries", ()) or ()):
+        raise IpcError(
+            "approved_models_empty",
+            f"the immutable controller config approves NO models, so {request.new_model!r} "
+            f"cannot be selected by any path. Populate the approved list in protected "
+            f"config through the S13.1 controller-update process; there is deliberately no "
+            f"default list (D-023-R013)")
+    if request.new_model not in approved:
+        raise IpcError(
+            "model_not_approved",
+            f"{request.new_model!r} is not on the owner-approved model list "
+            f"{list(approved.entries)}. A model arriving from a NON-CONFIG path - this "
+            f"authenticated IPC, a Remote Control switch, a settings fallback, or a "
+            f"provider convenience - is never admitted merely because it was requested "
+            f"and confirmed; the owner approves models in protected config only "
+            f"(D-023-R013)")
 
 
 @dataclasses.dataclass(frozen=True)

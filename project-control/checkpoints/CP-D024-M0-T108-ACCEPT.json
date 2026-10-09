@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D024-M0-T108-ACCEPT",
+  "timestamp": "2026-08-27T04:59:04.884785+00:00",
+  "commit": "faa46e3bde7ebd293dc36be4d967976f72eff09b",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "M0-T108 accepted (readonly-guard PowerShell/scripting write-gap fix); all gates PASS across 4 review rounds; DCV empty-set PASS; validator EXIT=0; M0-T109 follow-up created; campaign advanced seq 13 (NEXT M0-T104)",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-27T04:59:04.929326+00:00"
+}

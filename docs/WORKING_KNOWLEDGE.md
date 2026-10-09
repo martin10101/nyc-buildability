@@ -1,0 +1,760 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: the D-059 work order as "the CURRENT priority lane" and "R008 delivery sequence … governs remaining MVP order"; task order now comes from plan §12 and §12a. The loop-packet mechanics and the wide-street build map still apply.
+
+# WORKING_KNOWLEDGE — current section: D-059 dependable-answers + A2 geometry (D-054 Tier 2)
+
+## Loop-packet contract for WEB tasks (learned the hard way, run persistent-local-36, 2026-09-17)
+
+Five packet defects each killed a run of the relaunched loop on M5-T032; every future loop
+packet (web tasks especially) must satisfy ALL of these up front:
+
+1. **Checkpoint envelope:** packet `worktree` = the FULL controller-authoritative path, and the
+   packet carries the instruction to leave `starting_sha`/`current_sha`/`branch`/`worktree` as
+   `""` in the worker checkpoint (controller fills them; any worker-supplied value must match
+   EXACTLY — short SHAs/names fail closed as `checkpoint_field_mismatch`).
+2. **Producer report path** (`project-control/reports/<task>-producer-report.md`) MUST be in
+   `allowed_paths` — the worker's Write is held forever otherwise.
+3. **documented_test_commands profile:** plain single commands only (no quotes, parens,
+   chaining, redirection) — a prose "CI is the authority" line there aborts launch with
+   `bad_documented_test_commands`. Put CI-authority prose in `outputs`/`inputs`.
+4. **Thin client = NO local npm** (no node_modules anywhere, ~6 GB free): web tests CANNOT run
+   locally. Web packets follow the M5-T023 pattern — worker edits + commits + python checks
+   only; CI on the pushed head is the executable authority; orchestrator pushes and captures
+   CI + any live smoke evidence at the seam. Never document npm/npx commands for the loop, and
+   tell the worker not to propose WebFetch (network is owner-default-deny).
+5. **After a `consecutive_revision_loops` (or any counter) breaker trip, the tally is durable
+   per run-id:** relaunch REQUIRES a fresh `--run-id` (edit the ACTIVE-TASK block in
+   `autostart-launch.ps1`); `clear-recovery` alone re-refuses with `budget_exhausted`.
+6. **Discovery routing (D-069):** every packet instructs the producer AND the Codex review
+   guidance to surface out-of-scope product/domain discoveries in their reports (never fix
+   them in-packet); the orchestrator records them in `docs/DISCOVERY_BACKLOG.md` at the seam.
+   Codex learns of the backlog only through the packet — it reads no repo rule files.
+
+Recovery drill order when a run dies mid-task: read audit tail → fix the packet defect (BOTH
+packet copies: ctl24 + the task worktree) → deny stale asks (strip `\r` from digests piped
+through git-bash!) → `clear-recovery` if PAUSED_RECOVERY → fresh run-id if a counter tripped →
+relaunch via autostart-launch.ps1 → re-arm the audit-tail watcher. Worker file edits survive
+all of this (they live in the task worktree, uncommitted).
+
+Machine-sleep crash recovery (run 38, 2026-09-17): a sleep/reboot kills supervisor + worker +
+orchestrator session together, leaving a STALE lock (pid dead), a journal stuck in
+CLAUDE_RUNNING (so `clear-recovery` refuses — it only fires from PAUSED_RECOVERY), a forked
+audit chain (mid-write), and boot refusal `unit_dispatch_unreconciled`. Order: repair script
+(archives fork) → gather read-only evidence (pending_effects 0, children 0, asks empty, edits
+confined to the task worktree) → run `recovery.reconcile_dispatch_intent(journal)` via the
+scripted journal-open from the loop-task-switch drill (NO CLI verb) → fresh run-id → relaunch.
+Worker edits survive in the worktree; the new run resumes from packet + tree.
+
+Watcher + ask mechanics (learned re-arming for run 36, 2026-09-17):
+
+- **Asks live in TWO stores (run-40 proof, 2026-09-17): journal `queued_asks` AND the runtime
+  pending-approvals store (CLI `pending-approvals`).** Run 40 held 6 pending asks while
+  `queued_asks` read 0 the whole time — a watcher polling only the journal reports asks as
+  "self-resolved" while they sit unanswered. Poll BOTH; before any relaunch, `deny` each stale
+  entry by exact request_id + digest (copy them from the pending-approvals JSON — one mistyped
+  id = unknown_request), then re-list to confirm 0.
+  A journal-side `queued_asks` row with NO broker approval record (rotation pause /
+  turnover_refused / model-chain classes) is a genuine owner question the boot probe
+  `pending_requests` counts even when `pending-approvals` lists 0 - the launch REFUSES
+  (S11.5 unsafe_or_drifted, failed_probes=['pending_requests']). No CLI verb closes it
+  between runs (deny=unknown_request; resume-after-answer refuses outside WAIT_FOR_OWNER):
+  answer via the library on the closed journal - cli.DurableJournal(cli.runtime_dir_for
+  (checkout)/cli.DB_FILENAME).open(); journal.resolve_ask(ask_id, answer) (the gate-3
+  reconcile precedent; ask_id from status --json open_asks). Proven loop-2 run-13->14
+  seam, 2026-09-19.
+
+- The watcher's lock-pid check MUST NOT use Git-Bash `ps -p` — MSYS ps cannot see native
+  Windows pids and reports the live supervisor as dead (false LOOP BREAK). Use
+  `tasklist //FI "PID eq $PID" //NH | grep -q $PID` with a 5 s recheck before alarming.
+- Ask-alert pattern (owner directive 2026-09-17 "ping me-side so questions are answered
+  right away"): queued asks serialize in audit.jsonl as `"decision":"DEFER_TO_OWNER"`
+  (detail carries `"tier":"ASK"` / `policy_rule S4.3/...`) — the words `undocumented_command`
+  / `pending_prompt` NEVER appear in the audit line, so a watcher grepping only those goes
+  silent while asks pile up (run-37 gap: 8 queued unnoticed). Watch for
+  `DEFER_TO_OWNER|"tier":"ASK"` AND poll the journal's unanswered `queued_asks` count
+  (sqlite read-only) as belt-and-braces.
+- Answer-ask CLI verbs (approve-once/deny) APPEND to the audit chain and can RACE the live
+  supervisor into a fork (duplicate sequence, seen run 39): the broker journal write usually
+  lands first, so the ANSWER still takes effect even when the audit append raises
+  AuditChainError. A forked chain blocks only NEW CLI processes — the live supervisor keeps
+  appending from its in-memory counter and the run continues unharmed. Posture: verify the
+  answer landed in `queued_asks` (read-only sqlite), keep monitoring, and repair the fork
+  BETWEEN runs (never run the repair script against a live supervisor). If a must-answer ask
+  arrives while the CLI is fork-blocked, the fallback is the controlled restart drill.
+- Not every undocumented-command ask is a packet gap. Two benign classes seen in run 36:
+  (a) the worker chains `; echo FOO_EXIT=$?` onto a documented test command — chaining can
+  NEVER be a documented_test_command (profile forbids it), and the worker self-recovers by
+  retrying the exact documented form within seconds → deny the chained ask as stale;
+  (b) worker `git add` / `git commit` — git writes are never AUTO (policy S4.3), so the
+  worker's local checkpoint commits arrive as ASKs by design → approve-once when staging is
+  in-scope. The supervisor stores only command DIGESTS; recover the actual command text by
+  timestamp-matching the ask's `queued_at_utc` against Bash tool_use entries in the worker
+  session transcripts under `~/.claude/projects/C--…-wt-m5t032/*.jsonl` (subagent files too).
+
+Also: the full `validate_directive_compliance.py` run starves against a live loop worker on
+this box (each `_run_git` call crawls to its 60 s bail under disk contention) — run it between
+units, or rely on the control-plane CI job (same validator, clean runner) for the seam verdict.
+
+## D-059 MVP-review work order (owner 2026-09-14) — the CURRENT priority lane
+
+Owner transmitted a commissioned read-only MVP review (of the branch at 16272c05) with a
+covering message; captured VERBATIM as **D-059** (12 requirements R001–R012, source-001.md
+carries both the message and the full review byte-faithfully). It judges progress against the
+EXPANDED D-045 scope, not the old FAR demo. Standing items every session must respect:
+
+- **R006 claims discipline (prohibition, permanent):** never present the accepted-task count as
+  an MVP completion percentage or as finished customer features (138 of 210 are foundation /
+  control-plane); never repeat the old "2–4 hours saved per lot" estimate as demonstrated; time
+  saved comes ONLY from the R007 benchmark; don't cite the resolved B-022 as a current reason
+  the product is unfinished.
+- **R008 delivery sequence (8 steps)** governs remaining MVP order; step 1 = make today's
+  answers dependable (this is where M5-T027/M5-T028 sit), step 2 = street/lot measurement
+  (M4-T020 + M4-T021 both ACCEPTED), then envelope → units → C/M campaign → corpus →
+  production workflow → professional proof.
+- **R007 benchmark protocol:** ~15–20 real parcels across all five boroughs incl. condo/billing
+  lots, mixed-address parcels, split zoning, special districts, wide-street boundary cases;
+  record the architect's checked answer, BOTH elapsed times, corrections, usefulness. G6 + B-010
+  stay open regardless.
+- **R004 spatial-failure protocol:** the recorded `spatial_intersection_absent` on BBL
+  3022647515 must be root-caused from the deployed commit + settings + typed logs and
+  reproduced — it is NOT justified to say B3/B4 alone fixes it (the live provider doesn't use
+  the centerline module and has its own `LIVE_SPATIAL_PROVIDER_ENABLED`); the deploy checklist
+  must also name `LIVE_SPATIAL_PROVIDER_ENABLED` and `INTERNAL_SCENARIO_ENABLED`. STILL OPEN.
+- **R009 status-prose reconciliation:** master_plan.json milestone summaries are stale (M2
+  survey rows, M3 acceptance). STILL OPEN. Verified counts at 2026-09-14: M0 138, M1 9, M2 21,
+  M3 1, M4 15, M5 26 = **210 accepted** (2026-09-14 session close).
+- Fix lane: **M5-T027 ACCEPTED (208th)** — R001 recorded-data wording, R002
+  bldgarea-zero-with-buildings fail-closed, R003 evaluation-derived labels. **M5-T028 ACCEPTED
+  (209th)** — opened from M5-T027's own G3 advisory A1, which found the R003 defect class
+  surviving in FIVE live-wired modules (`derive.py:82` DERIVED_RANGE_LABEL emitted
+  unconditionally, `breakeven.py:155`, `comparison.py:118/:129`, `ranking.py:114`,
+  `sensitivity.py:128`). **R003 is now CLOSED PROJECT-WIDE**: its DCV swept BEYOND the five for
+  a sixth defective module (none found — `evidence.py`'s hit is a docstring never serialized)
+  and proved the remaining literals are unreachable aliases by tracing the live route's imports
+  and the server-side-only `scenario_document` build. Still-out-of-scope carriers (candidates,
+  NOT defects in the accepted work): `scenario.schema.json` prose and the apps/web presentation
+  surface, both forbidden paths in those packets.
+- **The reviewer-finds-what-the-task-missed pattern is now twice-proven** and worth repeating:
+  M5-T027's G3 found the five-module gap the packet never scoped, and M4-T021's G4 found a
+  provenance drop no test could have caught (the output fields did not exist). Give reviewers a
+  standing licence to look just outside the packet boundary — both of this session's most
+  valuable findings came from there.
+
+Living file for the section under construction NOW. Handoff names it a must-read; update it
+while working; at section close PRUNE finished material (git keeps history) or PROMOTE
+durable items to `.claude/rules/PROGRAM_KNOWLEDGE.md`. Ledger stays authoritative.
+
+## Wave-4: CLOSED (pruned per D-054-R003 — detail in git history + the DCV report)
+
+- M4-T018 (203rd) + M4-T019 (204th) ACCEPTED; 20/20 DCV rows PASS
+  (`reports/M4-T018-M4-T019-dcv-verification.md`); checkpoint CP-2026-09-14-wave4-closed.
+  Nothing in flight. Next big block: D-053 relaunch (section below).
+
+## Gate/lifecycle mechanics learned the hard way (2026-09-14 — each cost a real cycle)
+
+Recorded because every one of these was discovered by a refusal mid-arc, not by reading docs.
+
+- **Default gate set.** `new-task` without `--gates` yields **G0,G2,G3,G4,G5**, not the
+  G0,G3,G4 the earlier packets used. All three packets contracted this session carry the fuller
+  set. G2 is the producer self-check gate and the CLI rejects the producer's own agent name for
+  it — record with `--reviewer orchestrator` (role `self_check`, never counts as independent
+  review). A required gate ALSO needs its reviewer listed in the packet's `reviewer_agents`;
+  all three packets required G5 but omitted `security-reviewer`, so the completed review could
+  not be recorded. **Fix by ADDING the reviewer — never by removing the gate.**
+- **Post-submit edits invalidate the frozen submission identity.** The `[ORCH-CORRECTED]`
+  docstring fix on M4-T021 landed after its submit, and `accept` failed closed with
+  "frozen-evidence identity mismatch … re-submit and re-verify". The fix is to re-freeze:
+  `awaiting_gate → rework → in_progress → submit` (the lifecycle forbids the direct hops).
+  Gates recorded AFTER the edit stay valid — no re-run needed, and both reviewers' identity-carry
+  attestations covered it.
+- **`accept` scans open blockers' `affects` AND `detail`** for a word-bounded task id
+  (`_blocker_references`, docstring: "can only block acceptance, never allow it" — it accepts
+  false positives). B-024's historical sentence "the loop stopped while attempting packet
+  M4-T021" therefore blocked that packet's acceptance. Correct the *reference*, preserve every
+  fact/quote/sha, move the id to an unscanned field, and log a dated `scope_corrections` entry —
+  **never close or downgrade a blocker to get past it** (B-024 is still open).
+- **PASS-with-required-corrections + reviewer disagreement.** G3 returned PASS-with-corrections
+  while G4 returned FAIL on the SAME submission, and the two disagreed on EC-5. Inventory the
+  whole failure surface before fixing (principle 17), rule the disagreement explicitly in a
+  written record (`reports/M4-T021-rework-ruling.md`), then rework once and send a
+  delta-attestation to the SAME reviewer agents (they stay resumable and return in ~1 min).
+  Ruling heuristic that settled it: when a packet incorporates a precedent BY NAME, the
+  precedent's actual source mechanism is the specification — the reviewer who read the
+  precedent beats the reviewer who read only the packet prose.
+- **`tools/test_directive_compliance.py` takes ~54 min (129 tests).** It is slow, not hung.
+  Three agents relaunched it after apparent timeouts, stacking four parallel 54-minute runs.
+  Launch it ONCE in the background with a long budget.
+- Orchestrator edits to production source are acceptable ONLY as tagged
+  `[ORCH-CORRECTED per <gate> <finding>]` comment/docstring fixes with the superseded text
+  preserved and BOTH independent reviewers re-attesting afterwards — the DCV ruled this
+  "compatible, narrowly" and explicitly not a precedent for functional code.
+
+## A2 build map (B-lanes; statuses)
+
+- B5 ruling = DONE (D-052). B6 = DONE (M4-T018 report = the pin). **B3 = DONE — M4-T020
+  ACCEPTED 2026-09-14 (207th)**, module `dcm_street_centerline_geometry.py` (DCV 5/5,
+  CI green). **B4 = DONE — M4-T021 ACCEPTED (210th)** (`wide_street_buffer_engine.py`, 40 tests,
+  connectors suite 792; 5/5 gates + DCV 5/5, after a G4 FAIL + rework). B7 (wire into
+  r6_r7_r8_wide_street_conditional_far.rule.json — currently cites zr-23-22 ONLY, performs
+  no wide-street determination) = OPEN, do LAST.
+- **B7 BINDING PRECONDITIONS (from the M4-T021 reviewers — do NOT rediscover these when B7 is
+  scoped):** (1) *G3 modularity ruling:* do NOT split `wide_street_buffer_engine.py`, but B7's
+  rule-wiring and the named-street override table MUST land as their own module(s) consuming
+  this one — never added into this file (the DCM parse/classify/policy four-file split is the
+  precedent). (2) *G5 advisory A1:* the engine has NO input-size or coordinate-magnitude bound
+  of its own — `len(wide_segments)`, per-path vertex count, and plausible-EPSG:2263-extent are
+  all unbounded here, relying entirely on upstream transport caps (MAX_RESPONSE_BYTES 10 MB,
+  MAX_RESULT_RECORD_COUNT 2000/page, HARD_MAX_PAGES). Acceptable today ONLY because nothing
+  reaches this module from a request path. **Before B7 wires it behind a handler, add a typed
+  fail-closed bound (and/or an extent sanity check alongside the existing finiteness check) or
+  make it a binding requirement of B7's own contract.**
+- **B4 judgment calls the producer disclosed for the reviewers to rule on** (carry into B7):
+  `Ec5AttestedPreconditions` is required/no-default but does NOT gate computation on the
+  attested boolean VALUES (reading: the pinned research says B4 is not blocked on B5/B6/B7);
+  `quad_segs=8` pinned for determinism continuity, not source-derived; no multipolygon/holes
+  lot fixture. EC-4 tangency was characterised empirically (GEOS: intersects=True with a
+  zero-area LineString) and the legal-tolerance question left OPEN for G6 —
+  `BOUNDARY_TOLERANCE_FT` is proven never imported (AST name scan).
+- **B7 acceptance criterion (G3 advisory A1, elevated):** `exceptions_checked=True` only when
+  exceptions checked AND (none apply OR each applicable one implemented/resolved);
+  `frontage_match_method=coverage_established` only after real multi-feature collection
+  (E 96 St segmentation). Policy API: any non-{wide,narrow} decision = "not classified" —
+  don't key routing solely off routed_to (G3 A4).
+- T019 leftovers for B7/next packet: 3 concrete inequality test cases (`<=74`→narrow,
+  `<80`→UNRESOLVED, `>60`→UNRESOLVED, G3 A2); optionally persist classifier `basis` (A3);
+  genuine conflicting-records test + per-rule fallback tests (G4 F2/advisories);
+  per-field no-default assertion = standard guard for any new attestation dataclass.
+
+## Exception-rule build inputs (from M4-T018 report §3)
+
+- Named-street override table: 2 rows (Broadway W94–97 Mn CD7; Allen St Rivington–Delancey
+  Mn CD3), legislative facts w/ §12-10 anchors — needs a CD+cross-street matcher (nothing
+  accepted keys on those today), distinct override provenance code. OPEN: "separated by
+  mapped public park" grammatical scope; "may be considered" vs "is" (both routed, G6-class).
+- C5-3/C6-4/C6-6 alternate-width test: avg ≥75 AND min ≥65 per portion — needs portion-level
+  avg/min width NO accepted connector computes. 70-ft connector clause (<700 ft between two
+  ≥75 portions) similarly geometric.
+- Snapshot-update task (rules-engineer, separate): zr-12-10.snapshot.json carries superseded
+  flat-75 text (retrieved 2026-07-22, AFTER the 3/26/2026 amendment — already stale at
+  capture); carriers = snapshot + M4-T013 report + r5_setback.rule.json;
+  `section_last_amended: 2024-12-05` metadata defect (page banner, not the term stamp).
+  Corrective addendum flows to carriers; conflict visible; NO re-adjudication of past
+  acceptances without qualified-human ruling (G1 advisory 1).
+
+## C-district build (from accepted M4-T017 §9)
+
+- 3 bounded families: (1) overlay commercial FAR (33-121, 20 rows, keyed by UNDERLYING R
+  district; image-rendered-PDF rows need text-source spot-check — G1 A1 row list in
+  M4-T017-G1 report); (2) standalone FAR (33-122/123) — REPORT IS STRUCTURAL-ONLY, family-2
+  research must capture values from a text source (F5/A2; owner research has the values as
+  discovery aid: C4-6=3.4, C4-7=10.0, non-monotonic); (3) equivalents ROUTING (34-112,
+  C4-6→R10) — reuses residential rule files unmodified. 34-111 substitutions (GTZ qualifying
+  R1–R5→R5; non-qualifying R1/R2→R3-2) run BEFORE residential rule selection. 35-31 mixed
+  caps NOT additive; 35-32 qualifying-site 2.5 GTZ. OQ-3(T017)=33-121 R9A 7.50 vs rule 7.52
+  factual check. 32-121/122: no residential in C7/C8, C3A building-type limits.
+
+## Research-channel state (D-050)
+
+- Queue: RQ-003/RQ-004 ANSWERED (consume in D-049-R004 conversion task + A4 triage → then
+  SATISFIED/Closed register). RQ-005 residual OPEN: DCM field-level width convention — DCP
+  email draft ready in `docs/research/owner-research/RQ005_Independent_Confirmation_…md`
+  (owner sends; DCPOpendata@planning.nyc.gov); per-frontage closes via Section/Alteration
+  Maps (index in DCP labs-layers-api config; PDFs at nycdcp-dcm-alteration-maps DO spaces).
+- Qualifying-residential-site (RQ-003 yield, for the D-049-R004 conversion packet): routes
+  (a)(1)–(c) + affordability paragraph; §114-02 excludes >5-acre 2024-12-05 Special Bay
+  Ridge lots — §12-10-only eligibility function is WRONG; cross-refs §23-21/§23-424
+  (35/35, 35/45, 45/55)/§27-111/§66-11; print/PDF capture still owed.
+
+## D-053 loop — shift 1 HARVESTED; shift 2 BLOCKED on B-024 (Fable exhausted)
+
+- **Shift-1 harvest fully landed 2026-09-14**: M4-T020 (the loop worker's build) cherry-picked
+  byte-identical (patch-id 3ea576a6, blob-proven), G3/G4 PASS zero blocking, DCV 5/5,
+  **ACCEPTED as the 207th**. The loop's unit DID produce accepted product code end-to-end.
+- **Shift 2 could NOT run.** Relaunch (run `persistent-local-35`, packet M4-T021, the
+  relaunch_m4t021.ps1 adaptation) passed preflight, reached START_CLAUDE, then stopped
+  `REFUSED (unsafe, exit 11) fable_exhaustion_turnover_recorded` at 62.1s. Fable is exhausted
+  ACCOUNT-WIDE including the extra usage D-058-R004 relied on — corroborated independently by
+  `model_switch_tracker.py --query` showing this orchestrator session force-migrated Fable 5 →
+  Opus 5 at 08:45:24Z on a recorded USAGE/RATE LIMIT (explicitly not a safety refusal).
+  Root cause per the controller doctor: the live account-quota CLI signature has never been
+  captured, so the turnover probe leaves the failure 'unknown' and holds the fail-closed pause.
+  **The worker-pin flip is OWNER-ONLY** (controller S3.2 rule 6 + the classifier's model-file
+  guard) → **blocker B-024** carries the exact one-line edit. Authorization is pre-recorded as
+  **D-060-R002**; revert obligation D-060-R003. Candidate follow-up the doctor named: capture
+  the live quota signature now that a genuine exhaustion finally happened.
+- **Loop continuity without the loop (D-060-R001):** the blocked packet was produced by an
+  orchestrator-dispatched producer instead (deviation recorded in the M4-T021 progress log).
+  When the owner restores the pin, point the relaunched loop at the NEXT packet, not M4-T021.
+
+## D-053 loop — shift 1 detail (persistent-local-34 closed benignly at unit completion)
+
+- **Run persistent-local-34 (M4-T020 B3) FINISHED its unit**: worker built the module, ran
+  all four documented commands auto-approved (audit seq 838–844), `claude_unit_completed`
+  seq 845; close = the benign checkpoint refusal (seq 846: worktree-FIELD mismatch,
+  'wt-m4t020' vs full path — same DL-class as the starting_sha variant) → synchronous stop.
+  **Work verified green by the orchestrator (39 tests + ruff) and COMMITTED at wt-m4t020
+  `d7766b8d`** (branch task/M4-T020-dcm-geometry). NEXT for M4-T020: cherry-pick to
+  candidate, submit + G3/G4 wave + DCV + accept (normal arc).
+- **Relaunch pattern for shift 2** (successor): adapt `scratchpad/relaunch_m4t020.ps1`
+  (new packet/branch, fresh run-id persistent-local-35+); down-state drill first
+  (pending-approvals denies w/ \r-strip, clear-recovery from PAUSED_RECOVERY, worktree
+  reset to claim head). **D-058-R004: worker stays claude-fable-5 via EXTRA USAGE**
+  (regular weekly exhausted per owner; opus chain = genuine-hard-stop last resort only,
+  never a pin flip).
+- **D-055 (owner, captured+executed 2026-09-14)**: Fable while it lasts for main + reviewers —
+  model_selection.toml = fable-5 w/ ["claude-opus-4-8"] quota fallback (D-036 revert done);
+  five gate-reviewer agent files (89c4e304 set) back to `model: claude-fable-5`, effort key
+  removed. Standing cycles stay armed: on the next exhaustion, worker falls back via
+  reason_code quota_exhausted; reviewer files flip per reviewer-model-fallback (revert on
+  owner's next "Fable is back"). D-047 sonnet-5 loop-allowlist item still open (owner
+  settings, D-053-R004).
+- Launch traps proven this arc: classifier-block → capture-directive-then-retry-once
+  (promoted to Tier 1); owner `!`-prefix attempt produced NO artifacts (script never ran).
+  MapLibre trap (M5-T025 G3-corrected root cause): a one-time `load` listener as the SOLE
+  draw contingency never fires on a degraded-GL device — always arm `style.load` + an
+  `error` handler; `isStyleLoaded()` fast path = defense-in-depth.
+- Posture now: **quiet monitor + owner bridge only** (R002/R003); NO auto-accept/merge (R595
+  shadow); gates/acceptance stamped by the orchestrator at the seam; relaunch-per-task via
+  `scratchpad/relaunch_m4t020.ps1` pattern (new packet path/branch/run-id each time).
+- Wave-5 queue after M4-T020: B4 buffer engine, zr-12-10 snapshot-update task, C-district
+  families 1–3, B7 wiring LAST (G3-A1 acceptance criterion).
+
+## D-043 owner walkthrough findings (2026-09-14, live Render deploy)
+
+- Deploy WORKS end-to-end on the owner's device: web service created by hand per the
+  checklist; `?ruleeval=on` address flow resolves live (CORS correct), confirm card +
+  property profile + provenance disclosures render. This is the D-043-R001 evidence leg
+  (owner-confirmed live URL). Real URLs stay out of repo/chat per D-043-R002.
+- **Finding 1 (confirmed, candidate packet): provenance panel has no outbound source link.**
+  `ProvenanceDisclosure.tsx` renders `source_id` (internal slug e.g. nyc-dcp-pluto-soda),
+  `dataset_id`, and only `urlHost(request_url)` as TEXT. A safe clickable link is
+  constructible TODAY without reflecting any server string: constant allowlisted host +
+  validated dataset-id token → `https://data.cityofnewyork.us/d/<dataset_id>` (same
+  constant-prefix + validated-token pattern as the ZoLa link, G5 F-1 discipline). Small
+  focused web packet; same treatment applies to RuleEvaluationResult.tsx line ~135.
+- Finding 2 (pending owner retest): lot-outline map shows gray panel — outline may just be
+  SMALL (fitBounds maxZoom 18 caps a single tax lot to fingernail size; no basemap is
+  deliberate, none admitted). Owner to scroll-zoom center; if truly absent → defect packet
+  (console evidence requested). Polish candidates if present: higher maxZoom for small lots,
+  basemap admission (needs G5 source admission).
+- Finding 3 (RETESTED, closed as EXTERNAL — D-056-R004): ZoLa blank; link format verified
+  from ZoLa router source (2026-09-12 doc) AND live shell re-fetch 2026-09-14. EVIDENCE
+  UPDATE 2026-09-14: the ZoLa HOMEPAGE itself is blank on TWO owner devices (desktop +
+  mobile Chrome, 5+ min, multiple refreshes) while the shell fetches fine server-side →
+  city-side app/asset failure OR a network shared by both devices (router DNS/ad-block);
+  definitively NOT this repo's link and NOT a single-browser config. **ROOT CAUSE PROVEN
+  2026-09-14 (owner console + independent fetch): ZoLa's backing service
+  labs-layers-api.herokuapp.com/v1/layer-groups returns HTTP 500 (both POST from the app,
+  per the owner's console trace on route map-feature.lot, and GET from this side) — a
+  city-side outage of ZoLa's layers API; the SPA dies before painting.** No repo change
+  owed; none of OUR accepted connectors depend on labs-layers-api (DCM/MapPLUTO go direct
+  to ArcGIS/SODA) — the outage does not touch platform data paths. Resilience candidate
+  noted: a second escape-hatch link (city Digital Tax Map) beside the ZoLa link on the
+  confirm card. NYC Planning Labs contact labs_dl@planning.nyc.gov if persistent.
+  Findings 1+2 became the D-056 work order → packet M5-T025.
+- **Finding 4 (confirmed vs live PLUTO, candidate packet): address-continuity gap on
+  Step 2.** Owner entered "125 Taylor St" → confirm card 125 TAYLOR STREET / BBL 3021720001
+  → Step 2 shows "83 TAYLOR STREET" for the SAME BBL. NOT a lookup bug: PLUTO stores ONE
+  representative address per tax lot, and live SODA (64uk-42ks, 2026-09-14) returns
+  address="83 TAYLOR STREET", lotarea=116000, lotfront=580, lotdepth=200 for that lot —
+  a block-sized multi-address lot; Geoclient correctly maps 125 Taylor onto it. UX
+  candidate: carry the user-confirmed address into Step 2 ("You searched 125 Taylor St —
+  this lot's official PLUTO label is 83 Taylor St") instead of silently swapping labels.
+- **Finding 5 (confirmed, candidate packet): year fields render with thousands separators**
+  ("Year built 2,005"). Cause: `apps/web/src/lib/format.ts` formatValue line ~15 runs EVERY
+  number through toLocaleString("en-US") grouping; year-class fields (yearbuilt, yearalter*)
+  need plain rendering. Tiny fix + test. (298 Wallabout walkthrough, live SODA yearbuilt raw
+  = "2005".) Minor sibling candidate: the data-completeness banner could link to the
+  Missing-inputs section that already enumerates the absent fields (discoverability only —
+  the enumeration exists, MissingInputsSection + show-more toggle, nothing is dropped).
+- Walkthrough data notes (298 Wallabout, BBL 3022647515, live SODA 2026-09-14): condo lot
+  (condono=1313, 75xx billing lot), bldgclass R4 (DOF condo building-class code) under
+  zoning R7-1 (different vocabulary - no contradiction); unitsres=unitstotal=20 = DECLARED
+  condo units (owner counts 12 apts + 8 basement rooms - consistent if basement rooms are
+  separately declared units; authoritative confirmation = the ACRIS condo declaration, out
+  of scope); numfloors ABSENT from the official PLUTO record (app honestly shows missing -
+  a floors-bearing source (DOB) is a future connector candidate, not a defect).
+- **Finding 6 (confirmed, candidate packet): the aggregated "Missing official inputs" card
+  is mounted ONLY on the /property lookup view (PropertyLookup.tsx:144) — the Step-2
+  Confirm screen shows the completeness summary + per-fact notes but has no list and no
+  link.** Candidate: mount or link MissingInputsSection on ConfirmScreen (pairs with the
+  Finding-5 banner-link nit).
+- **Owner-facing flag map (walkthrough Q&A):** Compare/scenario endpoint is gated by its
+  OWN api-side var `INTERNAL_SCENARIO_ENABLED` (config.py:34; fail-safe 404 when unset) —
+  NOT by INTERNAL_RULE_EVAL_ENABLED; the D-043 checklist never mentions it (doc-gap
+  candidate: checklist addendum). "Confirm facts (not yet available)" is honest-by-design:
+  user_confirmations exist in the contract but no endpoint accepts them until the
+  analysis-run milestone + persistence/auth (Supabase B-001) land — not a flag.
+- **Live-deploy staleness (owner walkthrough, Compare run):** the deployed nycdf-api is the
+  2026-09-11 blueprint build (autoDeployTrigger off) — it PREDATES M4-T009's R1–R12 FAR
+  families (accepted 9/12): the live scenario coverage matrix says "(R5)" and treats
+  higher-density as out_of_scope. The owner's next Manual-Deploy round must cover BOTH
+  services (web + api). Scenario for 3022647515 fails closed on `spatial_intersection_absent`
+  (profile carries no spatial_intersection section; integration.py:474 — district never
+  guessed) — the geometry lane (B3 done, B4 next) + spatial layer is exactly this gap.
+
+
+## Seq-117 three-loop day (2026-09-18) — session lessons
+
+- **Consult THIS file at contract time, not after:** the checkpoint-envelope and full-path
+  worktree rules were ALREADY item 1 above, yet the three-loop seam re-hit both (claims made
+  with short worktree names; no envelope note) costing three one-time S4.5 stops. Contract
+  checklists beat recall. (Tier-1 line now exists in PROGRAM_KNOWLEDGE.)
+- **Agent-return truncation is routine for long reviewer reports:** returns clip mid-text
+  repeatedly; chase remainders via SendMessage in 2-4 rounds, save each part VERBATIM with
+  truncation points marked, and ask for "ONLY the remainder from <quote>" to keep rounds small.
+- **A copy-string change must sweep BOTH sibling vitest suites AND the e2e specs:** the F2
+  clean-line lowercase change broke a case-sensitive `toHaveTextContent` in the OTHER suite
+  (predicted independently by HJ + G4 before CI reported), and the DB-009 shared-constant
+  rewording broke a Playwright assertion. Grep the exact old sentence across apps/web
+  (components + __tests__ + e2e) before committing any user-facing copy change.
+- **`submit --sha` must equal live HEAD** (content identity stamped at HEAD, fail closed) —
+  if control-plane commits landed after the material cherry-pick, verify allowed_paths
+  byte-stability material..HEAD and submit at HEAD.
+- **DCV registry usage:** `directive_registry.load_registry()` (or `.load()` after
+  construction) — an unloaded instance falsely reports "directive does not exist".
+- **Breaker economics:** 8 consecutive_revision_loops trips in one day, every one at/near
+  completion (evidence packaging), zero code defects — each ~3-min recovery (archive fork if
+  CLI raced, clear-recovery, fresh run-id, relaunch). DB-012 (4→6) is the lever.
+- **Stale-snapshot class (DB-022):** a v1 zr snapshot predated its section's amendment while
+  the ACCEPTED capture lived in a task report; matcher-class packets must pin the snapshot
+  AND check its `section_last_amended` against the latest accepted capture. Sweep the other
+  v1 snapshots for the same class at the next research seam (WATCH).
+- **PASS-with-required-corrections at full depth:** HJ corrections → tagged [ORCH-CORRECTED]
+  edits → rework→in_progress→resubmit at new head → delta-attestations from ALL FIVE
+  reviewers (two rounds when a reviewer catches a defect IN the correction) → CI at the final
+  head → gates → DCV with multi-condition restamp — all evidence verbatim in the reports.
+
+## Seq-118 five-accept session (2026-09-18/19) — session lessons
+
+- **DCV restamps vs parallel lanes:** a disjoint peer material commit between freeze and
+  record voids literal all-product-dirs-empty conditions (M5-T040 needed a delta-attestation
+  EXTENSION); ask every DCV to state its disjoint-peer tolerance UP FRONT (M5-T042 onward all
+  did), and for tagged corrections get an AMENDED condition-1 ("byte-identical to material as
+  amended by exactly commit X") — the M5-T044 DCV wrote it cleanly.
+- **Tagged-correction cycle at speed:** G3 PASS-with-required-correction → one [ORCH-CORRECTED]
+  commit + mutation-sensitive test → rework→resubmit → SendMessage delta-attestations to the
+  four resumable reviewers (~1-2 min each; G4 re-ran its own mutation probe on the correction).
+- **Deny ALL asks before relaunch:** a run's unanswered asks survive its close; ONE hidden ask
+  (below a head-trimmed listing) fails preflight `pending_requests` → PAUSED_RECOVERY. List
+  pending-approvals untrimmed and deny everything, both stores, before every launch.
+- **Watchers:** plain background-bash watchers were killed repeatedly (external stops); the
+  harness Monitor tool (persistent) survived all evening — use it for loop watching and CI
+  waits. A single-cycle run close with `stopped=deny_and_continue` is a RESUMABLE park
+  (SAFE_CHECKPOINT), not a failure: clear asks and re-run the launcher (same run-id resumes).
+- **gitleaks FP class:** fixture VARIABLE NAMES containing KEY trip generic-api-key — inline
+  `# gitleaks:allow` on the line; never quote the flagged line verbatim in an evidence file
+  (it re-trips the hook on the evidence commit — reword descriptively).
+- **modularity_check cwd artifact:** exit 2 from `services/` cwd; repo root only.
+- **SODA null semantics (load-bearing for the condo wiring):** Socrata OMITS null columns —
+  the real null-billing shape is KEY ABSENCE (7/8-key object), so explicit-null synthetics are
+  byte-infaithful; pin the real captured fixture and assert key-absence tolerance. Free
+  freshness stamp: response header `X-SODA2-Truth-Last-Modified` == dataset `rowsUpdatedAt`.
+- **Submit CLI writes `reports/<task>.json`** (frozen-submission record) — stage it with the
+  submit commit (five were under-staged this session and swept at landing).
+
+## Loop stop drill: rotation_refused over a parked broker ask (run persistent2-local-19, 2026-09-20 seq 121)
+
+Same resolution as the seq-119 model-downgrade collision, but a DIFFERENT trigger: the worker
+tried one undocumented Bash command -> the broker parked an operator ASK (correct; left
+unanswered per the autonomous model) -> at the next session-rotation point the S11.3
+unsafe_seam gate refused to rotate over the outstanding approval -> unsafe stop exit 11
+`rotation_refused`, journal PAUSED_RECOVERY. The WORK SURVIVES (cycle-1 edits intact in the
+task worktree; here all four in-scope M5-T055 files were already edited).
+
+Fix (loops-down write-verbs only, ~3 min):
+1. `pending-approvals --checkout <C:/SupervisorControllerN>` -> `deny <id> <digest>` the CLI-store ask.
+2. The SAME ask also lives in the JOURNAL store plus the `turnover_refused/<run-id>/N` ask —
+   no CLI verb; resolve BOTH via the library:
+   `cli.DurableJournal(cli.runtime_dir_for(checkout)/cli.DB_FILENAME).open()` -> `open_asks()`
+   -> `resolve_ask(ask_id, answer)` (signature `(ask_id, answer) -> bool`).
+3. `clear-recovery --checkout ...` (journal rests at PREFLIGHT).
+4. Fresh `--run-id` in the launcher ACTIVE-TASK block; relaunch; worker resumes on the
+   surviving worktree edits.
+
+Related (same seam, loop-3/loop-2 boot repairs): the STOCK repair_forked_audit_chain.py and
+reconcile_dispatch_intent.py both HARDCODE loop-1's runtime key — for instance 2/3 write a
+targeted copy keyed by that instance's checkout key (launcher `$CheckoutKey`) before running;
+never point the stock script at the wrong store. `clear-recovery` on a forked audit chain
+fails on the AUDIT APPEND even when the journal transition is valid — archive-repair the fork
+first, then re-check (the journal may already rest at PREFLIGHT).
+
+## Deficit convergence: the two loop-worker no-checkpoint stops of 2026-09-20 (seq 122) - CLOSED at run-61 relaunch
+
+Two runs parked PAUSED_RECOVERY with the SAME S14 wording ("missing_checkpoint") but DIFFERENT
+mechanisms - the audit stream discriminates them, the S14 reason string does NOT:
+
+- **run persistent2-local-21-m5t058**: `events: 2, context_tokens: 0, observed_models: []` -
+  the worker CLI never initialized a session (no ~/.claude/projects dir created), sat the full
+  1500s, exited rc 0. SILENT-START class. One occurrence; single retry (run 22) succeeded.
+- **run persistent-local-60-m5t060**: `events: 902, context_tokens: 7.4M, observed_models:
+  [claude-opus-4-8]`, session file exists, worktree carries 10+ files of real cycle-1 edits -
+  the worker was PRODUCTIVELY MID-BUILD and hit the 1500s unit timeout before its first
+  checkpoint. TIMEOUT-UNDER-LOAD class: at that instant the machine ran 0.6GB free of 7.8GB RAM
+  with the T059 FIVE-reviewer wave + the loop-2 worker + the orchestrator all live.
+
+**Rule: never diagnose a missing_checkpoint stop from the S14 reason string - read the run's
+audit `events`/`context_tokens`/`observed_models` triple and the worktree diff first.**
+
+Repairs (operational, no repo code): (1) loop-1 unit-timeout 1500 -> 2400 for the large frontend
+packet (first cycles explore + scaffold; 25 min was insufficient under load); (2) concurrency
+conduct - while TWO loop workers are live, dispatch reviewer waves in batches of <= 3 agents and
+never launch a loop during an active full wave (the 7.8GB thin client cannot host 8+ model
+processes); (3) the silent-start class keeps the recorded single-retry drill (recurrence of THAT
+class specifically = reopen convergence). Verification: run-61 first cycle reaches
+CHECKPOINT_RECEIVED. Evidence frozen in both stores' audit.jsonl + journals.
+
+## Deficit convergence: silent-start class, third occurrence (2026-09-20 seq 123) - CLOSED at run-27 relaunch
+
+Third occurrence of the worker-CLI silent-start class (after run persistent2-local-21 seq-122
+and run persistent-local-63 cycle-3 seq-123): run persistent2-local-26-m5t062 cycle 1 - the
+supervisor spawned claude.exe under job_object containment and recorded a session id, but the
+CLI NEVER created its ~/.claude/projects session dir and emitted ZERO events (audit triple
+events:2/context_tokens:0/observed_models:[]), sat the full 1500s unit timeout, rc 0.
+
+Causal trace (bounded): the hang is INSIDE the worker CLI's startup - the supervisor side is
+healthy (preflight verified, dispatch recorded, containment up), and the CLI writes nothing to
+trace. Discriminating evidence: loop-3's worker (run persistent3-local-09) launched THIRTEEN
+seconds later from the same launcher pattern and initialized normally (session file + real
+cycle-1 edits) - so the class is a NONDETERMINISTIC startup race (shared-CLI-state/credential
+contention or auth refresh hang are the candidates), not machine-wide pressure, not the packet,
+not the worktree.
+
+Repairs (operational): (1) the single-retry drill stays the remedy - now proven 2/2 (run 22
+after 21; run 64 after 63's cycle-3 instance); (2) NEW conduct: stagger loop launches >=60s
+apart and never inside a reviewer-wave dispatch window (runs 26/09 were 13s apart); (3) the
+class signature for fast diagnosis: spawn-ok + session-id recorded + NO session dir + events
+<=2 + ctx 0. A FOURTH occurrence despite staggered launches = open a blocker with the frozen
+evidence and raise the worker-CLI version question with the owner (the flip is owner-only).
+
+## fastapi 0.139 route-layout trap (2026-09-20 seq 123, T062 CI red + diagnostic branch)
+
+The pinned CI fastapi (0.139.0, starlette>=1.0) records each `include_router` call as ONE
+`_IncludedRouter` entry in `app.routes` with `path=None`; the prefixed APIRoute objects live
+under `entry.original_router.routes`. Older fastapi (local 3.11 env) flattens them into
+`app.routes` directly. CONSEQUENCE: any test introspecting `app.routes` paths without
+expanding sees NO included routes on CI - a mount-PRESENCE assert fails while the mount
+itself works, and mount-ABSENCE asserts pass only vacuously. Local pass + CI fail on a
+route-introspection test = check this FIRST. Canonical fix pattern (two precedents now):
+`tests/api/test_evidence_api.py::_flattened_route_list` and
+`tests/api/test_site_definition_api.py::_registered_paths` - expand
+`original_router.routes` in place (no-op on the old layout), filter non-str paths.
+Diagnosis method that settled it in ONE round: a THROWAWAY diagnostic branch off the failing
+head with the assert message carrying env/flag/module-file/version/paths (CI runs on every
+push), read the AssertionError payload from the failed log, delete the branch.
+
+## Cloud Road-1 run (2026-09-30/10-01, seq 132–133) — session lessons
+
+- **Owner operating mode (Road 1, option B).** The orchestrator dispatches producer and reviewer
+  agents on a 1 CPU / 2 GB droplet, **at most 2 at once**: load average reached 2.8 with 3. Each
+  PR goes:
+  1. producer;
+  2. independent review (PASS, 0 blocking, naming the exact head);
+  3. a body check;
+  4. CI 40/40;
+  5. `gh pr merge --merge --match-head-commit <sha>`.
+  
+  Zoning-math PRs need the owner's explicit yes. Record their verbatim words on the PR. Sixteen
+  merges in one evening; typical PRs needed 2–3 review rounds, and most corrections were in PR
+  bodies.
+- **Sizing for more lanes.** Comfortable: 8 CPU / 16 GB for 6 robots. Minimum: 4 / 8 for 5.
+  Resize the DO droplet with "CPU and RAM only", which is reversible.
+- **Fail-closed data facts (B-05).** Never emit a number with a caution label (§5a rule 3). If a
+  filing's figure may be zoning-lot-wide, set it aside and cite it, return Unknown — enter, and let
+  the architect confirm it as a stated assumption.
+- **Merging ≠ activation.** The R6B rules shipped hidden: `LANE_A_ENABLED` is unset in every
+  deploy config. Only the owner's word turns a lane flag on. Before ANY lane-A number shows,
+  #278's tax-lot-only warning and labels must be on every surface that shows it.
+- **Second opinions from another LLM.** Give it a question file with the snapshot quotes. Verify
+  its quotes against `docs/research/zr-snapshots/` and list the unverifiable ones. Never treat it
+  as G6: it confirmed the district rules but not the lot boundaries or the code.
+- **Dependency gate red on every PR.** A fresh advisory turned every PR red (urllib3 2.7.0 →
+  2.8.0, #272). The fix was a dedicated `.in` pin under the age gate, with a G5 review posted as a
+  PR comment.
+- **Owner communication.** The owner asked for plain, ELI5 explanations: short sentences, no
+  PR/CI/classifier jargon, one copy-paste line when the owner must act, and at most 2–3 one-word
+  questions.
+
+## Cloud session 2026-10-02 (seq 134; 4 CPU / 8 GB droplet; D-090 + D-091)
+- **Run shape:** up to 5 orchestrator-dispatched robots (producers and reviewers), memory under 70% (peak 16%). 46 PRs merged (#280–#325); the D-091 cloud-loop code is complete (M0-T165–T174, T176 accepted); only commissioning (M0-T175, owner-typed) remains.
+- **Server venv:** `/root/project/lanes-runtime/venv/bin/{python,ruff}`. Its site-packages hold a STALE `app` package, so run api tests from `services/api` (or with `PYTHONPATH=services/api`). System python3 has no pytest.
+- **Producers:** backend-engineer, frontend-engineer or cloud-architect. general-purpose and qa-engineer act read-only. Producers isolated to `.claude/worktrees/agent-*` sometimes cannot run git in the task worktree: the orchestrator commits their files.
+- **Watchers:** a CI watcher must test `.status != COMPLETED`; an empty `conclusion` fooled `conclusion // state`. Never merge with any check pending (the #299 slip).
+- **Windows CI is a real reviewer:** `os.open(O_CREAT|O_EXCL)` on a delete-pending file raises PermissionError on Windows, not FileExistsError. M0-T176 made review_slots wait through it, while locking.py still lets that OSError escape. A failure after accept was undone honestly with `git revert` of the accept commit before merge (M0-T171).
+- **"OOM-killed" producer claims were false twice:** the kernel `oom_kill` count was 0, and memory never went over 16%. Exit 137 is the process-group SIGKILL from the RealProcess test classes (`test_agent_supervisor_model_chain.py`). Do not run that file whole on this host; CI runs it.
+- **Web proves only in CI:** two PRs failed on a wrong import (`checkBoolean` comes from `scenario-contract-checks`, not `study-checks`) and on a shared mutable fixture (an imported JSON mutated in place). Reviewers must grep every import against ITS module.
+- **Recertification needs all three live claude-version teeth** (capability_probe, native_adapter, event_bus S8). The hook catalog is rebuilt from the official hooks docs and re-pointed in `event_drift.py` (the M0-T159 pattern). Codex is installed per worktree with `npm ci --ignore-scripts` in `tools/codex_cli`.
+- **Lane C wiring plan:**
+  - W0 contracts: done.
+  - W1 D-1 slice 2: done.
+  - W2/W3/W4 routes: done, unmounted.
+  - **W5:** mount the three routers in `main.py` (self-gated), add harness flags and mount tests, and run a security review at the mount.
+  - W6 (optional): a study.schema 1.1.0 transit_parking `$ref`, owner-decided.
+  
+  Every route mirrors `study_read.py`:
+  - flag-off 404 first;
+  - 429 before any work;
+  - 422 before I/O;
+  - 503 when inputs are unavailable or Lane B is off;
+  - a contract guard before send;
+  - one status/state matrix.
+- **PLUTO flood flags:** their meaning is verified from the DCP Open Data metadata (64uk-42ks; `docs/research/pluto-firm-flags-2026-10-02.md`), because the 26v1 dictionary PDF is encrypted. A decryption attempt was correctly refused.
+
+## Cloud session 2026-10-02b (08a1e891; seq 134 follow-on)
+- **CI watchers on this host:** `gh pr checks` has no `--json` here. A json-based watcher loops forever silently. Count the tab-separated text instead: `gh pr checks N | awk -F'\t' '$2=="pending"' | wc -l`, and tally `$2` for pass/fail.
+- **Transient age-gate failures:** a PyPI "Connection reset by peer" fails `exact-production-install` closed (correct). Wait for the run to complete, then `gh run rerun <id> --failed`. Never treat it as a code defect.
+- **Settled wording:** a producer shortened the owner-settled "Remaining development capacity: Not confirmed" to "Remaining capacity: Not confirmed" in a status strip (#331); review NB-1 caught it. Dispatch prompts must require the adapter constants (`NOT_CONFIRMED_LABEL` / `NOT_CONFIRMED_REASON`) for settled text, never a literal.
+- **Contract additions break count pins:** adding an enum-lock slot (#332) broke `study-vocabulary.test.ts`, which pinned `toHaveLength(14)`. Producers adding a contract enum or slot must grep for count pins and drift guards in every consumer.
+- **Mirror parity:** a contract change must update the hand-written runtime mirrors in the same PR (`site-fact-validator.ts`, `transit-parking-api.ts`). Otherwise a schema-valid document is rejected at the first real producer.
+
+## Cloud session 2026-10-03 (08a1e891; seq 135)
+- **Claude Code auto-updates on this host** (2.1.287 → 2.1.288 overnight) and breaks the certified CLI identity. The drift teeth catch it.
+  Admit it per D-024-R287: scope the recert to recapture all three drift families plus the `event_drift.py` catalog re-point. Host
+  auto-update is now off (`DISABLE_AUTOUPDATER=1` in `~/.claude/settings.json`; never `DISABLE_UPDATES`, R280).
+- **The owner's app does not execute `!` lines** (they arrive as chat text). For owner-typed server steps, use the DigitalOcean web console,
+  or run the line yourself when the owner's message clearly asks for it (it is their typed instruction).
+- **Auto-mode refuses edits to safety pins** (`M0-T036-ACTIVATION-CHECKLIST.md`) even with owner authorization ("Security Weaken"). Do not
+  work around it: prepare the reviewed text and the exact command; the owner applies it.
+- **CI-only real-unit tests:** make them self-explaining on failure (`systemctl status`, `journalctl -u`, a workdir listing). Two CI rounds
+  were lost to a guessed cause; the diagnostics found the real one (a `%`-format collision in the helper) in one round. Run unit helpers
+  with `/usr/bin/python3` (setup-python's interpreter needs LD_LIBRARY_PATH that a clean unit lacks).
+- **Producers misreport exit codes through pipes** (`check | tail` swallows `$?`): the M0-T177 "modularity exit 0" was false. Require direct
+  exit codes in every dispatch, and re-run the check yourself before pushing.
+
+## Cloud session 2026-10-03b (ab961de0; seq 136; Fable 5.1 main, 13 robots total, ≤ 7 at once, memory ≤ 16 %)
+- **Mid-turn owner messages are not `user` lines in the transcript.** They are stored as `queue-operation` + `attachment`
+  (`attachment.type == "queued_command"`, text in `attachment.prompt`, `origin.kind == "human"`). The D-090 source-011 capture
+  aborted on "not found" until the script scanned both shapes. Slash commands (e.g. `/session-handoff`) are `user` lines whose
+  content is the `<command-message>/<command-name>/<command-args>` block; the owner's words are the args.
+- **`eslint-plugin-react-hooks` 7.x `configs.recommended` / `recommended-latest` is not the two classic rules** — it adds every
+  React-Compiler rule at ERROR (set-state-in-effect, refs, purity, …). Register the plugin and name `rules-of-hooks` (error) +
+  `exhaustive-deps` (warn) explicitly; a wholesale preset would redden the whole web baseline.
+- **Enabling `@eslint/js` recommended on a codebase that never had it** (eslint-config-next did not) surfaces a predictable set:
+  `no-control-regex` on intentional control-character rejection regexes, `no-irregular-whitespace` on a literal U+FEFF in a regex,
+  `no-regex-spaces` in test regexes. Fix behaviour-identically (line-scoped justified disables, `﻿`, ` {2}`) under a recorded
+  scope correction; never by weakening the config.
+- **A root `.gitignore` pattern like `coverage/` silently ignores any real source directory with that name** — the A-01 producer had
+  to `git add -f`; the integrator added `!services/api/app/rules/coverage/`. Check `git check-ignore -v` when a new directory's files
+  do not show up in `git status`.
+- **PR bodies drift even when written from the producer's own return**: 2 of 5 lane bodies (A-01, B-11) and the M0-T180 checklist
+  needed count/claim fixes caught by the reviewer. The reviewer's "verify the body" step is load-bearing; patch with
+  `gh api -X PATCH …/pulls/N -F body=@file`.
+- **The lane process scales to six concurrent builders + rolling reviewers** at ~16 % memory on the 8 GB droplet; the only
+  serialization point was the one red CI check that blocked every merge — fix that first, then let reviews run while CI re-runs.
+- **generate-lockfile's bot commit message still says "M0-T019 security tree"** (template text in the workflow) — cosmetic;
+  fix the template when the workflow is next touched (needs its own Tier B review).
+
+## Cloud session 2026-10-03c (966ea9e4; seq 137)
+- **A never-settling mocked promise hangs the hook timeout and reddens web-e2e before Playwright runs.** A vitest test whose
+  `vi.mock`'d adapter returns `new Promise(() => {})` leaves the loading-state hook timeout to fire; hold the resolver, settle
+  it, await, then unmount (#359).
+- **This gh build has no `gh pr checks --json`** — use `gh pr view N --json statusCheckRollup` (CheckRun .status/.conclusion,
+  StatusContext .state). `gh pr merge --match-head-commit` needs the full 40-char sha.
+- **`readonly_agent_guard` fails closed for any agent type not on the `.claude/agents/` roster** (general-purpose cannot write);
+  writing producers must be roster producer types.
+- **An integrator edit to a Lane C root file inside a lane-a PR can never pass the lane path check** (#349's `.gitignore` line) —
+  carry the hunk in a Lane C PR first, then merge the base into the lane-a branch.
+- **Identity after a base merge:** `git show --remerge-diff --format= <merge> | wc -l` == 0 and an unchanged
+  `git patch-id --stable` of the net diff against the MERGE BASE (a two-dot diff from the old base misleads).
+- **Read-only reviewer types cannot `git worktree add`** — the guard blocks it; never ask them to. They verify via git
+  plumbing, `ruff --stdin-filename`, and in-process import.
+- **A producer's new request file can collide (add/add) with the integrator's docs seam** — resolve to the seam's file
+  plus the lane's State line (#364).
+
+## Cloud session 2026-10-03d (seq 138)
+- **PR record (all merged into candidate/D-024-mrl-option-b unless noted):** #367 (D-090 source-015, R099/R100,
+  e1db369d), #268 (E-03 DXF from results geometry, Lane E, b3bba78e), #370 + #374 + #368 + #373 (request D-2 remainder:
+  contract 1.1.0, key-set test, emitter, Source disclosure), #371 (C-07 labelled input channel, 98591c25), #372
+  (M0-T181 supervisor-bridge Windows CI repair, accepted d25a7fa3). #369 (A-05) reviewed PASS, CI green, OPEN awaiting
+  the owner's yes.
+- **The frozen-head accept flow worked again** — but an in-regime task appended to `manifest.affected_tasks` needs a
+  PROVISIONAL `task_verifications` row (verifier `""`, pending) in the SAME contract commit; c14 fails closed without
+  it and the control-plane CI job catches its absence (M0-T181, b5cdbdeb).
+- **A branch ref moved under a second worktree leaves that worktree's index stale** (814 phantom entries): realign with
+  `git -C <wt> reset --hard HEAD` before anyone reviews there.
+- **Never write a PR body's CI claim before the run finishes** — two bodies this session were corrected; the reviewer
+  verifies the body.
+- **Reviewer-found cross-PR byte mismatches are fixed on the side that is NOT the source of truth** — the emitter wins
+  over the fixture (the transit_parking `detail` reason clause, DB-115).
+
+## Cloud session 2026-10-06c (f9ce0b61; seq 146)
+
+- Seven merges in one session, one at a time: base merge (`queue_base_merge.sh`), fresh run, the description corrected from
+  the evidence files BEFORE the pre-merge check (three descriptions held a statement that had gone stale), `ci-evidence-verifier`,
+  the fail-closed merge step, then the integration branch's own run read before the next. About 20 minutes each.
+- A contract seam may ride on a documents pull request (packet, binding, placeholders, G0 `ready`); the claim then goes on the
+  task's own branch after the merge. Seed placeholders only in owned folders (DB-158) and run the coverage check first.
+- A builder's full-suite failure on an unrelated test: check whether its tree holds the integration branch's fix (DB-159).
+- Review corrections after a submit: `progress --status rework`, then `--status in_progress`, cherry-pick, a new evidence map
+  commit, `submit` and G2 at that head; then the SAME reviewer confirms by message and G3/G4 are recorded at that head.
+- A verifier's rows can be copied by script when the prompt fixes the form (`ROW D-090-Rnnn: PASS` then ` - ` sentences).
+- ZR 12-10 (the very large page) was read through the canonical HTML address with a browser user-agent; the print channel
+  for that node has timed out before. HPD's PDFs on nyc.gov download with a browser user-agent and read with `pdftotext`.
+- A new automatic instruction line needs room first: the automatic set stands at about 9,922 of 10,000 tokens.
+
+## Loop-run and Windows-PC notes (moved from Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md` on 2026-10-06, unchanged)
+
+Moved to keep the automatically loaded instructions under the owner's 10,000-token cap (D-067-R003) when the owner's
+working guidance was added to CLAUDE.md (D-090 R300). The seven notes below are byte-identical to their Tier 1 text.
+
+- PS5.1: no `&&`, no quotes-in-`git commit -m` via PowerShell (use Bash tool); UTF-16
+  redirection trap; heredocs via Write tool when Bash mangles them.
+- Fable exhaustion kills the loop (`REFUSED unsafe exit 11
+  fable_exhaustion_turnover_recorded`): the worker-pin flip is OWNER-ONLY (controller S3.2
+  rule 6) AND classifier-blocked — open a blocker with the one-line edit, never retry past it;
+  the INITIAL pin needs no launch probe so the owner's edit alone suffices. Keep working via an
+  orchestrator-dispatched producer + recorded deviation. Confirm exhaustion ONLY from the run
+  log + `model_switch_tracker.py --query`, never a model's self-report. Full arc: B-024, D-060.
+- `claim --worktree` MUST be the FULL path (controller-authoritative): a short name
+  lands in the packet, the worker echoes it, and S4.5 stops the run at the FIRST
+  checkpoint (`checkpoint_field_mismatch`). Fix both packet copies + fresh run-id.
+- Create/advance the task worktree AT (or past) the CLAIM-SEAM commit, never the contract
+  head: `task_authority` corroborates the ctl24 packet against the WORKTREE's ledger copy
+  (`--repo`), and a pre-claim copy (backlog vs in_progress) refuses the launch
+  (`ledger_status_mismatch`, exit 11). Fix = `git -C <wt> reset --hard <claim-seam sha>`;
+  a preflight refusal parks the journal in PREFLIGHT (no clear-recovery needed), same
+  run-id relaunches (M5-T045 launch, 2026-09-19).
+  ANY audit-appending CLI verb racing a LIVE loop forks its chain - deny/approve-once AND
+  graceful-stop alike (store-side effects land; appends refuse). Repair between runs
+  (archive-to-forked-evidence; loop-2 needs a targeted script - the stock repair hardcodes
+  loop-1's runtime). Packet allowed_paths are GLOBS matched at LAUNCH (cached): a bare
+  directory prefix matches nothing - write `dir/**`; a mid-run packet fix needs a
+  graceful-stop + relaunch to apply.
+- Loop WAIT_FOR_OWNER (tier_ask_blocking) after all asks denied needs `resume-after-answer`
+  (WAIT_FOR_OWNER -> PREFLIGHT); `clear-recovery` only exits PAUSED_RECOVERY.
+- Python with Windows paths goes through the Write tool, never a Bash heredoc (a backslash-U
+  becomes a unicodeescape SyntaxError; a claim silently did not run). Agents keep scratch .py files
+  in a SUBFOLDER: a root `inspect.py` in the shared scratchpad shadowed the stdlib, broke pytest.
+- Opus 5.5 (D-085): exact id `claude-opus-5-5` (alias opus55; dotted 'opus-5.5' = SILENT
+  unrecognized_model fallback to opus-4-8 - never use it). Verified on CLI 2.1.281 canary.
+  Worker-pin flips AND the shared allowlist (`C:\Program Files\SupervisorConfig\config.toml`
+  [claude].allowed_models + [approved_models].models) are OWNER edits (classifier-blocked;
+  B-025 resolved by owner actuation - all three lanes + allowlist on opus-5-5 since 2026-09-23).
+
+## Cloud session 2026-10-07 (9c3a3cee; seq 147)
+
+- A Windows repair needs Windows evidence BEFORE its tests and record are written: nobody here can run Windows. Ask the builder
+  in the FIRST round for a probe commit beside the tests and the repair: Windows-only tests that each end in `pytest.fail(<what was
+  observed>)`, pushed to `ci-exp/<task>-probe` (never merged). M0-T186's builder guessed a Windows file rule wrong and needed five
+  rounds; one probe run settled it. A permanent test should assert an invariant under the real race; its red-before proof is one
+  more experiment commit that restores the pre-repair code (`ci-exp/<task>-red2`).
+- Freeze every CI job used as evidence from the jobs API (byte count, sha256, the FAILURES section) under
+  `project-control/reports/<task>-ci-evidence/`; reviewers then match it with GitHub by digest.
+- One ledger-touching branch at a time: every ledger command rewrites `updated_at` in `project-control/state.json` (not tested
+  as a conflict; avoided). The record of an owner message rides on the active task branch, committed before any other action.
+- CI waits without a watcher: read `gh pr view <n> --json statusCheckRollup` by hand between other work; start the pre-merge
+  check's first round (everything but CI) while the last run finishes, then send the CI part to the same verifier.
+- This gh build: `gh run view --json` has no `attempt` field; use `gh api repos/<o>/<r>/actions/runs/<id> --jq .run_attempt`.
+- The registry validator now takes about one minute on this server; the ledger tool's own tests about two.
+- A scope correction after a submit (packet scenario text only) does not move the submitted content identity; record G0 again
+  at that head and say so in the readiness report.
+
+## Wide-street stack (moved from Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md` on 2026-10-09, unchanged)
+
+- Wide-street stack (all accepted): `dcm_street_centerline_arcgis.py` (transport; returnGeometry
+  TRUE, parse discards geometry) → `dcm_street_width_classifier.py` (24 classes, byte-immutable)
+  → `dcm_street_width_policy.py` (D-052; no-default `AttestedPreconditions` that VALUE-gates to
+  UNRESOLVED) → `dcm_street_centerline_geometry.py` (B3, typed 2263 polylines) →
+  `wide_street_buffer_engine.py` (B4, 100.0-ft buffer ∩ lot). B7 rule-wiring is NEXT and must be
+  its OWN module + close the B4 input-bounds gap (see Tier 2). Lot side:
+  `mappluto_geometry_arcgis.py` (2263, measurement) vs `mappluto_lot_outline.py` (4326, display
+  only, NEVER measure).

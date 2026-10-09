@@ -1,0 +1,154 @@
+{
+ "task_id": "M5-T145",
+ "material_commits": [
+  "ca3c3ad3 (part C, first commit: the two buildings of the step-P6 method; 3 files)",
+  "34296253 (parts B and D, first commit: coverage by portion; the preliminary apartment estimate's arithmetic; 6 files)",
+  "48fa796d (part A, first commit: the measured area of a corner lot's corner portion; 3 files)",
+  "ea2580bd (part C, the correction sent back before review (rulings C12, C13, C14, C17))",
+  "ae848f24 (part A, the correction sent back before review (ruling C18))",
+  "2e6dde3e (parts B and D, the correction sent back before review (rulings C12, C15, C16))",
+  "87d69ec2 (part E: the review register follows the four modules; 17 files = material head)"
+ ],
+ "claim_seam_head": "f2fb2ec1edbe331ce0957ebb591f2374780a6205",
+ "files_changed": [
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+  "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+  "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+  "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+  "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+  "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+  "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
+  "project-control/reports/M5-T145-part-A.md",
+  "project-control/reports/M5-T145-part-B.md",
+  "project-control/reports/M5-T145-part-C.md",
+  "project-control/reports/M5-T145-part-D.md",
+  "project-control/reports/M5-T145-part-E.md",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/first_building_options.py",
+  "services/api/app/scenario/three_answers/lot_coverage_by_portion.py",
+  "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
+  "services/api/app/spatial/corner_reach_area.py",
+  "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+  "services/api/tests/scenario/three_answers/test_first_building_options.py",
+  "services/api/tests/scenario/three_answers/test_lot_coverage_by_portion.py",
+  "services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py",
+  "services/api/tests/spatial/test_corner_reach_area.py"
+ ],
+ "what_did_not_change": "No existing engine, spatial, rule, contract or website file; no fixture, no result, no reference case, no capture; the committed results document and its snapshots; the 23 rule entries, their pages and the rule history; no step's verdict on the six-step page; no human verdict.",
+ "known_limits": [
+  "NOTHING IS CONNECTED: the four modules are imported by no existing file and no reported result changes. The program still withholds lot coverage by portion, the building option, the floor schedule and the legal unit limit, and still reports the estimate as not built. Connecting them is the next task (the wiring step).",
+  "WHICH BUILDING THE FIRST OPTION SHOWS IS NOT DECIDED: part C works both buildings of the hand-worked method; the choice is the owner's open decision (backlog row DB-210, point b).",
+  "Part C works one floor-to-floor height for every storey and no storey above the maximum base height: a 15 ft shop ground floor (row R542) and storeys above the base with their setbacks are not worked.",
+  "Part A measures the area within the distance of BOTH of two straight, confirmed street lines that meet at a corner. A bent frontage, more than two streets and a lot with one street give an unknown split with a state code; what follows for such a lot is the wiring step's.",
+  "For a missing input (parts B, C, D) and for the measurement's unknown states (part A) no kind of gap is named here by design (rulings C12 and C18): naming it is owed by the wiring step (row R650 stays open for that).",
+  "On the benchmark lot part A's two areas are 9,997.60 and 390.39 sq ft: equal at two decimals to one independent reading and 0.14 and 0.13 sq ft from the other; the test requires both within 1.0 sq ft and pins no single figure.",
+  "Which lot area a building rests on (recorded 10,075 sq ft against the measured outline 10,387.99 sq ft) is not decided here (backlog row DB-210, point a).",
+  "Every calculation entry of the register reads 'Not reviewed': the reviews of this task are by AI agents and establish no human verdict.",
+  "Building A's storey count is the floor of allowance divided by footprint with no rounding tolerance (G4 note; backlog row DB-212 d)."
+ ],
+ "checks_at_material_head": [
+  "CI: on the push of `9d9764f3`: CI run 37912550886, attempt 1, 21 of 21 jobs success (among them the server's whole suite), completed 09:45 UTC; secret-scan 37912550888 success; context-budget 37912550818 success; read by the orchestrator at 09:51 UTC on 2026-10-09 (the two reviews ran beside it; no gate was recorded before it was green). Nothing was rerun.",
+  "orchestrator: at `9d9764f3`: ruff exit 0; `tests/spatial`, `tests/scenario/three_answers`, the register tests, the reference-case tests and the journey tests: 1016 passed, 2 skipped; the size check, the path-coverage check and the register's renderer check exit 0. No whole-suite run on the build machine: that is CI's."
+ ],
+ "requirements": {
+  "D-090-R147": [
+   "For this task's share, mistake E10 only (a footprint never larger than the lot): part A's two measured areas sum to the outline's own area (services/api/tests/spatial/test_corner_reach_area.py: test_s1_right_angle_corner_lot_wider_than_the_distance, test_s4_benchmark_lot_within_tolerance_of_both_readings, test_resolve_rest_clamps_rounding_noise_but_raises_a_real_negative); part B's footprint never exceeds the sum of the two areas and a ratio above 1 is refused (services/api/tests/scenario/three_answers/test_lot_coverage_by_portion.py: test_c16c_footprint_never_exceeds_sum_of_areas, test_c16b_ratio_out_of_range_rejected).",
+   "project-control/reports/M5-T145-G3G4.md: G3 checks 2 and 3. Open: the guard on a REPORTED footprint is the wiring step's; the other mistakes of the list are other tasks'."
+  ],
+  "D-090-R192": [
+   "Part A measures the parcel's own recorded outline (the prepared tax-map outline in EPSG:2263 feet), not a rectangle or a typical lot: services/api/tests/spatial/test_corner_reach_area.py: test_s4_benchmark_lot_within_tolerance_of_both_readings, test_s3_non_right_angle_corner_distance_is_perpendicular.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 2 (the reviewer's own figures by another method). Open: no conclusion about a parcel is reported or drawn yet; that is the wiring step's."
+  ],
+  "D-090-R239": [
+   "The modules keep the two bases apart and decide nothing: part A reads only the measured outline; part B's areas are the measured portions (its `measurement_basis` text says so); part C takes the footprint and the floor-area allowance as two separate inputs. services/api/app/scenario/three_answers/lot_coverage_by_portion.py; services/api/app/scenario/three_answers/first_building_options.py.",
+   "project-control/reports/M5-T145-G3G4.md: G3 checks 2 to 4. Open: which lot area a building rests on is NOT decided here (backlog row DB-210, point a); the row stays open for the wiring step."
+  ],
+  "D-090-R255": [
+   "No default stands for a fact: a missing input or an unmeasurable lot gives an unknown or not-known state, never a zero or a guessed value: services/api/tests/spatial/test_corner_reach_area.py: test_s5_no_outline_both_areas_unknown_never_zero, test_s6_one_confirmed_straight_frontage_split_unknown; services/api/tests/scenario/three_answers/test_lot_coverage_by_portion.py: test_s13_missing_portion_areas_not_known; services/api/tests/scenario/three_answers/test_first_building_options.py: test_s20_missing_footprint_both_not_known, test_s21_missing_floor_area_allowance_both_not_known; services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s26_missing_floor_area_not_known.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 7; G4 checks 2 and 5."
+  ],
+  "D-090-R256": [
+   "Design choices are explicit, visible inputs: part C's floor-to-floor height is a required parameter with no default; part D's share range and apartment size are parameters whose values are returned in the result and named in its texts (services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit).",
+   "project-control/reports/M5-T145-G3G4.md: G3 checks 4 and 5. Open: showing and editing these values on the screen is the wiring and screen work."
+  ],
+  "D-090-R322": [
+   "Missing facts stay unknown and unbuilt work is called code not built: the tests of row R255, and part C's own limits (services/api/tests/scenario/three_answers/test_first_building_options.py: test_s29_building_b_plan_would_not_fit_footprint, test_s30_building_a_stack_passes_max_base_height); the register says the modules are connected to no reported result (part E).",
+   "project-control/reports/M5-T145-G3G4.md: G3 checks 7 and 8."
+  ],
+  "D-090-R379": [
+   "Part E: the register is updated inside this task's own commits by its existing process (commit 87d69ec2f: services/api/app/rules/review_register/register.json and the rendered files under docs/zoning-rule-review/).",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8. A scope correction before any review put this part into the task (project-control/tasks/M5-T145.json, scope_corrections)."
+  ],
+  "D-090-R509": [
+   "Part D's dividend is the proposed building's residential floor area, a required input, never the maximum: services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s25_real_estimate_a_two_readings_same_two_decimals, test_s22_real_estimate_b; part C returns a building's total apart from the allowance and the unused remainder (services/api/tests/scenario/three_answers/test_first_building_options.py: test_s17_real_building_a_reading13).",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 5. Open: feeding part D from the shown building is the wiring step's."
+  ],
+  "D-090-R519": [
+   "Part C states its assumptions in every returned text (a plain same-plan stack; the floor-to-floor height) and returns no storey above the maximum base height: services/api/tests/scenario/three_answers/test_first_building_options.py: test_s30_building_a_stack_passes_max_base_height, test_s15_made_up_building_a, test_s19_real_building_b_both_readings.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 4. Open: storeys above the base with their setbacks are not worked (code not built)."
+  ],
+  "D-090-R540": [
+   "Part D: the share range 0.60 to 0.75 is called a preliminary assumption, an unvalidated sensitivity range the user can change: services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit, test_c15d_share_outside_0_to_1_rejected, test_c15d_low_share_above_high_share_rejected.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 5."
+  ],
+  "D-090-R541": [
+   "Part D: 700 sq ft is called a preliminary assumption, a chosen starting apartment size on the HPD measurement basis that the user can change: services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit, test_s27_zero_apartment_size_rejected.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 5."
+  ],
+  "D-090-R543": [
+   "Part D's label is exactly the owner's words: 'Preliminary capacity estimate' when available, 'Not known' when not: services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit, test_s26_missing_floor_area_not_known (the first commit used another label; sent back before review, ruling C15).",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 5; G4 check 5 (the label mutation). Open: the label on the screen is the wiring and screen work."
+  ],
+  "D-090-R545": [
+   "No text says the owner's choice validates a value: parts C and D call the values design assumptions or preliminary assumptions, not law, not measured, not validated: services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit; services/api/app/scenario/three_answers/first_building_options.py (returned texts).",
+   "project-control/reports/M5-T145-G3G4.md: G3 checks 4, 5 and 7."
+  ],
+  "D-090-R650": [
+   "A kind of gap is named only where a module can know it: part C's own limits say 'code not built' (services/api/tests/scenario/three_answers/test_first_building_options.py: test_s29_building_b_plan_would_not_fit_footprint, test_s30_building_a_stack_passes_max_base_height). For a missing input the modules name the input and no kind (services/api/tests/scenario/three_answers/test_first_building_options.py: test_c12_missing_footprint_and_allowance_lists_both; services/api/tests/scenario/three_answers/test_lot_coverage_by_portion.py: test_s13_missing_portion_areas_not_known); part A gives each unknown outcome its own state code and no kind (services/api/tests/spatial/test_corner_reach_area.py: test_cause_tells_not_confirmed_from_not_straight, test_more_than_two_confirmed_frontages_split_unknown).",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 7. OPEN BY DESIGN (rulings C12 and C18): naming the kind for a missing input and for the measurement's states is owed by the wiring step, where the result is decided."
+  ],
+  "D-090-R688": [
+   "Part D is apart from the legal unit limit: it imports nothing from the unit-limit code and no text calls its result a legal limit, a ceiling or a count: services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 5."
+  ],
+  "D-090-R691": [
+   "Part E: four calculation entries moved to revision 2 and now say that a module exists and is connected to no reported result; each lists the new module among its code modules, so a later change of it is caught (scenario S33): services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_code_module_drift_is_caught_and_names_the_module, test_committed_calculations_validate_clean.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8; G4 check 5 (the part E mutation)."
+  ],
+  "D-090-R692": [
+   "Part E changed only the source data services/api/app/rules/review_register/register.json and one assertion of the test file; the pages and evidence logs were rendered by render_review_register.py, whose --check exits 0: services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_each_calculation_page_is_byte_identical, test_no_orphan_calculation_page.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8; G4 checks 1 and 3."
+  ],
+  "D-090-R700": [
+   "Part D: every text that names the apartment size or the share carries the words 'preliminary assumption': services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py: test_s28_labels_and_separation_from_the_legal_limit; the register's pages keep the words (services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_preliminary_assumption_words_are_required_on_size_and_share).",
+   "project-control/reports/M5-T145-G3G4.md: G3 checks 5 and 8."
+  ],
+  "D-090-R703": [
+   "Part E: the coverage gaps are still stated plainly: three reworded to say that modules exist and are connected to no reported result, one added (one floor-to-floor height for every storey, so a 15 ft shop ground floor is not worked), none dropped (9 to 10): services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_coverage_gaps_are_data_and_hold_at_least_nine, test_register_md_carries_the_calculations_and_gaps_sections.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8."
+  ],
+  "D-090-R704": [
+   "No human decision is entered by part E; every calculation entry still reads 'Not reviewed': services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_every_calculation_reads_not_reviewed.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8."
+  ],
+  "D-090-R705": [
+   "Part E appended four lines to the calculations history (6 to 10) and changed no earlier line; the 23 rule entries, their pages and the rule history are byte-identical: services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_calculations_history_is_append_only_and_separate, test_the_23_rule_entries_are_untouched.",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8; G4 check 3 (the one assertion that moved, read by the reviewer)."
+  ],
+  "D-090-R707": [
+   "The register update is part E of this same task, with the same gates and reviewers: project-control/tasks/M5-T145.json (scope_corrections; scenarios S31 to S33).",
+   "project-control/reports/M5-T145-G3G4.md: G3 check 8."
+  ],
+  "D-090-R773": [
+   "One task of five parts on separate files; parts A, C and B+D built by three builders side by side: project-control/reports/WAVE18-2026-10-09-concurrency-record.md (who built what; why one task with parts).",
+   "project-control/reports/M5-T145-G3G4.md: the builders' run times (16.5, 17.5 and 18.9 minutes side by side; one correction each of 8.5 to 10.8 minutes; part E 29.5 minutes afterwards). Open: the row is a standing way of working for later tasks."
+  ]
+ }
+}

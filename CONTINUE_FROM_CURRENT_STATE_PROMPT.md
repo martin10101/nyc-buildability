@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](docs/PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by the expansion hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2) and the plan. Do not follow this prompt.
+
 > **HISTORICAL — the one-time 3D/UI expansion bootstrap prompt.** It was already executed
 > (integration report `docs/3D_UI_EXPANSION_INTEGRATION_REPORT.md` exists) and its **item 10
 > (auto-continue onto expansion tasks) is SUSPENDED** by the active owner hold in

@@ -4,7 +4,7 @@ description: Read-only auditor that reconciles project-control status with git, 
 tools: Read, Grep, Glob, Bash, Skill
 disallowedTools: Write, Edit, MultiEdit, NotebookEdit, Agent
 model: claude-opus-4-8
-effort: high
+effort: xhigh
 permissionMode: plan
 skills:
   - status-board

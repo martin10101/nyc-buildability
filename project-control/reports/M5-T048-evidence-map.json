@@ -1,0 +1,20 @@
+{
+  "task_id": "M5-T048",
+  "material_commit": "93f194c0a52ca936c1d097777037d86f0aee6490",
+  "material_commits_note": "Two material cherry-picks: 0c7b17f1 (harvest of the runs 11-14 build, task-branch 8a4b3b45) and 93f194c0 (tagged correction, task-branch 607aab6b). The evidence-map material_commit names the LATEST; both are listed in M5-T048-source-sections.md.",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T048 packet was contracted with a seam-regenerated code-graph NAV BLOCK in its inputs (project-control/tasks/M5-T048.json; G0 record M5-T048-G0.md) instructing query.py --no-regen consumer checks before sweeps, graph advisory.",
+      "The contract bump's consumer surface was verified in source: the scenario schema's only consumers (contract.py gate + generated TS + fixtures + the scenario/api suites) all green unchanged for 1.0.0 documents at CI run 35439235554 (M5-T048-ci-evidence.md); typegen --check proves the TS consumer byte-identical."
+    ],
+    "D-076-R001": [
+      "Phase-B increment B0 delivered exactly per docs/PROPOSAL_EDITOR_PHASED_PLAN.md: the proposal contract (scenario 1.1.0 optional proposed_massing block) with zero evaluation/derivation/builder change (B1/B2 territory untouched - no profile/, spatial/, builder edit in either material commit; forbidden_paths clean)."
+    ],
+    "D-076-R002": [
+      "Proposals are a THIRD input class, never a record, never a rule: the block's kind is the literal 'proposed' (schema-enforced enum of one), provenance stamp carries author/editor_version/optional parent_scenario_id, nothing in the packet computes or implies an allowance; the validator refuses rather than derives (typed refusals naming exact fields, proposal.py); fixtures labeled by class (valid / schema-invalid / semantically-invalid)."
+    ],
+    "D-076-R003": [
+      "The contract path is additive under the accepted tooling: 1.1.0 appended to the CLOSED version enum in BOTH schema copies (byte-identical - LF-normalized AND raw-byte equality proven, digests dc41be0e... both, producer report independent-verifier section); 1.0.0 documents stay valid (all recorded fixtures green, 527 scenario tests); TS regenerated via the accepted typegen script with --check byte-identity in CI."
+    ]
+  }
+}

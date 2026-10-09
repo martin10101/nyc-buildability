@@ -265,6 +265,48 @@ body {
   color: var(--status-verified-fg);
 }
 
+/* ---- Caution label (M5-T004 rework; G3 finding 4 / G4 MEDIUM-5) ----
+
+   `.status-label` carries every draft, needs-review, professional-review,
+   and identity-mismatch warning on the Compare screen. It resolved to NO
+   RULE in any of the three stylesheets, so the honesty caveat rendered as
+   ordinary body copy on the same line where `.fact-value` bolds the number
+   it is qualifying: the number had maximum visual weight and the caution
+   had none. On a product whose core claim is honest labelling, that is the
+   wrong way round.
+
+   The treatment is at least as strong as `.fact-value` (600 weight,
+   tabular numerals): 700 weight, a caution ground, and a 4px left rule.
+   It is NEVER color-only — the rule and the weight are shape, the text
+   itself always states the caveat, and it reads correctly in a forced-
+   colors or monochrome rendering. `inline-block` so it works both inline
+   beside the cap and as a standalone paragraph. */
+
+.status-label {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--status-conditional-fg);
+  background: var(--status-conditional-bg);
+  border-left: 4px solid currentColor;
+  border-radius: 0 var(--radius-control) var(--radius-control) 0;
+  padding: 0.25em 0.6em;
+  margin: var(--space-1) 0;
+  overflow-wrap: anywhere;
+}
+
+/* Subsection heading inside a card, below `.section-title`. Also previously
+   undefined (G4 MEDIUM-5), so every subsection heading rendered at the
+   browser default for its element rather than in the type scale. */
+
+.section-subtitle {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: var(--space-4) 0 var(--space-2);
+}
+
 /* ---- Completeness banner ---- */
 
 .completeness-banner {
@@ -617,4 +659,25 @@ body {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ---- Lot-outline map (M5-T023) ---- */
+/* The MapLibre canvas needs an explicit height or it collapses to 0px. This is
+   additive layout only; the map is a display-only approximate outline. */
+.lot-outline {
+  margin: 0.75rem 0;
+}
+
+.lot-outline-map {
+  width: 100%;
+  height: 320px;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .lot-outline-map {
+    height: 240px;
+  }
 }

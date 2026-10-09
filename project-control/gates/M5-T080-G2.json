@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T080",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T080-G2.md",
+  "reviewed_at": "2026-09-24T15:06:12.718280+00:00",
+  "content_manifest_sha256": "12da09494b8112b13a000d9e198c4aa25df3d730034887eaf8290b2b53f4b147",
+  "reviewed_sha": "d8df2674d5f3b7cd67981bad518986ff4fdfa0f0",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T080-G2.md",
+      "reviewed_at": "2026-09-24T08:38:41.341173+00:00"
+    }
+  ],
+  "updated_at": "2026-09-24T15:06:15.092923+00:00"
+}

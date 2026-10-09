@@ -1,0 +1,27 @@
+# Frozen CI evidence - supervisor-bridge job 112160344138 (run 37430612001, attempt 1, event pull_request)
+# Head 486ebe8c1c4cfefc14e2dbcaf50faef839d2b07b, branch task/owner-working-guidance-in-claude-md-2026-10-06, runner image: Microsoft Windows Server 2025 (windows-latest; image provisioner 20260901.588)
+# Full job log: 52669 bytes, sha256 ed65f6f188db74b4fba121bd4baab340bdc2fdc386873d4a6cdc59df4f909733
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/112160344138/logs, read 2026-10-06 by the orchestrator. Excerpt = the FAILURES section through the summary line, timestamps stripped. Read-only for the producer.
+# The two progress lines below keep their timestamps: the line of the test file that ran just before, then the line of the review-slots file (printed when that file finished).
+
+2026-10-06T07:40:49.7526468Z ......................                                                   [ 79%]
+2026-10-06T07:41:51.4367049Z tools\test_agent_supervisor_review_slots.py ...F.............            [ 80%]
+
+================================== FAILURES ===================================
+_____________ RaceTests.test_global_last_slot_never_double_taken ______________
+
+self = <test_agent_supervisor_review_slots.RaceTests testMethod=test_global_last_slot_never_double_taken>
+
+    def test_global_last_slot_never_double_taken(self) -> None:
+        # 6 racers, distinct lanes, 2 global slots -> exactly 2 win.
+>       winners = self._run_race(n=6, global_limit=2, lane_limit=1, same_lane=False)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tools\test_agent_supervisor_review_slots.py:224:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\test_agent_supervisor_review_slots.py:200: in _run_race
+    self.fail(
+E   AssertionError: race produced a non-slot outcome (barrier/lock/state), not a clean admitted/full result - a loaded-runner barrier expiry or a fail-closed error, NOT a legitimate refusal to be counted as a loser: ['refused:slot_lock_timeout', 'refused:slot_lock_timeout', 'refused:slot_lock_timeout', 'admitted', 'admitted', 'refused:slot_lock_timeout']
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_review_slots.py::RaceTests::test_global_last_slot_never_double_taken - AssertionError: race produced a non-slot outcome (barrier/lock/state), not a clean admitted/full result - a loaded-runner barrier expiry or a fail-closed error, NOT a legitimate refusal to be counted as a loser: ['refused:slot_lock_timeout', 'refused:slot_lock_timeout', 'refused:slot_lock_timeout', 'admitted', 'admitted', 'refused:slot_lock_timeout']
+=========== 1 failed, 3951 passed, 60 skipped in 364.47s (0:06:04) ============

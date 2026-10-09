@@ -1,0 +1,13 @@
+# Test-run evidence for the zoning-rule review register (M4-T023)
+# Committed log of one deterministic run of this entry's linked test file(s),
+# executed against an exported copy of commit 52e3d8a4. The register's
+# automated-tests field records the result; the checker never re-runs tests,
+# it only checks that the recorded rule/test-file digests still match the files.
+entry: r6-r7-r8-wide-street-conditional-far
+command (from services/api): python -m pytest -q -p no:cacheprovider tests/rules/test_r1_r12_residential_far.py tests/rules/test_r6b_far_heights.py
+run date: 2026-10-06
+commit tested: 52e3d8a461cf08577273c82f802b85433f6f1ec3
+exit code: 0
+---
+...............................................                          [100%]
+47 passed in 1.52s

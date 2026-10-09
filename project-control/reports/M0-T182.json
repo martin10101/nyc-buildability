@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T182",
+  "producer_agent": "frontend-engineer",
+  "report_file": "project-control/reports/M0-T182-producer-report.md",
+  "submitted_at": "2026-10-06T06:18:50.964144+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T182-evidence-map.json",
+  "content_manifest_sha256": "416ce200565ee4e40f2b63f30515032ae9c604c9c3dff45614f8274fdf3e4dad",
+  "reviewed_sha": "9b4444210bea0940139557af0d85e3bc4252727a",
+  "applicable_requirements": [
+    "D-092-R004",
+    "D-092-R006",
+    "D-092-R007",
+    "D-092-R008",
+    "D-092-R012",
+    "D-092-R013",
+    "D-092-R014",
+    "D-092-R015"
+  ],
+  "updated_at": "2026-10-06T06:18:51.629070+00:00"
+}

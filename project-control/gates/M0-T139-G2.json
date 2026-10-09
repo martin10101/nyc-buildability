@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T139",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T139-G2-self-check.md",
+  "reviewed_at": "2026-09-02T07:45:10.635895+00:00",
+  "content_manifest_sha256": "9dd97c31d3a1f9e3fc7e107d92ed3e5ab9c072e25a123c387f52939a33f57316",
+  "reviewed_sha": "d96f4e9fa8904b9460383d10811e93647208dbd8",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T139-G2-self-check.md",
+      "reviewed_at": "2026-09-02T07:44:41.818786+00:00"
+    }
+  ],
+  "updated_at": "2026-09-02T07:45:11.206518+00:00"
+}

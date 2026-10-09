@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720.00 504.00" width="720.00" height="504.00" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-drawing="location_map" data-kit-version="0">
+<title>Location map</title>
+<defs><pattern id="hatch-building_footprint" patternUnits="userSpaceOnUse" width="3.00" height="3.00" patternTransform="rotate(-90.00)"><line x1="0.00" y1="1.50" x2="3.00" y2="1.50" stroke="#9E9E9E" stroke-width="0.40"/></pattern><pattern id="hatch-subject_lot" patternUnits="userSpaceOnUse" width="3.00" height="3.00" patternTransform="rotate(0.00)"><line x1="0.00" y1="1.50" x2="3.00" y2="1.50" stroke="#C8500A" stroke-width="0.40"/><line x1="1.50" y1="0.00" x2="1.50" y2="3.00" stroke="#C8500A" stroke-width="0.40"/></pattern></defs>
+<rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
+<path d="M56.00 442.46 L136.80 442.46 L136.80 361.66 L56.00 361.66 Z" fill="#E0E0E0" fill-rule="evenodd" stroke="#9E9E9E" stroke-width="0.40" stroke-linejoin="round" data-source="/map_context/building_footprints/entries/0"/>
+<path d="M56.00 442.46 L136.80 442.46 L136.80 361.66 L56.00 361.66 Z" fill="url(#hatch-building_footprint)" fill-rule="evenodd" stroke="none" data-source="/map_context/building_footprints/entries/0"/>
+<path d="M379.20 142.34 L460.00 142.34 L460.00 61.54 L379.20 61.54 Z" fill="#E0E0E0" fill-rule="evenodd" stroke="#9E9E9E" stroke-width="0.40" stroke-linejoin="round" data-source="/map_context/building_footprints/entries/1"/>
+<path d="M379.20 142.34 L460.00 142.34 L460.00 61.54 L379.20 61.54 Z" fill="url(#hatch-building_footprint)" fill-rule="evenodd" stroke="none" data-source="/map_context/building_footprints/entries/1"/>
+<path d="M148.34 142.34 L217.60 142.34 L217.60 73.09 L148.34 73.09 Z" fill="#E0E0E0" fill-rule="evenodd" stroke="#9E9E9E" stroke-width="0.40" stroke-linejoin="round" data-source="/map_context/building_footprints/entries/2"/>
+<path d="M148.34 142.34 L217.60 142.34 L217.60 73.09 L148.34 73.09 Z" fill="url(#hatch-building_footprint)" fill-rule="evenodd" stroke="none" data-source="/map_context/building_footprints/entries/2"/>
+<path d="M367.66 419.37 L436.91 419.37 L436.91 338.57 L367.66 338.57 Z" fill="#E0E0E0" fill-rule="evenodd" stroke="#9E9E9E" stroke-width="0.40" stroke-linejoin="round" data-source="/map_context/building_footprints/entries/3"/>
+<path d="M367.66 419.37 L436.91 419.37 L436.91 338.57 L367.66 338.57 Z" fill="url(#hatch-building_footprint)" fill-rule="evenodd" stroke="none" data-source="/map_context/building_footprints/entries/3"/>
+<path d="M240.69 303.94 L333.03 303.94 L333.03 188.51 L240.69 188.51 Z" fill="#FDE9D0" fill-rule="evenodd" stroke="#C8500A" stroke-width="1.50" stroke-linejoin="round" data-source="/map_context/subject_lot/outline"/>
+<path d="M240.69 303.94 L333.03 303.94 L333.03 188.51 L240.69 188.51 Z" fill="url(#hatch-subject_lot)" fill-rule="evenodd" stroke="none" data-source="/map_context/subject_lot/outline"/>
+<text x="286.86" y="246.23" font-size="8.00" text-anchor="middle" fill="#111111" data-role="subject_lot" data-source="/map_context/subject_lot/bbl">BBL 1000477501</text>
+<g data-role="north-arrow">
+<path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>
+<text x="554.00" y="58.00" font-size="8.00" text-anchor="start" fill="#111111" data-role="furniture">Grid north</text>
+</g>
+<g data-role="scale-bar" data-x0="520.00" data-px-per-ft="1.154286">
+<rect x="520.00" y="88.00" width="57.71" height="5.00" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<rect x="577.71" y="88.00" width="57.71" height="5.00" fill="#FFFFFF" stroke="#000000" stroke-width="0.50"/>
+<text x="520.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">0</text>
+<text x="577.71" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">50</text>
+<text x="635.43" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">100 ft</text>
+</g>
+<g data-role="legend">
+<text x="520.00" y="126.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Legend</text>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="#FDE9D0" stroke="#C8500A" stroke-width="1.50" stroke-linejoin="round"/>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="url(#hatch-subject_lot)" stroke="none"/>
+<text x="544.00" y="140.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Subject lot</text>
+<rect x="520.00" y="148.00" width="18.00" height="10.00" fill="#E0E0E0" stroke="#9E9E9E" stroke-width="0.40" stroke-linejoin="round"/>
+<rect x="520.00" y="148.00" width="18.00" height="10.00" fill="url(#hatch-building_footprint)" stroke="none"/>
+<text x="544.00" y="156.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Building footprint</text>
+</g>
+<g data-role="notes">
+<text x="520.00" y="182.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Notes</text>
+<text x="520.00" y="194.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/map_context/measurement/label">Approximate — tax map</tspan></text>
+<text x="520.00" y="208.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/map_context/building_footprints/attribution">Building footprints: NYC Office of</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/building_footprints/attribution">Technology and Innovation, Building</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/building_footprints/attribution">Footprints (NYC Open Data 5zhs-2jue),</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/building_footprints/attribution">under the NYC Open Data Terms of Use;</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/building_footprints/attribution">source edit date 2026-09-20.</tspan></text>
+</g>
+</svg>

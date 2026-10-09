@@ -1,0 +1,234 @@
+{
+  "task_id": "M4-T038",
+  "title": "Zoning-rule review register: let it hold CALCULATION entries beside rule entries, and add the calculation entries for the first building option's path (floor area, lot coverage by portion, building-option floor stack, legal dwelling-unit limit, preliminary apartment estimate) with the complete comparison \u2014 expected from the independent reference cases, actual recomputed through the program by the test; legal requirements told apart from design assumptions; the coverage gaps stated; no rule, no calculation, no result, no fixture and no human verdict changed [D-090 R686-R707, R379]",
+  "task_type": "rule_engineering",
+  "milestone_id": "M4",
+  "objective": "Extend the zoning-rule review register so it can carry CALCULATION entries (combined-rule and arithmetic calculations that have no rule file of their own) beside the 23 rule entries, by the register's existing process \u2014 authored source register.json, rendered by render_review_register.py, checked by check_review_register.py, tested by the register test suite \u2014 and add the calculation entries for the first building option's path for the benchmark lot (BBL 4073340070). Add a sibling 'calculations' list to register.json (the 23 'entries' stay byte-identical); bump schema_version 1.0 -> 1.1 additively. Each calculation entry carries: the law[] of every rule it combines (so the source of each is traceable), the register rule-entry ids it combines, its implementing code module(s) with per-module LF-normalized sha256 (its recorded identity, since there is no rule file), dedicated inputs/units/measurement_basis/formula/rounding fields (point 3), interpretation and implemented-vs-planned, a legal_vs_design marking of every figure (LEGAL REQUIREMENT with quoted text, or CHOSEN DESIGN ASSUMPTION; 700 sq ft and 0.60-0.75 labelled 'preliminary assumption'), a worked example whose EXPECTED side is the independent reference case (step-P5, real-lot, step-P6) and whose ACTUAL side is recomputed through the scenario engine by the test (agree / differ / side-missing), linked_records to the measurement-basis / reference cases / coverage matrix, test_links and an automated_tests result bound to the code-module digests, revision/last_changed, the standard human_review block (no verdict entered; applies-to-current derived from the code-module digests + law digests + revision), gaps and a coverage_gap sentence, and the standing draft_note. Add the calculation entries covering the six steps: calc-floor-area-allowance (FAR x recorded lot area = 20,150), calc-lot-coverage-by-portion (corner 100% + interior strip 80%), calc-building-option-floor-stack (footprint, each floor's area and height, total floor area, building height), calc-legal-dwelling-unit-limit (floor area / 680, round up at .75), and calc-preliminary-apartment-estimate (floor area x share / size). State every coverage gap from the inventory, including that the scenario three-answers engine and the M5-T144 engine change move no rule entry. Regenerate the Markdown; change NO rule file, NO scenario/calculation code, NO result, NO fixture and NO human verdict. The expected side of the entries that need the step-P6 independent example (lot coverage by portion, building-option floor stack, apartment estimate) binds once M4-T037 is accepted; calc-floor-area-allowance and calc-legal-dwelling-unit-limit can be completed now from the already-committed reference cases. THE ORCHESTRATOR'S RULINGS C1 to C9, at the end of the path notes, govern wherever they differ from the text above.",
+  "business_reason": "The owner's message of 2026-10-09 (D-090 source-068, rows R685-R709) asks that the first building option be compared, step by step, with an independently worked example, and that the review register be kept current for every rule AND calculation, with each relevant page showing the five points, legal requirements told apart from design assumptions, combined calculations and their records linked, every gap stated, and human verdicts left to a named human reviewer. Today the register covers only the 23 rule files; the scenario engine that turns those rules into the reported floor area, footprint, building option, unit limit and estimate has no entry, and nearly the whole building-option path is withheld with no register page comparing it to an independent example. This task is the program side of the comparison whose independent side M4-T037 (step P6) writes; it is the smallest change that makes the register hold calculations and traces the first building option's path. It is part of the existing work toward the building option (R707), not a separate project.",
+  "inputs": [
+    "The register as M4-T023 left it: docs/zoning-rule-review/ (REGISTER.md, rules/*.md, HISTORY.md, GUIDE.md, evidence/), authored source services/api/app/rules/review_register/register.json (schema_version 1.0, 23 entries), render_review_register.py, check_review_register.py, test services/api/tests/rules/test_zoning_rule_review_register.py",
+    "The committed results document packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json and the scenario engine services/api/app/scenario/three_answers/ (result_ways.py building-option withheld at 116-119; three_way_document.py; building_option.py; dwelling_units.py; geometry.py) \u2014 read-only; the test imports them to recompute the actual side",
+    "The independent reference cases docs/reference-cases/R6B/ (real-lot#L1 floor area 20,150, #L3 heights, #L5 lot coverage not known, #L6 dwelling units 29; step-p5-worked#floor-area-ratio-made-up-100x100; step-p1-worked#interior-40x100-coverage; and the step-P6 case cases/step-p6-worked.json written by M4-T037) \u2014 read-only, linked not copied",
+    "The measurement-basis record docs/measurement-basis/MEASUREMENT_BASIS.md and the rule-coverage matrix services/api/app/rules/coverage/COVERAGE_MATRIX.md \u2014 read-only, linked not copied",
+    "The law captures docs/research/zr-snapshots/v1/ the calculations cite (zr-23-22, zr-23-432, zr-23-362, zr-23-342, zr-23-344, zr-23-52, zr-12-10-*), each pinned by content digest \u2014 read-only",
+    "D-090 requirements.json rows R379 and R686-R707, and source-068-amendment.md",
+    "register-coverage-inventory.md (this session's companion inventory) for the step-by-step comparison and the coverage-gap list"
+  ],
+  "outputs": [
+    "services/api/app/rules/review_register/register.json: schema_version -> 1.1; a new 'calculations' list with the first-building-option calculation entries; new history events; the 23 'entries' byte-identical",
+    "services/api/app/rules/review_register/review_register_calculations.py: a new focused module holding the calculation-entry renderer and checker helpers, imported by render_review_register.py and check_review_register.py (old import paths kept)",
+    "services/api/app/rules/review_register/render_review_register.py and check_review_register.py: minimal wiring to render and validate the calculations list (top-level key set, calculations section in REGISTER.md, calc detail pages under calculations/, delegation to the new module)",
+    "docs/zoning-rule-review/REGISTER.md, HISTORY.md and the new docs/zoning-rule-review/calculations/<id>.md pages \u2014 all regenerated by --write (never hand-edited)",
+    "docs/zoning-rule-review/GUIDE.md: a hand-written 'Calculation entries' section (the new fields, the code-module identity, the append-only duty, that expected comes from independent records and actual is recomputed)",
+    "docs/zoning-rule-review/evidence/<calc-id>.txt: the committed run log for each calculation entry's linked test",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py: the acceptance tests for the calculation entries (positive, negative, boundary, missing-input, exception, effective-date)",
+    "project-control/reports/<task-id>-producer-report.md with the per-input-state table"
+  ],
+  "dependencies": [
+    "M4-T023",
+    "M4-T037"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/review_register/register.json",
+    "services/api/app/rules/review_register/render_review_register.py",
+    "services/api/app/rules/review_register/check_review_register.py",
+    "services/api/app/rules/review_register/review_register_calculations.py",
+    "docs/zoning-rule-review/GUIDE.md",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/calculations",
+    "docs/zoning-rule-review/evidence",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "project-control/reports/M4-T038-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/rulesets/** - no rule file is added or changed (no rule behaviour changes)",
+    "services/api/app/scenario/** - no scenario or calculation code changes; the test imports it read-only to recompute the actual side",
+    "packages/** and every fixture and snapshot - no result, document or fixture changes",
+    "docs/research/** - the law captures are inputs, read-only",
+    "docs/reference-cases/** - read-only; the step-P6 case is written by M4-T037, never touched here",
+    "docs/measurement-basis/** - linked, not copied, not changed",
+    "the human_review fields of any entry - no human verdict is entered anywhere",
+    "docs/zoning-rule-review/rules/** - the 23 rule detail pages are not rewritten (the 23 entries are untouched)",
+    "every other test file; apps/**; .github/**; tools/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report under project-control/reports/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "positive_validates_and_renders_clean",
+      "input": "the committed register.json with the new calculations list, run through check_review_register.validate and render_review_register --check",
+      "expected": "validate returns no errors; REGISTER.md, HISTORY.md and every calculations/<id>.md are byte-identical to the renderer's output; the 23 rule entries and their rules/*.md pages are unchanged"
+    },
+    {
+      "id": "S2",
+      "case": "positive_actual_recomputed_through_the_engine",
+      "input": "each calculation entry's example.actual for the benchmark lot",
+      "expected": "the test recomputes the actual side through the scenario engine (decide_result_ways / three_way_document for BBL 4073340070) and it equals the recorded actual (e.g. floor area 20,150 available-conditional; building option, lot coverage, estimate withheld/not_available with the recorded reason); the recorded expected is never taken from that run"
+    },
+    {
+      "id": "S3",
+      "case": "negative_code_module_drift_is_caught",
+      "input": "a calculation entry whose implementing code module changes but whose code-module sha256, revision and history are not updated",
+      "expected": "the checker FAILS and names the module, exactly as a changed rule file is caught for a rule entry; a value for an earlier code version is never shown as current"
+    },
+    {
+      "id": "S4",
+      "case": "negative_value_where_the_two_P6_readings_differ",
+      "input": "a calculation entry that records a single footprint-area figure where the two step-P6 readings differ in the decimals",
+      "expected": "the entry is refused; the expected side must hold both readings' figures or read 'not known', following the reference case's rule of agreement"
+    },
+    {
+      "id": "S5",
+      "case": "boundary_built_step_agrees_withheld_step_side_missing",
+      "input": "calc-floor-area-allowance (built: 20,150) and calc-building-option-floor-stack (withheld)",
+      "expected": "the built step records agrees=true (expected 20,150 from real-lot#L1 == actual 20,150); the withheld step records agrees=null with a 'program side withheld/not built' note, never a forced match"
+    },
+    {
+      "id": "S6",
+      "case": "negative_cited_case_row_missing_or_superseded",
+      "input": "an entry whose expected answer cites a case#row that does not exist, or one that is superseded",
+      "expected": "the checker refuses it and names the entry and the row (ruling C3); with the row present and current the check passes"
+    },
+    {
+      "id": "S7",
+      "case": "exception_special_density_or_overlay",
+      "input": "the special-density-area-unknown input that drives calc-legal-dwelling-unit-limit, and an overlay-present input",
+      "expected": "the legal-unit-limit calculation's actual stays withheld (the engine computes 29 internally but the document withholds it); the entry records both facts and the exception, and marks the special-density applicability a LEGAL REQUIREMENT"
+    },
+    {
+      "id": "S8",
+      "case": "effective_date_applicable_from",
+      "input": "each calculation entry's applicable_from (the latest last_amended among the rules it combines)",
+      "expected": "the entry carries applicable_from and applicable_to; the page shows them; nothing is claimed effective before that date, mirroring the rule entries"
+    },
+    {
+      "id": "S9",
+      "case": "legal_vs_design_marked",
+      "input": "every figure and step in every calculation entry",
+      "expected": "each is marked a LEGAL REQUIREMENT (with its quoted captured text) or a CHOSEN DESIGN ASSUMPTION; 700 sq ft and the 0.60-0.75 share carry the words 'preliminary assumption' wherever they appear; a figure left unmarked, or a design assumption called a legal requirement, is refused"
+    },
+    {
+      "id": "S10",
+      "case": "human_verdict_rules_preserved",
+      "input": "a calculation entry with no decision, and a mutated one with a recorded decision whose code-module digest then changes",
+      "expected": "no decision reads 'Not reviewed'; a recorded decision whose code-module digest, law digests or revision differs from current reads 'Needs re-review' with the earlier decision still shown; no verdict is ever derived from tests or an agent review"
+    },
+    {
+      "id": "S11",
+      "case": "coverage_gaps_stated_and_rendered",
+      "input": "the register after this task",
+      "expected": "the coverage-gap list from the inventory is present and rendered, including that the scenario three-answers engine has no entry and that the M5-T144 engine change moved no rule entry (row R703)"
+    },
+    {
+      "id": "S12",
+      "case": "no_program_rule_capture_or_verdict_change",
+      "input": "git show --name-status of the producer commit",
+      "expected": "only allowed_paths changed; no rule file, scenario/calculation code, result, fixture or human-verdict field changed; ruff passes; the full services/api pytest suite and the register --check pass in CI on the pushed head; modularity and lane-path checks pass"
+    },
+    {
+      "id": "S13",
+      "case": "complete_calculation_six_steps_page",
+      "input": "the entry for the first building option's complete calculation on the benchmark lot",
+      "expected": "its page shows the six steps in order (property inputs; footprint; each floor's area and height; total floor area; applicable legal unit limit; the separate preliminary apartment estimate), each with the independent example's answer by case#row, the program's actual answer and its standing, and agree / differ / a side is missing; it ends in the list of every disagreement and missing fact with its kind and what would settle it (ruling C1); the legal unit limit and the estimate are separate steps"
+    },
+    {
+      "id": "S14",
+      "case": "difference_of_method_recorded",
+      "input": "the building-option entry: the engine's sample stack against the independent example's two buildings",
+      "expected": "the page records the difference of method as a disagreement of kind 'a design assumption that differs', names backlog row DB-210 and the owner's pending decision, and resolves nothing (ruling C4)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "A calculation entry read as a reviewed or legal determination -> every page carries the standing draft_note and ADR-007 label; no human verdict is entered; legal_vs_design marks each figure",
+    "An expected value taken from a program run rather than an independent record -> expected is sourced only from the reference cases (step-P5, real-lot, step-P6) and the checker/tests keep expected and actual apart",
+    "The 23 rule entries disturbed while adding the calculations list -> the calculations live in a separate sibling list; a test asserts the 23 entries and their pages are byte-identical",
+    "A calculation entry with no rule file escaping the identity check -> the entry is fingerprinted by the LF-normalized sha256 of its code module(s); a drift fails the check like a changed rule file",
+    "render_review_register.py or check_review_register.py grown past its module boundary -> the calculation renderer and checker go into the new focused module review_register_calculations.py; run modularity_check.py --check before growing either",
+    "A figure recorded where the two step-P6 readings differ -> the rule of agreement is carried over; the expected holds both figures or 'not known'",
+    "The step-P6 case not yet accepted -> M4-T037 is a dependency; the entries that need it keep expected basis_kind 'gap' until it lands; calc-floor-area-allowance and calc-legal-dwelling-unit-limit complete now from committed cases"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T06:44:55.210953+00:00",
+  "updated_at": "2026-10-09T08:27:58.026944+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R379",
+        "D-090-R686",
+        "D-090-R687",
+        "D-090-R688",
+        "D-090-R689",
+        "D-090-R690",
+        "D-090-R691",
+        "D-090-R692",
+        "D-090-R693",
+        "D-090-R694",
+        "D-090-R695",
+        "D-090-R696",
+        "D-090-R697",
+        "D-090-R698",
+        "D-090-R699",
+        "D-090-R700",
+        "D-090-R701",
+        "D-090-R702",
+        "D-090-R703",
+        "D-090-R704",
+        "D-090-R705",
+        "D-090-R706",
+        "D-090-R707"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T06:44:55.211208+00:00",
+  "path_notes": "DESIGN (plain words). (1) New collection, not new fields on the 23. Add a sibling 'calculations' list to register.json beside 'entries'; the 23 rule entries keep their exact fixed key set and their rules/*.md pages byte-identical. schema_version moves 1.0 -> 1.1 (additive: a new collection and a new entry kind; old entries unchanged). The top-level key set in check_review_register.structure_errors gains 'calculations'; the field_guide gains a calculation sub-guide and an entry_kind value. (2) A calculation entry's fields: entry_id; entry_kind='calculation'; title; family; law[] (same shape as a rule entry, one per combined rule/section, so point 1 is carried and every source is traceable); combines_rule_ids[] (the register rule-entry ids it combines); code_modules[] = [{path, sha256}] and a single derived code_identity_sha256 = sha256 over the sorted 'path:sha256' lines (THIS is how an entry with no rule file is identified and fingerprinted; the checker recomputes each module's LF-normalized sha256 and the combined identity, and fails if a module changed and the entry was not revised, exactly as rule_file_errors does for a rule entry); applicable_from/applicable_to (the latest last_amended among the combined rules); applies_where; exceptions[]; interpretation; inputs[]; units; measurement_basis; formula; rounding (point 3 as DEDICATED fields; where no rounding rule exists the field reads 'none - no rounding rule'); behaviour{tested,committed_untested,planned} (implemented vs planned, point 2); legal_vs_design[] (one row per figure/step: kind LEGAL_REQUIREMENT with quoted_text + capture digest, or DESIGN_ASSUMPTION; the 700 sq ft size and 0.60-0.75 share rows carry the literal words 'preliminary assumption'); example{description, inputs, expected{values, basis_kind(reference_case|law_text|gap), basis(the named case#row or measurement-basis example), prepared_by}, actual{values, state}, agrees(true|false|null)}; linked_records[] (measurement-basis, reference cases, coverage matrix - linked not copied, R702); test_links[]; automated_tests{...} bound to code_identity_sha256 and the test-file digests (same staleness rule: a changed module or test file forces status 'Not run'); revision; last_changed; human_review (the SAME block as a rule entry, but applies_to_current is derived from reviewed_code_identity_sha256 + reviewed_law_digests + reviewed_revision versus current - so a decision never survives a code change; no verdict is entered); gaps[]; coverage_gap (one plain sentence for R703); draft_note. (3) Rendering. calc detail pages render to docs/zoning-rule-review/calculations/<id>.md (a NEW folder, so they do not trip the rules/*.md orphan sweep in rendered_errors); REGISTER.md gains a 'Calculations' table section; HISTORY.md already carries any entry_id. The calc renderer and the calc checker helpers live in ONE new focused module review_register_calculations.py, imported by both render_review_register.py and check_review_register.py (old import paths kept as thin facades) to keep both files inside the modularity thresholds. (4) Files and growth: register.json grows by the calculation entries and history events (JSON data, not SLOC-limited); check_review_register.py (498 SLOC) and render_review_register.py (423) grow only by the wiring (top-level key, calculations loop, delegation ~20-40 lines each, staying under the 600 warn line - run python3 tools/modularity_check.py --check, warn 600 / justify 750 / hard 1000); the bulk goes in review_register_calculations.py (new, focused, well under 600); the new test file test_zoning_rule_review_register_calculations.py goes in the existing owned folder services/api/tests/rules/ (do NOT grow the 538-line test_zoning_rule_review_register.py). (5) The existing 23 entries stay valid WITHOUT being rewritten: no new field is added to them; the point-3 fields (units/measurement_basis/formula/rounding) exist only on calculation entries, and their absence on the 23 rule entries is stated as a coverage gap (inventory item 6) rather than back-filled in this task - so 'optional for the existing entries' resolves to 'not added here, listed as a gap'. (6) What a reviewer must check by hand: that the history was appended and never rewritten (the check reads only the current file); that each expected value truly comes from the named independent record and NOT from a program run; that legal_vs_design is correct and 700/0.60-0.75 read 'preliminary assumption'; that no human_review decision was entered. (7) ONE entry or several? SEVERAL - one calculation entry per combining-calculation seam, because the entry's example holds a single expected/actual pair while the six steps have different inputs/units/measurement/formula/rounding, different code identities and different current states (floor area available-conditional; footprint, floor stack and estimate withheld or not built; unit limit withheld though the engine computes it). The set: calc-floor-area-allowance, calc-lot-coverage-by-portion, calc-building-option-floor-stack (covers 'each floor's area and height' and 'total floor area' together, as they come from one stack), calc-legal-dwelling-unit-limit, calc-preliminary-apartment-estimate; property inputs (step 1) are documented as the shared inputs/measurement_basis of calc-floor-area-allowance plus the recorded-vs-measured lot-area note, not a sixth entry, to keep the task smallest. (8) Complete today vs waiting for step-P6: calc-floor-area-allowance (expected from step-p5-worked#floor-area-ratio and real-lot#L1, both committed; actual 20,150 available) and calc-legal-dwelling-unit-limit (expected 29 from real-lot#L6, committed; actual withheld) can be COMPLETE now. calc-lot-coverage-by-portion, calc-building-option-floor-stack and calc-preliminary-apartment-estimate WAIT for the step-P6 case; the fields that wait are example.expected.values, example.expected.basis (the step-p6-worked#row id), example.agrees, and the per-building structured numbers; until M4-T037 is accepted those keep basis_kind 'gap' and agrees null. RULINGS (the orchestrator's, after reading the draft against the code): C1 (one page for the whole calculation). Beside the five component entries add ONE calculation entry for the first building option's complete calculation on the benchmark lot: six steps in order (property inputs; footprint; each floor's area and height; total floor area; applicable legal unit limit; the separate preliminary apartment estimate), each step with the independent example's answer (named case#row), the program's actual answer and its standing (settled, conditional, withheld, not built), and one of: agree / differ (by how much, and why) / a side is missing; each step links its component entry or rule entry. It ends in the list of every disagreement and missing fact, each with its kind (a missing fact about the property; unresolved law; code not built; a design assumption that differs) and what would settle it. C2 (where the program's side comes from). The document-level actual answer is read from the committed results document packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json, which the journey test proves equal, byte for byte, to what the program emits; a figure the engine computes and the document withholds (the unit count; the sample floor stack) is recomputed by the register's own test through the engine's functions from inputs stated in the entry, and the page says both: what the engine computes and that the document withholds it. The test imports nothing from another test folder. The expected side is never taken from a program run. C3 (the case exists). Task M4-T037 is integrated at the claim base, so docs/reference-cases/R6B/cases/step-p6-worked.json exists: no entry waits for it. An expected answer cites its case#row; a cited row that does not exist, or is superseded, is refused by the checker. Where the two readings of the case differ on a figure, the entry's expected side holds both figures, named, and agrees is null with the reason. C4 (a difference of method is a disagreement). The engine's sample building stacks floors on a plate of lot area times coverage up to the height limit; the independent example works a widest same-plan building up to the floor-area allowance and a second one to the minimum base height. Record it as a disagreement of kind 'a design assumption that differs', with backlog row DB-210 (the recorded lot area against the outline's area; which building the first option shows: the owner's decision, pending). Do not resolve it and do not change the engine. C5 (the 23 rule entries stay as they are). They are not rewritten in this task. That their pages lack dedicated fields for units, measurement basis, formula and rounding is stated in the coverage-gap list, with the six entries on this path named; each calculation page carries those five fields for its own steps, the rule's formula and rounding included, so the path is traceable now. C6 (the coverage-gap list is data). The list lives in register.json as its own top-level list, is rendered into REGISTER.md, and holds at least the nine gaps of the inventory (drafts/register-coverage-inventory.md, section E), each a plain sentence; the guide's own list of code with no rule id is brought into line with it. C7 (no revision of a rule entry moves; history is appended). Each new entry starts at revision 1 with a 'created' history event; no existing history line changes. No human verdict is entered; the human-review block of a calculation entry is the same as a rule entry's, with the recorded identity being the code identity, the law digests and the revision. C8 (the existing test file). services/api/tests/rules/test_zoning_rule_review_register.py is not in the allowed paths. If the new collection cannot be added without changing it, STOP and report which assertion and why. C9 (gates). G0, G2, G3 (data-contract-verifier: each entry against its sources, the cases and the program's real output), G4 (qa-engineer: the tests and mutations); no G5: no dependency, no route, no ledger tool changes.",
+  "documented_test_commands": [
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register.py tests/rules/test_zoning_rule_review_register_calculations.py",
+    "PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python services/api/app/rules/review_register/render_review_register.py --check",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave17",
+  "progress_log": [
+    {
+      "at": "2026-10-09T06:45:26.900146+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed on the branch of wave 17, on top of the head under review of M4-T037 (22262650); the two tasks share no file. The packet is a read-only helper's draft read against the code by the orchestrator, with nine rulings (C1 to C9). At the claim base: ruff exit 0; the register test 44 passed and with the seeded test file 45; the register renderer's check, the size check and the path-coverage check exit 0. Not pushed. Next: one builder (rules-engineer) in an isolated worktree reset to the claim-seam head, started when the review of M4-T037 has returned."
+    },
+    {
+      "at": "2026-10-09T07:57:55.072341+00:00",
+      "agent": "rules-engineer",
+      "percent": 70,
+      "status": "claimed",
+      "message": "Builder's two commits integrated (828d7249d and 6d2d94014: the second corrects the kind of the legal unit limit's gap to the program's own kind, work owed, and adds a test that every listed withheld gap agrees with the program). Focused checks at 07:57 UTC on the integrated head: ruff exit 0; register, calculation, reference-case and journey tests 187 passed; register render check, modularity and lane coverage exit 0; the 23 rule entries and the history prefix unchanged; six calculation entries; nine coverage gaps; no human decision entered. Next: push, CI on that head, reviews G3 and G4."
+    },
+    {
+      "at": "2026-10-09T08:12:02.090205+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "Reviews G3 (data-contract-verifier) and G4 (qa-engineer) PASS at fedef10b, none blocking; record project-control/reports/M4-T038-G3G4.md (both returns unchanged); evidence map of 23 rows with the known limits; the reviews' notes kept as backlog row DB-211. CI on fedef10b read green by the orchestrator at 08:08 UTC (run 37902086129, 21 of 21 jobs). Written at 08:12 UTC."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T08:27:58.026763+00:00"
+}

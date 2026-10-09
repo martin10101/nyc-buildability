@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-036",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct/config directive bound to the non-ledger sentinel D-036-BOOTSTRAP; R001/R002 verifiable at the first real quota-exhaustion substitution + return events; R003 verifiable from the installed task inventory.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

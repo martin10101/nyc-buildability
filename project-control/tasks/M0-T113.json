@@ -1,0 +1,127 @@
+{
+  "task_id": "M0-T113",
+  "title": "D-024 Amendment 9 unit N: R187/R595 limited-auto activation act + first-loop operation proof",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment 9 (R250-R260): durably record the owner's R187/R595 limited-auto activation authorization; run the complete activation preflight against the certified package (M0-T096-activation-package.md item 3) and current repository state; execute the exact certified start command with --mode limited-auto --owner-enable-bounded-auto ONLY if the repository is clean, the certified identity/configuration match, and all required gates pass; on ANY precondition mismatch stop and report the exact mismatch without improvising or partially activating; then prove operation beyond process launch and return the owner's 7-item report. Exclusions R257 remain owner-gated; 4.8 bridge stays shadow-only; certified supervisor code must not be modified before activation (R258). Supervisor-freeze qualifying evidence: D-024-R250.",
+  "business_reason": "Owner-typed R595 activation authorization 2026-08-29 (Amendment 9); activation must be preflight-verified, fail-closed, and durably evidenced.",
+  "inputs": [],
+  "outputs": [
+    "project-control/reports/M0-T113-activation-preflight.md (preflight matrix: identity/config/gates, or the exact mismatch)",
+    "project-control/reports/M0-T113-activation-evidence.md (activation record + 7-item owner report evidence)"
+  ],
+  "dependencies": [
+    "M0-T112"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T113-activation-preflight.md",
+    "project-control/reports/M0-T113-activation-evidence.md"
+  ],
+  "forbidden_paths": [
+    ".claude",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "tools"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T03:46:33.452684+00:00",
+  "updated_at": "2026-08-30T02:46:41.945214+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T03:46:33.452684+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Activation-act governance packet (Amendment 9, R250-R260): the unit executes the owner-authorized R595 start command and records preflight/operation evidence into NEW report files under project-control/reports/ (listed in allowed_paths; they exist only after the act). It binds no production code by design - R258 prohibits modifying certified supervisor code, and the certified identity is protected by the M0-T112 certification anchors, not by this packet's path set.",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T04:06:50.476979+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 45,
+      "status": "in_progress",
+      "message": "Preflight COMPLETE (R252): 14/14 mechanical checks PASS (capture a87b407 + CI 20/20; anchors 8574c58/132e698c/d2946392 intact; claude 2.1.248 + codex 0.146.0; protected-config 6AEF12A9 + model-selection 0E2432C0 digests match runbook; fresh manifest a5c9e1ce over 117 files outside repo; verify-controller + doctor PASS, ACL PROTECTED). R259 STOP: 2 owner-only mismatches - (1) worker model pinned claude-opus-4-8 under exhaustion-era R296/R308, revert trigger = owner-typed Fable-is-back switch-back, contradicts Amendment-9 'direct Fable' + certified bridge geometry; (2) [approved_models] empty -> APPROVED_MODELS_EMPTY=HALTED at first rotation/turnover/quota act, so certified continuous rotation cannot occur live until owner populates protected config via S13.1. NO start executed; nothing partially activated; supervisor SHADOW-ONLY. Awaiting owner: option A (switch-back + populate approved_models -> re-preflight -> launch) or option B (explicit launch-as-is directive)."
+    },
+    {
+      "at": "2026-08-29T04:39:39.477716+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 60,
+      "status": "in_progress",
+      "message": "Amendment 10 executed through its hold: capture c5ca81a (rows R261-R267, validator EXIT=0) -> R263 probe PASS (doctor --live control_response_live_probe VERIFIED sha256_head 8a9c9c9018460062; supplemental shipped-flow probe persisted events: init_model=claude-fable-5, 1 denial, no file, bounded) -> R265 single edit applied (model_selection [claude] model claude-opus-4-8 -> empty = account default Fable 5; new raw digest FCBBF70F...; post-edit doctor overall PASS, selection digest b2b927c6...) -> R266 admin instructions delivered to owner for [approved_models] + allowed_models -> R267 HOLD: no launch until owner config edit + manifest re-record + full re-preflight. Preflight MISMATCH 1 resolved by owner correction; MISMATCH 2 awaits the owner administrator edit."
+    },
+    {
+      "at": "2026-08-29T04:59:14.366840+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Owner confirmed 'config updated'. Re-preflight COMPLETE AND PASSING (preflight report sec 5): protected config verified verbatim (digest A1F99501; [claude] allowed_models + [approved_models] both = fable-5+opus-4-8); manifest RE-RECORDED (b07818fa, 117 files, config bound, round-trip PASS); verify-controller PASS; doctor PASS (approved_models populated, config identity b4f28b75); model_selection '' accepted (b2b927c6); anchors 8574c58/132e698c/d2946392 intact; CI 20/20 at bbb932a; M0-T107 staged as first bounded packet (G0 PASS, claimed by supervisor-loop-fable-producer, worktree wt-m0t107 branch task/M0-T107-plugin-portability @ 796e18f). R267 SATISFIED - launch authorized under R253/R254 once CI confirms green on the launch tip. Next: push, CI green, execute the certified start command."
+    },
+    {
+      "at": "2026-08-29T05:16:23.128226+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "ACTIVATION EXECUTED (R253/R254): certified start ran at green tip cfc6b16 - mode limited-auto, limited_auto_enabled=true, dispatched=true, 11/11 pre-dispatch probes PASS, containment job_object, 1 provider call (Fable worker live in wt-m0t107). First cycle FAIL-CLOSED per certification: worker proposed 3 read-only discovery commands -> ASK/DEFER_TO_OWNER (never AUTO); no structured checkpoint -> S14 -> PAUSED_RECOVERY -> typed refusal exit 11 no_valid_checkpoint; worktree clean, zero writes, zero forwards. R260 7-item report recorded in M0-T113-activation-evidence.md. Telegram: not configured (presence-only), queued 0. AWAITING OWNER: disposition of 3 ASK requests + clear-recovery + explicit re-start (restart 0/3, claude runs 1/12). R256 PROVEN LIVE: the loop stopped at a protected decision instead of improvising."
+    },
+    {
+      "at": "2026-08-29T05:40:10.729394+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "R268 EXECUTED: 3 denials (digests matched) + clear-recovery (journal PREFLIGHT) + identical certified restart at green tip 871cab8. RESTART REFUSED PRE-DISPATCH: UNSAFE_OR_DRIFTED, revalidation failed ['pending_requests'], dispatched=false, 0 provider calls, exit 11. ROOT CAUSE (primary evidence): deny_request/approve_once never resolve their ask_<request_id> queued_asks rows (M0-T070 fix applied to revoke_all ONLY, broker.py:684) AND probe_pending_requests reads raw open_asks() without the status command's read-time reconciliation - after any owner deny, restart is permanently blocked; revoke-all skips DENIED records. R270 HONORED: no further restarts, no journal hand-edit, loop stopped safely (no process, no effects, worktree clean). PROPOSED: M0-T115 (backlog) - bounded root-cause fix + regression tests + H2 RepairRecord; supervisor-source change -> R247 recert required before autonomous resume (R271). Awaiting owner decision on M0-T115 execution (+ optional M0-T114 same-window)."
+    },
+    {
+      "at": "2026-08-29T17:42:16.132441+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 95,
+      "status": "in_progress",
+      "message": "R276 RESUME EXECUTED THROUGH STEP 5, STOPPED PRE-START (R259/R276): steps 1-4 PASS - manifest RE-RECORDED for the post-repair tree (99b2e608, 117 files, config bound, replaces pre-repair b07818fa), verify-controller PASS, doctor 43/43 PASS, doctor --live control-response VERIFIED (d6f6c29a8ac6b3cf). Step 5 preflight: every row PASS (anchors f89aa29/7487901c/cf03caaa intact at eafdce4; CI 20/20; codex 0.146.0; config A1F99501 + selection FCBBF70F with model=''; wt-m0t107 clean at 796e18f; M0-T115 seam fix LIVE-PROVEN at status surface: open_asks empty, 3 denied asks resolved/not-actionable, journal PREFLIGHT) EXCEPT ONE EXACT MISMATCH: installed claude 2.1.251 vs certified 2.1.248 (CLI auto-updated post-activation). Drift tooth test_s8 RED by design; start would refuse provider_cli_drift at the S11.5 pinned-identity probe; the remedy flag --repin-cli-identity is an owner-requested act. START NOT ATTEMPTED, no restart loop, no journal edit, no fixture re-capture. AWAITING OWNER: (A recommended) authorize 2.1.251 fixture re-capture task + repin -> R247 re-triggers -> third recert window -> full R276 re-run; or (B) pin CLI back to 2.1.248 and re-run R276 from step 2. Preflight report section 6 has the full matrix."
+    },
+    {
+      "at": "2026-08-30T01:28:00.178069+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 96,
+      "status": "in_progress",
+      "message": "R276 RERUN EXECUTED THROUGH STEP 5, STEP 6 AT THE OWNER TOUCHPOINT: steps 1-4 PASS (manifest re-recorded 119 files 774f9198 config-bound; verify-controller PASS; doctor 43/43; doctor --live control-response VERIFIED d6f6c29a8ac6b3cf). Step 5 preflight matrix FULLY GREEN: tree clean HEAD==origin c88c2b9; anchors 7d8195b/8d34ea53/c54fd0d2 intact; CI 20/20 at c88c2b9; claude 2.1.251 (ADMITTED, digest undrifted) + codex 0.146.0; config A1F99501 + selection FCBBF70F model=''; wt-m0t107 clean 796e18f; journal PREFLIGHT 0 asks 0 effects; routing evidence current for the pinned digest. Step 6: the exact certified start command (--mode limited-auto --owner-enable-bounded-auto --repin-cli-identity, all inputs named, run_M0_T107_unitJ) was DENIED by the session permission classifier - per the standing instruction the exact command is handed to the owner for the ! prefix; NOT worked around (R259). All four Amendment-13/14 units accepted; the launch is the only remaining act."
+    },
+    {
+      "at": "2026-08-30T01:37:56.697483+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 96,
+      "status": "in_progress",
+      "message": "Owner-typed start attempt 1: the ! prefix ran through the BASH shell, which stripped unquoted backslashes from every Windows path (C:UsersMLFLL...) - all path-dependent S11.5 probes correctly refused fail-closed (UNSAFE_OR_DRIFTED, dispatched false, 0 provider calls, exit 11) and the journal remained at PREFLIGHT (no recovery clear needed; 0 asks, 0 effects). Orchestrator formatting error in the handed command, not a system defect - the refusal is itself live proof the probes catch corrupt inputs. Corrected command re-handed to the owner with cross-shell-safe forward-slash paths."
+    },
+    {
+      "at": "2026-08-30T01:45:05.505801+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 98,
+      "status": "in_progress",
+      "message": "R276 RERUN COMPLETE THROUGH THE LIVE PROOF: attempt 2 (forward-slash paths) - ALL 12 PROBES PASS, DISPATCHED, one-time repin executed with provenance (pinned d6f6c29a = admitted 2.1.251), routing tooth PASS native_preferred, R274 restart proof COMPLETE (denied asks reconciled, pending_requests PASS). LIVE FABLE 5 CONFIRMED (observed_models claude-fable-5, session 02b014ee, 143 events, rc 0). FIRST-CHECKPOINT PROGRESSION ACHIEVED: checkpoint M0-T107-ready-2026-08-29-01 parsed/validated/correlated, 46KB evidence packet, ZERO permission decisions and ZERO ask-stops (the shell-first stall did not recur - R276 proof goal met). Cycle 1 ended in the CERTIFIED fail-closed halt: Codex (gpt-5.6-sol) returned schema-valid HALT_UNSAFE ('mandatory fresh independent repository review was not completed - CONTINUE would rely on the untrusted worker checkpoint'); synchronous S9 stop, touch 2/2 within budget, exit 10; nothing forwarded. Rotation pending at next start (604772 tokens > 400k threshold, S11.2). State: HALTED, 0 asks, 0 effects, audit intact, worktree clean. Full addendum in M0-T113-activation-evidence.md. Continuation = explicit operator start WITHOUT the repin flag - handed to the owner."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-30T02:46:41.936969+00:00"
+}

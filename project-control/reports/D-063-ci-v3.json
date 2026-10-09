@@ -1,0 +1,148 @@
+{
+  "reviewed_sha": "daca3a0b949dc02100ed42499addfecc82c1ebe1",
+  "workflows": [
+    {
+      "id": 35045256841,
+      "name": "context-budget",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 35045256847,
+      "name": "secret-scan",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 35045256846,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "jobs": [
+    {
+      "id": 104633577148,
+      "name": "web-dependency-security (audit + committed-lock age gate + npm CLI advisory)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577309,
+      "name": "api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577312,
+      "name": "web-e2e (vitest + Playwright vs recorded-official-fixture API)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577320,
+      "name": "code-graph (determinism --check + fixture tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577322,
+      "name": "exact-production-install (Render pip install path + validate_profile + pip-audit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577323,
+      "name": "contracts-typegen (TS drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577336,
+      "name": "api (ruff + pytest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577351,
+      "name": "api-tooling-lock-verify (tooling lock byte-identical + age-gate unit tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577389,
+      "name": "contracts-schema-bundle (runtime schema drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577452,
+      "name": "web (lint + typecheck + build)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577479,
+      "name": "control-plane (workflow regression test, ADR-005)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577481,
+      "name": "context-index-a1 (fingerprint + cache + baseline)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577482,
+      "name": "product-map (owner-dashboard metadata integrity)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577489,
+      "name": "contracts (JSON Schema validation)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577514,
+      "name": "modularity (deterministic size/responsibility regression gate)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577538,
+      "name": "model-routing (frozen corpus + allowlist boundary tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577543,
+      "name": "context-pipeline (Units B-F suites + integration/adversarial tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104633577545,
+      "name": "supervisor-bridge (pytest tools/test_agent_supervisor_*.py)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "unit_tests": {
+    "files": 40,
+    "passed": 918
+  },
+  "browser_tests": {
+    "passed": 113
+  },
+  "artifact": {
+    "id": 10427121227,
+    "sha256": "66b09922d359ac54ad0066326021f9697361f975f4e307a76a74e37093cba8c7",
+    "digest_verified": true,
+    "screenshots_directory": "/workspace/scratch/cfa2464c5c7f/m5t031-ci-images-v3"
+  },
+  "release_disposition": "CI passed. Final independent visual/behavioral and directive verdicts remain required before delivery.",
+  "audit_ci_invocation_added": false
+}

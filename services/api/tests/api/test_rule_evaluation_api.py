@@ -33,8 +33,10 @@ the producer report).
 from __future__ import annotations
 
 import json
+import logging
 from datetime import UTC, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 import jsonschema
 import pytest
@@ -43,8 +45,12 @@ from referencing import Registry, Resource
 
 from app.api.v1 import rule_evaluation as rule_eval_module
 from app.api.v1.properties import get_pluto_fetcher
-from app.api.v1.rule_evaluation import get_spatial_substrate_provider
+from app.api.v1.rule_evaluation import (
+    get_resolved_spatial_substrate_provider,
+    get_wide_street_determination_provider,
+)
 from app.config import INTERNAL_RULE_EVAL_ENABLED_ENV_VAR
+from app.connectors.mappluto_geometry_arcgis import CRS_STAMP, analyze_lot_geometry
 from app.connectors.pluto_soda import (
     SOURCE_ID,
     TransportFailure,
@@ -52,18 +58,65 @@ from app.connectors.pluto_soda import (
     TransportTimeout,
     fetch_by_bbl,
 )
+from app.connectors.ztldb_soda import UpstreamError as ZtldbUpstreamError
 from app.main import app
 from app.rules import RuleRegistry
 from app.rules import coverage as cov
 from app.rules import integration as ri
 from app.rules.response import (
     RULE_EVALUATION_CONTRACT_VERSION,
+    RuleEvaluationContractError,
     compute_input_fingerprint,
     serialize_rule_evaluation,
     validate_rule_evaluation_document,
 )
 from app.rules.snapshots import SnapshotStore
+from app.rules.wide_street_wiring import (
+    COVERAGE_CONDITIONAL as WS_COVERAGE_CONDITIONAL,
+)
+from app.rules.wide_street_wiring import (
+    COVERAGE_PROFESSIONAL_REVIEW_REQUIRED as WS_COVERAGE_PRR,
+)
+from app.rules.wide_street_wiring import (
+    DETERMINATION_PROFESSIONAL_REVIEW as WS_DET_PRR,
+)
+from app.rules.wide_street_wiring import (
+    DETERMINATION_WITHIN_WIDE as WS_DET_WITHIN,
+)
+from app.rules.wide_street_wiring import (
+    DRAFT_LABEL_NOTICE,
+    FALLBACK_DIRECTION_NOTICE,
+    ROUTED_TO_NOT_USED_NOTICE,
+    WideStreetDetermination,
+)
+from app.rules.wide_street_wiring import (
+    FAR_ROW_NONE as WS_FAR_ROW_NONE,
+)
+from app.rules.wide_street_wiring import (
+    FAR_ROW_WIDE_STREET as WS_FAR_ROW_WIDE,
+)
+from app.spatial import live_provider as live_provider_module
+from app.spatial import wide_street_live_provider as wide_provider_module
+from app.spatial.live_provider import (
+    CONDO_BASE_LOT_UNRESOLVED_CAUSE,
+    LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR,
+    LiveSpatialFetchers,
+    LiveSubstrateResult,
+    build_substrate_substitution_stamp,
+)
+from app.spatial.wide_street_live_provider import (
+    LIVE_WIDE_STREET_PROVIDER_ENABLED_ENV_VAR,
+    LiveWideStreetFetchers,
+)
 
+# Importing app.rules.wide_street_wiring (above) pulls the shapely-heavy buffer
+# engine, exactly as the live provider would at runtime; a directly-constructed
+# WideStreetDetermination is the same typed object a real provider returns. The
+# M5-T034 disclosed gap is a provider RETURNING a determination through the
+# endpoint, exercised via the dependency override below (the wiring's own
+# engine-driven construction is proven in
+# tests/spatial/test_wide_street_live_provider.py and
+# tests/rules/test_wide_street_wiring.py).
 REPO_ROOT = Path(__file__).resolve().parents[4]
 FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "pluto"
 SCHEMA_DIR = REPO_ROOT / "packages" / "contracts" / "schemas" / "v1"
@@ -118,8 +171,22 @@ def install_fetcher(script_factory) -> None:
 
 
 def install_substrate(substrate) -> None:
-    app.dependency_overrides[get_spatial_substrate_provider] = (
-        lambda: (lambda canonical_bbl, correlation_id: substrate)
+    """Override the route's RESOLVED spatial provider (M5-T058) so existing tests
+    pass a substrate exactly as before: it rides as LiveSubstrateResult.substrate
+    with no substitution stamp and no condo cause (the non-condo path)."""
+    app.dependency_overrides[get_resolved_spatial_substrate_provider] = (
+        lambda: (
+            lambda canonical_bbl, correlation_id: LiveSubstrateResult(substrate=substrate)
+        )
+    )
+
+
+def install_resolved_substrate(result: LiveSubstrateResult) -> None:
+    """Override the route's RESOLVED spatial provider with a full
+    LiveSubstrateResult (M5-T058: carries a substitution stamp and/or the
+    condo-unresolved cause across the seam)."""
+    app.dependency_overrides[get_resolved_spatial_substrate_provider] = (
+        lambda: (lambda canonical_bbl, correlation_id: result)
     )
 
 
@@ -238,6 +305,18 @@ def _coverage_values(node):
             yield from _coverage_values(item)
 
 
+def _applicable_trace(rule_eval: dict) -> dict:
+    """The SINGLE applicable residential_far trace. The family evaluates every
+    member (visible not_applicable for the others), so positional selection
+    rots as the family grows; exactly-one is asserted so zero or several
+    applicable members fails loudly (M4-T011)."""
+    applicable = [
+        t for t in rule_eval["evaluations"] if t["applicability_outcome"] is True
+    ]
+    assert len(applicable) == 1, sorted(t["rule_id"] for t in applicable)
+    return applicable[0]
+
+
 # ==========================================================================
 # AS-3 - flag ON, confident supported family -> 200 schema-valid draft.
 # ==========================================================================
@@ -258,16 +337,25 @@ def test_as3_confident_supported_family_is_200_draft(client, monkeypatch, rule_e
     assert errors == [], [e.message for e in errors]
 
     # Draft (never verified), professional-review discipline, disclaimer.
-    assert doc["contract_version"] == RULE_EVALUATION_CONTRACT_VERSION
+    assert doc["contract_version"] == RULE_EVALUATION_CONTRACT_VERSION == "1.2.0"
+    # AS-3 (provider None omits the block): the default wide-street provider is
+    # off here (no override, flag unset) AND R5 is non-conditional, so BOTH the
+    # OPTIONAL wide_street and substrate_substitution blocks are ABSENT and the
+    # 1.0.0-shaped body stays valid under the additive 1.2.0 schema.
+    assert "wide_street" not in doc
+    assert "substrate_substitution" not in doc
     assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
     assert "verified" not in set(_coverage_values(doc))
     assert doc["not_verified_disclaimer"]
     assert doc["family_coverage"]["coverage_status"] == cov.COVERAGE_CONDITIONAL
 
     # A full draft trace: citations + computation steps + spatial_uncertainty.
+    # Every family member is evaluated (visible not_applicable for the non-R5
+    # rules); the count follows the document's own family list so it never
+    # rots as the family grows (M4-T011).
     assert doc["zoning_district"] == "R5"
-    assert len(doc["evaluations"]) == 1
-    trace = doc["evaluations"][0]
+    assert len(doc["evaluations"]) == len(doc["family_coverage"]["rule_ids"])
+    trace = _applicable_trace(doc)
     assert trace["citations"] and trace["computation_steps"]
     assert trace["outputs"]["max_residential_far"] == 1.5
     assert doc["spatial_uncertainty"]["base_district_candidates"][0]["district_label"] == "R5"
@@ -406,6 +494,97 @@ def test_as8_split_lot_preserves_share_ranges(client, monkeypatch, rule_eval_val
     assert candidates["R5"]["share_min"] == 0.55 and candidates["R5"]["share_max"] == 0.65
     assert candidates["R6"]["share_min"] == 0.35 and candidates["R6"]["share_max"] == 0.45
     assert doc["spatial_uncertainty"]["professional_review_required"] is True
+
+
+# ==========================================================================
+# M5-T058 - condo substrate-substitution stamp (contract 1.2.0) threaded
+# through the endpoint, and the honest condo_base_lot_unresolved refusal.
+# ==========================================================================
+
+
+def _resolution_double():
+    """A resolved-single CondoResolution-shaped double with every provenance
+    field populated (the route only reads the stamp the provider already built)."""
+    return SimpleNamespace(
+        resolved_base_bbl="1000010050",
+        condo_key="301313",
+        resolution_path="dtm_condo_soda_single_base_lot",
+        source_id="dof_dtm_condo",
+        dataset_ids=("dtm-condo-2026-09",),
+        retrieved_at="2026-09-06T00:00:00Z",
+    )
+
+
+def test_m5t058_route_stamps_substrate_substitution(
+    client, monkeypatch, rule_eval_validator
+):
+    """AS-1: a resolved-single condo substitution rides across the seam and the
+    endpoint stamps the OPTIONAL substrate_substitution block onto a 1.2.0
+    document; evaluated_input.bbl stays the ENTERED billing BBL."""
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    stamp = build_substrate_substitution_stamp(BBL, _resolution_double())
+    install_resolved_substrate(
+        LiveSubstrateResult(substrate=confident_r5_substrate(), substitution_stamp=stamp)
+    )
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["contract_version"] == "1.2.0"
+    # The stamp carries entered-vs-analyzed; evaluated_input.bbl is NOT moved.
+    assert doc["evaluated_input"]["bbl"] == BBL
+    assert doc["zoning_district"] == "R5"  # analysis ran on the base-lot substrate
+    block = doc["substrate_substitution"]
+    assert block == stamp  # serialized verbatim, nothing re-derived
+    assert block["entered_bbl"] == BBL
+    assert block["analyzed_bbl"] == "1000010050"
+    assert block["condo_key"] == "301313"
+    assert block["dataset_ids"] == ["dtm-condo-2026-09"]
+    assert block["mixed_substrate"]["lot_facts_substrate"] == "analyzed_base_lot"
+    assert block["mixed_substrate"]["identity_facts_substrate"] == "entered_billing_lot"
+
+
+def test_m5t058_route_condo_unresolved_names_reason_no_stamp(
+    client, monkeypatch, rule_eval_validator
+):
+    """AS-2: a condo billing BBL whose base lot could not be resolved to a single
+    lot fails safe with the HONEST condo_base_lot_unresolved reason (not the
+    generic spatial_intersection_absent) and carries NO substitution stamp."""
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_resolved_substrate(
+        LiveSubstrateResult(
+            substrate=None, fail_safe_cause=CONDO_BASE_LOT_UNRESOLVED_CAUSE
+        )
+    )
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200  # a fail-safe result is a normal document
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["coverage_status"] == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert doc["fail_safe"] is True
+    assert doc["fail_safe_reason"] == "condo_base_lot_unresolved"
+    assert doc["zoning_district"] is None  # no base lot auto-selected (D-078-R002)
+    assert doc["evaluations"] == []
+    assert "substrate_substitution" not in doc  # no single analyzed lot to stamp
+
+
+def test_m5t058_route_non_condo_absent_keeps_generic_reason(
+    client, monkeypatch, rule_eval_validator
+):
+    """AS-2 companion: a genuinely-absent non-condo substrate (no condo cause)
+    still fails safe with the generic spatial_intersection_absent reason."""
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_resolved_substrate(LiveSubstrateResult(substrate=None))
+
+    doc = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert "substrate_substitution" not in doc
 
 
 # ==========================================================================
@@ -664,3 +843,715 @@ def test_as14_health_endpoint_unaffected(client):
     response = client.get("/api/v1/health")
     assert response.status_code == 200
     assert response.json()["status"] == "ok"
+
+
+# ==========================================================================
+# M2-T020 - settings-gated LIVE spatial provider behind the DEFAULT seam.
+# S1 parity: live flag off -> the DEFAULT provider (no dependency override) is
+# byte-identical to the recorded absent-substrate fail-safe, with ZERO
+# connector calls. S2: flag on + connector doubles -> a real engine substrate
+# flows through the DEFAULT provider into evaluate_property. S3: a live
+# connector failure -> the SAME documented fail-safe document, never a 500.
+# ==========================================================================
+
+SPATIAL_FIXTURE_DIR = Path(__file__).resolve().parents[1] / "fixtures"
+_R32_X, _R32_Y = 997482.04, 163293.94  # interior probe of the real ZF03 polygon
+
+
+def _uninstall_substrate_override() -> None:
+    """Route the request through the route's DEFAULT spatial provider."""
+    app.dependency_overrides.pop(get_resolved_spatial_substrate_provider, None)
+
+
+def _live_lot_double(bbl: str, correlation_id: str):
+    """LotGeometryResult-shaped double: a square deep inside the real R3-2
+    polygon, assessed by the accepted MapPLUTO geometry validator."""
+    half = 25.0
+    ring = [
+        [_R32_X - half, _R32_Y - half],
+        [_R32_X - half, _R32_Y + half],
+        [_R32_X + half, _R32_Y + half],
+        [_R32_X + half, _R32_Y - half],
+        [_R32_X - half, _R32_Y - half],
+    ]
+    assessment = analyze_lot_geometry({"rings": [ring]}, crs=dict(CRS_STAMP))
+    return SimpleNamespace(
+        outcome="single_feature",
+        geometry=assessment,
+        review_required=False,
+        requested_bbl=bbl,
+        area_sq_ft=assessment.area_sq_ft,
+        retrieved_at="2026-09-06T00:00:00Z",
+        normalized_digest="digest-live-lot",
+        source_data_last_edited="2026-07-01T00:00:00Z",
+        crs=dict(CRS_STAMP),
+    )
+
+
+def _live_layer_double(label: str):
+    """LayerQueryResult-shaped double carrying the REAL ZF03 nyzd polygon,
+    relabelled to the queried district label (test data in a double)."""
+    doc = json.loads(
+        (SPATIAL_FIXTURE_DIR / "zoning_features" / "ZF03_query_nyzd_single_R3-2.json")
+        .read_text(encoding="utf-8")
+    )
+    features = json.loads(doc["response_body_raw"])["features"]
+    for feature in features:
+        feature["attributes"]["ZONEDIST"] = label
+    return SimpleNamespace(
+        layer="nyzd",
+        features=features,
+        object_id_field="OBJECTID",
+        normalized_digest="digest-live-zf03",
+        retrieved_at="2026-09-06T00:00:00Z",
+        source_data_last_edited="2026-07-01T00:00:00Z",
+        exceeded_transfer_limit=False,
+    )
+
+
+def _live_ztldb_double(label: str):
+    return SimpleNamespace(
+        status="ok",
+        zoning_assignment={
+            "zoning_districts": [
+                {"position": 1, "column": "zoning_district_1", "value": label}
+            ],
+            "commercial_overlays": [],
+            "special_districts": [],
+            "limited_height_district": None,
+        },
+        dataset_version="rows-2026-09-01",
+        source_freshness={"rows_updated_at": "2026-09-01T00:00:00Z"},
+    )
+
+
+class RecordingLiveFetchers:
+    """Recording spies around the live-fetcher doubles. Call lists are asserted
+    AFTER the request returns: the provider's fail-safe ``except`` swallows any
+    AssertionError raised inside a fetcher, so an exploding guard cannot prove
+    non-invocation, but a recorded call cannot be hidden. ``ztldb`` optionally
+    overrides the ZTLDB fetcher (e.g. with a raiser) while still being recorded.
+    """
+
+    def __init__(self, *, label: str = "R5", ztldb=None):
+        self.lot_calls: list = []
+        self.ztldb_calls: list = []
+        self.layer_calls: list = []
+        self._label = label
+        self._ztldb = ztldb  # optional (bbl, cid) callable override
+
+    def suite(self) -> LiveSpatialFetchers:
+        def fetch_lot(bbl, cid):
+            self.lot_calls.append((bbl, cid))
+            return _live_lot_double(bbl, cid)
+
+        def fetch_ztldb(bbl, cid):
+            self.ztldb_calls.append((bbl, cid))
+            if self._ztldb is not None:
+                return self._ztldb(bbl, cid)
+            return _live_ztldb_double(self._label)
+
+        def fetch_district_layer(layer, field, value, cid):
+            self.layer_calls.append((layer, field, value, cid))
+            return _live_layer_double(value)
+
+        return LiveSpatialFetchers(
+            fetch_lot=fetch_lot,
+            fetch_ztldb=fetch_ztldb,
+            fetch_district_layer=fetch_district_layer,
+        )
+
+
+def test_m2t020_s1_flag_off_default_seam_matches_absent_substrate_byte_for_byte(
+    client, monkeypatch
+):
+    enable_flag(monkeypatch)
+    monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    # Recording spies (working doubles): if a defect invoked them while the
+    # flag is off, the count assertions below fail AND the composed substrate
+    # would break the byte-parity assertion. Counts are checked AFTER the
+    # request returns, so the provider's fail-safe except cannot hide a call.
+    recording = RecordingLiveFetchers()
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(None)  # the recorded pre-M2-T020 default behavior
+    baseline = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    _uninstall_substrate_override()  # now the route uses its DEFAULT provider
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    live_default = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # The body carries no volatile field (AS-3 determinism), so parity is exact.
+    assert json.dumps(live_default, sort_keys=True) == json.dumps(baseline, sort_keys=True)
+    assert live_default["fail_safe_reason"] == "spatial_intersection_absent"
+    # Zero connector calls with the flag off, asserted after both requests.
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+
+def test_m2t020_s2_flag_on_live_substrate_reaches_evaluation_via_default_seam(
+    client, monkeypatch, rule_eval_validator
+):
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    recording = RecordingLiveFetchers(label="R5")
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()  # DEFAULT provider; no dependency override
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+
+    # Each connector was consulted exactly once, and every call carried the
+    # SAME correlation id the response advertises (provenance binding).
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+    assert recording.lot_calls == [(BBL, correlation_id)]
+    assert recording.layer_calls == [("nyzd", "ZONEDIST", "R5", correlation_id)]
+
+    # The engine-composed substrate reached evaluate_property: a confident R5
+    # district and the GEOMETRIC lot area drive a full conditional draft trace.
+    assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
+    assert doc["zoning_district"] == "R5"
+    assert doc["lot_area_source"] == "spatial_intersection.pairs[].lot_area_sq_ft"
+    assert doc["spatial_uncertainty"]["base_district_candidates"][0][
+        "district_label"
+    ] == "R5"
+    assert len(doc["evaluations"]) == len(doc["family_coverage"]["rule_ids"])
+    assert _applicable_trace(doc)["outputs"]["max_residential_far"] == 1.5
+    assert "verified" not in set(_coverage_values(doc))
+
+
+def test_m2t020_s3_live_connector_failure_is_absent_substrate_fail_safe(
+    client, monkeypatch, rule_eval_validator, caplog
+):
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+
+    # The message is a CANARY: it must never reach a log line or the response.
+    def _raising_ztldb(bbl, cid):
+        raise ZtldbUpstreamError("canary-upstream-detail", correlation_id=cid)
+
+    recording = RecordingLiveFetchers(ztldb=_raising_ztldb)
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()
+
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200  # documented fail-safe, never a 500
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["coverage_status"] == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert doc["fail_safe"] is True
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] is None
+    assert doc["evaluations"] == []
+
+    # Short-circuit asserted AFTER the request returned: the failing ZTLDB call
+    # happened exactly once and the later connectors were never consulted (an
+    # in-call exploding guard would have been swallowed by the fail-safe except).
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+    # The typed failure is logged payload-only: error CLASS + the SAME
+    # correlation id the response advertises, never the exception text.
+    lines = [
+        record.getMessage()
+        for record in caplog.records
+        if record.name == "app.spatial.live_provider"
+        and "fail_safe" in record.getMessage()
+    ]
+    assert len(lines) == 1
+    assert "event=connector_error" in lines[0]
+    assert "error_type=UpstreamError" in lines[0]
+    assert f"correlation_id={correlation_id}" in lines[0]
+    assert "canary-upstream-detail" not in lines[0]
+    assert "canary-upstream-detail" not in response.text
+
+
+# ==========================================================================
+# M5-T033 - deployed spatial_intersection_absent root-cause reproduction
+# (D-059-R004). The live capture (project-control/reports/M5-T033-live-capture.md)
+# recorded a UNIFORM spatial_intersection_absent across both D-059 parcels AND a
+# known-good control, each in ~0.6-0.7 s. Two candidate branches produce that
+# same response-level reason; these reproduce BOTH deterministically through the
+# route's DEFAULT spatial seam and pin what each observable signature does and
+# does NOT distinguish. No production code changes - the branches already exist;
+# this is the regression fence keeping a future deploy regression (flag unset)
+# separable from a live connector/data failure. Uniform absence across the control
+# and fast latency are SUGGESTIVE, never decisive: a shared connector failure is
+# uniform and fast too, so they cannot by themselves prove the flag was off (the
+# provider-level counterexample lives in tests/spatial/test_live_provider.py::
+# test_m5t033_shared_connector_failure_is_uniform_absent_flag_on). The runtime
+# cause stays UNCONFIRMED until the owner reads the deployed
+# LIVE_SPATIAL_PROVIDER_ENABLED value and its correlated connector logs
+# (docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md §6b); the tests assert code
+# behavior only, never that the live cause is confirmed.
+# ==========================================================================
+
+# The end-to-end seam behavior below is BBL-agnostic, so it runs on the module
+# fixture BBL (whose PLUTO row the connector validates against the requested BBL).
+# The D-059-R004 parcels themselves (3052960043, 3022647515) are exercised in the
+# reproduction fixtures at the PROVIDER level (tests/spatial/test_live_provider.py)
+# and the EVALUATOR level (tests/rules/test_rules_integration.py), where no PLUTO
+# row is fetched so the real parcel BBLs flow through unmodified.
+
+
+def test_m5t033_flag_off_uniform_absent_zero_connector_calls(
+    client, monkeypatch, rule_eval_validator
+):
+    """Branch A (deploy regression): LIVE_SPATIAL_PROVIDER_ENABLED unset -> the
+    DEFAULT provider yields no substrate with ZERO connector calls, and the
+    endpoint fail-safes to spatial_intersection_absent - the same reason the live
+    capture recorded UNIFORMLY across every parcel, reproduced end-to-end through
+    the route's own default seam (this branch's BBL-independence is pinned
+    per-parcel for the D-059 parcels at the provider/evaluator levels)."""
+    enable_flag(monkeypatch)  # INTERNAL_RULE_EVAL_ENABLED on (route reachable)
+    monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    recording = RecordingLiveFetchers(label="R5")  # working doubles; stay unused
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()  # route uses its DEFAULT (live) provider
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["fail_safe"] is True
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] is None
+    assert doc["evaluations"] == []
+    # The signature that separates this from a live connector failure: ZERO
+    # connector calls, asserted AFTER the request (the fail-safe except cannot
+    # hide a recorded call). Flag-off short-circuits before any network I/O.
+    assert recording.ztldb_calls == []
+    assert recording.lot_calls == []
+    assert recording.layer_calls == []
+
+
+def test_m5t033_flag_on_connector_failure_same_reason_but_connector_consulted(
+    client, monkeypatch, rule_eval_validator, caplog
+):
+    """Branch B (live data failure): flag ON + an injected connector failure
+    returns the SAME response-level spatial_intersection_absent (a documented 200
+    fail-safe, never a 500) - so the response body alone does NOT distinguish it
+    from branch A. What DOES: the connector was actually consulted (recorded) and
+    the provider logged exactly one payload-only connector_error line. This is the
+    crux the owner dashboard check resolves."""
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+
+    def _raising_ztldb(bbl, cid):
+        raise ZtldbUpstreamError("canary-m5t033-detail", correlation_id=cid)
+
+    recording = RecordingLiveFetchers(ztldb=_raising_ztldb)
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()
+
+    with caplog.at_level(logging.WARNING, logger="app.spatial.live_provider"):
+        response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    # Response-level reason IDENTICAL to branch A (body cannot tell them apart).
+    assert doc["fail_safe_reason"] == "spatial_intersection_absent"
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] is None
+    # Provider-level signature is observably DIFFERENT: the connector was consulted
+    # for this BBL, carrying the same correlation id the response advertises ...
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+    # ... and exactly one payload-only fail-safe line was logged (no canary text).
+    lines = [
+        r.getMessage()
+        for r in caplog.records
+        if r.name == "app.spatial.live_provider" and "fail_safe" in r.getMessage()
+    ]
+    assert len(lines) == 1
+    assert "event=connector_error" in lines[0]
+    assert "error_type=UpstreamError" in lines[0]
+    assert "canary-m5t033-detail" not in lines[0]
+    assert "canary-m5t033-detail" not in response.text
+
+
+def test_m5t033_flag_on_healthy_connectors_is_not_absent_per_parcel(
+    client, monkeypatch, rule_eval_validator
+):
+    """Flag ON + HEALTHY connectors end-to-end -> the parcel resolves to a real
+    district (NOT absent). This shows the flag-on branch CAN resolve; it does NOT
+    prove uniform absence implies flag-off. A SHARED connector failure yields
+    uniform absence with the flag ON too (tests/spatial/test_live_provider.py::
+    test_m5t033_shared_connector_failure_is_uniform_absent_flag_on), so uniformity
+    and latency are suggestive only - the owner dashboard flag reading and the
+    correlated typed connector logs are the decisive runtime evidence."""
+    enable_flag(monkeypatch)
+    monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
+    recording = RecordingLiveFetchers(label="R5")
+    monkeypatch.setattr(live_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    _uninstall_substrate_override()
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["fail_safe_reason"] != "spatial_intersection_absent"
+    assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
+    assert doc["zoning_district"] == "R5"
+    # The connectors WERE consulted for this parcel (unlike branch A's zero calls).
+    correlation_id = response.headers["X-Correlation-ID"]
+    assert recording.ztldb_calls == [(BBL, correlation_id)]
+
+
+# ==========================================================================
+# M5-T035 - a wide-street-determination provider RETURNING a real typed
+# determination flows through the DEFAULT get_wide_street_determination_provider
+# seam into evaluate_property and drives ZR 23-22 conditional-FAR row selection.
+# This closes the M5-T034 disclosed gap (AS-3): M5-T034 covered the provider
+# DEFAULT (None), but no test exercised a provider RETURNING a determination
+# through the full /rule-evaluation endpoint. The determination is supplied via a
+# dependency override (exactly as get_spatial_substrate_provider is overridden),
+# which is what "a provider returning a determination" means to this route.
+#
+# CONTRACT (M5-T037, rule_evaluation @ 1.1.0): the additive contract bump the
+# M5-T034 discovery called for has LANDED. app.rules.integration.
+# PropertyRuleEvaluation.as_dict now serializes the OPTIONAL top-level
+# ``wide_street`` block whenever a determination folded in (the D-052 provenance
+# summary: determination_state, far_row, governing_max_residential_far, the
+# provenance tuples, and the DRAFT marker). The determination's coverage effect
+# STILL also reaches the response through coverage_status /
+# professional_review_required / reasons (unchanged). The endpoint tests below now
+# assert the serialized block is present and correct on a within-wide document and
+# ABSENT on a no-determination document, alongside those observable effects.
+# ==========================================================================
+
+
+def confident_district_substrate(district: str, area: float = 10000.0):
+    """A single-district-confident base-zoning substrate for an arbitrary district
+    label (mirrors confident_r5_substrate for the wide-street-conditional R6)."""
+    return _substrate(
+        "single_district_confident",
+        [_pair(district, "interior_confident", lot_area=area)],
+        review=False,
+    )
+
+
+def _wide_street_determination(
+    determination_state: str,
+    far_row: str,
+    coverage_hint: str,
+    *,
+    reason: str,
+    aggregate_intersects: bool | None = None,
+) -> WideStreetDetermination:
+    """A real typed WideStreetDetermination (the exact object a live provider
+    returns) built directly - no shapely geometry needed at this seam; the
+    engine-driven construction from fixtures is proven in
+    tests/spatial/test_wide_street_live_provider.py. Mirrors
+    tests/rules/test_rules_integration.py::_wide_determination."""
+    return WideStreetDetermination(
+        determination_state=determination_state,
+        far_row=far_row,
+        coverage_hint=coverage_hint,
+        exceptions_checked=True,
+        named_street_override_pending=False,
+        reason=reason,
+        policy_decision_states=("wide",),
+        original_labels=("100",),
+        source_versions=("dcm-streetwidth-v1",),
+        matched_geometry_refs=("segment-object-id-1",),
+        interpreted_bounds_summaries=("exactly 100 ft",),
+        classification_reasons=("mapped width 100 ft >= 75 ft threshold",),
+        buffer_status="computed",
+        aggregate_intersects=aggregate_intersects,
+        aggregate_area_sq_ft=None,
+        lot_identity=BBL,
+        draft_label=DRAFT_LABEL_NOTICE,
+        routed_to_note=ROUTED_TO_NOT_USED_NOTICE,
+        fallback_direction_note=FALLBACK_DIRECTION_NOTICE,
+    )
+
+
+def install_wide_street_provider(determination) -> None:
+    """Override the route's wide-street-determination provider so the endpoint
+    behaves as if a live provider returned this determination (mirrors
+    install_substrate)."""
+    app.dependency_overrides[get_wide_street_determination_provider] = (
+        lambda: (lambda canonical_bbl, correlation_id: determination)
+    )
+
+
+class _RecordingWideFetchers:
+    """Recording spies for the live wide-street provider's connector seams, to
+    prove ZERO connector calls when LIVE_WIDE_STREET_PROVIDER_ENABLED is off.
+    Counts are asserted AFTER the request returns (the provider's fail-safe except
+    would swallow an in-call AssertionError, but a recorded call cannot hide)."""
+
+    def __init__(self) -> None:
+        self.calls = {"lot": 0, "segments": 0, "geometries": 0}
+
+    def suite(self) -> LiveWideStreetFetchers:
+        def fetch_lot(bbl, cid):
+            self.calls["lot"] += 1
+            raise AssertionError("wide-street lot fetch must not run with the flag off")
+
+        def fetch_segments(envelope, cid):
+            self.calls["segments"] += 1
+            raise AssertionError("wide-street segment fetch must not run with the flag off")
+
+        def fetch_geometries(object_id_in, cid):
+            self.calls["geometries"] += 1
+            raise AssertionError("wide-street geometry fetch must not run with the flag off")
+
+        return LiveWideStreetFetchers(
+            fetch_lot=fetch_lot,
+            fetch_segments_by_envelope=fetch_segments,
+            fetch_segment_geometries_by_ids=fetch_geometries,
+        )
+
+
+def test_m5t035_within_wide_determination_fires_wide_row_via_endpoint(
+    client, monkeypatch, rule_eval_validator
+):
+    # A within-100ft-of-a-wide-street determination on a confident R6 lot: the
+    # WIDE conditional-FAR row governs server-side. R6 is covered by exactly one
+    # residential_far rule (r6-r7-r8-wide-street-conditional-far; the flat r6-r12
+    # rule applies only to the suffixed districts), so the determination folds.
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    det = _wide_street_determination(
+        WS_DET_WITHIN,
+        WS_FAR_ROW_WIDE,
+        WS_COVERAGE_CONDITIONAL,
+        reason="M5-T035 endpoint fixture: within-100ft determination",
+        aggregate_intersects=True,
+    )
+    install_wide_street_provider(det)
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+
+    # WITHIN is a confident DRAFT outcome: coverage stays conditional, never
+    # escalated and never Verified (D-045-R009).
+    assert doc["coverage_status"] == cov.COVERAGE_CONDITIONAL
+    assert doc["professional_review_required"] is False
+    assert doc["zoning_district"] == "R6"
+    assert "verified" not in set(_coverage_values(doc))
+    assert doc["not_verified_disclaimer"]
+
+    # The rule's OWN DSL trace output stays the CONSERVATIVE R6 value (2.20); the
+    # higher wide-street value is NEVER produced by the rule's computation - it is
+    # selected only server-side and only surfaces in reasons (below).
+    trace = _applicable_trace(doc)
+    assert trace["outputs"]["max_residential_far"] == 2.2
+
+    # The wide-row effect that reaches the frozen contract is the fold reason,
+    # naming the higher governing FAR (3.00) and the DRAFT marker. Asserted as an
+    # exact reconstructed string (not a broad substring match).
+    expected_reason = (
+        "wide-street determination within_100ft_of_wide_street: the "
+        "wide-street (higher) conditional-FAR row governs (max_residential_far "
+        "3.0); DRAFT pending G6. M5-T035 endpoint fixture: within-100ft determination"
+    )
+    assert expected_reason in doc["reasons"]
+
+    # M5-T037 wide_street block, carried on a now-1.2.0-versioned document
+    # (additive M5-T058 bump): the structured wide_street block is serialized on a
+    # within-wide document. It carries the fired row, the higher governing FAR
+    # selected server-side (3.0, never the rule's own DSL output), the D-052
+    # provenance summary, and the DRAFT marker - never Verified.
+    assert doc["contract_version"] == "1.2.0"
+    block = doc["wide_street"]
+    assert block["determination_state"] == "within_100ft_of_wide_street"
+    assert block["far_row"] == "wide_street_row"
+    assert block["governing_max_residential_far"] == 3.0
+    assert block["coverage_hint"] == WS_COVERAGE_CONDITIONAL
+    # Geometry/source provenance rides in the block (the OBJECTID ref the D-052
+    # decision matched); the raw geometry-page sha256 digest (DB-020) is asserted
+    # at the provider level in tests/spatial/test_wide_street_live_provider.py.
+    assert block["matched_geometry_refs"] == ["segment-object-id-1"]
+    assert block["policy_decision_states"] == ["wide"]
+    assert block["source_versions"] == ["dcm-streetwidth-v1"]
+    assert "DRAFT" in block["draft_label"]
+    assert "verified" not in block["draft_label"].lower() or "not a" in block["draft_label"].lower()
+    # The internal dataclass field NAMES are never top-level document keys (the
+    # serialized key is the single ``wide_street`` block above).
+    for absent in ("wide_street_far_row", "wide_street_governing_far", "wide_street_determination"):
+        assert absent not in doc
+
+
+def test_m5t035_professional_review_determination_escalates_coverage_via_endpoint(
+    client, monkeypatch, rule_eval_validator
+):
+    # A professional-review wide-street determination on a confident R6 lot grants
+    # NO wide-street FAR bonus and ESCALATES coverage to professional_review_required
+    # (D-051 fallback direction: the wide value is the higher FAR, withheld on
+    # uncertainty). This is the observable, frozen-contract effect.
+    enable_flag(monkeypatch)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    det = _wide_street_determination(
+        WS_DET_PRR,
+        WS_FAR_ROW_NONE,
+        WS_COVERAGE_PRR,
+        reason="M5-T035 endpoint fixture: unresolved street width",
+    )
+    install_wide_street_provider(det)
+
+    response = client.get(f"/api/v1/properties/{BBL}/rule-evaluation")
+    assert response.status_code == 200  # escalation is still a normal 200 document
+    doc = response.json()
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    assert doc["coverage_status"] == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert doc["professional_review_required"] is True
+    assert doc["zoning_district"] == "R6"  # the district is still confidently known
+    assert "verified" not in set(_coverage_values(doc))
+
+    expected_reason = (
+        "wide-street determination professional_review_required: no "
+        "conditional-FAR row fires and no higher (wide-street) FAR bonus is "
+        "granted; coverage escalates to professional review "
+        "(D-051 fallback direction for these rows - the wide value is the "
+        "higher FAR, so it is withheld on uncertainty). "
+        "M5-T035 endpoint fixture: unresolved street width"
+    )
+    assert expected_reason in doc["reasons"]
+
+
+def test_m5t035_flag_off_default_wide_provider_zero_calls_byte_identical(client, monkeypatch):
+    # AS-1 (endpoint half): with LIVE_WIDE_STREET_PROVIDER_ENABLED off, the route's
+    # DEFAULT wide-street provider returns None with ZERO connector calls, and the
+    # /rule-evaluation document is byte-identical to the no-determination path.
+    enable_flag(monkeypatch)
+    monkeypatch.delenv(LIVE_WIDE_STREET_PROVIDER_ENABLED_ENV_VAR, raising=False)
+    recording = _RecordingWideFetchers()
+    monkeypatch.setattr(wide_provider_module, "_ACTIVE_FETCHERS", recording.suite())
+
+    # Baseline: an explicit override that supplies NO determination (None).
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(None)
+    baseline = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # Now the route uses its DEFAULT wide-street provider (flag off -> None).
+    app.dependency_overrides.pop(get_wide_street_determination_provider, None)
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    live_default = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # The body carries no volatile field (AS-3 determinism), so parity is exact.
+    assert json.dumps(live_default, sort_keys=True) == json.dumps(baseline, sort_keys=True)
+    assert live_default["zoning_district"] == "R6"
+    # Zero wide-street connector calls with the flag off, asserted AFTER the request
+    # (the provider's fail-safe except cannot hide a recorded call).
+    assert recording.calls == {"lot": 0, "segments": 0, "geometries": 0}
+
+
+# ==========================================================================
+# M5-T037 AS-3 (serialization) - a typed within-wide determination through the
+# endpoint yields a schema-valid rule_evaluation @ 1.1.0 document CARRYING the
+# optional wide_street block; a provider that returns None (no determination)
+# yields a schema-valid 1.1.0 document with the block ABSENT. Validated against
+# BOTH schema copies: the canonical packages/contracts copy (the rule_eval_
+# validator fixture) AND the bundled app._contract_schemas copy (the route's own
+# pre-send validate_rule_evaluation_document, which must pass for the 200).
+# ==========================================================================
+
+
+def test_m5t037_as3_within_wide_serializes_block_and_none_omits_block_via_endpoint(
+    client, monkeypatch, rule_eval_validator
+):
+    enable_flag(monkeypatch)
+    within = _wide_street_determination(
+        WS_DET_WITHIN,
+        WS_FAR_ROW_WIDE,
+        WS_COVERAGE_CONDITIONAL,
+        reason="M5-T037 AS-3 fixture: within-100ft determination",
+        aggregate_intersects=True,
+    )
+
+    # Branch 1: a within-wide determination -> the block is serialized.
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(within)
+    with_block = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # Canonical-schema valid (the bundled-schema validation already passed inside
+    # the route, which is why this was a 200 rather than a typed internal error).
+    assert list(rule_eval_validator.iter_errors(with_block)) == []
+    validate_rule_evaluation_document(with_block)  # bundled runtime schema, no raise
+    assert with_block["contract_version"] == "1.2.0"
+    block = with_block["wide_street"]
+    assert block["determination_state"] == "within_100ft_of_wide_street"
+    assert block["far_row"] == "wide_street_row"
+    assert block["governing_max_residential_far"] == 3.0
+    assert block["matched_geometry_refs"] == ["segment-object-id-1"]
+    assert block["policy_decision_states"] == ["wide"]
+    assert "DRAFT" in block["draft_label"]
+    assert "verified" not in set(_coverage_values(with_block))
+
+    # Branch 2: provider None (explicit override) -> the block is ABSENT and the
+    # 1.0.0-shaped body still validates against both schema copies under 1.2.0.
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(None)
+    no_block = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    assert list(rule_eval_validator.iter_errors(no_block)) == []
+    validate_rule_evaluation_document(no_block)
+    assert no_block["contract_version"] == "1.2.0"
+    assert "wide_street" not in no_block
+    assert no_block["zoning_district"] == "R6"
+
+
+def test_m5t037_as2_schema_rejects_undocumented_extra_key_in_block_and_at_root(
+    client, monkeypatch, rule_eval_validator
+):
+    # additionalProperties:false must reject an undocumented key both INSIDE the
+    # new wide_street block and at the document ROOT, on BOTH schema copies (the
+    # canonical fixture validator and the bundled runtime validator). Built from a
+    # real endpoint-produced 1.1.0 document so the base shape is genuinely valid.
+    enable_flag(monkeypatch)
+    within = _wide_street_determination(
+        WS_DET_WITHIN,
+        WS_FAR_ROW_WIDE,
+        WS_COVERAGE_CONDITIONAL,
+        reason="M5-T037 AS-2 fixture: within-100ft determination",
+        aggregate_intersects=True,
+    )
+    install_fetcher(lambda: [fixture_response("F01_single_lot_normal.json")])
+    install_substrate(confident_district_substrate("R6"))
+    install_wide_street_provider(within)
+    doc = client.get(f"/api/v1/properties/{BBL}/rule-evaluation").json()
+
+    # The clean base document is valid on both copies.
+    assert "wide_street" in doc
+    assert list(rule_eval_validator.iter_errors(doc)) == []
+    validate_rule_evaluation_document(doc)
+
+    # Extra key INSIDE the wide_street block -> rejected by both schema copies.
+    bad_block = json.loads(json.dumps(doc))
+    bad_block["wide_street"]["undocumented_block_key"] = "x"
+    assert list(rule_eval_validator.iter_errors(bad_block)) != []
+    with pytest.raises(RuleEvaluationContractError):
+        validate_rule_evaluation_document(bad_block)
+
+    # Extra key at the document ROOT (not the fixture-only _expected_failure key)
+    # -> rejected by both schema copies.
+    bad_root = json.loads(json.dumps(doc))
+    bad_root["undocumented_root_key"] = 1
+    assert list(rule_eval_validator.iter_errors(bad_root)) != []
+    with pytest.raises(RuleEvaluationContractError):
+        validate_rule_evaluation_document(bad_root)

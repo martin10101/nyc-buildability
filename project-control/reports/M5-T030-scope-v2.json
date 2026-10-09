@@ -1,0 +1,54 @@
+{
+  "recorded_at": "2026-09-15T01:23:43.230789+00:00",
+  "baseline_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d",
+  "prior_review_sha": "0c6340b2e0824afc1b8b579668cb337d927c1ed9",
+  "changed_application_paths": [
+    "apps/web/e2e/architect-workspace.spec.ts",
+    "apps/web/e2e/confirm-journey.spec.ts",
+    "apps/web/e2e/partial-and-conflict.spec.ts",
+    "apps/web/e2e/primary-journey.spec.ts",
+    "apps/web/src/components/architect/EvidenceInspector.tsx",
+    "apps/web/src/components/architect/EvidenceRecord.tsx",
+    "apps/web/src/components/architect/ReportSources.tsx",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx",
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx",
+    "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts",
+    "apps/web/src/lib/provenance-link.ts"
+  ],
+  "file_sha256": {
+    "apps/web/e2e/architect-workspace.spec.ts": "3d2afa7864e31d20da8a8e0d0ebcbef72ee49cbe64fd4fd64bcc972f1ac2f9b1",
+    "apps/web/e2e/confirm-journey.spec.ts": "175ef6593de3bc55dd917cbea09ef30d5975dddd35ddd70f094d5ccd1ea37b21",
+    "apps/web/e2e/partial-and-conflict.spec.ts": "b40afdeeaa1b2d8da1ec407c34f5a41e289baafa9e68ce630214c66b10abd0ef",
+    "apps/web/e2e/primary-journey.spec.ts": "71bc5fa4dc5060d05a503ab1adba8f4c8e605bd5445be4888c892f26cab5c23d",
+    "apps/web/src/components/architect/EvidenceInspector.tsx": "3370ed2f4a72cc082e422efa4a370525153de8fffb0fae6c65d5d0aec665099a",
+    "apps/web/src/components/architect/EvidenceRecord.tsx": "85a5e2992981ea9692e68cda31c40155597fc13cb5eb78ea9c5499198a5d28fc",
+    "apps/web/src/components/architect/ReportSources.tsx": "e8903d99093f2c208b1bffa736a4d20a74baf3894d14e8fc93e09286917ab72e",
+    "apps/web/src/components/architect/__tests__/source-links.test.tsx": "77c01ef4016c07f4583da5b791e61b6ef0d8673ddffe02fa44d8905c0c649bf2",
+    "apps/web/src/components/architect/__tests__/workspace.test.tsx": "48a19ef905b56f7d6f4ae627753919a974f6f06f86083530d49789f87c529019",
+    "apps/web/src/components/property/ProvenanceDisclosure.tsx": "0213e6c717d25643acbbd6a6649e0865d3f32549131ce9192d0897cad22572bf",
+    "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx": "99178ff3254e3f20a550c3fd01ab11f19b5b0e7848da3b681997f100d3ec9e95",
+    "apps/web/src/lib/__tests__/provenance-link.test.ts": "1de6ec9cb72d83f370647d11671e0dcd4817bb35c551ef247a7ca8e850ab5bdb",
+    "apps/web/src/lib/provenance-link.ts": "5c62219754122bfee6d635058139d8cc3d3f52692ee55c89fb85f93fb4f419fe"
+  },
+  "prior_manifest_changed_paths": [
+    "apps/web/src/components/architect/ReportSources.tsx",
+    "apps/web/e2e/architect-workspace.spec.ts"
+  ],
+  "newly_authorized_test_paths": [
+    "apps/web/e2e/confirm-journey.spec.ts",
+    "apps/web/e2e/partial-and-conflict.spec.ts",
+    "apps/web/e2e/primary-journey.spec.ts"
+  ],
+  "protected_application_diff": [],
+  "remote_main_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "remote_pr_241": {
+    "state": "open",
+    "merged": false,
+    "merged_at": null,
+    "base": "main",
+    "head": "4174a3b2a547ae7d5df5d35cefb63767cbf84721"
+  },
+  "note": "Read-only GitHub ref/PR checks reconfirmed protected refs before rework freeze. Rework changes three e2e outer-summary locators plus report captured-cell text case and its existing e2e computed-style assertion. No other product change."
+}

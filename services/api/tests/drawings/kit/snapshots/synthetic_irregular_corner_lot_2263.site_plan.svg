@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720.00 504.00" width="720.00" height="504.00" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-drawing="site_plan" data-kit-version="0">
+<title>Site plan</title>
+<defs></defs>
+<rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
+<path d="M161.40 372.90 L305.40 372.90 L305.40 300.90 L233.40 300.90 L233.40 204.90 L161.40 204.90 Z" fill="#F0E442" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-source="/geometry/floor_plates/entries/0" data-floor="1"/>
+<path d="M185.40 348.90 L330.60 348.90" fill="none" stroke="#D55E00" stroke-width="1.00" stroke-dasharray="6.00 3.00" stroke-linejoin="round" data-source="/geometry/setback_lines_per_level/entries/0"/>
+<text x="258.00" y="357.90" font-size="7.50" text-anchor="middle" fill="#111111" data-role="setback_floor" data-source="/geometry/setback_lines_per_level/entries/0/floor">Setback, floor 3</text>
+<path d="M161.40 372.90 L354.60 372.90 L354.60 228.30 L233.40 131.10 L161.40 131.10 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
+<path d="M161.40 374.90 L161.40 387.90 M159.20 382.70 L163.60 387.10 M354.60 374.90 L354.60 387.90 M352.40 382.70 L356.80 387.10 M161.40 384.90 L354.60 384.90" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="258.00" y="393.30" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">80.5 ft</text>
+<path d="M356.60 372.90 L369.60 372.90 M364.40 375.10 L368.80 370.70 M356.60 228.30 L369.60 228.30 M364.40 230.50 L368.80 226.10 M366.60 372.90 L366.60 228.30" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="375.00" y="300.60" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 375.00 300.60)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">60.25 ft</text>
+<path d="M355.85 226.74 L363.98 216.60 M362.45 222.03 L361.77 215.85 M234.65 129.54 L242.78 119.40 M241.25 124.83 L240.57 118.65 M362.11 218.94 L240.91 121.74" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="302.76" y="168.78" font-size="8.00" text-anchor="middle" transform="rotate(38.73 302.76 168.78)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">64.73 ft</text>
+<path d="M233.40 129.10 L233.40 116.10 M235.60 121.30 L231.20 116.90 M161.40 129.10 L161.40 116.10 M163.60 121.30 L159.20 116.90 M233.40 119.10 L161.40 119.10" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="197.40" y="117.10" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">30 ft</text>
+<path d="M159.40 131.10 L146.40 131.10 M151.60 128.90 L147.20 133.30 M159.40 372.90 L146.40 372.90 M151.60 370.70 L147.20 375.10 M149.40 131.10 L149.40 372.90" fill="none" stroke="#333333" stroke-width="0.50"/>
+<text x="147.40" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 147.40 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#4">100.75 ft</text>
+<text x="258.00" y="416.10" font-size="9.00" text-anchor="middle" font-style="italic" fill="#111111" data-role="street" data-source="/geometry/streets/0/street">Synthetic Avenue E</text>
+<text x="125.40" y="252.00" font-size="9.00" text-anchor="middle" font-style="italic" transform="rotate(-90.00 125.40 252.00)" fill="#111111" data-role="street" data-source="/geometry/streets/1/street">Synthetic Place F</text>
+<g data-role="north-arrow">
+<path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>
+<text x="554.00" y="58.00" font-size="8.00" text-anchor="start" fill="#111111" data-role="furniture">Grid north</text>
+</g>
+<g data-role="scale-bar" data-x0="520.00" data-px-per-ft="2.400000">
+<rect x="520.00" y="88.00" width="60.00" height="5.00" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<rect x="580.00" y="88.00" width="60.00" height="5.00" fill="#FFFFFF" stroke="#000000" stroke-width="0.50"/>
+<text x="520.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">0</text>
+<text x="580.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">25</text>
+<text x="640.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">50 ft</text>
+</g>
+<g data-role="legend">
+<text x="520.00" y="126.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Legend</text>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="#F0E442" stroke="#222222" stroke-width="0.50" stroke-linejoin="round"/>
+<text x="544.00" y="140.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Residential</text>
+<line x1="520.00" y1="153.00" x2="538.00" y2="153.00" stroke="#D55E00" stroke-width="1.00" stroke-dasharray="6.00 3.00" stroke-linejoin="round"/>
+<text x="544.00" y="156.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Setback line</text>
+<line x1="520.00" y1="169.00" x2="538.00" y2="169.00" stroke="#000000" stroke-width="1.50" stroke-linejoin="round"/>
+<text x="544.00" y="172.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Lot line</text>
+</g>
+<g data-role="notes">
+<text x="520.00" y="198.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Notes</text>
+<text x="520.00" y="210.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00">Lot outline: </tspan><tspan data-source="/geometry/measurement/label">Approximate — tax map</tspan></text>
+<text x="520.00" y="224.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/geometry/yards/reason">Yards not available — yard rules for</tspan><tspan x="520.00" dy="10.00" data-source="/geometry/yards/reason">this district are not built yet.</tspan></text>
+</g>
+</svg>

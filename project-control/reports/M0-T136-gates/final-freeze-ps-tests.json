@@ -1,0 +1,21 @@
+{
+ "argv": [
+  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "-NoProfile",
+  "-ExecutionPolicy",
+  "Bypass",
+  "-File",
+  "tools\\agent_supervisor\\ps_tests\\run_ps_tests.ps1"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-02T03:10:50.662240+00:00",
+ "ended_at_utc": "2026-09-02T03:10:54.315021+00:00",
+ "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+ "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "d6ef27c3f98f112dbdab11c3bed435bed538ed1ed7a2f5401f0aef54885b687a",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 683,
+ "stderr_bytes": 0
+}

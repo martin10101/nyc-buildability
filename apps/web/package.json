@@ -15,12 +15,15 @@
     "depage:test": "node --test scripts/tests/*.test.mjs"
   },
   "dependencies": {
-    "next": "15.5.21",
+    "@react-three/fiber": "9.7.0",
+    "maplibre-gl": "6.7.0",
+    "next": "15.5.27",
     "react": "19.1.2",
-    "react-dom": "19.1.2"
+    "react-dom": "19.1.2",
+    "three": "0.186.0"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "3.3.6",
+    "@eslint/js": "9.39.5",
     "@playwright/test": "1.61.1",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
@@ -30,16 +33,21 @@
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "4.7.0",
     "eslint": "9.39.5",
-    "eslint-config-next": "15.5.21",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.12.0",
     "jsdom": "26.1.0",
     "typescript": "5.9.3",
-    "vitest": "3.2.7"
+    "typescript-eslint": "8.70.1",
+    "vitest": "4.1.11"
   },
   "overrides": {
     "postcss": "8.5.23",
-    "sharp": "0.35.3",
-    "brace-expansion": "1.1.18",
-    "js-yaml": "4.3.1",
-    "nanoid": "3.3.18"
+    "sharp": "0.35.5",
+    "brace-expansion": "1.1.21",
+    "js-yaml": "4.3.2",
+    "nanoid": "3.3.18",
+    "baseline-browser-mapping": "2.11.21",
+    "browserslist": "4.28.9",
+    "source-map-js": "1.2.2"
   }
 }

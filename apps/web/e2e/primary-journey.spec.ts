@@ -66,7 +66,7 @@ test("S1: provenance drill-down on lot area shows source, dataset, version, orig
   await expectProfile(page);
 
   const details = page.locator("details", { hasText: "Source for Lot area" });
-  await details.locator("summary").click();
+  await details.locator(":scope > summary").click();
   await expect(details).toContainText("nyc-dcp-pluto-soda");
   await expect(details).toContainText("lotarea");
   await expect(details).toContainText("7577714"); // original value verbatim

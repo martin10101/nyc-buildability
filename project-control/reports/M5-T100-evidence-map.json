@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T100",
+ "material_commit": "2624adec (cherry-pick of wt-m5t100 51378dde; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T16:12:22+00:00",
+ "producer": "geospatial-engineer (orchestrator-dispatched subagent; worktree wt-m5t100)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block recorded that the connector is imported only by its own test and that app/resilience/transport.py and mappluto_geometry_arcgis.py are READ-ONLY; the material reuses the transport's exported sanitizer read-only and touches exactly the 3 allowed paths; the recorded fixtures stay byte-identical (their sha256 test passes). [ORCH-HARVEST] at the cherry-picked head 2624adec (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 117 passed in 1.22s."
+  ],
+  "D-087-R001": [
+   "Wave-6 capacity unit: contracted at d7a843d6 (G0), claimed at 2957e40d with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with the wave-4/5 units; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 2624adec (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 117 passed in 1.22s."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t100; material touches exactly the 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head 2624adec (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 117 passed in 1.22s."
+  ],
+  "D-087-R003": [
+   "The official footprint connector behind the 3D context buildings gets the review riders that do not need wiring (DB-058 e, h, l, m): the catch-all internal_error now logs class + a fixed sanitized bounded message + correlation id at ERROR level and never renders str(exc) (the returned refusal stays byte-identical, class-name only - the G5 safe choice); a feature missing its geometry key yields a typed null_geometry record end to end; the two one-half-wrong CRS pages are each refused wrong_crs; a zero CONSTRUCTION_YEAR gives construction_year None plus the zero_not_available gap; the three G4 survivors MY1a/MY1b/MY7 and four new mutations are all killed. [ORCH-HARVEST] at the cherry-picked head 2624adec (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 117 passed in 1.22s."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; the connector stays unwired (no route, main.py or web change); no network in tests; fixtures byte-identical. [ORCH-HARVEST] at the cherry-picked head 2624adec (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/connectors/test_building_footprints_arcgis.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 117 passed in 1.22s."
+  ]
+ }
+}

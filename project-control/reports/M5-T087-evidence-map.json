@@ -1,0 +1,20 @@
+{
+ "task_id": "M5-T087",
+ "material_commit": "a01d5fac (cherry-pick of the wt-m5t087 in-worktree commit bf374245; every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:20:00+00:00",
+ "producer": "official-source-researcher (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t087)",
+ "requirements": {
+  "D-066-R001": [
+   "D-066-R001: the packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 817 files) naming consumers, forbidden neighbours and the `query.py --no-regen impact` instruction; the producer stayed inside the named scope (no forbidden neighbour touched - the cherry-pick diff lists only the allowed paths)."
+  ],
+  "D-087-R001": [
+   "D-087-R001: this packet is one of the seq-128 capacity-ramp units - contracted, claimed and gated like any ledger packet (G0 PASS at 86e2f98b, claim seam 46cc1e6a); produced by an orchestrator-dispatched subagent in its own worktree (wt-m5t087) concurrently with the other D-087 units; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t087); the in-worktree commit bf374245 touches exactly the allowed paths (git diff --name-only bf374245^ bf374245); the shared package __init__ files stayed orchestrator-owned and untouched."
+  ],
+  "D-087-R003": [
+   "3D EXISTING-building source recon for R003: docs/research/building-footprints-source-2026-09.md identifies the official NYC BUILDING (Building Footprints) dataset (owner OTI; Open Data 5zhs-2jue; ArcGIS BUILDING_view FeatureServer/0 with outSR=2263), the field dictionary (HEIGHT_ROOF above ground, GROUND_ELEVATION NAVD88 for modern captures, BIN non-unique, BASE_BBL physical lot vs MAPPLUTO_BBL billing join incl. condo 7501-7599), access channels + limits + a one-BBL-plus-neighbours request shape, cadence and quality limits - inferences labelled (feet unit), unverifiable items routed to the future connector's G1 (RQ-1..RQ-6)."
+  ]
+ }
+}

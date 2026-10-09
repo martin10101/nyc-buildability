@@ -1,0 +1,85 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-027",
+ "version": 1,
+ "slug": "statusline-activation",
+ "title": "Owner-authorized activation of the accepted M0-T099 project statusLine handler: wire exactly per report section 4 (gitignore .claude/telemetry/ + project .claude/settings.json statusLine command) in passive shadow/read-only mode only (display + sanitized sidecar; no supervisory actions); separate bounded activation task instead of touching the accepted M0-T099 identity; verify project-only precedence with the owner's global personal statusLine fallback intact; prove both outputs (human row + sanitized sidecar) from the same feed with a real live check; confirm no personal paths, usernames, session identifiers, or credentials written unmasked; record/test/commit/push under project-control; no worktree purge; no continuous-Codex-loop activation; then continue to the campaign NEXT action (claim M0-T090 with carried advisories).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-26",
+ "captured_at": "2026-08-26T05:48:21+00:00",
+ "created_at": "2026-08-26T05:48:21+00:00",
+ "updated_at": "2026-08-26T05:48:21+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-26T05:48:21+00:00",
+   "content_digest_sha256": "c9c203d63cd42548bf8aaa6a4eb2f69b84c8aab33c0d8ee4fba590aed2ef9a9a"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T100"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "bounded-utility",
+  "task_ids": [
+   "M0-T100"
+  ],
+  "task_types": [
+   "governance"
+  ],
+  "allowed": "one small task (M0-T100): .gitignore telemetry-ignore line, project .claude/settings.json statusLine block exactly per M0-T099 report section 4, activation report with live two-output proof and masking scan, minimal control records",
+  "excluded": "any change to accepted M0-T099 artifacts; any supervisory actuation or continuous-mode activation; purging the three external leftover agent worktrees; modifying the owner's user-global settings; new dependencies; touching tools/agent_supervisor code",
+  "authorization_note": "This directive is the explicit owner authorization that lifts the documented-only restriction on the M0-T099 report section 4 wiring step for THIS activation; the settings.json forbidden-path posture of other task packets is unchanged for all other tasks."
+ },
+ "applicability_note": "Prohibitions binding session conduct also bind the NON-LEDGER sentinel D-027-BOOTSTRAP; all rows bind ledger task M0-T100 and are verified at its DCV. Relationship: D-027 activates a deliverable ACCEPTED under D-024 amendment 2 (M0-T099) without amending D-024; D-024 section 18 / R595 continuous-activation gate and the shadow-only supervisor posture are unchanged. The verbatim source-001.md governs on any wording question.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner mid-turn terminal message 2026-08-26 ordering the passive statusLine wiring activation and the campaign continuation to M0-T090."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-027-R001",
+  "D-027-R002",
+  "D-027-R003",
+  "D-027-R004",
+  "D-027-R005",
+  "D-027-R006",
+  "D-027-R007",
+  "D-027-R008",
+  "D-027-R009",
+  "D-027-R010",
+  "D-027-R011",
+  "D-027-R012",
+  "D-027-R013"
+ ],
+ "requirements_id_digest_sha256": "6585bda286456635d9778afef234c5ba4d9798c053dc9cb6857ca0e89f55ced1",
+ "requirements_content_digest_sha256": "1cb426ab6e3960dd02b9c1cc1314b3f9e99daa35bc4af54257f60319866475ae",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-26T05:48:21+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001.md verbatim (sha256 c9c203d63cd42548bf8aaa6a4eb2f69b84c8aab33c0d8ee4fba590aed2ef9a9a, 2097 bytes); decomposed into 13 requirements; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9; session Gate-0 re-verified before capture (cwd ctl24, branch control/D-024-fable-codex-loop @ 8bb829c, clean tree, no MCP servers). D-027 authorizes the M0-T099 report section-4 wiring as bounded task M0-T100 (passive shadow only); D-024 campaign record untouched (NEXT remains M0-T090, resumed after M0-T100 acceptance per D-027-R011)."
+  }
+ ]
+}

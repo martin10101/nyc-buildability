@@ -1,0 +1,1292 @@
+{
+ "schema": "native_reuse_matrix/v1",
+ "directive": "D-024",
+ "task": "M0-T102",
+ "amendment": "source-003-amendment.md (D-024-R139..R191)",
+ "recorded": "2026-08-26",
+ "installed": {
+  "claude_code": "2.1.220",
+  "codex_cli": "0.146.0",
+  "probe_fixture": "tools/agent_supervisor/fixtures/capability_probe_live_2026-08-26.json"
+ },
+ "target": {
+  "claude_code": "2.1.246",
+  "released": "2026-08-25",
+  "source": "project-control/reports/M0-T102-docs-snapshot/changelog.md"
+ },
+ "decision_vocabulary": {
+  "NATIVE_WRAPPED": "Claude Code supplies the runtime primitive; D-024 adds durable state, policy, verification, or recovery",
+  "CUSTOM_REQUIRED": "no sufficient native capability exists (includes governance/process rows enforced by project-control machinery)",
+  "OPTIONAL_ENHANCEMENT": "useful but not required for loop activation",
+  "REJECTED_OR_DEFERRED": "inappropriate, experimental, unsafe, or contrary to project policy (for the stated use)",
+  "NATIVE_REPLACEMENT": "native provides the behavior outright; none assigned - every native adoption here still needs D-024 durable state/policy/verification, so the honest maximum is NATIVE_WRAPPED"
+ },
+ "coverage": {
+  "definition": "every D-024 requirement applicable to at least one unaccepted task (M0-T092..T096, M0-T102, M0-T103) plus the amendment-3 BOOTSTRAP-only rows (R141, R142, R189)",
+  "requirement_count": 147,
+  "verified_against": "resolver-derived applicable sets in verification.json placeholder rows"
+ },
+ "capability_matrix_v1_delta": {
+  "re_verified": "all 20 capability rows in tools/agent_supervisor/fixtures/capability_matrix_v1.json re-checked against the 2026-08-26 docs snapshot and the fresh live probe: NO contradicted claim; installed versions unchanged (claude 2.1.220 / codex 0.146.0)",
+  "new_facts_since_v1": [
+   "current official stable is 2.1.246 (2026-08-25); v1 recorded no target version",
+   "official pages now snapshot-documented that v1 lacked: goal, agent-view/background sessions, workflows, worktrees, sessions, commands, cross-session-messaging, checkpointing, remote-control, plugins-reference, cli-reference, skills, changelog",
+   "/goal background check-ins gated 2.1.234+ / idle 2.1.236+ -> NOT available on installed 2.1.220",
+   "/autocompact flag/command gated 2.1.221+ -> NOT available on installed 2.1.220",
+   "promptCacheTtl/subagentPromptCacheTtl settings gated 2.1.243+",
+   "Windows background-session fixes land in 2.1.246 (respawn-in-flight, stale-session cleanup, worktree-sweep protection)"
+  ],
+  "still_unknown_live": "hooks.live_behavior_fixtures row stays 'unknown' (UserPromptExpansion interception, UserPromptSubmit erase, statusline payload shapes on the UPGRADED binary) - unit B/D/G deliverables"
+ },
+ "process_findings": [
+  "readonly_agent_guard.py does not intercept PowerShell tool writes: two snapshot agents wrote report files via [IO.File] despite Write/Edit/Bash denials, and disclosed it; files were content-reviewed, masking-verified, and ratified by the orchestrator. Guard fix is a follow-up control-plane task (guard file is forbidden-path for M0-T102).",
+  "built-in 'general-purpose' agent type is operationally read-only under the guard (not on the .claude/agents roster) - writing producers must be dispatched as roster types",
+  "native background-session worktrees default to branching from the repository DEFAULT branch (worktree.baseRef 'fresh') - integration-branch work must pin baseRef 'head' or reset explicitly (matches the known producer-worktree hazard)"
+ ],
+ "areas": [
+  {
+   "id": "goal-bounded-continuation",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/goal.md (code.claude.com/docs/en/goal)"
+   ],
+   "min_version": "2.1.246 for the full contract (background check-ins 2.1.234+, idle check-ins 2.1.236+, goal restored on all resume routes 2.1.239+, idle check-in cap 2.1.246); /goal itself has no stated overall gate",
+   "installed_probe": "installed 2.1.220: /goal exists per docs but LACKS check-ins (2.1.234+) - upgrade required before unit E; live behavioral fixture pending (unit B/E canary)",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R152",
+    "D-024-R174"
+   ],
+   "reuse": "D-023 bounded-mode assignment contracts; M0-T090 bounded contracts; health bands stay private controller evidence",
+   "new_code": "unit E: goal-condition generator from task packets (measurable completion condition), no-progress policy binding, check-in ingestion into the journal; NEVER one goal per campaign",
+   "failure_fallback": "goal cleared/unavailable (hooks disabled, evaluator error) -> existing controller turn-by-turn continuation; goal state never authoritative (ledger is)",
+   "evidence_plan": "unit-E fixtures: condition-met, impossible, no-progress (goal stays set), transient-vs-unrecoverable (4 clearing causes), resume (counters reset), context-pressure (overflow clears goal), background check-in; real low-risk canary",
+   "removal_plan": "replaces any planned custom inner-continuation prompter in M0-T092 scope; parity tests then remove per R180"
+  },
+  {
+   "id": "background-session-host",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/agent-view.md",
+    "project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+   ],
+   "min_version": "core documented without explicit gate; /fork-copy 2.1.212+; Windows respawn-in-flight fix + worktree-sweep protection + stale-session cleanup 2.1.246 -> target 2.1.246 on Windows",
+   "installed_probe": "not in the 2026-08-26 probe flag set; agent view is RESEARCH PREVIEW; live canary pending (unit B on upgraded binary)",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R032",
+    "D-024-R153",
+    "D-024-R172"
+   ],
+   "reuse": "existing D-010 supervisor dispatch/watchdog as the feature-detected fallback; M0-T088/T089 telemetry",
+   "new_code": "unit C adapter: claude --bg/--name dispatch, agents --json ingestion, attach/logs/stop/respawn wrappers, daemon-status handling, exactly ONE selected runtime backend per session; host-restart auto-resume mapping (daemon supervisor restart semantics)",
+   "failure_fallback": "feature-detect off / daemon unavailable / preview regression -> existing controller dispatch; never two active process-management systems (R153)",
+   "evidence_plan": "unit-B/C: dispatch, status, completion, blocked-input, failure, stop, respawn, supervisor restart no-duplicate, unexpected process exit, shutdown-vs-sleep semantics; Windows-native canaries on 2.1.246",
+   "removal_plan": "if proven, replaces custom process-spawn host in M0-T092 scope after parity+failure tests; rollback kept for supervised rollout only (R180)"
+  },
+  {
+   "id": "structured-passive-observation",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/cli-reference.md",
+    "project-control/reports/M0-T102-docs-snapshot/agent-view.md",
+    "project-control/reports/M0-T102-docs-snapshot/statusline.md"
+   ],
+   "min_version": "--forward-subagent-text 2.1.211+ (nested 2.1.219+); --include-hook-events no gate; agents --json no gate; installed 2.1.220 satisfies non-nested paths",
+   "installed_probe": "statusLine/subagentStatusLine live fixtures ACCEPTED (M0-T088/T099, statusline_live_2026-08-26.json); stream-json/agents --json live fixtures pending unit B",
+   "confidence": "mixed: measured-live (statusline), official-docs (stream-json/agents --json)",
+   "affected": [
+    "D-024-R042",
+    "D-024-R043",
+    "D-024-R154"
+   ],
+   "reuse": "accepted telemetry sidecar/journal/sanitization (M0-T088/T089/T099); tokenSamples trend accounting",
+   "new_code": "unit C/D: agents --json poller for Codex (outside Fable context), stream-json event ingestion; source/confidence labels on every usage number (R042); whole-run vs final-request accounting (R043)",
+   "failure_fallback": "feed absent/malformed -> statusline sidecar remains primary; never ask Fable for routine token/status reports (R154)",
+   "evidence_plan": "masked fixtures per feed; no-routine-polling-into-context proof; no-token-quotas-in-assignments proof (R045 tie)",
+   "removal_plan": "no custom transcript-polling collector is ever built where a structured feed exists (avoid-not-remove)"
+  },
+  {
+   "id": "hooks-event-bus",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/hooks.md"
+   ],
+   "min_version": "all 17 required events exist in the 31-event set; matcher/exit-code gates satisfied by 2.1.220 (commas 2.1.191+, hyphens 2.1.195+, prompt_id 2.1.196+, exit-code schema 2.1.214+)",
+   "installed_probe": "docs-documented; live firing-order/blocking fixtures pending (unit D); capability_matrix_v1 event-set row re-verified unchanged 2026-08-26",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R155",
+    "D-024-R173"
+   ],
+   "reuse": "M0-T099 statusline handler pattern (fast, sanitized, no-model-cost); existing journal append machinery",
+   "new_code": "unit D: hook recorders for SessionStart/End, Subagent*, Task*, Stop/StopFailure, Pre/PostCompact, PostToolBatch, Notification, Worktree*, ConfigChange; dedup, redaction, atomic persistence, restart-safe replay, unknown-event/version-drift handling",
+   "failure_fallback": "hook failure never blocks work unless security/authority requires fail-closed (R155); recorder outage -> journal gap flagged, statusline sidecar continues",
+   "evidence_plan": "per-event masked fixtures on installed version; firing order + blocking semantics; UserPromptSubmit-block-erase semantics; Windows PowerShell hook form",
+   "removal_plan": "replaces transcript-polling designs in M0-T092/T094 scope where a structured event exists"
+  },
+  {
+   "id": "worktree-isolation",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/worktrees.md",
+    "project-control/reports/M0-T102-docs-snapshot/sub-agents.md"
+   ],
+   "min_version": "--worktree/isolation:worktree documented; enforcement hardened 2.1.203/2.1.210; .worktreeinclude **/ fix 2.1.239; sweep protection for user worktrees 2.1.246",
+   "installed_probe": "--worktree measured-live supported (capability_probe_live_2026-08-26.json claude_flags['--worktree'])",
+   "confidence": "measured-live (flag) + official-docs (semantics)",
+   "affected": [
+    "D-024-R156"
+   ],
+   "reuse": "native physical isolation (4 enforced checks); RETAIN logical writer leases (M0-T091 lease_runtime), frozen-identity review, branch policy, cleanup verification, semantic-overlap protection",
+   "new_code": "unit C: worktree naming/branch-policy binding; baseRef handling (default 'fresh' branches from DEFAULT branch - known hazard; use 'head' or explicit reset for integration-branch work); cleanup verification vs native sweep",
+   "failure_fallback": "native isolation regression -> existing manual worktree discipline; leases always authoritative for overlap",
+   "evidence_plan": "creation/isolation/retention/cleanup fixtures incl. Windows NTFS-junction behavior; PowerShell-only-working-directory-check caveat documented and tested",
+   "removal_plan": "no duplicate physical-isolation machinery is built; logical layer is retained by design (not redundancy)"
+  },
+  {
+   "id": "dynamic-workflows",
+   "decision": "OPTIONAL_ENHANCEMENT",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/workflows.md"
+   ],
+   "min_version": "2.1.154+; size guideline 2.1.202+ (default medium 2.1.219+)",
+   "installed_probe": "available at 2.1.220 per docs; not required for loop activation",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R157"
+   ],
+   "reuse": "review-wave patterns (G3/G4/G5 fan-out), test matrices, audits",
+   "new_code": "none required for activation; optional wave-runner later; small-slice canary before larger usage; subagents run acceptEdits - reviewers must stay read-only via guard",
+   "failure_fallback": "plain Agent-tool dispatch (current practice)",
+   "evidence_plan": "small-slice canary first (R157); resume-in-session-only limitation documented",
+   "removal_plan": "never the durable top-level campaign controller (prohibited use, R166)"
+  },
+  {
+   "id": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/skills.md",
+    "project-control/reports/M0-T102-docs-snapshot/commands.md"
+   ],
+   "min_version": "custom commands merged into skills (no gate); disable-model-invocation documented; scheduled-run block 2.1.196+",
+   "installed_probe": "skills active in this session (project skills load); /loop-* names verified non-colliding with built-in /loop (distinct commands)",
+   "confidence": "official-docs + session-evidence",
+   "affected": [
+    "D-024-R034",
+    "D-024-R035",
+    "D-024-R083",
+    "D-024-R104",
+    "D-024-R158",
+    "D-024-R176"
+   ],
+   "reuse": "existing supervisor CLI operations (D-010) as the called backend; existing .claude/skills registry",
+   "new_code": "unit G: thin /loop-start,/loop-status,/loop-ask,/loop-pause,/loop-resume,/loop-stop,/loop-emergency-stop,/session-handoff skills with disable-model-invocation:true (owner-only), calling the external supervisor directly; 'Start the agent loop' natural-language doc (R035)",
+   "failure_fallback": "skills unavailable -> documented second-terminal supervisor CLI (honest fallback)",
+   "evidence_plan": "16.5 matrix: exact command matching, no shell interpolation, idle+mid-response behavior, no cancellation of producer turns",
+   "removal_plan": "replaces any parallel custom CLI surface plan (R034: no parallel CLI when a suitable surface exists)"
+  },
+  {
+   "id": "userpromptexpansion-interception",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/hooks.md"
+   ],
+   "min_version": "UserPromptExpansion documented (fires before prompt reaches Claude; can block with stderr/systemMessage display; updatedInput rewrite)",
+   "installed_probe": "docs-documented on 2.1.220; ZERO-MODEL-CONTEXT proof requires live fixture (16.5) - not yet proven",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R084",
+    "D-024-R085",
+    "D-024-R088",
+    "D-024-R089",
+    "D-024-R159"
+   ],
+   "reuse": "M0-T086 matrix row claude.hooks.UserPromptExpansion (re-verified unchanged)",
+   "new_code": "unit G: narrowly-matched UserPromptExpansion hook: block expansion, call supervisor, display result via stderr/systemMessage; transcript-noninsertion proof harness",
+   "failure_fallback": "if true pre-model interception cannot be proven live: retain honest second-terminal fallback (R159); never fake it",
+   "evidence_plan": "zero-model-context proof or truthful fallback record (R088); idle + mid-response tests (R089); no /loop collision (distinct names)",
+   "removal_plan": "supersedes any polling/status-into-context design (prohibited anyway, R154)"
+  },
+  {
+   "id": "session-identity-succession",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/sessions.md",
+    "project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+   ],
+   "min_version": "--session-id (UUID) + --name documented; live-name dedup 2.1.232; cross-project ID resume 2.1.223+; goal restore on resume 2.1.239+",
+   "installed_probe": "--name/--resume/--continue measured-live in probe flag set; deterministic-ID canary pending unit B",
+   "confidence": "measured-live (flags) + official-docs (semantics)",
+   "affected": [
+    "D-024-R160",
+    "D-024-R175"
+   ],
+   "reuse": "M0-T091 child_handoff (durable partial handoffs, s6.3 turnover draining); D-023 turnover watchdog; session-handoff skill",
+   "new_code": "unit F: deterministic session naming/IDs for producers; succession = genuinely FRESH session from durable state (native resume explicitly NOT a seam substitute, R160); stale-work quarantine; duplicate-free recovery",
+   "failure_fallback": "resume unavailable/confused conversation -> fresh session from ledger+handoff (default posture anyway)",
+   "evidence_plan": "rotation-at-safe-seam, handoff boundedness, successor reconstruction from durable state alone, crash windows (16.3)",
+   "removal_plan": "replaces nothing accepted; constrains M0-T092 succession design to native identity primitives"
+  },
+  {
+   "id": "native-reviews",
+   "decision": "OPTIONAL_ENHANCEMENT",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/commands.md"
+   ],
+   "min_version": "/code-review,/security-review,/verify documented; /simplify available as bundled skill",
+   "installed_probe": "available in-session",
+   "confidence": "session-evidence",
+   "affected": [
+    "D-024-R161"
+   ],
+   "reuse": "evidence-generating supplements feeding existing G3/G4/G5 + DCV gates",
+   "new_code": "none; usage guidance only - may SUPPLEMENT, never replace independent acceptance/frozen-identity review; /simplify supports replace-not-layer obsolete-code identification",
+   "failure_fallback": "standard reviewer roster (unchanged)",
+   "evidence_plan": "when used, outputs land as gate-evidence artifacts at the frozen identity",
+   "removal_plan": "n/a (additive evidence tools)"
+  },
+  {
+   "id": "context-safeguards",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/statusline.md",
+    "project-control/reports/M0-T102-docs-snapshot/commands.md",
+    "project-control/reports/M0-T102-docs-snapshot/workflows.md"
+   ],
+   "min_version": "statusLine accepted at 2.1.220 (M0-T088/T099); /autocompact 2.1.221+ (NOT on installed 2.1.220); promptCacheTtl/subagentPromptCacheTtl 2.1.243+",
+   "installed_probe": "statusline live fixture accepted; /autocompact + cache TTL settings require the 2.1.246 upgrade",
+   "confidence": "measured-live (statusline) + official-docs (rest)",
+   "affected": [
+    "D-024-R095",
+    "D-024-R162"
+   ],
+   "reuse": "RETAIN accepted statusLine telemetry integration (R162 explicit); health bands/seam turnover remain the primary context control",
+   "new_code": "unit E/F: /autocompact configured as EMERGENCY BUFFER only; cache-behavior assumptions only with live evidence (workflow sibling cache, subagent TTL)",
+   "failure_fallback": "autocompact failure -> safe-seam turnover (primary mechanism regardless)",
+   "evidence_plan": "no-leak statusline proofs re-run post-upgrade; cache behavior live-evidenced before reliance",
+   "removal_plan": "autocompact never replaces seam turnover or the durable handoff (prohibited substitution)"
+  },
+  {
+   "id": "messaging-and-remote-control",
+   "decision": "REJECTED_OR_DEFERRED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/cross-session-messaging.md",
+    "project-control/reports/M0-T102-docs-snapshot/remote-control.md"
+   ],
+   "min_version": "messaging: native Windows 2.1.234+ (fully 2.1.243); Remote Control: account-gated",
+   "installed_probe": "not probed live; not required for loop correctness (R163)",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R163"
+   ],
+   "reuse": "R096 notification-sink interface is the only integration point if ever adopted",
+   "new_code": "none now. Messaging: delivery explicitly NOT guaranteed (holds/expiry/drops) -> advisory-only, never authority, never a ledger replacement. Remote Control: transcript stored on Anthropic servers while connected + MCP surface implications -> owner security review required before any offering",
+   "failure_fallback": "n/a (not adopted)",
+   "evidence_plan": "if ever proposed: security review artifact + owner decision first (Tier-B/D routing)",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "official-updater-upgrade",
+   "decision": "NATIVE_WRAPPED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/cli-reference.md",
+    "project-control/reports/M0-T102-docs-snapshot/changelog.md",
+    "project-control/reports/M0-T102-docs-snapshot/agent-view.md"
+   ],
+   "min_version": "claude update / claude install [stable|version] documented; respawn --all for post-update restarts; daemon auto-update semantics documented",
+   "installed_probe": "installed 2.1.220 (live probe 2026-08-26); official stable 2.1.246 (changelog snapshot) -> upgrade REQUIRED for /goal check-ins, /autocompact, cache TTL settings, Windows background-session fixes",
+   "confidence": "measured-live (installed) + official-docs (target)",
+   "affected": [
+    "D-024-R147",
+    "D-024-R148",
+    "D-024-R167",
+    "D-024-R168",
+    "D-024-R171"
+   ],
+   "reuse": "capability_probe as the pre/post fixture generator; this docs snapshot as the official-stable confirmation",
+   "new_code": "unit B: pre-update capture (version, binary identity incl. dual-install PATH note, help output, settings, fixtures) -> claude update -> post-update identity -> disposable child canaries on NEW binary (running process stays old) -> re-run Gate 0, MCP default-deny, settings validation, statusLine, skills, hooks, accepted fixtures; masked dual-version fixtures",
+   "failure_fallback": "regression -> record + claude install 2.1.220 (documented supported rollback path); if rollback unsupported/unsafe -> STOP for owner (R168); no silent workarounds",
+   "evidence_plan": "R167/R168 step-by-step evidence in M0-T103 report; regression canary set; no-activation-merely-on-version-success proof",
+   "removal_plan": "n/a (procedure)"
+  },
+  {
+   "id": "fallback-model",
+   "decision": "REJECTED_OR_DEFERRED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/cli-reference.md"
+   ],
+   "min_version": "--fallback-model / fallbackModel documented (overload/unavailable cases)",
+   "installed_probe": "not configured; existing owner model policy (D-004 am.22/23) governs",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R165"
+   ],
+   "reuse": "custom guardrail-refusal bridge (R068-R075) and quota detect-and-hold remain the ONLY policies for those cases",
+   "new_code": "none; fallbackModel MUST NOT silently replace refusal/quota policies (R165); any availability-only use needs the existing approved model policy",
+   "failure_fallback": "n/a",
+   "evidence_plan": "16.4 matrix proves refusal and quota triggers stay distinct from availability fallback",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "top-level-loop-prohibitions",
+   "decision": "REJECTED_OR_DEFERRED",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/commands.md",
+    "project-control/reports/M0-T102-docs-snapshot/workflows.md",
+    "project-control/reports/M0-T102-docs-snapshot/checkpointing.md",
+    "project-control/reports/M0-T102-docs-snapshot/sessions.md"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R166"
+   ],
+   "reuse": "Codex + ledger + Git + owner gates remain campaign authority",
+   "new_code": "none: /loop, /batch, Agent Teams, Agent SDK, MCP channels, /autofix-pr, automatic cross-session messaging, raw session resume, auto-compaction, checkpointing-alone are NOT campaign authority; narrow optional uses only via separate evaluation. Checkpointing notably does NOT track bash-command or background-subagent edits - unsuitable as recovery authority",
+   "failure_fallback": "n/a",
+   "evidence_plan": "conversion packets forbid these as controllers; golden run proves the custom control plane is in charge",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 sections 3/7; existing tools/agent_supervisor (accepted M0-T086..T091)"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R027",
+    "D-024-R028",
+    "D-024-R029",
+    "D-024-R030",
+    "D-024-R031",
+    "D-024-R033",
+    "D-024-R102"
+   ],
+   "reuse": "accepted state machine + lease_runtime + runtime_health + campaign_continuity",
+   "new_code": "unit F/M0-T092: full section-3 state set, renewable epoch leases, stop-intent precedence, exact-once succession, outage handling - native host primitives (areas above) are consumed, never the authority",
+   "failure_fallback": "fail-closed to stopped/blocked with durable journal",
+   "evidence_plan": "16.3 matrix (crash windows, lease races, stop-intent persistence, Gate-0 recovery)",
+   "removal_plan": "n/a (this IS the retained custom core)"
+  },
+  {
+   "id": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 2; accepted D-007 bridge"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "codex 0.146.0 live-probed (exec/--json/--output-schema/--sandbox/resume supported)",
+   "confidence": "measured-live",
+   "affected": [
+    "D-024-R004",
+    "D-024-R021",
+    "D-024-R022",
+    "D-024-R023",
+    "D-024-R024",
+    "D-024-R025",
+    "D-024-R093",
+    "D-024-R116",
+    "D-024-R117"
+   ],
+   "reuse": "accepted Codex bridge (version-probed, fail-closed, read-only)",
+   "new_code": "M0-T092 preflight extensions only; review packets independently reconstructed from durable evidence",
+   "failure_fallback": "missing/malformed/timed-out/mismatched decision dispatches NOTHING (fail-closed)",
+   "evidence_plan": "transport preflight fixtures; independence proofs at frozen identity",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 8"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R068",
+    "D-024-R069",
+    "D-024-R070",
+    "D-024-R071",
+    "D-024-R072",
+    "D-024-R073",
+    "D-024-R074",
+    "D-024-R075",
+    "D-024-R103"
+   ],
+   "reuse": "D-007 am.12 quota detect-and-hold stays separate; allowlisted 4.8 continuation config",
+   "new_code": "M0-T093 (unit H): recognized-refusal classifier, two-attempt cap, neutral re-presentation, 4.8 output reviewed as any producer",
+   "failure_fallback": "unrecognized refusal -> blocked-with-handoff (never silent model substitution, R146)",
+   "evidence_plan": "16.4 matrix; refusal-vs-quota distinctness",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "root-cause-repair-gate",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 9"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R076",
+    "D-024-R077",
+    "D-024-R078",
+    "D-024-R105",
+    "D-024-R112"
+   ],
+   "reuse": "engineering-reliability standard (M0-T078); /simplify as optional evidence input",
+   "new_code": "M0-T095 (unit H): replace-not-layer review evidence, dual-path time-bounding, Codex checkpoint questions",
+   "failure_fallback": "gate FAIL on layered-wrapper repairs",
+   "evidence_plan": "16.6 matrix (wrapper-around-defective-path rejection)",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "github-exact-once-effects",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 10"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R090",
+    "D-024-R091",
+    "D-024-R114"
+   ],
+   "reuse": "existing Fable-only gh authority; merge-queue rules (D-010 tiers)",
+   "new_code": "M0-T095: idempotent exact-once effect journal, ambiguous-effect recovery, crash-window reconciliation",
+   "failure_fallback": "ambiguous external effect -> marked + reconciled before any retry",
+   "evidence_plan": "16.8 matrix (crash between commit/push, after push before ack, stale ledger/handoff)",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "graph-context-packs",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 12; D-013 context pipeline"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R079",
+    "D-024-R080",
+    "D-024-R082",
+    "D-024-R113"
+   ],
+   "reuse": "accepted graph/context-pack system (D-013/D-017..D-019)",
+   "new_code": "regression fingerprints proving loop work does not change graph results/ordering/pack sufficiency",
+   "failure_fallback": "graph advisory-only (never final authority)",
+   "evidence_plan": "16.7 matrix",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 sections 4/5 (workload-first revision)"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R045",
+    "D-024-R046",
+    "D-024-R050",
+    "D-024-R051",
+    "D-024-R052",
+    "D-024-R053",
+    "D-024-R054",
+    "D-024-R060",
+    "D-024-R064",
+    "D-024-R098"
+   ],
+   "reuse": "M0-T091 runtime_health bands/detectors/extension gate; lease caps",
+   "new_code": "calibration per resolved model (R052) using native telemetry feeds as INPUT only",
+   "failure_fallback": "catastrophic ceiling + guard-proven landing (accepted M0-T091 machinery)",
+   "evidence_plan": "16.2 matrix; no-worker-visible-quota proofs (R045/R184)",
+   "removal_plan": "native maxTurns/maxBudgetUsd remain prohibited as normal sizing (R051); --max-budget-usd noted as print-mode-only anyway"
+  },
+  {
+   "id": "seams-and-handoffs",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 7"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R065",
+    "D-024-R066",
+    "D-024-R067"
+   ],
+   "reuse": "M0-T091 child_handoff; session-handoff skill (D-025/D-026)",
+   "new_code": "M0-T092: seam detector integration with native events (WorktreeRemove, SubagentStop, TaskCompleted as evidence feeds)",
+   "failure_fallback": "no seam -> no rotation (hold), never silent truncation",
+   "evidence_plan": "16.3 matrix; handoff boundedness (R184)",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "operator-control-state",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 sections 6/11"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R036",
+    "D-024-R086",
+    "D-024-R087",
+    "D-024-R094",
+    "D-024-R096"
+   ],
+   "reuse": "durable status record design (M0-T087 campaign continuity); notification-sink interface",
+   "new_code": "M0-T094 (unit G backend): idempotent start, pause/stop durable-before-ack, secure bridge (exact match, no interpolation), bounded status record",
+   "failure_fallback": "control state durable-first; commands fail closed",
+   "evidence_plan": "16.5 matrix",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "bootstrap-gate0-mcp",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 Bootstrap Gate 0 section; D-020 MCP default-deny"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "/mcp = no servers (owner-run this session); --strict-mcp-config measured-live as a supplement",
+   "confidence": "measured-live",
+   "affected": [
+    "D-024-R125",
+    "D-024-R126",
+    "D-024-R127",
+    "D-024-R128"
+   ],
+   "reuse": "per-session Gate 0 discipline; D-020 program-wide default-deny",
+   "new_code": "child-canary launches use --strict-mcp-config + --mcp-config for clean-launch proofs",
+   "failure_fallback": "Gate-0 failure -> no writes, fresh session",
+   "evidence_plan": "re-run Gate 0 + MCP default-deny on the upgraded binary (R168)",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 sections 0/1/13/18/19/20; amendment-3 role separation"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R002",
+    "D-024-R003",
+    "D-024-R007",
+    "D-024-R008",
+    "D-024-R010",
+    "D-024-R017",
+    "D-024-R018",
+    "D-024-R020",
+    "D-024-R026",
+    "D-024-R118",
+    "D-024-R120",
+    "D-024-R140",
+    "D-024-R177",
+    "D-024-R187"
+   ],
+   "reuse": "ledger/CLI/gates/ADR-005/006; supervisor freeze rule; PR #241 hold; activation owner gate (R595/§18)",
+   "new_code": "none (process rows enforced by existing machinery); unit H (R177) carries the remaining custom builds",
+   "failure_fallback": "fail closed to owner gates",
+   "evidence_plan": "DCV rows at each unit acceptance; golden run proves no protected gate crossed",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "D-024 source-001 section 16; amendment-3 mandatory testing"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R019",
+    "D-024-R106",
+    "D-024-R107",
+    "D-024-R108",
+    "D-024-R109",
+    "D-024-R110",
+    "D-024-R111",
+    "D-024-R115",
+    "D-024-R119",
+    "D-024-R121",
+    "D-024-R122",
+    "D-024-R123",
+    "D-024-R149",
+    "D-024-R178",
+    "D-024-R182",
+    "D-024-R183",
+    "D-024-R184",
+    "D-024-R185",
+    "D-024-R186"
+   ],
+   "reuse": "accelerated-clock fixtures pattern (M0-T091 detectors); existing suite 2707/3/0 baseline",
+   "new_code": "units B..I harnesses incl. the 26 required proofs, runaway-work test (R019), golden run (R186/R121), activation package (R122/R123)",
+   "failure_fallback": "missing proof -> unit not accepted",
+   "evidence_plan": "per-unit acceptance-scenario packs; mutation teeth on important gates (R185)",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED",
+   "docs": [
+    "amendment-3 (source-003) capture/process sections"
+   ],
+   "min_version": "n/a",
+   "installed_probe": "n/a",
+   "confidence": "policy",
+   "affected": [
+    "D-024-R139",
+    "D-024-R141",
+    "D-024-R142",
+    "D-024-R143",
+    "D-024-R144",
+    "D-024-R145",
+    "D-024-R146",
+    "D-024-R150",
+    "D-024-R151",
+    "D-024-R164",
+    "D-024-R169",
+    "D-024-R170",
+    "D-024-R180",
+    "D-024-R181",
+    "D-024-R188",
+    "D-024-R189",
+    "D-024-R190",
+    "D-024-R191"
+   ],
+   "reuse": "directive registry + validator + campaign continuity (this capture is the evidence)",
+   "new_code": "none (process rows; this matrix + report discharge R150/R151/R190)",
+   "failure_fallback": "validator/DCV fail closed",
+   "evidence_plan": "capture verification PASS (M0-T102-capture-verification.md); DCV at M0-T102 acceptance",
+   "removal_plan": "n/a"
+  },
+  {
+   "id": "portability-plugin",
+   "decision": "OPTIONAL_ENHANCEMENT",
+   "docs": [
+    "project-control/reports/M0-T102-docs-snapshot/plugins-reference.md"
+   ],
+   "min_version": "plugin bundling of skills/agents/hooks/workflows documented; no 'adapters' component type (ship adapters as skills/bin)",
+   "installed_probe": "not probed; post-golden-run only",
+   "confidence": "official-docs",
+   "affected": [
+    "D-024-R179"
+   ],
+   "reuse": "generic skills/agents/hooks built by units C-G",
+   "new_code": "unit J plan only AFTER golden run: generic plugin; NYC graph/ledger/security/profiles/product rules STAY in-repo; must not block activation",
+   "failure_fallback": "n/a (non-blocking)",
+   "evidence_plan": "separate portability plan document",
+   "removal_plan": "n/a"
+  }
+ ],
+ "requirement_index": {
+  "D-024-R002": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R003": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R004": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R007": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R008": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R010": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R017": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R018": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R019": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R020": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R021": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R022": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R023": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R024": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R025": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R026": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R027": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R028": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R029": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R030": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R031": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R032": {
+   "area": "background-session-host",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R033": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R034": {
+   "area": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R035": {
+   "area": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R036": {
+   "area": "operator-control-state",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R042": {
+   "area": "structured-passive-observation",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R043": {
+   "area": "structured-passive-observation",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R045": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R046": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R050": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R051": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R052": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R053": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R054": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R060": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R064": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R065": {
+   "area": "seams-and-handoffs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R066": {
+   "area": "seams-and-handoffs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R067": {
+   "area": "seams-and-handoffs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R068": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R069": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R070": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R071": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R072": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R073": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R074": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R075": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R076": {
+   "area": "root-cause-repair-gate",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R077": {
+   "area": "root-cause-repair-gate",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R078": {
+   "area": "root-cause-repair-gate",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R079": {
+   "area": "graph-context-packs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R080": {
+   "area": "graph-context-packs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R082": {
+   "area": "graph-context-packs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R083": {
+   "area": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R084": {
+   "area": "userpromptexpansion-interception",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R085": {
+   "area": "userpromptexpansion-interception",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R086": {
+   "area": "operator-control-state",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R087": {
+   "area": "operator-control-state",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R088": {
+   "area": "userpromptexpansion-interception",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R089": {
+   "area": "userpromptexpansion-interception",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R090": {
+   "area": "github-exact-once-effects",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R091": {
+   "area": "github-exact-once-effects",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R093": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R094": {
+   "area": "operator-control-state",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R095": {
+   "area": "context-safeguards",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R096": {
+   "area": "operator-control-state",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R098": {
+   "area": "workload-supervision-policy",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R102": {
+   "area": "controller-state-machine",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R103": {
+   "area": "guardrail-refusal-bridge",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R104": {
+   "area": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R105": {
+   "area": "root-cause-repair-gate",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R106": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R107": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R108": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R109": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R110": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R111": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R112": {
+   "area": "root-cause-repair-gate",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R113": {
+   "area": "graph-context-packs",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R114": {
+   "area": "github-exact-once-effects",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R115": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R116": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R117": {
+   "area": "codex-supervision-transport",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R118": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R119": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R120": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R121": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R122": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R123": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R125": {
+   "area": "bootstrap-gate0-mcp",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R126": {
+   "area": "bootstrap-gate0-mcp",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R127": {
+   "area": "bootstrap-gate0-mcp",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R128": {
+   "area": "bootstrap-gate0-mcp",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R139": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R140": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R141": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R142": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R143": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R144": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R145": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R146": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R147": {
+   "area": "official-updater-upgrade",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R148": {
+   "area": "official-updater-upgrade",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R149": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R150": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R151": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R152": {
+   "area": "goal-bounded-continuation",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R153": {
+   "area": "background-session-host",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R154": {
+   "area": "structured-passive-observation",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R155": {
+   "area": "hooks-event-bus",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R156": {
+   "area": "worktree-isolation",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R157": {
+   "area": "dynamic-workflows",
+   "decision": "OPTIONAL_ENHANCEMENT"
+  },
+  "D-024-R158": {
+   "area": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R159": {
+   "area": "userpromptexpansion-interception",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R160": {
+   "area": "session-identity-succession",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R161": {
+   "area": "native-reviews",
+   "decision": "OPTIONAL_ENHANCEMENT"
+  },
+  "D-024-R162": {
+   "area": "context-safeguards",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R163": {
+   "area": "messaging-and-remote-control",
+   "decision": "REJECTED_OR_DEFERRED"
+  },
+  "D-024-R164": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R165": {
+   "area": "fallback-model",
+   "decision": "REJECTED_OR_DEFERRED"
+  },
+  "D-024-R166": {
+   "area": "top-level-loop-prohibitions",
+   "decision": "REJECTED_OR_DEFERRED"
+  },
+  "D-024-R167": {
+   "area": "official-updater-upgrade",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R168": {
+   "area": "official-updater-upgrade",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R169": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R170": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R171": {
+   "area": "official-updater-upgrade",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R172": {
+   "area": "background-session-host",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R173": {
+   "area": "hooks-event-bus",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R174": {
+   "area": "goal-bounded-continuation",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R175": {
+   "area": "session-identity-succession",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R176": {
+   "area": "skills-operator-surface",
+   "decision": "NATIVE_WRAPPED"
+  },
+  "D-024-R177": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R178": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R179": {
+   "area": "portability-plugin",
+   "decision": "OPTIONAL_ENHANCEMENT"
+  },
+  "D-024-R180": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R181": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R182": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R183": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R184": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R185": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R186": {
+   "area": "test-harnesses-canaries",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R187": {
+   "area": "authority-and-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R188": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R189": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R190": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  },
+  "D-024-R191": {
+   "area": "governance-amendment-process",
+   "decision": "CUSTOM_REQUIRED"
+  }
+ }
+}

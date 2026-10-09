@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T160",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T160-G0.md",
+  "reviewed_at": "2026-09-24T20:11:28.053379+00:00",
+  "content_manifest_sha256": "b7a4a15004e355b5edeb768907581ec10072e66c10f5ac4e24deefc450671ae6",
+  "reviewed_sha": "edafaad2d422abbb8a44f4afdc9b5a38b6faddd5",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M0-T160-G0.md",
+      "reviewed_at": "2026-09-24T15:35:08.920715+00:00"
+    }
+  ],
+  "updated_at": "2026-09-24T20:11:28.582129+00:00"
+}

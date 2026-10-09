@@ -1,0 +1,134 @@
+{
+ "task_id": "M0-T113",
+ "note": "Evidence per D-024 requirement applicable to M0-T113 (resolver set: 32 rows across Amendments 9/10/11/12/13/14/15). The unit spans the R187/R595 activation act, the Amendment-10 correction, the Amendment-11 restart that exposed the seam defect, and the seq-33 R276 rerun that achieved the live proof. Primary artifacts: M0-T113-activation-preflight.md (sections 1-6), M0-T113-activation-evidence.md (main + addenda 1-2), M0-T113-fable-probe.md, the amendment captures source-009..015, and the M0-T113 progress_log. Reviewers reproduce claims at the frozen head.",
+ "requirements": {
+  "D-024-R250": [
+   "The owner's typed R187/R595 limited-auto authorization is captured verbatim in source-009-amendment.md (rows R250-R260, capture a87b407, validator EXIT=0) and was exercised: activation executed 2026-08-29 05:05Z; the loop stops at protected decisions (proven live TWICE: the S14 ask-stop 05:07Z and the HALT_UNSAFE independent-review stop 2026-08-30 01:41Z - nothing auto-approved either time).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R251": [
+   "Authorization durably recorded BEFORE acting: capture commit a87b407 (verbatim amendment + registry rows + campaign record) pushed with CI green before the first start (preflight report row 1).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R252": [
+   "Complete activation preflight run BEFORE every start attempt: the original 14-row matrix (preflight report sections 1-4, R259 stop on two mismatches), the section-5 re-preflight after Amendment 10 (PASS), the section-6 R276 preflight (seq 30, stopped on CLI drift), and the seq-33 rerun preflight (steps 1-5 all green, progress_log 96%).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R253": [
+   "Every launch used the exact certified item-3 shape with --mode limited-auto --owner-enable-bounded-auto and every input named (activation evidence item 1; addendum 2 attempt 2); the only additional flag ever carried was the owner-authorized one-time --repin-cli-identity (R277/R285). No other launch shape was attempted.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R254": [
+   "Every dispatch happened only with clean repo + certified identity/config match + all gates green: first activation at cfc6b16 (CI 20/20, section-5 preflight PASS); the seq-33 dispatch at c88c2b9 (CI 20/20, anchors 7d8195b/8d34ea53/c54fd0d2, digests A1F99501/FCBBF70F, 12/12 probes). Non-matching states NEVER dispatched (seq-28 stop, seq-30 drift stop, the bash-mangled attempt).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R255": [
+   "The certified loop machinery selected and ran the campaign task M0-T107 (claimed packet, resolver 7 rows), dispatched Fable, collected evidence, and ran the Codex review + validation - the full select/direct/review/advance chain exercised live (cycle-1 path in addendum 2 item 6).",
+   "CLAIM: SATISFIED (first live traversal; advancement gated by the certified review, which correctly held)"
+  ],
+  "D-024-R256": [
+   "Fail-closed proven LIVE at every seam hit so far: unclassified commands -> ASK never AUTO (first cycle); missing checkpoint -> S14 stop never success; restart-blocking seam -> pre-dispatch refusal (Amendment 11); provider CLI drift -> preflight + provider_cli_drift refusal (seq 30); corrupt paths -> UNSAFE_OR_DRIFTED (attempt 1); untrusted checkpoint -> HALT_UNSAFE (cycle 1); rotation deferred to the seam (S11.2, pending).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R257": [
+   "Every exclusion untouched across the whole unit: no autostart, PR #241 never merged (live-checked repeatedly), no production/credentials/payments/legal, no OS-ACL change, no C1 canary, no Telegram live send (presence-only checks, queued 0), natural-event lane pending_live_observation, 4.8 bridge shadow-only (double-gated, verified by the T119 G5 review), residual fixes untouched.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R258": [
+   "No certified supervisor code was modified before activation (activation ran at the M0-T112-certified identity 8574c58); the residuals were carried as tracked follow-up exactly as ordered (M0-T114 executed later under the owner's Amendment-12 window, which also handled the R247 re-trigger).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R259": [
+   "Exercised FOUR times, never improvised: seq-28 stop on the model-pin + approved-models mismatches (options put to the owner); seq-30 stop on CLI drift (options A/B put to the owner); the bash-mangled attempt refused with the exact probe evidence; every stop reported with exact mismatch detail and no partial activation.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R260": [
+   "The 7-item R260 report was recorded at the first activation (activation evidence items 1-7: activation record/mode, run identity + runtime dir + budget digest, selected task, dispatch evidence with the 3 ASK-held commands, operator commands, Telegram state, awaiting-owner items) and extended by addendum 2 with the seq-33 confirmation set.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R261": [
+   "The owner's Fable-availability correction is captured verbatim in source-010-amendment.md (capture c5ca81a, validator EXIT=0); the stale exhaustion-era assumption was retired on the owner's stated facts.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R262": [
+   "The stale opus-4-8 worker pin was removed and Fable 5 restored as primary worker per the owner's authorization (R265 edit; the seq-33 live run dispatched observed_models claude-fable-5).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R263": [
+   "BEFORE any change: the read-only live capability probe ran and PASSED - doctor --live control-response VERIFIED (sha256_head 8a9c9c9018460062) + the supplemental shipped-flow probe with init_model=claude-fable-5, 1 denial, no file write, bounded (M0-T113-fable-probe.md; preflight A1).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R264": [
+   "Probe evidence + the owner correction recorded durably: source-010 capture commit + M0-T113-fable-probe.md committed; progress_log entries at 75/80%.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R265": [
+   "Exactly ONE setting changed: model_selection.toml [claude] model claude-opus-4-8 -> empty string (account default Fable 5); new raw digest FCBBF70F...DD2B recorded; post-edit doctor PASS (preflight A1; the digest has matched every subsequent preflight incl. the seq-33 rerun).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R266": [
+   "Exact administrator instructions for [approved_models] + allowed_models were delivered to the owner (preflight section 3 remedy block); the owner executed them and confirmed ('config updated'); the resulting protected-config digest A1F99501...D1436 was read back verbatim with only the two instructed changes (preflight A2).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R267": [
+   "No launch until the manifest was re-recorded AND the complete preflight passed again: manifest b07818fa re-recorded post-config-edit (preflight A3), full section-5 re-preflight PASS, THEN the launch at cfc6b16. The same discipline repeated at seq 30/33 (manifests 99b2e608, 774f9198).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R268": [
+   "Executed exactly: all three stale asks denied via the documented deny command with digests echoed back; clear-recovery cleared PAUSED_RECOVERY (audited); the IDENTICAL certified start re-ran at green tip 871cab8 (activation evidence addendum 1 items 1-3). The restart refused pre-dispatch, exposing the seam defect - handled under R270/R271.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R269": [
+   "The confirmation set was reported for the Amendment-11 attempt (addendum 1 item 6: no new identity minted, 0 provider calls, refusal pre-dispatch) and COMPLETED at seq 33 (addendum 2: run resumed with byte-identical budget digest, live Fable 5, checkpoint M0-T107-ready-2026-08-29-01 validated - the run advanced TO the first structured checkpoint; continuation past it is gated by the certified review, which held fail-closed).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R270": [
+   "No restart-looping ever: after the Amendment-11 refusal exactly ZERO further restarts were attempted; the bounded SEPARATE correction was proposed (M0-T115) and executed under the owner's Amendment-12 window; the seq-33 continuation happened only after the full recertification chain and owner-typed starts.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R271": [
+   "The M0-T115 correction invalidated the certification and the FULL R247 cycle ran before resuming (M0-T116); when Amendments 13/14 moved supervisor code again, the cycle ran AGAIN (M0-T119). Autonomous operation resumed only after each recertification was accepted.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R273": [
+   "The runtime journal was NEVER hand-edited across the entire unit: the pre-fix journal's denied-ask rows were made truthful exclusively by the reviewed read-time reconciliation (M0-T115), proven live at seq 30 (status surface) and end-to-end at seq 33 (pending_requests PASS on the resumed run); every state change went through documented CLI/broker surfaces (deny, clear-recovery, start).",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R276": [
+   "The resume executed ONLY after every gate: the seq-30 attempt STOPPED on the drift mismatch (stop-and-report, no bypass); the seq-33 resume ran after all four Amendment-13/14 units were accepted, the third recertification passed, CI was 20/20, and the complete preflight was green - and each failed precondition along the way produced a stop, never a bypass.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R277": [
+   "M0-T113's slice of Option A executed: the one-time --repin-cli-identity was applied on the next certified start after the recertification window completed (cli_capability_manifest PASS with repinned ['claude'], recorded provenance; addendum 2 item 2).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R280": [
+   "No DISABLE_UPDATES ever used (registry-checked NOT SET by the T119 DCV); Claude never downgraded (2.1.251 throughout, digest stable across the admission and the live run); no unrelated global configuration change by this unit (the machine env var was owner-executed under R288).",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R284": [
+   "After M0-T119's acceptance the R276 sequence was rerun FROM THE BEGINNING in order: record-manifest (119 files 774f9198) -> verify-controller -> doctor 43/43 -> doctor --live VERIFIED -> full preflight matrix (all green incl. CI 20/20 at c88c2b9) -> the certified start (progress_log 96-98%; addendum 2).",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R285": [
+   "On the certified start the ONE-TIME repin was applied and the new executable digest verified: the probe recorded 'an operator re-pinned ['claude'] to their current identity with recorded provenance'; the pinned digest d6f6c29a8ac6b3cf equals the R282-admitted 2.1.251 binary (independently re-hashed by three reviewers + two DCVs); M0-T107 resumed in the already-authorized limited-auto mode (limited_auto_enabled true, dispatched true). No new activation authority was created.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R298": [
+   "This submission and gate wave IS the R298 execution: M0-T113 completes through gates and acceptance BEFORE the owner's cycle-2 start (the owner holds the cycle-2 command and has stated they will run it only after this completion report).",
+   "CLAIM: IN EXECUTION at submit; the acceptance record itself completes it"
+  ],
+  "D-024-R299": [
+   "The pre-continuation report is delivered at acceptance: the pushed tip SHA plus a FRESH supervisor status readback (expected: HALTED operator-startable state, 0 open asks, 0 pending effects, journal + audit intact) - the readback is re-run at report time, not reused.",
+   "CLAIM: IN EXECUTION; discharged by the acceptance-time report"
+  ],
+  "D-024-R300": [
+   "The cycle-2 stop protocol is durably recorded (this amendment + campaign seq-33 NEXT): on another counted stop there is NO further restart and ALL evidence (journal, audit chain, evidence packets, worktree state) is preserved untouched. Conditional - dischargeable only if the condition fires; the binding record exists now.",
+   "CLAIM: RECORDED AND BINDING (conditional protocol)"
+  ],
+  "D-024-R301": [
+   "The conditional defect-diagnosis obligation is durably recorded: on a cycle-2 counted stop the independent Codex review failure becomes a SEPARATE bounded AD-093 defect task citing D-024-R301 as qualifying evidence. Conditional - the packet is created only if the condition fires.",
+   "CLAIM: RECORDED AND BINDING (conditional protocol)"
+  ]
+ }
+}

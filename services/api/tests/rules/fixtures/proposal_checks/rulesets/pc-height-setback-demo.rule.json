@@ -1,0 +1,30 @@
+{
+  "rule_id": "pc-height-setback-demo",
+  "rule_version": "0.0.1-draft",
+  "family": "residential_height_setback",
+  "title": "SYNTHETIC maximum building height, attestation-conditional (M5-T054 proposal-checks wiring proof)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "description": "SYNTHETIC fixture (M5-T054, D-076 phase B2) proving the proposal-checks module surfaces COULD_NOT_CHECK when a REQUIRED attested input is absent: this synthetic max_building_height is gated on a caller-attested street_width_class, so with no attestation the evaluator returns professional_review_required and NO allowance - the check is COULD_NOT_CHECK naming the missing attestation, never a default width, a silent pass, or a fail-closed-to-narrow guess (D-051). The OUTPUT name (max_building_height) matches the real r5-height rule so the same declared check runs against both the synthetic and the real registry. In the REAL registry max_building_height is street-width INDEPENDENT (r5-height, section 23-422); this synthetic gate exercises only the module's attested/unattested COULD_NOT_CHECK behavior, not R5 legal semantics. Illustrative values only; not a Verified determination and not an official capture.",
+  "citations": [
+    {"snapshot_id": "pc-demo-synthetic", "section": "SYNTHETIC-HEIGHT", "quote": "SYNTHETIC (illustrative, not verbatim): the maximum building height is 60 feet on a wide street and 40 feet on a narrow street in the indicated district.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "enum": ["R5"], "description": "District governing the lot."},
+    {"name": "street_width_class", "type": "string", "required": true, "enum": ["wide", "narrow"], "description": "Caller-attested wide/narrow street class (the accepted wide-street OUTPUT shape, consumed read-only). REQUIRED and fail-closed: with no attestation the evaluation returns professional_review_required with no value."}
+  ],
+  "outputs": [
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Maximum building height in feet, selected by street-width class."}
+  ],
+  "parameters": [
+    {"name": "max_height_by_street_class", "value": {"wide": 60, "narrow": 40}, "citation_ref": "pc-demo-synthetic", "note": "SYNTHETIC illustrative maximum building height (feet) by street-width class (wide 60 / narrow 40)."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5"]},
+  "computation": {
+    "steps": [
+      {"id": "height", "op": "identity", "args": [{"param_select": {"map": "max_height_by_street_class", "key_input": "street_width_class"}}], "note": "Select the maximum building height for the street-width class."}
+    ],
+    "outputs": {"max_building_height": {"step": "height"}}
+  },
+  "limitations": ["SYNTHETIC representability fixture; illustrative values; requires official capture + G6 before any use."]
+}

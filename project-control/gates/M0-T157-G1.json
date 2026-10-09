@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T157",
+  "gate_id": "G1",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T157-G1.md",
+  "reviewed_at": "2026-09-13T00:13:16.108999+00:00",
+  "content_manifest_sha256": "a015e85ae77bb0f34c0f4e6eb272141d8eb2e6b1d810623770692b2f4b3c270b",
+  "reviewed_sha": "58b80013eba37965fb93bf2237958e4e90f2112a",
+  "updated_at": "2026-09-13T00:13:16.458073+00:00"
+}

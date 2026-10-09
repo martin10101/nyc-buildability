@@ -1,0 +1,20 @@
+{
+ "task_id": "M5-T068",
+ "material_commit": "5aad9007 (cherry-pick of the in-worktree commit 4e49d8e7; 3 files, ALL-MATCH LF-normalized digest verification; CI at the pushed head a66cf818 = run 35769445255 SUCCESS - the api job (ruff + pytest) green on BOTH attempts; attempt 1's sole red was the DB-048 accepted-spec vitest flake in apps/web, zero overlap with this api-test-only task, green on the zero-delta attempt-2 rerun)",
+ "produced_at": "2026-09-21T05:57:00+00:00",
+ "producer": "qa-engineer (loop-1 worker, run persistent-local-67; closed at the S13.8 consecutive_revision_loops breaker cycle 6 - the evidence-stalemate class; unit delivered complete UNCOMMITTED; orchestrator harvest re-ran the fresh explicit-cwd suites)",
+ "requirements": {
+  "D-082-R002": [
+   "The six DB-046 (a-f) closures harden exactly the R002 proof surface: AS-1/AS-2 prove the fail-closed consistency raise (MaxEnvelopeError field='candidate.<dim>' under a monkeypatched failing checker) maps to the bounded generic 500 with X-Correlation-ID and no exception detail (a REAL route 500, not a mock); AS-3 pins the out-of-EPSG:2263-bounds lot to the typed LOT_GEOMETRY_UNSUPPORTED gap (never a candidate); AS-4 drives a binding height >100ft through the FULL generator-checker consistency proof (multi-floor candidate re-checked green by the accepted checker); AS-5 exercises the populated _conflict_advisory branch (surfaced-never-resolved, tightest stays binding); the _LOT_AREA_INPUT drift guard pins the engine to the accepted checker's input binding. All seven tests mutation-sensitive per the producer's tooth notes; 63 passed at harvest (wt, cwd services/api) and in CI at a66cf818."
+  ],
+  "D-066-R001": [
+   "Packet carries the seam navigation block; the TEST-ONLY wall held: exactly the two test allowed_paths + the report changed (material 5aad9007 = 3 files); the forbidden engine/route/main are byte-untouched (all-insertions diff; forbidden paths absent from the material commit)."
+  ],
+  "D-077-R002": [
+   "Full lane drill: contract at the 5aebc26c seam -> claim 63c15a0c (FULL worktree path wt-m5t068) -> loop-1 run-67 build -> S13.8 breaker close -> 10 stale asks denied BOTH stores -> fresh harvest suites (ruff clean, 63 passed, modularity 0) -> in-worktree 4e49d8e7 cherry-picked 5aad9007 ALL-MATCH x3 -> submit at the CI-green head a66cf818."
+  ],
+  "D-077-R003": [
+   "TEST-ONLY scope honored: exactly the packet's three allowed_paths in the material commit; every forbidden path untouched (max_envelope.py, max_envelope_api.py, main.py, rules/, site_definition/, apps/web/, contracts/); zero dependency changes."
+  ]
+ }
+}

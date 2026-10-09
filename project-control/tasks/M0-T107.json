@@ -1,0 +1,115 @@
+{
+  "task_id": "M0-T107",
+  "title": "D-024 Amendment 3 unit J: generic Claude Code plugin portability plan (post-golden-run, non-blocking)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "AFTER the local loop passes its golden run (M0-T096): prepare a separate portability plan for a generic Claude Code plugin containing the reusable skills, agents, hooks, and adapters built by units C-G (plugins bundle skills/agents/hooks/workflows per the plugins-reference snapshot; adapters ship as skills/bin - no native 'adapters' component type). NYC-specific graph, ledger, security policy, profiles, and product rules STAY in this repository. Planning deliverable only; MUST NOT block the local loop's activation (D-024-R179).",
+  "business_reason": "Amendment 3 unit J: portability is explicitly ordered as separate, later, and non-blocking.",
+  "inputs": [],
+  "outputs": [
+    "docs/D024_PORTABILITY_PLAN.md (generic plugin plan: reusable skills/agents/hooks/adapters; NYC-specific stays in-repo)",
+    "project-control/reports/M0-T107-portability-plan.md"
+  ],
+  "dependencies": [
+    "M0-T096"
+  ],
+  "allowed_paths": [
+    "docs/D024_PORTABILITY_PLAN.md",
+    "project-control/reports/M0-T107-portability-plan.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "supervisor-loop-fable-producer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T22:31:57.765156+00:00",
+  "updated_at": "2026-09-04T16:00:13.061374+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T22:31:57.765156+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Planning-only unit-J packet created at campaign conversion; its two deliverable files (docs/D024_PORTABILITY_PLAN.md, project-control/reports/M0-T107-portability-plan.md) do not exist until production, which begins only after the M0-T096 golden run. The allowed_paths pin the eventual write scope; the content identity binds real files from the first produced commit onward (re-pinned at claim).",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m0t107",
+  "progress_log": [
+    {
+      "at": "2026-08-30T03:06:43.217177+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "CYCLE-2 START REFUSED PRE-DISPATCH (owner-typed certified command, exit 13 stale_state): illegal transition HALTED->HALTED trigger 'act'. Root cause: the owner_explicit_restart exit edge (HALTED->IDLE, state_machine.py:399) has zero call sites - no documented surface can restart after a certified halt; clear-recovery covers only PAUSED_RECOVERY. NOT a counted stop (dispatched false, 0 provider calls, touch budget untouched 2/2; R300/R301 not triggered). R259/R270 applied: one attempt, no retry, no journal edit; journal preserved HALTED (transitions still 13, audit head 33). Bounded AD-093 defect packet PROPOSED to wire the restart channel (F-2 class, third instance; fix re-triggers R247 recert). Full record: reports/M0-T107-cycle2-start-refusal.md (D-024-R259/R270)"
+    },
+    {
+      "at": "2026-08-30T05:49:15.314082+00:00",
+      "agent": "orchestrator",
+      "percent": 25,
+      "status": "claimed",
+      "message": "CYCLE-2 LIVE JOURNEY (R320): owner-restart WORKED LIVE (first certified use - HALTED->IDLE exactly-once, audited); certified start DISPATCHED (fresh probes green) then POST-DISPATCH COUNTED STOP at S14 no_valid_checkpoint, exit 11, PAUSED_RECOVERY. ROOT CAUSE (audit+transcripts, read-only): the certified ROTATION AT THE SEAM DID NOT FIRE - the start RESUMED the over-ceiling session (context_tokens 640224 vs the 400k ceiling; was 604772) instead of rotating to a fresh worker; second dimension: the resumed worker ran with cwd = the PRIMARY ctl24 checkout, not wt-m0t107 (isolation risk; zero writes, zero brokered decisions, read-only discovery only); terminal rc=1 mid-run with no result record (probable provider context-limit rejection - inferred, labeled as such). Codex review + M0-T107 advancement NOT REACHED. PROTOCOL ENFORCED: one attempt consumed (R316), NO restart (R317/R300), everything preserved (R321), no autonomy claim (R322); S16.7 touch-budget excess fires (cumulative 3rd counted stop vs cap 2) - OWNER disposition; bounded AD-093 rotation-at-seam defect task PROPOSED (R301 lane, target named transparently). Full record: reports/M0-T107-cycle2-live-journey.md (D-024-R317/R320/R321)"
+    },
+    {
+      "at": "2026-08-30T19:42:55.899947+00:00",
+      "agent": "orchestrator",
+      "percent": 35,
+      "status": "claimed",
+      "message": "Amendment-20/21 authorized attempt DISPATCHED then counted stop no_valid_checkpoint (S14) after exactly 12/12 worker turns: eight-point proof R352-R356 PASS (shed-before-launch, fresh Fable 5 session 0835bb80 in wt-m0t107, lineage/budgets/audit preserved), R357 FAIL (no structured checkpoint emitted - max_turns bound exhausted mid-tool-use), R358 not reached, R359 not achieved. Journal preserved at PAUSED_RECOVERY (transitions 22, audit 53). Full assessment: project-control/reports/M0-T107-amendment20-live-journey-2.md. R361 binding: no restart/retry/clear; NEW owner decision required."
+    },
+    {
+      "at": "2026-08-31T18:17:04.658918+00:00",
+      "agent": "orchestrator",
+      "percent": 35,
+      "status": "claimed",
+      "message": "COMMISSIONING STEP-2 REFUSED PRE-DISPATCH (owner-typed exact presented command): UNSAFE_OR_DRIFTED, failed probe task_authority (ledger_record_missing) - the presented --repo (pack checkout at 94e243e, parked since 2026-08-11) has no project-control/tasks/M0-T107.json; probe reads the ledger from args.repo (start_gate.py:178). NOT a counted stop (nothing dispatched, 0 provider calls, touch ledger unchanged); journal rests at PREFLIGHT (owner Step-1 clear-recovery seq 23 stands; refusal wrote only last_recovery_outcome); queue never snapshotted. R394 applied: no retry; one consolidated assessment at reports/M0-T107-commissioning-start-refusal.md - OPTION A recommended (narrow R413 lift: ff wt-m0t107 796e18f->1c06957, then --repo wt-m0t107, re-preflight, owner re-types Step 2 only) vs OPTION B (AD-093 probe-root defect task, R247 re-trigger). All candidate --repo shapes verified read-only; corrected shape PASSES task_authority + launch bindings (D-024-R394/R409/R413)"
+    },
+    {
+      "at": "2026-08-31T18:54:43.605683+00:00",
+      "agent": "orchestrator",
+      "percent": 40,
+      "status": "claimed",
+      "message": "COMMISSIONING JOURNEY 3 (owner-typed corrected Step-2): DISPATCHED - the Option-A repo correction is live-proven (full pre-dispatch gauntlet PASS incl task_authority); fresh worker 6786b4b0 in wt-m0t107 (job_object); Stage-3 driver ENGAGED live (queued digest M0-T109 snapshotted); the worker emitted the FIRST VALID live checkpoint of the campaign (honest IN_PROGRESS cp1). COUNTED STOP no_valid_checkpoint (exit 11, transitions 26, PAUSED_RECOVERY): root cause = real-CLI queued-prompt ABSORPTION (queue event absorbed_mid_turn 18:35:01Z) - the reserved-final-turn prompt merged into the worker first turn, truncating the unit to discovery-only (symptom A) AND collapsing two written prompts into one terminal result so expected_results=2 never satisfied, unit_complete never latched, 900s wall ride, tree-termination, S14 counts it (symptom B); consecutive_invalid_outputs 3/3 hard limit; touches 3 of 2 (S16.7 EXCESS - owner matter). Golden fake-CLI delivers queued prompts as own turns = fixture-fidelity gap (AD-093: reproduced defect + provider drift + measured problem). R394 applied: no retry; assessment reports/M0-T107-commissioning-journey-3.md; NEXT = owner decides (bounded defect task on reserved-turn delivery + expected_results robustness, then R247 recert, then fresh journey; S16.7 disposition). wt-m0t107 clean c5c6ff7 zero writes; wt-m0t109 clean 1c06957 never dispatched; Codex never contacted; no advancement (D-024-R394)"
+    },
+    {
+      "at": "2026-08-31T20:07:31.335594+00:00",
+      "agent": "orchestrator",
+      "percent": 55,
+      "status": "claimed",
+      "message": "COMMISSIONING JOURNEY 4 (owner-typed, fresh run_m0t107_j4): FARTHEST EVER - M0-T130 fix live-proven end to end (worker did ~7min real work, 503KB transcript, no truncation, no wall ride); FIRST valid checkpoint validated + forwarded (facts 1-3); FIRST live Codex review completed (fact 4: gpt-5.6-sol, attempts 1, schema-valid). Codex verdict HALT_UNSAFE with the honest finding that the reviewer execution policy blocks repository reads - the supervisor honored it exactly (HALTED, no advancement, exactly-once preserved, M0-T109 never dispatched). Root cause assessed from preserved evidence: first live codex exec on this host; candidate mechanisms = codex read-only sandbox unenforceable on Windows under exec+strict-config (fail-closed) and/or linked-worktree .git redirection outside the -C root; certification could not catch it (fake reviewer by design, R220/R221). NOT a machinery defect on our side: transport/schema/allowlist/validation/halt all worked. Counted touch 1 of 2 on the new run (S16.7 cumulative excess continues). R394 applied: no retry; assessment reports/M0-T107-commissioning-journey-4.md; NEXT = owner decides the bounded reviewer-access diagnostic+fix task (one authorized minimal live codex sandbox probe, then the measured fix; R247 re-trigger if supervisor changes); restart path when ready = owner-restart (HALTED->IDLE) then a fresh start (D-024-R394)"
+    },
+    {
+      "at": "2026-09-03T02:40:21.057638+00:00",
+      "agent": "orchestrator",
+      "percent": 55,
+      "status": "claimed",
+      "message": "OWNER DISPOSITION DECISION A EXECUTED (D-024 Amendment 49, R732-R737): the two run_m0t107_j4 prior-journey drafts committed UNALTERED to task/M0-T107-plugin-portability as the authorized starting state - commit ffc77bab80907fac1fde4e3bd81f1fdf1aa5dd81 (exactly 2 added paths; blob sha256 7546d4e9.../b203ebf0... byte-identical to pre-act hashes; wt-m0t107 CLEAN; no upstream/push/PR; journey NOT started - provider never contacted). Amendment 48 launch blocker RESOLVED; the journey script dirty-tree guard now passes. NEXT = owner types the one journey command (handoff seq 79 item 6)."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-04T16:00:13.061374+00:00"
+}

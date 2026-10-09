@@ -1,0 +1,83 @@
+{
+  "task_id": "M0-T114",
+  "title": "D-024 residual follow-up: _already_queued digest normalization + live_observation raw source_record_key + unit-K boundary notes",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Fix the three pinned non-blocking certification residuals carried through M0-T112 (recertification report sec 5): (1) telegram_sink _already_queued compares the stored post-builder summary digest vs the raw notify-time digest (normalize so outage growth suppression is exact for redaction/truncation-altered summaries, preserving at-least-once); (2) live_observation.py:296 raw source_record_key one-liner; (3) unit-K boundary-queue write-only/inert notes. OWNER SEQUENCING: this task runs only when the owner schedules it - any supervisor change re-invalidates the R247 certification and re-triggers the golden re-certification cycle (Amendment 9 R258 records the owner's decision to carry these as tracked follow-up work, not fix pre-activation).",
+  "business_reason": "Owner directive: carry the nonblocking residuals as tracked follow-up work (Amendment 9, R258).",
+  "inputs": [],
+  "outputs": [
+    "residual fixes + tests",
+    "project-control/reports/M0-T114-residual-fixes.md",
+    "OWNER NOTE: completing this task re-triggers the R247 golden re-certification cycle"
+  ],
+  "dependencies": [
+    "M0-T112"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/telegram_sink.py",
+    "tools/agent_supervisor/live_observation.py",
+    "tools/test_agent_supervisor_telegram_sink.py",
+    "tools/test_agent_supervisor_golden_run.py",
+    "project-control/reports/M0-T114-residual-fixes.md"
+  ],
+  "forbidden_paths": [
+    ".claude",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T03:46:33.868128+00:00",
+  "updated_at": "2026-08-29T07:17:37.056353+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T03:46:33.868128+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T06:58:45.763701+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Residuals executed: (1) telegram_sink queue-growth suppression now compares post-builder vs post-builder (already_queued after build_notification; at-least-once preserved; delivered-dedup unchanged); (2) live_observation reads the already-sanitized source_record_key (one line); (3) unit-K boundary-queue notes dispositioned inert-by-design no-code (outside allowed_paths). RED both defect tests failed pre-fix; GREEN L-pack 36/36 + golden 41/41; revert-proof stash->2 FAIL->pop->2 PASS; sweep 535/535; ruff clean; modularity EXIT=0; zero journal writes (R273). Submitting for the 4-reviewer wave."
+    },
+    {
+      "at": "2026-08-29T07:09:15.414648+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "rework",
+      "message": "One consolidated correction: the CI credential scan (a different scanner from local gitleaks) flagged the unpragma'd fake register-key sentinel at 5e2c8c3; allow pragmas added at a22e34a per the L-pack convention (comment-only, test semantics unchanged); CI 20/20 green at a22e34a. Resubmitting at the corrected identity for delta re-attestations."
+    }
+  ],
+  "dependency_change_note": "Orchestrator dependency correction at the accept seam (ADR-005 authority): the packet was created at Amendment-9 capture with dependency M0-T113, but Amendment 12 (R272/R275/R276) reordered the sequence - M0-T113 COMPLETES only at the post-recertification resume, which the owner placed AFTER M0-T114 and M0-T116. The factual prerequisite for the residual fixes is the M0-T112-certified baseline (accepted). Recorded 2026-08-29; G0 readiness item 3 documented this reading at claim.",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-29T07:17:37.056353+00:00"
+}

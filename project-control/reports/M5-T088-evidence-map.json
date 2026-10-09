@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T088",
+ "material_commit": "9f355fe1 (cherry-pick of wt-m5t088 353b919d; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T11:00:00+00:00",
+ "producer": "3d-massing-engineer (orchestrator-dispatched subagent; worktree wt-m5t088)",
+ "requirements": {
+  "D-066-R001": [
+   "Navigation block at the contract seam named massing_model.py's only importer (its test), max_envelope.py and every other scenario module FORBIDDEN, and the GLB writer as a later generic consumer; the material touches exactly the 3 allowed paths; grep confirms massing_model is still unimported outside its test."
+  ],
+  "D-087-R001": [
+   "Wave-2 capacity unit: contracted at 5e9dbd07 (G0), claimed at 114e5e56 with the full worktree path, produced by an orchestrator-dispatched subagent (3d-massing-engineer) concurrently with T089/T090/T091/T092; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every live packet; one worktree wt-m5t088; material 9f355fe1 (cherry-pick of 353b919d) touches only the 3 allowed paths, every file MATCH."
+  ],
+  "D-087-R003": [
+   "3D building handling made safe for real geometry before any wiring (DB-054 (a)-(j)): non-star concave (U, comb), clockwise, exact-collinear and near-boundary fixtures; typed bounds before heavy work - coordinate magnitude 1e8 (a 1e154 lot ring used to crash with an untyped GEOSException), floor cap with an 'over_cap_floors' reason, total output vertices 100k, metered ear-clip triangulation budget 2e6 (a 998-vertex spiral now refuses in 4.2 s instead of running 19.2 s); local-origin volume proven on non-integer coordinates; five-floor golden added; output bytes of 12 valid fixtures unchanged vs the accepted module; 14 producer mutants all RED; [ORCH-HARVEST] at the cherry-picked head (Python 3.11.9, cwd services/api): `python -m ruff check .` -> All checks passed!; `python -m pytest tests/scenario/test_massing_model.py -q` -> 54 passed; repo root modularity exit 0 (massing_model.py 663 SLOC now in the warning band - producer discovery 3 routes a triangulation split)."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (tests add stdlib fractions + the already-admitted numpy); no route, API, main.py, web or requirements change; module unwired."
+  ]
+ }
+}

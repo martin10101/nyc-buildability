@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T079",
+  "gate_id": "G4",
+  "reviewer": "qa-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T079-G4-rework.md",
+  "reviewed_at": "2026-09-24T14:41:13.989651+00:00",
+  "content_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+  "reviewed_sha": "cdd62c5cb3a594bcda1abe38303d4a9e5c4cbbf9",
+  "history": [
+    {
+      "reviewer": "qa-engineer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M5-T079-G4.md",
+      "reviewed_at": "2026-09-24T09:56:35.923182+00:00"
+    }
+  ],
+  "updated_at": "2026-09-24T14:41:16.752165+00:00"
+}

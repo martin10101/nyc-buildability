@@ -43,11 +43,17 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from . import coverage as cov
 from . import lifecycle
 from .registry import RuleRegistry
+
+if TYPE_CHECKING:  # pragma: no cover - typing only; avoids importing the shapely-
+    # heavy wide-street buffer engine (transitively pulled by wide_street_wiring)
+    # onto this module's import path. The wiring is imported lazily, only when a
+    # wide-street determination is actually supplied (never on the default path).
+    from app.rules.wide_street_wiring import WideStreetDetermination
 
 # ---------------------------------------------------------------------------
 # Spatial vocabulary (DUPLICATED from app.spatial, guarded by a drift test).
@@ -87,6 +93,13 @@ FAILSAFE_INCONSISTENT_CONFIDENT = "inconsistent_confident_geometry"
 # applicable to the same inputs for overlapping outputs (a legal ambiguity the
 # engine surfaces for professional review; it never picks a governing rule).
 FAILSAFE_RULE_CONFLICT = "rule_conflict"
+# M5-T058 (contract 1.2.0): a condo BILLING BBL that resolved to a multi-lot /
+# unresolved / typed-error outcome. The substrate is absent for a NAMED reason -
+# the condo's base lot could not be resolved to a single lot - so the refusal is
+# honest instead of the generic FAILSAFE_SPATIAL_ABSENT. A base lot is never
+# auto-selected on a multi-lot outcome (D-078-R002); the human site-definition
+# confirmation is the paired M5-T059 flow, not this evaluator.
+FAILSAFE_CONDO_BASE_LOT_UNRESOLVED = "condo_base_lot_unresolved"
 
 _COVERAGE_SOURCE_EVALUATOR = "rule_evaluator"
 _COVERAGE_SOURCE_FAIL_SAFE = "integration_fail_safe"
@@ -132,9 +145,38 @@ class PropertyRuleEvaluation:
     # each rule's effective window) when a same-family conflict is detected;
     # ``None`` otherwise. Never carries a computed output/determination value.
     rule_conflict: dict | None = None
+    # M5-T034: wide-street conditional-FAR outcome. Populated ONLY when a
+    # wide-street determination is supplied for a wide-street-conditional district
+    # (ZR 23-22 R6/R7-1/R7-2/R8); ``None`` on every other path (the default, a
+    # non-conditional district, or a fail-safe short-circuit). ``wide_street_far_row``
+    # names the row the determination fired (``wide_street_row`` / ``standard_row`` /
+    # ``none``); ``wide_street_governing_far`` is the FAR that row selects from the
+    # rule's OWN byte-checked parameters (the higher wide value only for an
+    # affirmative WITHIN determination, else the conservative value, else None);
+    # ``wide_street_determination`` is a JSON-safe provenance summary (DRAFT).
+    # M5-T037: the rule_evaluation contract bump to v1.1.0 serializes these as the
+    # OPTIONAL ``wide_street`` block in as_dict() - emitted ONLY when a determination
+    # actually folded in (``wide_street_determination`` is not None), so a document
+    # with no determination stays a valid 1.0.0-shaped body. The determination's
+    # coverage effect continues to reach the response through the existing
+    # coverage_status / professional_review_required / reasons fields as well.
+    wide_street_far_row: str | None = None
+    wide_street_governing_far: float | None = None
+    wide_street_determination: dict | None = None
+    # M5-T058: condo billing-BBL -> base-lot substitution stamp. Populated ONLY
+    # when the spatial substrate came from a single resolved condo base lot
+    # substituted for the entered billing BBL; ``None`` on every other path (non
+    # condo input, flag off, a multi-lot / unresolved / typed-error condo outcome,
+    # or a non-condo absent substrate). The rule_evaluation contract bump to v1.2.0
+    # serializes it as the OPTIONAL top-level ``substrate_substitution`` block in
+    # as_dict() - emitted ONLY when a substitution folded in, so a document with no
+    # substitution stays a valid 1.0.0/1.1.0-shaped body. A RECORD of a documented
+    # resolution, never a computed allowance; evaluated_input.bbl stays the ENTERED
+    # billing BBL and this stamp alone carries entered-vs-analyzed.
+    substrate_substitution: dict | None = None
 
     def as_dict(self) -> dict:
-        return {
+        document = {
             "bbl": self.bbl,
             "coverage_status": self.coverage_status,
             "data_completeness": self.data_completeness,
@@ -158,6 +200,25 @@ class PropertyRuleEvaluation:
             "coverage_source": self.coverage_source,
             "rule_conflict": (dict(self.rule_conflict) if self.rule_conflict is not None else None),
         }
+        # M5-T037 (rule_evaluation v1.1.0, additive): serialize the OPTIONAL
+        # wide-street block ONLY when a determination folded in (a wide-street-
+        # conditional district with a supplied determination). On every other path
+        # the key is ABSENT and the body stays valid under both the 1.0.0 and 1.1.0
+        # schema. The block is the DRAFT D-052 provenance summary already assembled
+        # by _wide_street_summary (far row, governing FAR, source versions, matched
+        # geometry refs, interpreted bounds, classification reasons, policy decision
+        # states, DRAFT label); it is never a Verified value.
+        if self.wide_street_determination is not None:
+            document["wide_street"] = dict(self.wide_street_determination)
+        # M5-T058 (rule_evaluation v1.2.0, additive): serialize the OPTIONAL
+        # substrate_substitution block ONLY when a condo base-lot substitution
+        # folded in. On every other path the key is ABSENT and the body stays
+        # valid under the 1.0.0, 1.1.0 and 1.2.0 schema. The block is a RECORD of
+        # a documented resolution (entered-vs-analyzed BBLs, provenance carried
+        # verbatim, mixed-substrate visibility); it is never a Verified value.
+        if self.substrate_substitution is not None:
+            document["substrate_substitution"] = dict(self.substrate_substitution)
+        return document
 
     def export(self) -> dict:
         """Serialize for a downstream consumer, fail-closed: raises
@@ -362,9 +423,16 @@ def _fail_safe(
     spatial_context: dict | None,
     spatial_uncertainty: dict,
     family_coverage: dict,
+    substrate_substitution: dict | None = None,
 ) -> PropertyRuleEvaluation:
     """Build a fail-safe result: professional review (or data conflict) with NO
-    guessed district and NO computed value; uncertainty preserved."""
+    guessed district and NO computed value; uncertainty preserved.
+
+    ``substrate_substitution`` (M5-T058) rides along ONLY when a condo base-lot
+    substitution folded in and the analysis then fail-safed on the BASE lot's own
+    substrate (e.g. the base lot itself is geometry-uncertain). It is never set on
+    the condo-unresolved absent-substrate path (no single analyzed lot exists to
+    stamp)."""
     return PropertyRuleEvaluation(
         bbl=bbl,
         coverage_status=coverage_status,
@@ -385,6 +453,7 @@ def _fail_safe(
         family_coverage=family_coverage,
         reasons=[reason],
         coverage_source=_COVERAGE_SOURCE_FAIL_SAFE,
+        substrate_substitution=substrate_substitution,
     )
 
 
@@ -440,6 +509,105 @@ def _conflict_result(
 
 
 # ---------------------------------------------------------------------------
+# M5-T034: wide-street conditional-FAR row selection (server-side).
+#
+# The accepted wide-street stack (dcm_street_width_policy + wide_street_buffer_
+# engine, folded into a typed determination by app.rules.wide_street_wiring)
+# feeds THIS function, which selects the governing ZR 23-22 conditional-FAR row
+# for R6/R7-1/R7-2/R8. It is called by evaluate_property when a determination is
+# supplied, so the determination genuinely drives server-side FAR-row selection
+# rather than sitting in an unused helper (M5-T034 revision). It never invents a
+# FAR value: the two candidates are the rule's OWN byte-checked parameters.
+# ---------------------------------------------------------------------------
+
+def select_conditional_far_row(
+    determination: Any,
+    *,
+    standard_far: float,
+    wide_street_far: float,
+) -> dict:
+    """Fold one wide-street determination into the governing conditional-FAR row.
+
+    * ``within_100ft_of_wide_street`` fires the WIDE row -> the higher
+      ``wide_street_far`` governs (DRAFT, pending G6).
+    * ``not_within_100ft_of_wide_street`` fires the STANDARD row -> the
+      conservative ``standard_far`` governs.
+    * Any professional-review determination (unresolved/unknown/not-classified
+      width, an unimplemented named-street override candidate, a typed buffer-
+      engine failure, or an empty/absent classification) fires NO row and grants
+      NO FAR bonus: ``governing_far`` is None and coverage must escalate to
+      professional_review_required.
+
+    Never raises and never selects the higher value on uncertainty. Returns a
+    plain dict; the FAR values come straight from the rule's parameters, so this
+    is not a second source of truth. Deterministic and side-effect-free."""
+    # Lazy import: keeps the shapely-heavy buffer engine (pulled transitively by
+    # wide_street_wiring) off this module's import path - loaded only when a
+    # determination is actually supplied, never at module load or on the default
+    # (no-determination) request path.
+    from app.rules.wide_street_wiring import (
+        COVERAGE_PROFESSIONAL_REVIEW_REQUIRED as _WS_PRR,
+    )
+    from app.rules.wide_street_wiring import (
+        FAR_ROW_WIDE_STREET as _WS_ROW_WIDE,
+    )
+    from app.rules.wide_street_wiring import (
+        select_far_row_value,
+    )
+
+    far_row = determination.far_row
+    governing = select_far_row_value(
+        determination, standard_far=standard_far, wide_street_far=wide_street_far
+    )
+    professional_review = determination.coverage_hint == _WS_PRR or governing is None
+    if professional_review:
+        reason = (
+            f"wide-street determination {determination.determination_state}: no "
+            "conditional-FAR row fires and no higher (wide-street) FAR bonus is "
+            "granted; coverage escalates to professional review "
+            "(D-051 fallback direction for these rows - the wide value is the "
+            f"higher FAR, so it is withheld on uncertainty). {determination.reason}"
+        )
+    else:
+        row_label = "wide-street (higher)" if far_row == _WS_ROW_WIDE else "standard (conservative)"
+        reason = (
+            f"wide-street determination {determination.determination_state}: the "
+            f"{row_label} conditional-FAR row governs (max_residential_far "
+            f"{governing}); DRAFT pending G6. {determination.reason}"
+        )
+    return {
+        "far_row": far_row,
+        "governing_far": governing,
+        "professional_review": professional_review,
+        "reason": reason,
+    }
+
+
+def _wide_street_summary(determination: Any, fold: dict) -> dict:
+    """A compact, JSON-safe provenance summary of a wide-street determination and
+    the row it selected - the D-052 provenance quintuple plus the DRAFT marker,
+    for a reviewer. NOT part of the frozen rule_evaluation contract (see
+    :class:`PropertyRuleEvaluation`)."""
+    return {
+        "determination_state": determination.determination_state,
+        "far_row": fold["far_row"],
+        "governing_max_residential_far": fold["governing_far"],
+        "coverage_hint": determination.coverage_hint,
+        "exceptions_checked": determination.exceptions_checked,
+        "named_street_override_pending": determination.named_street_override_pending,
+        "policy_decision_states": list(determination.policy_decision_states),
+        "original_labels": list(determination.original_labels),
+        "source_versions": list(determination.source_versions),
+        "matched_geometry_refs": list(determination.matched_geometry_refs),
+        "interpreted_bounds_summaries": list(determination.interpreted_bounds_summaries),
+        "classification_reasons": list(determination.classification_reasons),
+        "draft_label": determination.draft_label,
+        "fallback_direction_note": determination.fallback_direction_note,
+        "reason": fold["reason"],
+    }
+
+
+# ---------------------------------------------------------------------------
 # Public entry point.
 # ---------------------------------------------------------------------------
 
@@ -448,6 +616,9 @@ def evaluate_property(
     *,
     registry: RuleRegistry | None = None,
     as_of_date: str | None = None,
+    wide_street_determination: WideStreetDetermination | None = None,
+    substrate_substitution: dict | None = None,
+    spatial_absent_condo_unresolved: bool = False,
 ) -> PropertyRuleEvaluation:
     """Map a canonical property profile into the rules evaluator and evaluate the
     draft R5 residential-FAR family. Pure and deterministic: the same profile
@@ -461,6 +632,30 @@ def evaluate_property(
     through to the evaluator and to FH-2 conflict detection. When omitted (the
     default and the only existing behaviour) no temporal gating is applied, so the
     single-rule R5 family behaves exactly as before.
+
+    ``wide_street_determination`` (optional, M5-T034) is the typed output of the
+    accepted wide-street stack (:func:`app.rules.wide_street_wiring.
+    determine_wide_street_far`). When supplied AND the confident district is a
+    wide-street-conditional ZR 23-22 district (R6/R7-1/R7-2/R8), it selects the
+    governing conditional-FAR row server-side (see
+    :func:`select_conditional_far_row`): a WITHIN determination fires the higher
+    wide-street value, a NOT_WITHIN determination the conservative value, and any
+    professional-review determination grants NO bonus and escalates coverage to
+    professional_review_required. When omitted (the default and every
+    non-conditional district) NOTHING here runs and the result is byte-identical
+    to before, so the flat R1-R12 rules and every existing caller are unaffected.
+
+    ``substrate_substitution`` (optional, M5-T058) is the additive
+    ``substrate_substitution`` stamp built by the live provider when a single
+    resolved condo base lot was substituted for the entered billing BBL; it rides
+    onto the result unchanged (a RECORD, never re-derived here) and reaches the
+    contract-1.2.0 document via as_dict(). ``spatial_absent_condo_unresolved``
+    (optional, M5-T058) names an ABSENT substrate honestly: when True and the
+    substrate is absent, the fail-safe reason is
+    :data:`FAILSAFE_CONDO_BASE_LOT_UNRESOLVED` instead of the generic
+    :data:`FAILSAFE_SPATIAL_ABSENT` (a condo billing BBL whose base lot could not
+    be resolved to a single lot). Both default to the pre-M5-T058 behavior, so
+    every existing caller is byte-identical.
     """
     registry = registry or _default_registry()
     family_coverage = registry.family_coverage(TARGET_FAMILY)
@@ -470,16 +665,33 @@ def evaluate_property(
     spatial = profile.get("spatial_intersection")
     if not isinstance(spatial, dict):
         # RI-S3: no spatial substrate -> no lot-level district is known. Never
-        # guess one from PLUTO zonedist; fail safe with no value.
-        return _fail_safe(
-            bbl=bbl,
-            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
-            fail_safe_reason=FAILSAFE_SPATIAL_ABSENT,
-            reason=(
+        # guess one from PLUTO zonedist; fail safe with no value. M5-T058: name a
+        # condo-caused absence honestly - a condo billing BBL whose base lot could
+        # not be resolved to a single lot - instead of the generic spatial-absent
+        # reason a genuinely-absent non-condo lot keeps. No base lot is auto-picked
+        # (D-078-R002); no substitution stamp exists on this path (no single
+        # analyzed lot to stamp).
+        if spatial_absent_condo_unresolved:
+            fail_safe_reason = FAILSAFE_CONDO_BASE_LOT_UNRESOLVED
+            reason = (
+                "the entered BBL is a condominium billing lot whose base tax lot "
+                "could not be resolved to a single lot (multiple base lots, no "
+                "match, or an upstream error); no base lot is auto-selected and "
+                "the analysis fails safe - a site-definition confirmation is "
+                "required before results can be computed"
+            )
+        else:
+            fail_safe_reason = FAILSAFE_SPATIAL_ABSENT
+            reason = (
                 "property profile carries no spatial_intersection section; the "
                 "lot-level zoning-district assignment is unknown and must not be "
                 "guessed - professional review required"
-            ),
+            )
+        return _fail_safe(
+            bbl=bbl,
+            coverage_status=cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+            fail_safe_reason=fail_safe_reason,
+            reason=reason,
             spatial_context=None,
             spatial_uncertainty=_empty_uncertainty(),
             family_coverage=family_coverage,
@@ -508,6 +720,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     if lot_overall_class == _LOT_DATA_CONFLICT:
@@ -525,6 +738,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     if lot_overall_class != _LOT_SINGLE_DISTRICT_CONFIDENT or professional_review_required:
@@ -545,6 +759,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     # --- Confident path: exactly one interior_confident base-zoning district. ---
@@ -564,6 +779,7 @@ def evaluate_property(
             spatial_context=spatial_context,
             spatial_uncertainty=spatial_uncertainty,
             family_coverage=family_coverage,
+            substrate_substitution=substrate_substitution,
         )
 
     lot_area_sq_ft, lot_area_source = _lot_area(profile, spatial)
@@ -618,6 +834,42 @@ def evaluate_property(
             "result is not_applicable (visible, not silent)"
         )
 
+    # M5-T034: fold a supplied wide-street determination into the governing
+    # conditional-FAR row for a wide-street-conditional district. Additive: with
+    # no determination supplied (the default, and every non-conditional district)
+    # nothing here runs and the result is byte-identical to before. A determination
+    # is honored only for the single applicable rule that actually carries a
+    # wide_street_far_by_district parameter for this district (R6/R7-1/R7-2/R8) -
+    # it never touches R5, the flat R6-R12 rule, or a not_applicable outcome.
+    ws_far_row: str | None = None
+    ws_governing_far: float | None = None
+    ws_summary: dict | None = None
+    if wide_street_determination is not None:
+        applicable_traces = [t for t in evaluations if t.get("applicability_outcome")]
+        if len(applicable_traces) == 1:
+            applied_rule = registry.rule(applicable_traces[0]["rule_id"])
+            standard_map = applied_rule.parameters.get("standard_far_by_district")
+            wide_map = applied_rule.parameters.get("wide_street_far_by_district")
+            if (
+                isinstance(standard_map, dict)
+                and isinstance(wide_map, dict)
+                and district in standard_map
+                and district in wide_map
+            ):
+                fold = select_conditional_far_row(
+                    wide_street_determination,
+                    standard_far=standard_map[district],
+                    wide_street_far=wide_map[district],
+                )
+                ws_far_row = fold["far_row"]
+                ws_governing_far = fold["governing_far"]
+                ws_summary = _wide_street_summary(wide_street_determination, fold)
+                reasons = [*reasons, fold["reason"]]
+                if fold["professional_review"]:
+                    coverage_status = cov.most_severe(
+                        coverage_status, cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+                    )
+
     needs_review = coverage_status != cov.COVERAGE_VERIFIED and (
         professional_review_required
         or any(status != lifecycle.STATUS_PUBLISHED for status in statuses)
@@ -647,6 +899,10 @@ def evaluate_property(
         family_coverage=family_coverage,
         reasons=reasons,
         coverage_source=_COVERAGE_SOURCE_EVALUATOR,
+        wide_street_far_row=ws_far_row,
+        wide_street_governing_far=ws_governing_far,
+        wide_street_determination=ws_summary,
+        substrate_substitution=substrate_substitution,
     )
     # Defensive fail-close: this function can never return a Verified draft.
     assert_not_verified(result)
@@ -657,6 +913,7 @@ __all__ = [
     "PropertyRuleEvaluation",
     "DraftVerifiedError",
     "evaluate_property",
+    "select_conditional_far_row",
     "assert_not_verified",
     "NOT_VERIFIED_DISCLAIMER",
     "TARGET_FAMILY",
@@ -666,4 +923,5 @@ __all__ = [
     "FAILSAFE_GEOMETRY_UNCERTAIN",
     "FAILSAFE_INCONSISTENT_CONFIDENT",
     "FAILSAFE_RULE_CONFLICT",
+    "FAILSAFE_CONDO_BASE_LOT_UNRESOLVED",
 ]

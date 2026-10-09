@@ -1,0 +1,156 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-083",
+ "version": 1,
+ "slug": "architect-lens-product-assessment",
+ "title": "Owner 2026-09-21 (relayed architect-lens assessment: 'Yes—the overall direction is right ... I would be careful about the claim maximum allowed building'): direction validated; binding presentation/flow requirements for future increments - claim-class vocabulary (regulatory limit / generated building option / demonstrated maximum; interim 'Preliminary development limits' wording), answer-first property flow, no unrestricted green pass under unevaluated rules, design-tool ergonomics direction, input-precision (sketch vs survey) provenance, actionable check feedback, site-boundary provenance labels, independent-example evidence standard for maximum claims; import route = pending owner decision (phase C/D still NOT released); owner return item on converter/calculator gating; three-property uncoached demo protocol",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-21",
+ "captured_at": "2026-09-21T06:22:00+00:00",
+ "created_at": "2026-09-21T06:22:00+00:00",
+ "updated_at": "2026-09-25T09:28:22+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "defe301382459db82e27265feefd333615de26f9",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner-relayed architect-lens assessment sent in-channel mid-session without qualification; treated as binding product direction for FUTURE increments. It validates the current direction and adds presentation/flow/evidence requirements. Items that would enter unreleased scope (the phase-C/D import route) are captured as a pending owner decision (R007), never an authorization; no hold is lifted, no accepted work is altered."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-083-R001",
+  "D-083-R002",
+  "D-083-R003",
+  "D-083-R004",
+  "D-083-R005",
+  "D-083-R006",
+  "D-083-R007",
+  "D-083-R008",
+  "D-083-R009",
+  "D-083-R010",
+  "D-083-R011",
+  "D-083-R012",
+  "D-083-R013"
+ ],
+ "requirements_content_digest_sha256": "6f40aa51e9e8cd00642f2a32e20b2e160375a924b6f388b9ce5d99375b0a6a6c",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-21T06:22:00+00:00",
+   "content_digest_sha256": "7f11a99fb557355d18a4e2d13103fe882d2e88e6572f5f7fd6cd3ca39185293e"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_direction",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "presentation vocabulary, flow sequencing, provenance labeling, evidence standards, and editor-ergonomics direction for future max-envelope surfacing, proposal-editor, check-feedback, and site-definition increments, contracted at seams under the normal gated process",
+  "forbidden": "phase C (CAD/PDF import) / phase D on this authority (R007 is a pending decision, not a release); any held surface (expansion section 2 minus the D-040/D-076/D-082 scoped releases); retro-invalidating accepted work; any LLM-calculated legal value (permanent principle 1)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-21T06:22:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 249 accepted; the M5-T066 review wave (fresh HJ + SEC + DCV at frozen 84132df5) in flight with SEC PASS and HJ PASS already returned; T068 harvest pending; loop-2 LIVE on T069. frozen_baseline_sha = defe3013 (the seq-124 handoff-amendment head, this capture's parent). Immediate planning effect: the loop-3 re-feed candidate (D-082-R003 max-renders-first UI surfacing) must carry R001/R002/R003/R004 vocabulary and flow requirements at its contract seam. R011 (converter/calculator gating explanation) owed to the owner this session."
+  },
+  {
+   "at": "2026-09-22T18:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T070 (D-082-R003 + D-083 max-first UI surfacing: the Preliminary-development-limits panel w/ claim-class vocabulary, honest gaps, one-action adoption; stubbed unmounted route, web-only) at the seq-125 T066-acceptance seam; graph regenerated at this seam (795/16876/7377) before authoring; digest resync same commit."
+  },
+  {
+   "at": "2026-09-22T19:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "return_item_discharged",
+   "note": "D-083-R011 answered in the owner-facing reply (seq 125, 2026-09-22): the converter and max calculator do NOT technically require sign-in (compute-only; no record writes) - only the site-definition record system does. They are off because (a) the T065 security review flagged mounting public compute endpoints without per-request authN/rate-limiting (DB-045(b) SEC-A1), (b) the bridge needs one real-parcel-pair validation pass before live trust (DB-045(a) G3-F1), and (c) any real-user enablement is an owner release decision (Tier D production approval). Recommendation delivered: the trial release can bundle converter + calculator behind rate limiting independent of full sign-in, with the record system waiting for sign-in; either way the trial sequence ships complete (R013). Requirement status stays pending until the DCV verifies the recorded reply at a reviewed identity."
+  },
+  {
+   "at": "2026-09-24T08:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-083-R001 <- M5-T079; D-083-R002 <- M5-T079; D-083-R004 <- M5-T079; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T15:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-6 contract seam (M5-T099 plan + M5-T100 footprint riders): bound D-083-R001 <- M5-T099; D-083-R002 <- M5-T099; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T21:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-7 contract seam (seq 129: M5-T101 + M5-T102 from the accepted M5-T099 plan): bound D-083-R001 <- M5-T102; D-083-R002 <- M5-T102; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T01:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-10 contract seam (seq 129: M5-T106 + M5-T107 + M5-T108 + M5-T109 + M0-T161 - the M5-T099 plan's batch 2, the DB-069 massing pre-wiring packet, and the D-088 commissioning helper): bound D-083-R001 <- M5-T107, M5-T108, M5-T109; D-083-R002 <- M5-T107, M5-T109; D-083-R006 <- M5-T108; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T05:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-088 lane-1 contract seam (seq 129: M5-T110 - the supervised one-cycle canary packet for loop lane 1): bound D-083-R001 <- M5-T110; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T05:01:54+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-1 contract seam (seq 130: M5-T111 + M5-T112 + M5-T113 + M5-T114 - overnight subagent-producer packets, the B-026 workaround): bound D-083-R001 <- M5-T114; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T06:01:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-2 contract seam (seq 130: M5-T115 - overnight subagent-producer packets, the B-026 workaround): bound D-083-R001 <- M5-T115; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T06:30:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-3 contract seam (seq 130): M5-T116: bound D-083-R001 <- M5-T116; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T07:14:12+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-4 contract seam (seq 130): M5-T119: bound D-083-R001 <- M5-T119; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T08:08:07+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-6 contract seam (seq 130): M5-T121: bound D-083-R001 <- M5-T121; D-083-R006 <- M5-T121; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T08:37:41+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-7 contract seam (seq 130): M5-T122: bound D-083-R001 <- M5-T122; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T09:28:22+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-089 wave-9 contract seam (seq 130): M5-T124: bound D-083-R001 <- M5-T124; D-083-R006 <- M5-T124; requirements digest resynced in the same commit."
+  }
+ ]
+}

@@ -1,0 +1,72 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-081",
+ "version": 1,
+ "requirement_count": 2,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T16:38:00+00:00",
+ "requirements": [
+  {
+   "id": "D-081-R001",
+   "text": "Session-start authorization ('This is the new season start up the 3 loops'): the orchestrator executes the seq-122 handoff's recorded relaunch drill for ALL THREE supervised lanes now — per lane: diagnose the 12:43-12:45Z stop from the run's audit triple (events/context_tokens/observed_models, never the S14 string), deny every stale pending ask in BOTH stores (CLI pending-approvals store and the durable-journal ask store), clear-recovery to PREFLIGHT, set a fresh run-id in the lane's launcher ACTIVE-TASK block (61->62 m5t060, 24->25 m5t058, 07->08 m5t061), relaunch via C:\\SupervisorController{,2,3}\\autostart-launch.ps1 — and re-arm the read-only loop watcher (scratchpad/loop_watcher.py under a persistent Monitor). This authorization covers the operator writes the drill requires outside the repo (supervisor store deny/clear-recovery appends and the launcher run-id edits).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-081-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "All three supervisor locks held by fresh run-ids after the relaunch round; each lane's first cycle reaches CHECKPOINT_RECEIVED or parks with a recorded, diagnosed reason; the watcher process is live.",
+   "required_evidence": "Supervisor audit.jsonl entries for the deny/clear-recovery/relaunch sequence per lane; the three launcher run-id values; the watcher Monitor task.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; the relaunch round is in progress this session.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-081-R002",
+   "text": "Boundary: 'start up the 3 loops' re-enters D-080 nonstop conduct unchanged — it lifts NO stop condition (Tier D / Section 20, owner holds including expansion section 2 minus the D-040/D-076 scoped releases and PR #241, gate FAIL handling, dependency security, D-072 isolation, the D-076-R003 post-B3 owner checkpoint, and the D-078-R003 T058-before-T059 accept order all stand). ONE relaunch round is authorized: if the simultaneous three-lane stop class recurs after this round, REOPEN deficit convergence per the seq-122 record instead of retry-looping relaunches.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-081-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Any recurrence of the simultaneous stop class appears as a reopened deficit-convergence record (or a consolidated blocker), never as repeated relaunch attempts; no stop condition is bypassed.",
+   "required_evidence": "Session record: either stable lanes after one relaunch round, or a reopened convergence/blocker record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

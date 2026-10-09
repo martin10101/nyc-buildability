@@ -54,7 +54,8 @@ from tools.agent_supervisor.model_turnover import (  # noqa: E402
     classify_exhaustion,
 )
 from tools.agent_supervisor.turnover_controller import (  # noqa: E402
-    ALLOWED_SUCCESSOR_MODEL_ID,
+    ALLOWED_SUCCESSOR_EFFORT,
+    ApprovedSuccessor,
     TurnoverLayer,
 )
 from tools.agent_supervisor.worker_turnover import (  # noqa: E402
@@ -124,6 +125,31 @@ def _run_result_like_runner(events: list[dict[str, Any]], *,
     )
 
 
+
+# --------------------------------------------------------------------------
+# M0-T080 (D-023-R013): the successor is no longer a module constant in the
+# production code. `ALLOWED_SUCCESSOR_MODEL_ID = "claude-opus-4-8"` is GONE,
+# because a model id living in the source is a selection the owner never
+# approved and no launch probe ever proved. `TurnoverController` now takes an
+# injected resolver that names the next OWNER-APPROVED, live-probed model, so
+# these tests state the approved chain THEMSELVES and assert the launch used
+# that id - a strictly stronger claim than "it equals the constant the code
+# also reads", which could not fail even if the id were wrong.
+# --------------------------------------------------------------------------
+
+#: The owner-approved chain these tests pretend the protected config declares.
+APPROVED_CHAIN: tuple[str, ...] = ("claude-fable-5", "claude-opus-4-8")
+#: The entry after the exhausted Fable model - what the resolver must pick.
+APPROVED_SUCCESSOR = "claude-opus-4-8"
+
+
+def _approved_successor(_context: object) -> ApprovedSuccessor:
+    """A `SuccessorResolver` standing in for the approved + live-probed selection."""
+    return ApprovedSuccessor(
+        model_id=APPROVED_SUCCESSOR, effort=ALLOWED_SUCCESSOR_EFFORT,
+        probed_at_utc="2026-08-21T00:00:00+00:00",
+        config_identity="test-config-identity", cli_version="test-cli-version")
+
 class LiveProofDistillationTests(unittest.TestCase):
     """The runner-side gatherer distills exactly what the classifier needs."""
 
@@ -184,7 +210,7 @@ class LiveProofSeamTests(unittest.TestCase):
         self.assertEqual(decision.reason_code, REASON_TURNOVER_LAUNCHED)
         self.assertEqual(len(launcher.calls), 1)
         self.assertEqual(launcher.calls[0].layer, TurnoverLayer.WORKER)
-        self.assertEqual(launcher.calls[0].model_id, ALLOWED_SUCCESSOR_MODEL_ID)
+        self.assertEqual(launcher.calls[0].model_id, APPROVED_SUCCESSOR)
         self.assertEqual(len(audit.launched_records()), 1)
 
     def test_real_exhaustion_triggers_recorded_when_unauthorized(self) -> None:

@@ -1,0 +1,1994 @@
+{
+  "source_expectations": {
+    "schema_version": 1,
+    "prepared_at": "2026-09-15T23:26:42.094961+00:00",
+    "independence": "Transcribed from the official tables and footnotes before reading implementation rule tables during M4-T022. This is a reference-table check, not a property eligibility determination.",
+    "sources": [
+      {
+        "id": "23-21",
+        "url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-21",
+        "retrieved_at": "2026-09-15T23:26:42.094961+00:00",
+        "response_sha256": "59a0419aff5132081ffdfea88305ca370665f4f331a97749b16c036155096048",
+        "text_path": "tests/fixtures/residential_validation/23-21.txt",
+        "text_sha256": "12488c7eac627fe3a080d2a23c4c5c8a663e36e2dff12440127a687a31b09b27"
+      },
+      {
+        "id": "23-22",
+        "url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-22",
+        "retrieved_at": "2026-09-15T23:26:42.094961+00:00",
+        "response_sha256": "872f2d2dfce1aaded7ee560fbcd43a1e5bf6b23c9de4532b2538f01bf6550d4c",
+        "text_path": "tests/fixtures/residential_validation/23-22.txt",
+        "text_sha256": "ba78d6e074c2f6baa417d2a6797fdc90f33284d1643275b0ec5f061bb61fba22"
+      }
+    ],
+    "conditions": {
+      "23-21-footnote-1": {
+        "minimum_lot_area_sq_ft": "4000",
+        "single_dwelling_unit_equivalent_far_limit": "0.60",
+        "scope": "Standard zoning lots in the indicated 0.75 FAR row; per dwelling unit limit, not replacement total-lot FAR."
+      },
+      "23-22-footnote-1": {
+        "distance_ft": "100",
+        "scope": "Zoning lots, or portions thereof, within 100 feet of a wide street."
+      },
+      "23-22-footnote-2": {
+        "distance_ft": "100",
+        "scope": "Outside Mandatory Inclusionary Housing areas; lots or portions within 100 feet of a wide street containing UAP developments or qualifying senior housing."
+      }
+    },
+    "qualifying_column_meaning": {
+      "23-21": "Qualifying residential sites",
+      "23-22": "Qualifying affordable housing or qualifying senior housing"
+    },
+    "rows": [
+      {
+        "district": "R1-2A",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R1-1",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R1-2",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R2A",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R2",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R3A",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R3X",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R3-1",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R3-2",
+        "condition": "base",
+        "standard_far": "0.75",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": [
+          "23-21-footnote-1"
+        ]
+      },
+      {
+        "district": "R2X",
+        "condition": "base",
+        "standard_far": "1.00",
+        "qualifying_far": "1.00",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R4A",
+        "condition": "base",
+        "standard_far": "1.00",
+        "qualifying_far": "1.50",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R4B",
+        "condition": "base",
+        "standard_far": "1.00",
+        "qualifying_far": "1.50",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R4",
+        "condition": "base",
+        "standard_far": "1.00",
+        "qualifying_far": "1.50",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R4-1",
+        "condition": "base",
+        "standard_far": "1.00",
+        "qualifying_far": "1.50",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R5A",
+        "condition": "base",
+        "standard_far": "1.50",
+        "qualifying_far": "2.00",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R5B",
+        "condition": "base",
+        "standard_far": "1.50",
+        "qualifying_far": "2.00",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R5",
+        "condition": "base",
+        "standard_far": "1.50",
+        "qualifying_far": "2.00",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R5D",
+        "condition": "base",
+        "standard_far": "2.00",
+        "qualifying_far": "2.00",
+        "source_section": "23-21",
+        "notes": []
+      },
+      {
+        "district": "R6A",
+        "condition": "base",
+        "standard_far": "3.00",
+        "qualifying_far": "3.90",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R6-1",
+        "condition": "base",
+        "standard_far": "3.00",
+        "qualifying_far": "3.90",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7B",
+        "condition": "base",
+        "standard_far": "3.00",
+        "qualifying_far": "3.90",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R6",
+        "condition": "within_100ft_wide_street",
+        "standard_far": "3.00",
+        "qualifying_far": "3.90",
+        "source_section": "23-22",
+        "notes": [
+          "23-22-footnote-1"
+        ]
+      },
+      {
+        "district": "R6",
+        "condition": "base",
+        "standard_far": "2.20",
+        "qualifying_far": "3.90",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R6B",
+        "condition": "base",
+        "standard_far": "2.00",
+        "qualifying_far": "2.40",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R6D",
+        "condition": "base",
+        "standard_far": "2.50",
+        "qualifying_far": "3.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R6-2",
+        "condition": "base",
+        "standard_far": "2.50",
+        "qualifying_far": "3.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7A",
+        "condition": "base",
+        "standard_far": "4.00",
+        "qualifying_far": "5.01",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7-1",
+        "condition": "within_100ft_wide_street",
+        "standard_far": "4.00",
+        "qualifying_far": "5.01",
+        "source_section": "23-22",
+        "notes": [
+          "23-22-footnote-1"
+        ]
+      },
+      {
+        "district": "R7-2",
+        "condition": "within_100ft_wide_street",
+        "standard_far": "4.00",
+        "qualifying_far": "5.01",
+        "source_section": "23-22",
+        "notes": [
+          "23-22-footnote-1"
+        ]
+      },
+      {
+        "district": "R7-1",
+        "condition": "base",
+        "standard_far": "3.44",
+        "qualifying_far": "5.01",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7-2",
+        "condition": "base",
+        "standard_far": "3.44",
+        "qualifying_far": "5.01",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7D",
+        "condition": "base",
+        "standard_far": "4.66",
+        "qualifying_far": "5.60",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7X",
+        "condition": "base",
+        "standard_far": "5.00",
+        "qualifying_far": "6.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R7-3",
+        "condition": "base",
+        "standard_far": "5.00",
+        "qualifying_far": "6.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R8A",
+        "condition": "base",
+        "standard_far": "6.02",
+        "qualifying_far": "7.20",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R8X",
+        "condition": "base",
+        "standard_far": "6.02",
+        "qualifying_far": "7.20",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R8",
+        "condition": "base",
+        "standard_far": "6.02",
+        "qualifying_far": "7.20",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R8",
+        "condition": "wide_street_additional_conditions",
+        "standard_far": "7.20",
+        "qualifying_far": "8.64",
+        "source_section": "23-22",
+        "notes": [
+          "23-22-footnote-1",
+          "23-22-footnote-2"
+        ]
+      },
+      {
+        "district": "R8B",
+        "condition": "base",
+        "standard_far": "4.00",
+        "qualifying_far": "4.80",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R9A",
+        "condition": "base",
+        "standard_far": "7.52",
+        "qualifying_far": "9.02",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R9",
+        "condition": "base",
+        "standard_far": "7.52",
+        "qualifying_far": "9.02",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R9D",
+        "condition": "base",
+        "standard_far": "9.00",
+        "qualifying_far": "10.80",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R9X",
+        "condition": "base",
+        "standard_far": "9.00",
+        "qualifying_far": "10.80",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R9-1",
+        "condition": "base",
+        "standard_far": "9.00",
+        "qualifying_far": "10.80",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R10A",
+        "condition": "base",
+        "standard_far": "10.00",
+        "qualifying_far": "12.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R10X",
+        "condition": "base",
+        "standard_far": "10.00",
+        "qualifying_far": "12.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R10",
+        "condition": "base",
+        "standard_far": "10.00",
+        "qualifying_far": "12.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R11",
+        "condition": "base",
+        "standard_far": "12.00",
+        "qualifying_far": "15.00",
+        "source_section": "23-22",
+        "notes": []
+      },
+      {
+        "district": "R12",
+        "condition": "base",
+        "standard_far": "15.00",
+        "qualifying_far": "18.00",
+        "source_section": "23-22",
+        "notes": []
+      }
+    ]
+  },
+  "verification_at": "2026-09-15T23:37:27.153060+00:00",
+  "checks": [
+    {
+      "layer": "source_capture",
+      "case": "23-21",
+      "status": "pass",
+      "expected": "12488c7eac627fe3a080d2a23c4c5c8a663e36e2dff12440127a687a31b09b27",
+      "observed": "12488c7eac627fe3a080d2a23c4c5c8a663e36e2dff12440127a687a31b09b27"
+    },
+    {
+      "layer": "source_capture",
+      "case": "23-22",
+      "status": "pass",
+      "expected": "ba78d6e074c2f6baa417d2a6797fdc90f33284d1643275b0ec5f061bb61fba22",
+      "observed": "ba78d6e074c2f6baa417d2a6797fdc90f33284d1643275b0ec5f061bb61fba22"
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r1-r2-r3-residential-far:standard_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R1-1",
+        "R1-2",
+        "R1-2A",
+        "R2",
+        "R2A",
+        "R3-1",
+        "R3-2",
+        "R3A",
+        "R3X"
+      ],
+      "observed": [
+        "R1-1",
+        "R1-2",
+        "R1-2A",
+        "R2",
+        "R2A",
+        "R3-1",
+        "R3-2",
+        "R3A",
+        "R3X"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r1-r2-r3-residential-far:qualifying_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R1-1",
+        "R1-2",
+        "R1-2A",
+        "R2",
+        "R2A",
+        "R3-1",
+        "R3-2",
+        "R3A",
+        "R3X"
+      ],
+      "observed": [
+        "R1-1",
+        "R1-2",
+        "R1-2A",
+        "R2",
+        "R2A",
+        "R3-1",
+        "R3-2",
+        "R3A",
+        "R3X"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r2x-r4-residential-far:standard_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R2X",
+        "R4",
+        "R4-1",
+        "R4A",
+        "R4B"
+      ],
+      "observed": [
+        "R2X",
+        "R4",
+        "R4-1",
+        "R4A",
+        "R4B"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r2x-r4-residential-far:qualifying_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R2X",
+        "R4",
+        "R4-1",
+        "R4A",
+        "R4B"
+      ],
+      "observed": [
+        "R2X",
+        "R4",
+        "R4-1",
+        "R4A",
+        "R4B"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r5-residential-far:standard_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R5",
+        "R5A",
+        "R5B",
+        "R5D"
+      ],
+      "observed": [
+        "R5",
+        "R5A",
+        "R5B",
+        "R5D"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r5-residential-far:qualifying_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R5",
+        "R5A",
+        "R5B",
+        "R5D"
+      ],
+      "observed": [
+        "R5",
+        "R5A",
+        "R5B",
+        "R5D"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r6-r12-residential-far:standard_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R10",
+        "R10A",
+        "R10X",
+        "R11",
+        "R12",
+        "R6-1",
+        "R6-2",
+        "R6A",
+        "R6B",
+        "R6D",
+        "R7-3",
+        "R7A",
+        "R7B",
+        "R7D",
+        "R7X",
+        "R8A",
+        "R8B",
+        "R8X",
+        "R9",
+        "R9-1",
+        "R9A",
+        "R9D",
+        "R9X"
+      ],
+      "observed": [
+        "R10",
+        "R10A",
+        "R10X",
+        "R11",
+        "R12",
+        "R6-1",
+        "R6-2",
+        "R6A",
+        "R6B",
+        "R6D",
+        "R7-3",
+        "R7A",
+        "R7B",
+        "R7D",
+        "R7X",
+        "R8A",
+        "R8B",
+        "R8X",
+        "R9",
+        "R9-1",
+        "R9A",
+        "R9D",
+        "R9X"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r6-r12-residential-far:qualifying_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R10",
+        "R10A",
+        "R10X",
+        "R11",
+        "R12",
+        "R6-1",
+        "R6-2",
+        "R6A",
+        "R6B",
+        "R6D",
+        "R7-3",
+        "R7A",
+        "R7B",
+        "R7D",
+        "R7X",
+        "R8A",
+        "R8B",
+        "R8X",
+        "R9",
+        "R9-1",
+        "R9A",
+        "R9D",
+        "R9X"
+      ],
+      "observed": [
+        "R10",
+        "R10A",
+        "R10X",
+        "R11",
+        "R12",
+        "R6-1",
+        "R6-2",
+        "R6A",
+        "R6B",
+        "R6D",
+        "R7-3",
+        "R7A",
+        "R7B",
+        "R7D",
+        "R7X",
+        "R8A",
+        "R8B",
+        "R8X",
+        "R9",
+        "R9-1",
+        "R9A",
+        "R9D",
+        "R9X"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r6-r7-r8-wide-street-conditional-far:standard_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R6",
+        "R7-1",
+        "R7-2",
+        "R8"
+      ],
+      "observed": [
+        "R6",
+        "R7-1",
+        "R7-2",
+        "R8"
+      ]
+    },
+    {
+      "layer": "reference_structure",
+      "case": "r6-r7-r8-wide-street-conditional-far:qualifying_far_by_district",
+      "status": "pass",
+      "expected": [
+        "R6",
+        "R7-1",
+        "R7-2",
+        "R8"
+      ],
+      "observed": [
+        "R6",
+        "R7-1",
+        "R7-2",
+        "R8"
+      ]
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R1-2A:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R1-2A:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R1-2A:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R1-1:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R1-1:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R1-1:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R1-2:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R1-2:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R1-2:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R2A:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R2A:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R2A:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R2:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R2:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R2:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R3A:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3A:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3A:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R3X:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3X:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3X:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R3-1:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3-1:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3-1:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R3-2:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3-2:base:standard_far",
+      "status": "pass",
+      "expected": "0.75",
+      "observed": 0.75
+    },
+    {
+      "layer": "reference_value",
+      "case": "R3-2:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R2X:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R2X:base:standard_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R2X:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R4A:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4A:base:standard_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4A:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R4B:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4B:base:standard_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4B:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R4:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4:base:standard_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R4-1:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4-1:base:standard_far",
+      "status": "pass",
+      "expected": "1.00",
+      "observed": 1.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R4-1:base:qualifying_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R5A:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5A:base:standard_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5A:base:qualifying_far",
+      "status": "pass",
+      "expected": "2.00",
+      "observed": 2.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R5B:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5B:base:standard_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5B:base:qualifying_far",
+      "status": "pass",
+      "expected": "2.00",
+      "observed": 2.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R5:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5:base:standard_far",
+      "status": "pass",
+      "expected": "1.50",
+      "observed": 1.5
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5:base:qualifying_far",
+      "status": "pass",
+      "expected": "2.00",
+      "observed": 2.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R5D:base",
+      "status": "pass",
+      "expected": [
+        "23-21"
+      ],
+      "observed": [
+        "23-21"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5D:base:standard_far",
+      "status": "pass",
+      "expected": "2.00",
+      "observed": 2.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R5D:base:qualifying_far",
+      "status": "pass",
+      "expected": "2.00",
+      "observed": 2.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6A:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6A:base:standard_far",
+      "status": "pass",
+      "expected": "3.00",
+      "observed": 3.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6A:base:qualifying_far",
+      "status": "pass",
+      "expected": "3.90",
+      "observed": 3.9
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6-1:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6-1:base:standard_far",
+      "status": "pass",
+      "expected": "3.00",
+      "observed": 3.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6-1:base:qualifying_far",
+      "status": "pass",
+      "expected": "3.90",
+      "observed": 3.9
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7B:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7B:base:standard_far",
+      "status": "pass",
+      "expected": "3.00",
+      "observed": 3.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7B:base:qualifying_far",
+      "status": "pass",
+      "expected": "3.90",
+      "observed": 3.9
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6:within_100ft_wide_street",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6:within_100ft_wide_street:standard_far",
+      "status": "pass",
+      "expected": "3.00",
+      "observed": 3.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6:within_100ft_wide_street:qualifying_far",
+      "status": "pass",
+      "expected": "3.90",
+      "observed": 3.9
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6:base:standard_far",
+      "status": "pass",
+      "expected": "2.20",
+      "observed": 2.2
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6:base:qualifying_far",
+      "status": "pass",
+      "expected": "3.90",
+      "observed": 3.9
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6B:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6B:base:standard_far",
+      "status": "pass",
+      "expected": "2.00",
+      "observed": 2.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6B:base:qualifying_far",
+      "status": "pass",
+      "expected": "2.40",
+      "observed": 2.4
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6D:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6D:base:standard_far",
+      "status": "pass",
+      "expected": "2.50",
+      "observed": 2.5
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6D:base:qualifying_far",
+      "status": "pass",
+      "expected": "3.00",
+      "observed": 3.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R6-2:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6-2:base:standard_far",
+      "status": "pass",
+      "expected": "2.50",
+      "observed": 2.5
+    },
+    {
+      "layer": "reference_value",
+      "case": "R6-2:base:qualifying_far",
+      "status": "pass",
+      "expected": "3.00",
+      "observed": 3.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7A:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7A:base:standard_far",
+      "status": "pass",
+      "expected": "4.00",
+      "observed": 4.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7A:base:qualifying_far",
+      "status": "pass",
+      "expected": "5.01",
+      "observed": 5.01
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7-1:within_100ft_wide_street",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-1:within_100ft_wide_street:standard_far",
+      "status": "pass",
+      "expected": "4.00",
+      "observed": 4.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-1:within_100ft_wide_street:qualifying_far",
+      "status": "pass",
+      "expected": "5.01",
+      "observed": 5.01
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7-2:within_100ft_wide_street",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-2:within_100ft_wide_street:standard_far",
+      "status": "pass",
+      "expected": "4.00",
+      "observed": 4.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-2:within_100ft_wide_street:qualifying_far",
+      "status": "pass",
+      "expected": "5.01",
+      "observed": 5.01
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7-1:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-1:base:standard_far",
+      "status": "pass",
+      "expected": "3.44",
+      "observed": 3.44
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-1:base:qualifying_far",
+      "status": "pass",
+      "expected": "5.01",
+      "observed": 5.01
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7-2:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-2:base:standard_far",
+      "status": "pass",
+      "expected": "3.44",
+      "observed": 3.44
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-2:base:qualifying_far",
+      "status": "pass",
+      "expected": "5.01",
+      "observed": 5.01
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7D:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7D:base:standard_far",
+      "status": "pass",
+      "expected": "4.66",
+      "observed": 4.66
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7D:base:qualifying_far",
+      "status": "pass",
+      "expected": "5.60",
+      "observed": 5.6
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7X:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7X:base:standard_far",
+      "status": "pass",
+      "expected": "5.00",
+      "observed": 5.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7X:base:qualifying_far",
+      "status": "pass",
+      "expected": "6.00",
+      "observed": 6.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R7-3:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-3:base:standard_far",
+      "status": "pass",
+      "expected": "5.00",
+      "observed": 5.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R7-3:base:qualifying_far",
+      "status": "pass",
+      "expected": "6.00",
+      "observed": 6.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R8A:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8A:base:standard_far",
+      "status": "pass",
+      "expected": "6.02",
+      "observed": 6.02
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8A:base:qualifying_far",
+      "status": "pass",
+      "expected": "7.20",
+      "observed": 7.2
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R8X:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8X:base:standard_far",
+      "status": "pass",
+      "expected": "6.02",
+      "observed": 6.02
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8X:base:qualifying_far",
+      "status": "pass",
+      "expected": "7.20",
+      "observed": 7.2
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R8:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8:base:standard_far",
+      "status": "pass",
+      "expected": "6.02",
+      "observed": 6.02
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8:base:qualifying_far",
+      "status": "pass",
+      "expected": "7.20",
+      "observed": 7.2
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R8:wide_street_additional_conditions",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8:wide_street_additional_conditions:standard_far",
+      "status": "pass",
+      "expected": "7.20",
+      "observed": 7.2
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8:wide_street_additional_conditions:qualifying_far",
+      "status": "pass",
+      "expected": "8.64",
+      "observed": 8.64
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R8B:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8B:base:standard_far",
+      "status": "pass",
+      "expected": "4.00",
+      "observed": 4.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R8B:base:qualifying_far",
+      "status": "pass",
+      "expected": "4.80",
+      "observed": 4.8
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R9A:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9A:base:standard_far",
+      "status": "pass",
+      "expected": "7.52",
+      "observed": 7.52
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9A:base:qualifying_far",
+      "status": "pass",
+      "expected": "9.02",
+      "observed": 9.02
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R9:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9:base:standard_far",
+      "status": "pass",
+      "expected": "7.52",
+      "observed": 7.52
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9:base:qualifying_far",
+      "status": "pass",
+      "expected": "9.02",
+      "observed": 9.02
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R9D:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9D:base:standard_far",
+      "status": "pass",
+      "expected": "9.00",
+      "observed": 9.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9D:base:qualifying_far",
+      "status": "pass",
+      "expected": "10.80",
+      "observed": 10.8
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R9X:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9X:base:standard_far",
+      "status": "pass",
+      "expected": "9.00",
+      "observed": 9.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9X:base:qualifying_far",
+      "status": "pass",
+      "expected": "10.80",
+      "observed": 10.8
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R9-1:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9-1:base:standard_far",
+      "status": "pass",
+      "expected": "9.00",
+      "observed": 9.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R9-1:base:qualifying_far",
+      "status": "pass",
+      "expected": "10.80",
+      "observed": 10.8
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R10A:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R10A:base:standard_far",
+      "status": "pass",
+      "expected": "10.00",
+      "observed": 10.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R10A:base:qualifying_far",
+      "status": "pass",
+      "expected": "12.00",
+      "observed": 12.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R10X:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R10X:base:standard_far",
+      "status": "pass",
+      "expected": "10.00",
+      "observed": 10.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R10X:base:qualifying_far",
+      "status": "pass",
+      "expected": "12.00",
+      "observed": 12.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R10:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R10:base:standard_far",
+      "status": "pass",
+      "expected": "10.00",
+      "observed": 10.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R10:base:qualifying_far",
+      "status": "pass",
+      "expected": "12.00",
+      "observed": 12.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R11:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R11:base:standard_far",
+      "status": "pass",
+      "expected": "12.00",
+      "observed": 12.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R11:base:qualifying_far",
+      "status": "pass",
+      "expected": "15.00",
+      "observed": 15.0
+    },
+    {
+      "layer": "reference_provenance",
+      "case": "R12:base",
+      "status": "pass",
+      "expected": [
+        "23-22"
+      ],
+      "observed": [
+        "23-22"
+      ]
+    },
+    {
+      "layer": "reference_value",
+      "case": "R12:base:standard_far",
+      "status": "pass",
+      "expected": "15.00",
+      "observed": 15.0
+    },
+    {
+      "layer": "reference_value",
+      "case": "R12:base:qualifying_far",
+      "status": "pass",
+      "expected": "18.00",
+      "observed": 18.0
+    }
+  ],
+  "pluto_dictionary": {
+    "url": "https://s-media.nyc.gov/agencies/dcp/assets/files/pdf/data-tools/bytes/pluto_datadictionary.pdf",
+    "version": "August 2026 (26v2)",
+    "retrieved_at": "2026-09-15",
+    "pages": [
+      36,
+      37,
+      45,
+      46
+    ],
+    "meanings": {
+      "builtfar": "Rough existing total building area divided by tax-lot area; not established zoning floor area.",
+      "residfar": "District-based standard-residence reference based on ZoneDist1, with documented fallback if that district disallows residential uses; excludes amenity bonuses. R6, R7-1, R7-2, R8 and R9 use ideal sky-exposure-plane conditions.",
+      "affresfar": "District-based affordable-residence reference; does not itself establish project qualification."
+    }
+  },
+  "scope": "Table fidelity and preserved conditions; not eligibility, legal approval or complete property buildability."
+}

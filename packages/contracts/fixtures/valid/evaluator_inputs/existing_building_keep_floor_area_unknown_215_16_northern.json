@@ -1,0 +1,90 @@
+{
+  "contract_version": "1.1.0",
+  "study_id": "study-215-16-northern-blvd",
+  "option_id": "option-1",
+  "revision": 1,
+  "inputs": [
+    {
+      "key": "lot_area_sq_ft",
+      "value": 10075,
+      "unit": "square_feet",
+      "fact_id": "northern-blvd-4073340070:lot-area:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "lot_front_ft",
+      "value": 100.8,
+      "unit": "feet",
+      "fact_id": "northern-blvd-4073340070:lot-frontage:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "lot_depth_ft",
+      "value": 100,
+      "unit": "feet",
+      "fact_id": "northern-blvd-4073340070:lot-depth:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "lot_type",
+      "value": "corner",
+      "unit": null,
+      "fact_id": "northern-blvd-4073340070:lot-type:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "zoning_district",
+      "value": "R6B",
+      "unit": null,
+      "fact_id": "northern-blvd-4073340070:zoning-district:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    }
+  ],
+  "site_measurement_rank": "city_records",
+  "depends_on_fact_ids": [
+    "northern-blvd-4073340070:lot-area:city",
+    "northern-blvd-4073340070:lot-frontage:city",
+    "northern-blvd-4073340070:lot-depth:city",
+    "northern-blvd-4073340070:lot-type:city",
+    "northern-blvd-4073340070:zoning-district:city"
+  ],
+  "existing_building": {
+    "plan": {
+      "value": "keep",
+      "basis": "entered",
+      "label": "Entered",
+      "statement": "Keep the existing building"
+    },
+    "floor_area": {
+      "key": "existing_zoning_floor_area",
+      "value": null,
+      "unit": null,
+      "fact_id": "northern-blvd-4073340070:existing-zoning-floor-area",
+      "rank": "unknown",
+      "label": "Unknown — enter",
+      "source_kind": null,
+      "governing": false,
+      "note": "Needs existing zoning floor area: from a Buildings Department filing or certificate of occupancy, or entered as a stated assumption. City-recorded building area is never used for it. No DOB job-filing rows were supplied. No certificate of occupancy figure or stated assumption was entered."
+    }
+  }
+}

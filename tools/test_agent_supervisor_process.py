@@ -229,6 +229,22 @@ class EnvironmentTests(unittest.TestCase):
         env = pc.minimal_env({"FAKE_MODE": "normal"})
         self.assertEqual(env["FAKE_MODE"], "normal")
 
+    def test_minimal_env_does_not_inject_the_claude_autoupdater_control(self) -> None:
+        # D-024-R278 (M0-T117): DISABLE_AUTOUPDATER=1 is CLAUDE-scoped and lives in
+        # `claude_child_env`. The shared `minimal_env` - which codex children also
+        # use - must never add it, or the control would leak into codex (AS-5).
+        os.environ.pop("DISABLE_AUTOUPDATER", None)
+        self.assertNotIn("DISABLE_AUTOUPDATER", pc.minimal_env())
+        self.assertNotIn("DISABLE_AUTOUPDATER", pc.minimal_env({"FAKE_MODE": "x"}))
+
+    def test_claude_child_env_forces_the_autoupdater_control(self) -> None:
+        # The claude-scoped helper adds exactly the forced pair on top of
+        # minimal_env, and a conflicting extra_env cannot win (forced pair wins).
+        os.environ.pop("DISABLE_AUTOUPDATER", None)
+        self.assertEqual(pc.claude_child_env()["DISABLE_AUTOUPDATER"], "1")
+        self.assertEqual(
+            pc.claude_child_env({"DISABLE_AUTOUPDATER": "0"})["DISABLE_AUTOUPDATER"], "1")
+
 
 # --------------------------------------------------------------------------
 # Executable resolution and identity

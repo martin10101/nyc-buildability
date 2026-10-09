@@ -2847,6 +2847,171 @@ def test_s12_empty_identity_guard() -> None:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
 
+def test_s13_pattern_allowed_paths_seal() -> None:
+    """Backlog DB-181 / D-090-R557 (S1 red proof + claim/submit states): claim and submit
+    refuse an in-regime packet whose allowed_paths carry a glob/pattern entry -- which binds
+    NO tracked file under GIT_LITERAL_PATHSPECS=1, so the reviewed content identity would
+    cover less than the packet declares even though a tracked literal report keeps the
+    empty-identity guard green (the insidious patterns-plus-literal-report case). A
+    literal-only packet is accepted; a mixed list is refused naming ONLY the pattern entry.
+
+    RED PROOF: against the pre-change CLI, claim and submit ACCEPT the pattern packet
+    (returncode 0), so every refusal assertion here fails -- that is the recorded red."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-seal-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        task_ids = ["M9-T900", "M9-T901", "M9-T902", "M9-T903"]
+        make_directive(pc, "D-900", "seal", task_ids=task_ids, task_types=[], milestones=[],
+                       req_specs=[("D-900-R001", task_ids)])
+
+        def mk(tid, allowed):
+            r = run(tmp, "new-task", "--task-id", tid, "--title", "t", "--task-type",
+                    "research", "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+                    "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+            assert r.returncode == 0, f"new-task {tid}: {r.stderr}"
+            rep = f"project-control/reports/{tid}-report.md"
+            (tmp / rep).parent.mkdir(parents=True, exist_ok=True)
+            (tmp / rep).write_text(f"# {tid}\n", encoding="utf-8")  # tracked literal report
+            edit_task(tmp, tid, allowed_paths=allowed)
+
+        pat = "services/api/app/scenario/**"
+        mk("M9-T900", [pat, "project-control/reports/M9-T900-report.md"])   # claim probe
+        mk("M9-T901", [pat, "project-control/reports/M9-T901-report.md"])   # submit probe
+        mk("M9-T902", ["probe.txt", "project-control/reports/M9-T902-report.md"])  # literal control
+        mk("M9-T903", ["probe.txt", pat, "project-control/reports/M9-T903-report.md"])  # mixed
+        (tmp / "probe.txt").write_text("real\n", encoding="utf-8")
+        head = git_commit_all(tmp, "scaffold seal tasks")
+
+        # ---- S1 RED PROOF (claim) ----
+        write_report(tmp, "g0.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T900", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0.json")
+        r = run(tmp, "claim", "--task-id", "M9-T900", "--agent", "producer-x", "--worktree", "wt")
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and pat in out and "literal" in out.lower(), \
+            f"claim must refuse a pattern allowed_paths entry, naming it: {out}"
+
+        # ---- S1 RED PROOF (submit) ----
+        edit_task(tmp, "M9-T901", status="in_progress", producer_agent="producer-x")
+        write_report(tmp, "M9-T901-final.json", '{"r":"x"}')
+        write_report(tmp, "M9-T901-emap.json", json.dumps({"requirements": {"D-900-R001": ["e"]}}))
+        r = run(tmp, "submit", "--task-id", "M9-T901", "--agent", "producer-x", "--report",
+                "project-control/reports/M9-T901-final.json", "--requested-status",
+                "awaiting_gate", "--evidence-map", "project-control/reports/M9-T901-emap.json",
+                "--sha", head)
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and pat in out, f"submit must refuse a pattern entry: {out}"
+
+        # ---- positive control: a LITERAL-only in-regime packet claims AND submits ----
+        write_report(tmp, "g0b.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T902", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0b.json")
+        r = run(tmp, "claim", "--task-id", "M9-T902", "--agent", "producer-x", "--worktree", "wt")
+        assert r.returncode == 0, f"a literal-only packet must claim: {r.stdout} {r.stderr}"
+        run(tmp, "progress", "--task-id", "M9-T902", "--agent", "producer-x", "--percent",
+            "40", "--status", "in_progress", "--message", "x")
+        write_report(tmp, "M9-T902-final.json", '{"r":"x"}')
+        write_report(tmp, "M9-T902-emap.json", json.dumps({"requirements": {"D-900-R001": ["e"]}}))
+        r = run(tmp, "submit", "--task-id", "M9-T902", "--agent", "producer-x", "--report",
+                "project-control/reports/M9-T902-final.json", "--requested-status",
+                "awaiting_gate", "--evidence-map", "project-control/reports/M9-T902-emap.json",
+                "--sha", head)
+        assert r.returncode == 0, f"a literal-only packet must submit: {r.stdout} {r.stderr}"
+
+        # ---- S7: a MIXED list is refused naming ONLY the pattern, never the literal ----
+        write_report(tmp, "g0c.json", '{"g":0}')
+        run(tmp, "gate", "--task-id", "M9-T903", "--gate-id", "G0", "--reviewer",
+            "orchestrator", "--result", "PASS", "--report", "project-control/reports/g0c.json")
+        r = run(tmp, "claim", "--task-id", "M9-T903", "--agent", "producer-x", "--worktree", "wt")
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and pat in out and "'probe.txt'" not in out, \
+            f"a mixed list must be refused naming only the pattern entry: {out}"
+        print("OK: S13 literal-allowed-paths seal (claim+submit refuse patterns; literal accepted; "
+              "mixed names only the pattern)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
+def _drive_to_verified(tmp: Path, tid: str, allowed_paths) -> str:
+    """Drive an in-regime CODE task (allowed_paths OUTSIDE project-control/) to awaiting_gate
+    with G0+G3 PASS and a v2 per-task verification at the stamped identity. Returns the head."""
+    pc = tmp / "project-control"
+    run(tmp, "new-task", "--task-id", tid, "--title", "t", "--task-type", "research",
+        "--milestone", "M0", "--objective", "o", "--gates", "G0,G3",
+        "--reviewers", "reviewer-v,reviewer-z", "--directive-refs", "D-900:ALL")
+    edit_task(tmp, tid, allowed_paths=allowed_paths)
+    head = git_commit_all(tmp, f"commit scope {tid}")
+    write_report(tmp, f"{tid}-g0.json", '{"g":0}')
+    run(tmp, "gate", "--task-id", tid, "--gate-id", "G0", "--reviewer", "orchestrator",
+        "--result", "PASS", "--report", f"project-control/reports/{tid}-g0.json")
+    run(tmp, "claim", "--task-id", tid, "--agent", "producer-p", "--worktree", "wt")
+    run(tmp, "progress", "--task-id", tid, "--agent", "producer-p", "--percent", "40",
+        "--status", "in_progress", "--message", "x")
+    write_report(tmp, f"{tid}-final.json", '{"r":"x"}')
+    write_report(tmp, f"{tid}-emap.json", json.dumps({"requirements": {"D-900-R001": ["e"]}}))
+    r = run(tmp, "submit", "--task-id", tid, "--agent", "producer-p", "--report",
+            f"project-control/reports/{tid}-final.json", "--requested-status", "awaiting_gate",
+            "--evidence-map", f"project-control/reports/{tid}-emap.json", "--sha", head)
+    assert r.returncode == 0, f"submit {tid}: {r.stdout} {r.stderr}"
+    write_report(tmp, f"{tid}-g3.json", '{"g":3}')
+    run(tmp, "gate", "--task-id", tid, "--gate-id", "G3", "--reviewer", "reviewer-v",
+        "--result", "PASS", "--report", f"project-control/reports/{tid}-g3.json", "--sha", head)
+    ident = _git_identity(tmp, [p for p in allowed_paths if not p.startswith("project-control/")],
+                          head)
+    v2 = {"schema": "directive_verification/v2", "directive_id": "D-900", "producer": "orchestrator",
+          "task_verifications": [{
+              "directive_id": "D-900", "task_id": tid, "applicable_requirement_ids": ["D-900-R001"],
+              "reviewed_sha": head, "reviewed_manifest_sha256": ident, "producer": "orchestrator",
+              "verifier": "reviewer-v", "schema_version": "directive_verification/v2",
+              "verified_at": "t", "requirements": [{"id": "D-900-R001", "state": "PASS",
+                  "evidence": [f"project-control/reports/{tid}-g3.json"], "verified_by": "reviewer-v"}]}],
+          "updated_at": "t"}
+    (pc / "directives" / "D-900-ex" / "verification.json").write_text(
+        json.dumps(v2, indent=2), encoding="utf-8")
+    return head
+
+
+def test_s14_accept_reruns_pattern_check() -> None:
+    """Reviewers' note 1: ACCEPT re-runs the non-binding-entry check. A pattern entry added to a
+    packet AFTER a clean submit binds nothing, so it changes no content identity and neither the
+    frozen-evidence guard nor the content hash catches it -- only CI would. The accept path now
+    runs the same shared detector and refuses, naming the entry. A clean literal task still
+    accepts (positive control)."""
+    tmpdir = tempfile.mkdtemp(prefix="pc-accept-seal-")
+    tmp = Path(tmpdir)
+    try:
+        make_temp_project(tmp)
+        setup_regime(tmp)
+        pc = tmp / "project-control"
+        (tmp / "probe.txt").write_text("content\n", encoding="utf-8")
+        make_directive(pc, "D-900", "ex", task_ids=["M9-T950", "M9-T951"], task_types=[],
+                       milestones=[], req_specs=[("D-900-R001", ["M9-T950", "M9-T951"])])
+
+        # (a) positive control: a clean LITERAL-only task accepts.
+        _drive_to_verified(tmp, "M9-T950", ["probe.txt"])
+        r = run(tmp, "accept", "--task-id", "M9-T950", "--agent", "orchestrator")
+        assert r.returncode == 0, f"a clean literal task must accept: {r.stdout} {r.stderr}"
+
+        # (b) add a PATTERN entry to M9-T951 AFTER submit+verification. probe.txt is unchanged and
+        # the task packet is NOT in allowed_paths, so the content identity is unchanged (the
+        # pattern binds nothing) and the edit is not 'dirty' for the identity -- exactly the gap
+        # the frozen-evidence guard misses. Only the accept-path pattern check should catch it.
+        _drive_to_verified(tmp, "M9-T951", ["probe.txt"])
+        edit_task(tmp, "M9-T951", allowed_paths=["probe.txt", "services/api/**"])
+        r = run(tmp, "accept", "--task-id", "M9-T951", "--agent", "orchestrator")
+        out = r.stdout + r.stderr
+        assert r.returncode != 0 and "services/api/**" in out, \
+            f"accept must refuse a pattern entry added post-submit, naming it: {out}"
+        assert "frozen-evidence identity mismatch" not in out, \
+            "the content identity is unchanged (pattern binds nothing); the pattern check is the catch"
+        print("OK: S14 accept re-runs the non-binding-entry check (note 1)")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
+
+
 ALL_TESTS = [
     test_original_workflow,
     test_s1_transitions,
@@ -2871,6 +3036,8 @@ ALL_TESTS = [
     test_s11_missing_producer_identity_fails_closed,
     test_s11_no_special_casing_source_proofs,
     test_s12_empty_identity_guard,
+    test_s13_pattern_allowed_paths_seal,
+    test_s14_accept_reruns_pattern_check,
 ]
 
 

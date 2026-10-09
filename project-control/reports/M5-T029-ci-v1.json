@@ -1,0 +1,143 @@
+{
+  "task_id": "M5-T029",
+  "reviewed_sha": "50995365dedba7694f8462c5db3fd4dcf235690f",
+  "recorded_at": "2026-09-14T21:21:19.176044+00:00",
+  "source": "GitHub Actions connector reads; run34896822769",
+  "result": "FAIL",
+  "jobs": [
+    {
+      "id": 104152893917,
+      "name": "code-graph (determinism --check + fixture tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894148,
+      "name": "contracts (JSON Schema validation)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894178,
+      "name": "web (lint + typecheck + build)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894237,
+      "name": "api-tooling-lock-verify (tooling lock byte-identical + age-gate unit tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894272,
+      "name": "exact-production-install (Render pip install path + validate_profile + pip-audit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894289,
+      "name": "contracts-typegen (TS drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894291,
+      "name": "api (ruff + pytest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894350,
+      "name": "api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894381,
+      "name": "product-map (owner-dashboard metadata integrity)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894402,
+      "name": "context-index-a1 (fingerprint + cache + baseline)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894455,
+      "name": "contracts-schema-bundle (runtime schema drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894464,
+      "name": "context-pipeline (Units B-F suites + integration/adversarial tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894465,
+      "name": "web-e2e (vitest + Playwright vs recorded-official-fixture API)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 104152894485,
+      "name": "control-plane (workflow regression test, ADR-005)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894531,
+      "name": "modularity (deterministic size/responsibility regression gate)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894534,
+      "name": "model-routing (frozen corpus + allowlist boundary tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152894568,
+      "name": "supervisor-bridge (pytest tools/test_agent_supervisor_*.py)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104152895556,
+      "name": "web-dependency-security (audit + committed-lock age gate + npm CLI advisory)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "web_e2e": {
+    "unit_files": 37,
+    "unit_tests": 601,
+    "browser_passed": 95,
+    "browser_failed": 3,
+    "failures": [
+      "Ambiguous autocomplete option selector matches native borough options",
+      "Five evaluation traces violate singular evidence selector",
+      "Keyboard text matcher stops on BODY at tab wrap instead of Evidence link; producer diagnosing captured trace"
+    ],
+    "artifact_id": 10369525695,
+    "artifact_sha256": "d4c58c8638ae27907984569586754580dbd5fe81e7415d68ad65a12f23e82368"
+  },
+  "other_workflows": [
+    {
+      "id": 34896822696,
+      "name": "secret-scan",
+      "conclusion": "success"
+    },
+    {
+      "id": 34896822747,
+      "name": "context-budget",
+      "conclusion": "success"
+    }
+  ],
+  "disposition": "Retain failed run and independent gate reports. Correct source, accessibility and presentation findings; rerun browser evidence at replacement frozen SHA. No acceptance or candidate update at this version."
+}

@@ -1,0 +1,205 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-056",
+ "version": 1,
+ "requirement_count": 6,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-14T05:40:00+00:00",
+ "requirements": [
+  {
+   "id": "D-056-R001",
+   "text": "PROVENANCE SOURCE LINKS — the per-fact provenance surfaces (ProvenanceDisclosure.tsx and the provenance rows in RuleEvaluationResult.tsx) render a clickable outbound link to the official dataset landing page, constructed ONLY from a constant allowlisted prefix (https://data.cityofnewyork.us/d/) plus the dataset id after strict token validation — NEVER from the reflected request_url or any other server-echoed string (the ZoLa-link constant-prefix + validated-token pattern; G5 F-1 discipline). An absent or validation-failing dataset id renders an honest absence (current text), never a guessed link. target=_blank with rel=noopener noreferrer.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-056-BOOTSTRAP",
+     "M5-T025"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "unit tests: link rendered from valid dataset id in both surfaces; no-link on invalid/absent id; negative test that request_url never becomes an href",
+   "required_evidence": "component tests + code review at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-056-R002",
+   "text": "LOT-OUTLINE VISIBILITY FIX — reproduce and root-cause why no outline is visible on the live deploy (owner device, BBL 3022647515-class single_lot result: gray canvas + attribution render, outline absent even after scroll-zoom), fix it, and make the initial framing show a single tax lot CLEARLY (the fitBounds maxZoom 18 cap renders a typical lot at roughly fingernail size — revisit it as part of the fix). The display-only discipline is unchanged: no measurement, geometry verbatim, camera framing only. Root cause + fix guarded by a test that fails on the old behavior where the harness can express it (jsdom/Playwright-CI lack WebGL - pure framing/wiring logic extracted for test where needed).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-056-BOOTSTRAP",
+     "M5-T025"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "producer report names the concrete root cause with evidence; regression-guard test red-on-old/green-on-new where expressible; reviewer G3 verifies cause-vs-fix coherence",
+   "required_evidence": "producer report + tests + G3/G4 review at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-056-R003",
+   "text": "ZOOM CONTROLS — the lot-outline map shows visible zoom in/out buttons (MapLibre NavigationControl or equivalent already-admitted maplibre-gl surface; zero new dependencies), keyboard-accessible, without breaking the dynamic-import/SSR and no-WebGL fallback structure.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-056-BOOTSTRAP",
+     "M5-T025"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "control present in the map init path; fallback paths unchanged (tests stay green)",
+   "required_evidence": "code + tests at the frozen head",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-056-R004",
+   "text": "ZOLA FINDING IS EXTERNAL (fact record) — the ZoLa blank page is not a repository defect: the link format /bbl/<bbl> is verified from ZoLa's own router source + live checks (docs/design/zola-deeplink-url-confirmation.md, 2026-09-12) and the live server re-check at capture time (2026-09-14) returns ZoLa's normal SPA shell for the exact URL; the failure is the city SPA's client-side boot on the owner's browser. No code change owed; owner diagnostic returned (open zola.planning.nyc.gov directly — blank there too means browser/extension/hardware-acceleration or a city-side issue).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-056-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "capture-context record + the two dated verifications",
+   "required_evidence": "source-001 capture-context; zola-deeplink-url-confirmation.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-056-R005",
+   "text": "EXECUTION MODE (owner decision) — direct owner order to the monitoring session, hand-conducted as ONE parallel packet (M5-T025) whose allowed_paths are fully disjoint from the loop worker's M4-T020 scope; D-046 ceiling respected (2 writers); normal gated process (G0/G3/G4, producer != reviewers); the D-053 quiet-monitor posture resumes after acceptance. Lot-outline edits sit inside the D-040-R001 scoped release; no expansion-pack work is started.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-056-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "task packet + gate records show the mode; no expansion-pack task ids appear",
+   "required_evidence": "ledger records at acceptance",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-056-R006",
+   "text": "OWNER DEPLOY STEP (return) — auto-deploy is OFF on the hand-created web service, so the fix reaches the live page only after the owner clicks Manual Deploy (branch candidate/D-024-mrl-option-b) and refreshes; report this step plus completion state to the owner at the seam when the packet is accepted and pushed.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-056-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "seam report with the exact owner step",
+   "required_evidence": "seam report; acceptance record",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

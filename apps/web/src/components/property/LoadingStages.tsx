@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 /**
  * Staged loading indicator (task M2-T001; design system section 12: show
@@ -14,6 +14,15 @@ import { useEffect, useRef } from "react";
  * `body`; when the outcome arrives, the screen moves focus to the outcome
  * heading. Initial (non-retry) lookups never pass `focusOnMount`, so this
  * card never steals focus from the form.
+ *
+ * D-flake (a11y-announcements.spec.ts:152): the focus call runs in a LAYOUT
+ * effect, i.e. inside the same React commit that inserts this card and
+ * removes the failure card holding the focused Retry button — before the
+ * browser can paint or run any other task. A passive `useEffect` is not
+ * enough: when the commit is not a discrete-input commit (Confirm enters
+ * loading from its fetch effect), React may yield to the browser between
+ * the DOM change and the effect, so focus sat on `<body>` while this card
+ * was already visible. React's own `autoFocus` focuses in this same phase.
  */
 export function LoadingStages({
   bbl,
@@ -24,7 +33,7 @@ export function LoadingStages({
 }) {
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (focusOnMount) {
       sectionRef.current?.focus();
     }

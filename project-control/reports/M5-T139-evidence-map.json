@@ -1,0 +1,49 @@
+{
+ "task_id": "M5-T139",
+ "material_commits": [
+  "b8bcbb74 (the builder's one commit, parent = the claim-seam head, cherry-picked with an identical tree: the entry, the transform, the route file, three test files, the report; 7 files) = material head"
+ ],
+ "claim_seam_head": "5ed7b4c888e63efacf1018d11cd5eb03a4669287",
+ "files_changed": [
+  "project-control/reports/M5-T139-producer-report.md",
+  "services/api/app/api/v1/results_read.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/api/test_results_read_api.py",
+  "services/api/tests/api/test_results_read_law_examples.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+ ],
+ "what_did_not_change": "engine_disclosures.py, evaluator_inputs.py, results_request.py, engine_conditions.py, the engine, the decision modules, every schema, fixture and saved drawing (the committed journey result is byte-identical), every website file, app/main.py, app/config.py. No value, no way entry and no other scope line of a returned document changes; only the basis and the sentence of two lines, and only when the user chose.",
+ "known_limits": [
+  "three_way_document.py is 599 lines, one under the size warning: its next change must split it.",
+  "The transform keeps its own copy of the housing-program display names (the G3 reviewer's note F1).",
+  "Nothing new is visible on a screen: the website panel is the next piece."
+ ],
+ "checks_at_material_head": [
+  "builder at its commit: ruff clean; tests/api 1131 passed; three_answers, journey and contracts 912 passed 2 skipped; cad and drawings 1359 passed 6 skipped; modularity exit 0",
+  "orchestrator at 82c32742: the full api suite 8655 passed 8 skipped, exit 0; CI on the pushed head: see the pull request",
+  "G3 at 82c32742: its own requests through the route; the same focused counts",
+  "G4 at 82c32742: the two focused suites reproduced; eleven mutations in a copy outside the repository, all caught; the red proof reproduced"
+ ],
+ "requirements": {
+  "D-090-R256": [
+   "services/api/tests/api/test_results_read_law_examples.py::test_t139_s1_entered_floor_to_floor_height_is_said_to_be_entered: through the route a floor-to-floor height the user entered is returned with the basis 'entered' and a sentence saying it was entered; services/api/tests/api/test_results_read_law_examples.py::test_t139_s2_starting_floor_to_floor_height_is_still_called_the_default: with no height in the body the engine's starting value is still called the default.",
+   "services/api/tests/api/test_results_read_law_examples.py::test_t139_s3_housing_program_is_the_users_selection: each of the three housing programs is returned as selected by the user.",
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py::test_t139_only_the_two_choice_lines_differ_with_user_choices: nothing else in the document moves; the value shown is the value used.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T139-G3G4.md), checks 2, 3 and 6: its own requests through the route give 'entered' for an entered height, 'default' for the starting value and 'selected' for each program; value and unit untouched; nothing else calls an entered height a default. the G4 reviewer (qa-engineer; project-control/reports/M5-T139-G3G4.md), check 3: eleven mutations, all caught.",
+   "Share: the two lines of the returned document. The screen's editable inputs are the website panel's."
+  ],
+  "D-090-R582": [
+   "A step of connecting the results display: the panel shows these two lines beside the inputs the user just changed; the website panel is the next piece.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T139-G3G4.md), check 6: no two parts of a returned document disagree, which the panel needs before it shows these lines beside the inputs."
+  ],
+  "D-090-R584": [
+   "The commit changes no switch, no mount, no production setting: app/main.py, app/config.py and render.yaml are untouched; the route stays behind its switch, which is off by default.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T139-G3G4.md), check 1: main.py, config.py and render.yaml are not in the diff; no website file changed."
+  ],
+  "D-090-R588": [
+   "Nothing of the report is dropped. What stays owed is on record: backlog row DB-204 points b to f, and the note that three_way_document.py must be split before it grows again.",
+   "the G3 reviewer (data-contract-verifier; project-control/reports/M5-T139-G3G4.md) notes F1 to F3 and the G4 reviewer (qa-engineer; project-control/reports/M5-T139-G3G4.md) notes F1 to F3 name what stays owed; none removes a part of the report."
+  ]
+ }
+}

@@ -1,0 +1,11 @@
+{
+  "task_id": "M5-T046",
+  "requirements": {
+    "D-066-R001": [
+      "Code graph regenerated at the contract seam (743 files / 15651 nodes / 6934 edges) and a graph-derived navigation block embedded in the packet inputs (address-search consumers, confirm-arc components, T045-owned exclusions, the integrated-Geoclient boundary). The producer's report section 5 then VERIFIED the call paths in source at the material head - including the load-bearing finding that no live GeoSearch-to-lot promotion exists (suggestions discard pad.bbl; the sole lot authority is the server Geoclient route), which drove the recorded ORCH-SCOPE-ADJUDICATION. Graph used as advisory navigation; every material conclusion verified in source (packet input 4; producer report sections 5 and 8; G0 report + addendum)."
+    ],
+    "D-073-R006": [
+      "Records-vs-allowances discipline delivered on the confirm arc: AddressConfirmCard renders the ENTERED input verbatim (raw typed text preserved through the pick flow before the field rewrite) beside the MATCHED city address as RECORDS - trimming decides only blank-vs-not, the original string renders unchanged through an escaped React text node, no URL is built from it, and the in-place comment documents that no computed value is implied (producer report section 6; source sections dd4f02f5/70cc76df/018aa354). The lot's PLUTO address-of-record, where it differs, is the REPORTED discovery (record-address channel gap) - honestly absent, never built around with an invented field. The registry draft additionally documents the records-grade match discipline (equality gate; match_type/confidence non-discriminating) binding any future GeoSearch promotion surface. Acceptance scenarios AS-1/AS-4 (amended, library level), AS-6, AS-8 carry the distinction; the HJ walkthrough verifies it on the CI-proven head."
+    ]
+  }
+}

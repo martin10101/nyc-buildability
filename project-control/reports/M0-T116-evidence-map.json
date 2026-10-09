@@ -1,0 +1,20 @@
+{
+ "task_id": "M0-T116",
+ "requirements": {
+  "D-024-R273": [
+   "This unit is re-run-only + reports: zero code changes, zero runtime-journal writes (diff touches only project-control/**; the golden pack blob cf03caaa is byte-identical before and after the unit)",
+   "project-control/reports/M0-T116-recertification.md sec 6",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R275": [
+   "Full M0-T112-pattern recertification executed at the ONE frozen post-repair identity (material f89aa29, tree 7487901cea729f5c254f98c8f7dcf859eb64e2c5, run head c67830f) AFTER both repair units were accepted (M0-T115 then M0-T114, each with its own 4-reviewer wave + delta re-attestations)",
+   "Golden pack 41/41; affected packs 705/705 (10 packs incl. the new command-authority/recovery-probes/turnover-live-seam coverage); WHOLE suite 2710 passed/2 skipped/0 failed, 2712 collected reconciling EXACTLY as 2696+14+2; CI 20-check run on the pushed certification tip (SHA + conclusion pinned in progress_log at the submit seam)",
+   "Activation-package items 10-12 second REFRESH-ONLY edit (M0-T096-activation-package.md)",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R276": [
+   "Resume NOT performed in this unit: the loop remains stopped; the recertification report sec 1/6 and the activation-package banner condition the R276 resume on THIS unit's acceptance plus manifest re-record + verify-controller + doctor + doctor --live + complete activation preflight + CI, with stay-stopped-and-report on any failure",
+   "CLAIM: HOLD IN FORCE and honored - this unit only establishes the certification the resume requires"
+  ]
+ }
+}

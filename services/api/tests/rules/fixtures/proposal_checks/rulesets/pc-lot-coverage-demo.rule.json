@@ -1,0 +1,29 @@
+{
+  "rule_id": "pc-lot-coverage-demo",
+  "rule_version": "0.0.1-draft",
+  "family": "lot_coverage",
+  "title": "SYNTHETIC maximum lot coverage ratio (M5-T054 proposal-checks wiring proof)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "description": "SYNTHETIC fixture (M5-T054, D-076 phase B2) proving the proposal-checks module wires a MAXIMUM-ratio allowance (a ceiling) through the EXISTING evaluator. Illustrative value only; not a Verified determination and not an official capture.",
+  "citations": [
+    {"snapshot_id": "pc-demo-synthetic", "section": "SYNTHETIC-COVERAGE", "quote": "SYNTHETIC (illustrative, not verbatim): the maximum lot coverage ratio in the indicated district is 0.50.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "enum": ["R5"], "description": "District governing the lot."}
+  ],
+  "outputs": [
+    {"name": "max_lot_coverage_ratio", "type": "number", "unit": "ratio", "description": "Maximum permitted lot coverage ratio (footprint / lot area)."}
+  ],
+  "parameters": [
+    {"name": "max_coverage_by_district", "value": {"R5": 0.5}, "citation_ref": "pc-demo-synthetic", "note": "SYNTHETIC illustrative maximum lot coverage ratio by district (R5 = 0.50)."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5"]},
+  "computation": {
+    "steps": [
+      {"id": "coverage", "op": "identity", "args": [{"param_select": {"map": "max_coverage_by_district", "key_input": "zoning_district"}}], "note": "Select the maximum lot coverage ratio for the district."}
+    ],
+    "outputs": {"max_lot_coverage_ratio": {"step": "coverage"}}
+  },
+  "limitations": ["SYNTHETIC representability fixture; illustrative value; requires official capture + G6 before any use."]
+}

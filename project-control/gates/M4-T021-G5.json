@@ -1,0 +1,12 @@
+{
+  "task_id": "M4-T021",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M4-T021-G5-security-privacy.md",
+  "reviewed_at": "2026-09-14T10:14:18.854955+00:00",
+  "content_manifest_sha256": "7413f6e4f3594881e1b206aba19c094ef5ee965e9dc15ab3d1436c31fbe9dbd0",
+  "reviewed_sha": "275c166c3e2213ec03740ecc9d963ccb48dbebdd",
+  "updated_at": "2026-09-14T10:14:19.169337+00:00"
+}

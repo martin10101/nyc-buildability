@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T019",
+  "note": "Cited D-040:D-040-R002, APPLICABLE via the append-only applicability bind (digest 27d6d1b8->a3fc9d01, audit-logged). evaluate_task_refs: ok=true, applicable == cited == [D-040-R002].",
+  "requirements": {
+    "D-040-R002": [
+      "apps/web/src/lib/rule-evaluation.ts at b30f709c (the flag read is now process.env INTERNAL_RULE_EVAL_ENABLED - the canonical backend name per design-spec section 6; token semantics, two-factor gate, and non-NEXT_PUBLIC posture byte-preserved)",
+      "apps/web/src/lib/__tests__/rule-evaluation.test.ts at b30f709c (full token matrix retained + NEW guard pinning the OLD name INTERNAL_RULE_EVAL_UI as inert - the M5-T015 G5 F-1 misconfiguration class closed on the web side)",
+      "project-control/reports/M5-T019-producer-report.md (grep transcript proving the exclusive rename; the OWNER RETURN NOTE naming the Render env-var action verbatim - the D-040-R002 deploy-affecting obligation)",
+      "project-control/reports/M5-T019-ci-evidence.txt (run 34694372457 at 634f1060: web + web-e2e SUCCESS with one flag name through both processes; only red = owner-gated web-dependency-security)"
+    ]
+  }
+}

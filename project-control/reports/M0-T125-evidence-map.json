@@ -1,0 +1,27 @@
+{
+  "task_id": "M0-T125",
+  "note": "Evidence per D-024 requirement applicable to M0-T125 (resolver set, 7 rows: R372, R373, R374, R375, R383, R384, R389). Producer: supervisor-stabilization-surveyor (read-only analysis spawn; content returned via the agent-return channel and captured VERBATIM by the orchestrator under the report-preservation rule - the readonly_agent_guard denies file writes to non-roster spawns). Deliverables: M0-T125-callgraph-and-transitions.md + M0-T125-defect-register.md, both analyzed at HEAD 13cd59731561e02c51adddf662a1669c602466f4.",
+  "requirements": {
+    "D-024-R372": [
+      "The window is open and this task is its mandated first step: Amendment 22 captured at 789b823 (source-022-amendment.md, validator EXIT=0, CI 20/20 at 13cd597); no second live attempt, no launch, no recovery action performed by this task."
+    ],
+    "D-024-R373": [
+      "The analysis covers EVERY seam of the complete journey: M0-T125-callgraph-and-transitions.md sections A.1-A.5 (start gate -> launch seam -> worker unit -> checkpoint extract/validate -> evidence -> Codex review -> verdict -> forwarding -> multi-unit continuation/rotation/turnover -> recovery channels), B (the full 94-edge transition inventory: 26 reachable, 61 unreachable-by-design, 7 unreachable-DEFECT), C (CLI surfaces, presented-command reconciliation, durable keys, audit events, fixed-bound map). Journey-tail gaps are named as defects (D8 ROTATE_SESSION strand, D9 COMPLETE strand/no next-task selection, D10 cross-start prompt loss)."
+    ],
+    "D-024-R374": [
+      "Byte-for-byte preservation observed: the producer read audit.jsonl and the worker transcript as plain files only, never opened the sqlite journal (D-024-R374 named in the report header), executed NO supervisor subcommand (CLI introspected by pure import of build_parser), and made no writes (write-guard denied by design; content returned via the agent channel). Journal remains PAUSED_RECOVERY, transitions 22, audit head 53."
+    ],
+    "D-024-R375": [
+      "No restart, no clear-recovery, no journal edit, no repin, no PR #241 action, no policy change, no live launch occurred during this task; the only repository writes are the two report files plus this evidence map, captured by the orchestrator."
+    ],
+    "D-024-R383": [
+      "M0-T125-callgraph-and-transitions.md: section A = the complete launch-to-next-task call graph per-edge with file:line citations; section B = every one of the 94 documented transitions inventoried with its calling surface and reachability class; section C = every operating surface (all CLI verbs with full argument sets, every owner-presented command reconciled argument-by-argument against the parser/seam contract, all durable-state keys, audit events, and the fixed-bounds map). Produced BEFORE any code change; M0-T126 (implementation) depends on this task."
+    ],
+    "D-024-R384": [
+      "M0-T125-defect-register.md: 17 defects, ALL 17 in-scope, spanning all ten mandated classes (class 1: D8/D9/D12; class 2: D14; class 3: D15; class 4: D2; class 5: D10; class 6: D3; class 7: D4/D5/D16; class 8: D6/D13; class 9: D7/D11; class 10: D1/D17), each with citation, severity, in-scope ruling, proposed correction, and test implication; six live-evidence seeds dispositioned (five verified, one - seed c - refuted with primary evidence and the journey-2 report corrected append-only); a 12-area checked-and-CLEAN list records absence-of-findings as evidence."
+    ],
+    "D-024-R389": [
+      "Independent review pending at submit time by design: G3 (code-reviewer) + G4 (qa-engineer) wave dispatched after submit; DCV (directive-compliance-verifier) verification precedes acceptance. This row is completed by the gate records and verification.json rows at the reviewed identity."
+    ]
+  }
+}

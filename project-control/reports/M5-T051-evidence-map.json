@@ -1,0 +1,16 @@
+{
+  "task_id": "M5-T051",
+  "material_commit": "f1ec64a81b4b5aca3cc348012b8196bd963480b8",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T051 packet was contracted with a seam-regenerated code-graph NAV BLOCK in its inputs (project-control/tasks/M5-T051.json inputs[3]; G0 record M5-T051-G0.md) naming proposal.py/contract.py consumers with line anchors and the read-only spatial seams as parameters-only.",
+      "The consumer discipline held: derivation.py is a NEW leaf module (stdlib-only, caller-supplied inputs, no connector/spatial import); proposal.py's only change is the DB-034(c) refusal (its consumers contract.py + the gate module unaffected - their suites green in CI run 35455214032); no forbidden path touched."
+    ],
+    "D-076-R001": [
+      "The increment is exactly the plan's B1 row: footprint, coverage, per-level areas, the gross-treatment vocabulary, wall setbacks (lot lines + attested street line), heights - each with evidence records; property tests against hand-computed fixtures whose arithmetic is shown; NO rule evaluation, NO builder/route change (forbidden_paths pin contract.py/scenario.py/api/rules/spatial; the diffs touch none)."
+    ],
+    "D-076-R002": [
+      "Facts, never allowances: every derived value is a frozen EvidenceRecord with the literal source_class 'proposed_derivation' carrying value/unit/method/input_ids; the gross treatment is the declared PER_LEVEL_GROSS_NO_DEDUCTIONS vocabulary and never a 'zoning floor area' claim; AS-4's grep gate holds (no permitted/required/allowed vocabulary outside disclaiming comments); the street-setback outcome with no attestation supplied is a typed honest absence, never a default (the D-051 fallback discipline)."
+    ]
+  }
+}

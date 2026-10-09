@@ -1,0 +1,130 @@
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  7%]
+........................................................................ [  9%]
+........................................................................ [ 12%]
+.........................F.............................................. [ 14%]
+........................................................................ [ 17%]
+........................................................................ [ 19%]
+........................................................................ [ 22%]
+....................F................................................... [ 24%]
+........................................................................ [ 27%]
+........................................................................ [ 29%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+.....................F.................................................. [ 41%]
+........................................................................ [ 44%]
+.................................................................s...... [ 46%]
+........................................................................ [ 49%]
+........s............................................................... [ 51%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 59%]
+........................................................................ [ 61%]
+........................................................................ [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 69%]
+........................................................................ [ 71%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+........................................................................ [ 81%]
+........................................................................ [ 83%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 91%]
+........................................................................ [ 93%]
+.................................................................s...... [ 96%]
+........................................................................ [ 98%]
+.....................................                                    [100%]
+================================== FAILURES ===================================
+______________ test_live_reprobe_claude_version_matches_fixture _______________
+
+current = {'body': {'claude_flags': {'--add-dir': 'supported', '--agent': 'supported', '--continue': 'supported', '--init-only':...codex.CMD', '[HOME]\\AppData\\Roaming\\npm\\codex'], 'generated_at': '2026-08-27T05:12:48+00:00', 'platform': 'win32'}}
+
+    @pytest.mark.skipif(shutil.which("claude") is None,
+                        reason="claude CLI not installed on this runner")
+    def test_live_reprobe_claude_version_matches_fixture(current):
+        rec = cp._run(["claude", "--version"])
+        assert rec["status"] == "supported"
+>       assert rec["first_line"] == current["body"]["probes"]["claude_version"]["first_line"], (
+            "installed claude version drifted from the committed current fixture; re-run "
+            "python -m tools.agent_supervisor.capability_probe and re-review")
+E       AssertionError: installed claude version drifted from the committed current fixture; re-run python -m tools.agent_supervisor.capability_probe and re-review
+E       assert '2.1.248 (Claude Code)' == '2.1.247 (Claude Code)'
+E         
+E         - 2.1.247 (Claude Code)
+E         ?       ^
+E         + 2.1.248 (Claude Code)
+E         ?       ^
+
+tools\test_agent_supervisor_capability_probe.py:187: AssertionError
+________________ test_s8_live_version_matches_catalog_fixture _________________
+
+    @requires_claude
+    def test_s8_live_version_matches_catalog_fixture():
+        """Drift tooth: RED locally when the installed claude moves past the
+        fixture's recorded version without a catalog re-capture (mirrors the
+        M0-T104 native-adapter drift tooth)."""
+        binary = shutil.which("claude")  # resolved path: no shell, ever
+        assert binary is not None  # guaranteed by requires_claude
+        out = subprocess.run([binary, "--version"], capture_output=True,
+                             text=True, encoding="utf-8", timeout=60)
+        installed = out.stdout.strip()
+        data = ed.load_catalog_fixture()
+>       assert installed == data["claude_version"], (
+            "installed claude drifted from the committed hook-event catalog "
+            "fixture; re-capture the catalog for the new version and re-review")
+E       AssertionError: installed claude drifted from the committed hook-event catalog fixture; re-capture the catalog for the new version and re-review
+E       assert '2.1.248 (Claude Code)' == '2.1.247 (Claude Code)'
+E         
+E         - 2.1.247 (Claude Code)
+E         ?       ^
+E         + 2.1.248 (Claude Code)
+E         ?       ^
+
+tools\test_agent_supervisor_event_bus.py:344: AssertionError
+________________ test_live_detection_matches_committed_fixture ________________
+
+detection = {'background_gaps': [], 'claude_version': '2.1.247 (Claude Code)', 'directive': 'D-024', 'flags': {'--agent': 'supported', '--background': 'supported', '--bg': 'supported', '--name': 'supported', ...}, ...}
+
+    @requires_claude
+    def test_live_detection_matches_committed_fixture(detection):
+        """Adapter drift tooth: the live surface still matches the committed
+        2.1.247 record (version + every required verb)."""
+        caps = nr.detect_native_capabilities()
+>       assert caps.claude_version == detection["claude_version"], (
+            "installed claude drifted from the committed detection fixture; "
+            "re-run the unit-C detection capture and re-review")
+E       AssertionError: installed claude drifted from the committed detection fixture; re-run the unit-C detection capture and re-review
+E       assert '2.1.248 (Claude Code)' == '2.1.247 (Claude Code)'
+E         
+E         - 2.1.247 (Claude Code)
+E         ?       ^
+E         + 2.1.248 (Claude Code)
+E         ?       ^
+
+tools\test_agent_supervisor_native_adapter.py:724: AssertionError
+============================ slowest 15 durations =============================
+67.62s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c4_s4_invented_requirement_bad_source_anchor
+67.46s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c11_s10_unsupported_not_applicable
+67.28s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c14_s1_omitted_requirement
+67.24s call     tools/test_directive_compliance.py::RequirementsBodyDigestTest::test_missing_content_digest_flagged
+67.13s call     tools/test_directive_compliance.py::PositiveTests::test_real_registry_valid
+66.97s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c8_s11_evidence_path_missing
+66.95s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c12_c13_s9_completion_claim_with_unresolved
+66.84s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c10_stale_verification_identity
+66.82s call     tools/test_directive_compliance.py::MultipleDirectivesTest::test_two_active_directives_validate_and_coexist
+66.80s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c14_verification_missing_row
+66.80s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c2_s6_source_rewritten_without_hash_change
+66.68s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c14_invented_id_digest_mismatch
+66.56s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c3_s5_amendment_not_registered
+66.52s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c7_s8_producer_equals_verifier
+66.43s call     tools/test_directive_compliance.py::NegativeValidatorTests::test_c14_s2_omitted_prohibition
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_capability_probe.py::test_live_reprobe_claude_version_matches_fixture
+FAILED tools/test_agent_supervisor_event_bus.py::test_s8_live_version_matches_catalog_fixture
+FAILED tools/test_agent_supervisor_native_adapter.py::test_live_detection_matches_committed_fixture
+3 failed, 2911 passed, 3 skipped in 1931.27s (0:32:11)

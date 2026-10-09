@@ -1,0 +1,25 @@
+{
+  "contract_version": "1.0.0",
+  "fact_id": "fact-existing-zfa",
+  "key": "existing_zoning_floor_area",
+  "lot_bbl": "5999999998",
+  "street": null,
+  "value": 54488,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "city_records",
+    "label": "City records"
+  },
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "PLUTO",
+    "dataset_version": "26v2",
+    "retrieved_at": "2026-09-30T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/bldgarea",
+    "document_ref": null,
+    "statement": null
+  },
+  "blocks": [],
+  "editable": true,
+  "_expected_failure": "Existing zoning floor area taken from a city dataset's recorded building area (PLUTO bldgarea): it may come only from a Buildings Department filing / certificate of occupancy, an architect entry or a stated assumption (plan section 3 step 4, section 8; task M2-07)."
+}

@@ -1,0 +1,23 @@
+{
+  "task_id": "M0-T134",
+  "producer_agent": "mrl-tranche-a-producer",
+  "report_file": "project-control/reports/M0-T134-producer-report.md",
+  "submitted_at": "2026-09-01T21:22:27.812673+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T134-evidence-map.json",
+  "content_manifest_sha256": "1c3078c62692b26b3054c4239d51a2c79dec5da8f6ad8b9f6aad7ac051a6f23e",
+  "reviewed_sha": "ad770ad48a2d040c129d9e8d3c1b2bd6cf0fb0f4",
+  "applicable_requirements": [
+    "D-024-R500",
+    "D-024-R501",
+    "D-024-R502",
+    "D-024-R503",
+    "D-024-R504",
+    "D-024-R505",
+    "D-024-R509",
+    "D-024-R510",
+    "D-024-R511",
+    "D-024-R514"
+  ],
+  "updated_at": "2026-09-01T21:22:29.260496+00:00"
+}

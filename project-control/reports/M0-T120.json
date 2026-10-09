@@ -1,0 +1,21 @@
+{
+  "task_id": "M0-T120",
+  "producer_agent": "supervisor-routing-producer",
+  "report_file": "project-control/reports/M0-T120-producer-report.md",
+  "submitted_at": "2026-08-29T23:40:45.207017+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T120-evidence-map.json",
+  "content_manifest_sha256": "9773ecc55c57f4fe906ffe233a9394f4039b3f1fd09c5358ed3886794b2f25f2",
+  "reviewed_sha": "7d8195b454d956cc739cbed4d422828ea2f5645b",
+  "applicable_requirements": [
+    "D-024-R289",
+    "D-024-R290",
+    "D-024-R291",
+    "D-024-R292",
+    "D-024-R293",
+    "D-024-R294",
+    "D-024-R295",
+    "D-024-R296"
+  ],
+  "updated_at": "2026-08-29T23:40:48.308150+00:00"
+}

@@ -1,0 +1,28 @@
+{
+  "task_id": "M0-T138",
+  "producer_agent": "controller-update-source-binding-producer",
+  "report_file": "project-control/reports/M0-T138-producer-report.md",
+  "submitted_at": "2026-09-02T05:38:15.163879+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T138-evidence-map.json",
+  "content_manifest_sha256": "dd8cf45d149735956414f5c6088836410e5b242adc227507975f868d52ae83ee",
+  "reviewed_sha": "8e2cb909bea7fb28c81eeac4f3fc24f13103bf8c",
+  "applicable_requirements": [
+    "D-024-R607",
+    "D-024-R608",
+    "D-024-R609",
+    "D-024-R610",
+    "D-024-R611",
+    "D-024-R612",
+    "D-024-R613",
+    "D-024-R614",
+    "D-024-R615",
+    "D-024-R616",
+    "D-024-R617",
+    "D-024-R618",
+    "D-024-R619",
+    "D-024-R620",
+    "D-024-R621"
+  ],
+  "updated_at": "2026-09-02T05:38:17.478146+00:00"
+}

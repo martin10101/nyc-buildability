@@ -4,8 +4,8 @@ import { expectProfile } from "./helpers";
 /**
  * M4-T005 phase 3 — the DEFENSE-IN-DEPTH no-call guarantee.
  *
- * Even though this test server has the frontend env flag ON
- * (INTERNAL_RULE_EVAL_UI=1) and the API's server flag ON, a request that does
+ * Even though this test server has the canonical env flag ON
+ * (INTERNAL_RULE_EVAL_ENABLED=1, the SAME name gating the API), a request that does
  * NOT opt in must render no rule-evaluation surface and must issue NO request
  * to the rule-evaluation endpoint. The browser is proven silent by recording
  * every request URL it makes.

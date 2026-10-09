@@ -1,0 +1,117 @@
+{
+  "task_id": "M0-T133",
+  "schema": "evidence_map/v1",
+  "requirements": {
+    "D-024-R460": [
+      {
+        "evidence": "New AD-093 defect-lane task M0-T133 created + claimed under the standard process (G0 PASS); reviewers run on the approved fallback model (opus) per the dispatch; optimized for fastest safe return by scoping to the certified limited-auto run.",
+        "paths": [
+          "project-control/tasks/M0-T133.json",
+          "project-control/reports/M0-T133-G0-readiness.md"
+        ]
+      }
+    ],
+    "D-024-R461": [
+      {
+        "evidence": "Smallest durable correction: a new focused module + a split of extract_checkpoint + a controller enrichment seam - NOT a prompt-only wording fix and NOT a bare Opus retry (the checkpoint contract prompt is unchanged; the controller now provides the fields).",
+        "paths": [
+          "tools/agent_supervisor/checkpoint_envelope.py",
+          "tools/agent_supervisor/claude_runner.py",
+          "project-control/reports/M0-T133-producer-report.md"
+        ]
+      }
+    ],
+    "D-024-R462": [
+      {
+        "evidence": "branch/worktree/starting_sha/current_sha treated as CONTROLLER-AUTHORITATIVE: CheckpointEnvelope.resolve() derives them from the dispatch context (expected branch/worktree, pre-dispatch starting_sha) + a fresh read-only git measurement.",
+        "paths": [
+          "tools/agent_supervisor/checkpoint_envelope.py",
+          "tools/agent_supervisor/loop.py"
+        ]
+      }
+    ],
+    "D-024-R463": [
+      {
+        "evidence": "Enrichment runs BEFORE validation: run_unit finds the candidate, then (envelope present) resolves + enrich_checkpoint + validate_checkpoint; only the four fields are populated.",
+        "paths": [
+          "tools/agent_supervisor/claude_runner.py",
+          "tools/agent_supervisor/checkpoint_envelope.py"
+        ]
+      }
+    ],
+    "D-024-R464": [
+      {
+        "evidence": "Worker-supplied fields require an exact normalized match; mismatch/unreadable git/unexpected branch/wrong worktree/ambiguous SHA all FAIL CLOSED (EnvelopeError codes checkpoint_field_mismatch/git_unreadable/unexpected_branch/wrong_worktree/ambiguous_sha/ambiguous_branch) -> invalid_checkpoint. Tested for each.",
+        "paths": [
+          "tools/agent_supervisor/checkpoint_envelope.py",
+          "tools/test_agent_supervisor_checkpoint_envelope.py"
+        ]
+      }
+    ],
+    "D-024-R465": [
+      {
+        "evidence": "The worker's ORIGINAL checkpoint bytes are preserved (RunResult.checkpoint_original_digest; enrich returns a COPY, never mutating the input); the loop audits checkpoint_envelope_enriched with the added_fields + original digest + a 'NOT worker-authored' note.",
+        "paths": [
+          "tools/agent_supervisor/claude_runner.py",
+          "tools/agent_supervisor/loop.py",
+          "tools/test_agent_supervisor_claude_runner_checkpoint.py"
+        ]
+      }
+    ],
+    "D-024-R466": [
+      {
+        "evidence": "No change to semantic completion/evidence/status/review/advancement/worktree-isolation/effect/budget/owner-gate: models.py/ClaudeCheckpoint untouched (forbidden path); enrichment touches ONLY the four envelope fields; test_enrichment_touches_only_envelope_fields_and_preserves_status proves a BLOCKED status/summary/blockers survive.",
+        "paths": [
+          "tools/agent_supervisor/checkpoint_envelope.py",
+          "tools/test_agent_supervisor_checkpoint_envelope.py",
+          "project-control/reports/M0-T133-producer-report.md"
+        ]
+      }
+    ],
+    "D-024-R467": [
+      {
+        "evidence": "Removal-sensitive tests for all 8 named scenarios in test_agent_supervisor_checkpoint_envelope.py (18) incl the exact journey-5 opus shape (RED without enrichment on the four missing fields) + no-false-completion; loop-level in test_agent_supervisor_claude_runner_checkpoint.py (6).",
+        "paths": [
+          "tools/test_agent_supervisor_checkpoint_envelope.py",
+          "tools/test_agent_supervisor_claude_runner_checkpoint.py"
+        ]
+      }
+    ],
+    "D-024-R468": [
+      {
+        "evidence": "Test sequence honored: affected packs first (477 passed/0), then ONE golden (42) + ONE whole suite once (3067 passed/2 skipped/0 failed, 3045 baseline +24); then independent G3/G4 + DCV. No broad 17-defect survey; no unrelated cert repeats.",
+        "paths": [
+          "project-control/reports/M0-T133-G2-self-check.md",
+          "project-control/reports/M0-T133-producer-report.md"
+        ]
+      }
+    ],
+    "D-024-R469": [
+      {
+        "evidence": "Preserved throughout: journal PAUSED_RECOVERY (transitions 40, audit 104 unchanged), pending effects 0, worktrees, budgets, owner-touch, model pin claude-opus-4-8, manifest (pre-recert c228b7ca), PR #241 OPEN.",
+        "paths": [
+          "project-control/reports/M0-T133-G2-self-check.md",
+          "project-control/reports/M0-T133-producer-report.md"
+        ]
+      }
+    ],
+    "D-024-R470": [
+      {
+        "evidence": "After acceptance + the single R247 recertification, the orchestrator presents the targeted proof + the exact owner-typed clear-recovery command + one parse-validated start with a FRESH unused run id; present-only, no additional optional work. (Delivered in the recert report + final seam.)",
+        "paths": [
+          "project-control/reports/M0-T133-recertification.md"
+        ]
+      }
+    ],
+    "D-024-R471": [
+      {
+        "evidence": "The orchestrator does NOT clear recovery / start the loop / execute commissioning (present-only). The fix does NOT weaken fail-closed checkpoint integrity: every anomaly fails closed and the worker value is never overwritten; models.py schema unchanged; so no stop-and-report blocker was triggered.",
+        "paths": [
+          "tools/agent_supervisor/checkpoint_envelope.py",
+          "tools/agent_supervisor/claude_runner.py",
+          "project-control/reports/M0-T133-producer-report.md"
+        ]
+      }
+    ]
+  }
+}

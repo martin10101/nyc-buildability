@@ -1,0 +1,162 @@
+{
+  "_provenance": {
+    "derived_by": "M0-T123 (D-024-R341), read-only from the preserved cycle-2 evidence",
+    "note": "Sanitized, load-bearing shape only. Session ids are random UUIDs (no secret). Sources were NEVER written; see source_sha256.",
+    "runtime_dir_name": "33dfa57d54dbc5d1...TRUNCATED (sha256 of the canonical checkout path - the runtime-dir naming digest, not a secret; truncated for secret-scanner hygiene by the orchestrator at commit time)"
+  },
+  "ceiling": 400000,
+  "source_sha256": {
+    "supervisor_journal.sqlite3": "a4acb370f3a23fd5193c27d16e729a6b6035c53c368a10c52673de8b5de29255",
+    "audit.jsonl": "e80c057cabc24478ab67d785e2f903696f6cc1fcf7cbf782db9fd6f284430c83",
+    "transcript_cycle1": "3a0d1f30664b1deba7b6cd47a0a69bdc84906332eb3ed180aea5e74e2f8b9b17",
+    "transcript_cycle2": "3c9185687f12e86a2e066b18e8347a15840be94f981a52af3965f01394adbfaf"
+  },
+  "durable_journal_state_at_cycle2_start": {
+    "rotation_pending": true,
+    "rotation_pending_reason": "context_threshold",
+    "provider_session_continuity": {
+      "session_id": "798d2f00-a346-49b4-9a95-8d746b617e22",
+      "run_id": "run_33dfa57d54db",
+      "cycle": 1,
+      "model_id": "",
+      "context_tokens_present": false
+    }
+  },
+  "audit_excerpt": [
+    {
+      "sequence": 24,
+      "event_type": "rotation_pending_flagged",
+      "policy_result": "context_threshold",
+      "detail": {
+        "reason_code": "context_threshold",
+        "detail": "cumulative context usage 604772 crossed the configured threshold 400000",
+        "cycle": 1
+      }
+    },
+    {
+      "sequence": 30,
+      "event_type": "state_transition",
+      "policy_result": "decision_halt_unsafe",
+      "detail": {
+        "reason": ""
+      }
+    },
+    {
+      "sequence": 34,
+      "event_type": "state_transition",
+      "policy_result": "owner_explicit_restart",
+      "detail": {
+        "reason": ""
+      }
+    },
+    {
+      "sequence": 37,
+      "event_type": "state_transition",
+      "policy_result": "start_command",
+      "detail": {
+        "reason": ""
+      }
+    },
+    {
+      "sequence": 40,
+      "event_type": "claude_unit_completed",
+      "policy_result": "",
+      "detail": {
+        "context_tokens": 640224,
+        "usage_known": true,
+        "returncode": 1,
+        "events": 134,
+        "observed_models": [
+          "claude-fable-5"
+        ],
+        "model_mismatch": false,
+        "timed_out": false,
+        "cancelled": false,
+        "graceful_close_failed": false,
+        "malformed_lines": 0,
+        "session_id_recorded": true
+      }
+    },
+    {
+      "sequence": 42,
+      "event_type": "state_transition",
+      "policy_result": "unsafe_condition",
+      "detail": {
+        "reason": "missing_checkpoint: the run produced no structured checkpoint; a missing result is never interpreted as success (S14)"
+      }
+    },
+    {
+      "sequence": 43,
+      "event_type": "owner_touch_recorded",
+      "policy_result": "no_valid_checkpoint",
+      "detail": {
+        "reason": ""
+      }
+    }
+  ],
+  "worker_transcripts": {
+    "cycle_1_correct_worktree": {
+      "project_slug": "[HOME-SLUG]-Downloads-nyc-zoning-wt-m0t107",
+      "records": 91,
+      "cwds": [
+        "[HOME]/Downloads/nyc-zoning/wt-m0t107"
+      ],
+      "session_ids": [
+        "02b014ee-26f0-4826-ab70-b3c6fa1e8108"
+      ],
+      "type_counts": {
+        "queue-operation": 2,
+        "attachment": 20,
+        "user": 21,
+        "atis-latch": 6,
+        "assistant": 36,
+        "last-prompt": 6
+      },
+      "attachment_subtypes": {
+        "hook_success": 1,
+        "hook_additional_context": 2,
+        "deferred_tools_delta": 1,
+        "agent_listing_delta": 1,
+        "skill_listing": 1,
+        "total_tokens_reminder": 11,
+        "nested_memory": 3
+      },
+      "recovered_terminal_event": null,
+      "has_result_record": false
+    },
+    "cycle_2_primary_checkout_defect": {
+      "project_slug": "[HOME-SLUG]-Downloads-nyc-zoning-ctl24",
+      "records": 96,
+      "cwds": [
+        "[HOME]/Downloads/nyc-zoning/ctl24"
+      ],
+      "session_ids": [
+        "798d2f00-a346-49b4-9a95-8d746b617e22"
+      ],
+      "type_counts": {
+        "queue-operation": 2,
+        "attachment": 23,
+        "user": 23,
+        "atis-latch": 6,
+        "assistant": 36,
+        "last-prompt": 6
+      },
+      "attachment_subtypes": {
+        "hook_success": 1,
+        "hook_additional_context": 2,
+        "deferred_tools_delta": 1,
+        "agent_listing_delta": 1,
+        "skill_listing": 1,
+        "total_tokens_reminder": 13,
+        "nested_memory": 3,
+        "max_turns_reached": 1
+      },
+      "recovered_terminal_event": {
+        "kind": "max_turns_reached",
+        "maxTurns": 12,
+        "turnCount": 13
+      },
+      "has_result_record": false
+    }
+  }
+}

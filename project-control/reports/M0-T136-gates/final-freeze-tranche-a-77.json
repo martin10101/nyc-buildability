@@ -1,0 +1,26 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "-m",
+  "pytest",
+  "tools/test_agent_supervisor_checkpoint_extraction_split.py",
+  "tools/test_agent_supervisor_mrl_worker_result.py",
+  "tools/test_agent_supervisor_mrl_remote.py",
+  "tools/test_agent_supervisor_mrl_codex_decision.py",
+  "tools/test_agent_supervisor_mrl_transport.py",
+  "tools/test_agent_supervisor_mrl_exec_identity.py",
+  "tools/test_gate_runner.py",
+  "-q"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-02T03:09:12.451338+00:00",
+ "ended_at_utc": "2026-09-02T03:09:15.649688+00:00",
+ "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+ "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "3558ac159cd3df6ab4f33798118b8c230e9b6bbe5cacd50214ec1b70d3fdcb0c",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 182,
+ "stderr_bytes": 0
+}

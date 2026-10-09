@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T176",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T176-G5.md",
+  "reviewed_at": "2026-10-02T12:22:17.770114+00:00",
+  "content_manifest_sha256": "d28e1f226c90637b00078374c171183feb730e4b21b6abdd3f6601556f3a4a18",
+  "reviewed_sha": "21e4fb2b72d8de3730a0e00e73fc96a809b82829",
+  "updated_at": "2026-10-02T12:22:17.871286+00:00"
+}

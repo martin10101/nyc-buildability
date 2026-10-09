@@ -1,0 +1,13 @@
+{
+  "task_id": "M0-T158",
+  "note": "Cited D-044:D-044-R001,D-044-R002 (both bound via applicability append, digest 41304aa3->27dd2213) + D-001:ALL (s19 governance coverage, applicable subset empty). evaluate_task_refs: ok=true, applicable == [D-044-R001, D-044-R002].",
+  "requirements": {
+    "D-044-R001": [
+      "tools/context_budget.json at d1ab1f31 (handoff_token_budget == 8000; one surgical value)",
+      "project-control/reports/M0-T158-producer-report.md + M0-T158-G1.md (harness green: test_context_budget_check OK 15 tests; context_budget_check PASS reporting budget 8000)"
+    ],
+    "D-044-R002": [
+      "git diff over tools/context_budget.json at d1ab1f31 = exactly one changed value; eager_token_budget 6000 and every other key byte-identical; check script + tests untouched (G1 report verification items 1-3)"
+    ]
+  }
+}

@@ -107,6 +107,27 @@ def _round(args):
     return units.quantize(value, int(ndigits), rounding=units.DEFAULT_LEGAL_ROUNDING)
 
 
+def _round_threshold(args):
+    # round_threshold(value, threshold) - D-090 lane A item A-02b. Keeps the whole
+    # number of ``value`` and adds one only when the fractional part is AT LEAST
+    # ``threshold`` (a smaller fraction is dropped): e.g. a rule whose text counts
+    # "fractions equal to or greater than three-quarters" as one whole unit uses
+    # threshold 0.75, so 29.63 -> 29 and 29.75 -> 30. Additive: it does not touch
+    # ``round`` (half away from zero), whose behaviour is unchanged. Decided EXACTLY on
+    # the rational (the boundary fraction == threshold compares without float error).
+    # Fail-closed domain: ``value`` must be >= 0 (a count is never negative, so no
+    # sign convention is invented) and 0 < threshold <= 1 (threshold 1 = drop every
+    # fraction; threshold <= 0 would count a whole number as one more).
+    value, threshold = _nums("round_threshold", args, n=2)
+    if value < 0:
+        raise OperationError(f"round_threshold value must be >= 0, got {value}")
+    if not 0 < threshold <= 1:
+        raise OperationError(f"round_threshold threshold must be in (0, 1], got {threshold}")
+    whole, remainder = divmod(value.numerator, value.denominator)
+    fraction = Fraction(remainder, value.denominator)
+    return Fraction(whole + (1 if fraction >= threshold else 0))
+
+
 def _clamp(args):
     value, low, high = _nums("clamp", args, n=3)
     if low > high:
@@ -123,6 +144,7 @@ COMPUTE_OPS: dict[str, Callable[[list[Any]], Fraction]] = {
     "min": _min,
     "max": _max,
     "round": _round,
+    "round_threshold": _round_threshold,
     "clamp": _clamp,
 }
 

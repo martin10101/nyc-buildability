@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T025",
+  "producer_agent": "supervised-loop-fable-worker",
+  "report_file": "project-control/reports/M0-T025-producer-report.md",
+  "submitted_at": "2026-09-07T04:46:59.555002+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T025-evidence-map.json",
+  "content_manifest_sha256": "598fc256aeecfb33bfc3b2b5081f559d1f95f660c4ac08141709e547f2036d09",
+  "reviewed_sha": "56db6a17bd1c43e4f63bb894a4578e87d4a9139f",
+  "applicable_requirements": [],
+  "updated_at": "2026-09-07T04:47:12.700600+00:00"
+}

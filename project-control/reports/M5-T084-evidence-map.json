@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T084",
+ "material_commit": "075cc555 (cherry-pick of the wt-m5t084 in-worktree commit 673a870f; every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:20:00+00:00",
+ "producer": "official-source-researcher (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t084)",
+ "requirements": {
+  "D-066-R001": [
+   "D-066-R001: the packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 815 files) naming consumers, forbidden neighbours and the `query.py --no-regen impact` instruction; the producer stayed inside the named scope (no forbidden neighbour touched - the cherry-pick diff lists only the allowed paths)."
+  ],
+  "D-087-R001": [
+   "D-087-R001: this packet is one of the seq-128 capacity-ramp units - contracted, claimed and gated like any ledger packet (G0 PASS at 5e704eeb, claim seam f9bfd54d); produced by an orchestrator-dispatched subagent in its own worktree (wt-m5t084) concurrently with the other D-087 units; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t084); the in-worktree commit 673a870f touches exactly the allowed paths (git diff --name-only 673a870f^ 673a870f); the shared package __init__ files stayed orchestrator-owned and untouched."
+  ],
+  "D-087-R004": [
+   "docs/research/dxf-format-reference-2026-09.md records the official Autodesk DXF facts the AutoCAD export depends on (AutoCAD 2005 DXF Reference PDF sha256-pinned + current cloudhelp pages): $ACADVER codes and releases, minimal R12 vs R2000 structure (R12 needs no handles/CLASSES/OBJECTS), $INSUNITS codes incl. 21 = US Survey Feet added in the 2017 reference, full group-code tables for LINE, LWPOLYLINE, POLYLINE/VERTEX/SEQEND, 3DFACE, TEXT, LAYER, LTYPE; one item flagged for G1 re-verification (R2000 OBJECTS root dictionary)."
+  ],
+  "D-087-R005": [
+   "docs/research/architect-drawing-corpus-2026-09.md: six REAL public-domain drawing files (17 USC 105) - three AutoCAD-plotted VECTOR sets (VA standard details, drawing requirements) and three SCANNED+OCR HABS/HAER data pages - each with URL, publisher, reuse basis, size, vector-vs-scanned classification, producing app and sha256; downloaded to a temp dir only (nothing in the repo); copyrighted items excluded. This is the real-file corpus phase C requires before the reader is widened for production."
+  ],
+  "D-087-R006": [
+   "The DXF note is the format authority for both CAD directions (M5-T081 writer, M5-T086 reader); its $INSUNITS finding (2 = international feet vs 21 = US survey feet) is routed to both packets' G1 reviews."
+  ],
+  "D-087-R007": [
+   "Native DWG stays out of scope: no DWG library was evaluated for adoption; the note keeps DXF as the licence-free path."
+  ]
+ }
+}

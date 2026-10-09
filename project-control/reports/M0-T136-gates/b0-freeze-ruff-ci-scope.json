@@ -1,0 +1,20 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "-m",
+  "ruff",
+  "check",
+  "."
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\services\\api",
+ "started_at_utc": "2026-09-01T22:52:47.941044+00:00",
+ "ended_at_utc": "2026-09-01T22:52:48.048243+00:00",
+ "repo_head": "447026458fc4c79b8953032bccf53b6586e797e4",
+ "repo_tree": "3128d5d506e7773f699ee3a5fa6eb4f5bf5ecc2f",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 19,
+ "stderr_bytes": 0
+}

@@ -1,0 +1,108 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-036",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-07T15:35:40+00:00",
+ "requirements": [
+  {
+   "id": "D-036-R001",
+   "text": "Fable return / switch-back: the system must know when Fable normally returns (weekly cap lift, normally Thursday 9 PM local), check whether it is back, and switch back to Fable. SATISFACTION BINDING (verified against the certified controller, loop.py D-004-R751/R754/R758 block): the built chain already returns to the pinned model (claude-fable-5) at the next seam it is available, availability decided by an ACTUAL LAUNCH PROBE - strictly stronger than a clock guess; the Thursday-9PM knowledge additionally lands as (a) the recorded resume_not_before_utc deadline whenever a run stops on the weekly limit (drives the wake task), and (b) an owner-ordered weekly Thursday 21:00 local scheduled task running the controller's fixed --recover-boot action, so a fully-capped night still gets a Thursday-evening recovery attempt with no session alive.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-036-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "model_selection.toml chain entry + journal substitution/return events; the weekly scheduled task present with the fixed manifest-verified action",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-036-R002",
+   "text": "Fallback trigger and target: go to claude-opus-4-8 (xhigh) for the main agent ONLY when the week's Fable quota is exhausted. SATISFACTION BINDING: worker chain = fallback_models[claude-opus-4-8] in model_selection.toml (claude-opus-4-8 already on the immutable config.toml allowlist); the certified chain steps down ONLY on reason_code quota_exhausted (any other failure keeps the fail-closed pause) and records the substitution as a first-class event - exactly the only-on-weekly-exhaustion condition. The xhigh element binds at the layers where effort is lawfully configurable (session /model + agent-file conventions per D-004 and the standing 2026-08-05 reviewer-fallback rule: Fable -> claude-opus-4-8 xhigh); the PERMANENT D-004-R159 prohibition stands - the supervisor never writes or passes an effort key (sole standing exception: codex.review_reasoning_effort per M0-T146).",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-036-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [
+    "D-036-R001"
+   ],
+   "required_harness": "",
+   "required_evidence": "model_selection.toml diff; config.toml allowlist unchanged; substitution events carry quota_exhausted only",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-036-R003",
+   "text": "Autostart with timed retry: autostart must know what time the limit lifts and, if Claude Code is late to reopen, retry every 4 minutes up to 50 times until the loop is running. SATISFACTION BINDING: install the controller-planned OS tasks (owner-approved setup act, D-007 S11.4; this directive IS the owner approval): the boot task (logon trigger) now, the per-deadline wake task (TimeTrigger at the recorded resume_not_before_utc, WakeToRun, StartWhenAvailable) whenever a run stops on a limit, and the weekly Thursday task of R001; each carries the owner-ordered Task Scheduler restart policy RestartOnFailure Interval=PT4M Count=50 added AFTER certified installation via Set-ScheduledTask - the fixed, manifest-verified action and launcher are never altered (the S11.4 security property), only the OS retry setting the owner ordered. DURABLE FOLLOW-UP (freeze lane): controller-side XML support for the restart policy so the digest covers it, to be contracted as a supervisor task.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-036-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-09-07"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "schtasks/Get-ScheduledTask output showing the tasks, their fixed actions, and the PT4M/50 restart policy; installation transcript in the D-035 overnight/day report",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

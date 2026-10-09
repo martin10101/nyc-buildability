@@ -235,5 +235,31 @@
     "tolerance": 1e-06,
     "method": "abs(recomputed - canonical) <= tolerance * max(1, abs(canonical))",
     "note": "Not performed: professional-review/spatial uncertainty stopped the build."
+  },
+  "unused_draft_zoning_floor_area": {
+    "state": "not_computable",
+    "unused_draft_zoning_floor_area_sq_ft": null,
+    "unit": null,
+    "label": "Unused draft zoning floor area (FAR-derived): the DRAFT residential zoning-floor-area cap (ZR 23-21) minus the existing built floor area. A zoning floor-area difference only, under the draft label and per-fact provenance discipline.",
+    "scope_note": "Scope: this is a zoning floor-area difference only. Building geometry - height, yards, setbacks, layout, lot coverage, open space - has NOT been assessed by this calculation. It does not establish achievable floor area or a buildable envelope, and the tax lot is treated as the zoning lot (see the zoning_lot_extent assumption).",
+    "formula": null,
+    "professional_review_required": false,
+    "over_built_statement": null,
+    "not_computable_reason": "no_draft_far_cap",
+    "inputs": {
+      "draft_zoning_floor_area_cap": {
+        "value_sq_ft": null,
+        "unit": null,
+        "provenance": null
+      },
+      "existing_building_floor_area": {
+        "value_sq_ft": null,
+        "unit": null,
+        "coverage_status": null,
+        "provenance_ref": null,
+        "provenance": null
+      }
+    },
+    "assumptions": []
   }
 }

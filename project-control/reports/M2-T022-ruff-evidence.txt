@@ -1,0 +1,4 @@
+All checks passed!
+exit=0 (0 = All checks passed)
+ruff 0.13.0
+cwd=services/api; config=services/api/pyproject.toml line-length=100 select=[E,F,I,UP,B]; line 361 length=107; ruff E501 exempts lines whose overflow past the limit contains no whitespace (the URL token) - captured by the orchestrator per the evidence-capture division of labor after G4 B1 inferred a ruff failure statically

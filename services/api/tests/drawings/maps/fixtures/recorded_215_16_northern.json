@@ -1,0 +1,346 @@
+{
+  "contract_version": "1.0.0",
+  "document_kind": "map_context",
+  "map_context": {
+    "building_footprints": {
+      "attribution": "Building footprints: NYC Office of Technology and Innovation, Building Footprints (NYC Open Data 5zhs-2jue), under the NYC Open Data Terms of Use; source edit date 2026-09-27.",
+      "entries": [
+        {
+          "bin": "4157401",
+          "doitt_id": "408569",
+          "outline": [
+            [
+              [
+                1048804.64129735,
+                216346.532053343
+              ],
+              [
+                1048738.05481624,
+                216329.769619713
+              ],
+              [
+                1048739.14897416,
+                216325.423171696
+              ],
+              [
+                1048709.68873118,
+                216318.006519882
+              ],
+              [
+                1048697.73107797,
+                216365.503800275
+              ],
+              [
+                1048794.30306345,
+                216389.817399932
+              ],
+              [
+                1048804.64129735,
+                216346.532053343
+              ]
+            ]
+          ]
+        },
+        {
+          "bin": "4616079",
+          "doitt_id": "1307067",
+          "outline": [
+            [
+              [
+                1048906.58925633,
+                216356.150800468
+              ],
+              [
+                1048911.14010025,
+                216336.152152759
+              ],
+              [
+                1048846.30066288,
+                216321.397589126
+              ],
+              [
+                1048841.75014706,
+                216341.39623681
+              ],
+              [
+                1048805.70330309,
+                216333.193497336
+              ],
+              [
+                1048788.66921646,
+                216408.048334615
+              ],
+              [
+                1048889.55549778,
+                216431.005637741
+              ],
+              [
+                1048906.58925633,
+                216356.150800468
+              ]
+            ]
+          ]
+        }
+      ],
+      "provenance": {
+        "dataset_id": "5zhs-2jue",
+        "dataset_version": "1790475422511",
+        "raw_digest_sha256": "sha256:d96c613de168e72db2bc7f45c1393aa481e51927626f91d72e0c57a5c0be9c7e",
+        "request_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/arcgis/rest/services/BUILDING_view/FeatureServer/0/query?where=1%3D1&geometry=%7B%22rings%22%3A%5B%5B%5B1048810.2324%2C216310.4401%5D%2C%5B1048788.6281%2C216408.0544%5D%2C%5B1048889.9179%2C216431.1036%5D%2C%5B1048911.5751%2C216333.5015%5D%2C%5B1048812.4014%2C216310.9339%5D%2C%5B1048810.2324%2C216310.4401%5D%5D%5D%7D&geometryType=esriGeometryPolygon&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID%2CDOITT_ID%2CBIN%2CBASE_BBL%2CMAPPLUTO_BBL%2CHEIGHT_ROOF%2CGROUND_ELEVATION%2CCONSTRUCTION_YEAR%2CFEATURE_CODE%2CGEOM_SOURCE%2CLAST_EDITED_DATE%2CLAST_STATUS_TYPE&returnGeometry=true&outSR=2263&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+        "retrieved_at": "2026-09-30T06:20:00Z",
+        "source_data_last_edited": "2026-09-27",
+        "source_id": "nyc-oti-building-footprints-arcgis"
+      },
+      "status": "available"
+    },
+    "crs": "EPSG:2263",
+    "measurement": {
+      "label": "Approximate — tax map",
+      "rank": "approximate_tax_map"
+    },
+    "subject_lot": {
+      "bbl": "4073340070",
+      "outline": [
+        [
+          [
+            1048810.23242283,
+            216310.440144539
+          ],
+          [
+            1048788.62812519,
+            216408.054429531
+          ],
+          [
+            1048889.91793966,
+            216431.10360384
+          ],
+          [
+            1048911.57505941,
+            216333.501450062
+          ],
+          [
+            1048812.40138388,
+            216310.93389082
+          ],
+          [
+            1048810.23242283,
+            216310.440144539
+          ]
+        ]
+      ]
+    },
+    "units": "feet",
+    "zoning_districts": {
+      "accuracy": "Zoning-district boundaries are approximate: the DCP horizontal accuracy statement is approximately +/- 20 ft, so a boundary drawn near the lot is not a lot-level determination.",
+      "attribution": "Zoning districts: NYC Department of City Planning, NYC GIS Zoning Features (nyzd), via NYC Open Data under the NYC Open Data Terms of Use; source edit date 2026-08-17. This zoning layer was retrieved by an attribute query for ZONEDIST 'R6B'; neighbouring districts of other codes were not retrieved.",
+      "entries": [
+        {
+          "outline": [
+            [
+              [
+                1047438.9927043,
+                218676.136188224
+              ],
+              [
+                1047540.1204548,
+                218216.986844063
+              ],
+              [
+                1047573.00949664,
+                218224.166619733
+              ],
+              [
+                1047785.20329797,
+                217710.018697888
+              ],
+              [
+                1047964.8873218,
+                217750.412645981
+              ],
+              [
+                1047965.23246548,
+                217748.628856897
+              ],
+              [
+                1047993.9935628,
+                217622.056275398
+              ],
+              [
+                1047930.42249572,
+                217607.916539893
+              ],
+              [
+                1048000.6648093,
+                217426.861127734
+              ],
+              [
+                1047898.17387256,
+                217413.558332816
+              ],
+              [
+                1047954.37881264,
+                217253.403469399
+              ],
+              [
+                1048008.4718803,
+                217265.439206481
+              ],
+              [
+                1048169.62214856,
+                216821.110698804
+              ],
+              [
+                1048293.73935439,
+                216849.445943981
+              ],
+              [
+                1048364.76545906,
+                216529.519090399
+              ],
+              [
+                1049382.11348997,
+                216747.267670646
+              ],
+              [
+                1049586.54779239,
+                216791.02381672
+              ],
+              [
+                1050996.86682214,
+                217098.140000388
+              ],
+              [
+                1051239.21377839,
+                217150.914173067
+              ],
+              [
+                1051273.61823714,
+                216998.79603897
+              ],
+              [
+                1051158.91013323,
+                216969.927002221
+              ],
+              [
+                1051158.86977898,
+                216969.918143973
+              ],
+              [
+                1051188.43697706,
+                216838.697933972
+              ],
+              [
+                1050657.38718614,
+                216718.950141981
+              ],
+              [
+                1049700.62827289,
+                216507.030290231
+              ],
+              [
+                1049064.38774747,
+                216366.104390979
+              ],
+              [
+                1048713.45045722,
+                216288.372591063
+              ],
+              [
+                1048368.34616056,
+                216228.430453733
+              ],
+              [
+                1048406.85198906,
+                216117.647210732
+              ],
+              [
+                1048310.33085664,
+                216100.370670483
+              ],
+              [
+                1048267.6544328,
+                216092.73190622
+              ],
+              [
+                1048261.72990397,
+                216107.077021897
+              ],
+              [
+                1048072.2000993,
+                216044.57780306
+              ],
+              [
+                1047921.06129397,
+                215994.738335803
+              ],
+              [
+                1047921.02389248,
+                215994.726196721
+              ],
+              [
+                1047876.93605414,
+                216117.349967226
+              ],
+              [
+                1047542.87865138,
+                216006.056226566
+              ],
+              [
+                1045984.28760847,
+                215449.374597147
+              ],
+              [
+                1045911.48296405,
+                215770.188588053
+              ],
+              [
+                1046404.8077648,
+                215912.337910056
+              ],
+              [
+                1046867.60211481,
+                216088.653502315
+              ],
+              [
+                1047843.54340439,
+                216419.33459948
+              ],
+              [
+                1047449.50449431,
+                217524.17983073
+              ],
+              [
+                1047567.58201405,
+                217539.967200726
+              ],
+              [
+                1047140.62322231,
+                218595.963120222
+              ],
+              [
+                1047216.75167897,
+                218627.237335891
+              ],
+              [
+                1047438.9927043,
+                218676.136188224
+              ]
+            ]
+          ],
+          "zonedist": "R6B"
+        }
+      ],
+      "provenance": {
+        "dataset_id": "nyzd",
+        "dataset_version": "1786990460277",
+        "raw_digest_sha256": "sha256:27b5a4fba2e6e7c763e119f2cb2a673a194d170ad206500aacaffe113c7fef51",
+        "request_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/nyzd/FeatureServer/0/query?where=ZONEDIST%3D%27R6B%27&outFields=*&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&f=json",
+        "retrieved_at": "2026-09-30T06:20:00Z",
+        "source_data_last_edited": "2026-08-17",
+        "source_id": "nyc-dcp-zoning-features-arcgis"
+      },
+      "status": "available",
+      "use_limitation": "These features are not intended for determining zoning at the individual tax lot level."
+    }
+  }
+}

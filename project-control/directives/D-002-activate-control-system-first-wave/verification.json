@@ -1099,7 +1099,20 @@
         }
       ],
       "verified_at": "2026-07-24T00:00:00+00:00"
+    },
+    {
+      "directive_id": "D-002",
+      "task_id": "M0-T025",
+      "applicable_requirement_ids": [],
+      "reviewed_sha": "c7e57229a3d55fd6da309531facdab540f22a7c7",
+      "reviewed_manifest_sha256": "598fc256aeecfb33bfc3b2b5081f559d1f95f660c4ac08141709e547f2036d09",
+      "producer": "supervised-loop-fable-worker",
+      "verifier": "directive-compliance-verifier",
+      "schema_version": "directive_verification/v2",
+      "verified_at": "2026-09-07T06:16:41+00:00",
+      "note": "EMPTY-SET verification. M0-T025 cites D-002:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-002 requirements for this packet: every one of the 69 D-002 requirements carries a NON-EMPTY applicability.task_ids ('M0-T024' | 'M3-T001','M4-T007','M2-T017' | 'M0-T024-POSTMERGE') and none contains 'M0-T025', so _applicability_matches short-circuits to non-match even though task_type=governance and milestone=M0 would otherwise match. evaluate_task_refs returns ok=true with applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[]. No selective citation: an independent conjunction sweep of all 3623 requirement rows across all 32 active directives (D-001..D-034) against M0-T025's task_id/task_type/milestone/allowed_paths (tools/directive_registry.py, tools/validate_directive_compliance.py, tools/test_directive_compliance.py, project-control/reports/M0-T025-producer-report.md) yields ZERO applicable requirements; D-004's textual 'do not touch M0-T025' prohibitions are applicability-bound to other tasks and are not cited by M0-T025. Row exists because accept() fail-closes when a cited active directive has no task_verification row (D-032/M0-T147..M2-T020, D-033/M0-T150 empty-set precedents). Verifier != producer. Material identity: reviewed_manifest_sha256 = 598fc256aeecfb33bfc3b2b5081f559d1f95f660c4ac08141709e547f2036d09, reproduced via directive_registry.frozen_git_identity over the four allowed_paths and byte-identical across submit 56db6a17, candidate 20f7651c, and HEAD 75f060d8 (require_clean=True at HEAD, err=None); the four blobs are e1168304 / d649b6fe / 940ad7dd / 805ddc84 at all three commits. Directive integrity reproduced: D-002 active, zero errors; validate_directive_compliance.py --check exit 0. Append-only law honored: git show --stat 20f7651c = exactly the four allowed_paths; no source-*.md/manifest.json/requirements.json/verification.json under project-control/directives/ touched. Prohibited-action evidence: status awaiting_gate, in active_tasks only, not accepted, no merge/deploy, no blocker references M0-T025, PR #241 untouched. Mechanical accept-time restamp convention applies: reviewed_manifest_sha256 stays 598fc256 while the four allowed_paths blobs are unchanged; the orchestrator re-stamps reviewed_sha to the actual accept-time HEAD (must be verified clean and byte-identical), else fail closed. The full tools/test_directive_compliance.py suite (~27 min) is the separate mandatory orchestrator gate-wave step.",
+      "requirements": []
     }
   ],
-  "updated_at": "2026-07-24T00:00:00+00:00"
+  "updated_at": "2026-09-07T06:16:41+00:00"
 }

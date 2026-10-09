@@ -1,0 +1,64 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-060",
+  "version": 1,
+  "slug": "loop-continuity-fable-exhaustion",
+  "title": "Owner 2026-09-14: keep the build loop running - the recorded fable_exhaustion_turnover_recorded REFUSED-unsafe stop plus the runtime's own usage-limit fallback of the orchestrator session establish the D-058-R004 genuine hard-stop condition, authorizing the armed claude-opus-4-8 worker fallback (revert to Fable on availability); no quality, gate, or hold relaxation.",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-14",
+  "captured_at": "2026-09-14T09:00:03+00:00",
+  "created_at": "2026-09-14T09:00:03+00:00",
+  "updated_at": "2026-09-14T09:00:03+00:00",
+  "channel": "interactive_chat",
+  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "capture_head_sha": "7150edefed4574a5b66f92255b7fce5cc0cdf117",
+  "owner_approval": {
+    "state": "authorized",
+    "note": "Owner instructed loop continuity after the exhaustion began (08:57Z vs the 08:45Z runtime fallback); D-058-R004 already reserved the opus chain for exactly this hard stop and the model is on the immutable owner-approved allowlist."
+  },
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "locked_requirement_ids": [
+    "D-060-R001",
+    "D-060-R002",
+    "D-060-R003",
+    "D-060-R004",
+    "D-060-R005"
+  ],
+  "requirements_content_digest_sha256": "0cba81646c514e3597af08c0d3c4be5076a36dd3bfeffff5fcd2c5c7b3bb15fb",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-14T09:00:03+00:00",
+      "content_digest_sha256": "49b0650221b8533247ac31e8d37c1b683d070a56227aeaee9dcf6ec6e949fbcf"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "loop_continuity_order",
+    "task_ids": [],
+    "task_types": [],
+    "allowed": "worker-model fallback actuation to the allowlisted claude-opus-4-8 while Fable is exhausted, loop relaunch, and the revert when Fable returns",
+    "prohibited": "widening any model allowlist; introducing a model not already owner-approved; relaxing gates, reviews, dependency policy, or any active hold; leaving the opus pin in place after Fable returns"
+  },
+  "audit_log": [
+    {
+      "at": "2026-09-14T09:00:03+00:00",
+      "actor": "orchestrator",
+      "action": "captured",
+      "note": "Captured at the loop-restore seam with both primary runtime records quoted (supervisor exit-11 stop reason; model-switch tracker usage-limit fallback). 5 requirements R001-R005."
+    }
+  ]
+}

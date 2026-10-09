@@ -1,0 +1,219 @@
+{
+ "task_id": "M0-T095",
+ "directive_refs": [
+  {
+   "directive_id": "D-024",
+   "requirement_ids": "ALL"
+  }
+ ],
+ "applicable_requirement_note": "DirectiveRegistry.evaluate_task_refs resolves the applicable set for this packet to 46 requirement ids (the Phase-G root-cause/GitHub-effect core R076-R078 + R090/R091 + R105/R112/R114 + the standing conduct/identity/testing set), re-resolved live this session: ok=true, missing=[], invalid=[], unresolved=[]. All GitHub-effect proofs are SHADOW-ONLY against injected runners/fakes (the github_flow convention); live publication stays behind R595 (report section 2). Detail per row: report sections 0-4, especially the executable prove-first 16.8 mapping table in section 4.1.",
+ "task_evidence": [
+  "project-control/reports/M0-T095-repair-gate.md",
+  "project-control/reports/M0-T095-evidence-map.json",
+  "tools/test_agent_supervisor_repair_gate.py"
+ ],
+ "generated_at": "2026-08-28T07:15:25+00:00",
+ "requirements": {
+  "D-024-R002": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: this unit's readiness share only - the repair-quality/effect-compliance leg (defect fixes gated for root cause, GitHub effects verified journaled/idempotent/authority-bounded); the two-unit golden run from the exact owner start command is owed by M0-T096, not claimed here"
+  ],
+  "D-024-R003": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/agent_supervisor/review_packet.py",
+   "CLAIM: this unit's share of the durable loop - the section-9 repair gate and section-12 effect-compliance verification that the review/acceptance seam consumes; Fable remains the producer and everything stays SHADOW-ONLY deterministic policy"
+  ],
+  "D-024-R004": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: unchanged by this unit - no Codex authority is added; the R078 questions ride the existing review packet as a structured record (checkpoint_section), and the disposition never lets a reviewer become a producer"
+  ],
+  "D-024-R007": [
+   "docs/SESSION_HANDOFF.md",
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: this successor session implemented the unit from the frozen staged pack + captured directive alone, without asking the owner to re-paste anything"
+  ],
+  "D-024-R008": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: no routine owner questions were asked; the only owner-gated item (live GitHub publication behind R595) is flagged in report section 2, not asked"
+  ],
+  "D-024-R010": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: PR #241 and every pre-existing PR untouched AND the protection is now mechanized - classify_pr gives a pre-existing/held PR zero actions (16.8 E10 tests incl. the #241 fixture), and github_flow's existing not-authorized refusal is cross-proven"
+  ],
+  "D-024-R017": [
+   "project-control/tasks/M0-T095.json",
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: D-024-R105 is cited as qualifying evidence in the task packet and in both commits of this unit (1e86670, cef5ded); the duty itself is additionally mechanized by validate_freeze_citation (16.8 E13 fixture rejects an uncited supervisor change record)"
+  ],
+  "D-024-R018": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: prove-first honored - the section-4.1 mapping table cites the existing github_flow/external_effects/push_policy/reviewer proofs for E1-E5, E8, E9, E12 (and the executable Section168RegisterTests verifies every citation against real source); only the genuinely unproven cases got new code/tests, and no existing flow logic was rebuilt"
+  ],
+  "D-024-R020": [
+   "project-control/tasks/M0-T095.json",
+   "CLAIM: produced under Fable producer authority inside the packet's allowed_paths on the campaign control branch; commits and pushes follow ADR-005/ADR-006 Tier A"
+  ],
+  "D-024-R021": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: unchanged by this unit - no Codex action surface is touched; the checkpoint questions are a record Codex READS in the packet, and the disposition consumes its verdict through the existing review path"
+  ],
+  "D-024-R022": [
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: reinforced - the E9 register row cites the existing enumerated read-only-git proof (reviewer pack), and nothing in this unit gives Codex any write/stage/commit/push/merge capability"
+  ],
+  "D-024-R025": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: the same fail-closed posture is applied to the new surfaces - a missing/unrecognized review verdict never accepts (repair_gate_disposition), an undecidable expiry blocks, and blank identities never validate a review"
+  ],
+  "D-024-R026": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: owner final authority preserved - an owner hold classifies a PR as deliberately unmerged with zero actions, protected-branch merging stays behind github_flow's existing owner-stop/hard-deny logic, and nothing here activates anything"
+  ],
+  "D-024-R045": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: no worker-facing quota/countdown language anywhere in the new module or its packet section; the checkpoint section carries answers and findings only"
+  ],
+  "D-024-R076": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: the RepairRecord protocol delivers every R076 element - reproduce-first (reproduction ref or falsifiable failure condition), root cause + smallest owning boundary, preserved-behavior characterization, defect-bound regression test, explicit direct-repair vs bounded-replacement mode, one authoritative path with removal + recorded search/graph unreachability evidence, stale-caller refusal, no broad rewrite and no unrelated deletion (16.6 T1-T5, T8; mutation M1-M5 killed)"
+  ],
+  "D-024-R077": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: CompatibilityException carries reason, owner/task identity, measurable removal condition, telemetry key, removal task + deadline/milestone, and anti-default tests - one typed refusal per missing field (T6); expiry consumes injected clock/milestone facts only and an expired or undecidable exception BLOCKS acceptance (T7; mutation M8 killed)"
+  ],
+  "D-024-R078": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: the six checkpoint questions are a CLOSED data tuple; a missing/blank/unknown key refuses mechanically per key (T9); an unjustified new wrapper/retry/fallback/flag/branch/adapter around a known-bad path is a typed patch-stacking rejection while a justified layer and a sufficient direct fix pass without a demanded rewrite (T1/T2); complete answers yield a typed disposition that never auto-accepts (mutations M6/M7 killed)"
+  ],
+  "D-024-R079": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: the graph system is not edited by this unit; it is consumed as the evidence channel - UnreachabilityEvidence records search/code_graph queries and findings inside the RepairRecord, per the packet's reuse boundary"
+  ],
+  "D-024-R080": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: graph output is evidence, never authority - recorded findings that name still-reachable stale callers REFUSE the one-authoritative-path claim until resolved (T4), i.e. stale/contradicting graph data is surfaced and blocks rather than being acted on as fact"
+  ],
+  "D-024-R090": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: the R090 duty set is PROVEN against the existing surfaces per the section-4.1 mapping table - protected/default-branch and force-push hard-denies (E2), collision-free branch/head identities (E1), writer isolation (E3), required checks before push/merge (E4), journal-before-effect with confirmed-result-after and crash reconciliation before any retry (E5), duplicate-effect idempotence incl. the newly proven PR-create guard (E6), and no credentials in any record (E8); all SHADOW-ONLY via injected runners"
+  ],
+  "D-024-R091": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: bounded-checkpoint review discipline mechanized - review_still_valid invalidates a review whenever the frozen identity moves (E7), and evaluate_correction_round refuses drip-feeding by shape (multiple post-review identities), requiring ONE consolidated correction round at a single new frozen identity followed by re-review (E14; mutations M9/M12 killed)"
+  ],
+  "D-024-R098": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: unchanged by this unit - no session/seam machinery is touched; this session resumed the staged claim at the recorded seam per the campaign pattern"
+  ],
+  "D-024-R105": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: Phase G delivered - root-cause/replace-not-layer review evidence (RepairRecord + checkpoint questions in the review packet via checkpoint_section), compatibility-exception tracking with expiry-blocks-acceptance, and the section-12 confirmation that automatic checkpoint/branch/PR publication complies with effect journaling and current authority (the executable 16.8 register, section 4.1)"
+  ],
+  "D-024-R112": [
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: the full 16.6 matrix is implemented as T1-T9 test classes (wrapper-around-defective-path rejected; direct repair accepted without forced rewrite; bounded replacement removes old reachable logic; search/graph catches stale callers and duplicate fallbacks; regression test fails if fix removed; compatibility exception requires owner/removal-condition/telemetry/removal-task; expired path blocks acceptance; unrelated working code preserved) - 78 tests, 0 failures, Section166RegisterTests proves all nine cases map to named tests"
+  ],
+  "D-024-R114": [
+   "tools/test_agent_supervisor_repair_gate.py",
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: the full 16.8 matrix is covered E1-E14 via the prove-first register - existing proofs cited and verified against source (E1-E5, E8, E9, E12 + the existing halves of E6/E10), new proofs added for the gaps (E6 PR-create idempotence, E7 identity-invalidation, E10/E11 closed effect-free PR classification incl. the supervisor-freeze citation fixture E13, E14 consolidated round); Section168RegisterTests lists all fourteen cases"
+  ],
+  "D-024-R120": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: bounded rules mandatory - closed vocabularies throughout (repair modes, layer kinds, evidence tools, question keys, PR classes), fail-closed refusals, and no keep-trying path anywhere in the new policy"
+  ],
+  "D-024-R125": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: Bootstrap Gate 0 (launch root) passed this session before any write - primary cwd IS the worktree root, branch/HEAD/tree verified against the ledger"
+  ],
+  "D-024-R126": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: MCP-clean passed this session - no MCP tools attached to the live session tool inventory"
+  ],
+  "D-024-R127": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: not triggered - both Gate-0 checks passed; no writes preceded them"
+  ],
+  "D-024-R128": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: not triggered - no failed-start session's uncommitted work was adopted; the session started clean at the seq-21 seam with a clean tree"
+  ],
+  "D-024-R139": [
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "CLAIM: hold satisfied - capture/verification/conversion completed at seq 10 and M0-T095 was claimed in the accepted dependency order (M0-T092 accepted, M0-T093 accepted at seq 20)"
+  ],
+  "D-024-R140": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: roles preserved exactly - Fable produced, Codex reads the checkpoint record and rules through the existing review path, ledger/git/requirement records remain the durable authority, owner gates untouched"
+  ],
+  "D-024-R143": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: no duplicate machinery built - the unit reuses github_flow (Tier A/B/D + S5.5), external_effects/durable_state journaling, push_policy hard-denies, the review-packet path, policy.CONTROLLER_PATHS, and the unit-H1 disposition pattern; only the pack-section-0 genuine gaps were added"
+  ],
+  "D-024-R145": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: conduct within the amendment's authorization - surgical implementation of a staged task; no binary update, no native replacement act needed by this unit"
+  ],
+  "D-024-R146": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: nothing prohibited done - no activation, no Agent SDK, no MCP servers/channels, no protected/held PR touched (E10 mechanizes the protection), no model substitution, no owner-gate bypass, no permission-bypass flags, no unbounded fan-out, ledger remains authority"
+  ],
+  "D-024-R149": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: no documented feature assumed - the unit adds deterministic local policy only, proven by executable fixtures on the installed Windows Python; no provider/platform feature adoption occurred"
+  ],
+  "D-024-R164": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: this unit BUILDS preserved custom D-024 control - requirement-traceable repair records, frozen-identity review validity, exact-once GitHub-effect verification against the shadow journal, and owner-gate-respecting PR classification"
+  ],
+  "D-024-R166": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: no prohibited surface adopted as campaign authority - the unit adds deterministic controller policy only"
+  ],
+  "D-024-R177": [
+   "tools/agent_supervisor/repair_gate.py",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: unit H's H2 share delivered - the root-cause repair gate and the exact-once GitHub-effect verification/matrices; the refusal bridge was H1 (accepted), and the golden-run/graph-regression residue belongs to M0-T096, not claimed here"
+  ],
+  "D-024-R180": [
+   "tools/agent_supervisor/repair_gate.py",
+   "CLAIM: replace-not-layer honored twice over - the unit ADDS no parallel implementation beside any existing surface (github_flow/external_effects/push_policy are reused, not shadowed), and the R076/R077 gate itself mechanically enforces replace-not-layer with tracked, expiring compatibility exceptions"
+  ],
+  "D-024-R181": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "CLAIM: no accepted code deleted - the unit is purely additive (two new files); nothing was removed on a documentation claim"
+  ],
+  "D-024-R182": [
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: deterministic fixtures throughout, injected clock/milestone/age facts instead of wall-clock, a real temporary journal for the E6 idempotence proof, hand-picked mutants run serially after the suites finished, and no token-burning threshold proofs (the whole matrix runs in ~0.3s)"
+  ],
+  "D-024-R183": [
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: this unit's platform share - the deterministic core is proven on the installed Windows Python (backslash paths recognized by touches_supervisor); packet answers route through redaction (secret-bearing answer proven redacted); no statusLine/telemetry surface changed"
+  ],
+  "D-024-R184": [
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: this unit's share of the required proof set - overlapping-writer rejection is cited-and-verified in the E3 register row against the existing bounded-contracts/runtime-supervision proofs; no worker-facing quotas exist in any new record; the rotation/succession shares were proven by units F/G and are not re-claimed"
+  ],
+  "D-024-R185": [
+   "project-control/reports/M0-T095-repair-gate.md",
+   "tools/test_agent_supervisor_repair_gate.py",
+   "CLAIM: this unit's share - GitHub effects idempotent and exactly-once (E5/E6 incl. crash-between-effect-and-acknowledgment via the existing crash-reconciliation proofs), the supervisor suite stays green (2563/0 chunked, report section 4.3), mutation tests prove the new gates fail when deliberately broken (12/12 killed), and the 4-reviewer independent review at the frozen identity is the gate cycle recorded in project-control/gates/"
+  ],
+  "D-024-R188": [
+   "project-control/campaigns/D-024-fable-codex-loop.json",
+   "project-control/tasks/M0-T095.json",
+   "CLAIM: campaign rules followed - exactly one cohesive writer task claimed (the staged H2), fresh producer context (this successor session), continuity record to be advanced at the seam, no arbitrary token ceilings in any worker-facing text, commit messages cite the qualifying evidence (D-024-R105)"
+  ]
+ }
+}

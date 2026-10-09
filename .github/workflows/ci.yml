@@ -113,6 +113,16 @@ jobs:
             apps/web/test-results/
           retention-days: 7
           if-no-files-found: ignore
+      # Keep connected-dashboard captures small enough for thin-client review.
+      # The full trace/report archive above remains available and unchanged.
+      - name: Upload connected dashboard screenshots
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: connected-dashboard-screenshots
+          path: apps/web/test-results/**/connected-*.png
+          retention-days: 7
+          if-no-files-found: ignore
 
   # Task M0-T019 (ADDITIVE job; existing jobs untouched): the permanent,
   # machine-enforced dependency-security suite for the web app. BLOCKING on
@@ -182,6 +192,69 @@ jobs:
       # FE-S11: the pinned npm CLI must itself be advisory-free (fail-closed).
       - name: npm CLI tooling advisory verification (npm@11.18.0, fail-closed)
         run: node scripts/dependency_age_gate.mjs --npm-cli-advisory 11.18.0
+
+  # Task M0-T167 (D-091; ADDITIVE job, existing jobs untouched): the same
+  # permanent, machine-enforced dependency-security suite applied to the
+  # repo-local Codex CLI admission (tools/codex_cli). BLOCKING on every push and
+  # PR — a finding, a too-new package, an integrity mismatch, an unexpected host,
+  # or a registry outage fails the build. No warning-only step, no allowlist, no
+  # suppression, no agent waiver. This closes the continuous-audit gap for the
+  # admitted Codex lock (DEPENDENCY_SECURITY_POLICY.md §1 rule 5: audited on every
+  # change AND on a schedule). The daily re-audit is the companion job in
+  # scheduled-web-audit.yml. Reuses the web app's committed age gate
+  # (apps/web/scripts/dependency_age_gate.mjs, Node built-ins only), the SAME
+  # SHA-pinned actions, and the SAME pinned npm CLI 11.18.0 as web-dependency-security.
+  codex-cli-dependency-security:
+    name: codex-cli-dependency-security (audit + committed-lock age gate)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/codex_cli
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tools/codex_cli/package-lock.json
+      # The exact reviewed npm CLI (FE-S4), pinned the same way web-dependency-security does.
+      - name: Pin npm CLI to 11.18.0
+        run: |
+          npm install -g npm@11.18.0
+          test "$(npm -v)" = "11.18.0" || { echo "npm pin failed: $(npm -v)"; exit 1; }
+      # Deterministic install from the committed lock. --ignore-scripts because the
+      # Codex CLI pulls a platform binary package; it publishes no lifecycle scripts
+      # and none are permitted to run. `npm ci` fails if the committed lock is
+      # missing or does not match package.json, and verifies every tarball integrity.
+      - name: Deterministic install (npm ci --ignore-scripts; lockfile + integrity verified)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      # The canonical blocking audit. Exits non-zero on ANY finding at low or above,
+      # across runtime AND dev dependencies. No --omit=dev.
+      - name: Blocking npm audit (--audit-level=low)
+        run: npm audit --audit-level=low
+      # Stricter belt-and-suspenders — parse the audit JSON and fail if the total
+      # across EVERY severity bucket (info..critical) is non-zero.
+      - name: Blocking npm audit (JSON total vulnerabilities must be 0)
+        run: |
+          set -o pipefail
+          npm audit --json > "$RUNNER_TEMP/audit.json" || true
+          node -e '
+            const a = require(process.env.RUNNER_TEMP + "/audit.json");
+            const v = (a.metadata && a.metadata.vulnerabilities) || {};
+            const total = Object.values(v).reduce((s, n) => s + (typeof n === "number" ? n : 0), 0);
+            if (total !== 0) {
+              console.error("npm audit JSON reports " + total + " vulnerabilities:", JSON.stringify(v));
+              process.exit(1);
+            }
+            console.log("npm audit JSON: total vulnerabilities == 0 across all severities");
+          '
+      # Independent committed-lockfile release-age gate: reuse the web app's gate
+      # against the Codex lock. Re-verifies every registry package resolves to
+      # registry.npmjs.org with a registry-matching integrity and is >= 7 complete
+      # days old, against the registry's own UTC clock. Fails closed on any
+      # outage/malformed/mismatch/unexpected-host condition.
+      - name: Committed-lockfile release-age gate (>= 7 days, fail-closed)
+        run: node ../../apps/web/scripts/dependency_age_gate.mjs package-lock.json
 
   api:
     name: api (ruff + pytest)
@@ -456,6 +529,23 @@ jobs:
         run: python3 tools/validate_mcp_policy.py --check
       - name: Run MCP default-deny policy validator tests
         run: python3 tools/test_mcp_policy.py
+      # Task M0-T164 (ADDITIVE step, D-090-R004; existing steps untouched): lane path check.
+      # Stdlib only. Always: checker tests + every tracked file owned by exactly one lane in
+      # docs/lanes/OWNERSHIP.yaml. On pull_request from a lane-<x>/ branch: every changed file
+      # must be owned by lane x (GitHub's merge commit vs its first parent, read from the merge
+      # commit itself and fetched at depth 1, so the checkout stays shallow). Not the event's
+      # base.sha: it is stale when the base advances before the run, which pulled other PRs'
+      # files into this one (#261). Fails closed if HEAD is not a 2-parent merge commit.
+      - name: Lane path check (docs/lanes/OWNERSHIP.yaml)
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          python3 scripts/lanes/test_check_lane_paths.py
+          python3 scripts/lanes/check_lane_paths.py --coverage
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            python3 scripts/lanes/check_lane_paths.py --branch "$HEAD_REF" --pr-merge --fetch
+          fi
 
   # Task M0-T022 (ADDITIVE job; existing jobs untouched): integrity gate for the
   # owner dashboard's one new metadata file, project-control/product-map.json.
@@ -536,9 +626,52 @@ jobs:
       - name: Install pytest from the hash-pinned tooling lock
         shell: bash
         run: python -m pip install --require-hashes -r services/api/requirements-tools.lock
+      # M0-T126 (D-024-R372; M0-T125 D1/D14/D15/D17): the command-document
+      # validation tooth. Extracts every presented supervisor command from the
+      # living operator runbook and dry-runs it against the LIVE parser/seam
+      # contract (pinned start flags + dispatch inputs). Fails closed on any
+      # drift — the guard the live exit-11 refusal escaped because no test parsed
+      # the presented documents. Stdlib-only; launches nothing.
+      - name: Command-document validation (presented commands vs live contract)
+        shell: bash
+        run: python tools/supervisor_command_doc_check.py
       - name: Supervisor test suite
         shell: bash
         run: pytest tools/test_agent_supervisor_*.py
+
+  # M0-T177 (D-091-R001/R007; B-027 reproduced defect; ADDITIVE job, existing jobs
+  # untouched): the Linux-only tests for the systemd control-group containment the
+  # loop's start/post-cycle/turnover gates PROVE. ubuntu-latest is required because
+  # these cover POSIX session isolation, process-group kill semantics, and (opt-in)
+  # a REAL transient systemd unit - none of which the windows-latest supervisor job
+  # can exercise. Specific files only (never the whole `tools/test_agent_supervisor_*`
+  # glob, which starved the hosted ubuntu runner on 2026-08-03). Stdlib + the
+  # hash-pinned pytest only; same actions, python, and install pattern as the
+  # supervisor-bridge job above; launches no provider and contacts no network.
+  supervisor-linux-containment:
+    name: supervisor-linux-containment (systemd cgroup proof, POSIX session isolation)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Install pytest from the hash-pinned tooling lock
+        run: python -m pip install --require-hashes -r services/api/requirements-tools.lock
+      - name: Linux containment proof (positive, negative, mutation, bounded R1/R2 real-process)
+        run: python -m pytest -q -p no:cacheprovider tools/test_agent_supervisor_linux_containment.py
+      - name: POSIX process + launch-path tests
+        run: >-
+          python -m pytest -q -p no:cacheprovider
+          tools/test_agent_supervisor_process.py
+          tools/test_agent_supervisor_linux_launch.py
+          -k "not RealProcess"
+      - name: R3 real transient systemd unit (opt-in; kill -9 MainPID reaps the control group)
+        env:
+          NYC_SUP_R3_SYSTEMD: "1"
+        run: >-
+          python -m pytest -q -p no:cacheprovider
+          tools/test_agent_supervisor_linux_containment.py -k R3
 
   # M0-T073 (D-017-R110, ADDITIVE job; existing jobs untouched): permanent
   # modularity enforcement. Stdlib only. --check fails on a NEW handwritten
@@ -607,3 +740,59 @@ jobs:
         run: |
           python3 tools/context_benchmark.py --e2e \
             --baseline project-control/reports/M0-T076-baseline-g0.json
+
+  # Task M1-T026 (C-10; plan M1-26; cites D-090; ADDITIVE job; existing jobs,
+  # triggers, permissions and action pins untouched): run the four previously
+  # orphaned test suites that no workflow executed (RECONCILIATION.md M1-26;
+  # CODE_MAP.md §8) so they stop silently rotting —
+  #   * .github/scripts/tests — the contract-validator test suite (the validator
+  #     itself runs in the `contracts` job; its tests ran in no workflow)
+  #   * tools/test_residential_validation.py — the residential source-audit suite
+  #   * tools/test_gate_runner.py            — the raw gate-evidence recorder suite
+  #   * tools/test_authority_policy.py       — the ADR-006 autonomy-tier suite
+  # Runs on a CLEAN SHA-pinned setup-python 3.12 interpreter, like the sibling
+  # pytest jobs (contracts-typegen, api-tooling-lock-verify). The earlier
+  # preinstalled-python3 attempt layered the lock's packages into user-site and
+  # collided with the runner's ambient pytest11 entrypoint
+  # (ModuleNotFoundError: platformdirs.pytest_plugin), crashing pytest at startup
+  # so none of the suites ran (PR #306 review B1). On a clean interpreter
+  # jsonschema is no longer ambient, so it is installed hash-pinned from the
+  # product lock (requirements.txt pins jsonschema==4.26.0 with its full dep set)
+  # and an explicit `import jsonschema` guard FAILS the job rather than letting
+  # validate_contracts' module-level importorskip silently skip. pytest comes
+  # hash-pinned from the tooling lock, exactly as the sibling Python jobs install
+  # it. The two locks share six transitives at identical versions (anyio,
+  # colorama, h11, idna, pyyaml, typing-extensions), so the two --require-hashes
+  # installs do not conflict (the exact-production-install job relies on the same
+  # fact). No new dependency, no range resolution, no new third-party action;
+  # inherits the top-level least-privilege `contents: read` and the workflow
+  # concurrency; no secrets. Fail-closed: a missing jsonschema or any non-zero
+  # pytest exit fails the build — nothing here is warning-only.
+  validation-suite:
+    name: validation-suite (orphaned contracts-validator + residential + gate-runner + authority)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      # jsonschema (and the pinned production tree) from the product lock, so the
+      # validate_contracts jsonschema tests run on the clean interpreter instead
+      # of silently importorskip-ping.
+      - name: Install jsonschema from the hash-pinned product lock
+        run: python -m pip install --require-hashes -r services/api/requirements.txt
+      # pytest from the hash-pinned tooling lock, as the sibling Python jobs do;
+      # the shared transitives are identical versions, so this does not conflict.
+      - name: Install pytest from the hash-pinned tooling lock
+        run: python -m pip install --require-hashes -r services/api/requirements-tools.lock
+      # Fail-closed: a missing jsonschema must fail the job, never skip the suite.
+      - name: Guard — jsonschema must be importable
+        run: python -c "import jsonschema"
+      - name: Contract-validator tests (.github/scripts/tests)
+        run: python -m pytest .github/scripts/tests -q
+      - name: Residential source-audit suite (tools/test_residential_validation.py)
+        run: python -m pytest tools/test_residential_validation.py -q
+      - name: Gate-evidence recorder suite (tools/test_gate_runner.py)
+        run: python -m pytest tools/test_gate_runner.py -q
+      - name: Authority-policy / ADR-006 tier suite (tools/test_authority_policy.py)
+        run: python -m pytest tools/test_authority_policy.py -q

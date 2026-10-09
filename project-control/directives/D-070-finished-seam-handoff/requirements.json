@@ -1,0 +1,109 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-070",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T22:19:21.584821+00:00",
+ "requirements": [
+  {
+   "id": "D-070-R001",
+   "text": "Finished-seam handoff rule (standing): a PLANNED session handoff may be written only at a truly finished seam. Before the handoff, the outgoing session must complete the seam entirely: (a) the D-069 backlog sweep recorded; (b) the NEXT task packet fully contracted - packet body written and checked, directive refs bound with applicable == cited, new-file placeholders seeded, G0 recorded at the contract head, task claimed with progress logged, all committed and pushed; (c) the task worktree created at the contract head; (d) the loop launcher ACTIVE-TASK block updated to that packet with a fresh run-id. The successor startup then reduces to: verify state, revoke stale approvals, launch the loop, re-arm the watcher.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-070-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Every subsequent planned handoff shows the seam already done (next packet contracted/claimed/pushed + launcher pointed) before the handoff commit.",
+   "required_evidence": "the handoff commit history: contract-seam commits precede the handoff commit",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured; binds every future planned handoff.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [
+     "docs/SESSION_HANDOFF.md"
+    ],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-070-R002",
+   "text": "The standing rule is recorded IN docs/SESSION_HANDOFF.md as a permanent preamble item that survives every handoff rewrite (owner: \"add it in seasen handoff\"), so each outgoing session sees the finished-seam requirement in the very document it is about to write.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-070-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "docs/SESSION_HANDOFF.md"
+    ],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Preamble block present in docs/SESSION_HANDOFF.md; retained across subsequent handoff rewrites.",
+   "required_evidence": "docs/SESSION_HANDOFF.md content + git history",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Written in the capture commit.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [
+     "docs/SESSION_HANDOFF.md"
+    ],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-070-R003",
+   "text": "Fallback exception (owner-accepted): when a session ends WITHOUT the prepared seam (crash, machine sleep, forced shutdown, account exhaustion, or any unplanned turnover), the successor performs the full seam itself - sweep, contract, relaunch, watcher - as the fallback path. The exception never becomes the norm: a session that CAN finish the seam before handing off must.",
+   "source_ref": "source-001.md#context-the-orchestrator-proposal-the-owner-accepted-quoted-for-interpretation-only-the-owners-yes-above-is-the-authorization",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-070-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Unplanned-turnover successors may run the seam without treating R001 as violated; the handoff/blocker record names the unplanned cause.",
+   "required_evidence": "successor session records naming the unplanned cause when the fallback is used",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured with the rule.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "M4-T014",
+  "assembled_by": "orchestrator",
+  "note": "A1 wave 1b material at c8d94f38. Executable authority for the api suite is CI on the pushed head; the orchestrator also reproduced the three local checks at capture.",
+  "requirements": {
+    "D-045-R001": [
+      "services/api/app/rules/rulesets/r3_r4_pitched_height.rule.json + r3_2_r4_flat_height.rule.json + r4b_height.rule.json - the R3/R4 series height/setback draft families encoded per the source's own section structure: ZR 23-421 pitched (explicit variants R3A/R3X/R3-1/R3-2/R4/R4-1/R4A; 25 ft perimeter wall / 35 ft ridge as separate typed constraints), 23-422 flat (R3-2/R4 at 35 ft; R4B at 25 ft flat-only); asymmetries encoded as sourced with anchors, never symmetrized",
+      "snapshots: fresh in-task capture 2026-09-13 (zr-23-42, zr-23-421-r3-r4, zr-23-422-r3-r4) in canonical docs/research/zr-snapshots/v1/ + byte-identical bundle copies (sync_zr_snapshots --check EXIT 0, 10 files); every constraint carries section/clause + effective-date + snapshot id/hash provenance",
+      "services/api/tests/rules/test_r3_r4_height.py - 90 deterministic cases: per-variant expectations, min/max separation, cross-variant AND cross-section isolation, typed-gap coverage, effective-date discipline, negative controls; full rules suite 458 passed (producer AND orchestrator reproduction)",
+      "reports: project-control/reports/M4-T014-producer-report.md (S1-S6 + disclosures incl. raw_html_verified=false extracted_draft posture and the engine-axis building_type disclosure for G6) + M4-T014-source-capture.md (URL/date/hash per snapshot; variant enumeration with anchors)"
+    ],
+    "D-045-R008": [
+      "one-family bounded scope held; A2 provisions became typed gaps, never mechanics: sloping-plane setback (documented_limitation), building-type selection (fail-closed PRR), 23-424/425/426 + overlay/special/historic modifications, base-plane determination; no street-width value entered any cap"
+    ],
+    "D-045-R009": [
+      "every rule status needs_review DRAFT; snapshots extraction_status extracted_draft with raw_html_verified=false disclosed; no compliance/envelope language (producer report S5 grep); nothing G6-approved; no dependency change"
+    ],
+    "D-046-R001": [
+      "wave-1 rules-lane slot executed in an isolated worktree (base 5450d39f) in parallel with M4-T013"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint concurrent scopes held: M4-T014 wrote rules dirs + snapshots + its reports; M4-T013 wrote its research report + registry drafts - zero file overlap; M4-T012 held BLOCKED with a clean worktree throughout (no third writer)",
+      "packet correction recorded pre-capture (progress log): allowed_paths += docs/research/zr-snapshots - the canonical dir the established mechanism requires (M4-T006 precedent; producer disclosed rather than silently writing)"
+    ]
+  }
+}

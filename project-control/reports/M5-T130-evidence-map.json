@@ -1,0 +1,62 @@
+{
+ "task_id": "M5-T130",
+ "material_commits": [
+  "1ed440c4 (cherry-pick of the builder's commit daad5efb: the modules, the tests, the two guard tests)",
+  "d1e6683c (of b31b3d43: tests and report only, after the failed G4 review)",
+  "material head: d9a003a1"
+ ],
+ "claim_seam_head": "6979d27d",
+ "modules": [
+  "result_way_bridge.py",
+  "result_way_bridge_overlay.py",
+  "result_way_facts.py"
+ ],
+ "entry_function": "gather_result_ways",
+ "guard_tests_changed_in_one_function_each": [
+  "services/api/tests/scenario/three_answers/test_result_ways.py",
+  "services/api/tests/spatial/test_lot_reach.py"
+ ],
+ "orchestrator_readings": "O14 to O18 in the packet's objective",
+ "scope_corrections": 1,
+ "owed_work": "the piece that relaxes the engine's inputs, calls this in the real path and emits contract 1.3.0; backlog rows DB-171, DB-172, DB-173",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/scenario/three_answers tests/spatial/test_lot_reach.py: exit 0 (counts in the producer report and the review records)",
+  "pytest tests/contracts tests/journey tests/spatial tests/scenario tests/rules/reference_cases with all three tasks on the branch: exit 0",
+  "tools/modularity_check.py --check: exit 0; no warning names a file of this task",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "the orchestrator drove the entry function on the recorded benchmark lot and for nine missing-input cases and read every text it returned",
+  "the full services/api suite, run alone by the orchestrator at d1e6683c (the final content of all three tasks): exit 0, 8384 passed, 8 skipped, no expected failure"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "The facts the decision module needs are gathered from the records by new modules that nothing calls yet (services/api/app/scenario/three_answers/result_way_facts.py, result_way_bridge.py, result_way_bridge_overlay.py; entry function gather_result_ways). A fact that is missing is carried as 'not given' or 'not read' and never filled: no profile, so every recorded column is 'not read' (services/api/tests/scenario/three_answers/test_result_way_facts.py::test_no_profile_is_not_read_for_every_column); no outline, no recorded area, no lot type, no district, each in turn (services/api/tests/scenario/three_answers/test_result_way_bridge.py::test_missing_inputs_one_at_a_time_s6).",
+   "For the recorded benchmark lot, assembled offline from the recorded pack as the journey test assembles it, the entry function returns coverage, rear yard, setback, building option and the unit limits withheld, the heights and the floor-area figures conditional, and nothing settled (test_benchmark_lot_s1; the orchestrator drove it itself and read every text it returned).",
+   "NOT done by this task, and not claimed: the engine still runs on the values its caller types in and emits what it emitted before (the saved results, the DXF snapshots and the tests that pin today's output are untouched and pass); nothing shows 'not known' to a user because of this task. The row is met for the fact-gathering share only."
+  ],
+  "D-090-R239": [
+   "How the two area figures are used is written down and applied before anything uses them: the orchestrator's reading O15 in the packet (no tolerance is invented: the figures agree only when the outline's area, rounded to the whole square foot, equals the recorded figure; otherwise they disagree; where the outline's area cannot be computed the comparison could not be made; with no recorded area the outline's area never stands in), implemented in result_way_bridge.py and returned in words with the comparison (test_area_rule_s3). Backlog row DB-173 records that a wider tolerance is owed work that needs recorded lots.",
+   "For the benchmark lot: 10,075 against 10,387.99 sq ft: disagree; both figures carried; neither chosen."
+  ],
+  "D-090-R240": [
+   "An input that is not given stays unanswered: the entry function takes a missing evaluator-inputs record, profile, outline or geometry and passes the state on; an unrecognised lot-type string and a user's statement the packet does not decide are held back and listed, not guessed (test_missing_inputs_one_at_a_time_s6, test_read_site_inputs_states, test_density_statement_that_claims_in_one_is_held_back). The large-lot answer is 'not stated' when there is no recorded area (test_large_lot_answer_o17).",
+   "A recorded city-record column counts as 'recorded as absent' only where the profile carries the record of a fetch that served the row without it; without that it is 'not read' (the orchestrator's reading O14: test_every_column_served_empty_after_a_fetch_is_recorded_as_absent, test_served_empty_without_a_recorded_fetch_is_not_read, test_a_served_but_untrusted_value_is_not_read_never_guessed). The wording is about the records ('City records list no ...'), never about the lot.",
+   "NOT done by this task: the engine's own six required inputs are not relaxed; that is the next piece."
+  ],
+  "D-090-R255": [
+   "A user's statement that the lot is not in a special density area is passed to the decision module as a statement and appears in none of the gathered fact records (test_user_statement_is_not_a_fact_s5); the decision module then returns the unit limit as conditional and never settled (task M5-T129).",
+   "NOT done by this task: no screen takes such a statement and nothing is saved; refusing a statement that contradicts a recorded fact stays where the evaluator inputs refuse today."
+  ],
+  "D-090-R257": [
+   "Two area figures that disagree are both carried with their difference and neither is chosen; the outline's area is never used in a calculation (test_area_rule_s3; the returned statement: 'Both figures are shown; neither replaces the other.'). See row R239 for the rule."
+  ],
+  "D-090-R267": [
+   "The four conditions that have no data source are always passed to the decision module as 'not checked' (there is no source to check them); no parameter of the entry function can mark one as checked, and the conditional assumption returned for the benchmark lot names all four (services/api/tests/scenario/three_answers/test_result_way_bridge.py::test_benchmark_conditional_names_all_four_unchecked_conditions_f3). The decision module then settles no zoning result (task M5-T129).",
+   "The first gate G4 review FAILED the tests: an unknown reach measurement, and the lot types 'interior' and 'through', were pinned by no test, and marking one condition as checked failed no test. The same builder added the tests (test_adapt_reach_keeps_an_unknown_measurement_unknown_f1, test_unknown_reach_withholds_coverage_and_rear_yard_f1, test_interior_and_through_lot_types_are_mapped_f2 and others); at the second review every one of the reviewer's mutations is caught."
+  ],
+  "D-090-R268": [
+   "Under a recorded commercial overlay a result is passed on as supported only where a current row of the independently read reference cases gives 'same as plain R6B' with no standing condition; the rear yard, whose row carries one reading's caveat, is not supported and stays withheld (the orchestrator's reading O16: test_every_table_row_rests_on_a_current_same_as_plain_r6b_reference_row, test_a_family_is_supported_only_with_no_standing_condition). The table lives in app code and is tied to the reference rows by a test that reads them through the loader; app code does not read docs/ at run time.",
+   "NOT done by this task: nothing is shown to a user; which answers stay visible on the screen is the next pieces' work."
+  ]
+ }
+}

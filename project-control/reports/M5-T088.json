@@ -1,0 +1,18 @@
+{
+  "task_id": "M5-T088",
+  "producer_agent": "3d-massing-engineer",
+  "report_file": "project-control/reports/M5-T088-producer-report.md",
+  "submitted_at": "2026-09-24T10:49:35.598618+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T088-evidence-map.json",
+  "content_manifest_sha256": "327ef492bd5a7b37284dbf5f7870639d4ff879028a01f43f5686bf88cc48fc86",
+  "reviewed_sha": "9f355fe1047d508e232b8ed3758e477541a74ab2",
+  "applicable_requirements": [
+    "D-066-R001",
+    "D-087-R001",
+    "D-087-R002",
+    "D-087-R003",
+    "D-087-R009"
+  ],
+  "updated_at": "2026-09-24T10:49:44.994502+00:00"
+}

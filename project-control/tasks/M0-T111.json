@@ -1,0 +1,97 @@
+{
+  "task_id": "M0-T111",
+  "title": "D-024 Amendment 8 unit L: one-way Telegram notification sink (owner-gated live send)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Amendment 8 (R241-R245 + R231/R232/R246/R248/R249): bounded one-way Telegram sink over the existing NotificationSink boundary for exactly the eight listed conditions (STOP_FOR_OWNER, approval waiting, breaker/stuck, repeated CI failure, unrecovered controller/session failure, quota/refusal hold, golden-run completion, campaign completion); no Telegram approvals/merges/execution/config changes; bot token + chat id only in an approved local secret mechanism (never Git/packets/logs/telemetry/reports/messages); redaction, bounded retries, deduplication, failure isolation so Telegram downtime cannot stop the loop; the real send remains an owner-gated exact-command canary (R245). Supervisor-freeze qualifying evidence: D-024-R232/R241.",
+  "business_reason": "Owner-required capability before continuous-mode activation (Amendment 8, R232).",
+  "inputs": [],
+  "outputs": [
+    "telegram sink module under tools/agent_supervisor (one-way; secrets via approved local mechanism)",
+    "tools/test_agent_supervisor_telegram_sink.py",
+    "project-control/reports/M0-T111-telegram-sink.md"
+  ],
+  "dependencies": [
+    "M0-T096"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    "tools/test_agent_supervisor_telegram_sink.py",
+    "project-control/reports/M0-T111-telegram-sink.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    ".claude/hooks",
+    ".claude/settings.json",
+    "apps",
+    "packages",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-28T18:29:20.087551+00:00",
+  "updated_at": "2026-08-29T02:15:17.813311+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-28T18:29:20.087551+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-28T22:13:59.225625+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 5,
+      "status": "in_progress",
+      "message": "Unit L claimed at seq-24 NEXT (G0 PASS; resolver ok=true 10 applicable ids R231/R232/R241-R245/R246/R248/R249). Next: prove-first over notifications.NotificationSink + circuit_breakers/outage_policy, then telegram sink design+implementation (one-way; secrets never committed; fake-transport proof; live send owner-gated). (D-024-R232/R241)"
+    },
+    {
+      "at": "2026-08-28T22:18:37.371285+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Unit L STAGED (M0-T111-telegram-sink.md sections 0-5): reuse S13.10 build_notification leak-refusal + NotificationQueue queued-not-lost + state_kv CAS dedup register; decided: closed 8-condition vocabulary (2 passively derivable: stop_for_owner attention rows + usage_limit_record; 6 loop-emitted at the seam - honest bound); secrets ONLY via SUPERVISOR_TELEGRAM_* env (repr-redacted holder; error details carry status classes never URLs); one-way only (no receive surface, source-scan enforced); real transport constructible only behind --live-canary-authorized-by-owner (R245; never fired this unit); bounded 3-attempt in-call retries + digest dedup + never-raise isolation (run_must_pause structurally False). Prove-first green: adversarial+endurance 187/187, phase1 80/80. Next: implement telegram_sink.py + telegram_sink_cli.py + L-pack. (D-024-R232/R241)"
+    },
+    {
+      "at": "2026-08-29T01:35:47.443310+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Unit L IMPLEMENTED (deliverable c9b3b9a): telegram_sink.py + telegram_sink_cli.py + cli.py registration + L-pack 31/31 (closed 8-condition vocabulary; env-only secrets with leak-absence proofs; one-way AST source scan; owner-gated live transport never fired; bounded retries/dedup/never-raise isolation; read-only discovery). Mutation 13/13 killed; affected packs 408/408; supervisor 2690/0(2 skipped); non-supervisor 559/1 (validator pack split into 4 class-groups after two external kills - workstation slow this pass); ruff clean; modularity 0. Next: CI on c9b3b9a, then submit + 4-reviewer gate wave. (D-024-R232/R241)"
+    },
+    {
+      "at": "2026-08-29T01:59:44.727881+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "rework",
+      "message": "ONE consolidated correction round applied at 8574c58 (all four gate-wave verdicts PASS at 4ce8131; reports committed verbatim): compose_text identifier redaction + 3500-char hard cap (G5 MINOR-2/G3 INFO-3, mutants M17/M18); pending-queue already_queued suppression (G5 ADVISORY-1, mutant M16); CLI import hygiene (G3 MINOR-1); one-way scan hardened with import-aware exact-identifier needles (G5 MINOR-1/G4 MINOR-4); 4 new tests closing G4 MINOR-1/2/5 + exact risk-map (G4 MINOR-3, mutant M15) + task_id dedup pin (mutant M14) + CODEX_HOLD_KEY branch + timeout forwarding. Pack 35/35; affected 302/302; mutation 18/18; ruff clean; scans PASS; modularity 0. Next: CI at 8574c58, resubmit, SendMessage delta re-attestations from the SAME four reviewers. (D-024-R232/R241)"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-29T02:15:17.813311+00:00"
+}

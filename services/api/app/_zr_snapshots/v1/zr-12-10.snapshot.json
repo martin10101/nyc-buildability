@@ -10,22 +10,86 @@
   "source": {
     "source_id": "nyc-dcp-zoning-resolution-portal",
     "official_channel": "html",
-    "request_url": "https://zr.planning.nyc.gov/article-i/chapter-2/12-10",
-    "retrieved_at": "2026-07-22T00:00:00Z",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-09-14T02:15:06Z",
     "document_currency_banner": null,
-    "document_currency_banner_note": "City of Yes for Housing Opportunity moved the R1-R5 residential bulk (height and setback) regulations into the ZR 23-42 series with a Last Amended date of 12/5/2024. The site-wide currency banner was not captured for this retrieval and is a needs_review item.",
-    "section_last_amended": "2024-12-05",
-    "section_last_amended_source_text": "Last Amended 12/5/2024",
-    "capture_method": "official_source_researcher_capture_2026-07-22",
+    "document_currency_banner_note": "The site-wide currency banner was not separately captured; the operative provenance is the per-term Last Amended stamps captured in M4-T018 (street, wide /node/21683 = 3/26/2026; street, narrow /node/21678 = 12/15/1961).",
+    "section_last_amended": "2026-03-26",
+    "section_last_amended_source_text": "Last Amended 3/26/2026 (term 'street, wide', /node/21683). The companion term 'street, narrow' (/node/21678) is Last Amended 12/15/1961. The prior snapshot value '2024-12-05' was a page-level City-of-Yes banner date that matched none of the per-term stamps (M4-T018 §2.4 / OQ item 6) and is corrected here.",
+    "capture_method": "M5-T039_phase0_transcription_from_accepted_M4-T018_capture_2026-09-14",
     "raw_html_verified": false,
-    "verification_required": "Draft capture of ZR 12-10 supplied by official-source-researcher (access 2026-07-22, zr.planning.nyc.gov). It has NOT been re-verified byte-for-byte against raw HTML by the rules-engineer, so raw_html_verified is false and extraction_status is extracted_draft. The governing section, the exact heights/depths, the district-to-statement association, and every applicability condition (building type, street width, qualifying-residential-site geography, special-district/overlay/historic-district context) MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
+    "verification_required": "Text transcribed VERBATIM (M5-T039 Phase 0) from the accepted, G1-reviewed M4-T018 capture record (project-control/reports/M4-T018-zr1210-wide-street-reconciliation.md), which byte-pinned the canonical-HTML channel. This snapshot has NOT been independently re-fetched from raw HTML by the rules-engineer for M5-T039, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination: the district-to-statement association, the 'separated by mapped public park' grammatical scope, and the 'may be considered' permissive-vs-declarative reading MUST be confirmed by a qualified zoning professional (G6) before any rule citing this snapshot is published or Verified."
   },
-  "verbatim_excerpt": "A wide street is a street that is 75 feet or more in width. A narrow street is a street that is less than 75 feet in width.",
-  "content_digest_sha256": "4810adcb1beab01cd4d71176495c79183fb9867f4463ff05a8f111598030243a",
+  "provenance_chain": {
+    "transcribed_from": "project-control/reports/M4-T018-zr1210-wide-street-reconciliation.md",
+    "transcription_basis": "byte-exact verbatim quotes from M4-T018 §1.2 (street, narrow) and §1.3 (street, wide); no paraphrase, no network, no other source",
+    "official_capture": {
+      "channel": "canonical_html_fallback",
+      "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+      "http_status": 200,
+      "byte_count": 1316658,
+      "content_sha256": "4a75e22f22a736beea6daf52c57cca3ce66f9cacc4244807964577141216e0a4",
+      "retrieved_at": "2026-09-14",
+      "shortlink_node": "/node/18523",
+      "print_pdf_fallback_note": "The print/PDF completeness channel entityprint/pdf/node/18523 -> 302 -> print/pdf/node/18523 returned HTTP 504 twice (disclosed in M4-T018 §1.1); the canonical-HTML channel was used per the documented fallback instruction."
+    },
+    "capture_task": "M4-T018 (accepted, G1-reviewed research capture)",
+    "repair_task": "M5-T039 Phase 0 source repair"
+  },
+  "verbatim_excerpt": "A 'wide street' is any street 75 feet or more in width. In C5-3, C6-4 or C6-6 Districts, when a front lot line of a zoning lot adjoins a portion of a street whose average width is 75 feet or more and whose minimum width is 65 feet, such portion of a street may be considered a wide street; or when a front lot line adjoins a portion of a street 70 feet or more in width, which is between two portions of a street 75 feet or more in width, and which portion is less than 700 feet in length, such portion may be considered a wide street, and in that case, for the purposes of the height and setback regulations and the measurement of any publicly accessible open area or arcade, the street line shall be considered to be a continuous line connecting the respective street lines of the nearest portions of the street which are 75 feet or more in width.\n\nIn Community District 7 in the Borough of Manhattan, the roadways of Broadway between West 94th and West 97th Streets and in Community District 3 in the Borough of Manhattan, the roadways of Allen Street between Rivington and Delancey Streets, which are separated by mapped public park shall each be considered a wide street.\n\nA 'narrow street' is any street less than 75 feet wide.",
+  "verbatim_excerpt_composition": "Three verbatim paragraphs joined by blank lines: [1] 'street, wide' paragraph 1 (flat 75-ft test + C5-3/C6-4/C6-6 alternate-width + 70-ft connector clause), [2] 'street, wide' paragraph 2 (the two named-street designations), [3] 'street, narrow'. Each paragraph is a byte-exact quote from M4-T018; only the '\\n\\n' joins are structural. The structured blocks below quote substrings of this excerpt so the content_digest_sha256 (sha256 of this excerpt) covers their source text.",
+  "content_digest_sha256": "23a9ccad31f1081fd15de94d796c22d540e7e8bcfe986e64c9ba302bf8fa4fde",
   "extraction_status": "extracted_draft",
+  "named_street_overrides": {
+    "provision_id": "zr-12-10-named-street-wide",
+    "section_anchor": "ZR 12-10, definition 'street, wide', paragraph 2",
+    "node_anchor": "/node/21683",
+    "last_amended": "2026-03-26",
+    "verbatim_source_quote": "In Community District 7 in the Borough of Manhattan, the roadways of Broadway between West 94th and West 97th Streets and in Community District 3 in the Borough of Manhattan, the roadways of Allen Street between Rivington and Delancey Streets, which are separated by mapped public park shall each be considered a wide street.",
+    "qualifier_clause": "which are separated by mapped public park",
+    "qualifier_predicate": "roadways_separated_by_mapped_public_park",
+    "qualifier_predicate_resolvable_from_text": false,
+    "qualifier_scope_status": "unresolved_open_legal_question",
+    "open_legal_questions": ["G6-Q1-park-qualifier-scope"],
+    "disposition_when_located": "indeterminate",
+    "disposition_reason": "The designation is conditioned on the roadways being 'separated by mapped public park' - a physical predicate this TEXTUAL matcher cannot verify (no geometry, no park layer) - and the grammatical scope of that qualifier (Allen row only vs both rows) is an unresolved G6 question (G6-Q1). Conservative refusal: a located row returns INDETERMINATE with full provenance until G6 rules and a map-backed predicate exists. No coding assumption decides the scope.",
+    "rows": [
+      {
+        "row_id": "broadway-cd7-w94-w97",
+        "borough": "Manhattan",
+        "community_district": 7,
+        "street_name": "Broadway",
+        "frontage_from": "West 94th Street",
+        "frontage_to": "West 97th Street"
+      },
+      {
+        "row_id": "allen-st-cd3-rivington-delancey",
+        "borough": "Manhattan",
+        "community_district": 3,
+        "street_name": "Allen Street",
+        "frontage_from": "Rivington Street",
+        "frontage_to": "Delancey Street"
+      }
+    ]
+  },
+  "alternate_width_provisions": {
+    "provision_id": "zr-12-10-c-district-alternate-width",
+    "section_anchor": "ZR 12-10, definition 'street, wide', paragraph 1",
+    "node_anchor": "/node/21683",
+    "last_amended": "2026-03-26",
+    "applicable_districts": ["C5-3", "C6-4", "C6-6"],
+    "verbatim_source_quote": "A 'wide street' is any street 75 feet or more in width. In C5-3, C6-4 or C6-6 Districts, when a front lot line of a zoning lot adjoins a portion of a street whose average width is 75 feet or more and whose minimum width is 65 feet, such portion of a street may be considered a wide street; or when a front lot line adjoins a portion of a street 70 feet or more in width, which is between two portions of a street 75 feet or more in width, and which portion is less than 700 feet in length, such portion may be considered a wide street, and in that case, for the purposes of the height and setback regulations and the measurement of any publicly accessible open area or arcade, the street line shall be considered to be a continuous line connecting the respective street lines of the nearest portions of the street which are 75 feet or more in width.",
+    "average_minimum_test": "average width of the adjoined street portion >= 75 ft AND minimum width of that portion >= 65 ft",
+    "connector_test": "portion width >= 70 ft AND portion length < 700 ft AND it lies between two portions each >= 75 ft wide",
+    "verb": "may be considered",
+    "disposition": "professional_review_required",
+    "disposition_reason": "The clause reads 'may be considered a wide street' (permissive) rather than the declarative 'is any street 75 feet or more in width' - whether it self-executes on a numeric match or requires an affirmative agency determination is an unresolved G6 question (G6-Q2). It also requires portion-level average/minimum width no accepted connector supplies. This TEXTUAL matcher performs NO numeric width computation; it classifies only whether a district is within the provision's C5-3/C6-4/C6-6 vocabulary and returns professional_review_required for those districts.",
+    "open_legal_questions": ["G6-Q2-may-be-considered-permissive"]
+  },
   "notes": [
-    "Supplies the §12-10 wide/narrow street threshold (75 feet) the §23-423 setback depth turns on. The canonical property_profile exposes NO street-width field, so any constraint predicated on wide/narrow street fails closed to professional_review_required.",
-    "Captured for M4-T006 as a governing-source candidate for the R5-series height & setback DRAFT rule family (needs_review).",
+    "M5-T039 Phase 0 replaced the prior flat, paraphrased wide/narrow sentence (retrieved 2026-07-22, content_digest 4810adcb...) with the amended verbatim §12-10 text (street, wide Last Amended 3/26/2026), because that flat text predated and omitted the 3/26/2026 amendment (M4-T018 §2.3). The digest is recomputed over the new verbatim_excerpt.",
+    "Supplies the §12-10 wide/narrow street threshold (75 feet) plus the C5-3/C6-4/C6-6 alternate-width / 70-ft-connector clause and the two named-street designations. The canonical property_profile exposes NO street-width field, so any constraint predicated on wide/narrow street still fails closed to professional_review_required.",
+    "The named_street_overrides and alternate_width_provisions blocks are a structured, digest-covered representation: each block's verbatim_source_quote is a substring of verbatim_excerpt, which the content_digest_sha256 covers. Consumers must treat these as DRAFT until G6.",
     "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule plus G6 qualified-human approval (owner directive item 5)."
   ]
 }

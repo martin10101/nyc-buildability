@@ -1,0 +1,84 @@
+{
+ "task_id": "M5-T147",
+ "material_commits": [
+  "b6540dc6 (part C first half)",
+  "c2694e21 (part C second half: against the regenerated document)",
+  "8df25d78 (part C third round: the browser test asserts building B)",
+  "c47fa18b (the correction after the walkthrough (F1, N4))",
+  "566372cd (the producers' report reassembled from the part report = material head)"
+ ],
+ "claim_seam_head": "4b9b7f3202dee5c0a3b3e6db009a5177a9900ffe",
+ "files_changed": [
+  "apps/web/e2e/results.flag-on.spec.ts",
+  "apps/web/src/components/architect/answers/FirstBuildingOptions.tsx",
+  "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+  "apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/answers/three-answers.css",
+  "apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts",
+  "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+  "apps/web/src/lib/architect/__tests__/first-building-options.test.ts",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "apps/web/src/lib/architect/first-building-options.ts",
+  "apps/web/src/lib/architect/three-answers.ts",
+  "apps/web/src/lib/results-contract-checks.ts",
+  "project-control/reports/M5-T147-part-C.md",
+  "project-control/reports/M5-T147-producer-report.md"
+ ],
+ "what_did_not_change": "No rule file, no capture, no reference case, no earlier contract version's fixture; the 23 rule entries of the review register and their pages; no human verdict; no production switch.",
+ "known_limits": [
+  "The share range and the apartment size are shown as preliminary assumptions, not changeable on this screen (ruling W7); recorded as work owed.",
+  "Walkthrough notes N1 to N3 stand for a later screen task (the option sits far down; the legal unit limit sits near the estimate; conditions repeat). The owner's design brief of 2026-10-09 (D-090 source-079) governs that work.",
+  "The website's contract check does not reject an extra numeric field in a not-worked entry; the server's schema does (G3 delta note N2).",
+  "The words 'on the HPD measurement basis' are typed in the panel (G3 note, both rounds).",
+  "The narrow-table test asserts the structure only (jsdom cannot measure); the pictures at 420 px showed no sideways scroll."
+ ],
+ "checks_at_material_head": [
+  "ruff exit 0",
+  "focused server suites 3675 passed, 8 skipped",
+  "register renderer check exit 0",
+  "contract validator 23 schemas, 0 failures; its tests 24 passed; schema copy byte-identical",
+  "size check, path coverage, context budget and directive validator exit 0",
+  "website: lint 0, typecheck 0, vitest 1143 passed (answers, lib/architect, lib/__tests__)",
+  "CI run 38001788978 on f237d0d7: 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-090-R256": [
+   "The entered floor-to-floor height shows on every storey, and the screen marks it as entered. Open: changing the share range and the apartment size on this screen is work owed (ruling W7). project-control/reports/M5-T147-G3G4.md: walkthrough, both rounds."
+  ],
+  "D-090-R509": [
+   "The screen shows each listed building's own estimate from the document; no figure is typed in the website. apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx (S1 to S11), journey-215-16-northern.test.tsx (S10), three-answers-panel.test.tsx; apps/web/src/lib/architect/__tests__/first-building-options.test.ts; apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts; apps/web/e2e/results.flag-on.spec.ts (building B at 10 and 14 ft; the 16 ft run). project-control/reports/M5-T147-G3G4.md: G3 check 2."
+  ],
+  "D-090-R526": [
+   "Each listed building shows what was not checked, parking, loading and bicycle among it; nothing is called feasible (the browser test asserts it). project-control/reports/M5-T147-G3G4.md: G3 check 4, walkthrough."
+  ],
+  "D-090-R540": [
+   "The share range is shown with the estimate and called a preliminary assumption. Open: changing it on this screen is work owed (ruling W7)."
+  ],
+  "D-090-R541": [
+   "700 sq ft is shown with the estimate as a preliminary assumption on the HPD measurement basis. Open: changing it on this screen is work owed (ruling W7)."
+  ],
+  "D-090-R543": [
+   "The estimate's label is shown exactly as the document gives it. apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx (S1 to S11), journey-215-16-northern.test.tsx (S10), three-answers-panel.test.tsx; apps/web/src/lib/architect/__tests__/first-building-options.test.ts; apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts; apps/web/e2e/results.flag-on.spec.ts (building B at 10 and 14 ft; the 16 ft run)."
+  ],
+  "D-090-R544": [
+   "The legal unit limit shows as not known, apart from the estimate. project-control/reports/M5-T147-G3G4.md: walkthrough check 3, first round."
+  ],
+  "D-090-R556": [
+   "A withheld coverage and a withheld legal unit limit show no number and no older value; the older blocks are not shown beside the list (ruling W11). project-control/reports/M5-T147-G3G4.md: G3 check 3, both rounds; G4 mutations."
+  ],
+  "D-090-R570": [
+   "No withheld value appears on the screen; the not-worked reasons carry no footprint figure. project-control/reports/M5-T147-G3G4.md: walkthrough delta check 3."
+  ],
+  "D-090-R641": [
+   "The overall label stays 'Preliminary zoning results' (G3 check 4, first round)."
+  ],
+  "D-090-R688": [
+   "The screen shows the program's building B, floor schedule and estimate from the document, and the legal unit limit separately, as not known. project-control/reports/M5-T147-G3G4.md: walkthrough, both rounds."
+  ],
+  "D-090-R700": [
+   "The share range and the apartment size are called preliminary assumptions on the screen (ruling W7). Open: they cannot be changed here yet."
+  ]
+ }
+}

@@ -1,0 +1,141 @@
+{
+  "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "content_manifest_sha256": "003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8",
+  "ci_run": 34917249174,
+  "ci_url": "https://github.com/martin10101/nyc-buildability/actions/runs/34917249174",
+  "web_test_results": {
+    "unit_files": 39,
+    "unit_passed": 703,
+    "browser_passed": 100,
+    "browser_failed": 0,
+    "exact_log_excerpt": [
+      "2026-09-15T01:27:03.6812110Z  Test Files  39 passed (39)",
+      "2026-09-15T01:27:03.6815964Z       Tests  703 passed (703)",
+      "2026-09-15T01:28:35.9256193Z   \u2713   20 [chromium] \u203a e2e/architect-workspace.spec.ts:103:7 \u203a architect report: canonical records, reachable navigation and screenshot (1.8s)",
+      "2026-09-15T01:29:10.6397346Z   \u2713   41 [chromium] \u203a e2e/confirm-journey.spec.ts:80:5 \u203a S1: per-fact provenance drill-down works on the Confirm card (479ms)",
+      "2026-09-15T01:29:27.5741846Z   \u2713   69 [chromium] \u203a e2e/partial-and-conflict.spec.ts:65:5 \u203a S2: D5 fallback provenance join renders for a contract-1.0.0 profile (no maps) (710ms)",
+      "2026-09-15T01:29:30.7775705Z   \u2713   72 [chromium] \u203a e2e/primary-journey.spec.ts:62:5 \u203a S1: provenance drill-down on lot area shows source, dataset, version, original value, retrieved_at (959ms)",
+      "2026-09-15T01:29:53.2475202Z   100 passed (2.0m)"
+    ]
+  },
+  "browser_artifact": {
+    "id": 10376359061,
+    "digest": "sha256:c86dd3fca0aa71d5e6b18b98813ce4ec6129ca338c25d6b0d79db17f739223df",
+    "created_at": "2026-09-15T01:29:57Z",
+    "head_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+    "local_screenshot_root": "/workspace/scratch/cfa2464c5c7f/source-links-review-artifacts/2cee838c/test-results"
+  },
+  "jobs": [
+    {
+      "id": 104217449127,
+      "name": "web-e2e (vitest + Playwright vs recorded-official-fixture API)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449167,
+      "name": "web-dependency-security (audit + committed-lock age gate + npm CLI advisory)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449177,
+      "name": "contracts-typegen (TS drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449241,
+      "name": "web (lint + typecheck + build)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449253,
+      "name": "exact-production-install (Render pip install path + validate_profile + pip-audit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449257,
+      "name": "api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449265,
+      "name": "code-graph (determinism --check + fixture tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449270,
+      "name": "contracts-schema-bundle (runtime schema drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449276,
+      "name": "context-index-a1 (fingerprint + cache + baseline)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449332,
+      "name": "model-routing (frozen corpus + allowlist boundary tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449336,
+      "name": "api (ruff + pytest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449342,
+      "name": "supervisor-bridge (pytest tools/test_agent_supervisor_*.py)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449349,
+      "name": "product-map (owner-dashboard metadata integrity)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449395,
+      "name": "context-pipeline (Units B-F suites + integration/adversarial tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449420,
+      "name": "control-plane (workflow regression test, ADR-005)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449444,
+      "name": "contracts (JSON Schema validation)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449473,
+      "name": "modularity (deterministic size/responsibility regression gate)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104217449549,
+      "name": "api-tooling-lock-verify (tooling lock byte-identical + age-gate unit tests)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "note": "Final GitHub run and full jobs response verified PASS at frozen SHA: all 18 jobs success, including build/lint/typecheck, contracts, API, security, modularity and Windows supervisor suite. 703 unit tests and 100 browser journeys passed. Prior CI/G3 failures are preserved in v1 reports.",
+  "ci_status": "completed",
+  "ci_conclusion": "success"
+}

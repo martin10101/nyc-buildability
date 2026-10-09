@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T066",
+ "material_commit": "abfd182b (cherry-pick of the in-worktree commit 0f1ffc1b; 11 files, ALL-MATCH LF-normalized digest verification; CI at the pushed harvest head 2578329c = completed SUCCESS first round - web unit suites, the NEW pointer e2e journey, the retained keyboard journey, and the mutation-sensitive reconciliation specs all green)",
+ "produced_at": "2026-09-21T05:35:00+00:00",
+ "producer": "frontend-engineer (loop-3 worker, run persistent3-local-13; closed at the S13.8 consecutive_revision_loops breaker cycle 6 - the evidence-stalemate class; the report's section 0 records an in-run RETURN truncation honestly recovered by referencing the tree, never re-pasting source; web+mutation proofs correctly routed to CI at the pushed head - thin client; the single documented local check modularity exit 0 confirmed at harvest)",
+ "requirements": {
+  "D-082-R001": [
+   "The map-drawing capability's CLICK interaction layer delivered under the same authorization and the recorded T065 [ORCH-SCOPE-DISPOSITION]: click-to-place/select/move/delete on the lot map via the NEW ProposalOutlineMap interactive wrapper (created under the packet's glob) + an additive-optional interaction prop on LotOutlineMap (absent prop = the accepted display behavior, byte-equivalent - the accepted address-confirm consumers unchanged); contracted at c40c60db, widened at 1986f589 under the normal gated process; phase C/D untouched; zero new dependencies."
+  ],
+  "D-082-R003": [
+   "Manual stays the option and the drawn/clicked input feeds ONE path: clicked display-4326 positions enter the SAME drawn-outline state the accepted keyboard/numeric path fills - one draft model, one correspondence bridge, one adoption; the numeric table stays visible, editable, authoritative; the HJ-2 fold-in makes adoption reconcile walls/lot-lines (dangling references dropped, AS-6 mutation-tested in proposal-draft.test.ts)."
+  ],
+  "D-066-R001": [
+   "Packet carries the seam navigation block (793/16728/7304, regenerated at the T066 contract seam) naming LotOutlineMap's consumers - AddressConfirmCard (forbidden; additive-optional prop discipline honored), PropertyOverview (forbidden, untouched), ProposalOutlineDraw (in scope); the T065 lib spine walls held except the deliberately-widened proposal-draft.ts (the HJ-2 remediation); exactly the packet's allowed_paths changed."
+  ],
+  "D-076-R001": [
+   "Phase-B increment over the existing engine: the click layer is pure input UI feeding the accepted drawing-bridge-adoption spine; no new math path, no parallel concept; the check loop still runs the accepted proposal-checks engine on the adopted shape (e2e)."
+  ],
+  "D-076-R002": [
+   "Third-input-class honesty preserved and IMPROVED: the HJ-1 copy fix makes the drawing-section copy describe the interaction that now exists; proposed-not-a-record labels unchanged; every measurement stays server-side (clicked positions remain display 4326 until the accepted bridge converts); keyboard parity complete (click is an addition - the a11y bar), DB-043(a) focus remedy preserved."
+  ],
+  "D-077-R002": [
+   "Full lane drill: contract c40c60db -> claim-then-hold (D-070) -> the launch held until the T065 accept over the three shared files -> pre-launch widening 1986f589 with G0 re-record -> loop-3 run-13 build -> breaker-close harvest -> in-worktree commit 0f1ffc1b cherry-picked abfd182b ALL-MATCH x11 -> submit at the CI-green-verified head; FULL worktree path wt-m5t066."
+  ],
+  "D-077-R003": [
+   "Released D-082 scope only; exactly the packet's allowed_paths (the new wrapper files match the packet's glob surface); every forbidden path untouched (AddressConfirmCard, PropertyOverview, outline-bridge-api, helpers.ts, services/api, contracts); zero new dependencies; the follow-up items live in DB-045, not scope-crept here."
+  ]
+ }
+}

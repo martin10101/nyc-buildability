@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720.00 504.00" width="720.00" height="504.00" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-drawing="zoning_map" data-kit-version="0">
+<title>Zoning map</title>
+<defs><pattern id="hatch-zoning_district" patternUnits="userSpaceOnUse" width="3.00" height="3.00" patternTransform="rotate(-135.00)"><line x1="0.00" y1="1.50" x2="3.00" y2="1.50" stroke="#4A6572" stroke-width="0.40"/></pattern><pattern id="hatch-subject_lot" patternUnits="userSpaceOnUse" width="3.00" height="3.00" patternTransform="rotate(0.00)"><line x1="0.00" y1="1.50" x2="3.00" y2="1.50" stroke="#C8500A" stroke-width="0.40"/><line x1="1.50" y1="0.00" x2="1.50" y2="3.00" stroke="#C8500A" stroke-width="0.40"/></pattern></defs>
+<rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
+<path d="M171.09 130.44 L178.71 165.04 L181.18 164.50 L197.17 203.23 L210.71 200.19 L210.74 200.32 L212.90 209.86 L208.11 210.93 L213.41 224.57 L205.68 225.57 L209.92 237.64 L213.99 236.73 L226.14 270.21 L235.49 268.07 L240.84 292.18 L317.49 275.77 L332.89 272.47 L439.15 249.33 L457.41 245.36 L460.00 256.82 L451.36 258.99 L451.35 258.99 L453.58 268.88 L413.57 277.90 L341.49 293.87 L293.55 304.49 L267.11 310.34 L241.11 314.86 L244.01 323.21 L236.74 324.51 L233.52 325.08 L233.07 324.00 L218.80 328.71 L207.41 332.47 L207.41 332.47 L204.08 323.23 L178.91 331.62 L61.49 373.56 L56.00 349.39 L93.17 338.68 L128.04 325.39 L201.57 300.48 L171.88 217.23 L180.78 216.05 L148.61 136.48 L154.34 134.13 Z" fill="#EAF0F6" fill-rule="evenodd" stroke="#4A6572" stroke-width="0.75" stroke-linejoin="round" data-source="/map_context/zoning_districts/entries/0"/>
+<path d="M171.09 130.44 L178.71 165.04 L181.18 164.50 L197.17 203.23 L210.71 200.19 L210.74 200.32 L212.90 209.86 L208.11 210.93 L213.41 224.57 L205.68 225.57 L209.92 237.64 L213.99 236.73 L226.14 270.21 L235.49 268.07 L240.84 292.18 L317.49 275.77 L332.89 272.47 L439.15 249.33 L457.41 245.36 L460.00 256.82 L451.36 258.99 L451.35 258.99 L453.58 268.88 L413.57 277.90 L341.49 293.87 L293.55 304.49 L267.11 310.34 L241.11 314.86 L244.01 323.21 L236.74 324.51 L233.52 325.08 L233.07 324.00 L218.80 328.71 L207.41 332.47 L207.41 332.47 L204.08 323.23 L178.91 331.62 L61.49 373.56 L56.00 349.39 L93.17 338.68 L128.04 325.39 L201.57 300.48 L171.88 217.23 L180.78 216.05 L148.61 136.48 L154.34 134.13 Z" fill="url(#hatch-zoning_district)" fill-rule="evenodd" stroke="none" data-source="/map_context/zoning_districts/entries/0"/>
+<path d="M274.40 308.68 L272.77 301.33 L280.40 299.59 L282.04 306.94 L274.56 308.64 Z" fill="#FDE9D0" fill-rule="evenodd" stroke="#C8500A" stroke-width="1.50" stroke-linejoin="round" data-source="/map_context/subject_lot/outline"/>
+<path d="M274.40 308.68 L272.77 301.33 L280.40 299.59 L282.04 306.94 L274.56 308.64 Z" fill="url(#hatch-subject_lot)" fill-rule="evenodd" stroke="none" data-source="/map_context/subject_lot/outline"/>
+<text x="233.76" y="278.19" font-size="8.00" text-anchor="middle" fill="#111111" data-role="zoning_district" data-source="/map_context/zoning_districts/entries/0/zonedist">R6B</text>
+<text x="277.40" y="304.14" font-size="8.00" text-anchor="middle" fill="#111111" data-role="subject_lot" data-source="/map_context/subject_lot/bbl">BBL 4073340070</text>
+<g data-role="north-arrow">
+<path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>
+<text x="554.00" y="58.00" font-size="8.00" text-anchor="start" fill="#111111" data-role="furniture">Grid north</text>
+</g>
+<g data-role="scale-bar" data-x0="520.00" data-px-per-ft="0.075343">
+<rect x="520.00" y="88.00" width="75.34" height="5.00" fill="#000000" stroke="#000000" stroke-width="0.50"/>
+<rect x="595.34" y="88.00" width="75.34" height="5.00" fill="#FFFFFF" stroke="#000000" stroke-width="0.50"/>
+<text x="520.00" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">0</text>
+<text x="595.34" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">1,000</text>
+<text x="670.69" y="103.00" font-size="7.50" text-anchor="middle" fill="#111111" data-role="scale" data-source="scale">2,000 ft</text>
+</g>
+<g data-role="legend">
+<text x="520.00" y="126.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Legend</text>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="#FDE9D0" stroke="#C8500A" stroke-width="1.50" stroke-linejoin="round"/>
+<rect x="520.00" y="132.00" width="18.00" height="10.00" fill="url(#hatch-subject_lot)" stroke="none"/>
+<text x="544.00" y="140.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Subject lot</text>
+<rect x="520.00" y="148.00" width="18.00" height="10.00" fill="#EAF0F6" stroke="#4A6572" stroke-width="0.75" stroke-linejoin="round"/>
+<rect x="520.00" y="148.00" width="18.00" height="10.00" fill="url(#hatch-zoning_district)" stroke="none"/>
+<text x="544.00" y="156.50" font-size="8.00" text-anchor="start" fill="#111111" data-role="legend">Zoning district</text>
+</g>
+<g data-role="notes">
+<text x="520.00" y="182.00" font-size="8.00" text-anchor="start" font-weight="bold" fill="#111111" data-role="furniture">Notes</text>
+<text x="520.00" y="194.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/map_context/measurement/label">Approximate — tax map</tspan></text>
+<text x="520.00" y="208.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/map_context/zoning_districts/use_limitation">These features are not intended for</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/use_limitation">determining zoning at the individual tax</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/use_limitation">lot level.</tspan></text>
+<text x="520.00" y="242.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/map_context/zoning_districts/accuracy">Zoning-district boundaries are</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/accuracy">approximate: the DCP horizontal accuracy</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/accuracy">statement is approximately +/- 20 ft, so</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/accuracy">a boundary drawn near the lot is not a</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/accuracy">lot-level determination.</tspan></text>
+<text x="520.00" y="296.00" font-size="7.50" fill="#111111" data-role="note"><tspan x="520.00" dy="0.00" data-source="/map_context/zoning_districts/attribution">Zoning districts: NYC Department of City</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">Planning, NYC GIS Zoning Features</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">(nyzd), via NYC Open Data under the NYC</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">Open Data Terms of Use; source edit date</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">2026-08-17. This zoning layer was</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">retrieved by an attribute query for</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">ZONEDIST 'R6B'; neighbouring districts</tspan><tspan x="520.00" dy="10.00" data-source="/map_context/zoning_districts/attribution">of other codes were not retrieved.</tspan></text>
+</g>
+</svg>

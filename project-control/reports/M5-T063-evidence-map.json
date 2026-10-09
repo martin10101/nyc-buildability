@@ -1,0 +1,31 @@
+{
+ "task_id": "M5-T063",
+ "material_commit": "f33b752c (clean cherry-pick of worktree producer commit 50e8978e; 11 files, ALL-MATCH LF-normalized digest verification post-pick)",
+ "produced_at": "2026-09-20T23:25:00+00:00",
+ "produced_note": "One packet allowed_paths file (apps/web/src/lib/__tests__/rule-evaluation.test.ts is IN the 11; the unchanged 12th path is PropertyOverview.tsx spec-adjacent scope the producer deliberately left byte-identical - the producer report records PropertyOverview's logic as UNCHANGED with its gating verified in place).",
+ "producer": "frontend-engineer (loop-3 worker, run persistent3-local-09; unit closed at the S13.8 consecutive_revision_loops breaker after the in-loop reviewer converged the report to the cap-safe evidence-repair form and demanded supervisor-assembled digest-bound sections; commit/push/CI orchestrator-owned)",
+ "requirements": {
+  "D-066-R001": [
+   "Code graph regenerated at the fffbd002 contract seam before the packet was authored (783 files/16500 nodes/7221 edges recorded in the packet's navigation block); the block named bounded.ts as the 15+-consumer shared lib (additive-only) and PropertyOverview's five read-only consumers incl. the T060-owned ArchitectEntry - the material honors both (bounded.ts additive helper only; PropertyOverview byte-unchanged)."
+  ],
+  "D-073-R006": [
+   "Records-vs-allowances discipline holds: recorded_zoning is display-only provenance throughout - the new boundedZoningDistrict helper renders the RECORDED district faithfully (slash mixed-use class byte-exact), the divergence notice gates on ACTUALLY-recorded zoning, the ZTLDB gap is surfaced honestly where zoning is unknown, and nothing wires a recorded district into any allowance computation (the packet's preservation wall; grep-provable)."
+  ],
+  "D-077-R002": [
+   "The lane ran the full contract drill (fffbd002 contract seam binds+resyncs+seeds+G0 three-way disjointness; ae8be2ed claim with the FULL worktree path wt-m5t063; loop-3 run persistent3-local-09 built the material through an in-run REVISE arc that included ONE test-only assertion correction preserved and explained in the producer report; orchestrator harvest at the breaker close)."
+  ],
+  "D-077-R003": [
+   "Scope stayed inside the released queue: the DB-036(a) sanitizer PRECONDITION (the recorded prerequisite for any future zoning emission) + the accepted waves' rider items (DB-036(e), DB-038(b)(c), DB-042(c)(d)(e)); 11 of the packet's 12 allowed_paths changed, the 12th deliberately byte-unchanged; zero forbidden/held files touched (T060-lane and T062-lane surfaces clean - verifiable by diff)."
+  ]
+ },
+ "orchestrator_evidence": {
+  "note": "Supervisor-assembled evidence per the in-loop reviewer's final REVISE demand. THIN CLIENT: the web behavior proves ONLY in CI on the pushed head f33b752c - no local npm; local evidence is modularity + digest binding.",
+  "commands": [
+   {"argv": "python tools/modularity_check.py --check", "cwd": "wt-m5t063 (repo root)", "exit": 0, "output_tail": "failures 0; warnings 20 (all pre-existing, none in the packet files)"}
+  ],
+  "web_proof": "CI at f33b752c: CI (incl. the web vitest/typecheck/lint/e2e jobs) / secret-scan / context-budget ALL completed success",
+  "reviewed_file_digests": {
+   "note": "sha256 over LF-normalized bytes of each of the 11 changed files at 50e8978e/f33b752c (ALL-MATCH verified post-pick); values enumerated in the gate wave reports rather than inline (gitleaks generic-api-key FP class)"
+  }
+ }
+}

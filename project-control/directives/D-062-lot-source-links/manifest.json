@@ -1,0 +1,78 @@
+{
+  "schema": "directive_manifest/v1",
+  "directive_id": "D-062",
+  "version": 1,
+  "slug": "lot-source-links",
+  "title": "Lot-specific source links and real-building verification",
+  "status": "active",
+  "lifecycle_state": "active",
+  "issued_by": "owner",
+  "issued_at": "2026-09-15",
+  "captured_at": "2026-09-15T00:34:40.144721+00:00",
+  "created_at": "2026-09-15T00:34:40.144721+00:00",
+  "updated_at": "2026-09-15T00:34:40.144721+00:00",
+  "channel": "interactive_chat",
+  "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "capture_head_sha": "546dd09a9541097a5c5e39cd43683c4068ab368d",
+  "owner_approval": {
+    "state": "authorized",
+    "note": "Current source-link addition and real-building test request; existing frontend build/push/live authorization persists."
+  },
+  "requirements_file": "requirements.json",
+  "verification_file": "verification.json",
+  "final_reviewed_sha": null,
+  "locked_requirement_ids": [
+    "D-062-R001",
+    "D-062-R002",
+    "D-062-R003",
+    "D-062-R004",
+    "D-062-R005",
+    "D-062-R006",
+    "D-062-R007"
+  ],
+  "requirements_content_digest_sha256": "86ac50eb4ca5b0839865fa50913fe0d4390cac2dbe63bdf6d8a22005dcbe096f",
+  "sources": [
+    {
+      "file": "source-001.md",
+      "kind": "original",
+      "sequence": 1,
+      "recorded_at": "2026-09-15T00:34:40.144721+00:00",
+      "content_digest_sha256": "4d9a8a1c820ad83d6059a4f65dadb8fa4d70fc7b580dba0133341a07de6a9348"
+    }
+  ],
+  "amendments": [],
+  "supersedes": [],
+  "superseded_by": null,
+  "affected_tasks": [
+    "M5-T030"
+  ],
+  "affected_prs": [],
+  "affected_branches": [
+    "candidate/D-024-mrl-option-b"
+  ],
+  "scope": {
+    "kind": "frontend",
+    "task_ids": [
+      "M5-T030"
+    ],
+    "task_types": [
+      "frontend"
+    ],
+    "allowed": "Frontend lot-source links, evidence presentation, tests and scoped task records; candidate push and existing Render frontend deployment.",
+    "prohibited": "Backend, contracts, rules/calculations, dependencies, deployment configuration, main and PR 241."
+  },
+  "audit_log": [
+    {
+      "at": "2026-09-15T00:34:40.144721+00:00",
+      "actor": "orchestrator",
+      "action": "captured",
+      "note": "New source-link follow-up based on accepted candidate; owner request preserved verbatim."
+    },
+    {
+      "at": "2026-09-15T00:34:40.144721+00:00",
+      "actor": "orchestrator",
+      "action": "intake_binding_correction",
+      "note": "Bound delivery rows to non-ledger D-062-DELIVERY sentinel, following existing delivery separation; empty selector would incorrectly attach to all tasks. No requirement or source text changed."
+    }
+  ]
+}

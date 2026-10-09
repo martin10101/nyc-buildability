@@ -1,0 +1,21 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "-m",
+  "pytest",
+  "tools/test_agent_supervisor_command_docs.py",
+  "tools/test_agent_supervisor_manifest_binding.py",
+  "-q"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-02T05:33:32.114109+00:00",
+ "ended_at_utc": "2026-09-02T05:33:51.122528+00:00",
+ "repo_head": "435531defa272db4a780bdf9b8490044748af826",
+ "repo_tree": "732d03b15402368ab2b7292184e8a2d7a28ea45b",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "5b21456fa0baa7f2af24d6259882cacab2b5cd1953a8a624cd7dcc69ebc3f44b",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 183,
+ "stderr_bytes": 0
+}

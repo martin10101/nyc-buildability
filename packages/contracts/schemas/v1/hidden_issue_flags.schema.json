@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/martin10101/nyc-buildability/packages/contracts/schemas/v1/hidden_issue_flags.schema.json",
+  "title": "Hidden Issue Flags",
+  "description": "v1 wiring contract (lane C packet W0; plan docs/PRODUCT_PLAN_CURRENT_2026-09-28.md section 8a, queue item B-09) for the hidden-issue flag layer: the §8a groups checked on every property, each item shown as a flag, an opportunity, or 'Check needed' when the data is not available. The document is the serialized FlagGroup.to_dict() output of services/api/app/profile/hidden_issue_flags/ (model.py FlagGroup / HiddenIssueFlag), wrapped in a version envelope. This layer carries NO legal meaning and computes nothing about the law: a flag only reports what the sourced data already shows, or says the source is not available (a missing source is always 'Check needed', never a guess). Legal determinations belong to the rule engine (Lane A) and a qualified reviewer at G6, never here. There are four groups (existing_building, zoning_lot_history, map_based_rules, site_shape_and_street); the zoning-lot-history group is a reminder only, so its items are a flag or 'Check needed' and never claim a verified or combined zoning lot.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "groups"
+  ],
+  "properties": {
+    "contract_version": {
+      "type": "string",
+      "enum": ["1.0.0"],
+      "description": "CLOSED enum of published hidden_issue_flags contract versions. 1.0.0 = lane C packet W0 initial shape. New versions are admitted only by an accepted contract task that appends to this enum."
+    },
+    "groups": {
+      "type": "array",
+      "description": "The §8a flag groups, one FlagGroup.to_dict() per group. Each group_id is one of the four §8a group ids; a study may carry a subset while groups are wired in.",
+      "items": { "$ref": "#/$defs/flag_group" }
+    },
+    "_expected_failure": {
+      "type": "string",
+      "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key; it is allowed (optional) so an invalid fixture fails only for its stated defect under additionalProperties:false."
+    }
+  },
+  "$defs": {
+    "flag_group": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One §8a group as its flags (model.py FlagGroup.to_dict()).",
+      "required": [
+        "group_id",
+        "title",
+        "lot_bbl",
+        "flags"
+      ],
+      "properties": {
+        "group_id": {
+          "type": "string",
+          "enum": [
+            "existing_building",
+            "zoning_lot_history",
+            "map_based_rules",
+            "site_shape_and_street"
+          ],
+          "description": "The §8a group id (services/api/app/profile/hidden_issue_flags/*.py GROUP_ID). CLOSED enum of the four groups."
+        },
+        "title": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The group's plain title (GROUP_TITLE)."
+        },
+        "lot_bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The tax lot (10-digit BBL) the flags are for."
+        },
+        "flags": {
+          "type": "array",
+          "description": "The item flags, in plan order (HiddenIssueFlag.to_dict()).",
+          "items": { "$ref": "#/$defs/flag" }
+        }
+      }
+    },
+    "flag": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One §8a item as a flag, opportunity, check_needed or not_flagged (model.py HiddenIssueFlag.to_dict()).",
+      "required": [
+        "item_id",
+        "group",
+        "title",
+        "status",
+        "status_label",
+        "detail",
+        "typical_source",
+        "evidence",
+        "fact_refs",
+        "exception_label",
+        "phase"
+      ],
+      "properties": {
+        "item_id": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Stable id, <group>.<item> (for example existing_building.larger_than_today)."
+        },
+        "group": {
+          "type": "string",
+          "enum": [
+            "existing_building",
+            "zoning_lot_history",
+            "map_based_rules",
+            "site_shape_and_street"
+          ],
+          "description": "The §8a group id this item belongs to (HiddenIssueFlag.group)."
+        },
+        "title": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The item's plain title."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["flag", "opportunity", "check_needed", "not_flagged"],
+          "description": "model.py STATUSES: flag = the sourced data shows an issue; opportunity = the sourced data shows a gain; check_needed = the source is missing or not connected (never a negative claim); not_flagged = the source IS available and shows no issue."
+        },
+        "status_label": {
+          "type": "string",
+          "enum": ["Flag", "Opportunity", "Check needed", "No flag"],
+          "description": "The display label, tied one-to-one to status (model.py LABELS). 'Check needed' is the plan section 8a wording, copied exactly."
+        },
+        "detail": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The one line shown beside the affected results (plan section 5a). For check_needed it names the missing source plainly."
+        },
+        "typical_source": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The §8a 'Typical source' for this item (what would answer it)."
+        },
+        "evidence": {
+          "type": "array",
+          "description": "The inputs this flag was drawn from, each {label, source}.",
+          "items": { "$ref": "#/$defs/evidence_item" }
+        },
+        "fact_refs": {
+          "type": "array",
+          "description": "The fact_id of each site fact this flag draws on, so a consumer can tie the flag to the facts and their 'Out of date' status.",
+          "items": { "$ref": "common.schema.json#/$defs/non_empty_string" }
+        },
+        "exception_label": {
+          "description": "A results exception label beside the number, such as 'Out of date', or null.",
+          "anyOf": [
+            { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            { "type": "null" }
+          ]
+        },
+        "phase": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The §8a phase for this item ('1' for the existing-building group)."
+        }
+      },
+      "allOf": [
+        {
+          "description": "The display label is tied one-to-one to the status (model.py LABELS).",
+          "oneOf": [
+            {
+              "properties": {
+                "status": { "const": "flag" },
+                "status_label": { "const": "Flag" }
+              }
+            },
+            {
+              "properties": {
+                "status": { "const": "opportunity" },
+                "status_label": { "const": "Opportunity" }
+              }
+            },
+            {
+              "properties": {
+                "status": { "const": "check_needed" },
+                "status_label": { "const": "Check needed" }
+              }
+            },
+            {
+              "properties": {
+                "status": { "const": "not_flagged" },
+                "status_label": { "const": "No flag" }
+              }
+            }
+          ]
+        },
+        {
+          "description": "The zoning-lot-history group is a reminder only (plan P-2): its items are a flag or 'Check needed', never opportunity or not_flagged, and never a verified or combined zoning-lot claim. Every other group admits all four statuses.",
+          "oneOf": [
+            {
+              "properties": {
+                "group": { "const": "zoning_lot_history" },
+                "status": { "enum": ["flag", "check_needed"] }
+              }
+            },
+            {
+              "properties": {
+                "group": {
+                  "enum": [
+                    "existing_building",
+                    "map_based_rules",
+                    "site_shape_and_street"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "evidence_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "One input a flag was drawn from, {label, source}.",
+      "required": ["label", "source"],
+      "properties": {
+        "label": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Plain label for the input."
+        },
+        "source": {
+          "description": "The input's provenance. Most inputs are a site_fact source (a dataset value); the existing-building 'larger than today' flag instead carries the ENGINE's as-of-right-allowance provenance (existing_building.py sets dict(allowance.source); allowance.py AsOfRightAllowance.source is an open engine-result provenance mapping, not a site_fact source). An input with no dataset carries null.",
+          "anyOf": [
+            { "$ref": "site_fact.schema.json#/$defs/source" },
+            { "$ref": "#/$defs/engine_provenance" },
+            { "type": "null" }
+          ]
+        }
+      }
+    },
+    "engine_provenance": {
+      "type": "object",
+      "description": "Provenance of an ENGINE result carried in as an input (allowance.py AsOfRightAllowance.source, a Mapping[str, Any] naming the engine result - its rule version and the evaluation it came from). It is carried through verbatim (existing_building.py dict(allowance.source)) and never derived here, so this schema does not fix a closed shape: it is an open object that typically carries at least a 'kind' (for example 'rule_evaluation') and a plain-English 'statement'. It is NOT a site_fact source (its 'kind' is an engine kind, not a city-data kind).",
+      "properties": {
+        "kind": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The engine provenance kind (for example 'rule_evaluation'). Not a site_fact source kind."
+        },
+        "statement": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "A plain-English statement of the engine result (for example 'R6B as-of-right, rule v1')."
+        }
+      }
+    }
+  }
+}

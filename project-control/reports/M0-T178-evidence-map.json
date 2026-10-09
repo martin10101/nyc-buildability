@@ -1,0 +1,13 @@
+{
+  "task_id": "M0-T178",
+  "requirements": {
+    "D-091-R001": [
+      "This task's share: the loop on this server cannot start the dual review with the combining model equal to the Claude reviewer model, or with either empty. dual_review._check_combiner_distinct_from_claude runs in _preflight before any slot reservation or process (dual_review.py:263; refusals review_models_not_distinct / review_models_unset). Producer commit a052c383; report project-control/reports/M0-T178-producer-report.md.",
+      "Remaining for R001 overall (not claimed): the Linux recertification superseding M0-T174, the owner-applied activation-PIN amendment (R009), the owner's combining-model choice (R008) and the owner-typed commissioning (M0-T175)."
+    ],
+    "D-091-R007": [
+      "Reviewed before use: G3/G4 independent code-reviewer PASS and G5 independent security-reviewer PASS at 434be42d (producer backend-engineer != reviewers). Tests: Scenario7 (4 tests) assert 0 spawns and 0 slots on each refusal; dual_review/review_combiner/claude_reviewer/review_slots 111 passed; mutation (neutralized equality check) turns the equal-models test red.",
+      "The certification itself follows in its own task, bundled with M0-T177."
+    ]
+  }
+}

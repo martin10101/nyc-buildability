@@ -105,6 +105,7 @@ _OP_SAMPLE_ARGS = {
     "min": [3, 1, 2],
     "max": [3, 1, 2],
     "round": [2.5, 0],
+    "round_threshold": [29.63, 0.75],
     "clamp": [5, 0, 3],
 }
 

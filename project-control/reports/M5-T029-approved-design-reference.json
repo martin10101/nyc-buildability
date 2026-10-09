@@ -1,0 +1,88 @@
+{
+  "task_id": "M5-T029",
+  "recorded_at": "2026-09-14T20:31:52.846717+00:00",
+  "approval_source": "project-control/directives/D-061-architect-interface/source-003-amendment.md",
+  "reference_kind": "Owner-reviewed generated concept previews in this conversation",
+  "local_reference_directory": "/workspace/scratch/cfa2464c5c7f/generated_images",
+  "interpretation": "Visual composition references only. Sample property values, example decisions and unavailable engines in concepts are not production data or authority to create backend features. Implement professional density/navigation and genuine existing workflows; preserve provenance and explicit unknowns.",
+  "screens": [
+    {
+      "screen": "Search",
+      "reference_file": "exec-d48ec922-7eaf-46cb-bd6f-847d141f9fc9.png",
+      "sha256": "6e83f37c511e05322cc6d9c9589dec4bcee5f90ab252e0d8911ab7768a2912d0",
+      "implementation_scope": "Official candidate lookup and existing BBL/manual recovery"
+    },
+    {
+      "screen": "Overview",
+      "reference_file": "exec-4ba90e28-963f-473e-ba73-d7e56614314c.png",
+      "sha256": "682fa1c163a37e259ba8bd0ac534cdd7eb827786b5d43d66d4a405ea6bbaaf5e",
+      "implementation_scope": "Actual canonical profile and available evaluation summary"
+    },
+    {
+      "screen": "Property facts",
+      "reference_file": "exec-d23af6ff-4e74-43cc-960d-17d7c0a4e660.png",
+      "sha256": "6fae3921eae96afca75e888e0e23c166eb1abfd31eefaf569538a4afffafb306",
+      "implementation_scope": "All actual source facts and openable evidence"
+    },
+    {
+      "screen": "Zoning",
+      "reference_file": "exec-9e0e28cc-03fb-42b5-ba53-86419e41203c.png",
+      "sha256": "04c3774170aa7b87bfdcf91568cf00a15dd6ab3a5b311e2a9ba6207726173240",
+      "implementation_scope": "Canonical zoning, coverage and source-backed context map"
+    },
+    {
+      "screen": "Scenarios",
+      "reference_file": "exec-82bc4807-007e-44ab-9ab2-5d14cbbadc4e.png",
+      "sha256": "fe7824cf0498d1990a04058ff64994bc190fb0b584d20925777a338891417b2a",
+      "implementation_scope": "Existing scenario calculations and assumptions only"
+    },
+    {
+      "screen": "Evidence",
+      "reference_file": "exec-9a46c472-15c1-4da2-b4fa-2ddec4514ded.png",
+      "sha256": "509acbf2a74577531f114696ed3e8cd3a744264810f8880d6b201a7520fa5705",
+      "implementation_scope": "Facts, transformations, calculation trace, safe sources and review history"
+    },
+    {
+      "screen": "Documents",
+      "reference_file": "exec-8b68540e-c10b-4e44-826f-adafd79a84d6.png",
+      "sha256": "0edc97d96a1e7c46b0da62a69f8cf4dbeb28d8739c0f3dfdc3428add68d4616e",
+      "implementation_scope": "Existing document/survey review entry; unsupported upload/persistence stays unavailable"
+    },
+    {
+      "screen": "Survey review",
+      "reference_file": "exec-05082418-4a4c-4f2a-a3ee-449f6e047ae1.png",
+      "sha256": "42bb6075910ae6a0f3719c3ae773e683e7721f80863ce484773b3a937bacda03",
+      "implementation_scope": "Existing flagged survey review and conflict handling"
+    },
+    {
+      "screen": "Open issues",
+      "reference_file": "exec-96c61376-1b5f-4527-a3c3-5a474be4c794.png",
+      "sha256": "0bedba4c51b09c8d7c100c1273dd7237d56378bd54d5af6d466b8381f250a6ad",
+      "implementation_scope": "Actual unresolved conflicts, missing inputs and unsupported checks"
+    },
+    {
+      "screen": "Property brief",
+      "reference_file": "exec-77b55848-3ed7-46e7-b9a1-637d5dec9080.png",
+      "sha256": "be9d8bafa2cce269018b20bc204780009c0384b3c15a052e49123da270a22b52",
+      "implementation_scope": "Print current fetched records with source appendix; no fabricated saved/export state"
+    },
+    {
+      "screen": "Envelope",
+      "reference_file": "exec-3a90f112-535b-496c-be60-5bb3a01ce675.png",
+      "sha256": "26e88d636b4f43ee0580ab528e4e24a4bcec820a430b58b4140676e35ad61636",
+      "implementation_scope": "Future engine unavailable"
+    },
+    {
+      "screen": "Units",
+      "reference_file": "exec-2ce7d578-af53-4a74-87ea-58146c88e361.png",
+      "sha256": "f2cd906420e9c52691199de752890d3210a905588125f30b6e345f92329ea9d1",
+      "implementation_scope": "Future engine unavailable"
+    },
+    {
+      "screen": "Financials",
+      "reference_file": "exec-c4c8784e-5dba-4de7-9acf-ad325c712a1d.png",
+      "sha256": "b8069d8cc7d4a831c2c2ec5187964cb85319ea19dea13060087ac26aa6a95b94",
+      "implementation_scope": "Future engine unavailable"
+    }
+  ]
+}

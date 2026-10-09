@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T004",
+  "gate_id": "G3",
+  "reviewer": "human-journey-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T004-rereview.md",
+  "reviewed_at": "2026-09-11T04:33:03.413164+00:00",
+  "content_manifest_sha256": "9f57ea9e886ef1909fd6f6260877c5e560e3b8af4740d7a9a0ef16cf97692c67",
+  "reviewed_sha": "9b4178755facda932c19c893d4ff2710a0f0d86a",
+  "history": [
+    {
+      "reviewer": "human-journey-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M5-T004-G3.md",
+      "reviewed_at": "2026-09-11T03:01:16.583680+00:00"
+    }
+  ],
+  "updated_at": "2026-09-11T04:33:04.075080+00:00"
+}

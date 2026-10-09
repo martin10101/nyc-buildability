@@ -35,8 +35,11 @@ sys.path.insert(0, str(REPO))
 from tools.agent_supervisor import broker as bk  # noqa: E402
 from tools.agent_supervisor import loop as lp  # noqa: E402
 from tools.agent_supervisor import policy as pol  # noqa: E402
+from tools.agent_supervisor import refusals  # noqa: E402
 from tools.agent_supervisor import rotation as rot  # noqa: E402
+from tools.agent_supervisor import orientation as orient  # noqa: E402
 from tools.agent_supervisor import state_machine as sm  # noqa: E402
+from tools.agent_supervisor import turn_budget as tb  # noqa: E402
 from tools.agent_supervisor.audit_log import AuditLog  # noqa: E402
 from tools.agent_supervisor.claude_runner import RunnerConfig, RunResult  # noqa: E402
 from tools.agent_supervisor.codex_reviewer import ReviewOutcome  # noqa: E402
@@ -50,6 +53,13 @@ from tools.agent_supervisor.state_machine import StateMachine  # noqa: E402
 
 #: The launch config a FakeRunner carries, so `--model` actuation is visible.
 _FAKE_LAUNCH_CONFIG = RunnerConfig(executable="fake-claude")
+
+
+#: M0-T080: the HEAD a loop fixture is at. `checkpoint()` already reports it as
+#: `current_sha`, so a rotation built from the last checkpoint pins THIS sha and
+#: the successor is expected to start from it. Before M0-T080 no seam looked at a
+#: SHA at all, so the fixtures never had to name one.
+HEAD_SHA = "b" * 40
 
 
 def checkpoint(**overrides) -> ClaudeCheckpoint:
@@ -89,18 +99,46 @@ class FakeRunner:
         self.prompts: list[str] = []
         #: Every model this runner was asked to launch with, one per unit.
         self.models: list[str] = []
+        #: M0-T080: every provider session id this runner was rebound to resume.
+        self.resumed: list[str] = []
+        #: M0-T126 (G3-2): the extra_turns tuple each dispatched unit received,
+        #: so a test can prove the reserved-final-turn checkpoint demand was
+        #: injected through run_unit's stdin channel (or absent when unbudgeted).
+        self.extra_turns_seen: list[tuple[str, ...]] = []
         self.config = dataclasses.replace(_FAKE_LAUNCH_CONFIG, model=model,
                                           expected_model=model)
 
     def with_model(self, model: str) -> "FakeRunner":
-        clone = FakeRunner(*self.results, model=model)
+        clone = type(self)(*self.results, model=model)
+        clone.config = dataclasses.replace(self.config, model=model,
+                                           expected_model=model)
         clone.prompts = self.prompts
         clone.models = self.models
+        clone.resumed = self.resumed
+        clone.extra_turns_seen = self.extra_turns_seen
         return clone
 
-    def run_unit(self, prompt: str, **_kwargs) -> RunResult:
+    def with_resume(self, provider_session_id: str) -> "FakeRunner":
+        """M0-T080: the resume rebind, modelled exactly like `with_model`.
+
+        The real runner returns a NEW runner whose launch config carries
+        `resume_session_id`, so a rotation recorded as a resume can be checked
+        against a launch configuration that really changed. The fake does the
+        same, and records the id so a test can assert the actuation reached it.
+        """
+        clone = type(self)(*self.results, model=self.config.model)
+        clone.config = dataclasses.replace(self.config,
+                                           resume_session_id=provider_session_id)
+        clone.prompts = self.prompts
+        clone.models = self.models
+        clone.resumed = self.resumed + [provider_session_id]
+        clone.extra_turns_seen = self.extra_turns_seen
+        return clone
+
+    def run_unit(self, prompt: str, *, extra_turns=(), **_kwargs) -> RunResult:
         self.prompts.append(prompt)
         self.models.append(self.config.model)
+        self.extra_turns_seen.append(tuple(extra_turns))
         return self.results[min(len(self.prompts) - 1, len(self.results) - 1)]
 
 
@@ -170,11 +208,36 @@ class LoopTestBase(unittest.TestCase):
     def at_preflight(self) -> None:
         self.machine.transition(sm.PREFLIGHT, "start_command")
 
+    def successor_result(self, *, checkpoint_id: str, session_id: str = "sess-successor",
+                         **overrides) -> RunResult:
+        """The post-rotation unit's result, modelling the S11.3 contract (M0-T080).
+
+        A re-oriented session's FIRST response is a structured READY checkpoint,
+        reporting ITS OWN provider session id and the task / branch / worktree /
+        HEAD it was commanded onto. Before M0-T080 the loop asked for none of
+        that, so these fixtures returned an ordinary UNIT_COMPLETE checkpoint
+        carrying a placeholder worktree and an unrelated starting SHA. The READY
+        gate and the post-launch identity check now require the real thing, so
+        the fake models it - which makes the fixture MORE faithful to a live
+        worker, not less demanding of one.
+        """
+        cp = checkpoint(status="READY", checkpoint_id=checkpoint_id,
+                        claude_session_id=session_id,
+                        starting_sha=HEAD_SHA, current_sha=HEAD_SHA,
+                        worktree=self.authority.worktree,
+                        branch=self.authority.branch,
+                        summary="re-oriented from the verified handoff; nothing changed",
+                        proposed_next_action="await the forwarded unit")
+        data = dict(session_id=session_id, checkpoint=cp)
+        data.update(overrides)
+        return run_result(**data)
+
     def build(self, *, mode: str = "shadow", runner=None, reviewer=None,
               approval_gate=None, budget: int = 2, max_cycles: int = 4,
               breakers=None, broker=None, pinned_model: str = "",
               context_rotation_threshold: int = 0, model_available=None,
-              model_chain=None, session_role: str = "") -> lp.SupervisedLoop:
+              model_chain=None, session_role: str = "",
+              head_sha: str = HEAD_SHA, turn_budget=None) -> lp.SupervisedLoop:
         return lp.SupervisedLoop(
             config=lp.LoopConfig(mode=mode, task_id="M0-T036", stage="phase4",
                                  allowed_paths=self.authority.allowed_paths,
@@ -189,6 +252,7 @@ class LoopTestBase(unittest.TestCase):
             broker=broker, pinned_model=pinned_model,
             context_rotation_threshold=context_rotation_threshold,
             model_chain=model_chain,
+            head_sha=head_sha, turn_budget=turn_budget,
             model_available=model_available)
 
 
@@ -226,6 +290,26 @@ class ModeTests(LoopTestBase):
                        {"owner_touch_budget": -1}):
             with self.assertRaises(lp.LoopError):
                 lp.LoopConfig(mode="shadow", task_id="t", stage="s", **kwargs)
+
+    def test_the_managed_wave_switch_never_reaches_loop_config(self) -> None:
+        # M0-T152 rework (D-033-R003; G5 M0-T150 F6): the first increment put
+        # an `owner_enabled_managed_gate_waves` field (with a by-name refusal)
+        # on LoopConfig, and cli._run_loop DID supply it from the operator
+        # flag - the field was wired, not dead. The rework removed the field
+        # AND its CLI wiring together: enforcement now lives at the CLI seam -
+        # `gate_wave.managed_wave_start_gate` gates `cmd_start` by name and
+        # `gate_wave.run_with_post_complete_stage` re-asserts it (both proven,
+        # with mutation halves, in tools/test_agent_supervisor_gate_wave.py).
+        # LoopConfig deliberately carries NO wave field, so no loop
+        # construction path - any mode, any kwargs - can observe or enable the
+        # stage (S1 OFF==today at this boundary). Reintroducing the field here
+        # fails this test.
+        self.assertNotIn(
+            "owner_enabled_managed_gate_waves",
+            {field.name for field in dataclasses.fields(lp.LoopConfig)})
+        with self.assertRaises(TypeError):
+            lp.LoopConfig(mode="shadow", task_id="M0-T036", stage="phase4",
+                          owner_enabled_managed_gate_waves=True)  # type: ignore[call-arg]
 
 
 # --------------------------------------------------------------------------
@@ -342,13 +426,65 @@ class AchievedContainmentTests(LoopTestBase):
                             for t in result.owner_touches))
 
     def test_process_group_containment_also_fails_closed(self) -> None:
-        # Anything short of job_object fails closed; process_group is not enough.
+        # Anything short of the accept-set fails closed; process_group is not enough.
+        # M0-T177 (B-027) mutation anchor: if CONTAINMENT_ACCEPT_SET were widened to
+        # include process_group, this stop would vanish and the test go red.
         self.at_preflight()
         loop = self.build(mode="supervised",
                           runner=FakeRunner(run_result(containment="process_group")),
                           approval_gate=lambda digest, prompt: True)
         result = loop.run_cycle("first unit", cycle=1)
         self.assertEqual(result.stopped, "containment_degraded")
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+
+    def _reprove(self, ok: bool):
+        # Patch the loop's G5 NB1 per-cycle systemd re-proof (the real one does a
+        # live `systemctl show`, which refuses off a systemd service host).
+        original = lp.reprove_systemd_containment_ok
+        lp.reprove_systemd_containment_ok = lambda: ok  # type: ignore[assignment]
+        self.addCleanup(lambda: setattr(lp, "reprove_systemd_containment_ok", original))
+
+    def test_systemd_cgroup_containment_proceeds_normally(self) -> None:
+        # M0-T177 (B-027): a cycle reporting a PROVED Linux systemd control group
+        # is an accepted kill-on-external-death kind and proceeds like job_object
+        # (the per-cycle NB1 re-proof still holds).
+        self._reprove(True)
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(containment="systemd_cgroup")),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "")
+        self.assertTrue(result.forwarded)
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+
+    def test_systemd_cgroup_reproof_failure_on_cycle_stops_containment_unverified(self) -> None:
+        # G5 NB1: the kind + membership held at launch, but a FRESH per-cycle
+        # re-proof of the systemd unit no longer holds (a mid-run `systemctl
+        # set-property` weakening). The cycle fails closed. Mutation: removing the
+        # re-check lets the cycle PROCEED and turns this red.
+        self._reprove(False)
+        self.at_preflight()
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(run_result(containment="systemd_cgroup")),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "containment_unverified")
+        self.assertIn("re-proof", result.reason)
+        self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
+
+    def test_systemd_cgroup_unverified_membership_stops_containment_unverified(self) -> None:
+        # M0-T177 (B-027): a systemd_cgroup cycle whose worker could NOT be verified
+        # in the service control group (a foreign cgroup) fails closed, exactly as
+        # an unverified job_object cycle does.
+        self.at_preflight()
+        unverified = run_result(containment="systemd_cgroup",
+                                containment_verified_in_job=False)
+        loop = self.build(mode="supervised",
+                          runner=FakeRunner(unverified),
+                          approval_gate=lambda digest, prompt: True)
+        result = loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(result.stopped, "containment_unverified")
         self.assertEqual(self.machine.current_state, sm.PAUSED_RECOVERY)
 
 
@@ -378,11 +514,22 @@ class DecisionRoutingTests(LoopTestBase):
         self.assertEqual(self.machine.current_state, sm.COMPLETE)
         self.assertFalse(result.forwarded)
 
-    def test_rotate_session_prepares_rotation(self) -> None:
-        _, result = self.route(decision(decision="ROTATE_SESSION", next_claude_prompt="",
-                                        rotation_reason="context pressure at a checkpoint"))
+    def test_rotate_session_routes_through_the_seam_not_prepare_rotation(self) -> None:
+        # M0-T126 (D-024-R372; defect D8): a legal ROTATE_SESSION verdict is
+        # routed through the EXISTING rotation seam — rotation_pending is set and
+        # the cycle closes into PREFLIGHT (a legal CYCLE_ENTRY_STATE) — instead of
+        # the dead PREPARE_ROTATION state, which had no exit caller and made the
+        # next start raise `bad_cycle_entry_state`, stranding the journal.
+        loop, result = self.route(decision(
+            decision="ROTATE_SESSION", next_claude_prompt="",
+            rotation_reason="context pressure at a checkpoint"))
         self.assertEqual(result.stopped, "rotate_session")
-        self.assertEqual(self.machine.current_state, sm.PREPARE_ROTATION)
+        self.assertEqual(self.machine.current_state, sm.PREFLIGHT)
+        # PREFLIGHT is a legal cycle-entry state (the strand is gone) and the
+        # rotation is durably pending with the rotate_session reason, so the next
+        # dispatch rotates at the proven seam.
+        self.assertIn(sm.PREFLIGHT, lp.CYCLE_ENTRY_STATES)
+        self.assertTrue(loop.rotation_pending())
 
     def test_a_synchronous_stop_for_owner_is_counted_as_a_stop(self) -> None:
         loop, result = self.route(decision(
@@ -769,6 +916,66 @@ class ForwardedPromptThreadingTests(LoopTestBase):
                          digest_of(result.forward.sent_prompt))
 
 
+class CrossProcessForwardResumeD10Tests(LoopTestBase):
+    """M0-T126 (defect D10): a run that forwards a CONTINUE prompt and exits at
+    CLAUDE_RUNNING (max_cycles reached) must dispatch THOSE forwarded bytes on the
+    NEXT start - not the generic default - and a cross-process re-decision must
+    not dead-end the run via duplicate suppression (advancing cycle number)."""
+
+    def test_forwarded_bytes_are_dispatched_on_the_next_start(self) -> None:
+        self.at_preflight()
+        runner1 = FakeRunner(run_result())
+        loop1 = self.build(mode="supervised", runner=runner1, max_cycles=1,
+                           approval_gate=lambda d, p: True)
+        run1 = loop1.run("the ORIGINAL first prompt")
+        self.assertEqual(run1.stopped, "max_cycles_reached")
+        self.assertEqual(self.machine.current_state, sm.CLAUDE_RUNNING)
+        # The forwarded bytes are durably pending for the next start.
+        pointer = self.journal.get_state(f"next_unit_prompt/{loop1.run_id}", None)
+        self.assertIsNotNone(pointer)
+        self.assertIn("TASK: M0-T036", pointer["prompt"])
+
+        # Fresh process: a NEW loop on the SAME journal, state CLAUDE_RUNNING.
+        runner2 = FakeRunner(run_result())
+        loop2 = self.build(mode="supervised", runner=runner2, max_cycles=1,
+                           approval_gate=lambda d, p: True)
+        loop2.run("the GENERIC DEFAULT prompt - MUST NOT be dispatched")
+        # Removal sensitivity: without the CLAUDE_RUNNING resume branch, runner2
+        # would have received the generic default (the D10 bug).
+        self.assertEqual(len(runner2.prompts), 1)
+        self.assertNotIn("GENERIC DEFAULT", runner2.prompts[0])
+        self.assertIn("TASK: M0-T036", runner2.prompts[0])
+
+    def test_the_pointer_is_consumed_exactly_once(self) -> None:
+        self.at_preflight()
+        loop1 = self.build(mode="supervised", runner=FakeRunner(run_result()),
+                           max_cycles=1, approval_gate=lambda d, p: True)
+        loop1.run("original")
+        key = f"next_unit_prompt/{loop1.run_id}"
+        self.assertIn("TASK", self.journal.get_state(key)["prompt"])
+        # First consume returns the bytes; the pointer is then cleared.
+        first = loop1._consume_next_unit_prompt()
+        self.assertIsNotNone(first)
+        self.assertIsNone(loop1._consume_next_unit_prompt(),
+                          "a second consume must find nothing (exactly-once)")
+
+    def test_re_decision_uses_an_advancing_cycle_number(self) -> None:
+        # The cross-process resume forwards at cycle 2 (advancing), so its message
+        # id differs from cycle 1's and is not dead-ended by duplicate suppression.
+        self.at_preflight()
+        loop1 = self.build(mode="supervised", runner=FakeRunner(run_result()),
+                           max_cycles=1, approval_gate=lambda d, p: True)
+        run1 = loop1.run("original")
+        self.assertIn("/fwd/1/", run1.cycles[0].forward.message_id)
+        loop2 = self.build(mode="supervised", runner=FakeRunner(run_result()),
+                           max_cycles=1, approval_gate=lambda d, p: True)
+        run2 = loop2.run("generic")
+        self.assertIn("/fwd/2/", run2.cycles[0].forward.message_id,
+                      "the resumed unit must forward at the ADVANCING cycle 2")
+        self.assertNotEqual(run1.cycles[0].forward.message_id,
+                            run2.cycles[0].forward.message_id)
+
+
 # --------------------------------------------------------------------------
 # V1.1 correction B-2: every cycle ends in a resumable state
 # --------------------------------------------------------------------------
@@ -916,15 +1123,25 @@ class OwnerTouchBudgetTests(LoopTestBase):
             self.ledger().record("silently_ignore", reason_code="x", reason="", cycle=1)
 
     def test_the_budget_module_cannot_widen_policy(self) -> None:
-        """S15: the shadow counter cannot itself trigger any policy widening."""
-        source = (REPO / "tools" / "agent_supervisor" / "loop.py").read_text(
-            encoding="utf-8")
-        for widening in ("owner_grant", "StandingGrant", "assert_not_widened",
-                         "TIER_ORDER"):
-            self.assertNotIn(widening, source,
-                             f"loop.py references {widening!r}; the owner-touch budget "
-                             f"is a measurement and must not be able to widen authority, "
-                             f"mint a grant, or move a tier")
+        """S15: the shadow counter cannot itself trigger any policy widening.
+
+        M0-T079 split the owner-touch accounting into `owner_touch.py` under the
+        modularity rule, so the scan covers BOTH files - the guarantee follows
+        the code rather than staying pinned to whichever module used to hold it.
+        """
+        package = REPO / "tools" / "agent_supervisor"
+        sources = {name: (package / name).read_text(encoding="utf-8")
+                   for name in ("loop.py", "owner_touch.py")}
+        for name, source in sources.items():
+            for widening in ("owner_grant", "StandingGrant", "assert_not_widened",
+                             "TIER_ORDER"):
+                self.assertNotIn(widening, source,
+                                 f"{name} references {widening!r}; the owner-touch budget "
+                                 f"is a measurement and must not be able to widen "
+                                 f"authority, mint a grant, or move a tier")
+        # The ledger really does live there, so the scan above is not vacuous.
+        self.assertIn("class OwnerTouchLedger", sources["owner_touch.py"])
+        source = sources["loop.py"]
         # `authority`, `policy_config`, and the budget are bound exactly once each
         # (in __init__) and are read-only thereafter.
         for attribute in ("self.authority =", "self.policy_config =", "self.config ="):
@@ -1059,6 +1276,36 @@ fallback_models = []
 """
 
 
+def make_live_checkout(root: pathlib.Path, *, task_id: str,
+                       status: str = "in_progress") -> pathlib.Path:
+    """A REAL git checkout with a ledger record, for the M0-T079 live probes.
+
+    `start` no longer certifies task authority, the branch, the worktree, or Git
+    state from "the operator named every flag" - that synthetic answer is the
+    defect M0-T079 fixed - so a fixture that DISPATCHES has to be a checkout the
+    probes can actually read. One empty commit and one ledger record.
+    """
+    import os
+    import subprocess
+
+    root.mkdir(parents=True, exist_ok=True)
+    tasks = root / "project-control" / "tasks"
+    tasks.mkdir(parents=True, exist_ok=True)
+    (tasks / f"{task_id}.json").write_text(
+        json.dumps({"task_id": task_id, "status": status, "blockers": []}),
+        encoding="utf-8")
+    env = {**os.environ,
+           "GIT_AUTHOR_NAME": "supervisor-test",
+           "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "supervisor-test",
+           "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+    for argv in (["init", "-q", "-b", "main"],
+                 ["commit", "-q", "--allow-empty", "-m", "fixture"]):
+        subprocess.run(["git", *argv], cwd=str(root), check=True,
+                       capture_output=True, env=env)
+    return root
+
+
 class CliStartTests(LoopTestBase):
     """`start` is REAL now, so it is driven here exactly as an operator would."""
 
@@ -1067,6 +1314,7 @@ class CliStartTests(LoopTestBase):
         from tools.agent_supervisor import cli
 
         self.cli = cli
+        make_live_checkout(self.repo, task_id="M0-T036")
         self.runtime = self.tmp / "runtime"
         self.config = self.tmp / "config.toml"
         self.config.write_text(CONFIG_TOML, encoding="utf-8")
@@ -1102,8 +1350,15 @@ class CliStartTests(LoopTestBase):
         return code, json.loads(stdout.getvalue())
 
     def test_start_without_the_required_inputs_does_not_dispatch(self) -> None:
+        """M0-T079 C7: a missing input is a TYPED refusal, not exit 0.
+
+        The payload always said `dispatched: false`, but an unattended launcher
+        reads the exit code, and 0 meant "the run happened". A drifted argv or a
+        moved config reported success for a run that executed no cycle.
+        """
         code, payload = self.run_cli("start", "--mode", "shadow")
-        self.assertEqual(code, 0)
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
+        self.assertEqual(payload["refusal"]["reason_code"], "missing_required_inputs")
         self.assertFalse(payload["dispatched"])
         self.assertEqual(payload["provider_calls_made"], 0)
         self.assertFalse(payload["limited_auto_enabled"])
@@ -1111,6 +1366,8 @@ class CliStartTests(LoopTestBase):
             payload["missing_inputs"],
             ["--claude-executable", "--codex-executable", "--config",
              "--manifest", "--model-selection", "--task-packet"])
+        self.assertEqual(payload["refusal"]["detail"]["missing_inputs"],
+                         payload["missing_inputs"])
 
     def test_start_names_exactly_which_input_is_missing(self) -> None:
         _, payload = self.run_cli(
@@ -1124,9 +1381,28 @@ class CliStartTests(LoopTestBase):
         self.assertFalse(payload["dispatched"])
 
     def test_start_limited_auto_refuses_by_name_before_any_input_check(self) -> None:
-        with self.assertRaises(NotImplementedError) as ctx:
-            self.run_cli("start", "--mode", "limited-auto")
-        self.assertIn("limited-auto is disabled", str(ctx.exception))
+        """M0-T079: the SAME refusal, now machine readable instead of a traceback.
+
+        The bounded mode is off unless the owner enables it for this exact
+        launch, and `start` says so with the documented `refused_mode` outcome,
+        exit 16, and a structured JSON payload - the bare `NotImplementedError`
+        this used to raise gave an unattended wrapper nothing to act on.
+        """
+        code, payload = self.run_cli("start", "--mode", "limited-auto")
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        self.assertEqual(payload["outcome"], refusals.REFUSED_MODE)
+        self.assertEqual(payload["reason_code"], "limited_auto_not_enabled")
+        self.assertIn("limited-auto is DISABLED", payload["message"])
+        self.assertIn("explicit owner activation", payload["message"])
+        self.assertEqual(payload["detail"]["owner_enable_input"],
+                         "--owner-enable-bounded-auto")
+
+    def test_start_refuses_the_bounded_enable_on_a_non_gated_mode(self) -> None:
+        """A stray enable flag never sits unnoticed in a scheduled task's argv."""
+        code, payload = self.run_cli("start", "--mode", "shadow",
+                                     "--owner-enable-bounded-auto")
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        self.assertEqual(payload["reason_code"], "owner_enable_without_gated_mode")
 
     def test_run2_scenario_clear_recovery_then_start_works(self) -> None:
         """V1.1 correction F-2, the pilot run-2 scenario end to end.
@@ -1164,9 +1440,10 @@ class CliStartTests(LoopTestBase):
                        "--manifest", str(self.manifest_path),
                        "--model-selection", str(self.selection))
 
-        # 1. The parked journal refuses with a REPORT, not a traceback (B-2/F-2).
+        # 1. The parked journal refuses with a REPORT, not a traceback (B-2/F-2),
+        #    and since M0-T079 with the typed `stale_state` exit code.
         code, payload = self.run_cli(*full_inputs)
-        self.assertEqual(code, 0)
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
         self.assertFalse(payload["dispatched"])
         self.assertIn("PAUSED_RECOVERY", payload["loop_refusal"]["message"])
 
@@ -1423,7 +1700,12 @@ class CliStartTests(LoopTestBase):
             "--config", str(self.config),
             "--manifest", str(self.manifest_path),
             "--model-selection", str(self.selection))
-        self.assertEqual(code, 0, "a refusal is a reported outcome, not a crash")
+        # M0-T079: still a reported outcome rather than a crash, and now with a
+        # typed exit code so a wrapper can act on it (`stale_state`: the durable
+        # state and the caller's idea of where the run is disagree).
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE],
+                         "a refusal is a reported outcome, not a crash")
+        self.assertEqual(payload["refusal"]["outcome"], refusals.STALE_STATE)
         self.assertFalse(payload["dispatched"])
         self.assertEqual(payload["loop_refusal"]["code"], "bad_cycle_entry_state")
         self.assertIn("bad_cycle_entry_state", payload["stopped_because"])
@@ -1564,14 +1846,15 @@ class SeamRotationTests(LoopTestBase):
     reached only at a seam (finish-current-unit invariant, S11.2)."""
 
     def _downgrade_runner(self) -> FakeRunner:
-        # Cycle 1 reports a model downgrade; cycle 2 is clean (the relaunch).
+        # Cycle 1 reports a model downgrade; cycle 2 is the RE-ORIENTED successor,
+        # which answers with the S11.3 READY checkpoint the rotation now requires.
         return FakeRunner(run_result(model_mismatch=True,
                                      mismatch_detail="reported claude-substitute"),
-                          run_result())
+                          self.successor_result(checkpoint_id="cp-successor"))
 
     def _threshold_runner(self) -> FakeRunner:
         return FakeRunner(run_result(context_tokens=500_000, usage_known=True),
-                          run_result())
+                          self.successor_result(checkpoint_id="cp-successor"))
 
     def test_a_model_downgrade_rotates_at_the_seam_and_relaunches_pinned(self) -> None:
         self.at_preflight()
@@ -1588,16 +1871,37 @@ class SeamRotationTests(LoopTestBase):
         self.assertEqual(rotation_record["reason_code"], "model_downgrade")
         self.assertEqual(rotation_record["cycle"], 2, "rotation fires at the seam")
         # relaunch-pinned + never-substitute: the record names the CONFIGURED model
-        # and a brand-new session id, and carries no substitute model.
+        # and carries no substitute model.
         self.assertEqual(rotation_record["pinned_model"], "claude-pinned")
-        self.assertNotEqual(rotation_record["new_session_id"],
-                            rotation_record["old_session_id"])
         self.assertNotIn("substitute_model", rotation_record)
+        # M0-T080: the record carries BOTH identities and never conflates them.
+        # `rotation_record_key` is supervisor-internal bookkeeping (prefix
+        # `sup-rot-`); `previous_provider_session_id` is the id the PROVIDER
+        # issued. Before M0-T080 one key held both meanings and the invented
+        # uuid was stored where the new session's identity belonged.
+        self.assertTrue(rotation_record["rotation_record_key"].startswith("sup-rot-"))
+        self.assertEqual(rotation_record["previous_provider_session_id"], "sess-1")
+        self.assertNotEqual(rotation_record["rotation_record_key"],
+                            rotation_record["previous_provider_session_id"])
+        # A downgrade rotation is cross-model/context-shedding, so resume is
+        # impossible and the record says so EXPLICITLY rather than implying one.
+        self.assertEqual(rotation_record["continuity_mode"], "reorientation")
+        self.assertEqual(rotation_record["provider_session_id"], "")
+        self.assertTrue(rotation_record["provider_session_none_reason"])
         # rotate reused rotation.py: the pending flag is cleared and the outgoing
-        # session archived.
+        # PROVIDER session archived (never the internal key).
         self.assertFalse(rot.rotation_pending(self.journal))
         ledger = rot.RotationLedger(self.journal)
-        self.assertIn(rotation_record["old_session_id"], ledger.archived_sessions())
+        self.assertIn(rotation_record["previous_provider_session_id"],
+                      ledger.archived_sessions())
+        self.assertNotIn(rotation_record["rotation_record_key"],
+                         ledger.archived_sessions())
+        # The full S11.3 path ran: a VERIFIED handoff is durably stored.
+        stored = ledger.stored_handoff()
+        self.assertIsNotNone(stored)
+        self.assertEqual(stored["handoff_digest"], rotation_record["handoff_digest"])
+        # The successor really received the handoff as its reorientation prompt.
+        self.assertIn("SESSION REORIENTATION", runner.prompts[1])
         events = {r["event_type"] for r in self.audit.read_all()}
         self.assertIn("rotation_pending_flagged", events)
         self.assertIn("session_handoff_refreshed", events)
@@ -1691,6 +1995,99 @@ class SeamRotationTests(LoopTestBase):
         self.assertFalse(rot.rotation_pending(self.journal))
 
 
+class RotatedOrientationDispatchTests(LoopTestBase):
+    """M0-T126 G3-1: the property-1 packet reaches the ROTATED worker's DISPATCHED
+    prompt, not just the orientation module's rotated branch (R387 scenario 1).
+
+    A dispatch-level proof: after a context-threshold rotation, the successor's
+    actual first prompt (`runner.prompts[1]`) must carry the sized checkpoint
+    cadence, the allowed-paths file list, and the exact-required-output demand -
+    the elements the S11.3 handoff alone did NOT carry.
+    """
+
+    def _rotating_runner(self) -> FakeRunner:
+        return FakeRunner(run_result(context_tokens=500_000, usage_known=True),
+                          self.successor_result(checkpoint_id="cp-successor"))
+
+    def test_rotated_dispatched_prompt_carries_cadence_paths_and_required_output(self) -> None:
+        self.at_preflight()
+        runner = self._rotating_runner()
+        budget = tb.budget_for_packet({})[1]
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          turn_budget=budget, approval_gate=lambda d, p: True)
+        loop.run("first unit")
+        self.assertEqual(len(runner.prompts), 2, "the rotated successor dispatched")
+        successor_prompt = runner.prompts[1]
+        # The S11.3 handoff still reaches the successor...
+        self.assertIn("SESSION REORIENTATION", successor_prompt)
+        # ...AND now so does the full property-1 orientation packet, rotated.
+        self.assertIn(orient.ORIENTATION_SENTINEL, successor_prompt)
+        self.assertIn("ROTATED successor", successor_prompt)
+        self.assertIn("context_threshold", successor_prompt)  # the rotation reason
+        self.assertIn("CHECKPOINT CADENCE", successor_prompt)
+        self.assertIn(f"by turn {budget.early_checkpoint_by}", successor_prompt)
+        self.assertIn(f"{budget.total_turns} turns total", successor_prompt)
+        self.assertIn("FINAL turn is reserved", successor_prompt)
+        self.assertIn("RELEVANT FILES", successor_prompt)
+        self.assertIn("tools/agent_supervisor", successor_prompt)  # an allowed path
+        self.assertIn("EXACT REQUIRED OUTPUT", successor_prompt)
+        self.assertIn("claude_checkpoint.schema.json", successor_prompt)
+
+    def test_without_a_budget_the_rotated_prompt_is_not_enriched(self) -> None:
+        # Removal-sensitive boundary: with no sized budget wired, the successor
+        # still gets the S11.3 handoff but NOT the property-1 packet - exactly the
+        # gap G3-1 flagged. The enrichment is what closes it.
+        self.at_preflight()
+        runner = self._rotating_runner()
+        loop = self.build(mode="supervised", runner=runner, max_cycles=2,
+                          pinned_model="claude-pinned",
+                          context_rotation_threshold=100_000,
+                          turn_budget=None, approval_gate=lambda d, p: True)
+        loop.run("first unit")
+        self.assertEqual(len(runner.prompts), 2)
+        successor_prompt = runner.prompts[1]
+        self.assertIn("SESSION REORIENTATION", successor_prompt)
+        self.assertNotIn(orient.ORIENTATION_SENTINEL, successor_prompt)
+        self.assertNotIn("CHECKPOINT CADENCE", successor_prompt)
+
+
+class ReservedTurnInjectionDispatchTests(LoopTestBase):
+    """M0-T126 G3-2: the reserved-final-turn checkpoint demand is injected as an
+    ACTUAL follow-up user turn through run_unit's extra_turns stdin channel, not
+    prompt-text only (property 3). Removal-sensitive: without a sized budget no
+    demand is injected (the preserved 12/12 shape where a turn-exhausted worker
+    receives no boundary demand)."""
+
+    def test_reserved_turn_demand_is_injected_when_a_budget_is_wired(self) -> None:
+        self.at_preflight()
+        runner = FakeRunner(run_result())
+        budget = tb.budget_for_packet({})[1]
+        loop = self.build(mode="supervised", runner=runner,
+                          turn_budget=budget, approval_gate=lambda d, p: True)
+        loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(len(runner.extra_turns_seen), 1)
+        injected = runner.extra_turns_seen[0]
+        self.assertEqual(injected, tb.reserved_turn_injection(budget))
+        self.assertEqual(len(injected), 1, "exactly one reserved-turn demand")
+        demand = injected[0]
+        self.assertIn("RESERVED FINAL TURN", demand)
+        self.assertIn("Emit your mandatory checkpoint NOW", demand)
+        self.assertIn("do NOT start any new tool call", demand)
+        self.assertIn(f"{budget.total_turns}", demand)
+
+    def test_no_injection_without_a_budget(self) -> None:
+        # Removal-sensitive boundary: an unbudgeted dispatch passes empty
+        # extra_turns - run_unit is called exactly as before the fix.
+        self.at_preflight()
+        runner = FakeRunner(run_result())
+        loop = self.build(mode="supervised", runner=runner, turn_budget=None,
+                          approval_gate=lambda d, p: True)
+        loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(runner.extra_turns_seen, [()])
+
+
 # --------------------------------------------------------------------------
 # V1.2.2 D-004 am.27 / D-007 am.12: the orchestrator-role MODEL CHAIN
 # --------------------------------------------------------------------------
@@ -1733,10 +2130,12 @@ class ModelChainSwitchTests(LoopTestBase):
 
     def _downgrade_runner(self) -> FakeRunner:
         # Cycle 1 reports a model downgrade (sets rotation_pending); later cycles
-        # are clean relaunches.
+        # are the RE-ORIENTED successors, which answer with the S11.3 READY
+        # checkpoint the rotation now requires before anything is forwarded.
         return FakeRunner(run_result(model_mismatch=True,
                                      mismatch_detail="reported claude-substitute"),
-                          run_result(), model=PIN)
+                          self.successor_result(checkpoint_id="cp-successor"),
+                          model=PIN)
 
     def _sub_key(self) -> str:
         return f"model_substitution/{self.run_id}"
@@ -1772,7 +2171,13 @@ class ModelChainSwitchTests(LoopTestBase):
         self.assertEqual(rec["launched_model"], NEXT_1)
         self.assertEqual(rec["pinned_model"], PIN)
         self.assertEqual(rec["chain"], list(CHAIN))
-        self.assertNotEqual(rec["new_session_id"], rec["old_session_id"])
+        # M0-T080: both identities, never conflated. A chain switch is
+        # cross-model, so it can only ever be an explicit reorientation.
+        self.assertTrue(rec["rotation_record_key"].startswith("sup-rot-"))
+        self.assertNotEqual(rec["rotation_record_key"],
+                            rec["previous_provider_session_id"])
+        self.assertEqual(rec["continuity_mode"], "reorientation")
+        self.assertIn("cross_model", rec["provider_session_none_reasons"])
         # durable journal record present, carrying pin/selection/reason/cycle/ids.
         sub = self.journal.get_state(self._sub_key())
         self.assertTrue(sub["active"])
@@ -1780,8 +2185,9 @@ class ModelChainSwitchTests(LoopTestBase):
         self.assertEqual(sub["substitute_model"], NEXT_1)
         self.assertEqual(sub["reason_code"], "quota_exhausted")
         self.assertIn("cycle", sub)
-        self.assertIn("new_session_id", sub)
-        self.assertIn("old_session_id", sub)
+        self.assertIn("rotation_record_key", sub)
+        self.assertIn("previous_provider_session_id", sub)
+        self.assertIn("continuity_mode", sub)
         # first-class audit event, never silent, carrying the same fields.
         events = [r for r in self.audit.read_all()
                   if r["event_type"] == "model_substitution"]
@@ -1904,7 +2310,14 @@ class ModelChainSwitchTests(LoopTestBase):
         self.at_preflight()
         runner = FakeRunner(
             run_result(model_mismatch=True, mismatch_detail="reported substitute"),
-            run_result(), run_result(), model=PIN)
+            # Both post-rotation units are re-oriented successors and answer with
+            # the S11.3 READY checkpoint (M0-T080). Distinct checkpoint ids: a
+            # repeated id is the no-progress livelock signal.
+            self.successor_result(checkpoint_id="cp-successor-1",
+                                  session_id="sess-successor-1"),
+            self.successor_result(checkpoint_id="cp-successor-2",
+                                  session_id="sess-successor-2"),
+            model=PIN)
         # First seam: the pin is exhausted and NEXT_1 answers. Second seam: the pin
         # is available again.
         probe = ChainProbe({}, sequence=[(False, "quota_exhausted"), (True, ""),
@@ -2000,6 +2413,163 @@ class ModelChainSwitchTests(LoopTestBase):
             lp.LoopConfig(mode="supervised", task_id="M0-T036", stage="phase4",
                           session_role="admin")
         self.assertEqual(raised.exception.code, "unknown_session_role")
+
+
+class D5CeilingConsumptionTests(LoopTestBase):
+    """M0-T126 (defect D5): the rotation-threshold branch consumes the LIVE
+    context figure, not the cumulative one. These tests EXECUTE
+    _flag_rotation_if_needed (the branch the orchestrator flagged as untested)."""
+
+    def test_live_below_ceiling_does_not_flag_even_if_cumulative_over(self) -> None:
+        # The exact live-journey shape: live 72546 (< 400000) but cumulative
+        # 694251 (>= 400000). Removal sensitivity: if the ceiling consumed the
+        # cumulative figure (the D5 bug), rotation_pending would be set here.
+        loop = self.build(mode="supervised", context_rotation_threshold=400000)
+        rr = run_result(live_context_tokens=72546, live_context_usage_known=True,
+                        context_tokens=694251, usage_known=True)
+        loop._flag_rotation_if_needed(rr, cycle=1)
+        self.assertFalse(loop.rotation_pending(),
+                         "live 72546 is under the ceiling; the cumulative 694251 "
+                         "must NOT drive the rotation flag (D5)")
+
+    def test_live_over_ceiling_flags_rotation(self) -> None:
+        loop = self.build(mode="supervised", context_rotation_threshold=400000)
+        rr = run_result(live_context_tokens=450000, live_context_usage_known=True,
+                        context_tokens=450000, usage_known=True)
+        loop._flag_rotation_if_needed(rr, cycle=1)
+        self.assertTrue(loop.rotation_pending(),
+                        "live 450000 >= the ceiling must flag rotation")
+
+    def test_live_unknown_falls_back_to_cumulative(self) -> None:
+        # When the stream carried no per-turn usage, the conservative fallback
+        # keeps the cumulative signal (premature rotation is the safe direction).
+        loop = self.build(mode="supervised", context_rotation_threshold=400000)
+        rr = run_result(live_context_tokens=0, live_context_usage_known=False,
+                        context_tokens=500000, usage_known=True)
+        loop._flag_rotation_if_needed(rr, cycle=1)
+        self.assertTrue(loop.rotation_pending())
+
+
+class BetweenCycleIntentStopTests(LoopTestBase):
+    """M0-T126 (defects D11/D12): the between-cycle owner-intent seam."""
+
+    def test_no_intent_permits_dispatch(self) -> None:
+        loop = self.build(mode="supervised")
+        self.assertEqual(loop._intent_stop(), "")
+
+    def test_graceful_stop_blocks_the_next_dispatch(self) -> None:
+        from tools.agent_supervisor import stop_intent as si
+        loop = self.build(mode="supervised")
+        si.set_graceful_stop(self.journal, reason="owner asked to wind down")
+        self.assertEqual(loop._intent_stop(), "owner_intent_graceful_stop")
+
+    def test_pause_blocks_the_next_dispatch(self) -> None:
+        from tools.agent_supervisor.resume_scheduler import MANUAL_PAUSE_KEY
+        loop = self.build(mode="supervised")
+        self.journal.set_state(MANUAL_PAUSE_KEY, True)
+        self.assertEqual(loop._intent_stop(), "owner_intent_manual_pause")
+
+    def test_emergency_outranks_and_blocks(self) -> None:
+        from tools.agent_supervisor.resume_scheduler import EMERGENCY_STOP_KEY
+        loop = self.build(mode="supervised")
+        self.journal.set_state(EMERGENCY_STOP_KEY, True)
+        self.assertEqual(loop._intent_stop(), "owner_intent_emergency_stop")
+
+    def test_a_run_stops_when_an_intent_is_set(self) -> None:
+        # Removal sensitivity: with a durable intent set, run() stops with the
+        # intent reason before dispatching any unit, rather than proceeding.
+        from tools.agent_supervisor import stop_intent as si
+        loop = self.build(mode="supervised", max_cycles=3)
+        si.set_graceful_stop(self.journal, reason="stop between cycles")
+        outcome = loop.run("do the work")
+        self.assertEqual(outcome.stopped, "owner_intent_graceful_stop")
+
+
+class PacketCompletenessWiringTests(LoopTestBase):
+    """M0-T148 (D-032-R020): _collect wires the three added evidence classes into
+    the packet the reviewer receives. A worker under orchestrator-only git cannot
+    commit, so its new deliverables (untracked_content), the task contract
+    (task_packet) and the supervisor's own test runs (command_transcripts) are
+    what content review had been missing. Collector runner is a fake - no real
+    git, no provider - but the untracked file and the contract are on disk so the
+    collector's read_file opens the real bytes."""
+
+    def _collector(self):
+        from tools.agent_supervisor.process import ProcessResult
+        from tools.agent_supervisor import evidence as ev
+        # a new deliverable the worker could never commit
+        (self.repo / "tools" / "agent_supervisor").mkdir(parents=True, exist_ok=True)
+        (self.repo / "tools" / "agent_supervisor" / "new_deliverable.py").write_text(
+            "def added():\n    return 42\n", encoding="utf-8")
+        (self.repo / "project-control" / "tasks").mkdir(parents=True, exist_ok=True)
+        (self.repo / "project-control" / "tasks" / "M0-T036.json").write_text(
+            json.dumps({"task_id": "M0-T036", "allowed_paths": ["tools/**"]}),
+            encoding="utf-8")
+
+        def runner(argv, **_kwargs):
+            tokens = list(argv)
+            if "status" in tokens:
+                out = "?? tools/agent_supervisor/new_deliverable.py\n"
+            else:
+                out = ""
+            return ProcessResult(argv=tuple(argv), returncode=0, stdout=out,
+                                 stderr="", duration_seconds=0.0)
+
+        return ev.EvidenceCollector(repo_root=str(self.repo), runner=runner)
+
+    def _loop_with_collector(self, reviewer):
+        return lp.SupervisedLoop(
+            config=lp.LoopConfig(mode="shadow", task_id="M0-T036", stage="phase4",
+                                 allowed_paths=self.authority.allowed_paths,
+                                 stop_conditions=("no bypass flags",),
+                                 max_cycles=4, owner_touch_budget=2),
+            journal=self.journal, audit=self.audit, machine=self.machine,
+            authority=self.authority, runner=FakeRunner(run_result()),
+            reviewer=reviewer, run_id=self.run_id,
+            collector=self._collector(), head_sha=HEAD_SHA)
+
+    def test_the_reviewer_packet_carries_all_three_new_sections(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        self.assertEqual(len(reviewer.packets), 1)
+        sections = reviewer.packets[0]["sections"]
+        self.assertIn("untracked_content", sections)
+        self.assertIn("task_packet", sections)
+        self.assertIn("command_transcripts", sections)
+
+    def test_the_untracked_deliverable_content_and_digest_are_present(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        untracked = reviewer.packets[0]["sections"]["untracked_content"]
+        entry = untracked["tools/agent_supervisor/new_deliverable.py"]
+        self.assertTrue(entry["ok"])
+        self.assertIn("return 42", entry["value"])
+        self.assertTrue(entry["digest"])
+
+    def test_the_documented_test_command_was_executed_and_recorded(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        transcripts = reviewer.packets[0]["sections"]["command_transcripts"]
+        # the authority documents exactly one test command; it was run
+        self.assertEqual(len(transcripts), 1)
+        entry = next(iter(transcripts.values()))
+        self.assertTrue(entry["ok"])
+        self.assertEqual(entry["value"]["exit_code"], 0)
+
+    def test_the_task_contract_rides_digest_bound(self) -> None:
+        self.at_preflight()
+        reviewer = FakeReviewer(outcome())
+        loop = self._loop_with_collector(reviewer)
+        loop.run_cycle("first unit", cycle=1)
+        task_packet = reviewer.packets[0]["sections"]["task_packet"]
+        self.assertTrue(task_packet["file"]["digest"])
+        self.assertIn("allowed_paths", task_packet["file"]["value"])
 
 
 if __name__ == "__main__":  # pragma: no cover

@@ -1,0 +1,64 @@
+{
+  "rule_id": "r4b-height",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_height_setback_r3_r4",
+  "title": "R4B district (flat-roof envelope, ZR 23-422) - maximum building height",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r3_r4_height.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the flat-roof envelope HEIGHT constraint for the exact R4B district per NYC Zoning Resolution section 23-422 (City of Yes, Last Amended 2024-12-05). The source gives R4B a single maximum building height (25 ft) with NO base-height / setback split, and no building-type condition ('In the district indicated, the maximum building height shall be 25 feet') - so ONLY max_building_height is emitted; a base height and a setback are NOT invented. R4B appears ONLY in section 23-422 (flat-roof); it has NO section 23-421 pitched-roof counterpart - this asymmetry is encoded exactly as sourced and never symmetrized. R4B is encoded SEPARATELY from R3-2/R4 (whose flat cap is 35 ft) and from every 23-421 pitched variant - no dimension is inherited (R4B's 25 ft flat BUILDING height is NOT the same construct as the 23-421 25 ft PERIMETER-WALL height). NOT a Verified determination.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-422-r3-r4",
+      "section": "23-422",
+      "quote": "R4B In the district indicated, the maximum building height shall be 25 feet.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "0268089074b51d7b2457fa280bb19f5a2ce1c49b708dbb6654f49df78ea61b18"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Applicability equals R4B (via in_set); R3-2/R4/R4A/R4-1 and every other district are NOT matched (visible not_applicable)."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff zoning.commercial_overlays[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff zoning.special_districts[] is non-empty; when true -> professional_review_required (section 23-44)."},
+    {"name": "historic_district", "type": "boolean", "required": false, "description": "True iff the lot is in a designated Historic District (section 23-426); when a caller supplies true -> professional_review_required."}
+  ],
+  "outputs": [
+    {"name": "max_building_height", "type": "number", "unit": "feet", "description": "Maximum building height (ft) for R4B. Separate typed constraint; not a buildable-envelope result. No base-height/setback split exists for R4B in the source."}
+  ],
+  "parameters": [
+    {"name": "building_height_ft", "value": 25, "citation_ref": "zr-23-422-r3-r4", "note": "R4B maximum building height 25 ft (section 23-422). Candidate value pending raw-HTML verification and G6 approval."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R4B"]},
+  "computation": {
+    "steps": [
+      {"id": "bldg_h", "op": "identity", "args": [{"param": "building_height_ft"}], "note": "Maximum building height for R4B (section 23-422)."}
+    ],
+    "outputs": {
+      "max_building_height": {"step": "bldg_h"}
+    }
+  },
+  "exceptions": [
+    {"id": "commercial_overlay_modification", "description": "A commercial overlay may modify residence-district height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A mapped special district may modify height (section 23-44); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null},
+    {"id": "historic_district_base_height_match", "description": "In a designated Historic District the height may be constrained (section 23-426); the citywide value is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "historic_district", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict)."
+  },
+  "limitations": [
+    "Draft extraction pending raw-HTML source verification and G6 qualified-human legal approval; not a Verified determination.",
+    "The source gives R4B only a maximum building height (25 ft) with no base-height/setback split; a base height and a setback are not invented.",
+    "Building height is measured ABOVE THE BASE PLANE (section 23-42); the base-plane determination is a separate professional input.",
+    "R4B is flat-only: it has NO section 23-421 pitched-roof counterpart. This asymmetry is encoded as sourced and never symmetrized (no pitched envelope is invented for R4B).",
+    "The section 23-424 qualifying-residential-site / qualifying-senior-housing increase and the section 23-425 large-site modification are conditional alternatives not modeled here (A2 gaps, geography/eligibility dependent)."
+  ]
+}

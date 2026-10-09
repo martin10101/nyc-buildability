@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T114",
+  "producer_agent": "product-design-director",
+  "report_file": "project-control/reports/M5-T114-producer-report.md",
+  "submitted_at": "2026-09-25T05:26:43.767042+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T114-evidence-map.json",
+  "content_manifest_sha256": "24ac1f58b30e8ecab3b32535041b023eb8c9020dacd65694c052caecdbdf1e5e",
+  "reviewed_sha": "2f35001537fb5bb6aa7c1ad487a7326cf8beecf4",
+  "applicable_requirements": [
+    "D-066-R001",
+    "D-083-R001",
+    "D-086-R001",
+    "D-086-R002",
+    "D-086-R003",
+    "D-086-R004",
+    "D-087-R001",
+    "D-087-R002"
+  ],
+  "updated_at": "2026-09-25T05:26:49.675780+00:00"
+}

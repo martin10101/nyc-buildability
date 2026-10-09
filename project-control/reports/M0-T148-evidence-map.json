@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T148",
+  "cited_refs": [
+    {
+      "directive_id": "D-032",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "applicable_set": "empty (all D-032 rows bind to task_ids ['D-032-BOOTSTRAP']; conjunction semantics leave no row applicable to M0-T148)",
+  "requirements": {},
+  "note": "Authority context: M0-T148 is the repair vehicle for D-032-R020 (owner amendment source-003); R020 itself is session-conduct bound to D-032-BOOTSTRAP and is verified at the directive close-out, not at this task's acceptance. Frozen candidate 53d642a1."
+}

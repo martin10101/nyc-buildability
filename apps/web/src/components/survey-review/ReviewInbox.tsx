@@ -13,7 +13,7 @@ import type { InboxOutcome } from "@/lib/surveyReview/types";
  * Handles the honest empty state (§10.8): never a blank canvas — it explains
  * the next action. Loading and recoverable failure states are first-class.
  */
-export function ReviewInbox() {
+export function ReviewInbox({ bbl, embedded = false }: { bbl?: string; embedded?: boolean } = {}) {
   const client = useSurveyReviewClient();
   const [loading, setLoading] = useState(true);
   const [outcome, setOutcome] = useState<InboxOutcome | null>(null);
@@ -38,13 +38,12 @@ export function ReviewInbox() {
     return () => controller.abort();
   }, [client, attempt]);
 
+  const entries = outcome?.kind === "inbox" ? outcome.entries.filter(entry => !bbl || entry.target_bbl === bbl) : [];
   return (
     <div data-testid="review-inbox">
       <OutcomeAnnouncer message={loading ? "" : announcement} />
       <header className="confirm-header">
-        <h1 className="section-title" style={{ fontSize: "1.4rem", margin: 0 }}>
-          Survey review inbox
-        </h1>
+        {embedded ? <h2 className="section-title">Survey documents for this property</h2> : <h1 className="section-title" style={{ fontSize: "1.4rem", margin: 0 }}>Survey review inbox</h1>}
         <p className="section-note">
           Documents awaiting review, ordered by state. Every extracted fact is
           unconfirmed evidence until a designated professional confirms it.
@@ -58,17 +57,16 @@ export function ReviewInbox() {
       ) : null}
 
       {!loading && outcome && outcome.kind === "inbox" ? (
-        outcome.entries.length === 0 ? (
+        entries.length === 0 ? (
           <section className="card" data-testid="inbox-empty">
             <h2 className="section-title">No documents to review</h2>
             <p className="section-note">
-              There are no survey documents in review right now. Upload a survey
-              to begin, or check back when a document routes to review.
+              {bbl ? "No survey documents for this BBL were returned in the review queue." : "There are no survey documents in review right now."} Upload is not available in this version; existing routed documents appear here.
             </p>
           </section>
         ) : (
           <ul className="sr-inbox-list">
-            {outcome.entries.map((entry) => (
+            {entries.map((entry) => (
               <li key={entry.document_digest} className="card sr-inbox-row" data-testid={`inbox-row-${entry.document_digest}`}>
                 <div className="sr-inbox-main">
                   <Link className="sr-inbox-link" href={`/survey/review/${encodeURIComponent(entry.document_digest)}`}>

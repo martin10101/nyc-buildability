@@ -3,7 +3,7 @@ name: backend-engineer
 description: Implements FastAPI services, contracts, connectors, job control, provenance, analysis state transitions, and scenario/report APIs.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: claude-opus-4-8
-effort: high
+effort: xhigh
 permissionMode: default
 isolation: worktree
 memory: project

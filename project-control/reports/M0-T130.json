@@ -1,0 +1,18 @@
+{
+  "task_id": "M0-T130",
+  "producer_agent": "orchestrator-defect-runner",
+  "report_file": "project-control/reports/M0-T130-reserved-turn-fix.md",
+  "submitted_at": "2026-08-31T19:34:57.299610+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T130-evidence-map.json",
+  "content_manifest_sha256": "fd4e61d6fce3bc83ef44cb91c4fe2f54be200a31a71430419f00dce62caa1b6c",
+  "reviewed_sha": "517895c44d9e9301390a2f3ce603e8aeb237516a",
+  "applicable_requirements": [
+    "D-024-R420",
+    "D-024-R421",
+    "D-024-R422",
+    "D-024-R423",
+    "D-024-R424"
+  ],
+  "updated_at": "2026-08-31T19:34:57.854165+00:00"
+}

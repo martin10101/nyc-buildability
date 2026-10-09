@@ -1,0 +1,18 @@
+M5-T022 CI evidence (captured by the orchestrator)
+
+Material: pin f17a5869 (package.json: ONE added dependency maplibre-gl 6.7.0) + BOT lock
+6d776102 (generate-lockfile run 34729750887 SUCCESS first-dispatch: npm ci integrity,
+blocking audit total==0 at every severity WITH the 22-node maplibre tree, committed-lock
+7-day age gate over all 575 nodes, npm CLI advisory - the full proof chain BEFORE the
+bot commit).
+
+Run 34729820746 (head 44c1012d), completed 2026-09-13: CONCLUSION SUCCESS - every job
+green with the new package admitted. web-dependency-security SUCCESS (the whole-tree
+machine gates re-proven over the enlarged tree); web (lint+typecheck+build) SUCCESS
+(the dependency graph installs and builds cleanly); web-e2e SUCCESS (no source imports
+maplibre yet - behavior unchanged, the unused-dependency window is intended pending the
+rendering packet); api/control-plane/contracts/typegen/bundle/modularity all SUCCESS.
+
+Local: thin client - no npm ran locally; the lock was generated and proven exclusively
+on the GitHub runner. Transitive enumeration (22 added nodes, 0 removed, all
+registry.npmjs.org + sha512) in M5-T022-producer-report.md section 2.

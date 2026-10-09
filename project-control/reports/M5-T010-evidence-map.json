@@ -1,0 +1,15 @@
+{
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/comparison.py: new M5 backend product engine compare_scenario_assumption_sets (601 SLOC) — deterministic scenario comparison/delta, the optimization-engine PRODUCT domain (NOT M0 supervisor/control-plane self-infra); additive facade export in services/api/app/scenario/__init__.py",
+      "Contracted G0 packet project-control/gates/M5-T010-G0.json result=PASS; required_gates G0/G1/G3/G4/G5 all PASS at reviewed_sha ea08f504 (reviewers code-reviewer G1, qa-engineer G3, ci-evidence-verifier recorded as code-reviewer G4, security-reviewer G5 — each independent != producer scenario-optimization-engineer)",
+      "AS-1..AS-7 map to real passing tests in services/api/tests/scenario/test_scenario_comparison.py; reproduced python -m pytest services/api/tests/scenario -> 323 passed (71 new + 252 pre-existing, 0 regress); python tools/modularity_check.py --check EXIT 0 (comparison.py not flagged)",
+      "Canonical cap transported VERBATIM from derive_practical_usable_range (consumed READ-ONLY); comparison never independently recalculates and is never Verified (NOT_VERIFIED_DISCLAIMER stamped, needs_review=True, coverage capped to conditional); DCV D-038-R003 PASS (project-control/reports/M5-T010-DCV.md)"
+    ],
+    "D-038-R004": [
+      "comparison.py imports only stdlib (json, math, typing) + .derive + .constants + ._json_safety; negative grep supabase|geoclient|requests|httpx|socket|urllib|os.environ|getenv|subprocess over the changed files -> none (module + transitive over services/api/app/scenario/*.py)",
+      "Pure dict->dict function: no persistence write, no network, no address->BBL resolution; derive consumed READ-ONLY, input scenario document not mutated or aliased into output",
+      "Offline proof: socket-blocked run completes (COMPARED, json.dumps(result, allow_nan=False) OK, no ' at 0x' address leak); full suite 323 passed on committed fixtures; packet dependencies=[M5-T009] only; no deferred credentials required; DCV D-038-R004 PASS"
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "task_id": "M5-T024",
+  "assembled_by": "orchestrator",
+  "note": "Evidence is scoped to THIS task's deliverable (the owner-executed checklist; D-043-R001 'contract as normal gated ledger task(s)' + R003 'the task's return item hands the owner the exact service settings and env-var checklist'). The dashboard execution itself and the owner's live-URL confirmation are OWNER-side steps recorded as explicit return items, never agent-performed (R003; D-008).",
+  "requirements": {
+    "D-043-R001": [
+      "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md - the complete owner-executed checklist standing up apps/web as an internal/unlisted Render web service from the advisory-free post-M5-T021 head branch (candidate/D-024-mrl-option-b), unified flag INTERNAL_RULE_EVAL_ENABLED covered on BOTH services (sections 2.1 and 5.2), NEXT_PUBLIC_API_BASE_URL pointed at the private API service with the build-time-inlining ordering enforced (sections 2.2, 3), internal/dev labeling + disclaimers kept (sections 0, 6)",
+      "contracted as a normal gated ledger task citing D-043:D-043-R001..R004 (this packet, G0 PASS at 6a8f2298)",
+      "OWNER RETURN ITEM (pending, owner-side by R003): execute the checklist in the Render dashboard and confirm the live URL works on the owner's device"
+    ],
+    "D-043-R002": [
+      "privacy-by-construction: the API URL appears ONLY as the placeholder <owner-pastes-private-API-URL> (checklist sections 0 placeholder table, 2.2); producer privacy grep recorded in project-control/reports/M5-T024-producer-report.md (zero real onrender.com hosts, zero credentials; the only literal URL is the documented local default http://127.0.0.1:8000)",
+      "checklist section 2.2 instructs the value is pasted in the dashboard only, never a repo file, commit, or chat"
+    ],
+    "D-043-R003": [
+      "every dashboard step in docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md is owner-performed (stated at the top and throughout); no agent action against Render exists in the task; credentials never enter repo or chat (placeholders only)",
+      "the deliverable IS the exact service settings + env-var checklist the requirement names; Render-UI specifics not fixed by repo evidence are explicitly marked [confirm in the dashboard UI] instead of guessed (producer report disclosures 1-3)"
+    ],
+    "D-043-R004": [
+      "checklist section 0 ('This is NOT a public launch') and section 6 (unlisted != secret, honest exposure) preserve the internal/dev posture; no listing/marketing/indexing step exists anywhere in the checklist; the render.yaml nycdf-web restoration debt is recorded as a later gated task (section 8), not performed",
+      "visual redesign untouched; PR #241, G6, Supabase-before-credentials, expansion hold all unreferenced by any checklist action"
+    ]
+  }
+}

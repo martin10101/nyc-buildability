@@ -1,0 +1,15 @@
+{
+  "task_id": "M5-T020",
+  "note": "Cited D-040:D-040-R001, APPLICABLE via the append-only applicability bind (digest a3fc9d01->a4145aeb, audit-logged). evaluate_task_refs: ok=true, applicable == cited == [D-040-R001].",
+  "requirements": {
+    "D-040-R001": [
+      "services/api/app/connectors/mappluto_lot_outline.py at 683b6095 (the display-only EPSG:4326 transport: f=geojson&outSR=4326 query via the immutable connector's injection-proof discipline; four typed outcomes incl. honest condo-unit no-outline; display_only + accuracy note + NYC DCP attribution on every outcome; no measurement from 4326 coords)",
+      "services/api/app/api/v1/lot_geometry.py at 683b6095 (body-less flag-gated GET /api/v1/properties/{bbl}/lot-geometry; generic 404 off; injected fetch seam; typed outcomes to honest shapes - never a silent first-pick or fabricated outline)",
+      "packages/contracts/schemas/v1/lot_geometry.schema.json + services/api/app/_contract_schemas/v1/lot_geometry.schema.json + packages/contracts/generated/lot_geometry.ts at 683b6095 (NEW closed contract, byte-identical copies, generated TS; 7 valid contract fixtures)",
+      "services/api/tests/fixtures/mappluto_lot_outline/ MANIFEST.json + 6 live-captured f=geojson&outSR=4326 fixtures + 2 documented synthetic negatives (recorded-official rule honored; capture URLs/timestamps/sha256 in the manifest)",
+      "project-control/reports/M5-T020-producer-report.md (per-file build, capture transcript, display-only boundary argument, S1-S6 mapping, real output, four disclosed limitations)",
+      "project-control/reports/M5-T020-ci-evidence.txt (run 34698587781 at 6f091098 all green except owner-gated web-dependency-security; orchestrator pre-gate 486+417+modularity EXIT 0)",
+      "project-control/reports/D-040-R001-mappluto-research.md (the pinned research-first deliverable D-040-R001 mandates)"
+    ]
+  }
+}

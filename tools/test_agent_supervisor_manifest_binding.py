@@ -237,6 +237,27 @@ class DoctorPathTests(TempCase):
         self.assertIn("NOTHING was verified", check.detail)
 
 
+def _make_live_checkout(root: pathlib.Path, *, task_id: str,
+                        status: str = "in_progress") -> pathlib.Path:
+    """A REAL git checkout with a ledger record, for the M0-T079 live probes."""
+    root.mkdir(parents=True, exist_ok=True)
+    tasks = root / "project-control" / "tasks"
+    tasks.mkdir(parents=True, exist_ok=True)
+    (tasks / f"{task_id}.json").write_text(
+        json.dumps({"task_id": task_id, "status": status, "blockers": []}),
+        encoding="utf-8")
+    env = {**os.environ,
+           "GIT_AUTHOR_NAME": "supervisor-test",
+           "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "supervisor-test",
+           "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+    for argv in (["init", "-q", "-b", "main"],
+                 ["commit", "-q", "--allow-empty", "-m", "fixture"]):
+        subprocess.run(["git", *argv], cwd=str(root), check=True,
+                       capture_output=True, env=env)
+    return root
+
+
 class CliProductionPathTests(TempCase):
     """AS-1, AS-4, AS-7 through the real CLI (subprocess; the production path)."""
 
@@ -300,6 +321,11 @@ class CliProductionPathTests(TempCase):
         """Full explicit inputs with sentinel-writing fake executables."""
         checkout = self.tmp / "checkout"
         checkout.mkdir(exist_ok=True)
+        # M0-T079: `start` establishes task authority, the branch, the worktree,
+        # and Git state with LIVE probes now, so the fixture is a real checkout
+        # with a ledger record rather than an empty directory that a complete
+        # command line used to certify by itself.
+        _make_live_checkout(checkout, task_id="M0-T072-TEST", status="claimed")
         runtime_base = self.tmp / "runtime"
         sentinel = self.tmp / "provider_was_called.sentinel"
         if os.name == "nt":

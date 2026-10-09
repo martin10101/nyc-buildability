@@ -1,0 +1,32 @@
+{
+  "task_id": "M0-T121",
+  "producer_agent": "supervisor-restart-producer",
+  "report_file": "project-control/reports/M0-T121-producer-report.md",
+  "submitted_at": "2026-08-30T04:34:32.239257+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T121-evidence-map.json",
+  "content_manifest_sha256": "7cadcc709cb6a314bf04c444f76ed5db6c1ed47f8541d04975a07a46c7329669",
+  "reviewed_sha": "6432d2d022931d7ec3552228639d99e5a44f1f08",
+  "applicable_requirements": [
+    "D-024-R302",
+    "D-024-R303",
+    "D-024-R304",
+    "D-024-R305",
+    "D-024-R306",
+    "D-024-R307",
+    "D-024-R308",
+    "D-024-R309",
+    "D-024-R310",
+    "D-024-R311",
+    "D-024-R312",
+    "D-024-R313",
+    "D-024-R314",
+    "D-024-R318",
+    "D-024-R319",
+    "D-024-R323",
+    "D-024-R324",
+    "D-024-R325",
+    "D-024-R326"
+  ],
+  "updated_at": "2026-08-30T04:34:33.375996+00:00"
+}

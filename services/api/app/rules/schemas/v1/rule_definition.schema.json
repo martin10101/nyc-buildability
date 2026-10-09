@@ -39,7 +39,8 @@
           "snapshot_id": {"type": "string", "minLength": 1},
           "section": {"type": "string", "minLength": 1},
           "quote": {"type": "string", "minLength": 1},
-          "last_amended": {"type": ["string", "null"]}
+          "last_amended": {"type": ["string", "null"]},
+          "content_digest_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
         }
       }
     },
@@ -111,7 +112,7 @@
             "required": ["id", "op", "args"],
             "properties": {
               "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$"},
-              "op": {"type": "string", "enum": ["identity", "add", "subtract", "multiply", "divide", "min", "max", "round", "clamp"]},
+              "op": {"type": "string", "enum": ["identity", "add", "subtract", "multiply", "divide", "min", "max", "round", "round_threshold", "clamp"], "description": "round_threshold (D-090 lane A item A-02b; args [value, threshold]): the whole number of value, plus one only when its fractional part is at least threshold; value >= 0 and 0 < threshold <= 1, else fail-closed. Additive: round keeps its half-away-from-zero behaviour."},
               "args": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/ref"}},
               "note": {"type": "string"}
             }
@@ -194,6 +195,11 @@
     "determination": {
       "$ref": "#/$defs/determination",
       "description": "M4-T003: optional compliance determination. When present, after the computation the engine compares a proposal input against a computed output (or constant) and records a genuine pass/fail determination in the trace WITHOUT changing coverage (a draft rule stays conditional)."
+    },
+    "lane_flag": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D", "E"],
+      "description": "D-090 (lane A item A-02a): optional parallel-build lane that owns this rule while it is new behavior. The registry VALIDATES the rule at every load like any other, but INDEXES it (makes it visible to evaluation, families and every consumer) only when that lane's flag LANE_<X>_ENABLED holds an explicit true token; absent/empty/unknown = off (fail safe). Absent field = always indexed (every rule written before D-090)."
     }
   },
   "$defs": {

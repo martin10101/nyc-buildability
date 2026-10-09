@@ -1,0 +1,43 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "test-fixture-synthetic-study",
+  "option_id": "option-1",
+  "revision": 2,
+  "inputs": [
+    {
+      "key": "lot_depth_ft",
+      "value": 98,
+      "unit": "feet",
+      "fact_id": "test-fixture-synthetic:lot-depth:assumed",
+      "rank": "assumed",
+      "label": "Assumed",
+      "source_kind": "assumption",
+      "governing": true,
+      "displaced": [
+        {
+          "fact_id": "test-fixture-synthetic:lot-depth:city",
+          "rank": "city_records",
+          "label": "City records",
+          "value": 100
+        }
+      ]
+    },
+    {
+      "key": "lot_area_sq_ft",
+      "value": 5000,
+      "unit": "square_feet",
+      "fact_id": "test-fixture-synthetic:lot-area:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    }
+  ],
+  "site_measurement_rank": "assumed",
+  "depends_on_fact_ids": [
+    "test-fixture-synthetic:lot-depth:assumed",
+    "test-fixture-synthetic:lot-area:city"
+  ],
+  "_expected_failure": "An 'assumed' governing record carries a displaced fact: a stated assumption never overrides a recorded value (plan section 9; site_fact 'editable' ties the override path to entered/survey_entered). An assumption that conflicts with a recorded value is a visible conflict, not an override."
+}

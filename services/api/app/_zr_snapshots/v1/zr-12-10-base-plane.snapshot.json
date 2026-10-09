@@ -1,0 +1,52 @@
+{
+  "snapshot_id": "zr-12-10-base-plane",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - base plane",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-07T07:10:58Z",
+    "http_status": 200,
+    "response_bytes": 1316758,
+    "raw_html_sha256": "3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc",
+    "portal_node_id": "18523",
+    "defined_term": "base plane",
+    "defined_term_node_id": "21517",
+    "last_amended_machine_readable": "2021-05-12T12:00:00Z",
+    "last_amended_display": "5/12/2021",
+    "section_last_amended": "2021-05-12",
+    "section_last_amended_source_text": "Last Amended 5/12/2021 (ZR 12-10 term 'base plane', /node/21517)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523) shows Last Amended 3/26/2026 (the §12-10 page header, node 18523, data-section-number=\"12-10\"), which is the date of the most-recently-amended term on the page; the operative provenance for THIS term is its own per-term Last Amended stamp (5/12/2021, /node/21517) recorded above.",
+    "capture_method": "M4-T029 in-task capture 2026-10-07 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned HTTP 504 (attempted twice) so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel; this is the documented fallback (DB-167). The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined term only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-07T07:11:02Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-07 at 2026-10-07T07:11:02Z and again on retry at 2026-10-07T07:12:26Z (~59 s) - the documented DB-167 behaviour. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used; the term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article id=\"term-<name>\", its definition__definition body) and self-checked for word-completeness against the raw HTML bytes (every word of the definition present; whitespace normalised; defined terms bold-italic <strong><em> written #term#). THIS term's definition contains NO ordered list (no <ol>), so there are NO list-position labels in this capture: any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture. The DB-167 F1 label-confirmation gap (whole-page PDF 504) therefore does not affect any text here.",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "The \"base plane\" is a plane from which the height of a #building or other structure# is measured as specified in certain Sections. For #buildings#, portions of #buildings# with #street walls# at least 15 feet in width, or #building segments# within 100 feet of a #street line#, the level of the #base plane# is any level between #curb level# and #street wall line level#. Beyond 100 feet of a #street line#, the level of the #base plane# is the average elevation of the final grade adjoining the #building# or #building segment#, determined in the manner prescribed by the New York City Building Code for adjoining grade elevation. For the purposes of this definition, #abutting buildings# on a single #zoning lot# may be considered a single #building#. In addition, the following regulations shall apply:\n\n(a) Within 100 feet of a #street line#:\n\n(1) The level of the #base plane# for a #building# or #building segment# without a #street wall# shall be determined by the average elevation of the final grade adjoining such #building# or #building segment#.\n\n(2) Where a #base plane# other than #curb level# is established, the average elevation of the final grade adjoining the #street wall# of the #building# or #building segment#, excluding the entrance to a garage within the #street wall#, shall not be lower than the level of the #base plane#.\n\n(3) Where the average elevation of the final grade adjoining the #street wall# of the #building#, excluding the entrance to a garage within the #street wall#, is more than two feet below #curb level#, the level of the #base plane# shall be the elevation of such final grade. This paragraph shall not apply to #buildings developed# before June 30, 1989, in R2X, R3, R4 or R5 Districts. Furthermore, this paragraph shall not apply to #buildings# in C1 or C2 Districts mapped within R2X, R3, R4 or R5 Districts, or in C3 or C4-1 Districts, unless such #buildings# are located on #waterfront blocks#.\n\n(4) As an option, on sites which slope from the #street wall line level# to the #rear wall line level# by at least five percent to the horizontal, the level of the #base plane# may extend in a sloping plane from such #street wall line level# to such #rear wall line level#. When a sloping #base plane# is thus established, the average elevation of the final grade at the #rear wall line# shall not be lower than the #rear wall line level#.\n\n(b) For all #buildings#, where #base planes# of different elevations apply to different portions of a #building#, only that portion of the #building# to which such #base plane# applies may be used to determine such #base plane#.\n\n(c) For #buildings# located partially within and partially beyond 100 feet of a #street line#, or where #corner lot# or #through lot# regulations subject different portions of a #building# to #base planes# of different elevations, separate #base planes# may be determined for each such portion of the #building# or, as an option, the elevation of each such #base plane# may be multiplied by the percentage of the total #lot coverage# of the #building# to which such #base plane# applies. The sum of the products thus obtained may be the elevation of the adjusted #base plane# applicable to such #building#.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph of the defined term's definition body. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. The definition has no ordered-list markup (no <ol>); any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined term 'base plane') for the law text the independent readings and the earlier captures named as needed and not captured (task M4-T029, D-090 R291). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523; sha256 and byte count pinned). The whole-page print/PDF completeness channel returned HTTP 504 twice (the documented DB-167 fallback), so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel. This term's definition contains no ordered list, so no list-position label is used anywhere in it.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "f57cd9b62e591236908fe65163f7162605e03ca8604c5c4e6fe4e48a4f56eae2"
+}

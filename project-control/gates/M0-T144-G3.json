@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T144",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T144-G3-policy-review.md",
+  "reviewed_at": "2026-09-04T16:49:50.472522+00:00",
+  "content_manifest_sha256": "76a75c6f2eeb9ef96fd6a94566cb4e2eaf2b4ff40d7125f40e9fa2df9d4fffb9",
+  "reviewed_sha": "4b18e7ab66e8b3f05093448dd1e6f4cebded7d79",
+  "updated_at": "2026-09-04T16:49:51.968112+00:00"
+}

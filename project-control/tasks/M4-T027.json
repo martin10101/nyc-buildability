@@ -1,0 +1,144 @@
+{
+  "task_id": "M4-T027",
+  "title": "The R6B reference cases worked from the text captured in step P1: the corner-lot portion and coverage (K1), ZR 23-363 for interior and through lots (K2), the rear yard of ZR 23-342 (K4), special density areas (K11) - two independent readings from a sealed folder, a value only where both agree, every change with its reason (D-090 R226, R238, R241, R259, R291, R318)",
+  "task_type": "research",
+  "milestone_id": "M4",
+  "objective": "Work the reference-case rows that waited for step P1, from the law text captured by task M4-T025, and write them into the R6B reference cases (docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md, section 8: 'new reference cases are worked from the new text, as in step R0', and section 5 gaps K1, K2, K4 and K11). INPUT MADE BY THE ORCHESTRATOR BEFORE THE BUILDER STARTS: two readings by two different AI helpers that took no part in writing the program's rules, each working alone from a sealed folder (every pinned law capture without its notes, the benchmark lot's recorded official facts and outline, no floor-area-ratio field, no program output) and with no access to the program or the repository; their returns are handed to the builder unchanged. The readings cover: (1) the ZR 12-10 definitions of corner, interior and through lot and of lot area: the lot type of the benchmark lot and of the made-up lots, and the portion of a corner lot that is subject to the corner-lot regulations; (2) maximum lot coverage for that portion and for any remaining portion (ZR 23-362 with ZR 23-363), and whether ZR 23-363 changes the interior-lot reading of the interior-lots case; (3) the rear yard: where one is required and how deep (ZR 23-342), and the area in which the corner provision applies; (4) what the ZR 12-10 definition of special density areas lists, and what the lot's recorded facts do and do not show about it. THE BUILDER then: saves the two returns unchanged under docs/reference-cases/R6B/provenance/; updates the case files so that each row that was 'not known' for want of captured text gets its facts, the quoted law with its capture id and digest, the arithmetic and the expected value where BOTH readings give the same value on the same basis, and stays 'not known' with the reason where they do not settle it or disagree (a disagreement is recorded with both readings and is not resolved by the builder); adds rows or a case where the readings cover something no row holds; writes a change-log entry with its reason for every changed value; updates the README section on law text that is not captured; re-renders the pages; extends the test support only as the new rows need. No coverage figure is stated for a whole lot unless the lot's geometry shows that the corner provision covers the whole lot (R238). Nothing in a case comes from a program run. No rule file, rule engine, capture, register entry, plan or screen changes.",
+  "business_reason": "Step 3 of the owner's eight steps (R291) and the owner's rule that interpretation is checked with independently worked, source-backed examples kept apart from program output (R226, R241, R259, R318). The cases of step R0 (task M4-T024) record as 'not known' every value that needed text which was not captured then; that text is captured now (task M4-T025). The work order requires these cases before any rule or gate changes: their answers set the expected values for the later steps.",
+  "inputs": [
+    "The two independent readings (returns saved by the orchestrator; given to the builder with its instructions)",
+    "docs/reference-cases/R6B/ (README.md, cases/*.json, the rendered pages, provenance/) and services/api/tests/rules/reference_cases/ (the checker, renderer, loader and test) as task M4-T024 left them",
+    "The captures made by task M4-T025 under docs/research/zr-snapshots/v1/ (zr-12-10-lot-corner, zr-12-10-lot-interior, zr-12-10-lot-through, zr-12-10-lot-area, zr-12-10-special-density-areas, zr-23-342, zr-23-363) and the existing zr-23-362, zr-23-344 and zr-11-25 captures; docs/DISCOVERY_BACKLOG.md row DB-167 (two 12-10 captures carry list labels that are positions in the page's markup)",
+    "docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 5 (gaps K1, K2, K4, K11, K12), section 8 and section 9 (tables A to D)",
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/requirements.json rows R226, R238, R241, R259, R291, R318"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/provenance/: the two new returns, unchanged, each with a short header saying what it is",
+    "docs/reference-cases/R6B/cases/*.json and the pages rendered from them: the updated and added rows, each with facts, quoted law and capture, arithmetic, expected value or 'not known' with its reason; a change-log entry for every changed value",
+    "docs/reference-cases/R6B/README.md: the section on law text that is not captured brought up to date; the list of cases if one is added",
+    "services/api/tests/rules/reference_cases/: the checker, renderer, loader and test extended only as the new rows need; nothing imported from the program",
+    "project-control/reports/M4-T027-producer-report.md: every row changed or added, with the old and new value and the reason; every point where the two readings differ; what stays 'not known' and why; every check with its DIRECT exit code"
+  ],
+  "dependencies": [
+    "M4-T024",
+    "M4-T025"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/**",
+    "services/api/tests/rules/reference_cases/**",
+    "project-control/reports/M4-T027-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** (no rule file, engine, registry, register or capture copy change)",
+    "docs/research/** (no capture and no helper file), docs/zoning-rule-review/**, docs/plans/**, docs/measurement-basis/**",
+    "every other test file; apps/**; packages/**; .github/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report named in allowed_paths"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "two_independent_readings_kept_unchanged",
+      "input": "docs/reference-cases/R6B/provenance/",
+      "expected": "the two new returns are present unchanged (a test compares their digests); each says it was made from the sealed folder without the program"
+    },
+    {
+      "id": "S2",
+      "case": "a_value_only_where_both_readings_agree",
+      "input": "each changed or added row",
+      "expected": "an expected value is recorded only where both readings give the same value on the same basis; where they differ or do not settle it the row is 'not known' with the reason and both readings are named; the builder resolves no disagreement"
+    },
+    {
+      "id": "S3",
+      "case": "each_row_followable",
+      "input": "each changed or added row",
+      "expected": "the row gives its facts with their source, the law quoted with its capture id and content digest, why the provision applies, the arithmetic and the expected value; a test recomputes the arithmetic and checks every citation against the live capture"
+    },
+    {
+      "id": "S4",
+      "case": "no_whole_lot_coverage_without_geometry",
+      "input": "the coverage rows of the real-lot and corner-reach cases",
+      "expected": "no row states a coverage figure for a whole lot unless the lot's geometry in the row shows the corner provision covers the whole lot; otherwise the figure is given per portion or is 'not known'"
+    },
+    {
+      "id": "S5",
+      "case": "nothing_from_a_program_run",
+      "input": "the case files and the support code",
+      "expected": "no case file holds a program result; the support code imports nothing from the rule or scenario engine (the existing tests of both still pass)"
+    },
+    {
+      "id": "S6",
+      "case": "every_change_has_a_reason",
+      "input": "each case's change log",
+      "expected": "every changed expected value has a dated entry naming the reason (newly captured text or a corrected reading) and the old and new value; no value changed because the program disagreed"
+    },
+    {
+      "id": "S7",
+      "case": "readme_and_pages_current",
+      "input": "docs/reference-cases/R6B/README.md and the rendered pages",
+      "expected": "the README no longer lists as not captured the text that M4-T025 captured, and names what is still not captured; the pages are byte-identical to the renderer's output"
+    },
+    {
+      "id": "S8",
+      "case": "scope",
+      "input": "git show --name-status <the builder's commit>",
+      "expected": "the builder's commit changes only allowed_paths; no rule, engine, capture, register, plan or screen changed; ruff and the full services/api pytest pass at the wave's final candidate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Two AI readings that agree are not proof -> the cases say so (R259); each row is followable by a person with the law text and a calculator",
+    "A reading that fills a gap the text does not settle -> S2: a value only where both readings agree on the same basis, otherwise 'not known' with the reason",
+    "A whole-lot coverage figure on a lot only partly within the corner portion -> S4 (R238)",
+    "A case changed to match the program -> S5 and S6 (R241): nothing from a program run, every change with its reason"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-07T05:05:16.386586+00:00",
+  "updated_at": "2026-10-07T06:25:38.293906+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R226",
+        "D-090-R238",
+        "D-090-R241",
+        "D-090-R259",
+        "D-090-R291",
+        "D-090-R318"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-07T05:05:16.386888+00:00",
+  "path_notes": "PRODUCER = rules-engineer in an isolated worktree (show-toplevel guard; reset to the CLAIM-SEAM head first), started only after the orchestrator holds BOTH independent readings. PART OF A PARALLEL WAVE with M5-T126 and M4-T026 (owner messages 107 and 108, D-090 source-052): the three share no file; see the wave's concurrency record in project-control/reports/. MODULARITY ANSWERS: no handwritten production source changes; documents and test support only (the checker, renderer and loader stay under the 600-line warning threshold; split before growing one past it).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "the renderer's check mode (pages byte-identical to the data)",
+    "cd services/api && python -m pytest -q   (the FULL api suite, once, at the wave's final candidate; the orchestrator runs it)",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave1",
+  "progress_log": [
+    {
+      "at": "2026-10-07T05:06:09.118469+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Claimed in wave 1 at the contract head d1074dd8 (integration head a5c6c2f0); builder rules-engineer in an isolated worktree; see project-control/reports/WAVE1-2026-10-07-concurrency-record.md."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-07T06:25:38.293714+00:00"
+}

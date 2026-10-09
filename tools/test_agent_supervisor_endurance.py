@@ -674,23 +674,45 @@ class CliTests(unittest.TestCase):
         self.assertEqual(cli.DEFERRED_COMMANDS, {})
 
     def test_limited_auto_refuses_by_name(self) -> None:
-        with self.assertRaises(NotImplementedError) as raised:
-            self.run_cli("start", "--mode", "limited-auto")
-        self.assertIn("limited-auto is disabled", str(raised.exception))
-        self.assertIn("explicit owner activation", str(raised.exception))
+        """M0-T079: still refused by name, now with a typed exit code and JSON."""
+        from tools.agent_supervisor import refusals
+
+        code, out, err = self.run_cli("start", "--mode", "limited-auto", "--json")
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.REFUSED_MODE])
+        payload = json.loads(out)
+        self.assertTrue(payload["refused"])
+        self.assertEqual(payload["outcome"], refusals.REFUSED_MODE)
+        self.assertIn("limited-auto is DISABLED", payload["message"])
+        self.assertIn("explicit owner activation", payload["message"])
+        self.assertNotIn("Traceback", out + err)
 
     def test_start_never_dispatches(self) -> None:
+        from tools.agent_supervisor import refusals
+
         code, out, _ = self.run_cli("start", "--mode", "shadow", "--json")
         payload = json.loads(out)
         self.assertFalse(payload["dispatched"])
         self.assertEqual(payload["provider_calls_made"], 0)
         self.assertFalse(payload["limited_auto_enabled"])
-        self.assertEqual(code, 0)
+        # M0-T079 C7: the missing-input stop is a typed refusal, not exit 0.
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
+        self.assertEqual(payload["refusal"]["reason_code"], "missing_required_inputs")
 
     def test_start_releases_the_lock_it_took(self) -> None:
+        """The SECOND start must not find a leaked lock.
+
+        Both starts refuse for missing inputs (C7), so the proof is that the
+        second refuses for the SAME reason rather than for a lock it could not
+        take - a leaked lock surfaces as a different refusal entirely.
+        """
+        from tools.agent_supervisor import refusals
+
         self.run_cli("start", "--mode", "shadow", "--json")
-        code, _, _ = self.run_cli("start", "--mode", "supervised", "--json")
-        self.assertEqual(code, 0, "a second start must not find a leaked lock")
+        code, out, _ = self.run_cli("start", "--mode", "supervised", "--json")
+        payload = json.loads(out)
+        self.assertEqual(code, refusals.EXIT_CODES[refusals.STALE_STATE])
+        self.assertEqual(payload["refusal"]["reason_code"], "missing_required_inputs")
+        self.assertNotIn("lock", payload["recovery"]["reason"].lower())
 
     def test_pause_then_recovery_status_reports_the_flag(self) -> None:
         self.run_cli("pause")

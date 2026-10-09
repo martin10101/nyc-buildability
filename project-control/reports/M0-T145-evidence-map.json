@@ -1,0 +1,6 @@
+{
+  "schema": "directive_evidence_map/v1",
+  "task_id": "M0-T145",
+  "note": "Cited directive D-001 (ALL): registry evaluation at claim and at submit returns an EMPTY applicable set for M0-T145 (every D-001 requirement is applicability-scoped to task_ids [M0-T023], the directive-system build task). No requirement is selectively omitted; there is nothing to map. The task's substantive obligations come from its packet objective (M0-T109 G5 MEDIUM residual closure) and are evidenced in project-control/reports/M0-T145-guard-brace-residual.md (worker validation + orchestrator apply record) and the G4 report (27 independent probes, 3 mutant teeth) at reviewed SHA 0671edd5a0be16848eaa2b7e7c80e7c50511b998.",
+  "requirements": {}
+}

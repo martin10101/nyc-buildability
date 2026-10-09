@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/worker_result.schema.json",
+  "title": "MRL WorkerResult (untrusted)",
+  "description": "The ONLY object Claude returns in the Minimum Reliable Loop. It is UNTRUSTED and carries the worker's self-reported outcome plus two human-readable text fields, and nothing else. It has no run/task/session ids, no SHAs, no branch/origin, no model or executable identity, no gate/test results and no evidence digests; the controller constructs every such factual field from its own observed run/task/session/Git facts (D-024-R501/R503). additionalProperties is false, so any forged factual field is rejected fail-closed. The worker's outcome is a CLAIM, never itself an advancement decision.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["outcome", "summary", "requested_next_action"],
+  "properties": {
+    "outcome": {"type": "string", "enum": ["COMPLETED", "BLOCKED", "NEEDS_OWNER"]},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "requested_next_action": {"type": "string", "minLength": 0, "maxLength": 1024}
+  }
+}

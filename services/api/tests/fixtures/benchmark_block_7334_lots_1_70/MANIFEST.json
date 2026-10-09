@@ -1,0 +1,86 @@
+{
+  "manifest_version": 1,
+  "task": "B-07 (Lane B; plan ID M2-05; directive D-090)",
+  "benchmark_id": "block-7334-lots-1-70",
+  "bbls": [
+    "4073340001",
+    "4073340070"
+  ],
+  "address": "215-10 and 215-16 Northern Boulevard, Queens (borough 4, block 7334, tax lots 1 and 70)",
+  "purpose": "Recorded official city data for multi-lot site math on the benchmark block: tax lot 1's MapPLUTO outline and PLUTO row, and the DCM street center lines around lots 1 + 70. Tax lot 70's records are in ../benchmark_215_16_northern (queue item B-01). DOB BIS job 421803891 (in that pack) is a filing that mentions one zoning lot of tax lots 1 and 70; it is evidence of a filing, not a verified zoning lot.",
+  "authentication": "none (keyless official services and anonymous NYC Open Data SODA reads; no credential exists in this pack)",
+  "capture_method": "Python urllib GET with 'Accept: application/json', one request per file, sequential with a >= 2.5 s pause, 2026-10-01 UTC, by the Lane B B-07 producer. Bodies stored byte-for-byte as returned. Every URL was produced by the named connector's own URL builder (field 'connector').",
+  "retrieved_at_basis": "client UTC clock when the request was sent; 'http_date' is the response Date header",
+  "digest_algorithm": "sha256 hex over the exact file bytes (= the response body bytes). The directory's .gitattributes sets '-text' so no line-ending conversion ever changes them.",
+  "dcm_envelope_epsg2263": [
+    1048541.85,
+    216138.42,
+    1049061.58,
+    216581.1
+  ],
+  "capture_notes": [
+    "All four requests returned HTTP 200 on the first attempt."
+  ],
+  "files": [
+    {
+      "file": "mappluto_lot_4073340001_epsg2263.json",
+      "kind": "recorded_official",
+      "dataset_id": "MAPPLUTO/FeatureServer/0 (DCP_GIS ArcGIS Online)",
+      "source_id": "nyc-dcp-mappluto-arcgis",
+      "connector": "app.connectors.mappluto_geometry_arcgis.build_lot_query_url",
+      "purpose": "Tax lot 1 outline in EPSG:2263 feet (the measurement geometry) and its MapPLUTO Version.",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BBL%3D4073340001&outFields=OBJECTID%2CBBL%2CBoroCode%2CBorough%2CBlock%2CLot%2CCondoNo%2CVersion%2CShape__Area%2CShape__Length&orderByFields=OBJECTID%20ASC&resultRecordCount=10&resultOffset=0&f=json",
+      "retrieved_at": "2026-10-01T22:17:33Z",
+      "http_date": "Thu, 01 Oct 2026 22:17:33 GMT",
+      "last_modified": "Wed, 09 Sep 2026 15:30:24 GMT",
+      "http_status": 200,
+      "bytes": 2036,
+      "sha256": "0cef342ceedab19f2a463baaf079865a8a8329d420eb97ccccbcd97aef974b56"
+    },
+    {
+      "file": "pluto_64uk-42ks_bbl_4073340001.json",
+      "kind": "recorded_official",
+      "dataset_id": "64uk-42ks",
+      "source_id": "nyc-dcp-pluto-soda",
+      "connector": "app.connectors.pluto_soda.fetch_by_bbl (f'{BASE_URL}?bbl=<canonical BBL>')",
+      "purpose": "PLUTO row for tax lot 1: lotarea / lotfront / lotdepth (City records) and zoning districts.",
+      "url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=4073340001",
+      "retrieved_at": "2026-10-01T22:17:35Z",
+      "http_date": "Thu, 01 Oct 2026 22:17:35 GMT",
+      "last_modified": "Mon, 24 Aug 2026 20:20:51 GMT",
+      "http_status": 200,
+      "bytes": 1559,
+      "sha256": "e0f0deff3ffea3cbfdcb67f00b82b46599826d88d0af15532c3838f66382a1cf"
+    },
+    {
+      "file": "dcm_street_centerline_envelope_lots_1_70.json",
+      "kind": "recorded_official",
+      "dataset_id": "DCM_Street_Center_Line/FeatureServer/0 (item 9ce5b83f139748f29eb92cdabeb29398)",
+      "source_id": "nyc-dcp-dcm-street-centerline-arcgis",
+      "connector": "app.connectors.dcm_street_centerline_arcgis.build_segment_query_url(envelope=(1048541.85, 216138.42, 1049061.58, 216581.1)) - the union of the MapPLUTO bounds of lots 1 and 70 (0.01 ft) padded by 150 ft (app.spatial.site_geometry.parameters.SEARCH_RADIUS_FT)",
+      "purpose": "Every DCM street center line within 150 ft of the combined lots 1 + 70.",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=1%3D1&geometry=1048541.8500%2C216138.4200%2C1049061.5800%2C216581.1000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&outSR=2263&f=json",
+      "retrieved_at": "2026-10-01T22:17:38Z",
+      "http_date": "Thu, 01 Oct 2026 22:17:38 GMT",
+      "last_modified": "Mon, 01 Dec 2025 19:39:55 GMT",
+      "http_status": 200,
+      "bytes": 8758,
+      "sha256": "3fad815e5954fe778193d80ef172b5e08faa209682cf31f4e372556d2dafaf1f"
+    },
+    {
+      "file": "dcm_layer_metadata.json",
+      "kind": "recorded_official",
+      "dataset_id": "DCM_Street_Center_Line/FeatureServer/0 (item 9ce5b83f139748f29eb92cdabeb29398)",
+      "source_id": "nyc-dcp-dcm-street-centerline-arcgis",
+      "connector": "app.connectors.dcm_street_centerline_arcgis.build_metadata_url",
+      "purpose": "DCM layer metadata: editingInfo.dataLastEditDate (dataset version for street widths, B-04).",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0?f=json",
+      "retrieved_at": "2026-10-01T22:17:40Z",
+      "http_date": "Thu, 01 Oct 2026 22:17:40 GMT",
+      "last_modified": "Mon, 01 Dec 2025 19:39:55 GMT",
+      "http_status": 200,
+      "bytes": 11694,
+      "sha256": "5d59aa711054846cf5d0c2e56b772be66b0a7e459872a370eabcafcc2fde5db2"
+    }
+  ]
+}

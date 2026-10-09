@@ -1,0 +1,64 @@
+{
+ "task_id": "M0-T121",
+ "note": "Evidence per D-024 requirement applicable to M0-T121 (resolver set, 19 rows: R302-R314, R318/R319, R323-R326). Material identity: work commit 668c824 + rework delta 6432d2d (edge-granular reachability, test-only) on control/D-024-fable-codex-loop. Reviewers reproduce each claim at the frozen head; producer report + repair record are claims, the code/tests/transcripts are the evidence.",
+ "requirements": {
+  "D-024-R302": [
+   "Authorization exercised exactly as bounded: one defect task (this one) + the recert window (M0-T122, created, depends_on T121). Amendment 16 verbatim: directives/D-024-fable-codex-loop/source-016-amendment.md; G0 readiness report cites the reproduced-defect qualifying evidence (M0-T107-cycle2-start-refusal.md)."
+  ],
+  "D-024-R303": [
+   "Complete F-2 class closed, not just HALTED: the mechanical sweep found and closed a THIRD latent edge (owner_answer_validated, WAIT_FOR_OWNER->PREFLIGHT) beyond the two named ones. Surfaces: owner-restart, acknowledge-emergency-stop, resume-after-answer (tools/agent_supervisor/restart_channel.py; cli.py wiring +2 lines). Producer report section 3 records the discovery and scope reasoning."
+  ],
+  "D-024-R304": [
+   "owner-restart command: HALTED->IDLE on owner_explicit_restart, explicit + audited (durable owner-recovery audit event + journal transition), fail-closed (see R311 row). Tests AS-1 (live-shape pre-fix journal restarts truthfully, no journal edit) + AS-2 (repeat invocation refuses cleanly) in tools/test_agent_supervisor_restart_channel.py."
+  ],
+  "D-024-R305": [
+   "acknowledge-emergency-stop: DISTINCT command, materially stronger acknowledgment - requires an explicit flag AND a journal-derived --confirm-emergency-token (printed on mismatch so the operator must read the journal state); impossible via habit/script default. AS-4 tests."
+  ],
+  "D-024-R306": [
+   "Ordinary owner-restart REFUSES on EMERGENCY_STOPPED; no automatic path (recovery classification, scheduler, succession, start) fires either edge - AS-4 negative tests + the reachability meta-test pin the surfaces as the only call sites."
+  ],
+  "D-024-R307": [
+   "Complete enumeration in producer report: blocking={WAIT_FOR_OWNER,PAUSED_RECOVERY,EMERGENCY_STOPPED,HALTED}, terminal={COMPLETE,EMERGENCY_STOPPED,HALTED}, all recovery edges listed; a meta-test pins the mechanically derived set against the TRANSITIONS table."
+  ],
+  "D-024-R308": [
+   "Per-EDGE proof: each of the four owner recovery-resume edges has exactly one callable CLI surface (the shared owner_explicit_restart TRIGGER backs two distinct edges, one surface each); intentionally terminal edges (e.g. COMPLETE->IDLE run_closed) explicitly excluded as non-resume edges. Producer report enumeration table; meta-test."
+  ],
+  "D-024-R309": [
+   "Deterministic mechanical reachability sweep, EDGE-granular after the gate-wave rework (G3-F2/G4-MEDIUM closure): operator_recovery_edges() derives (state_from, trigger) pairs from TRANSITIONS; coverage requires a handler whose AST-closure literals contain BOTH the source state and the trigger, so a sibling surface on the shared owner_explicit_restart trigger cannot stand in. Per-surface drop tests: removing ONLY owner-restart, ONLY acknowledge-emergency-stop, or ONLY resume-after-answer each FAILS the sweep; parser registration of all three verbs asserted against the real build_parser(). RED on the pre-fix registration set permanently encoded (test_pre_fix_registration_set_is_red, rewritten to edges); GREEN post-fix. Verbatim red/green in the producer report (sections 4 and 10)."
+  ],
+  "D-024-R310": [
+   "No generic state-changing command (each verb has a fixed source-state and fixed target edge); no journal edits (AS-1 restarts the pre-fix journal shape untouched); no policy loosening, budget resets, or audit-history modification (AS-8 before/after snapshot assertions)."
+  ],
+  "D-024-R311": [
+   "Fail-closed preconditions, each individually forcing a typed refusal: open asks, pending external effects, surviving children, provider identity drift (recorded pinned identity check; the LIVE drift probe remains start-preflight territory - documented deferral, not a silent skip), non-SAFE_CHECKPOINT recovery classification. Tests AS-5a..e; durable emergency-stop flag refusal AS-6."
+  ],
+  "D-024-R312": [
+   "Matrix covered with named tests (34 after the rework): pre-fix journals (AS-1: HALTED via decision_halt_unsafe + 3 denied asks + SAFE_CHECKPOINT, chain verified cryptographically before AND after), current/fresh journals, repeated invocation (AS-2), stale runs (stale-lock takeover), concurrent controllers (live-foreign-pid lock-contention refusal with the lock held across check+transition - a sound proxy for exactly-once; sequential double-invocation proves one transition; wording corrected per G4 section 5 - NOT claimed as a threaded race), emergency-stop recovery (AS-4 incl. wrong/missing token), audit-chain continuity (verify_chain cryptographic), removal sensitivity (per-surface edge-granular drops), plus the asks_unreadable defensive branch (read error refuses, never treated as empty). Orchestrator re-ran the suite independently at both identities."
+  ],
+  "D-024-R313": [
+   "Exactly-once: single-instance lock held across precondition re-check AND transition (_locked); sequential re-invocation refuses wrong_state with exactly one transition recorded; a live foreign lock holder refuses lock_held (the concurrency primitive exercised directly). Durable audited owner-recovery record appended after the journal-first transition commit (crash ordering verified by G5 Q4)."
+  ],
+  "D-024-R314": [
+   "Standard process: G0 PASS (ef0d476); G2 orchestrator self-check PASS (668c824); gate wave round 1: G3 PASS (1 MINOR), G4 PASS (1 MEDIUM), G5 PASS (0 SEC findings) - all three verbatim reports on file; the converged G3-F2/G4-MEDIUM R309 gap closed by the bounded test-only rework 6432d2d with per-reviewer delta attestations; freeze-baseline duty: orchestrator ran the FULL supervisor suite - 2811 passed, 2 skipped, 0 failures (>=1165 baseline re-established); DCV + final model-identity re-read at accept; CI on the pushed tip; frozen-identity recertification = M0-T122 (held until acceptance)."
+  ],
+  "D-024-R318": [
+   "Producer never interrupted: one dispatch, natural completion notification; Amendments 17/18 were captured and the model-identity evidence gathered read-only while it ran."
+  ],
+  "D-024-R319": [
+   "No continuous-operability claim anywhere: producer report explicitly disclaims it; the orchestrator narrative and this evidence map repeat the disclaimer. The live-journey standard (R320) is owed AFTER M0-T122 via the owner-typed cycle-2 act."
+  ],
+  "D-024-R323": [
+   "Producer ACTUAL model identity recorded mid-run without touching the producer: 105/105 transcript events claude-opus-4-8, uniform, no second id. Durable authority: D-004-R735 (subagent model assignment) via .claude/agents/backend-engineer.md frontmatter, byte-stable since commit 8b1b386. Report: M0-T121-producer-model-identity.md. FINAL transcript re-read owed at accept time per the report's commitment."
+  ],
+  "D-024-R324": [
+   "Not interrupted: evidence as R318; the identity evidence came from a read-only grep of the transcript file, never a message to or stop of the agent."
+  ],
+  "D-024-R325": [
+   "Determination recorded: AUTHORIZED - explicitly permitted bounded subagent assignment (no substitution/fallback event exists in the window; orchestrator stayed on Fable 5). Fail-closed condition NOT met; re-evaluated at accept with the final transcript re-read."
+  ],
+  "D-024-R326": [
+   "Authority claimed ONLY from the explicit D-004-R735 assignment + checked-in frontmatter; no allowlist consulted or cited as authorization (model-identity report section 4)."
+  ]
+ },
+ "updated_at": "2026-08-30T04:30:39.000980+00:00"
+}

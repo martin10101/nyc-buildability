@@ -1,0 +1,14 @@
+{
+ "requirements": {
+  "D-038-R003": [
+   "services/api/app/api/v1/scenario.py @ aaf088a0 - a PRODUCT endpoint (property buildability/scenario), user-facing domain feature, NOT supervisor self-infrastructure",
+   "project-control/tasks/M5-T003.json - G0-passed packet with executable acceptance scenarios AS-1..AS-7",
+   "project-control/reports/M5-T003-orchestrator-captured-evidence.md (commit 9cae874f) - green: scenario 27/27, adjacent 107, config/flag/rule_eval 111, ruff clean, modularity 0 failures"
+  ],
+  "D-038-R004": [
+   "scenario.py consumes the injected get_pluto_fetcher + get_spatial_substrate_provider seams only - NO Supabase, NO Geoclient (docstring + imports at scenario.py:52-66)",
+   "AS-7 (test_as7_confident_path_is_fully_offline, test_as6_disabled_request_performs_no_dependency_io) - fully offline via committed fixtures, no network",
+   "orchestrator-captured evidence run on committed fixtures with no credentials (report 9cae874f); flag-gated fail-safe 404 keeps it off by default"
+  ]
+ }
+}

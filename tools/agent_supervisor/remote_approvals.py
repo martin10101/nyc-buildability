@@ -305,8 +305,9 @@ def disable_limited_auto(journal: Any, *, reason: str, audit: Any = None) -> dic
     """The immediate 'turn it off' half of the S13.10 revoke command."""
     journal.set_state(LIMITED_AUTO_KEY, False)
     record = {"limited_auto_enabled": False, "reason": reason, "at_utc": to_utc_iso(),
-              "note": "limited-auto is not implemented in this build and cannot be enabled "
-                      "by any code path; this command asserts the flag off regardless"}
+              "note": "limited-auto is implemented (M0-T079) and OFF by default, enabled "
+                      "only by an explicit per-launch owner act; this command asserts the "
+                      "flag off regardless"}
     if audit is not None:
         audit.append("limited_auto_disabled", detail=record)
     return record

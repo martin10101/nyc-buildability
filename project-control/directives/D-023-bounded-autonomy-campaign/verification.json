@@ -1,0 +1,1494 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-023",
+ "authority_note": "Independent verification by directive-compliance-verifier (producer=orchestrator != verifier). M0-T078: 18/18 PASS. M0-T079: ALL 20 applicable rows PASS at sha baf2c3a5 / manifest c9f402ba (verbatim report M0-T079-directive-verification.md; R026/R029 record the round-1 M2 leak and its independently-verified round-2 closure rather than an all-addressed narrative). Remaining campaign tasks pending. M0-T079 re-stamped to final commit ecf679750 after evidence-only commits (material manifest byte-identical c9f402ba).",
+ "producer": "orchestrator",
+ "verifier": "directive-compliance-verifier",
+ "task_verifications": [
+  {
+   "task_id": "M0-T078",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R015",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R036",
+    "D-023-R038"
+   ],
+   "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0",
+   "verified_at": "2026-08-21T00:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "PASS",
+     "evidence": [
+      "handoff re-hashed by verifier: exact match 08aee279/50147B/867L",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R002",
+     "state": "PASS",
+     "evidence": [
+      "packet directive_refs D-023:ALL; append-only campaign chain 6b9ae32..7ca7f26",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R003",
+     "state": "PASS",
+     "evidence": [
+      "diff 6b9ae32..HEAD: 4 files +327/-2; zero deletions campaign-wide",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R004",
+     "state": "PASS",
+     "evidence": [
+      "no .claude/agents or .claude/hooks change; skill dir = one SKILL.md",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R005",
+     "state": "PASS",
+     "evidence": [
+      "verifier grep over full b1fb384 diff: zero third-party/installer hits",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R006",
+     "state": "PASS",
+     "evidence": [
+      "zero URLs/domains in added lines; G5 independent concurrence",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R010",
+     "state": "PASS",
+     "evidence": [
+      "all changed files inside allowed_paths; zero forbidden_paths touched",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R015",
+     "state": "PASS",
+     "evidence": [
+      "ten vetted areas map 1:1 to handoff lines 371-381; context-budget 2956/6000 PASS reproduced; G3+G5 PASS",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R023",
+     "state": "PASS",
+     "evidence": [
+      "12 claim-vocabulary hits all triggers/prohibitions/self-disclaimer; zero affirmative claims; 31-token delta reproduced",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R025",
+     "state": "PASS",
+     "evidence": [
+      "no deploy surface touched; 'deploy' only descriptive in standard 8.5",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R026",
+     "state": "PASS",
+     "evidence": [
+      "credential-pattern scan zero; G5 secret/BOM/Unicode scan clean",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R027",
+     "state": "PASS",
+     "evidence": [
+      "zero legal/zoning content; 'legal' only as defect class",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R028",
+     "state": "PASS",
+     "evidence": [
+      "blockers/checkpoints/rules untouched; hold non-interaction confirmed by G5",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R029",
+     "state": "PASS",
+     "evidence": [
+      "protections untouched; MCP + DCV validators exit 0 re-run by verifier",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R030",
+     "state": "PASS",
+     "evidence": [
+      "main untouched at d8b3899f; campaign branch append-only; true merge 409386c",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R031",
+     "state": "PASS",
+     "evidence": [
+      "17-file campaign surface; zero overlap with PR #64/#241/wt-m0t064",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R036",
+     "state": "PASS",
+     "evidence": [
+      "no owner interrupt; findings pooled F-001..F-006 per R016/R017",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    },
+    {
+     "id": "D-023-R038",
+     "state": "PASS",
+     "evidence": [
+      "zero hits Superpowers/secondsky/wshobson + installer verbs across diff",
+      "project-control/reports/M0-T078-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "621f6732d1f12a0776fa361e9f1fd65dc16d8cc0"
+    }
+   ],
+   "reviewed_manifest_sha256": "6b76e8f65b7007b22a2aab5277a4243dd52d6231e2cc96c357de6c2848c7834a"
+  },
+  {
+   "task_id": "M0-T079",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R011",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R033",
+    "D-023-R036",
+    "D-023-R037",
+    "D-023-R038"
+   ],
+   "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41",
+   "verified_at": "2026-08-21T00:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "PASS",
+     "evidence": [
+      "manifest audit_log records handoff read at capture (SHA-256 08aee279, 50147B/867L); producer report sec 1.1 derives task from R011/R037/R033 by quoted text",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R002",
+     "state": "PASS",
+     "evidence": [
+      "task 2 of the chain, one branch, three merge commits; owner_touch.py verbatim extraction, recovery_probes re-exports moved names - upgrade not replacement",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R003",
+     "state": "PASS",
+     "evidence": [
+      "producer commits e830c4b/41d0490/0ab986b touch only 15 files under tools/agent_supervisor + 9 test modules; existing stack extended in place; state_kv reused not a new table",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R004",
+     "state": "PASS",
+     "evidence": [
+      "git diff --name-only f99d388 baf2c3a filtered to .claude/ returns nothing; 25-agent roster intact",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R005",
+     "state": "PASS",
+     "evidence": [
+      "full tools/ diff grep for 13 agent-framework names returns zero; every added import stdlib or first-party; no dependency manifest in diff",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R006",
+     "state": "PASS",
+     "evidence": [
+      "same grep, no vendored code; new modules cite internal AD-093/S-numbers not upstream APIs",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R010",
+     "state": "PASS",
+     "evidence": [
+      "scope confined to bounded-mode area 1; github_flow/rotation/turnover/model/remote_approvals absent from producer commits; C3 placed in process.py so turnover_adapters.py (T080) stayed untouched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R011",
+     "state": "PASS",
+     "evidence": [
+      "bounded mode on existing supervisor; durable crash-safe budget (WAL+synchronous=FULL); deterministic seam stop (AS-3/4); nine breakers wired at real event sites; live probes; OFF by default; substantiated G3/G4/G5 across three rounds; 10-hr run correctly not claimed (behind R033)",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R023",
+     "state": "PASS",
+     "evidence": [
+      "grep of all reports: only 10-hour hits are the requirement quoted, a test budget, and two disclaimers; producer report line 332/374 disclaim live/readiness citing R023",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R025",
+     "state": "PASS",
+     "evidence": [
+      "no deployment/infra/service file in diff; supervisor SHADOW-ONLY, bounded mode OFF",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R026",
+     "state": "PASS",
+     "evidence": [
+      "CLOSED at frozen identity, with history recorded (not an all-addressed narrative): round-1 identity e830c4b DID leak a live PAT on stdout of every start --json (G5 must-fix M2); independently caught at the gate; closed round 2 by redaction at the transmission boundary (cli.py:1758/1760, refusals.py:164/167); G5-rereview re-proved end-to-end through the real CLI in both modes with audit.jsonl/journal/runtime-dir side channels clean",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R027",
+     "state": "PASS",
+     "evidence": [
+      "nothing in diff touches legal/zoning rules, services/api, or rule publication",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R028",
+     "state": "PASS",
+     "evidence": [
+      "finalize() clears nothing (docstring + AS-21: durable values unchanged, emergency stop still false); T079 tightens holds - safe_but_forbidden no longer dispatched over (AS-12, exit 14); no gate/hold file in diff",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R029",
+     "state": "PASS",
+     "evidence": [
+      "no .github/workflow/CI/branch-protection file in diff; no test weakened (five amended modules gained assertions net; typed exit 10-16 replace silent exit 0). History recorded: the round-1 M2 leak was a transient security-surface regression, caught at the gate and closed round 2 - named here rather than asserting no violation",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R030",
+     "state": "PASS",
+     "evidence": [
+      "work on control/D-023-autonomy-campaign; main still d8b3899 untouched; only ordinary commits + three --no-ff merges; reflog shows no forced update/rebase/amend",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R031",
+     "state": "PASS",
+     "evidence": [
+      "producer commits confined to tools/agent_supervisor/** + tests; the one out-of-scope ledger file in range was the orchestrator's gate commit not the producer; PR #241 checkout untouched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R033",
+     "state": "PASS",
+     "evidence": [
+      "RUNNABLE_MODES excludes the mode (loop.py:134); owner_enabled_bounded_auto default False; config.py zero occurrences of the enable string; durable limited_auto_enabled written False at all six sites never True; enable is per-launch argv only, added to OWNER_ACTIVATION_ARGUMENTS; no R595/checklist file in diff; G5 both rounds: R595 untouched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R036",
+     "state": "PASS",
+     "evidence": [
+      "live reconciliation returned before first mutation (D-023-capture-readiness.md: origin/main d8b3899f 0/0, PR states, 121 packets, collision-free IDs, ruleset, validators PASS, zero drift); work continued autonomously; deviations flagged to reviewers not owner",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R037",
+     "state": "PASS",
+     "evidence": [
+      "NO CEILING EXISTS: UNLIMITED=None, no companion max constant, package-wide grep finds none; --run-wall-clock-seconds default None; check() returns not-exhausted on wall is None before arithmetic; 1e9s round-trips unclamped; zero/negative refused; source-guard itself tested (widened to run_budget/loop/cli/loop_breakers by C12); counter bounds are separate S13.8 axis from owner config.toml. SELF-EXTENSION CLOSED: round-1 G5 must-fix M1 fixed by _ABSENT sentinel + _resume() refusing five corruption shapes (G5-rereview re-ran attack+12 neighbours via raw SQLite, all refuse); round-3 D3 made budget_digest required (delta-review: strictly additive). Manifest note reframes 36000s as PROPOSED first run not ceiling, flagged for owner",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    },
+    {
+     "id": "D-023-R038",
+     "state": "PASS",
+     "evidence": [
+      "same grep as R005/R006 - no Superpowers/secondsky/wshobson anywhere; no downloaded agent/plugin code; no dependency manifest touched",
+      "project-control/reports/M0-T079-directive-verification.md"
+     ],
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "255a70d3a018e0f1adfbf902a4f84e7fc9cdaf41"
+    }
+   ],
+   "reviewed_manifest_sha256": "c9f402baa4d6291bc998e02d3334d013c65a341a5263c6f943c4f591d5605112"
+  },
+  {
+   "task_id": "M0-T080",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R013",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R036",
+    "D-023-R038"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R002",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R003",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R004",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R005",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R006",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R010",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R013",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R023",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R025",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R026",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R027",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R028",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R029",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R030",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R031",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R036",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R038",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T081",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R012",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R032",
+    "D-023-R036",
+    "D-023-R038"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R002",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R003",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R004",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R005",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R006",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R010",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R012",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R023",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R025",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R026",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R027",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R028",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R029",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R030",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R031",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R032",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R036",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R038",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T082",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R012",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R032",
+    "D-023-R036",
+    "D-023-R038"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R002",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R003",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R004",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R005",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R006",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R010",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R012",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R023",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R025",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R026",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R027",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R028",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R029",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R030",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R031",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R032",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R036",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R038",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T083",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R020",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R036",
+    "D-023-R038"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R002",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R003",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R004",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R005",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R006",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R010",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R020",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R023",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R025",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R026",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R027",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R028",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R029",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R030",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R031",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R036",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R038",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T084",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R014",
+    "D-023-R023",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R036",
+    "D-023-R038"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R002",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R003",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R004",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R005",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R006",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R010",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R014",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R023",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R025",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R026",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R027",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R028",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R029",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R030",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R031",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R036",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R038",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "task_id": "M0-T085",
+   "directive_id": "D-023",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [
+    "D-023-R001",
+    "D-023-R002",
+    "D-023-R003",
+    "D-023-R004",
+    "D-023-R005",
+    "D-023-R006",
+    "D-023-R010",
+    "D-023-R011",
+    "D-023-R016",
+    "D-023-R017",
+    "D-023-R018",
+    "D-023-R019",
+    "D-023-R020",
+    "D-023-R021",
+    "D-023-R022",
+    "D-023-R023",
+    "D-023-R024",
+    "D-023-R025",
+    "D-023-R026",
+    "D-023-R027",
+    "D-023-R028",
+    "D-023-R029",
+    "D-023-R030",
+    "D-023-R031",
+    "D-023-R033",
+    "D-023-R034",
+    "D-023-R036",
+    "D-023-R037",
+    "D-023-R038"
+   ],
+   "reviewed_sha": null,
+   "verified_at": null,
+   "requirements": [
+    {
+     "id": "D-023-R001",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R002",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R003",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R004",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R005",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R006",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R010",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R011",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R016",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R017",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R018",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R019",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R020",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R021",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R022",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R023",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R024",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R025",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R026",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R027",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R028",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R029",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R030",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R031",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R033",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R034",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R036",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R037",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-023-R038",
+     "state": "pending",
+     "evidence": [],
+     "verified_by": null,
+     "reviewed_sha": null
+    }
+   ]
+  }
+ ],
+ "updated_at": "2026-08-21T00:00:00+00:00"
+}

@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T140",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T140-canary-execution-evidence.md",
+  "reviewed_at": "2026-09-03T01:21:12.842488+00:00",
+  "content_manifest_sha256": "033667f4bac559d313e037ecef0490fa8d43dc410a0a2d85eb33c0c1b1b36884",
+  "reviewed_sha": "704df81463b13f0d517ab06f9a635a112e054a24",
+  "updated_at": "2026-09-03T01:21:13.210657+00:00"
+}

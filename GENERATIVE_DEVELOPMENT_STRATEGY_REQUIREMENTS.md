@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](docs/PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: "Approved product requirement" (owner question OD-11); "more than … one conventional building inside a legal envelope"; the core, stair, grid and unit-mix grammar; "Lock … footprint edges … Duplicate and modify a candidate"; profit/Pareto goals; the "conditional" status. The rest still applies.
+
 # NYC Buildability — Generative Development Strategy Requirements
 
 **Status:** Approved product requirement; not yet proof of implementation  

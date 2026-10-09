@@ -1,0 +1,88 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-030",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-08-26T21:09:42+00:00",
+ "requirements": [
+  {
+   "id": "D-030-R001",
+   "text": "Perform the session handoff now: land the current session per the /session-handoff skill and .claude/session-handoff-profile.md (replace docs/SESSION_HANDOFF.md current-only, commit, push), recording the owner's reason verbatim in the handoff header.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-030-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "refreshed docs/SESSION_HANDOFF.md committed and pushed; HANDOFF READY printed with identity block matching live git",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": ["docs/SESSION_HANDOFF.md"], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-030-R002",
+   "text": "SEQUENCING GATE: the successor session must perform the native Claude Code capability re-baseline - the M0-T086 pattern (D-024 s21 / Phase A item 2): live capability_probe run, capability_matrix_v1.json re-verified against the INSTALLED claude/codex versions and current official docs, evidence recorded durably as a bounded gated ledger task (no untracked work) - BEFORE claiming M0-T092 or any later D-024 campaign task.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-030-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": ["D-030-R001"],
+   "required_harness": "python -m tools.agent_supervisor.capability_probe (deterministic live probe) + capability-matrix verification",
+   "required_evidence": "accepted re-baseline ledger task with refreshed probe/matrix evidence, dated after 2026-08-26, accepted before any M0-T092+ claim event",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": ["tools/agent_supervisor/fixtures/capability_matrix_v1.json"], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-030-R003",
+   "text": "Hold conversion (recorded reading): this instruction is the owner's next instruction that D-029-R006 awaited; it discharges the D-029 wait state and converts the D-029-R002 hold into the R002 re-baseline prerequisite - after the re-baseline task is accepted the successor continues the D-024 campaign chain under standing authorizations, with no separate further owner release required by this text.",
+   "source_ref": "source-001.md#verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-030-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "paths": [],
+    "lifecycle_events": [],
+    "effective_date": "2026-08-26"
+   },
+   "dependencies": [],
+   "required_harness": "",
+   "required_evidence": "campaign record NEXT reflects the converted gate; no M0-T092+ claim before the accepted re-baseline",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {"files": [], "tests": [], "tasks": []},
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

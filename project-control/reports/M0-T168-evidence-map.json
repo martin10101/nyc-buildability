@@ -1,0 +1,18 @@
+{
+  "task_id": "M0-T168",
+  "material_commit": "ec68b2aa (producer commit in worktree w-M0-T168; 2 new files)",
+  "produced_at": "2026-10-02T06:00:00+00:00",
+  "producer": "ai-pipeline-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T168)",
+  "requirements": {
+    "D-091-R002": [
+      "tools/agent_supervisor/claude_reviewer.py: an independent Claude reviewer beside codex_reviewer.py. It reviews the same frozen head and packet, is read-only (--permission-mode plan; write-enabling modes and write/edit/resume flags refused), and refuses before any process starts when the reviewer equals the producer, the head is not frozen, or a peer/Codex review is in the packet. Its verdict reuses the Codex reviewer's ReviewOutcome/CodexDecision shape so the later combiner reads both. Malformed or empty output is FAIL/UNVERIFIED, never PASS.",
+      "Tests: tools/test_agent_supervisor_claude_reviewer.py, 26 passed; review_packet.py unchanged; review_packet consumers pass (reviewer 125, ephemeral_review 31, mrl_one_shot_review 81, gate_wave 63, cross_task 45, mrl_launch_path 52, repair_gate 78, start_reentry 16, context_pack 15)."
+    ],
+    "D-091-R001": [
+      "Part of moving the loop to this server: the Claude reviewer path the D-091 design calls for (docs/D091_CLOUD_LOOP_DESIGN.md section 2). Behind a switch that defaults off; loop.py references nothing, so the running loop is unchanged."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 at a4ca65c9; submitted for G2, G3/G4 (code-reviewer), G5 (security-reviewer) and directive-compliance verification. Only fixture-verified CLI flags are emitted (-p, --output-format, --permission-mode plan, --model; evidence files listed in the producer report). Recertification is a later D-091 task."
+    ]
+  }
+}

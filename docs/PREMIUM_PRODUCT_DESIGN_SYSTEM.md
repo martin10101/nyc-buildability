@@ -1,3 +1,7 @@
+> **Presentation contract (2026-10-09, D-090 source-079).** For architect-facing website, report, drawing and PDF presentation, [`docs/design/ARCHITECT_PRESENTATION_CONTRACT.md`](design/ARCHITECT_PRESENTATION_CONTRACT.md) wins on conflict, in particular over this document's §3 page composition, §6 tokens, §7 typography, §8 status system, §13 responsive behavior and §16 visual acceptance. Its §15 anti-clutter rules agree with the contract and still apply.
+
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: its §2 seven-area navigation and its §3 "3D page" where "the 3D canvas remains visually dominant" (plan §3: one dashboard page with floating tools; §5c), "React Three Fiber for 3D" (its §5) and the "Conditional" status (its §8; plan §5). The rest, including the §15 anti-clutter rules, still applies.
+
 # Premium Product Design System
 
 ## Product-quality objective

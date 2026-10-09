@@ -1,0 +1,106 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-067",
+ "version": 2,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T07:15:00.000000+00:00",
+ "requirements": [
+  {
+   "id": "D-067-R001",
+   "text": "Keep the build loop running and building continuously: do not let the loop die. On any break, stall, breaker trip, or run end the orchestrator executes the documented recovery drill (docs/WORKING_KNOWLEDGE.md loop-packet contract) and relaunches; at each task seam the orchestrator carries the seam duties (push, CI evidence, gates, accept) and contracts the next packet per the standing sequence (spatial diagnosis with D-066 wiring, then D-045 FAR wiring, then D-065) so the loop always has work. All existing gates, holds, Tier D stops, and quality controls remain unchanged - 'as much as possible' means continuous throughput, not skipped controls.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-067-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Loop watcher armed; recovery drill or seam action recorded on each loop event; next packet contracted at each acceptance seam.",
+   "required_evidence": "audit.jsonl continuity, ledger task sequence, session handoffs",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured while run persistent-local-36-m5t032 is live.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-067-R002",
+   "text": "Owner decision on orchestrator rotation (scope narrowed by source-002 amendment): ONLY the interactive orchestrator session the owner is addressing keeps going past ~400k, relying on harness auto-compaction ('when you get to compacting, you just continue on') so unattended overnight operation survives token exhaustion. The ~400k-seam rotation rule is NOT cancelled for the loop side: any main/fable agent operating as part of the loop arrangement still rotates at the ~400k seam, and D-010 R113/R114 remains fully in force there; D-067 does not amend D-010. A handoff (/session-handoff) is still written whenever a session actually ends.",
+   "source_ref": "source-002-amendment.md#owner-message-verbatim-clarification-portion",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-067-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Session continues past 400k without a rotation stop; no premature turnover.",
+   "required_evidence": "session continuity; absence of an unnecessary rotation handoff",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured; applies from receipt.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-067-R003",
+   "text": "Authorization (permissive, owner-granted): the eager context-instruction budget enforced by tools/context_budget_check.py may be raised from 6000 to 10000 tokens, and the PROGRAM_KNOWLEDGE.md budget prose updated to match, citing D-067-R003. This authorizes exactly one cap value (10000); it does not authorize removing the check, further raises, or any other loosening of the budget tooling.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-067-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [
+     "tools/context_budget_check.py",
+     ".claude/rules/PROGRAM_KNOWLEDGE.md"
+    ],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "context_budget_check passes with the 10000 cap; the cap constant and rule prose agree and cite D-067.",
+   "required_evidence": "diff of tools/context_budget_check.py + .claude/rules/PROGRAM_KNOWLEDGE.md; passing check output",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured; edit follows capture in a separate commit.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

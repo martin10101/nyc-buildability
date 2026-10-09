@@ -1,0 +1,66 @@
+{
+ "task_id": "M0-T189",
+ "material_commits": [
+  "cc8bc7b9 (the contract file, the routing lines, the new path-scoped rule, the handoff entry, one Tier-1 bullet moved to Tier 2; 9 files = material head)"
+ ],
+ "claim_seam_head": "9b6420427",
+ "files_changed": [
+  ".claude/rules/PROGRAM_KNOWLEDGE.md",
+  ".claude/rules/drawings-report-presentation.md",
+  ".claude/rules/frontend-web.md",
+  "CLAUDE.md",
+  "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md",
+  "docs/SESSION_HANDOFF.md",
+  "docs/WORKING_KNOWLEDGE.md",
+  "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+  "project-control/reports/M0-T189-producer-report.md"
+ ],
+ "what_did_not_change": "No product, contract, tool, test or fixture file; no requirement deleted from the design-system document; the always-loaded budget stays under 10000 tokens.",
+ "known_limits": [
+  "Nothing in the product changes in this task: no screen or PDF is built to the contract yet (the brief's steps 2 to 7 follow as their own tasks).",
+  "The owner's paper-size question D1 and the label questions C1 and C2 stay open; the contract records them."
+ ],
+ "checks_at_material_head": [
+  "context_budget_check.py PASS (eager ~9927 of 10000 tokens)",
+  "check_lane_paths.py --coverage PASS (9745 files)",
+  "the contract body after its marker has SHA-256 3faa7d1f9e1ea50d27421001b6dd4fb3c19a0c55f4b2955270333fbfb81949f1, equal to the owner's file (recomputed by the G3 reviewer)"
+ ],
+ "requirements": {
+  "D-090-R804": [
+   "Only instruction and documentation files change (packet forbidden paths apps/, services/, packages/, tools/; the G3 reviewer's check 1); no scope, calculation, security or production switch moves."
+  ],
+  "D-090-R807": [
+   "The branch, the current tasks and the owner's latest decisions were checked before editing: the work rides on task/wave19-first-option-wiring beside M5-T146 and M5-T147 on disjoint paths; the read-only survey of the route wiring and report path is summarised in the session notes; the handoff entry names the hold on the results-screen files."
+  ],
+  "D-090-R808": [
+   "The directive is recorded once (D-090 source-079, rows R800 to R891) and mapped through this task's packet, evidence map and gates; no second governance system or status document was made."
+  ],
+  "D-090-R859": [
+   "The brief's first step (reconcile and persist) is this task; the handoff entry names steps 2, 3 and 4 as the next actions."
+  ],
+  "D-090-R860": [
+   "One contract file (the brief, byte-identical under an eight-line header), one small rule file and short routing lines; no other design document."
+  ],
+  "D-090-R861": [
+   "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md: header with origin (package and file digests), adoption date 2026-10-09 and the one-file change rule; body byte-identical to the owner's brief (G3 check 2)."
+  ],
+  "D-090-R862": [
+   "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md: a note naming the contract and the sections it overrides on conflict (3, 6, 7, 8, 13, 16; 15 still applies), nothing deleted; .claude/rules/frontend-web.md: two routing lines, frontmatter unchanged (G3 check 3)."
+  ],
+  "D-090-R863": [
+   "CLAUDE.md: one routing-table row carrying the brief's suggested handoff items; the brief is not pasted in; budget PASS at ~9927 of 10000 tokens after one Tier-1 bullet moved unchanged to Tier 2 (G3 check 4)."
+  ],
+  "D-090-R864": [
+   ".claude/rules/drawings-report-presentation.md: paths services/api/app/drawings/** and services/api/app/cad/**; five short points; no skill, hook or watcher (G3 checks 3 and 6)."
+  ],
+  "D-090-R865": [
+   "docs/SESSION_HANDOFF.md section 8: contract path and revision command, branch named, last surface checked (none in the product; the test PDF outside the repository), UX checks not run, questions file and open ids, next visible action and the hold (G3 check 5)."
+  ],
+  "D-090-R883": [
+   "UX-15: PASS for its committed part (routing and contract committed; the handoff entry; the G3 reviewer read the rule frontmatter and the routing). The receiving-session orientation check runs at the next session start."
+  ],
+  "D-090-R890": [
+   "The producer's report and this map claim only what changed; nothing is called complete or verified; the open questions and the not-run UX checks are listed."
+  ]
+ }
+}

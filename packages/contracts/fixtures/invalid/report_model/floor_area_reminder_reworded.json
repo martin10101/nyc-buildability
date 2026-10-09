@@ -1,0 +1,272 @@
+{
+  "contract_version": "1.0.0",
+  "report_id": "test-fixture-synthetic-report-001",
+  "generated_at": "2026-09-30T12:07:00Z",
+  "results_ref": {
+    "results_id": "test-fixture-synthetic-results-001",
+    "study_id": "test-fixture-synthetic-study-001",
+    "option_id": "opt-a",
+    "revision": 3,
+    "results_digest": "sha256:d654cba96c4f486018f6075546ac39ebb64e1ee7eeacb9c6834116fa03503a26"
+  },
+  "identification_line": {
+    "option_name": "Option A",
+    "revision": 3,
+    "date": "2026-09-30",
+    "text": "Option A · revision 3 · 2026-09-30"
+  },
+  "sheets": {
+    "cover": {
+      "page_order": 1,
+      "title": "Cover",
+      "address": "1 Synthetic Test Street (test-fixture-synthetic)",
+      "zoning_districts": [
+        "R6B"
+      ],
+      "lots": [
+        "5999999999"
+      ],
+      "floor_area_allowance": {
+        "status": "available",
+        "value": 10000,
+        "unit": "square_feet",
+        "reads": {
+          "document": "results",
+          "pointer": "/answers/floor_area_allowance/values/1/value"
+        }
+      },
+      "maximum_height": {
+        "status": "available",
+        "value": 55,
+        "unit": "feet",
+        "reads": {
+          "document": "results",
+          "pointer": "/answers/permitted_envelope/values/2/value"
+        }
+      }
+    },
+    "site_plan": {
+      "page_order": 2,
+      "title": "Site plan",
+      "status": "available",
+      "reads_from": [
+        {
+          "document": "results",
+          "pointer": "/geometry"
+        },
+        {
+          "document": "study",
+          "pointer": "/site/facts"
+        }
+      ],
+      "measurement_note": "Approximate — city tax map, not a survey"
+    },
+    "section": {
+      "page_order": 3,
+      "title": "Section",
+      "status": "available",
+      "reads_from": [
+        {
+          "document": "results",
+          "pointer": "/geometry/envelope"
+        },
+        {
+          "document": "results",
+          "pointer": "/floor_by_floor"
+        },
+        {
+          "document": "results",
+          "pointer": "/answers/permitted_envelope"
+        }
+      ],
+      "measurement_note": "Approximate — city tax map, not a survey"
+    },
+    "massing_3d": {
+      "page_order": 4,
+      "title": "3D massing",
+      "status": "available",
+      "reads_from": [
+        {
+          "document": "results",
+          "pointer": "/geometry/floor_plates"
+        },
+        {
+          "document": "results",
+          "pointer": "/floor_by_floor"
+        }
+      ],
+      "measurement_note": "Approximate — city tax map, not a survey"
+    },
+    "calculation_table": {
+      "page_order": 5,
+      "title": "Calculation table",
+      "reads_from": [
+        {
+          "document": "report_model",
+          "pointer": "/calculation_rows"
+        }
+      ]
+    },
+    "floor_by_floor_table": {
+      "page_order": 6,
+      "title": "Floor-by-floor areas",
+      "reads_from": [
+        {
+          "document": "results",
+          "pointer": "/floor_by_floor"
+        }
+      ]
+    },
+    "addon_comparison": {
+      "page_order": 7,
+      "title": "Add-on comparison",
+      "reads_from": [
+        {
+          "document": "results",
+          "pointer": "/addon_gains"
+        },
+        {
+          "document": "results",
+          "pointer": "/best_combination"
+        }
+      ]
+    },
+    "assumptions": {
+      "page_order": 8,
+      "title": "Assumptions",
+      "reads_from": [
+        {
+          "document": "report_model",
+          "pointer": "/assumptions"
+        }
+      ]
+    },
+    "dob_style_preliminary": {
+      "page_order": 10,
+      "title": "Zoning diagram (preliminary)",
+      "marking": "Preliminary — not for filing",
+      "reads_from": [
+        {
+          "document": "results",
+          "pointer": "/answers"
+        },
+        {
+          "document": "results",
+          "pointer": "/geometry"
+        }
+      ]
+    }
+  },
+  "standing_notices": {
+    "shown_once": true,
+    "page_order": 9,
+    "not_dob_approval": "This report is not a Buildings Department approval.",
+    "floor_area_reminder": "Check that the floor area is still available.",
+    "zoning_lot_not_verified": "Based on the lots you selected — the app does not verify the zoning lot",
+    "district_incomplete": "The rules for this district are not complete yet: community facility floor area and ground-floor commercial space are not covered.",
+    "additional": []
+  },
+  "calculation_rows": [
+    {
+      "row_id": "lot-area",
+      "label": "Lot area",
+      "status": "available",
+      "value": 5000,
+      "unit": "square_feet",
+      "zr_section": null,
+      "source": "Approximate — tax map (test-fixture-synthetic DOF Digital Tax Map outline)",
+      "reads": {
+        "document": "study",
+        "pointer": "/site/facts/0/value"
+      },
+      "exception_label": null
+    },
+    {
+      "row_id": "far",
+      "label": "Maximum residential FAR",
+      "status": "available",
+      "value": 2.0,
+      "unit": "ratio",
+      "zr_section": "ZR 23-22",
+      "source": "Rule table test-fixture-synthetic-r6b-far 0.1.0-draft (needs review)",
+      "reads": {
+        "document": "results",
+        "pointer": "/answers/floor_area_allowance/values/0/value"
+      },
+      "exception_label": null
+    },
+    {
+      "row_id": "allowance",
+      "label": "Floor-area allowance",
+      "status": "available",
+      "value": 10000,
+      "unit": "square_feet",
+      "zr_section": "ZR 23-22",
+      "source": "Lot area x FAR; rule table test-fixture-synthetic-r6b-far 0.1.0-draft (needs review)",
+      "reads": {
+        "document": "results",
+        "pointer": "/answers/floor_area_allowance/values/1/value"
+      },
+      "exception_label": null
+    },
+    {
+      "row_id": "max-base-height",
+      "label": "Maximum base height",
+      "status": "available",
+      "value": 45,
+      "unit": "feet",
+      "zr_section": "ZR 23-432",
+      "source": "Rule table test-fixture-synthetic-r6b-height-setback 0.1.0-draft (needs review)",
+      "reads": {
+        "document": "results",
+        "pointer": "/answers/permitted_envelope/values/1/value"
+      },
+      "exception_label": null
+    },
+    {
+      "row_id": "max-height",
+      "label": "Maximum building height",
+      "status": "available",
+      "value": 55,
+      "unit": "feet",
+      "zr_section": "ZR 23-432",
+      "source": "Rule table test-fixture-synthetic-r6b-height-setback 0.1.0-draft (needs review)",
+      "reads": {
+        "document": "results",
+        "pointer": "/answers/permitted_envelope/values/2/value"
+      },
+      "exception_label": null
+    },
+    {
+      "row_id": "units",
+      "label": "Dwelling units (estimate)",
+      "status": "available",
+      "value": 14,
+      "unit": "dwelling_units",
+      "zr_section": "ZR 23-52",
+      "source": "10,000 ÷ 680 = 14.71; rounds up only at .75 or more",
+      "reads": {
+        "document": "results",
+        "pointer": "/unit_estimate/value"
+      },
+      "exception_label": null
+    },
+    {
+      "row_id": "neighbor-floor-area",
+      "label": "A neighbor's unused floor area",
+      "status": "not_available",
+      "reason": "The neighbor estimate is not built yet.",
+      "reads": {
+        "document": "results",
+        "pointer": "/addon_gains/1/gain/reason"
+      }
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption_id": "asm-heights",
+      "statement": "Floor-to-floor heights use the stated defaults: ground floor 12 ft, typical floor 10 ft."
+    }
+  ],
+  "_expected_failure": "The floor-area reminder must be worded exactly as plan section 5a item 2 requires."
+}

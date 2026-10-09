@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T112",
+  "gate_id": "G3",
+  "reviewer": "code-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T112-G3-rework.md",
+  "reviewed_at": "2026-09-25T06:12:56.122189+00:00",
+  "content_manifest_sha256": "4b71b83987689a1ce831b24f25f0c8f58d6b82f6a50e3b378dab966f89a77ef5",
+  "reviewed_sha": "fc76a09fd137def076977e5d90f8cb9a202a6874",
+  "history": [
+    {
+      "reviewer": "code-reviewer",
+      "role": "independent_review",
+      "result": "FAIL",
+      "report_file": "project-control/reports/M5-T112-G3.md",
+      "reviewed_at": "2026-09-25T06:03:51.189684+00:00"
+    }
+  ],
+  "updated_at": "2026-09-25T06:12:57.325435+00:00"
+}

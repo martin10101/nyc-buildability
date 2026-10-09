@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T102",
+ "material_commit": "01b52fe8 (cherry-pick of wt-m5t102 5dedac03; 9 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T21:59:17+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t102)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam) named every writer consumer (pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS; the writer tests; test_cad_owner_samples.py; test_dxf_roundtrip.py); the producer kept dxf_writer.CLAIM_CLASS_WORDS importable as an identity-equal alias and the read-only consumers pass unchanged. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R001": [
+   "One canonical claim-word screen with a separator-collapsing key now bars the D-083 words ('approved', 'maximum allowed building', 'as of right', ...) in every writer, including separator variants ('As_of_right', 'Maximum_allowed', 'MAXIMUM  ALLOWED', 'as-of-right') on GLB mesh/node names, DXF caller strings and the PDF title-block address/bbl. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R002": [
+   "The claim-class vocabulary stays distinct at the file boundary: no writer can emit a barred claim word from caller text, so exported files never present a regulatory limit or generated option as a permitted or demonstrated-maximum building. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Wave-7 capacity unit: contracted at 40169b9c (G0), claimed at 442b2dd2 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T101; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t102; the producer commit touches exactly the 9 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R004": [
+   "The AutoCAD-openable DXF export keeps byte-identical valid output (the DXF golden and the committed owner sample unchanged) while its caller-string claim screen now matches separator variants. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R006": [
+   "All three CAD writers (DXF, PDF, GLB) share one claim-word module with a drift guard; valid output of each stays byte-identical. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (stdlib only); unwired; no route/main.py/web change; app/cad/__init__.py untouched; the committed samples and read-only consumer tests unchanged. [ORCH-HARVEST] at the cherry-picked head 01b52fe8 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad tests/drawings/test_dxf_roundtrip.py -q` (cwd services/api) -> exit 0: 345 passed in 4.83s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}

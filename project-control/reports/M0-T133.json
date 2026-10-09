@@ -1,0 +1,25 @@
+{
+  "task_id": "M0-T133",
+  "producer_agent": "orchestrator-defect-runner",
+  "report_file": "project-control/reports/M0-T133-producer-report.md",
+  "submitted_at": "2026-09-01T05:40:56.804646+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T133-evidence-map.json",
+  "content_manifest_sha256": "565cc32d8acb61c085ac88ba910222ebe354b2a29c276b9d7afe6eb9af35a6ab",
+  "reviewed_sha": "3fd778aac863ae1cba929e10bef8e8948d672a25",
+  "applicable_requirements": [
+    "D-024-R460",
+    "D-024-R461",
+    "D-024-R462",
+    "D-024-R463",
+    "D-024-R464",
+    "D-024-R465",
+    "D-024-R466",
+    "D-024-R467",
+    "D-024-R468",
+    "D-024-R469",
+    "D-024-R470",
+    "D-024-R471"
+  ],
+  "updated_at": "2026-09-01T05:40:57.545059+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "M5-T028",
+  "prepared_by": "orchestrator",
+  "prepared_at": "2026-09-14",
+  "material_commit": "7e7cd85e (producer commit, cherry-picked onto the candidate branch; touches exactly the 11 allowed_paths files)",
+  "requirements": {
+    "D-059-R003": [
+      "Completes the requirement across the surface M5-T027 could not reach. All six previously-confirmed hardcoded 'ZR 23-21' occurrences are gone: orchestrator re-ran the grep over all five modules (derive.py, breakeven.py, comparison.py, ranking.py, sensitivity.py) at the integration head and it returns ZERO matches. The section reference is now derived from the evaluated rule's own citation via the shared extraction the accepted M5-T027 seam established.",
+      "derive.py gains _derived_range_label and _cap_section_reference; the four sibling modules import the shared extraction from .derive (an existing dependency) rather than duplicating logic. comparison.py had TWO hardcode sites (COMPARISON_LABEL and the canonical_cap_sq_ft metric label), each emitted at two call sites - all four corrected.",
+      "Fail-safe direction held: where no evaluated-rule context is available the surface states the section generically rather than defaulting to 23-21 (S1 covers the generic-fallback path with a dedicated test).",
+      "12 new tests across the five test files covering both district families per surface plus a source-text grep test asserting no hardcode returns. RED-ON-OLD verified by the producer by restoring all five production modules to their base-commit content and re-running: 7 of 12 failed with the expected assertion errors (every test exercising the actual fix); the 5 R5-only rows passed on old code as expected, since the R5 path was already correct."
+    ],
+    "D-046-R001": [
+      "Produced under the parallel regime by an unnamed backend-engineer producer (claude-sonnet-5 model override per D-047) in an isolated worktree, concurrent with the M4-T021 connectors lane; concurrency within the ceiling of 3."
+    ],
+    "D-046-R002": [
+      "Disjointness held: M5-T028's eleven allowed_paths (five scenario modules + their five test files + own report) share zero files with the concurrent M4-T021 connectors scope, and M5-T027's own three modules are fenced as forbidden_paths here so the accepted derivation seam could not be mutated by this packet. git show --name-only confirms the producer stayed inside exactly the contracted files."
+    ]
+  },
+  "orchestrator_verification_at_integration_head": {
+    "scenario_suite": "python -m pytest services/api/tests/scenario -q -> 443 passed (431 pre-existing + 12 new)",
+    "hardcode_grep": "grep -rn 'ZR 23-21' over all five modules -> ZERO matches",
+    "ruff": "cd services/api && python -m ruff check . -> All checks passed!",
+    "modularity": "python tools/modularity_check.py --check -> selected 405 files; failures 0; warnings 17 (identical to the pre-edit baseline)"
+  },
+  "producer_disclosed_design_note_for_reviewer_attention": [
+    "breakeven.py and comparison.py each carry a PRE-EXISTING acceptance test forbidding their own source from importing 'from .builder'. Rather than edit those tests or violate the module boundary, the shared _cap_citation_section extraction is imported once into derive.py (which has no such boundary) and re-exported as derive._cap_section_reference, which the four sibling modules import from .derive (already a dependency). Reviewers should judge whether this re-export respects the intent of that boundary test or merely routes around it.",
+    "comparison.py's _metric_delta gained an optional 4th parameter (metric_labels, default None) so its two existing 3-positional-arg unit tests needed no changes - reviewers should confirm no existing assertion was weakened by that signature change."
+  ]
+}

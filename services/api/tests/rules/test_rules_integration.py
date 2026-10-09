@@ -25,6 +25,20 @@ from app.rules import RuleRegistry
 from app.rules import coverage as cov
 from app.rules import integration as ri
 from app.rules.dsl import evaluation_trace_schema
+from app.rules.wide_street_wiring import (
+    COVERAGE_CONDITIONAL,
+    COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+    DETERMINATION_NOT_WITHIN_WIDE,
+    DETERMINATION_PROFESSIONAL_REVIEW,
+    DETERMINATION_WITHIN_WIDE,
+    DRAFT_LABEL_NOTICE,
+    FALLBACK_DIRECTION_NOTICE,
+    FAR_ROW_NONE,
+    FAR_ROW_STANDARD,
+    FAR_ROW_WIDE_STREET,
+    ROUTED_TO_NOT_USED_NOTICE,
+    WideStreetDetermination,
+)
 from app.spatial import policy as spatial_policy
 from app.spatial.models import (
     LOT_BOUNDARY_UNCERTAIN,
@@ -180,6 +194,22 @@ def registry() -> RuleRegistry:
     return RuleRegistry().load()
 
 
+def _applicable_trace(result) -> dict:
+    """The single family evaluation trace whose applicability held.
+
+    Since M4-T009 the residential_far family spans the whole R1-R12 table, so a
+    property's ``evaluations`` list carries one applicable trace (the rule that
+    governs the lot's district) plus not_applicable traces for the other district
+    groups. The integration contract selects the applicable one; there is exactly
+    one because the family's per-district applicability sets are disjoint.
+    """
+    applicable = [t for t in result.evaluations if t["applicability_outcome"]]
+    assert len(applicable) == 1, (
+        f"expected exactly one applicable residential_far trace, got {len(applicable)}"
+    )
+    return applicable[0]
+
+
 # --------------------------------------------------------------------------
 # RI-S1 - confident path carries the R5 FAR result, conditional, full trace.
 # --------------------------------------------------------------------------
@@ -195,8 +225,9 @@ def test_ri_s1_confident_r5_carries_far_result_conditional_with_citations(regist
     assert result.fail_safe is False
     assert result.coverage_source == "rule_evaluator"
 
-    assert len(result.evaluations) == 1
-    trace = result.evaluations[0]
+    # exactly one residential_far rule applies to an R5 lot (the family now spans R1-R12)
+    assert sum(t["applicability_outcome"] for t in result.evaluations) == 1
+    trace = _applicable_trace(result)
     assert trace["outputs"] == {
         "max_residential_far": 1.5,
         "max_residential_floor_area_sq_ft": 15000.0,
@@ -218,7 +249,7 @@ def test_ri_s1_confident_r5_carries_far_result_conditional_with_citations(regist
 def test_ri_s1_r5d_far_value(registry):
     result = ri.evaluate_property(_confident_profile("R5D", area=5000.0), registry=registry)
     assert result.zoning_district == "R5D"
-    assert result.evaluations[0]["outputs"] == {
+    assert _applicable_trace(result)["outputs"] == {
         "max_residential_far": 2.0,
         "max_residential_floor_area_sq_ft": 10000.0,
     }
@@ -236,7 +267,7 @@ def test_ri_s1_lot_area_falls_back_to_spatial_pair_when_geometry_absent(registry
     result = ri.evaluate_property(profile, registry=registry)
     assert result.lot_area_sq_ft == 8000.0
     assert result.lot_area_source == "spatial_intersection.pairs[].lot_area_sq_ft"
-    assert result.evaluations[0]["outputs"]["max_residential_floor_area_sq_ft"] == 12000.0
+    assert _applicable_trace(result)["outputs"]["max_residential_floor_area_sq_ft"] == 12000.0
 
 
 # --------------------------------------------------------------------------
@@ -339,6 +370,25 @@ def test_ri_s3_absent_spatial_intersection_fails_safe(registry):
     assert result.needs_review is True
 
 
+@pytest.mark.parametrize("bbl", ["3052960043", "3022647515"])
+def test_m5t033_absent_substrate_uniform_spatial_intersection_absent(registry, bbl):
+    """M5-T033 (D-059-R004) terminal link of the deployed failure chain. When the
+    server-side live provider yields no substrate (flag off OR a connector
+    failure), the rebuilt profile carries no spatial_intersection and the evaluator
+    emits EXACTLY spatial_intersection_absent + professional review - BBL-
+    independent, matching the uniform live-capture signature on both D-059 parcels.
+    This is the last hop the route-level reason rests on; it proves reproduced code
+    behavior only and asserts nothing about the (owner-visible) live runtime."""
+    result = ri.evaluate_property(_profile(None, bbl=bbl), registry=registry)
+    assert result.bbl == bbl
+    assert result.fail_safe_reason == ri.FAILSAFE_SPATIAL_ABSENT
+    assert result.fail_safe_reason == "spatial_intersection_absent"
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert result.professional_review_required is True
+    assert result.zoning_district is None
+    assert result.evaluations == []
+
+
 def test_ri_s3_present_section_missing_class_fails_safe(registry):
     # spatial_intersection present but lot_overall_class missing -> incomplete context
     section = {
@@ -380,7 +430,7 @@ def test_ri_s4_result_carries_coverage_needs_review_and_disclaimer(registry):
     # no field anywhere equals verified
     assert cov.COVERAGE_VERIFIED not in _iter_coverage_values(result.as_dict())
     # the evaluated rule is a draft (agent-authorable), never published
-    assert result.evaluations[0]["rule_status"] == "needs_review"
+    assert _applicable_trace(result)["rule_status"] == "needs_review"
 
 
 def test_ri_s4_fail_safe_result_also_honest(registry):
@@ -533,7 +583,7 @@ def test_c1_confident_base_with_commercial_overlay_pair(registry):
     result = ri.evaluate_property(_profile(_spatial_section(record)), registry=registry)
     assert result.zoning_district == "R5"
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
-    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+    assert _applicable_trace(result)["outputs"]["max_residential_far"] == 1.5
     candidates = result.spatial_uncertainty["base_district_candidates"]
     assert [c["district_label"] for c in candidates] == ["R5"]  # overlay excluded
     assert all("pair_class" in c for c in candidates)  # consumer can filter neighbours
@@ -555,8 +605,9 @@ def test_c2_confident_district_but_missing_lot_area_no_value(registry):
     assert result.lot_area_sq_ft is None
     assert result.fail_safe is False               # went through the confident path
     assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
-    assert result.evaluations[0]["outputs"] == {}  # no computed value
-    assert result.evaluations[0]["data_completeness"] == cov.COMPLETENESS_MISSING_CRITICAL
+    _trace = _applicable_trace(result)
+    assert _trace["outputs"] == {}  # no computed value
+    assert _trace["data_completeness"] == cov.COMPLETENESS_MISSING_CRITICAL
 
 
 @pytest.mark.parametrize("district", ["R5A", "R5B"])
@@ -565,7 +616,7 @@ def test_c3_r5a_r5b_variants_far_1_5(registry, district):
     result = ri.evaluate_property(_confident_profile(district), registry=registry)
     assert result.zoning_district == district
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
-    assert result.evaluations[0]["outputs"]["max_residential_far"] == 1.5
+    assert _applicable_trace(result)["outputs"]["max_residential_far"] == 1.5
 
 
 def test_f1_confident_class_but_professional_review_required_fails_safe(registry):
@@ -693,3 +744,377 @@ def test_hard4_successful_result_is_strict_json(registry):
     result = ri.evaluate_property(_confident_profile("R5", area=10000.0), registry=registry)
     assert result.coverage_status == cov.COVERAGE_CONDITIONAL
     json.dumps(result.export(), allow_nan=False)
+
+
+# --------------------------------------------------------------------------
+# M5-T034 - the wide-street determination reaches evaluate_property and drives
+# conditional-FAR row selection server-side (AS-3, task output #4). The wiring
+# module's OWN construction of a determination from policy + buffer inputs is
+# covered in test_wide_street_wiring.py; these tests isolate evaluate_property's
+# FOLD of an already-typed determination into the ZR 23-22 R6/R7-1/R7-2/R8 rows.
+# --------------------------------------------------------------------------
+
+def _wide_determination(
+    determination_state: str,
+    far_row: str,
+    coverage_hint: str,
+    *,
+    exceptions_checked: bool = True,
+    named_street_override_pending: bool = False,
+    aggregate_intersects: bool | None = None,
+) -> WideStreetDetermination:
+    """A typed :class:`WideStreetDetermination` fixture for the evaluator-seam
+    tests (built directly rather than through the buffer engine so no shapely
+    geometry is needed here; the engine-driven construction is tested in
+    test_wide_street_wiring.py)."""
+    return WideStreetDetermination(
+        determination_state=determination_state,
+        far_row=far_row,
+        coverage_hint=coverage_hint,
+        exceptions_checked=exceptions_checked,
+        named_street_override_pending=named_street_override_pending,
+        reason="test-fixture determination",
+        policy_decision_states=("wide",),
+        original_labels=("100",),
+        source_versions=("dcm-streetwidth-v1",),
+        matched_geometry_refs=("segment-object-id-1",),
+        interpreted_bounds_summaries=("exactly 100 ft",),
+        classification_reasons=("mapped width 100 ft >= 75 ft threshold",),
+        buffer_status="computed",
+        aggregate_intersects=aggregate_intersects,
+        aggregate_area_sq_ft=None,
+        lot_identity=_BBL,
+        draft_label=DRAFT_LABEL_NOTICE,
+        routed_to_note=ROUTED_TO_NOT_USED_NOTICE,
+        fallback_direction_note=FALLBACK_DIRECTION_NOTICE,
+    )
+
+
+def test_m5t034_within_wide_street_fires_wide_row_and_higher_far_for_r6(registry):
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.zoning_district == "R6"
+    assert result.wide_street_far_row == FAR_ROW_WIDE_STREET
+    # The higher (wide-street) R6 value comes straight from the rule's own
+    # wide_street_far_by_district parameter (3.00), never invented here.
+    assert result.wide_street_governing_far == 3.0
+    # WITHIN is a confident DRAFT outcome: coverage is NOT escalated to review.
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    assert result.coverage_status != cov.COVERAGE_VERIFIED
+    assert result.wide_street_determination is not None
+    assert result.wide_street_determination["governing_max_residential_far"] == 3.0
+    assert "DRAFT" in result.wide_street_determination["draft_label"]
+    # No Verified label leaks anywhere (D-045-R009).
+    assert cov.COVERAGE_VERIFIED not in _iter_coverage_values(result.as_dict())
+
+
+def test_m5t034_within_wide_street_fires_higher_far_for_r8(registry):
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R8", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.zoning_district == "R8"
+    assert result.wide_street_far_row == FAR_ROW_WIDE_STREET
+    assert result.wide_street_governing_far == 7.2  # R8 wide-street value
+
+
+def test_m5t034_not_within_wide_street_fires_standard_conservative_row_for_r6(registry):
+    det = _wide_determination(
+        DETERMINATION_NOT_WITHIN_WIDE, FAR_ROW_STANDARD, COVERAGE_CONDITIONAL,
+        aggregate_intersects=False,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.wide_street_far_row == FAR_ROW_STANDARD
+    # The conservative (lower) R6 value from standard_far_by_district (2.20).
+    assert result.wide_street_governing_far == 2.2
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+
+
+def test_m5t034_professional_review_determination_escalates_and_grants_no_bonus(registry):
+    det = _wide_determination(
+        DETERMINATION_PROFESSIONAL_REVIEW, FAR_ROW_NONE,
+        COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert result.wide_street_far_row == FAR_ROW_NONE
+    # No FAR bonus is granted on uncertainty (D-051 fallback direction).
+    assert result.wide_street_governing_far is None
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert any("professional review" in r.lower() for r in result.reasons)
+
+
+def test_m5t034_determination_ignored_for_non_conditional_district_r5(registry):
+    # R5's rule carries no wide_street_far_by_district parameter, so a supplied
+    # determination has NO effect: the wide-street fields stay None and the result
+    # is byte-identical to the no-determination path (additive guarantee).
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    with_det = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    without_det = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry,
+    )
+    assert with_det.zoning_district == "R5"
+    assert with_det.wide_street_far_row is None
+    assert with_det.wide_street_governing_far is None
+    assert with_det.wide_street_determination is None
+    assert with_det.export() == without_det.export()
+
+
+def test_m5t034_wide_fields_default_none_when_no_determination_supplied(registry):
+    result = ri.evaluate_property(_confident_profile("R6", area=10000.0), registry=registry)
+    assert result.wide_street_far_row is None
+    assert result.wide_street_governing_far is None
+    assert result.wide_street_determination is None
+
+
+def test_m5t034_select_conditional_far_row_within_picks_wide_value():
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    fold = ri.select_conditional_far_row(det, standard_far=2.2, wide_street_far=3.0)
+    assert fold["far_row"] == FAR_ROW_WIDE_STREET
+    assert fold["governing_far"] == 3.0
+    assert fold["professional_review"] is False
+
+
+def test_m5t034_select_conditional_far_row_not_within_picks_standard_value():
+    det = _wide_determination(
+        DETERMINATION_NOT_WITHIN_WIDE, FAR_ROW_STANDARD, COVERAGE_CONDITIONAL,
+        aggregate_intersects=False,
+    )
+    fold = ri.select_conditional_far_row(det, standard_far=2.2, wide_street_far=3.0)
+    assert fold["far_row"] == FAR_ROW_STANDARD
+    assert fold["governing_far"] == 2.2
+    assert fold["professional_review"] is False
+
+
+def test_m5t034_select_conditional_far_row_professional_review_grants_no_bonus():
+    det = _wide_determination(
+        DETERMINATION_PROFESSIONAL_REVIEW, FAR_ROW_NONE,
+        COVERAGE_PROFESSIONAL_REVIEW_REQUIRED,
+    )
+    fold = ri.select_conditional_far_row(det, standard_far=2.2, wide_street_far=3.0)
+    assert fold["far_row"] == FAR_ROW_NONE
+    assert fold["governing_far"] is None
+    assert fold["professional_review"] is True
+
+
+# --------------------------------------------------------------------------
+# M5-T037 - as_dict()/export() serialize the OPTIONAL wide_street block into the
+# rule_evaluation @ 1.1.0 document ONLY when a determination folded in (AS-3 at
+# the integration layer; the endpoint half is in tests/api/test_rule_evaluation_
+# api.py). A no-determination or non-conditional path leaves the key ABSENT so the
+# body stays valid under both the 1.0.0 and 1.1.0 schema.
+# --------------------------------------------------------------------------
+
+
+def test_m5t037_as_dict_emits_wide_street_block_on_within_wide_fold(registry):
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R6", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    document = result.as_dict()
+    assert "wide_street" in document
+    block = document["wide_street"]
+    # The block is the D-052 provenance summary (far row + higher governing FAR +
+    # provenance tuples + DRAFT marker), never a Verified value.
+    assert block["determination_state"] == DETERMINATION_WITHIN_WIDE
+    assert block["far_row"] == FAR_ROW_WIDE_STREET
+    assert block["governing_max_residential_far"] == 3.0
+    assert block["matched_geometry_refs"] == ["segment-object-id-1"]
+    assert block["policy_decision_states"] == ["wide"]
+    assert "DRAFT" in block["draft_label"]
+    # export() (the fail-closed dict form) carries the same block and stays
+    # strict-JSON serializable; no Verified label anywhere.
+    export = result.export()
+    assert export["wide_street"] == block
+    assert cov.COVERAGE_VERIFIED not in _iter_coverage_values(export)
+    json.dumps(export, allow_nan=False)
+
+
+def test_m5t037_as_dict_omits_wide_street_block_without_determination(registry):
+    # A conditional district (R6) evaluated with NO determination supplied leaves
+    # the key ABSENT (1.0.0-shaped body under the 1.1.0 schema).
+    result = ri.evaluate_property(_confident_profile("R6", area=10000.0), registry=registry)
+    assert "wide_street" not in result.as_dict()
+    assert "wide_street" not in result.export()
+
+
+def test_m5t037_as_dict_omits_wide_street_block_for_non_conditional_district(registry):
+    # A determination supplied for R5 (no wide_street_far_by_district parameter)
+    # never folds, so the key stays ABSENT - byte-identical to the no-block path.
+    det = _wide_determination(
+        DETERMINATION_WITHIN_WIDE, FAR_ROW_WIDE_STREET, COVERAGE_CONDITIONAL,
+        aggregate_intersects=True,
+    )
+    result = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry,
+        wide_street_determination=det,
+    )
+    assert "wide_street" not in result.as_dict()
+
+
+# --------------------------------------------------------------------------
+# M5-T058 - the condo substrate-substitution carry at the EVALUATOR seam:
+#   (a) an ABSENT substrate caused by an unresolved condo base lot is named
+#       HONESTLY (condo_base_lot_unresolved), while a genuinely-absent non-condo
+#       substrate keeps the generic spatial_intersection_absent reason - both
+#       default to the pre-M5-T058 behavior so every existing caller is
+#       byte-identical (AS-2);
+#   (b) a supplied substrate_substitution stamp rides onto the result verbatim
+#       (a RECORD, never re-derived) and serializes as the OPTIONAL top-level
+#       substrate_substitution block ONLY when supplied - additive, so a document
+#       with no substitution stays a valid 1.0.0/1.1.0-shaped body (AS-1/AS-5).
+# No base lot is ever auto-selected on a multi-lot/unresolved outcome
+# (D-078-R002); the absent-substrate refusal path carries NO stamp (there is no
+# single analyzed lot to stamp). The stamp is a plain dict literal here (the
+# evaluator carries it opaquely); the live provider's build_substrate_
+# substitution_stamp shape + provenance byte-match are proved in
+# tests/spatial/test_live_provider.py.
+# --------------------------------------------------------------------------
+
+_SUBSTITUTION_STAMP = {
+    "entered_bbl": "3022647515",
+    "analyzed_bbl": "3022640050",
+    "note": "analyzed on the recorded base tax lot; entered vs analyzed record",
+    "condo_key": "301313",
+    "resolution_path": "dtm_condo_soda_single_base_lot",
+    "source_id": "dof_dtm_condo",
+    "dataset_ids": ["dtm-condo-2026-09"],
+    "retrieved_at": "2026-09-06T00:00:00Z",
+    "mixed_substrate": {
+        "lot_facts_substrate": "analyzed_base_lot",
+        "identity_facts_substrate": "entered_billing_lot",
+        "note": "lot area/geometry describe the base lot; PLUTO identity the billing lot",
+    },
+}
+
+
+def test_m5t058_absent_substrate_condo_unresolved_names_honest_reason(registry):
+    # AS-2: a condo billing BBL whose base lot could not be resolved to a single
+    # lot -> the ABSENT-substrate refusal is named honestly, NOT the generic
+    # spatial_intersection_absent. No district, no value, no auto-picked base lot
+    # (D-078-R002), and NO substitution stamp (no single analyzed lot exists).
+    result = ri.evaluate_property(
+        _profile(None, bbl="3022647515"),
+        registry=registry,
+        spatial_absent_condo_unresolved=True,
+    )
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_CONDO_BASE_LOT_UNRESOLVED
+    assert result.fail_safe_reason == "condo_base_lot_unresolved"
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert result.zoning_district is None
+    assert result.evaluations == []
+    assert result.needs_review is True
+    # The refusal is honest about the condo cause and the human next step.
+    joined = " ".join(result.reasons).lower()
+    assert "no base lot is auto-selected" in joined
+    assert "site-definition confirmation" in joined
+    # No stamp on the absent path; the block is ABSENT from the document.
+    assert result.substrate_substitution is None
+    assert "substrate_substitution" not in result.as_dict()
+
+
+def test_m5t058_absent_substrate_non_condo_keeps_generic_reason(registry):
+    # AS-2 companion: with the new flag defaulted OFF (a genuinely-absent non-condo
+    # substrate) the generic spatial_intersection_absent reason survives, byte-
+    # identical to the pre-M5-T058 behavior. Never leak the condo cause here.
+    result = ri.evaluate_property(_profile(None, bbl="3052960043"), registry=registry)
+    assert result.fail_safe_reason == ri.FAILSAFE_SPATIAL_ABSENT
+    assert result.fail_safe_reason == "spatial_intersection_absent"
+    assert result.coverage_status == cov.COVERAGE_PROFESSIONAL_REVIEW_REQUIRED
+    assert "substrate_substitution" not in result.as_dict()
+
+
+def test_m5t058_absent_substrate_flag_default_is_pre_m5t058_byte_identical(registry):
+    # The additive params default to the old behavior: an absent-substrate result
+    # with both new params defaulted is byte-identical to one built without them.
+    with_defaults = ri.evaluate_property(
+        _profile(None, bbl="3052960043"),
+        registry=registry,
+        spatial_absent_condo_unresolved=False,
+        substrate_substitution=None,
+    ).export()
+    legacy = ri.evaluate_property(_profile(None, bbl="3052960043"), registry=registry).export()
+    assert (
+        json.dumps(with_defaults, sort_keys=True) == json.dumps(legacy, sort_keys=True)
+    )
+
+
+def test_m5t058_confident_result_carries_substitution_stamp_verbatim(registry):
+    # AS-1/AS-5: a supplied stamp rides onto a confident result unchanged (a
+    # RECORD, never re-derived) and serializes as the OPTIONAL top-level block.
+    result = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0),
+        registry=registry,
+        substrate_substitution=_SUBSTITUTION_STAMP,
+    )
+    assert result.zoning_district == "R5"  # analysis ran on the base-lot substrate
+    assert result.coverage_status == cov.COVERAGE_CONDITIONAL
+    document = result.as_dict()
+    assert document["substrate_substitution"] == _SUBSTITUTION_STAMP
+    # A distinct copy, never the same object (frozen dataclass copies on as_dict).
+    assert document["substrate_substitution"] is not _SUBSTITUTION_STAMP
+    # export() carries the same block and stays strict-JSON serializable.
+    export = result.export()
+    assert export["substrate_substitution"] == _SUBSTITUTION_STAMP
+    json.dumps(export, allow_nan=False)
+    # Additive: the ONLY difference from the no-stamp path is the extra block.
+    without = ri.evaluate_property(
+        _confident_profile("R5", area=10000.0), registry=registry
+    ).export()
+    assert "substrate_substitution" not in without
+    export.pop("substrate_substitution")
+    assert json.dumps(export, sort_keys=True) == json.dumps(without, sort_keys=True)
+
+
+def test_m5t058_stamp_survives_base_lot_uncertain_fail_safe(registry):
+    # A substitution DID happen (billing -> single base lot), but the base lot's
+    # own substrate is geometry-uncertain -> the result fail-safes on the base
+    # lot while STILL carrying the substitution stamp (the substitution and the
+    # base-lot uncertainty are independent facts; the stamp records the former).
+    record = _record(
+        LOT_BOUNDARY_UNCERTAIN,
+        [
+            _pair("R5", PAIR_NEAR_BOUNDARY_UNCERTAIN, share=(0.55, 0.60, 0.65)),
+            _pair("R6", PAIR_NEAR_BOUNDARY_UNCERTAIN, share=(0.35, 0.40, 0.45)),
+        ],
+        professional_review_required=True,
+        review_reasons=["lot_overall_class=boundary_uncertain"],
+    )
+    result = ri.evaluate_property(
+        _profile(_spatial_section(record)),
+        registry=registry,
+        substrate_substitution=_SUBSTITUTION_STAMP,
+    )
+    assert result.fail_safe is True
+    assert result.fail_safe_reason == ri.FAILSAFE_GEOMETRY_UNCERTAIN
+    assert result.zoning_district is None
+    assert result.as_dict()["substrate_substitution"] == _SUBSTITUTION_STAMP

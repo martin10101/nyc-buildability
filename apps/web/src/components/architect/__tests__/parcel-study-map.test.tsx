@@ -1,0 +1,467 @@
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { LotOutlineOutcome, ValidatedGeometry } from "@/lib/lot-geometry-api";
+import { ParcelStudyMap, type ParcelStudyOutline } from "../ParcelStudyMap";
+
+interface TestSource {
+  data: { features: Array<{ properties: { bbl: string; color: string; contextOnly: boolean }; geometry: ValidatedGeometry }> };
+}
+interface TestMap {
+  sources: Map<string, TestSource>;
+  emit: (event: string, payload?: { sourceId?: string }) => void;
+  remove: ReturnType<typeof vi.fn>;
+  resize: ReturnType<typeof vi.fn>;
+  fitBounds: ReturnType<typeof vi.fn>;
+}
+const runtime = vi.hoisted(() => ({
+  maps: [] as TestMap[],
+  markers: [] as HTMLElement[],
+  attributions: [] as unknown[],
+  renderAvailable: true,
+  styleReady: true,
+  observerDisconnect: vi.fn(),
+  observerCallback: null as ResizeObserverCallback | null,
+}));
+
+vi.mock("maplibre-gl", () => {
+  class MapMock {
+    sources = new Map<string, TestSource>();
+    layers = new Set<string>();
+    events = new Map<string, Set<(payload?: { sourceId?: string }) => void>>();
+    remove = vi.fn();
+    resize = vi.fn();
+    fitBounds = vi.fn();
+    constructor() { runtime.maps.push(this); }
+    on(event: string, callback: (payload?: { sourceId?: string }) => void) {
+      if (!this.events.has(event)) this.events.set(event, new Set());
+      this.events.get(event)!.add(callback);
+    }
+    off(event: string, callback: (payload?: { sourceId?: string }) => void) { this.events.get(event)?.delete(callback); }
+    emit(event: string, payload?: { sourceId?: string }) { this.events.get(event)?.forEach(callback => callback(payload)); }
+    isStyleLoaded() { return runtime.styleReady; }
+    isSourceLoaded(id: string) { return this.sources.has(id); }
+    getLayer(id: string) { return this.layers.has(id); }
+    addSource(id: string, source: TestSource) { this.sources.set(id, source); }
+    addLayer(layer: { id: string }) { this.layers.add(layer.id); }
+    addControl() {}
+    queryRenderedFeatures({ layers }: { layers: string[] }) {
+      if (!runtime.renderAvailable) return [];
+      return [...this.sources].flatMap(([source, data]) => data.data.features.flatMap(feature =>
+        layers.map(id => ({ source, layer: { id }, properties: feature.properties }))));
+    }
+  }
+  class MarkerMock {
+    constructor({ element }: { element: HTMLElement }) { runtime.markers.push(element); }
+    setLngLat() { return this; }
+    addTo() { return this; }
+    remove() {}
+  }
+  class ControlMock {}
+  class AttributionMock {
+    constructor(options: unknown) { runtime.attributions.push(options); }
+  }
+  return { default: { Map: MapMock, Marker: MarkerMock,
+    AttributionControl: AttributionMock, NavigationControl: ControlMock, setWorkerUrl: vi.fn() } };
+});
+
+const LOT_A = "3022640032";
+const LOT_B = "3022640033";
+const BILLING = "3022647515";
+const polygon: ValidatedGeometry = { type: "Polygon", coordinates: [
+  [[-73.958, 40.700], [-73.957, 40.700], [-73.957, 40.701], [-73.958, 40.701], [-73.958, 40.700]],
+  [[-73.9578, 40.7002], [-73.9572, 40.7002], [-73.9572, 40.7008], [-73.9578, 40.7008], [-73.9578, 40.7002]],
+] };
+const multipolygon: ValidatedGeometry = { type: "MultiPolygon", coordinates: [
+  polygon.coordinates,
+  [[[-73.956, 40.700], [-73.955, 40.700], [-73.955, 40.701], [-73.956, 40.700]]],
+] };
+
+function result(bbl: string, geometry: ValidatedGeometry = polygon): LotOutlineOutcome {
+  return { kind: "document", correlationId: null, view: {
+    bbl, outcome: "single_lot", outcomeToken: "single_lot", geometry,
+    geometryUnusable: false, featureCount: 1, reviewRequired: false, noOutlineReason: null,
+    condoClassification: { classification: "base_lot", note: null },
+    accuracyNote: "Approximate, plus or minus 20 feet.", attribution: "NYC DCP MapPLUTO",
+    disclaimer: "Not a legal boundary survey.", notes: ["A recorded source note."],
+    source: { sourceId: "nyc-dcp-mappluto", datasetVersion: "26v2", retrievedAt: "2026-09-25T18:00:00Z" },
+  } };
+}
+function outline(bbl: string, outcome = result(bbl)): ParcelStudyOutline {
+  return { bbl, outcome, loading: false };
+}
+function missing(bbl: string): ParcelStudyOutline {
+  const outcome = result(bbl);
+  if (outcome.kind === "document") Object.assign(outcome.view, {
+    outcome: "no_outline", geometry: null, featureCount: 0, noOutlineReason: "no_feature_for_bbl",
+  });
+  return outline(bbl, outcome);
+}
+function condoContext(): ParcelStudyOutline {
+  const outcome = result(BILLING, multipolygon);
+  if (outcome.kind === "document") outcome.view.condoClassification = {
+    classification: "condo_billing_lot", note: "Condominium billing lot: merged complex outline.",
+  };
+  return outline(BILLING, outcome);
+}
+function features(index = runtime.maps.length - 1) {
+  return runtime.maps[index].sources.get("parcel-study-outlines")!.data.features;
+}
+
+beforeEach(() => {
+  runtime.maps.length = 0;
+  runtime.markers.length = 0;
+  runtime.attributions.length = 0;
+  runtime.renderAvailable = true;
+  runtime.styleReady = true;
+  runtime.observerDisconnect.mockReset();
+  runtime.observerCallback = null;
+  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({} as WebGLRenderingContext);
+  vi.stubGlobal("ResizeObserver", class {
+    constructor(callback: ResizeObserverCallback) { runtime.observerCallback = callback; }
+    observe() {}
+    disconnect() { runtime.observerDisconnect(); }
+  });
+});
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); vi.useRealTimers(); });
+
+describe("ParcelStudyMap display-only identity and geometry", () => {
+  it("shows the recorded condo outline without inventing a third land parcel when Wallabout base outlines are absent", async () => {
+    render(<ParcelStudyMap compact arrangement="compare" outlines={[missing(LOT_A), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel boundaries unavailable.");
+    expect(screen.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "rendered");
+    expect(features()).toEqual([{ type: "Feature", properties: { bbl: BILLING, color: "#24699a", contextOnly: true }, geometry: multipolygon }]);
+    expect(runtime.markers.map(marker => marker.textContent)).toEqual(["Condo context"]);
+    expect(screen.getAllByText("No outline in the source record.")).toHaveLength(2);
+    expect(screen.getByLabelText("Parcel outline availability").children).toHaveLength(2);
+    expect(screen.getByText("Condo tax-map outline · context only")).toBeVisible();
+    expect(screen.getByText(`Billing BBL ${BILLING} · Not an additional parcel or a confirmed development site. The condo tax-map outline does not establish individual parcel boundaries.`)).toBeInTheDocument();
+    expect(screen.getByText("Condominium billing lot: merged complex outline.")).toBeInTheDocument();
+    expect(screen.queryByText(/1 of 2 approximate parcel outlines shown/)).not.toBeInTheDocument();
+  });
+
+  it.each(["wrong BBL", "review", "malformed", "nonbilling", "multiple", "no outline", "duplicate base"])("withholds unsafe condo context: %s", async (reason) => {
+    const context = condoContext();
+    if (context.outcome?.kind !== "document") throw new Error("Fixture must be a document");
+    if (reason === "wrong BBL") context.outcome.view.bbl = "3022647516";
+    if (reason === "review") context.outcome.view.reviewRequired = true;
+    if (reason === "malformed") context.outcome.view.geometry = { type: "Polygon", coordinates: [] };
+    if (reason === "nonbilling") context.outcome.view.condoClassification.classification = "base_lot";
+    if (reason === "multiple") context.outcome.view.featureCount = 2;
+    if (reason === "no outline") { context.outcome.view.outcome = "no_outline"; context.outcome.view.geometry = null; }
+    if (reason === "duplicate base") { context.bbl = LOT_A; context.outcome.view.bbl = LOT_A; }
+    render(<ParcelStudyMap arrangement="compare" outlines={[missing(LOT_A), missing(LOT_B)]} contextOutline={context} />);
+    expect(screen.getByTestId("parcel-study-context-outline")).toHaveAttribute("data-context-state", "unavailable");
+    expect(runtime.maps).toHaveLength(0);
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.getAllByText("No outline in the source record.").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("keeps a usable base outline when another is missing instead of replacing it with condo context", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("1 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties)).toEqual([{ bbl: LOT_A, color: "#a4680c", contextOnly: false }]);
+    expect(runtime.markers.map(marker => marker.textContent)).toEqual(["1 · Lot 32"]);
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+    expect(screen.getByText("No outline in the source record.")).toBeInTheDocument();
+  });
+
+  it("distinguishes missing records from failed outline requests and keeps retry guidance visible with context", async () => {
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={[missing(LOT_A), missing(LOT_B)]} />);
+    expect(screen.getByText("Individual parcel boundaries unavailable in the source records.")).toBeVisible();
+    rerender(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, { kind: "client_timeout", timeoutMs: 12000 }), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel requests failed. Retry to check availability.");
+    expect(screen.getByText("Outline request timed out.")).toBeInTheDocument();
+  });
+
+  it("uses compact camera padding, resizes before a pending fit, and preserves camera after readiness", async () => {
+    let width = 400, height = 220;
+    vi.spyOn(Element.prototype, "clientWidth", "get").mockImplementation(() => width);
+    vi.spyOn(Element.prototype, "clientHeight", "get").mockImplementation(() => height);
+    runtime.renderAvailable = false;
+    render(<ParcelStudyMap compact arrangement="together" outlines={[outline(LOT_A)]} />);
+    await waitFor(() => expect(runtime.maps).toHaveLength(1));
+    const map = runtime.maps[0];
+    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: { top: 44, left: 44, right: 44, bottom: 76 }, duration: 0, maxZoom: 19.5 });
+    map.fitBounds.mockClear();
+    map.resize.mockClear();
+    width = 900; height = 600;
+    act(() => runtime.observerCallback?.([], {} as ResizeObserver));
+    expect(map.fitBounds).toHaveBeenLastCalledWith(expect.any(Array), { padding: { top: 72, left: 72, right: 72, bottom: 104 }, duration: 0, maxZoom: 19.5 });
+    expect(map.resize.mock.invocationCallOrder[0]).toBeLessThan(map.fitBounds.mock.invocationCallOrder[0]);
+    runtime.renderAvailable = true;
+    act(() => map.emit("render"));
+    expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
+    map.fitBounds.mockClear();
+    height = 160;
+    act(() => runtime.observerCallback?.([], {} as ResizeObserver));
+    expect(map.fitBounds).not.toHaveBeenCalled();
+    expect(features()[0].geometry).toEqual(polygon);
+  });
+
+  it("keeps a hidden initializing map pending past the deadline, then resizes and verifies real features on reveal", async () => {
+    vi.useFakeTimers();
+    const outlines = [outline(LOT_A)];
+    const { container, rerender } = render(<div hidden><ParcelStudyMap arrangement="together" outlines={outlines} /></div>);
+    await act(async () => { await vi.dynamicImportSettled(); });
+    expect(runtime.maps).toHaveLength(1);
+    act(() => runtime.maps[0].emit("render"));
+    expect(container).toHaveTextContent("Loading interactive parcel map…");
+    expect(container).not.toHaveTextContent("1 of 1 approximate parcel outlines shown.");
+    await act(async () => { await vi.advanceTimersByTimeAsync(30_000); });
+    expect(runtime.maps[0].remove).not.toHaveBeenCalled();
+    runtime.renderAvailable = false;
+    rerender(<div><ParcelStudyMap arrangement="together" outlines={outlines} /></div>);
+    await act(async () => { await Promise.resolve(); });
+    expect(runtime.maps[0].resize).toHaveBeenCalledOnce();
+    expect(screen.getByText("Loading interactive parcel map…")).toBeInTheDocument();
+    runtime.renderAvailable = true;
+    act(() => runtime.maps[0].emit("render"));
+    expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
+    expect(runtime.maps).toHaveLength(1);
+  });
+
+  it("draws all polygons and holes verbatim, with numbered lot and BBL labels", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(features()).toHaveLength(2);
+    expect(features()[0].geometry).toEqual(polygon);
+    expect(features()[1].geometry).toEqual(multipolygon);
+    expect(features()[0].geometry.coordinates).toHaveLength(2);
+    expect(features()[1].geometry.coordinates).toHaveLength(2);
+    expect(features()[0].properties.color).not.toBe(features()[1].properties.color);
+    expect(runtime.markers.map(marker => marker.textContent)).toEqual(["1 · Lot 32", "2 · Lot 33"]);
+    expect(runtime.markers[1]).toHaveAttribute("aria-label", `Parcel 2, Lot 33, BBL ${LOT_B}`);
+    expect(screen.getByRole("link", { name: "View Lot 33 in ZoLa" })).toHaveAttribute("href", `https://zola.planning.nyc.gov/bbl/${LOT_B}`);
+    expect(screen.getAllByText("A recorded source note.")).toHaveLength(2);
+  });
+
+  it("withholds a wrong-BBL response while preserving the valid other parcel", async () => {
+    render(<ParcelStudyMap arrangement="together" outlines={[outline(LOT_A), outline(LOT_B, result("3022647515"))]} />);
+    await screen.findByText("1 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A]);
+    expect(screen.getByText("Returned parcel does not match; outline withheld.")).toBeInTheDocument();
+    expect(runtime.markers).toHaveLength(1);
+  });
+
+  it("does not pick from ambiguous, duplicate, unusable, or missing outlines", async () => {
+    const ambiguous = result(LOT_A);
+    if (ambiguous.kind === "document") ambiguous.view.outcome = "multiple_features";
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, ambiguous)]} />);
+    expect(screen.getByText("Parcel geometry needs review; outline withheld.")).toBeInTheDocument();
+    expect(runtime.maps).toHaveLength(0);
+    rerender(<ParcelStudyMap arrangement="together" outlines={[outline(LOT_A), outline(LOT_A)]} />);
+    expect(screen.getAllByText("Duplicate parcel records; outline withheld for review.")).toHaveLength(2);
+    expect(runtime.maps).toHaveLength(0);
+    const unusable = result(LOT_B);
+    if (unusable.kind === "document") unusable.view.geometryUnusable = true;
+    rerender(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_B, unusable)]} />);
+    expect(screen.getByText("Source geometry is unusable; outline withheld.")).toBeInTheDocument();
+    rerender(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_A, { kind: "route_absent", httpStatus: 404 })]} />);
+    expect(screen.getByText("Outline service unavailable here.")).toBeInTheDocument();
+    expect(runtime.maps).toHaveLength(0);
+  });
+
+  it("keeps data and ZoLa links when WebGL is unavailable without a fabricated map", async () => {
+    vi.mocked(HTMLCanvasElement.prototype.getContext).mockReturnValue(null);
+    render(<ParcelStudyMap arrangement="together" outlines={[outline(LOT_A), outline(LOT_B)]} />);
+    await screen.findByText(/Interactive map unavailable in this browser/);
+    expect(runtime.maps).toHaveLength(0);
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View Lot 32 in ZoLa" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View Lot 33 in ZoLa" })).toBeInTheDocument();
+    expect(screen.getAllByText("Approximate outline available.")).toHaveLength(2);
+  });
+
+  it("changes grouping without merging geometry and disposes the old map and resize observer", async () => {
+    const outlines = [outline(LOT_A), outline(LOT_B)];
+    const { rerender, unmount } = render(<ParcelStudyMap arrangement="together" outlines={outlines} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(features()[0].properties.color).toBe(features()[1].properties.color);
+    const old = runtime.maps[0];
+    rerender(<ParcelStudyMap arrangement="together" outlines={outlines.map(entry => ({ ...entry }))} />);
+    expect(runtime.maps).toHaveLength(1);
+    expect(old.remove).not.toHaveBeenCalled();
+    rerender(<ParcelStudyMap arrangement="compare" outlines={outlines} />);
+    await waitFor(() => expect(runtime.maps).toHaveLength(2));
+    expect(old.remove).toHaveBeenCalledOnce();
+    expect(runtime.observerDisconnect).toHaveBeenCalledOnce();
+    expect(features()).toHaveLength(2);
+    expect(features()[0].properties.color).not.toBe(features()[1].properties.color);
+    const latest = runtime.maps[1];
+    act(() => runtime.observerCallback?.([], {} as ResizeObserver));
+    expect(latest.resize).toHaveBeenCalledOnce();
+    act(() => old.emit("error"));
+    expect(screen.queryByText(/Interactive map could not render/)).toBeNull();
+    unmount();
+    expect(latest.remove).toHaveBeenCalledOnce();
+    expect(runtime.observerDisconnect).toHaveBeenCalledTimes(2);
+  });
+
+  it("cancels the async map import on unmount before it can create a map", async () => {
+    const { unmount } = render(<ParcelStudyMap arrangement="together" outlines={[outline(LOT_A)]} />);
+    unmount();
+    await act(async () => { await vi.dynamicImportSettled(); });
+    expect(runtime.maps).toHaveLength(0);
+  });
+
+  it("waits for rendered parcel features and exposes render failure without losing records", async () => {
+    runtime.renderAvailable = false;
+    render(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_A)]} />);
+    await waitFor(() => expect(runtime.maps).toHaveLength(1));
+    expect(screen.getByText("Loading interactive parcel map…")).toBeInTheDocument();
+    expect(screen.queryByText(/1 of 1 approximate parcel outlines shown/)).toBeNull();
+    act(() => runtime.maps[0].emit("error"));
+    expect(screen.getByText(/Interactive map could not render/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "View Lot 32 in ZoLa" })).toBeInTheDocument();
+    expect(runtime.maps[0].remove).toHaveBeenCalledOnce();
+  });
+
+  it("uses style readiness once and isolates failed street tiles from parcel data", async () => {
+    runtime.styleReady = false;
+    render(<ParcelStudyMap arrangement="separate" outlines={[outline(LOT_A)]} />);
+    await waitFor(() => expect(runtime.maps).toHaveLength(1));
+    expect(runtime.maps[0].sources.size).toBe(0);
+    act(() => { runtime.maps[0].emit("style.load"); runtime.maps[0].emit("load"); });
+    expect(features()).toHaveLength(1);
+    expect(runtime.markers).toHaveLength(1);
+    act(() => runtime.maps[0].emit("error", { sourceId: "nyc-basemap" }));
+    expect(screen.getByText(/Some street context could not load/)).toBeInTheDocument();
+    expect(screen.getByText("1 of 1 approximate parcel outlines shown.")).toBeInTheDocument();
+    expect(runtime.maps[0].remove).not.toHaveBeenCalled();
+  });
+
+  it("lets the compact dashboard focus either real parcel and return to all without changing source geometry", async () => {
+    render(<ParcelStudyMap compact arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B, result(LOT_B, multipolygon))]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(screen.getByRole("button", { name: "View all parcels" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "ready");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-kind", "parcels");
+    fireEvent.click(screen.getByRole("button", { name: "View all parcels" }));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "ready");
+    expect(runtime.maps).toHaveLength(1);
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 1, Lot 32" }));
+    await screen.findByText("Parcel 1 · Lot 32 approximate outline shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A]);
+    expect(features()[0].geometry).toEqual(polygon);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", LOT_A);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-visible-bbls", LOT_A);
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    await screen.findByText("Parcel 2 · Lot 33 approximate outline shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_B]);
+    expect(features()[0].geometry).toEqual(multipolygon);
+    expect(screen.getByRole("button", { name: "View Parcel 2, Lot 33" })).toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("button", { name: "View all parcels" }));
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A, LOT_B]);
+    expect(screen.getByLabelText("Parcel outline availability").children).toHaveLength(2);
+  });
+
+  it.each([2, 5])("distinguishes %i parcels in Compare, groups them in Together, and resets Separate to the first parcel", async count => {
+    const outlines = Array.from({ length: count }, (_, index) => outline(`30226400${32 + index}`));
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={outlines} />);
+    await screen.findByText(`${count} of ${count} approximate parcel outlines shown.`);
+    expect(new Set(features().map(feature => feature.properties.color)).size).toBe(count);
+    expect(screen.getAllByRole("button", { name: /^View Parcel/ })).toHaveLength(count);
+    fireEvent.click(screen.getByRole("button", { name: `View Parcel ${count}, Lot ${31 + count}` }));
+    await screen.findByText(`Parcel ${count} · Lot ${31 + count} approximate outline shown.`);
+    rerender(<ParcelStudyMap arrangement="together" outlines={outlines} />);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", "all");
+    await screen.findByText(`${count} of ${count} approximate parcel outlines shown.`);
+    expect(features()).toHaveLength(count);
+    expect(new Set(features().map(feature => feature.properties.color)).size).toBe(1);
+    expect(features().map(feature => feature.properties.bbl)).toEqual(outlines.map(entry => entry.bbl));
+    expect(features().every(feature => JSON.stringify(feature.geometry) === JSON.stringify(polygon))).toBe(true);
+    rerender(<ParcelStudyMap arrangement="separate" outlines={outlines} />);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", LOT_A);
+    await screen.findByText("Parcel 1 · Lot 32 approximate outline shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([LOT_A]);
+    expect(screen.getByRole("button", { name: "View Parcel 1, Lot 32" })).toHaveAttribute("aria-pressed", "true");
+  });
+
+  it("requires the newly focused parcel to paint before reusing a ready status", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B)]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    runtime.renderAvailable = false;
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "loading");
+    await waitFor(() => expect(runtime.maps).toHaveLength(2));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "loading");
+    expect(screen.queryByText("Parcel 2 · Lot 33 approximate outline shown.")).not.toBeInTheDocument();
+    runtime.renderAvailable = true;
+    act(() => runtime.maps[1].emit("render"));
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "ready");
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 2 · Lot 33 approximate outline shown.");
+  });
+
+  it("shows the selected missing parcel state instead of another parcel or the billing outline", async () => {
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), missing(LOT_B)]} contextOutline={condoContext()} />);
+    await screen.findByText("1 of 2 approximate parcel outlines shown.");
+    const previousMap = runtime.maps[0];
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 2 · Lot 33: No outline in the source record.");
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-visible-bbls", "");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-state", "unavailable");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-kind", "unavailable");
+    expect(previousMap.remove).toHaveBeenCalledOnce();
+    expect(screen.getByRole("link", { name: "View Lot 33 in ZoLa" })).toBeInTheDocument();
+  });
+
+  it("never presents the condo context as a selected individual parcel, including Separate's default", async () => {
+    const outlines = [missing(LOT_A), missing(LOT_B)];
+    const contextOutline = condoContext();
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={outlines} contextOutline={contextOutline} />);
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel boundaries unavailable.");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-kind", "condo-context");
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 1, Lot 32" }));
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 1 · Lot 32: No outline in the source record.");
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "View all parcels" }));
+    await screen.findByText("Condo tax-map outline shown for context; individual parcel boundaries unavailable.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual([BILLING]);
+    rerender(<ParcelStudyMap arrangement="separate" outlines={outlines} contextOutline={contextOutline} />);
+    expect(screen.getByRole("status")).toHaveTextContent("Parcel 1 · Lot 32: No outline in the source record.");
+    expect(screen.queryByTestId("parcel-study-map-canvas")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("parcel-study-context-outline")).not.toBeInTheDocument();
+  });
+
+  it("resets a selected parcel synchronously when the property membership changes", async () => {
+    const { rerender } = render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A), outline(LOT_B)]} />);
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    fireEvent.click(screen.getByRole("button", { name: "View Parcel 2, Lot 33" }));
+    await screen.findByText("Parcel 2 · Lot 33 approximate outline shown.");
+    rerender(<ParcelStudyMap arrangement="compare" outlines={[outline("3022640034"), outline("3022640035")]} />);
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-map-focus", "all");
+    expect(screen.getByTestId("parcel-study-map")).toHaveAttribute("data-visible-bbls", "3022640034,3022640035");
+    expect(screen.queryByRole("button", { name: "View Parcel 2, Lot 33" })).not.toBeInTheDocument();
+    await screen.findByText("2 of 2 approximate parcel outlines shown.");
+    expect(features().map(feature => feature.properties.bbl)).toEqual(["3022640034", "3022640035"]);
+  });
+
+  it("attributes the displayed DOF geometry to DOF without inventing MapPLUTO accuracy", async () => {
+    const dof = result(LOT_A);
+    if (dof.kind !== "document") throw new Error("Fixture must be a document");
+    Object.assign(dof.view, {
+      attribution: "NYC Department of Finance (DOF), Digital Tax Map",
+      accuracyNote: "Approximate tax-map geometry; not a boundary survey.",
+      source: { sourceId: "nyc-dof-digital-tax-map", datasetVersion: "1.1.0", retrievedAt: "2026-09-26T20:00:00Z" },
+    });
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, dof)]} />);
+    await screen.findByText("1 of 1 approximate parcel outlines shown.");
+    expect(runtime.attributions).toEqual([{ customAttribution: ["NYC Department of Finance (DOF), Digital Tax Map"] }]);
+    expect(screen.getByText(/Source: nyc-dof-digital-tax-map/)).toHaveTextContent("Version: 1.1.0");
+    expect(screen.queryByText(/MapPLUTO|20 feet/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Approximate official tax-map outlines/)).toBeInTheDocument();
+  });
+
+  it("treats source attribution as plain text before passing it to MapLibre's HTML control", async () => {
+    const source = result(LOT_A);
+    if (source.kind !== "document") throw new Error("Fixture must be a document");
+    source.view.attribution = 'Official <source> & "record"';
+    render(<ParcelStudyMap arrangement="compare" outlines={[outline(LOT_A, source)]} />);
+    await screen.findByText("1 of 1 approximate parcel outlines shown.");
+    expect(runtime.attributions).toEqual([{ customAttribution: ["Official &lt;source&gt; &amp; &quot;record&quot;"] }]);
+  });
+});

@@ -1,0 +1,46 @@
+{
+ "task_id": "M5-T061",
+ "material_commit": "1f1db078 (cherry-pick of worktree producer commit dd84168d; one-hunk docstring conflict resolved to the material side - the 823a0dff seed-E501 placeholder line the material replaces wholesale)",
+ "produced_at": "2026-09-20T18:35:00+00:00",
+ "producer": "backend-engineer (loop-3 worker, runs persistent3-local-07/-08; unit closed at the S13.8 consecutive_revision_loops breaker after six in-loop REVISE cycles converging the report to supervisor-outcome honesty; orchestrator harvest with fresh supervisor-owned evidence collection per the reviewer's handoff demand)",
+ "requirements": {
+  "D-066-R001": [
+   "Code graph regenerated at the M5-T061 contract seam BEFORE the packet was authored (recorded in the 64a6f984 contract-seam commit message: 'graph regenerated at this seam before authoring') and the packet's inputs carry the graph-derived seam: the route surface (__all__, router, caps, get_proposal_check_registry) is consumed by main.py mount + the packet's test file only; the producer report's Notes section re-verifies that seam is unchanged at the material identity ('the code-graph seam (consumed by main.py mount + this test file only) stays closed')."
+  ],
+  "D-076-R001": [
+   "The material implements a phase-B increment of the recorded proposal-editor plan: DB-039 hardening of the existing POST /api/v1/proposal-checks route (the plan's check loop over the existing scenario engine) without any new work class - registry-derived numeric input-domain validation ordered ahead of the O(n2) outline gate, bounded wall-id charset validation, and per-registry input-domain memoization, all inside the already-released route surface; the (200,None)/(404,None)/(413)/(422)/(500) matrix is unchanged (producer report, scope header)."
+  ],
+  "D-076-R002": [
+   "Honesty/boundary discipline holds: the route treats the proposal strictly as caller input validated against registry-derived rule domains (a third input class - never a city record, never a rule); no proposal-derived number is persisted or relabeled; refusals are typed with bounded echoes (422 field key, 413, flag-off 404) and the tests pin exact-cap HTTP-200 vs above-cap typed-refusal boundaries (walls=500, street_lines=400, label=200, body==MAX_BODY_BYTES). The producer report additionally models evidence honesty explicitly: report-only authorship is recorded as an uncorroborated CLAIM, and this unit's in-run command outcomes (ruff exit 1, pytest exit 4/no tests found - the recorded cwd invocation artifact) are retained as distinct historical outcomes, superseded only by the orchestrator's fresh explicit-cwd transcripts below."
+  ],
+  "D-077-R002": [
+   "This packet is the loop-3 lane operating under the full contract drill: contracted at 64a6f984 (binds + digest resyncs D-066 R001 / D-076 R001,R002 / D-077 R002,R003, seeds, G0 with the pairwise-disjointness record vs live T058/T060 and parked T059), claimed at a444708d with the FULL worktree path wt-m5t061, built by the supervised loop-3 worker across runs persistent3-local-07/-08, and harvested by the orchestrator at the lane's breaker close - the lane cycled without owner round-trips per D-080."
+  ],
+  "D-077-R003": [
+   "Scope stayed inside the released, non-held queue: DB-039 route hardening on the already-released proposal-checks route - no B3-UI scope, no 3D/massing, no held item touched; the four changed files are exactly the packet's allowed_paths; the M5-T058-HELD rule-evaluation-fixtures surface was not touched (producer report Notes)."
+  ]
+ },
+ "orchestrator_evidence": {
+  "note": "Supervisor-owned evidence collection demanded by the in-loop reviewer (six REVISE cycles): documented commands re-run fresh by the orchestrator with EXPLICIT cwd, bound to the LF-normalized digests of the four reviewed files; digest identity verified byte-equal after cherry-pick into ctl24 at 1f1db078 (ALL-MATCH).",
+  "commands": [
+   {"argv": "python -m ruff check .", "cwd": "wt-m5t061/services/api", "exit": 0, "output_tail": "All checks passed!"},
+   {"argv": "python -m pytest tests/api/test_proposal_checks_api.py -q", "cwd": "wt-m5t061/services/api", "exit": 0, "output_tail": "67 passed in 7.79s"},
+   {"argv": "python -m pytest tests/api -q", "cwd": "wt-m5t061/services/api", "exit": 0, "output_tail": "591 passed in 71.09s"},
+   {"argv": "python tools/modularity_check.py --check", "cwd": "wt-m5t061 (repo root)", "exit": 0, "output_tail": "selected 467 files; failures 0; warnings 20 (all pre-existing, none in the packet files)"},
+   {"argv": "python -m pytest -q --ignore=tests/documents", "cwd": "wt-m5t061/services/api", "exit": 1, "output_tail": "1 failed, 3135 passed in 191.74s - the single failure is tests/contracts/test_contract_serializers.py ast.parse-ing documents/units.py PEP-695 syntax under local Python 3.11 (the recorded 3.11-vs-3.12 interpreter artifact, zero relation to the packet files); the documents suite and this test prove on CI's 3.12 at the pushed head"}
+  ],
+  "reviewed_file_digests": {
+   "note": "sha256 over LF-normalized bytes; values are content digests of repository files, not credentials",
+   "entries": [
+    {"path": "project-control/reports/M5-T061-producer-report.md",
+     "sha256_lf": "bc0a47dc390a68abf92acc4f7a30d818a7df02d59358f2de9b4647fda7cd13ce"},
+    {"path": "services/api/app/api/v1/_proposal_fact_domains.py",
+     "sha256_lf": "fd9fc4feebd053f688d46abe46b47829d094d72147110eaaea37692ac58d988e"},
+    {"path": "services/api/app/api/v1/proposal_checks_api.py",
+     "sha256_lf": "8c219a0762f9717372eba1f3476db63034c41aa2af40903a6e6cce3583406040"},
+    {"path": "services/api/tests/api/test_proposal_checks_api.py",
+     "sha256_lf": "7cbd93980704bd4571d0cf782f2bc270b5df5da8d82134cf996a50a4d53db387"}
+   ]
+  }
+ }
+}

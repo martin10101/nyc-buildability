@@ -23,11 +23,11 @@ const NORTH = "sev:doc:p1:3";
 
 afterEach(cleanup);
 
-function renderScreen(digest = DIGEST_PRO, client?: SurveyReviewClient) {
+function renderScreen(digest = DIGEST_PRO, client?: SurveyReviewClient, compact = false) {
   const resolved = client ?? createMockSurveyReviewClient(seedStore());
   return render(
     <SurveyReviewClientProvider client={resolved}>
-      <SurveyReviewScreen documentDigest={digest} />
+      <SurveyReviewScreen documentDigest={digest} compact={compact}/>
     </SurveyReviewClientProvider>,
   );
 }
@@ -40,6 +40,24 @@ async function correctFocused(value: string, reason: string) {
 }
 
 describe("SurveyReviewScreen — orientation (SC-S1/S4)", () => {
+  it("keeps compact review decisions and blockers visible while source and impact details remain reachable", async () => {
+    renderScreen(DIGEST_PRO, undefined, true);
+    await screen.findByTestId("focused-item");
+    expect(screen.getByTestId("fact-list")).toBeVisible();
+    expect(screen.getByTestId("check-conflict")).toBeVisible();
+    expect(screen.getByTestId("focused-actions")).toBeVisible();
+    expect(screen.getByTestId("action-confirm-document")).toBeDisabled();
+    expect(screen.getByTestId("downstream-summary")).toBeVisible();
+    expect(screen.getByTestId(`overlay-mark-${AREA}`)).not.toBeVisible();
+    fireEvent.click(screen.getByText("Original document and overlays", { exact: true }));
+    expect(screen.getByTestId(`overlay-mark-${AREA}`)).toBeVisible();
+    fireEvent.click(screen.getByTestId(`fact-row-${CLEAN}`));
+    expect(screen.getByTestId("focused-heading")).toHaveFocus();
+    fireEvent.click(screen.getByTestId("action-accept"));
+    await screen.findByTestId("accept-affirmed");
+    fireEvent.click(screen.getByText("Affected facts and reasons", { exact: true }));
+    expect(screen.getByTestId(`downstream-${AREA}`)).toBeVisible();
+  });
   it("shows the document state, overlay, urgency-ordered facts, and Unconfirmed evidence", async () => {
     renderScreen();
     await screen.findByTestId("review-topbar");

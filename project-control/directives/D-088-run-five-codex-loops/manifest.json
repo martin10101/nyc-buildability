@@ -1,0 +1,94 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-088",
+ "version": 1,
+ "slug": "run-five-codex-loops",
+ "title": "Owner 2026-09-24 ('Run5 codex loops in parallel'): run FIVE codex loop lanes side by side - raises D-072's ceiling of three to five; lanes 4-5 stood up as byte-identical certified controller instances with their own runtime identities; every lane fed with a pairwise-disjoint, contracted, claimed packet; no lane launches before the owner-typed B-026 commissioning (lane 1 = supervised canary first); D-071/D-072 isolation, every gate, hold, Tier D stop and dependency rule unchanged",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-24",
+ "captured_at": "2026-09-25T01:15:00+00:00",
+ "created_at": "2026-09-25T01:15:00+00:00",
+ "updated_at": "2026-09-25T04:45:26+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "afbde1cf625a5f9d317e3d49024e97870bcc619d",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the instruction directly in-channel mid-session, answering the orchestrator's question (restart three lanes first, or plan for five). It is a Tier A capacity/dispatch instruction: raise the loop ceiling to five and keep five lanes occupied with in-regime work. It lifts no hold, changes no gate, and every fed packet still passes the normal contract/claim/gate process; the commissioning stays owner-typed (runbook section 12)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-088-R001",
+  "D-088-R002",
+  "D-088-R003",
+  "D-088-R004",
+  "D-088-R005",
+  "D-088-R006",
+  "D-088-R007"
+ ],
+ "requirements_content_digest_sha256": "60a0bb1db9d7cf0a38bf5ef5efc73afcee653dfb9299b405f259e496bff0feb1",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-25T01:15:00+00:00",
+   "content_digest_sha256": "375ee0c3e975dcfd8ae7d8cfeb9ce20418813be0113c027c5449dabae7b59748"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "amends": "source-001.md",
+   "recorded_at": "2026-09-25T04:45:26+00:00",
+   "content_digest_sha256": "eb446f18a3b494ba18886abe8712309f6133edafa91582a5f594a7676c60a7e0"
+  }
+ ],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "dispatch_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "raising the concurrent loop-lane ceiling to five; standing up lanes 4-5 as byte-identical certified controller instances with their own runtime identities; feeding and launching up to five lanes on contracted, claimed, pairwise-disjoint, in-regime ledger packets after the owner-typed B-026 commissioning",
+  "forbidden": "lifting any owner hold (expansion section 2 minus its scoped releases; PR #241; the unmounted max-envelope route; DWG licensing); skipping any contract/claim/gate step; changing the certified config.toml, allowlist or activation manifest to add lanes; running the owner-typed commissioning or the canary approval on the owner's behalf; any Tier D action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-25T01:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 288 accepted; all lanes down (B-026 open; recertification M0-T159 and the installer re-pin M0-T160 accepted; commissioning owner-typed and not yet run); lanes 1-3 exist, lanes 4-5 do not; M5-T103 in rework (G5 FAIL, orchestrator-dispatched rework producer running), M5-T105 at its final compliance check. frozen_baseline_sha = this capture's parent. Relation: raises D-072-R001's ceiling; D-071, D-072 and D-084 stay active. Immediate planning effect: prepare the owner's commissioning helper (extended to lanes 4-5) and contract five pairwise-disjoint lane packets."
+  },
+  {
+   "at": "2026-09-25T01:45:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "wave-10 contract seam (seq 129: M5-T106 + M5-T107 + M5-T108 + M5-T109 + M0-T161 - the M5-T099 plan's batch 2, the DB-069 massing pre-wiring packet, and the D-088 commissioning helper): bound D-088-R003 <- M0-T161; D-088-R004 <- M0-T161; D-088-R007 <- M0-T161; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T05:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "D-088 lane-1 contract seam (seq 129: M5-T110 - the supervised one-cycle canary packet for loop lane 1): bound D-088-R002 <- M5-T110; D-088-R005 <- M5-T110; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-25T04:45:26+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "source-002 captured verbatim ('Run 5 codex loop side by side', received ~04:35Z at the seq-130 resume): a re-affirmation of source-001 and the owner's go after the status pause. No requirement text changes (requirements.json untouched; its content digest unchanged). The commissioning and the canary approval stay OWNER-TYPED (B-026 open). Captured in the same commit as D-089 (the owner's follow-up 'keep running till in the morning'). Clock note: earlier entries' times were approximate (the 05:05Z entries predate this real-time capture)."
+  }
+ ]
+}

@@ -1,0 +1,42 @@
+{
+  "contract_version": "1.0.0",
+  "comparable_sales": {
+    "subject": {
+      "bbl": "5999999999",
+      "building_class_category": "01 ONE FAMILY DWELLINGS",
+      "gross_square_feet": 2400
+    },
+    "criteria": {
+      "size_tolerance_fraction": 0.5,
+      "exclude_zero_price": true,
+      "require_recorded_size": true
+    },
+    "criteria_text": "Similar type: same DOF building class category. Similar size: recorded gross floor area within +/-50%.",
+    "not_a_valuation": "These are recorded sales selected by a simple, disclosed filter, not a valuation or an appraisal. How \"similar type and size\" should be defined is a product choice to confirm with the owner.",
+    "selected": [],
+    "excluded": [],
+    "source": null
+  },
+  "unused_floor_area": {
+    "lot_bbl": "5999999999",
+    "role": "subject",
+    "status": "confirmed",
+    "label": "Remaining development capacity: Not confirmed",
+    "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+    "existing_floor_area_input": {
+      "known": false,
+      "value_sq_ft": null,
+      "unit": null,
+      "measurement": {
+        "rank": "unknown",
+        "label": "Unknown — enter"
+      },
+      "source": null,
+      "basis": "unknown",
+      "basis_label": "Unknown — enter",
+      "note": null
+    },
+    "detail": "Remaining development capacity: Not confirmed. Needs verified zoning-lot boundaries and existing zoning floor area. Existing zoning floor area is not on file."
+  },
+  "_expected_failure": "unused_floor_area.status is 'confirmed'; this data layer never confirms a capacity, so status is pinned to the const 'not_confirmed' and the document is rejected."
+}

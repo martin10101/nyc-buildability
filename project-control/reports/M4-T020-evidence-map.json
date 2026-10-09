@@ -1,0 +1,24 @@
+{
+  "task_id": "M4-T020",
+  "prepared_by": "orchestrator",
+  "prepared_at": "2026-09-14",
+  "material_commit": "d7766b8d25c0d2a7a0c06baeac7cee533b0b8b7f (cherry-picked from wt-m4t020 branch task/M4-T020-dcm-geometry)",
+  "requirements": {
+    "D-045-R002": [
+      "B3 delivers the A2 geometry lane's data input: services/api/app/connectors/dcm_street_centerline_geometry.py parses the typed esriGeometryPolyline geometry ALREADY arriving on the accepted M4-T015 transport's wire (parse-and-expose; the module builds no URL and opens no socket - AST-verified import allowlist in the test suite; each page transported exactly once).",
+      "CRS fail-closed to the exact live-verified EPSG:2263 pair (wkid 102718 / latestWkid 2263) BEFORE any coordinate is interpreted; per-feature geometry-validity taxonomy (8 typed states incl. NaN/Infinity and boolean-coordinate traps); coordinates pass through untouched (no rounding/reprojection/conversion - test-proven against independent json.loads of the same body); full per-page and per-query provenance carried from the accepted transport (producer report sections 2-3)."
+    ],
+    "D-045-R008": [
+      "Single bounded gated task: exactly 3 allowed files (module, test file, producer report), contracted under ledger id M4-T020 citing D-045:D-045-R002/R008/R009 + D-046:R001/R002; normal G0 (PASS at d7f0f3f8) -> submit -> independent G3/G4 -> DCV -> accept arc; no monolithic multi-family work."
+    ],
+    "D-045-R009": [
+      "Preservation held: accepted connector modules touched only by READ-ONLY import (byte-immutable dcm_street_centerline_arcgis.py unchanged - full accepted suite 752 passed in the producer run); zero dependency changes (imports = stdlib + the accepted transport module only, AST-asserted); no compliance declarations, no DRAFT/needs_review posture change, no hold lifted."
+    ],
+    "D-046-R001": [
+      "Produced under the D-046 parallel regime by the D-053 loop worker (backend-engineer role, run persistent-local-34) in isolated worktree wt-m4t020 off the packet claim head 7f297f09, concurrent with the disjoint M5-T025 web producer; concurrency 2 <= ceiling 3; unit completed claude_unit_completed (audit seq 845), work verified green and committed by the orchestrator at d7766b8d."
+    ],
+    "D-046-R002": [
+      "Disjointness held: M4-T020 allowed_paths are entirely services/api/** + its own report - zero overlap with the concurrent M5-T025 scope (apps/web/**) and with M5-T026 (apps/web/** + checklist doc); git show --name-only d7766b8d = exactly the 3 allowed files."
+    ]
+  }
+}

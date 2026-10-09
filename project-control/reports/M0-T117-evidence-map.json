@@ -1,0 +1,37 @@
+{
+ "task_id": "M0-T117",
+ "note": "Evidence per D-024 Amendment-13 requirement applicable to M0-T117 (resolver set: R277/R278/R279/R280/R286/R287/R288). CORRECTED material identity d6a2ac8 (round-1 fa16560 + consolidated rework: G3-2/G3-3/G3-8/G4-F6). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R277": [
+   "This unit delivers the FIRST element of the authorized Option-A chain: the DISABLE_AUTOUPDATER control. The remaining elements are bound to their own units: fixture recapture (M0-T118, R281), recertification window (M0-T119, R283), R276 rerun + one-time repin (M0-T113, R284/R285).",
+   "CLAIM: SATISFIED for this unit's slice of the authorization; the chain continues under its own packets"
+  ],
+  "D-024-R278": [
+   "Controller-launched scope ESTABLISHED + VERIFIED at ALL FOUR supervisor-CONSTRUCTED-env claude seams: worker run_unit (claude_runner ~1103), model-launch probe (~1549), doctor --live control-response probe (preflight.py:139), turnover successor launch both layers (turnover_adapters.py:399-401, effort/role pairs preserved). claude_child_env() applies the forced pair LAST so neither allowlist, parent env, nor extra_env can drop or override it - including the G4-F6 allowlist re-enable vector (dedicated test).",
+   "Verified by 14 removal-sensitive tests (10 round 1 + 4 rework; red proven per seam: round-1 7 failed None!=1; rework 3 failed None!=1/KeyError on the pre-fix seams; green after). Touched+extended packs 221 passed/1 skipped; whole suite 2726 collected = 2712 baseline + 14, 2721 passed, 2 skipped, 3 failed = the three PRE-EXISTING drift teeth (M0-T118 scope). Orchestrator independently re-ran both.",
+   "Documented exclusion (precise claims per G3-8): the two bare version/help probe seams (capability_probe._run ~99 no env=, native_runtime._run ~101 env=None) inherit the FULL parent environment - not injection-covered, covered by the owner machine-scope belt when set (allowlist stripping does not apply to full inheritance); minimal_env allowlist STRIPS the belt on constructed envs, which is why the code-side injection exists (G3 Finding 4 recorded in docs).",
+   "Workstation/certification-window scope: exact administrator PowerShell + verification command pack DELIVERED to the owner and recorded verbatim in M0-T117-autoupdater-evidence.md (never executed by any agent, R288). OWNER CONFIRMATION PENDING at resubmit time - this half of R278 completes on the owner typed confirmation.",
+   "CLAIM: code scope SATISFIED (four constructed-env seams forced + precise documented exclusion); workstation scope delivered and owner-executed - PENDING the owner confirmation (acceptance-blocking until then, fail closed)"
+  ],
+  "D-024-R279": [
+   "No fixture recapture has begun: M0-T118 is backlog/unclaimed, its worktree does not exist, and its packet objective states it MUST NOT start before R278 is verified in BOTH scopes; ledger dependency M0-T118 -> M0-T117 enforces the order mechanically.",
+   "CLAIM: SEQUENCING HONORED"
+  ],
+  "D-024-R280": [
+   "No DISABLE_UPDATES anywhere in the delta (docs say it is deliberately NOT used and why); claude NOT downgraded (installed remains 2.1.251); no global configuration change performed - both rounds span only the packet allowed_paths (incl. the recorded rework scope extension); the only workstation-level change is the owner-executed command pack, delivered but never run from this side.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R286": [
+   "Background updates are disabled for controller-launched workers BY CONSTRUCTION: the forced pair is unconditional at all FOUR supervisor-constructed claude child-env seams (worker, model probe, doctor --live probe, turnover successor) and removal-sensitive tests fail if it is removed; documented as standing policy in tools/agent_supervisor/README.md and docs/CONTROLLER_UPDATE_RUNBOOK.md section 13.",
+   "CLAIM: SATISFIED (code-enforced, not configuration-dependent)"
+  ],
+  "D-024-R287": [
+   "Admission-event discipline documented in both operator-facing documents: future Claude Code upgrades are deliberate admission events - update intentionally, recapture the measured fixture pack, run full recertification, only then repin (--repin-cli-identity); silent drift acceptance prohibited. This very window (Amendment 13) is the discipline's first execution.",
+   "CLAIM: SATISFIED (documented; being exercised by this window)"
+  ],
+  "D-024-R288": [
+   "STOPPED before any Windows change: no agent executed any environment mutation (M0-T117-autoupdater-evidence.md line ~183 states none of the owner-side commands were executed); the exact Administrator PowerShell command, stored-value verification, inheritance verification, and claude-doctor behavioral check were delivered to the owner in-session and recorded verbatim in the evidence report.",
+   "CLAIM: SATISFIED"
+  ]
+ }
+}

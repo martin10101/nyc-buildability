@@ -1,0 +1,11 @@
+{
+ "task_id": "M5-T075",
+ "material_commit": "7d225e2f (cherry-pick of the wt-m5t075 in-wt commit; 2 files, MATCH x2 LF-normalized; +239/-4 with the test file additions-only). Web proof rides CI on the seam push (thin-client rule).",
+ "produced_at": "2026-09-23T05:45:00+00:00",
+ "producer": "qa-engineer (loop-1 worker, run persistent-local-70-m5t075; closed COMPLETE/decision_complete - the clean close class, zero queued asks; the report honestly SUPERSEDED its own earlier mid-flight-abort mutation prediction after rechecking the catch condition)",
+ "requirements": {
+  "D-084-R001": [
+   "Lane-1 ran on its second consecutive contracted, claimed, in-regime packet under the D-070 finished-seam standard (contract+claim seams at a0b41ed0, G0 PASS, worktree at the claim seam, fresh run-id, stale asks denied before launch). The unit delivered the packet exactly: five browser-fault specs (network TypeError, timeout AbortError, pre-flight AND mid-flight caller abort as distinct branches, over-budget Content-Length), each asserting the EXACT typed outcome kind, the COMPLETE bounded announcement copy (.toBe against the client's literal arms), the never-laundered negative (never bridged, never any refusal kind), and recoverability where a Retry is meaningful; per-spec single-mutation predictions recorded incl. one honest self-correction; additions-only, zero production edits."
+  ]
+ }
+}

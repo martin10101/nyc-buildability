@@ -1,0 +1,74 @@
+# CI evidence for M0-T186 - the supervisor-bridge jobs (windows-latest) of both runs on head 6d5899ce0c9480817c0bfa0ac77c29cafcb05dca FAILED; written by the orchestrator, read-only. Nothing was rerun.
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/<id>/logs. For each job: this test file's progress line(s), then the FAILURES section through the summary line, timestamps stripped, otherwise unchanged.
+
+## run 37554223543 (event push, attempt 1), job 112576591960: conclusion failure; runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+full log: 52025 bytes, sha256 88705c43ceb8f34f2dda3d74ac9d37c4c558f8826befb6c11b2bcaf77674ec31
+FAILED lines: ['tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact']
+
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+............F..................                                          [ 56%]
+
+================================== FAILURES ===================================
+_ TestExclusiveWindowsDeletePending.test_windows_delete_pending_create_raises_permission_error_platform_fact _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsDeletePending object at 0x000001D9A4A71F40>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_windows_delete_pending_cr0')
+
+    @pytest.mark.skipif(
+        os.name != "nt",
+        reason="Windows-only platform fact: on POSIX an O_EXCL create never raises "
+        "PermissionError for a delete race, so the mechanism cannot be exercised there. "
+        "This pins the Win32 behaviour the repair rests on; DEMONSTRATED on "
+        "windows-latest, never assumed from memory of the API.")
+    def test_windows_delete_pending_create_raises_permission_error_platform_fact(self, tmp_path):
+        # S5(iv) / S3: a file that another handle (opened the way os.open opens it,
+        # sharing delete) still holds open AFTER an unlink is delete-pending; an O_EXCL
+        # create on that name raises PermissionError and does NOT create the file.
+        # This is candidate (a)'s mechanism, proven on the platform.
+        lock = tmp_path / "l.json.lock"
+        fd = os.open(str(lock), os.O_CREAT | os.O_WRONLY)   # os.open shares delete on Windows
+        try:
+>           os.unlink(str(lock))                            # delete-pending while fd is open
+            ^^^^^^^^^^^^^^^^^^^^
+E           PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:281: PermissionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact - PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+=========== 1 failed, 3961 passed, 60 skipped in 281.38s (0:04:41) ============
+
+## run 37554228069 (event pull_request, attempt 1), job 112576606545: conclusion failure; runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+full log: 53483 bytes, sha256 18da56a7c00ad6828992e3780d5711d6a2f0fdbdd4782767229b94c3afdde9b9
+FAILED lines: ['tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact']
+
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+............F..................                                          [ 56%]
+
+================================== FAILURES ===================================
+_ TestExclusiveWindowsDeletePending.test_windows_delete_pending_create_raises_permission_error_platform_fact _
+
+self = <test_agent_supervisor_mrl_subagent_contract.TestExclusiveWindowsDeletePending object at 0x000002B6554B9C70>
+tmp_path = WindowsPath('C:/Users/runneradmin/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_windows_delete_pending_cr0')
+
+    @pytest.mark.skipif(
+        os.name != "nt",
+        reason="Windows-only platform fact: on POSIX an O_EXCL create never raises "
+        "PermissionError for a delete race, so the mechanism cannot be exercised there. "
+        "This pins the Win32 behaviour the repair rests on; DEMONSTRATED on "
+        "windows-latest, never assumed from memory of the API.")
+    def test_windows_delete_pending_create_raises_permission_error_platform_fact(self, tmp_path):
+        # S5(iv) / S3: a file that another handle (opened the way os.open opens it,
+        # sharing delete) still holds open AFTER an unlink is delete-pending; an O_EXCL
+        # create on that name raises PermissionError and does NOT create the file.
+        # This is candidate (a)'s mechanism, proven on the platform.
+        lock = tmp_path / "l.json.lock"
+        fd = os.open(str(lock), os.O_CREAT | os.O_WRONLY)   # os.open shares delete on Windows
+        try:
+>           os.unlink(str(lock))                            # delete-pending while fd is open
+            ^^^^^^^^^^^^^^^^^^^^
+E           PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+
+tools\test_agent_supervisor_mrl_subagent_contract.py:281: PermissionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_mrl_subagent_contract.py::TestExclusiveWindowsDeletePending::test_windows_delete_pending_create_raises_permission_error_platform_fact - PermissionError: [WinError 32] The process cannot access the file because it is being used by another process: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_windows_delete_pending_cr0\\l.json.lock'
+=========== 1 failed, 3961 passed, 60 skipped in 268.01s (0:04:28) ============

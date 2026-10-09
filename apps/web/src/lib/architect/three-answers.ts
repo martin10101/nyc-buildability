@@ -1,0 +1,682 @@
+// Display rules for the three-answers panel (queue D-05; plan §5 "Three separate answers" and
+// "Calculation behavior", §5a "Label on the box"). Pure functions over a `results` document:
+// no fetching, no legal logic, no arithmetic on the numbers — values, units, rule sections and
+// reasons are read from the document and only formatted for reading.
+//
+// Plan §5: each answer is shown only when its rules are implemented and reviewed, eligibility is
+// resolved and the site geometry is supported; otherwise it shows "Not available" with the
+// reason, and a caution label never turns an unsupported number into a result.
+//
+// Draft rules (schema `draft`, D-090-R010): while ANY rule version used is not published, a
+// surface shown to an architect renders every available answer as not available ("rules not
+// reviewed"). Only a surface behind a lane flag may pass `showDraftValues` to see the numbers.
+
+import type {
+  AnswerValue,
+  ExceptionLabel,
+  GapKind,
+  MeasurementKnown,
+  Results,
+  Scope,
+  ScopeAssumption,
+  StreetWidthCase,
+  Unit,
+  ValueState,
+} from "../../../../../packages/contracts/generated/results";
+import { NOT_CONFIRMED, REMAINING_CAPACITY_LABEL, REMAINING_CAPACITY_REASON } from "./tax-lot-scope";
+
+// The canonical generated contract types (packages/contracts/generated/results.ts, task C-03),
+// re-exported so the panel and its tests import them from one place.
+export type { AnswerValue, ExceptionLabel, Results, Scope, ScopeAssumption, Unit };
+
+/**
+ * The part of a `results` document the panel reads, derived from the generated `Results` type
+ * so the compiler keeps it in step with the contract. A full `Results` document is accepted.
+ */
+export type ThreeAnswersResults = Pick<
+  Results,
+  | "out_of_date"
+  | "out_of_date_reason"
+  | "lot_selection_statement"
+  | "with_approvals_label"
+  | "answers"
+  | "remaining_floor_area"
+  | "shortfall"
+  | "completeness_line"
+  | "status_strip"
+  | "notices_count"
+  | "draft"
+  | "street_width_case"
+  | "scope"
+  // Results contract 1.4.0 additive blocks (M5-T146/M5-T147). All OPTIONAL/absent on an earlier
+  // document, so the panel renders unchanged for every 1.0.0–1.3.0 instance (FirstBuildingOptions
+  // reads these). unit_estimate is the legal dwelling-unit limit, shown withheld beside — never as —
+  // the preliminary capacity estimate (D-090-R688). buildings_not_worked (ruling W14/W15, the
+  // walkthrough F1) names each building of the method that was NOT listed, with its reason.
+  | "building_alternatives"
+  | "coverage_by_portion"
+  | "buildings_not_worked"
+  | "unit_estimate"
+>;
+
+export type AnswerKey = keyof ThreeAnswersResults["answers"];
+
+/** The three answers, in the plan's order (§3 step 5, §5). */
+export const ANSWER_KEYS: readonly AnswerKey[] = [
+  "floor_area_allowance",
+  "permitted_envelope",
+  "building_option",
+];
+
+export const ANSWER_TITLES: Readonly<Record<AnswerKey, string>> = {
+  floor_area_allowance: "Floor-area allowance",
+  permitted_envelope: "Permitted envelope",
+  building_option: "Building option",
+};
+
+export const NOT_AVAILABLE = "Not available";
+
+/**
+ * The two kinds of gap in plain words, keyed by the document's `gap_kind` (D-090-R258,
+ * ruling R6). The ONE place these words live. A `gap_kind` that is absent, null or unknown
+ * to the website shows NO kind line and never a machine word.
+ */
+export const GAP_KIND_LINES: Readonly<Record<string, string>> = {
+  missing_information: "Missing information about this property.",
+  work_owed: "Not built yet: this part of the program is still owed.",
+};
+
+/** The plain-words gap-kind line for a document `gap_kind`, or null when it is absent, null or
+ * a kind this build does not know (presence tested with `!= null`, never a truthiness test). */
+export function gapKindLine(gapKind: GapKind | string | null | undefined): string | null {
+  return gapKind != null ? GAP_KIND_LINES[gapKind] ?? null : null;
+}
+
+/** Reason shown for an available answer computed from rules that are not reviewed yet. */
+export const RULES_NOT_REVIEWED_REASON = "the rules for this answer are not reviewed yet";
+
+/** Heading tag on a lane-flag surface that shows draft numbers (never an architect surface). */
+export const DRAFT_PREVIEW_TAG = "internal preview, rules not reviewed";
+
+/** Reason shown if an available answer arrives without any value (the contract forbids it). */
+export const NO_VALUE_REASON = "no value was returned for this answer";
+
+/** Row label for an available value of the allowance left after a kept building (plan §3
+ * step 4). Without a verified value the row reads REMAINING_CAPACITY_LABEL (D-090-R038). */
+export const REMAINING_LABEL = "Remaining after the existing building";
+
+/** Row label for a building option's gap to the allowance (plan §5 answer 3). */
+export const SHORTFALL_LABEL = "Gap to the allowance";
+
+export const REACHES_ALLOWANCE_TEXT = "Reaches the full floor-area allowance.";
+
+/** Plan §5a item 1: the status strip shows at most three short items. */
+export const STRIP_MAX_ITEMS = 3;
+
+// Leading words of a reason that only repeat the title the card already shows, e.g. the plan's
+// own example "Envelope not available — height rules for this district are not built yet" under
+// the "Permitted envelope" heading. Only these exact leads are dropped; any other reason is kept
+// word for word after "Not available — ".
+type ReasonSubject = AnswerKey | "remaining_floor_area" | "shortfall";
+const REASON_SUBJECTS: Readonly<Record<ReasonSubject, readonly string[]>> = {
+  floor_area_allowance: ["floor-area allowance", "floor area allowance", "allowance"],
+  permitted_envelope: ["permitted envelope", "envelope"],
+  building_option: ["building option", "option"],
+  remaining_floor_area: ["remaining floor area", "remaining capacity"],
+  shortfall: ["shortfall", "gap to the allowance"],
+};
+
+const SEPARATOR = /^\s*[—–-]\s*/;
+
+/**
+ * "Not available — <reason>" (plan §5, §5a item 3). A lead of "Not available —" or
+ * "<this answer's subject> not available —" already in the reason is not repeated.
+ */
+export function notAvailableText(reason: string, subject?: ReasonSubject): string {
+  const trimmed = reason.trim();
+  const lower = trimmed.toLowerCase();
+  const subjects: readonly string[] = subject ? REASON_SUBJECTS[subject] : [];
+  const leads = [...subjects.map(s => `${s} not available`), "not available"].sort(
+    (a, b) => b.length - a.length,
+  );
+  for (const lead of leads) {
+    if (!lower.startsWith(lead)) continue;
+    const after = trimmed.slice(lead.length);
+    if (/^\s*[.:]?\s*$/.test(after)) return NOT_AVAILABLE;
+    const separator = SEPARATOR.exec(after);
+    if (separator) return `${NOT_AVAILABLE} — ${after.slice(separator[0].length)}`;
+  }
+  return trimmed === "" ? NOT_AVAILABLE : `${NOT_AVAILABLE} — ${trimmed}`;
+}
+
+/** A number and its plain-English unit, kept apart so a headline can size them differently. */
+export interface DisplayQuantity {
+  number: string;
+  unit: string;
+}
+
+const PLAIN_NUMBER = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 });
+const RATIO_NUMBER = new Intl.NumberFormat("en-US", {
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 3,
+});
+
+/** Formats a contract value for reading. Never shows the raw unit code (plan §5a item 5). */
+export function displayQuantity(value: number, unit: Unit): DisplayQuantity {
+  const number = PLAIN_NUMBER.format(value);
+  switch (unit) {
+    case "square_feet":
+      return { number, unit: "sq ft" };
+    case "feet":
+      return { number, unit: "ft" };
+    case "ratio":
+      return { number: RATIO_NUMBER.format(value), unit: "" };
+    case "percent":
+      return { number, unit: "%" };
+    case "stories":
+      return { number, unit: value === 1 ? "floor" : "floors" };
+    case "dwelling_units":
+      return { number, unit: value === 1 ? "unit" : "units" };
+    case "square_feet_per_dwelling_unit":
+      return { number, unit: "sq ft per unit" };
+    default:
+      // A unit added to the contract later shows the bare number, never its code.
+      return { number, unit: "" };
+  }
+}
+
+/** One-line text of a quantity, e.g. "10,000 sq ft", "100%", "2.0". */
+export function quantityText(quantity: DisplayQuantity): string {
+  if (quantity.unit === "") return quantity.number;
+  if (quantity.unit === "%") return `${quantity.number}%`;
+  return `${quantity.number} ${quantity.unit}`;
+}
+
+// The contract's stable value keys (schema answer_value.key: "e.g. max_residential_floor_area,
+// max_building_height, achieved_zoning_floor_area") picked as each answer's large number. When
+// the key is absent the answer's first value is the headline. Every value is still shown.
+const HEADLINE_KEYS: Readonly<Record<AnswerKey, string>> = {
+  floor_area_allowance: "max_residential_floor_area",
+  permitted_envelope: "max_building_height",
+  building_option: "achieved_zoning_floor_area",
+};
+
+/**
+ * A value_states entry a value appears withheld in (results contract 1.3.0, work order §0): the
+ * key, its human label and the reason it is not known. A withheld value carries NO number and is
+ * shown as its reason, NEVER by falling back to another value (R556, R570).
+ */
+export interface WithheldValueView {
+  key: string;
+  label: string;
+  reason: string;
+  /** Which kind of gap this is, in plain words (D-090-R258, ruling R6), after the reason; null
+   * when the document carries no gap_kind the website knows. */
+  gapKindLine: string | null;
+}
+
+/** A shown value and, when its way is conditional, each condition on its own line. */
+export interface ShownValueView {
+  value: AnswerValue;
+  /** One "If <assumption>" line per condition when the value's way is conditional (work order
+   * §0; ruling L1). EMPTY for a settled value — the ONE representation of the conditions, so no
+   * joined line can disagree with the list. */
+  conditions: readonly string[];
+}
+
+/** The big headline of an available answer: a shown value, or - when the designated headline key is
+ * withheld - the withheld entry rendered as its reason (never a different value in its place). */
+export type HeadlineView =
+  | { kind: "value"; shown: ShownValueView }
+  | { kind: "withheld"; withheld: WithheldValueView };
+
+export type AnswerView =
+  | {
+      kind: "available";
+      headline: HeadlineView;
+      rows: readonly ShownValueView[];
+      /** Withheld values shown as their reason (never a number), apart from the shown values. */
+      withheld: readonly WithheldValueView[];
+      measurementLabel: string;
+    }
+  | {
+      kind: "not_available";
+      text: string;
+      /** Which kind of gap a whole not-available answer is, in plain words (ruling R6), after its
+       * reason; null for the draft gate, a valueless answer, or an answer with no gap_kind. */
+      gapKindLine: string | null;
+    };
+
+const IF_PREFIX = "If ";
+
+/** The value_states map of an available answer (results contract 1.3.0), or an empty map. */
+function valueStates(
+  answer: Extract<ThreeAnswersResults["answers"][AnswerKey], { status: "available" }>,
+): Record<string, ValueState> {
+  const states = answer.value_states;
+  return states ? (states as Record<string, ValueState>) : {};
+}
+
+/** Each condition of a value whose way is conditional, one line per condition (ruling L1); an
+ * empty list for a settled value. Nothing is retyped (each line is the document's assumption,
+ * trimmed); the reader's rule is applied to EACH entry by itself — "If " is put in front only
+ * when that entry does not already begin with it, so the two assumptions never run together.
+ * Exported so the 1.4.0 first-building-options view renders an alternative's / coverage's `way`
+ * through the ONE representation of conditions the panel already uses. */
+export function conditionList(state: ValueState | undefined): readonly string[] {
+  if (!state || state.way !== "conditional") return [];
+  return state.conditions.map(condition => {
+    const text = condition.assumption.trim();
+    return text.startsWith(IF_PREFIX) ? text : `${IF_PREFIX}${text}`;
+  });
+}
+
+/** True when the document carries at least one worked first-building alternative (contract 1.4.0). */
+export function hasBuildingAlternatives(results: ThreeAnswersResults): boolean {
+  const alternatives = results.building_alternatives;
+  return Array.isArray(alternatives) && alternatives.length > 0;
+}
+
+/** True when the document carries the first-building-options section at all (contract 1.4.0): a
+ * worked alternative, a coverage-by-portion block, or a not-worked building (ruling W14/W15). On
+ * such a lot the single `building_option` answer is superseded by that section shown below — also
+ * when NO building is listed (the F1 fix), so its card never repeats the document's machine reason. */
+export function hasFirstBuildingOptions(results: ThreeAnswersResults): boolean {
+  const notWorked = results.buildings_not_worked;
+  return (
+    hasBuildingAlternatives(results) ||
+    results.coverage_by_portion != null ||
+    (Array.isArray(notWorked) && notWorked.length > 0)
+  );
+}
+
+/** The plain-words reason the single building-option card shows when the first-building-options
+ * section is shown below it (contract 1.4.0). It points the reader to that section instead of
+ * repeating the document's machine reason, which names the `building_alternatives` /
+ * `buildings_not_worked` contract fields (never put on the screen — plan §5a item 5). It says
+ * "building options", not "worked", because on some inputs no building is worked. "Not available —"
+ * is prepended by notAvailableText. */
+export const BUILDING_OPTIONS_BELOW_REASON = "the building options are shown below";
+
+export function answerView(
+  results: ThreeAnswersResults,
+  key: AnswerKey,
+  showDraftValues: boolean,
+): AnswerView {
+  const answer = results.answers[key];
+  if (answer.status !== "available") {
+    // On a lot with the first-building-options section (contract 1.4.0) the single building option
+    // points to that section below, in plain words, never the document's machine reason (R556/§5a
+    // item 5) — also when no building is worked (the F1 fix). The section renders in
+    // FirstBuildingOptions.
+    const pointsToAlternatives = key === "building_option" && hasFirstBuildingOptions(results);
+    if (pointsToAlternatives) {
+      return {
+        kind: "not_available",
+        text: notAvailableText(BUILDING_OPTIONS_BELOW_REASON, key),
+        gapKindLine: null,
+      };
+    }
+    // A whole not-available answer that carries a gap_kind says which kind it is (ruling R6).
+    return {
+      kind: "not_available",
+      text: notAvailableText(answer.reason, key),
+      gapKindLine: gapKindLine(answer.gap_kind),
+    };
+  }
+  if (results.draft && !showDraftValues) {
+    return {
+      kind: "not_available",
+      text: `${NOT_AVAILABLE} — ${RULES_NOT_REVIEWED_REASON}`,
+      gapKindLine: null,
+    };
+  }
+  const values = answer.values;
+  if (values.length === 0) {
+    return { kind: "not_available", text: `${NOT_AVAILABLE} — ${NO_VALUE_REASON}`, gapKindLine: null };
+  }
+  const states = valueStates(answer);
+  const shownKeys = new Set(values.map(value => value.key));
+  const shownView = (value: AnswerValue): ShownValueView => ({
+    value,
+    conditions: conditionList(states[value.key]),
+  });
+
+  // The withheld values: every value_states entry whose way is 'withheld' and that is NOT shown in
+  // values[] (a withheld value carries no number, so it is never a values[] entry). Shown as its
+  // reason, never a number.
+  const withheld: WithheldValueView[] = [];
+  for (const [stateKey, state] of Object.entries(states)) {
+    if (state.way === "withheld" && !shownKeys.has(stateKey)) {
+      withheld.push({
+        key: stateKey,
+        label: state.label,
+        reason: state.reason,
+        gapKindLine: gapKindLine(state.gap_kind),
+      });
+    }
+  }
+
+  // The headline: the shown value for the designated headline key; if that key is WITHHELD, the
+  // headline is its reason (never values[0] - R556); if the key is simply absent (e.g. a 1.0.0
+  // document), the first shown value is the headline, as before.
+  const headlineKey = HEADLINE_KEYS[key];
+  const headlineValue = values.find(value => value.key === headlineKey);
+  const headlineState = states[headlineKey];
+  let headline: HeadlineView;
+  let headlineKeyShown: string;
+  if (headlineValue) {
+    headline = { kind: "value", shown: shownView(headlineValue) };
+    headlineKeyShown = headlineValue.key;
+  } else if (headlineState && headlineState.way === "withheld") {
+    headline = {
+      kind: "withheld",
+      withheld: {
+        key: headlineKey,
+        label: headlineState.label,
+        reason: headlineState.reason,
+        gapKindLine: gapKindLine(headlineState.gap_kind),
+      },
+    };
+    headlineKeyShown = headlineKey;
+  } else {
+    headline = { kind: "value", shown: shownView(values[0]) };
+    headlineKeyShown = values[0].key;
+  }
+
+  return {
+    kind: "available",
+    headline,
+    rows: values.filter(value => value.key !== headlineKeyShown).map(shownView),
+    withheld: withheld.filter(entry => entry.key !== headlineKeyShown),
+    measurementLabel: answer.measurement.label,
+  };
+}
+
+/** Rule sections of one value, each once, in document order. */
+export function uniqueSections(sections: readonly string[]): string[] {
+  return sections.filter((section, index) => sections.indexOf(section) === index);
+}
+
+export type SupplementView =
+  | { kind: "value"; label: string; quantity: DisplayQuantity }
+  | { kind: "not_available"; label: string; text: string; reason?: string };
+
+/**
+ * The allowance left after a kept building (plan §3 step 4). null when no building is kept.
+ * Read only while the allowance itself is shown. Without a verified value it reads the owner's
+ * settled wording (D-090-R038), which replaces plan §3 step 4's: "Remaining development
+ * capacity" → "Not confirmed", then the reason line.
+ */
+export function remainingFloorAreaView(results: ThreeAnswersResults): SupplementView | null {
+  const remaining = results.remaining_floor_area;
+  if (remaining.status === "available") {
+    return {
+      kind: "value",
+      label: REMAINING_LABEL,
+      quantity: displayQuantity(remaining.value_sf, "square_feet"),
+    };
+  }
+  if (remaining.status === "not_available") {
+    return {
+      kind: "not_available",
+      label: REMAINING_CAPACITY_LABEL,
+      text: NOT_CONFIRMED,
+      reason: REMAINING_CAPACITY_REASON,
+    };
+  }
+  return null;
+}
+
+export type ShortfallView =
+  | { kind: "reaches_allowance" }
+  | { kind: "shortfall"; amount: DisplayQuantity; reasons: readonly string[] }
+  | { kind: "not_available"; label: string; text: string };
+
+/**
+ * How much of the allowance the building option reaches, and why not all of it (plan §5
+ * answer 3). Read only while the building option itself is shown.
+ */
+export function shortfallView(results: ThreeAnswersResults): ShortfallView {
+  const shortfall = results.shortfall;
+  if (shortfall.status === "none") return { kind: "reaches_allowance" };
+  if (shortfall.status === "shortfall") {
+    return {
+      kind: "shortfall",
+      amount: displayQuantity(shortfall.sq_ft, "square_feet"),
+      reasons: shortfall.reasons.map(reason => reason.text),
+    };
+  }
+  return {
+    kind: "not_available",
+    label: SHORTFALL_LABEL,
+    text: notAvailableText(shortfall.reason, "shortfall"),
+  };
+}
+
+/** The strip's items: at most three on the line; anything more goes behind it (plan §5a 1, 6). */
+export function statusStripItems(results: ThreeAnswersResults): {
+  visible: readonly string[];
+  overflow: readonly string[];
+} {
+  const texts = results.status_strip.map(item => item.text);
+  return { visible: texts.slice(0, STRIP_MAX_ITEMS), overflow: texts.slice(STRIP_MAX_ITEMS) };
+}
+
+const ASSUMED_WIDTH: Readonly<Record<string, string>> = {
+  wide: "a wide street",
+  narrow: "a narrow street",
+};
+
+/** Plain-English lines for a "Needs street width" case document (plan §4). */
+export function streetWidthCaseLines(results: ThreeAnswersResults): string[] {
+  const assumptions: StreetWidthCase["assumptions"] = results.street_width_case?.assumptions ?? [];
+  return assumptions.flatMap(assumption => {
+    const width = ASSUMED_WIDTH[assumption.assumed];
+    return width
+      ? [`This case assumes ${assumption.street} is ${width}; its width is not known.`]
+      : [];
+  });
+}
+
+// ---- Scope beside the numbers (results contract 1.1.0, D-090-R108) ----
+// The panel reads every scope string straight from the document (label, lot.display, each
+// assumption statement, the whole-site statement and the two settled remaining-capacity strings).
+// These maps only turn the machine assumption key and the basis enum into plain words so no
+// internal code reaches the screen (plan §5a item 5); they never restate a document string.
+
+const SCOPE_ASSUMPTION_KEY_LABELS: Readonly<Record<string, string>> = {
+  lot_type: "Lot type",
+  within_100_ft_of_street_line_intersection: "Within 100 ft of a street-line intersection",
+  street_line_intersection_angle_degrees: "Street-line intersection angle",
+  housing_program: "Housing program",
+  floor_to_floor_ft: "Floor-to-floor height",
+  // D-090-R119/R131: the scope now carries all the assumed inputs (12 rows). These plain-word
+  // labels match the drawings' scope vocabulary (services/api/app/drawings/kit/scope.py, Lane E).
+  zoning_district: "Zoning district",
+  overlay_present: "Commercial overlay present",
+  special_district_present: "Special purpose district",
+  special_density_area: "Special density area",
+  lot_front_ft: "Lot frontage",
+  lot_depth_ft: "Lot depth",
+  site_measurement_rank: "Site measurement basis",
+};
+
+/** A machine assumption key in plain words. An unlisted key is de-underscored and sentence-cased
+ * so a key added to the contract later never prints as a raw code. */
+export function scopeAssumptionKeyLabel(key: string): string {
+  const mapped = SCOPE_ASSUMPTION_KEY_LABELS[key];
+  if (mapped) return mapped;
+  const words = key.replace(/_/g, " ").trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : key;
+}
+
+// The basis enum (schema scope_assumption.basis) in plain words, so the architect sees whether a
+// value was assumed, entered, a fixed benchmark, from city records, from a supplied survey, from
+// the approximate tax map, or the app's default — never the enum code.
+const SCOPE_BASIS_LABELS: Readonly<Record<ScopeAssumption["basis"], string>> = {
+  assumed: "Assumed",
+  entered: "Entered",
+  fixture: "Test fixture",
+  city_records: "City records",
+  survey_entered: "Survey",
+  approximate_tax_map: "Approximate tax map",
+  default: "Default",
+};
+
+/** Where an assumed value came from, in plain words (never the enum code). */
+export function scopeAssumptionBasisLabel(basis: ScopeAssumption["basis"]): string {
+  return SCOPE_BASIS_LABELS[basis];
+}
+
+// Measurement-rank values (schema MeasurementKnown.rank) in plain words, so a rank carried as a
+// scope-assumption value (e.g. site_measurement_rank) reads well and never prints the enum code.
+// Exhaustive over the rank union so a rank added to the contract later forces an entry here.
+type MeasurementRank = MeasurementKnown["rank"];
+const MEASUREMENT_RANK_WORDS: Readonly<Record<MeasurementRank, string>> = {
+  survey_entered: "survey (entered)",
+  city_records: "city records",
+  approximate_tax_map: "approximate tax map",
+  entered: "entered",
+  assumed: "assumed",
+};
+
+// Housing-program codes in plain words, matching the drawings' scope vocabulary (D-090-R119/R131).
+// The contract types a scope-assumption value as a free string | number | boolean, so there is no
+// closed enum to exhaust; the API's codes are standard_residence | qualifying_affordable_housing |
+// qualifying_senior_housing. Only standard_residence is pinned here (the one the drawings pin and
+// the only one a scope carries today); the other two de-underscore cleanly via the fallback below.
+const HOUSING_PROGRAM_WORDS: Readonly<Record<string, string>> = {
+  standard_residence: "standard residence",
+};
+
+// Code-like string values turned into plain words (requirement b): measurement-rank values and
+// housing-program codes, consistent with the drawings. Any string not listed keeps the
+// de-underscore fallback, so the panel guard never sees a snake_case code on the screen.
+const SCOPE_VALUE_WORDS: Readonly<Record<string, string>> = {
+  ...MEASUREMENT_RANK_WORDS,
+  ...HOUSING_PROGRAM_WORDS,
+};
+
+/** An assumed value with its unit, in plain words: a flag reads Yes/No, a number is grouped, and a
+ * code-like string reads as plain words — a known measurement-rank or housing-program code via
+ * SCOPE_VALUE_WORDS, any other code de-underscored. The unit comes from the document already in
+ * plain words. */
+export function scopeAssumptionValueText(
+  value: string | number | boolean,
+  unit: string | null,
+): string {
+  let base: string;
+  if (typeof value === "boolean") base = value ? "Yes" : "No";
+  else if (typeof value === "number") base = PLAIN_NUMBER.format(value);
+  else base = SCOPE_VALUE_WORDS[value] ?? value.replace(/_/g, " ");
+  return unit ? `${base} ${unit}` : base;
+}
+
+export interface ScopeAssumptionView {
+  keyLabel: string;
+  valueText: string;
+  basisLabel: string;
+  statement: string;
+}
+
+export interface ScopeView {
+  /** The scope label, byte-exact from the document (e.g. "Tax-lot-only estimate"). */
+  label: string;
+  /** The human lot label, read from the document (e.g. "Queens block 7334, lot 70"). */
+  lotDisplay: string;
+  /** Each assumed condition in the order the document gives; statement read from the document. */
+  assumptions: readonly ScopeAssumptionView[];
+  /** The whole-site statement, byte-exact from the document. */
+  wholeSiteStatement: string;
+  /** The remaining-capacity line ("<label>: <status word>"), byte-exact from the document. */
+  remainingLabel: string;
+  /** The reason under the remaining-capacity line, byte-exact from the document. */
+  remainingReason: string;
+}
+
+/**
+ * The scope-beside-the-numbers block (results contract 1.1.0, D-090-R108), or null when the
+ * document carries no scope — a 1.0.0 document, or a 1.1.0 document with scope null — so the panel
+ * renders unchanged from before for those (requirement b). Every string is read from the document;
+ * the key and basis are turned into plain words only, never restated.
+ */
+export function scopeView(results: ThreeAnswersResults): ScopeView | null {
+  const scope = results.scope;
+  if (!scope) return null;
+  return {
+    label: scope.label,
+    lotDisplay: scope.lot.display,
+    assumptions: scope.assumptions.map(assumption => ({
+      keyLabel: scopeAssumptionKeyLabel(assumption.key),
+      valueText: scopeAssumptionValueText(assumption.value, assumption.unit),
+      basisLabel: scopeAssumptionBasisLabel(assumption.basis),
+      statement: assumption.statement,
+    })),
+    wholeSiteStatement: scope.whole_site.statement,
+    remainingLabel: scope.remaining_capacity.label,
+    remainingReason: scope.remaining_capacity.reason,
+  };
+}
+
+// ---- Building-option draft notes (results contract 1.2.0, D-090-R132) ----
+// A note is a DRAFT reading of the captured zoning text for the building option — never a
+// compliance statement. The panel reads the text, ZR sections and snapshot ids straight from the
+// document; the kind becomes plain words and the heading is a fixed UI label. Nothing is retyped.
+
+/**
+ * Heading over every building-option draft note. A fixed label (never read from the document): it
+ * marks the note as a draft reading a qualified reviewer has NOT signed off, so a reading is never
+ * shown as a finding (D-090-R132).
+ */
+export const BUILDING_OPTION_NOTE_HEADING = "Draft reading — pending qualified review";
+
+// The note kind enum (schema building_option_note.kind) in plain words, so the architect sees what
+// the reading is about, never the enum code (plan §5a item 5). An unlisted kind is de-underscored
+// and sentence-cased so a kind added to the contract later never prints as a raw code.
+const BUILDING_OPTION_NOTE_KIND_LABELS: Readonly<Record<string, string>> = {
+  minimum_base_height: "Minimum base height",
+};
+
+/** A note kind in plain words (never the enum code). */
+export function buildingOptionNoteKindLabel(kind: string): string {
+  const mapped = BUILDING_OPTION_NOTE_KIND_LABELS[kind];
+  if (mapped) return mapped;
+  const words = kind.replace(/_/g, " ").trim();
+  return words ? words.charAt(0).toUpperCase() + words.slice(1) : kind;
+}
+
+export interface BuildingOptionNoteView {
+  /** The draft heading over the note (the fixed UI label above, never from the document). */
+  draftLabel: string;
+  /** What the reading is about, in plain words (e.g. "Minimum base height"). */
+  kindLabel: string;
+  /** The note text, byte-exact from the document. */
+  text: string;
+  /** The ZR sections the reading is based on, read from the document (e.g. "ZR 23-431"). */
+  zrSections: readonly string[];
+  /** The captured snapshot ids behind the reading, read from the document (e.g. "zr-23-431"). */
+  snapshotIds: readonly string[];
+}
+
+/**
+ * The building option's draft notes (results contract 1.2.0, D-090-R132). Reads only the
+ * document. Fail safe: a note whose `draft` flag is not exactly true is dropped, so a reading
+ * never reaches the screen as a finding; a building option that is not available, or one with no
+ * notes, yields an empty list so the card is unchanged (requirement c). The rendering gate — show
+ * a note only while the heights it interprets are shown — is the card itself: the panel passes
+ * this list to the building-option card, which renders its children only when available.
+ */
+export function buildingOptionNotesView(results: ThreeAnswersResults): BuildingOptionNoteView[] {
+  const option = results.answers.building_option;
+  if (option.status !== "available" || !option.notes) return [];
+  return option.notes
+    .filter(note => note.draft === true)
+    .map(note => ({
+      draftLabel: BUILDING_OPTION_NOTE_HEADING,
+      kindLabel: buildingOptionNoteKindLabel(note.kind),
+      text: note.text,
+      zrSections: note.zr_sections,
+      snapshotIds: note.snapshot_ids,
+    }));
+}

@@ -1,0 +1,14 @@
+{
+  "_scope_note": "APPLICABILITY, stated first: the packet cites D-038:['D-038-R003'] (the loop-dispatch-era steering context under which runs 30-33 built this family). D-038 R003's applicability.task_ids are M5-T003..M5-T013, which do NOT include M4-T009, so the machine-applicable requirement set for this task computes EMPTY (M2-T021/M4-T010 precedent); the R003 entry below discharges the substance VOLUNTARILY and the independent verifier's row is expected to be the empty-applicable form. Every claim below is scoped to the named commit it is true of - no claim spans 'any producer commit'.",
+  "requirements": {
+    "D-038-R003": [
+      "PRODUCT ENGINEERING, NOT SELF-INFRASTRUCTURE, per commit: loop producer commit ae117874 (11 files: 5 rule-family JSONs, 2 acceptance-pack test modules, 3 adapted sibling test modules, producer report) - every file inside allowed_paths, ZERO files under tools/, .claude/, the supervisor, or any loop/self-infrastructure path.",
+      "Loop follow-up commit 197156b9 (2 files: E501 line wraps in the two acceptance packs, no assertion changed) - same property.",
+      "Base-repair commit 3c46f923 is an ORCHESTRATOR snapshot repair (4 snapshot files under docs/research/zr-snapshots and services/api/app/_zr_snapshots, cherry-picked from candidate commits 48cd58a5+a8b82a43), outside this packet's allowed_paths under ADR-005 record/base authority and disclosed as such in the packet progress_log - not producer work and not self-infrastructure.",
+      "Integration commit 3433c3bb is an orchestrator merge (no new content; all four snapshot blobs verified byte-identical to candidate pre-merge).",
+      "AS-5 unit commit 317df044 (7 files: the 5 family rules gaining one recorded content_digest_sha256 line each, the provenance test module, the producer report addendum) - every file inside allowed_paths, zero self-infrastructure paths.",
+      "The deliverable is the R1-R12 residential FAR draft rule family - product rule engineering on the committed ZR snapshots, the widest single coverage expansion since R5 (18 + 27 districts, 45 covered, disjoint applicability sets, per the producer report).",
+      "VERIFICATION IS FULLY OFFLINE: the acceptance packs load committed snapshots and rulesets from disk and evaluate through the in-process engine; no network, no Supabase, no credential appears in any test (the packs import app.rules + stdlib only); self-checks at the AS-5 unit: 368 rules tests passed, ruff clean, modularity exit 0, connectors regression 438 passed - CI remains the execution authority."
+    ]
+  }
+}

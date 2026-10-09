@@ -43,12 +43,42 @@ from pathlib import Path
 
 # The four documents a property_profile $ref registry must load (README:
 # "Consumers that build their own $ref registry ... must load all four").
-SCHEMA_FILES = (
+PROFILE_SCHEMA_FILES = (
     "property_profile.schema.json",
     "source_fact.schema.json",
     "common.schema.json",
     "coverage_status.schema.json",
 )
+
+# The study contract set (task C-03, plan M1-09; contracts added by M5-T125).
+# Loaded at runtime by app/contracts/study_contracts.py. Their $refs resolve
+# only within this set plus common.schema.json (already bundled above).
+STUDY_SCHEMA_FILES = (
+    "site_fact.schema.json",
+    "study.schema.json",
+    "results.schema.json",
+    "report_model.schema.json",
+    "export_record.schema.json",
+    "benchmark_lot.schema.json",
+    # Lane C packet W0 wiring contracts. Each $refs within the study set plus
+    # common (hidden_issue_flags, transit_parking and parity_data all $ref
+    # site_fact.schema.json#/$defs/source, already bundled above).
+    "hidden_issue_flags.schema.json",
+    "transit_parking.schema.json",
+    "parity_data.schema.json",
+    # Lane C evaluator channel (task C-07, plan M1-08). $refs site_fact (for
+    # the measurement/source vocabulary) and common, both bundled above.
+    "evaluator_inputs.schema.json",
+    # Lane C compare backend (task C-09, plan M1-18). $refs results (not_available,
+    # unit, zr_section, value_source), site_fact (measurement_known) and common,
+    # all bundled above.
+    "compare_rows.schema.json",
+    # Maps connection step 2 (D-090-R124). The document the E-07 map renderers
+    # consume; $refs site_fact (measurement_known) and common, both bundled above.
+    "map_context.schema.json",
+)
+
+SCHEMA_FILES = PROFILE_SCHEMA_FILES + STUDY_SCHEMA_FILES
 
 # services/api/scripts/sync_contract_schemas.py
 #   parents[0] = scripts, parents[1] = services/api, parents[2] = services,

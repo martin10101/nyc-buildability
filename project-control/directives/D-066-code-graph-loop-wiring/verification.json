@@ -1,0 +1,2037 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-066",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-066-BOOTSTRAP; no ledger task is bound at capture. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-25T10:33:24+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T033",
+   "applicable_requirement_ids": [
+    "D-066-R001",
+    "D-066-R002",
+    "D-066-R003",
+    "D-066-R004"
+   ],
+   "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828",
+   "reviewed_manifest_sha256": "b1c77a6f6a426ffbe5d1cd23f6f9f683ae1425c5f2ae7ad5683a09c6053f78eb",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T09:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified the packet inputs carry the seam-regenerated code-graph navigation block (728/15255/6762; dependencies + depth-1/2 impact set for live_provider.py) with the query.py --no-regen instruction, tooling present, material graph claims matching source, and the producer report recording the graph as consulted and advisory (project-control/reports/M5-T033-DCV-verification.md)."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    },
+    {
+     "id": "D-066-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified the packet outputs carry the Codex blast-radius guidance + required accuracy/usefulness statement; zero controller/supervisor/manifest paths in the material range; the reviewer's statement ('useful navigation, accuracy unverified from this packet') is on record in the producer report section 6, with its supervisor-journal provenance accurately characterized. The independent G3 reviewer separately verified the navigation block's pointers against source and found them accurate."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    },
+    {
+     "id": "D-066-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified project-control/reports/M5-T033-graph-comparison.md records the dated per-unit wall-time comparison with unit ids, the one-sided token figure marked UNVERIFIABLE, four stated limits, and no savings claim - an advisory observation exactly as the requirement demands."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    },
+    {
+     "id": "D-066-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: no standalone graph campaign, no controller/manifest edit on D-066 authority in the material range, and M5-T032 not displaced (accepted in parallel, ledger timestamps)."
+     ],
+     "verified_at": "2026-09-17T09:10:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "62dd97cb495dd3d803ee80f447caaf403d5b4828"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T034",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed",
+   "reviewed_manifest_sha256": "9aa0855d2d2a81d9fde61a178badec54529b7765cf4963e09d93155756fed5be",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-17T21:20:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified the packet carried the seam-regenerated navigation block (728/15271/6762, producers + rule target + evaluator seam + first-consumer fact) with the query.py --no-regen instruction, and that the producer verified graph-derived conclusions in source (advisory discipline). Basis: project-control/reports/M5-T034-DCV-verification.md + delta-attestations."
+     ],
+     "verified_at": "2026-09-17T21:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6d5e1c42f35a4dc19d555139263289e8f2213bed"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T036",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "5d5c502baff07020a8a0c5e933da5d32e7374b72",
+   "reviewed_manifest_sha256": "a40beb782b9ddb488ff3b33d1c9eb4d4c5ae0b48c6027b5fbf30bb49e1392876",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T05:55:50+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified at 5b9da18d (report project-control/reports/M5-T036-DCV-verification.md): navigation block present in the packet with seam-regen counts 732/15341/6791 matching contract-seam commit 8dccf758, query.py --no-regen instruction and advisory clause in inputs AND review guidance; block pointers independently verified in actual source (five importer lines, zolaLotUrl, mappedFeatureView, ZoningSection arrays - all accurate); advisory-verified-in-source corroborated by the independent G3 return. Restamp condition (no allowed_paths change since 5b9da18d + nav-block input byte-stable) re-verified by the orchestrator at bc1fae15 before assembly. Restamped to 5d5c502b under the DCV's conditional pre-authorization (git diff 5b9da18d 5d5c502b --name-only = control-plane only; nav-block input byte-stable)."
+     ],
+     "verified_at": "2026-09-18T05:55:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "5d5c502baff07020a8a0c5e933da5d32e7374b72"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T035",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f",
+   "reviewed_manifest_sha256": "5dd9966709d87fd16f3923043080a5a50ae266f6bbbf270706d3eed3877e2b02",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T07:22:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T035-DCV-verification.md): packet inputs[13] carries the contract-seam code-graph navigation block (regenerated 2026-09-17, 730 files/15339 nodes/6791 edges) with consumers/dependencies/impact set for the three target files, the query.py --no-regen instruction, and the advisory clause; outputs[31] repeats the citation. R002/R003 are reviewer-side duties not applicable to this task (cited==applicable set confirmed via registry). Restamped to efd7c948 under the DCV's conditional pre-authorization (condition verified: git diff 97fa2eea..efd7c948 -- services/ apps/ packages/contracts/ deploy-checklist EMPTY; --stat control-plane only)."
+     ],
+     "verified_at": "2026-09-18T07:22:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "efd7c948df99ba533f8ae009b317f842670bd76f"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T039",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f7c196ba9841d51f7fc999c93967a8569149b537",
+   "reviewed_manifest_sha256": "cf9c1b9e0ef8c3c0d37599ac49c95b36127da694aa1f184f3da714c4b08143d4",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T09:28:07+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T039-DCV-verification.md): packet carries the seam-regenerated navigation block (c759a049: 734/15427/6852) with the query.py --no-regen instruction and advisory clause; the advisory conclusion (zero-consumer leaf) independently re-verified in source. Restamped to f7c196ba under the DCV's conditional pre-authorization (condition verified: diff 1564e509..f7c196ba services/apps/docs-research EMPTY; --stat control-plane only)."
+     ],
+     "verified_at": "2026-09-18T09:28:07+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f7c196ba9841d51f7fc999c93967a8569149b537"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T038",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "4b1f21210ea9ed0360f4bd8a3dc23e33ac0c4955",
+   "reviewed_manifest_sha256": "87e8c8363a9164ca289f3800250692c29f381e37b39cbde35c9a7cf04e141e2a",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T10:05:21+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified at HEAD e829050e against frozen material d94bbcb6 (verbatim return project-control/reports/M5-T038-DCV-verification.md): nav block present in the packet with seam-regen provenance c759a049 (734/15427/6852, cross-checked against the M5-T039 row at the same seam), query.py --no-regen instruction and advisory clause verbatim; block pointers independently re-verified in source (five consumer imports); build honored the impact boundaries (PropertyOverview additive-only, M5-T037-lane test untouched, 9 material files all in allowed_paths; the one out-of-scope e2e consumer corrected by the tagged orchestrator commit 8c089343 with M5-T032 precedent). Restamped to 4b1f2121 under the DCV's conditional pre-authorization (condition verified: 13 allowed_paths diff EMPTY; range content = control-plane + the already-landed disjoint M5-T037-lane/[ORCH-CORRECTED] commits the authorization names; nav-block input byte-stable)."
+     ],
+     "verified_at": "2026-09-18T10:05:21+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "4b1f21210ea9ed0360f4bd8a3dc23e33ac0c4955"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T037",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79",
+   "reviewed_manifest_sha256": "df500aad4550f2525a7968f997a88890e980fea1c2881edc522f9ca9735083a0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T10:38:49+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T037-DCV-verification.md): the packet carries the graph-derived navigation block naming the four api consumer surfaces + the strict web validator + the generated-TS never-hand-edit note, with the query.py --no-regen instruction and the advisory clause; packet-content obligation met. Restamped to 1179357c under the DCV's three-condition pre-authorization (all three reproduced at record time: material dirs diff EMPTY; --stat project-control-only; both schema copies still blob 0f2eebd6)."
+     ],
+     "verified_at": "2026-09-18T10:38:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1179357caaf1f100851dbe3bc6e627e68505fd79"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T041",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "435d7b13d7d537108fddad73bdb84ae62ba83227",
+   "reviewed_manifest_sha256": "f087e85e859a26018a931bfdae00897ad44767ba78092d98fa5c4c4ee9f3d853",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-18T22:56:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T041-DCV.md, frozen head 843e23c4, material 740b6f2f): nav block present in the packet naming the web surface + the strict-validator consumer constraint + the query.py --no-regen instruction + the advisory clause; material diff = exactly the 10 apps/web files + producer report, all in allowed_paths, no services/api/schema/generated-TS, address-search.ts absent; validator change comment-only (zero behavior change) with CI run 35402081543 success at the material head. Restamped to 435d7b13 under the DCV five-condition pre-authorization - all five reproduced at record time: (1) apps/services/packages diff 843e23c4..435d7b13 EMPTY; (2) all 14 allowed_paths files byte-identical; (3) directive_refs + allowed_paths + evidence-map material_commit 740b6f2f unchanged; (4) only project-control/** touched; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-18T22:56:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "435d7b13d7d537108fddad73bdb84ae62ba83227"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T040",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9",
+   "reviewed_manifest_sha256": "f09b4a88cdb140cd8c87ab38f859979bd070559696b13fe3a2933812d57a0479",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T00:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T040-DCV.md, frozen head b4865d1c, materials 987930a2 + 751a1826): the packet carried the seam navigation block with exact consumer anchors; consumer suites in allowed_paths and green (475 reproduced + CI); the wide_street_wiring.py modularity warning-tier crossing disclosed by producer and ruled acceptable-with-justification by G3. Restamped to d4f2fb4a under the EXTENDED five-condition pre-authorization (M5-T040-DCV-delta.md): all five reproduced at record time - (1) product-dir diff b4865d1c..d4f2fb4a = exactly the two named disjoint M5-T042 connector files, nothing else; (2) all 17 M5-T040 allowed_paths byte-identical; (3) directive_refs/allowed_paths/evidence-map materials unchanged; (4) only project-control/** plus the two permitted files; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d4f2fb4a277168d999cd184481791b302f19d5d9"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T042",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d1d082db189191956d00a33e5733bfbb1829e625",
+   "reviewed_manifest_sha256": "1fa7ef47ef823b3fc1ebfe19635f0ce3e4f03e30e110b2a744f6ad2fabb58ab3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T00:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T042-DCV.md, frozen head 3bd6e304, material 0a6c43c9): nav block present with all four required elements (leaf status, SODA models to mirror, query.py instruction, advisory clause; the named model files exist at the frozen head); material diff = exactly the 3 allowed_paths files; zero consumer imports under app/ (leaf verified in source); suites reproduced green (26 + 852) and CI run 35407815825 success at c87aacbf with empty product-path diff to the material; modularity warn-tier signal disclosed. Restamped to d1d082db under the DCV five-condition pre-authorization WITH its explicit disjoint-peer tolerance - all five reproduced at record time: (1) the 3 own files byte-identical to material 0a6c43c9 (diff 0 lines); (2) packet directive_refs/allowed_paths and evidence-map material unchanged; (3) nav-block packet input byte-stable (lifecycle-only packet churn); (4) leaf invariant intact (grep shows only the 2 in-module self-references); (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T00:26:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d1d082db189191956d00a33e5733bfbb1829e625"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T043",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "088a26f68ffcf8363d7c5496172409758f2e40f5",
+   "reviewed_manifest_sha256": "69eaf84c81eabc546a2f3258bb8ba1703b3cf3fdcef50b439d43d7e97fa42714",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T02:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T043-DCV.md, frozen head 20c597c1, material f6e88222): the packet nav block named the consumers and the G3 extraction seam; the extraction executed exactly that seam with an identity-asserting facade test; modularity improved - both owned rules modules off the warn list (checker exit 0 reproduced by three reviewers). Restamped to 088a26f6 under the DCV five-condition peer-tolerant pre-authorization - all reproduced at record time: every M5-T043 allowed_path byte-identical 20c597c1..088a26f6; the only non-control-plane changes in that range are the two disjoint M5-T044 connector files (explicitly tolerated); refs/paths/evidence-map unchanged; validator exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T02:00:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "088a26f68ffcf8363d7c5496172409758f2e40f5"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T044",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "41f847ef8de2b1bb1afbdc6d3bce8b623132f758",
+   "reviewed_manifest_sha256": "2f3d0ab61dc82ec3694d79fe59da3f6f7435edc546815008ff9146f630958232",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T02:05:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T044-DCV.md, frozen head 20c597c1, material 1fd07e9a) and delta-attested EXTENDED on the tagged correction a471e376 (M5-T044-delta-attestations.md): nav block with all five elements; material = exactly the 3 allowed files; zero consumer imports (leaf verified in source at the corrected head); suites reproduced (55 focused / 881 connectors-wide / ruff clean); scope boundaries honored (no registry record, no fixture capture, no consumer wiring). Restamped to 41f847ef under the AMENDED five-condition pre-authorization - all reproduced at record time: (1-amended) both code files byte-identical to a471e376 and the producer report byte-identical to 1fd07e9a, with a471e376 the ONLY material change over 1fd07e9a; (2) refs/allowed_paths unchanged, evaluate_task_refs ok; (3) D-066 active, R001 unamended; (4) leaf intact, corrected-head CI 35414107043 success at 880a154d; (5) validate_directive_compliance.py --check exit 0 at the record state."
+     ],
+     "verified_at": "2026-09-19T02:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "41f847ef8de2b1bb1afbdc6d3bce8b623132f758"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T046",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "d12112ca1bd98383153080d899d48bc0c7c102d8",
+   "reviewed_manifest_sha256": "1de6180b4891074b80756b2bdbda24f4947a3c8caeda5ca4f5dc9340ddeeec48",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T06:31:19.876587+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T046-DCV.md, frozen content identity c9113e09, material 3182f0a2 + test-only correction fb7af67d): nav block present in the packet (tasks/M5-T046.json input 3) with query.py --no-regen + advisory clause; the load-bearing no-production-importer conclusion reproduced by the DCV's own git grep in source; consumers/edges verified; graph advisory-verified-in-source (producer report s5; G0 report). Stamped at d12112ca1bd98383153080d899d48bc0c7c102d8 under the six-condition pre-authorization - all reproduced at record time: (1) all 10 allowed_paths byte-identical c9113e09->record head (empty diff); (2) refs/allowed_paths/evidence-map unchanged, evaluate_task_refs ok; (3) every intervening commit touches only project-control/** or paths disjoint from the M5-T046 surface (docs/PROPOSAL_EDITOR_PHASED_PLAN.md, docs/DISCOVERY_BACKLOG.md, .claude/rules/expansion-agent-dispatch-hold.md - the D-076 planning seam; zero overlap with the 10 allowed_paths); (4) packet nav-block + amended scenarios byte-stable; (5) D-066 active, R001 unamended, source digests match; (6) validator exit 0 at the record state."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T047",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+   "reviewed_manifest_sha256": "9c6050a5ffcf743061cbbfed94e60d2a6434c3862bc49bb177bd24a2fb2c53de",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T09:33:36.477757+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T047-DCV.md, frozen identity ca94b2c3, material 7ecdcbf4 + tagged test-only correction d27a6a83): nav block in the packet with the load-bearing PropertyOverview->LotOutlineMap edge verified in source at PropertyOverview.tsx:10; consumer sweep outcome = the one affected out-of-scope consumer caught by CI and corrected per the M5-T023 precedent (G3 Surface 5); advisory-verified-in-source. Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the four-condition pre-authorization - reproduced at record time: (1) all 10 allowed_paths + the corrected consumer test byte-identical ca94b2c3->record head (empty diff); (2) refs/allowed_paths/evidence-map unchanged, evaluate_task_refs ok; (3) D-066/D-073 active, R001/R006 unamended, digests match; (4) validator exit 0 at the record state; intervening commits are control-plane or the granted disjoint peers (T045 acceptance evidence, T048/T049 lanes)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T045",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cfa8cb3930565ef09f622e334293c316a89f3841",
+   "reviewed_manifest_sha256": "e0ac5bfdbaac9b5631cc6efb26729ea38c3118eda3b4a79d890b5117a567f74d",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T09:33:36.477757+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T045-DCV.md, frozen submission 2b851c18, material 28082288, CI-proven 21ee7379): seam-regenerated nav block (740/15648) in packet inputs[4] with the query.py instruction + advisory clause; the DCV independently grep-reproduced that the new symbols live ONLY in the four in-scope modules and NO forbidden path carries them; nav-block material claims verified in source (route consumer rule_evaluation.py:66, single live ztldb call live_provider.py). Stamped at cfa8cb3930565ef09f622e334293c316a89f3841 under the five-condition pre-authorization - reproduced at record time: (1) all 17 allowed_paths byte-identical 28082288->record head (empty diff); (2) refs/paths/evidence-map unchanged, evaluate_task_refs ok; (3) directives active, R001/R006 unamended, digests match; (4) validator exit 0 at the record state; (5) intervening commits are control-plane or the granted disjoint peers (T047 acceptance evidence, T048/T049 lanes)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T049",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "0c7b17f111f85636ccafb4aeff10837117311de4",
+   "reviewed_manifest_sha256": "15de365781f870d3db9503ab32a96281094fa413f944ed9c7a987c0f40e53455",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T10:36:28.931607+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (project-control/reports/M5-T049-DCV.md, frozen submission f3bf4fd3, material d52b1402/cherry-pick b5d3343f, CI run 35435873943 all 12 jobs success): seam-regenerated nav block (747/15766) in packet inputs[3] with the query.py instruction + advisory clause; the DCV re-ran the packet-instructed impact query (exit 0, cache served) and got exactly the nav block's consumer set, and verified all four consumer imports in source at the claimed line anchors at the frozen head. Stamped at 0c7b17f111f85636ccafb4aeff10837117311de4 under the four-condition pre-authorization - reproduced at record time: (1) git diff f3bf4fd3..0c7b17f1 on all 7 allowed_paths EMPTY; (2) evaluate_task_refs ok, applicable==cited==[D-066-R001]; (3) foreground validator exit 0 at the target (run recorded in the seam commit); (4) the peer commits between freeze and target are the M5-T048 harvest material + gate/Tier-2/control-plane records - all inside the stated disjoint-peer tolerance. Manifest digest at record time equals the attested 69add60f... exactly.",
+      "[ORCH-CORRECTED field-sourcing note] reviewed_manifest_sha256 is the task allowed_paths git-canonical content identity FROM THE GATE RECORDS (G2-G5 all stamp 15de365781f870d3db9503ab32a96281094fa413f944ed9c7a987c0f40e53455 at aa8e2f53; identical content at the accept target per the reproduced empty diffs). The DCV prompt had misnamed this field as the D-066 manifest.json digest; the DCV-computed directive-manifest digest 69add60f... remains recorded above as the directive-registry identity it verified."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T048",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "499ae64208903a9161105adaf131b1c0a71426ba",
+   "reviewed_manifest_sha256": "41719272d3d07de52d0f7148c612a80d9bdd353566d05c467040d2729ed32271",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T11:49:14.717379+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T048-DCV.md, frozen submission 15c1b3a4, material 0c7b17f1+93f194c0, CI 35439235554 all green): seam-regenerated nav block (743/15656) in packet inputs[4] with the query.py instruction + advisory clause; all three required elements present. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T050",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "6f74488d5ead45f4883e2c92fd8519940f4674d6",
+   "reviewed_manifest_sha256": "a64b27ea2a214e114be8f2da83397282cf9509cce8e88facd09b09d8c35072ad",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T12:10:42.135261+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T050-DCV.md, frozen submission ee1b361c, material bcfcc538, CI 35440808156 all green): seam-regenerated nav block in packet inputs[3] with the query.py instruction + advisory clause; nav-block consumer claims reproduced at exact source line anchors (main.py:33, test_lot_geometry_api.py:35, AddressConfirmCard.tsx:15, record-address.test.ts:7). Stamped at 6f74488d5ead45f4883e2c92fd8519940f4674d6 under the DCV pre-authorization (M5-T050-DCV.md) whose conditions the DCV itself already reproduced AT THIS HEAD: empty git diff ee1b361c..HEAD on all 9 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (M5-T051 seam + gate-record commits). Orchestrator re-ran the foreground validator after stamping (exit code recorded in the seam commit)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T052",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "396081b594b1ca46f9fc858f552526217f81eb00",
+   "reviewed_manifest_sha256": "6ae71aeed51165b2800ae4106ee9f33a7ef97b985d62f97c60a786b93211d1cd",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T15:47:41.593840+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T052-DCV.md, frozen submission e9abeaaf after the attested G3 corrections cycle, material 365f492f+46bf1105+a6f35a0f, CI 35451055372 all green): seam-regenerated nav block in packet inputs[3] with consumers/dependencies/impact + the query.py instruction + advisory clause; the one stale pointer (resolver rules/ vs connectors/) judged non-material - the advisory-verify-in-source clause worked exactly as designed (route imports the correct path; correction recorded in G2). Stamped at 396081b594b1ca46f9fc858f552526217f81eb00 under the DCV pre-authorization (M5-T052-DCV.md) whose conditions the DCV itself reproduced AT 396081b5: empty git diff e9abeaaf..target on all 10 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T053",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "ce11d09fea402cbfd5b0b0a64b4cc717790e6e09",
+   "reviewed_manifest_sha256": "9b8d80183dc72dfae6254f40bb7eebb18b624578a2a9de30706fa7a10ab804f0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T16:47:22.582647+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T053-DCV.md, frozen submission 31cbc74b, material 25617bbd, CI 35454834946 all green first round): seam-regenerated nav block in packet inputs[3] with consumers + the query.py instruction + advisory clause; the nav block's LIVE-lane ownership flag drove the wrapper-gate disjointness, and the material commit touches neither proposal.py nor tests/scenario/. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T051",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bdb54765f8828cb7d22dd1556f2d57ff77f4024c",
+   "reviewed_manifest_sha256": "bcacbc7d8b436b3c69023a9b7a69aaec50fe91c7491c974c22a4263c4bb2c809",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T16:59:58.953298+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T051-DCV.md, frozen submission ce11d09f, material f1ec64a8, CI 35455214032 all green first round): seam-regenerated nav block in packet inputs[3] with the query.py instruction + advisory clause; nav claims spot-verified in source. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T054",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "ca5585572546f26c7a41504a4e9e2d9b58560b16",
+   "reviewed_manifest_sha256": "7b69e1e66219434dbbe16e972d9dd925f1a694c848757357a27aa8a38f790081",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T06:06:06.492959+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 1): seam-regenerated NAV block in the packet naming derivation.py's sole consumer (first production caller) + evaluator/integration consumer sets with line anchors; consumer discipline held (material ba0cf6b0 = 9 allowed-path files only; evaluator/integration/registry/response/rulesets/scenario byte-preserved; 722+568 suites green + CI 35491182686). Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T055",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "824b14bc2b5fafd063a490440a58ccb30d52ea19",
+   "reviewed_manifest_sha256": "0e1f9fb9a5273fabbf80158bd8054d8ea28015ac47bc3893e8b9569d64e5b735",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T07:02:39.286353+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T055-DCV.md): graph-derived NAV block in the packet with consumer line anchors verified in source (AddressResolutionScreen.tsx:19 chain); producer copy-sweep + consumer sweep reproduced (no missed consumer, no red left silent); material touched only the 4 allowed files. Advisory (non-blocking): carry the literal query.py --no-regen wording in future NAV blocks - adopted as a contract-seam habit. Stamped at 824b14bc2b5fafd063a490440a58ccb30d52ea19 under the DCV restamp pre-authorization as EXTENDED to the corrected identity (M5-T055-DCV.md): spec blob 75d80a88 + the four unchanged artifact blobs reproduced at this head; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T054/T056/T057/D-078 peers."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T056",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "8705be52a202d813e444056f46d64ff335025852",
+   "reviewed_manifest_sha256": "2399272a9c3d41c7ca649d24afaf0ae1e116b1551efa46cca74147b5f880631f",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T07:02:39.286353+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T056-DCV.md): NAV block present with query.py instruction; nav claims source-accurate (condo-records.ts consumers, main.py:32/:175 mount, bbl.ts:36 read-only); producer honored it (bbl.ts/bounded.ts byte-unchanged; PropertyOverview props stable; ReportView untouched with the shared-section inheritance proven). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T057",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "2fbd661e0afdd664d5d83daafd46ebf9ef9bfec1",
+   "reviewed_manifest_sha256": "c662a1cd6f34419ac384b10b2f11533b51d0765cfe3fe3ae566bbfcc82eab9f9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T09:34:29.968177+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta ruled SATISFIED with the seam-timing deviation permanently recorded (M5-T057-DCV.md delta SSB row 1): the regeneration conjunct was NOT performed at the 0099bbb2 contract seam - the false evidence-map claim was withdrawn and the facts recorded in the evidence map ([ORCH-CORRECTED per DCV SS3.1]) and an append-only G0 addendum (original line preserved); the regeneration was then executed (772 files / 16254 nodes / 7149 edges, cache metadata verified by the DCV) and the T057 consumer/impact set independently re-derived and confirmed in source by the DCV (route consumed by main.py:36 + its test file only; engine by the route + two test files - matches the packet's navigation block, no packet change). The nav-block and --no-regen conjuncts verified at both identities. Future contract seams must regenerate before the nav block is written. Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T061",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "5f7b032e1343d436aad56ea29315a3b5ad0d1aa6",
+   "reviewed_manifest_sha256": "51a173527473d916b2e29c75c99b639924b9e311c7220b0683a72b60d967aa61",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:13:31.264880+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (M5-T061-DCV.md section 3): graph regenerated at the 64a6f984 contract seam (D-066 manifest audit entry 2026-09-20T12:35:00; packet counts 782 files/16416 nodes/7200 edges distinct from the prior seam's 764) with the navigation block in the packet inputs; the consumer claim (main.py:36 mount + the test file only, no cycle) independently verified in source by the DCV and G3."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T058",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "94610a06180f118ff81d885a1022f051625101e7c390dbeda9393490a3217109",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (M5-T058-DCV.md section 2): graph regenerated at the 2fba5ed3/f86ae735 contract seam (D-066 manifest audit 2026-09-20T07:53:11Z, 764 files/16164 nodes) with the navigation block in packet inputs[4] naming the per-target impact sets and the three forbidden consumers; the graph was demonstrably USED - the harvest sweep caught the out-of-allowed-paths frozen-contract guard consumer and fixed it as 817a6546 rather than leaving it red."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T059",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "431eefa5838f4410e13a3bf30c394528f9f46d1da41847507495da80b94287d3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED (M5-T059-DCV.md): graph regenerated at the same 2fba5ed3/f86ae735 seam binding both D-078 packets; navigation block embedded in the T059 packet; rulings re-affirmed at the corrected identity 03882888."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T060",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "254841936d9ac14650f0b92a617ff78c3652941a",
+   "reviewed_manifest_sha256": "0b9ff84b481d309ae2e6fdb99b49f13d742180fe2d7034e446adcd1867ee9126",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T22:39:17.557850+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (M5-T060-DCV.md section 3): graph regenerated at the 5b4836be contract seam (seam-specific counts 772/16400/7195 vs the later seam's 783/16500/7221) with the navigation block in packet inputs[3] (mount-surface impact, held files flagged, advisory clause); producer report records source-verified consumption; the G3 consumer sweep independently confirmed the additive mount breaks no silent consumer."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T063",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "9a3d4883044f5ff575f06f5f000f3326641a6224",
+   "reviewed_manifest_sha256": "1cac065f15115a458a56b6dde7c78b68d847edc707f821a534477dd044020ebf",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:03:09.428806+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh seq-124 dispatch at frozen 853a1d25, byte-stable to HEAD over all 12 allowed_paths): packet inputs[3] carries the regenerated 783-file/16500-node navigation block naming key consumers (bounded.ts additive-only, PropertyOverview read-only consumers, rule-evaluation.ts announcer) + the query.py --no-regen instruction; conclusions verified in source by HJ/G3/G4; report M5-T063-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T062",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "e9283558a600c6540b20691aa5c30c8bd471753b",
+   "reviewed_manifest_sha256": "650a48c13ccc9273c82acdd5dbf45d2f0e8b4eae5a7c149db398c99eb8073def",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:08:27.520557+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh seq-124 dispatch at frozen 0366210c, all 8 allowed_paths byte-stable to HEAD): packet inputs carry the fffbd002-seam navigation block (783/16500/7221); material's only main.py change is the flag-gated include_router block + imports (main.py:203-218); condo_records/connectors consumed read-only; report M5-T062-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T065",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "a3b62c906a6e1adeaaae664355f254349ce5d5ce",
+   "reviewed_manifest_sha256": "648929ec9214fe6f296d189b08eb1b6fc32a4aed0b946d04762adf392388e18b",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:55:56.560960+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet inputs[3] carries the db81c35f-seam navigation block (783/16559/7258) naming free/read-only/forbidden seams + the query.py --no-regen instruction; conclusions verified in source by the wave; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the db81c35f-seam navigation block (783/16559/7258) with the query.py --no-regen instruction; conclusions verified in source; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T067",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "273e3ae0106644ab233f34f81135e9ad63f717a7",
+   "reviewed_manifest_sha256": "8e662633f9926b32912a64fbd4fa5357a69d96e0f99bc4a8e10c94ccdd2fa4b3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T05:42:55.233545+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block with the consumer-sweep duty; producer swept via Grep, G3 verified who-consumes in source (one _require_active caller; no out-of-scope suite pins message text); tests/api 650 green; report M5-T067-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block naming LotOutlineMap consumers (AddressConfirmCard/PropertyOverview FORBIDDEN and verified untouched in material; ProposalOutlineDraw the actual wiring point); exactly the packet's allowed_paths changed; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T068",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "9f035ad43e2e54475d026cd0f7503e28e5a3cdc9b89c1d2463efbef8a3c80097",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T22:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block; the no-consumer advisory conclusion re-derived in source (no import of the test modules anywhere); TEST-ONLY wall honored, exactly the 3 allowed_paths changed; report M5-T068-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T069",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "e9cd29d26ba16d510336267dfe35d7be729a66fdbeb8d1f9ba57f6cadc0b24a3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T21:47:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: packet carries the 793/16728/7304 seam navigation block naming store.py consumers (routes + condo_records FORBIDDEN); consumer sweep reproduced (no old supersede literal survives in code/tests outside the out-of-scope get()); exactly the 4 allowed_paths changed; report M5-T069-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED with a recorded non-blocking sub-clause gap (Part 2): navigation block present and its conclusions re-derived true in actual source; regeneration corroborated-by-control-record (the artifact lives outside the repo by design); the disclosed consumer-sweep miss honestly stated and closed per the CODING_RULES routing (c0b71938 cluster C), the DCV's own full-surface re-sweep found no unswept consumer. GAP: the packet omits the query.py --no-regen consultation sentence (drift since M5-T066) - orchestrator-side authoring, fix in the next packet."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED with the repeated non-blocking packet-drift gap (Part 3): navigation block present and re-derived true in source; consumer sweep discharged by construction (additive-only shared-module changes) + CI; regeneration corroborated-by-control-record (out-of-repo artifact by design). The query.py consultation sentence is absent again (contracted before the restoration duty existed) - the recorded duty covers future packets."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T084",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "f1d130abbf6cf13ce35cf91fc3d3dfeacdde0af2593bcc11bbaa6177fc9655fe",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: CODE-GRAPH NAVIGATION BLOCK present in M5-T084.json inputs (graph 815 files / 17025 nodes; names consumers M5-T081/T083 and the strict reader); report M5-T084-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T085",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "e258165147c33b071e88a27454a294cf0fa359ef51623bf8ecb57ebcb18beaf9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block present in M5-T085.json inputs (app/cad seam; forbidden sibling dxf_writer.py; reader read-only); report M5-T085-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T087",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2870507309967160a091b2491d57e1e9e6fcd8f",
+   "reviewed_manifest_sha256": "07cf9683e6b5937c8245b30adb68c003b1612bb2d386c3c2050dc7d4b91595ee",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T08:57:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block present in M5-T087.json inputs (future connector beside mappluto_geometry_arcgis.py + the massing model); report M5-T087-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T082",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "10def4ef106396b15f62284a7dc122d0d1186d67",
+   "reviewed_manifest_sha256": "1e921f5c11fad38a6e96d5f425007f498cae5b552ca43689d87e3e7be0c2b4d8",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T09:12:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T082.json inputs carry the CODE-GRAPH NAVIGATION BLOCK (graph regenerated, 815 files; max_envelope FORBIDDEN; proposal/contract/mappluto read-only; impact set; query.py --no-regen instruction); the producer stayed in scope (3-path diff); report M5-T082-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T077",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "114e5e56e158d6f263e58a314c383ea62ee7eff4",
+   "reviewed_manifest_sha256": "457a17155812843eb2c495aee6ed182b114a1ffe750718c849774b1529388369",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T09:44:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block byte-present in tasks/M5-T077.json since the contract seam; graph regenerated at the seam (817 files / 17027 nodes / 7441 edges, graph_sha256 re-hashes); block accuracy checked in source (max_envelope_api imported only by its test; lot_geometry_derivation by max_envelope_api + its test; app/main.py has no max_envelope - route unmounted); producer stayed in scope (five paths; max_envelope.py f0abf884 unchanged); report M5-T077-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T083",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "023294ec6e98a50a55c2d5e04e2a1891ed4ed4b8",
+   "reviewed_manifest_sha256": "86661a1ac1114f4463b2d3ce21d71d1660cea6d8788adfa0dd9250fc6a68607e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T10:22:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: navigation block present in tasks/M5-T083.json (graph regenerated at the seam, 815 files by generate.py's own include rules; strict modules consumed by vector_pdf_decoder / survey_pipeline / routing FORBIDDEN - consumer claims checked in source; query.py --no-regen impact instruction; graph advisory); producer stayed in the 4 allowed paths; report M5-T083-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T081",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "fa7e5fae8c9d0ae63851481f5f0a21c32cafa2aa",
+   "reviewed_manifest_sha256": "9700b33befc8789a9f12963f8e9284f52ab602c21150c206f5ed28ad314040cf",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T14:55:24+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T081.json inputs[8] carries the navigation block (graph regenerated, 815 files / 17025 nodes / 7441 edges - recounted by the verifier; consumers 'nothing imports it yet'; forbidden sibling pdf_sheet_writer.py; read-only ring source; query.py --no-regen impact; advisory); restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T081-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T086",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "fa7e5fae8c9d0ae63851481f5f0a21c32cafa2aa",
+   "reviewed_manifest_sha256": "f0c6963d13a7d72beca146eb1341f4eff7bc0981d23697abc2e805995b52caf2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T14:55:24+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T086.json inputs[7] carries the navigation block (graph regenerated at the seam; 'nothing imports dxf_reader yet'; forbidden siblings sheet_reader/sheet_primitives; query.py --no-regen impact; advisory); verifier recount 817 graph inputs matches the seam commit and evidence map (the G0 text's 815 is DCV F4, DB-057 (o)); restamp predicate re-verified by the orchestrator at the accept head fa7e5fae (the 8 frozen blobs 152f1f2e/2aa45291/9a4d06ef/6cce2a91/6dbc33b7/2503baae/b4675e48/3009c0f1 unchanged; identity reproduced; evaluate_task_refs ok); the verifier's own re-check at fa7e5fae HOLDS; report M5-T086-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T091",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f00a47452705f16378c08649e3dd863374d60861",
+   "reviewed_manifest_sha256": "f2d6b1a770af944574859c6c801735577a484746d1de063fadfeb9a4709be6c9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:10:18+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T091.json inputs[16] carries the navigation block (no importer of pdf_sheet_writer; forbidden siblings dxf/glb; documents reader read-only; query.py --no-regen impact); graph regenerated at the seam (817 files / 17386 nodes / 7525 edges); restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T091-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T092",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f00a47452705f16378c08649e3dd863374d60861",
+   "reviewed_manifest_sha256": "d912b914e495b31c9b3c0a24b9dd123e23f2e05b7cf564b04ff50169d59d58ff",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:10:18+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T092.json inputs[16] carries the navigation block (app/cad seeded by the orchestrator; forbidden siblings dxf/pdf; 'nothing imports glb_writer yet'; query.py --no-regen); graph regenerated at the seam (817 files / 17386 nodes); restamp predicate re-verified by the orchestrator at the accept head f00a4745 (six frozen blobs 86b129c9/52f37aa9/3b402b53/64568629/9166d160/8f390845 byte-identical; identity reproduced; evaluate_task_refs ok); report M5-T092-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T078",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "c5dd725ccedd73424ea5ca0a9f87fa926f4a7d5125480251306d7683caf1ce24",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-web, joint T078/T079): tasks/M5-T078.json inputs[8] carries the navigation block (graph regenerated 817 files / 17027 nodes / 7441 edges; consumers and depth-2 impact for ProposalOutlineDraw/ProposalOutlineMap; query.py --no-regen instruction; advisory caveat); identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M5-T079.json inputs[8] carries the navigation block (MaxEnvelopePanel.tsx + max-envelope-api.ts; ArchitectEntry consumer forbidden; query.py instruction); identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T088",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "327ef492bd5a7b37284dbf5f7870639d4ff879028a01f43f5686bf88cc48fc86",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t088): the packet's navigation block names massing_model.py's only importer (its test), forbids max_envelope.py and every scenario module, names the GLB writer as the later consumer, instructs query.py --no-regen impact; verified in source that no production module imports massing_model; blob-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (massing_model.py 42545728, test c55e2cd7, report b4c1b025, max_envelope.py f0abf884, requirements 7da554cf/bf38a09e unchanged; no production importer; identity 327ef492); report M5-T088-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T089",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "e9b3e9664201a134cf195f3fc700eb10174c0189953dfc4dbe68d9c5b9c06d35",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:05+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t089): tasks/M5-T089.json inputs[6] carries the navigation block (consumers-to-be massing_model context layer; MapPLUTO condo constants read-only; nothing imports the connector; query.py --no-regen; advisory); identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == e9b3e966 == the frozen stamp; evaluate_task_refs ok); report M5-T089-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T093",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "9f5a0cff2bdc095e3b7eceb50fe714a453ac27aaca6e6834ef2e0fcacf51fb07",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:05+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t093): tasks/M5-T093.json inputs[4] carries the navigation block (read-only consumers sheet_reader/sheet_primitives/app/documents/extraction; query.py --no-regen; advisory); graph regenerated at the seam; blob-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (56db26ad / d56349ec unchanged; identity 9f5a0cff; evaluate_task_refs ok); report M5-T093-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M0-T159",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cd58a3486fcb14632f239f4ea4e607b2bc3f3f88",
+   "reviewed_manifest_sha256": "3ccb0c5e6ca10b82b9edf8dec9b70cc9a1c9aabb944f615e781e594abe19d4aa",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:28:44+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: tasks/M0-T159.json inputs[4] carries the navigation block (fixture-pack consumers capability_probe / event_drift / native_runtime / recovery_probes / start_gate and the four test packs; query.py --no-regen; advisory); identity-level restamp predicate re-verified by the orchestrator at the accept head cd58a348 (_task_git_identity == 3ccb0c5e == the frozen stamp over the 12 allowed paths; evaluate_task_refs ok); report M0-T159-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T090",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "9c44b68da0bfe806dc6453494594b85208995fd3",
+   "reviewed_manifest_sha256": "f53b0781a63ffe2341f53cf3f592415a55e0cd108bcc1da37055c30d726d9cbb",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:32:29+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t090): the packet carries the navigation block for the apps/web dependency seam (no source consumer yet; the viewer is a later packet); blob-level restamp predicate re-verified by the orchestrator at the accept head 9c44b68d (package.json 19328b65, package-lock.json a8398ec5, report 4a7752c4 unchanged; identity f53b0781; evaluate_task_refs ok); report M5-T090-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T080",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "952f324b8a779bcd0a3c09de4dd9c3ed599e2372",
+   "reviewed_manifest_sha256": "12da09494b8112b13a000d9e198c4aa25df3d730034887eaf8290b2b53f4b147",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T16:01:06+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the packet's navigation block (graph regenerated 817 files / 17027 nodes / 7441 edges; page.tsx routes + ArchitectEntry; query.py --no-regen; advisory) is present and the route/state map is source-grounded; blob-level restamp predicate re-verified by the orchestrator at the accept head 952f324b (P0-RECONCILIATION.md b0e24e50, disclosure-ledger-a.json a106788d, disclosure-ledger-b.json 07775443, producer report 23ed9dc1; identity 12da0949; evaluate_task_refs ok); report M5-T080-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T094",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "59737e437d67060756fa031ba29c7ca610f6f2c9",
+   "reviewed_manifest_sha256": "df266133cf8597decc00e603e7418d7b6f578f2e69c22cd352ca37a65a78e01c",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T20:58:44+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t094): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 821 files / 17652 nodes / 7589 edges; sheet_reader.py had no production importer, only its test; app/documents/extraction and sheet_primitives.py named forbidden neighbours; the query.py --no-regen instruction, advisory) and the reviewers verified the conclusions in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 59737e43 (sheet_reader.py e3606e0f, sheet_objects.py 1f69f558, sheet_interpreter.py e71266bf, test_sheet_reader_split_equivalence.py fba20c0a, M5-T094-producer-report.md ce2eaecf; identity df266133; evaluate_task_refs ok); report M5-T094-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T099",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cf0da3587227911f3460f41f07e6bc313674e865",
+   "reviewed_manifest_sha256": "f46e45de86ac4c64e7b2043632cb95602feae3f77a873e10c47a9465535a2ba5",
+   "producer": "cloud-architect",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:04:35+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t099): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 827 files / 17658 nodes / 7589 edges; consumers, forbidden neighbours, the query.py --no-regen instruction, advisory); the producer verified consumers in source by grep when the cached graph was stale on the reset worktree, as the advisory graph permits. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T100",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "851c4e63197f50c572ccfc42ef6e71b9e8264a0f",
+   "reviewed_manifest_sha256": "384daa2432b91cf5e1668496843bb3b1b0b3c87f7b9ceb6aea89781a26c26284",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t100): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 827 files / 17658 nodes / 7589 edges; the connector imported only by its test; transport + MapPLUTO modules read-only; the query.py --no-regen instruction, advisory); the verifier independently confirmed zero app importers. Blob-level restamp predicate re-verified by the orchestrator at the accept head 851c4e63 (building_footprints_arcgis.py 9f8b9c4c, test_building_footprints_arcgis.py ea748f18, M5-T100-producer-report.md 9d2098c2; identity 384daa24; evaluate_task_refs ok); report M5-T100-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T096",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "75e75e55b00bfbda3b52d8290e53117e791b8dc3",
+   "reviewed_manifest_sha256": "8db12f2a8140c74ae17a823ae8bd22c6eabdca8378bcf2a0068e7342930c0f83",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:26:50+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t096): the packet carries the graph-derived navigation block (graph regenerated at the contract seam; consumers incl. pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS; the query.py --no-regen instruction, advisory); no public name changed and the consumer suites stay green. Blob-level restamp predicate re-verified by the orchestrator at the accept head 75e75e55 (dxf_writer.py 6f57cdc4, test_dxf_writer.py 79ad39af, test_cad_owner_samples.py c0383c49, .gitattributes ab95c38b, README.md c3e98f73, example-massing.glb 21c1e306, example-site-plan.dxf 2c80881b, example-site-plan.pdf d7220466, M5-T096-producer-report.md e2efa4df; identity 8db12f2a; evaluate_task_refs ok); report M5-T096-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T095",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "442b2dd263be079393d776d9d53f830d881cc1e3",
+   "reviewed_manifest_sha256": "d51ff82d96bbdc6ffd7907911d32059e187b002e6ca38bf6c4d51177545e4827",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:33:43+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t095): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 821 files / 17652 nodes / 7589 edges) naming every proposal.py consumer as forbidden, with the query.py --no-regen instruction and the advisory clause; the producer verified the removed helpers unused in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T098",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "2aeeafc56934be35b5a9550c53cb634b7624f885",
+   "reviewed_manifest_sha256": "8b3db9569628fc0ba0a31d41006e431e5c412e0fac7e2249cf9410ed065c0b8d",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:45:20+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t098): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 825 files / 17656 nodes / 7589 edges) naming the only consumer (its test), the read-only proposal.py dependency being changed in parallel by M5-T095, the forbidden scenario neighbours, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 2aeeafc5 (massing_model.py 7c693f51, test_massing_model.py b5bffe2a, M5-T098-producer-report.md 4b8a58bd; identity 8b3db956; evaluate_task_refs ok); report M5-T098-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T097",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "ec2c00c3764ceae10750af24dff3bd01bb4ec904",
+   "reviewed_manifest_sha256": "88431c2d5bd5fe8db88e987e1831f2dd3edd82ca1652a5a1528be329f8eb5a08",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:48:51+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t097): the packet carries the graph-derived navigation block (graph regenerated at the contract seam, 825 files / 17656 nodes / 7589 edges) naming the reader's only consumer (its test), the read-only writer owned by M5-T096 and the sheet_* files owned by M5-T094, and the query.py --no-regen instruction; the verifier reproduced the no-production-importer fact. Blob-level restamp predicate re-verified by the orchestrator at the accept head ec2c00c3 (dxf_reader.py 94895927, test_dxf_reader.py 78b4a278, test_dxf_roundtrip.py f301eed4, M5-T097-producer-report.md e6816ad0; identity 88431c2d; evaluate_task_refs ok); report M5-T097-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M0-T160",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "cf4fd2242807a4d4f19453b0d05a240801bdf803",
+   "reviewed_manifest_sha256": "f63172da573da8f55479ce78d9a77b48b760f56b3a07a6243c5a4e62418f24dc",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:04:10+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the packet's navigation block names the binding's readers (update_controller_from_candidate.ps1 Read-SourceBinding; test_runbook_parse.ps1 + test_source_binding.ps1) and the query.py --no-regen instruction, advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf4fd224 (source_binding.json 4f6fdfdb, CONTROLLER_UPDATE_RUNBOOK.md 4ee5a21b, test_runbook_parse.ps1 2288cb62, M0-T160-producer-report.md 94f62afc; identity f63172da; evaluate_task_refs ok); report M0-T160-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T102",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "95bb73bdcefd95a73b2f5c412f4511b11b0ce3af",
+   "reviewed_manifest_sha256": "14376b051093ae5713c801e506c7bf564fc1eafc0ed61ad205939d9032e8fca2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:38:50+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t102): the packet carries the graph-derived navigation block (regenerated at the contract seam, 827 files / 17839 nodes / 7656 edges) naming pdf_sheet_writer.py:54 CLAIM_CLASS_WORDS, the writer tests, test_cad_owner_samples.py and test_dxf_roundtrip.py, with the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T101",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "68bc726ec064c28d66761dbfb9b504a693565f64",
+   "reviewed_manifest_sha256": "d906812daea1f525f2c96c01c55338cc444583b9afd3b7022befbb7f4fc0fdd0",
+   "producer": "geospatial-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T00:38:08+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t101): the packet carries the graph-derived navigation block (regenerated at the contract seam, 827 files / 17839 nodes / 7656 edges) naming the connector's sole consumer (its test), the read-only transport and MapPLUTO neighbours, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 68bc726e (building_footprints_arcgis.py 22c86686, building_footprints_geometry.py d5867737, test_building_footprints_arcgis.py 60751a0a, building-footprints.json 3844dcec, M5-T101-producer-report.md 5aacc3cd; identity d906812d; evaluate_task_refs ok); report M5-T101-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T104",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "259b6d4036652e2b5a23e9ca184c01eff937c77d",
+   "reviewed_manifest_sha256": "38a708668c98f80b46273ab40579506c745e5af564ad6b10802ca5353211c839",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T00:47:06+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t104): the packet carries the graph-derived navigation block (regenerated at the contract seam, 830 files / 17842 nodes / 7656 edges) naming the reader modules' consumers and fencing the parallel M5-T103's files, with the query.py --no-regen instruction (advisory); the wave-8 bind has a same-commit digest resync. Blob-level restamp predicate re-verified by the orchestrator at the accept head 259b6d40 (test_sheet_reader.py 613bcd20, sheet_primitives.py eb4205a2, M5-T104-producer-report.md baa2cf45; identity 38a70866; evaluate_task_refs ok); report M5-T104-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T105",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bdbcfd252d49e0a4f64e59b035983e44aeaed96b",
+   "reviewed_manifest_sha256": "28abc2f685e0c80c0df6d48c99b06e7bf5136d414eacd70ca934f186a2aa32c1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T01:22:07+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t105): the packet carries the graph-derived navigation block (regenerated at the contract seam, 832 files / 17898 nodes / 7680 edges) naming the writer's consumers (test_pdf_sheet_writer, test_cad_owner_samples, test_claim_words) and its claim_words import, with the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head bdbcfd25 (pdf_sheet_writer.py bc68ca12, test_pdf_sheet_writer.py bdad0969, M5-T105-producer-report.md ddcdab6c; identity 28abc2f6; evaluate_task_refs ok); report M5-T105-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T103",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "30b5e37c675d209d13ffea79d2d8a8e0d7c86f0c",
+   "reviewed_manifest_sha256": "6cf6c3038897358466995f4816fae20bb3242a943ce4d8e6461bcdd2c6ae60b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T02:14:27+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t103): the packet carries the graph-derived navigation block (regenerated at the contract seam, 830 files / 17842 nodes / 7656 edges) naming the facade's single read_object_table integration point, the read-only app/documents/extraction and sheet_primitives.py, the forbidden test_sheet_reader.py, and the query.py --no-regen instruction (advisory). Blob-level restamp predicate re-verified by the orchestrator at the accept head 30b5e37c (pdf_object_streams.py 2cafd799, sheet_objects.py 568ca077, sheet_reader.py c7cf0b9f, sheet_interpreter.py 34e2ee39, test_pdf_object_streams.py e9500aeb, M5-T103-producer-report.md bc99696e; identity 6cf6c303; evaluate_task_refs ok); report M5-T103-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M0-T161",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "6314a25cbb635e2dc22e5b94a795f4e6898353f4",
+   "reviewed_manifest_sha256": "8286441633db9f2516b3ae3377e62af2e4264cc855a58d6d179f7f9f26e049b6",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:01:49+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the packet carries the graph-derived navigation block (no Python module imports tools/controller_update; the existing scripts read-only; the checkout key from durable_state at run time) and the helper honours it. Blob-level restamp predicate re-verified by the orchestrator at the accept head 6314a25c (commission_lanes.ps1 a39ba5bb, test_commission_lanes.ps1 f0d69ef1, M0-T161-owner-guide.md db29c32a, M0-T161-producer-report.md f2fd87cd; identity 82864416; evaluate_task_refs ok); report M0-T161-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T106",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "074a9f7b85532db300e67ea9f165008c6114437215e0c52922458dad2b55ddb3",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:07+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t106): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming massing_model.py's only consumer and warning that the parallel M5-T107 codes against the public API; the public API is unchanged. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (massing_model.py 68e062e5, test_massing_model.py 6971be8a, M5-T106-producer-report.md 14be254c; identity 074a9f7b; evaluate_task_refs ok); report M5-T106-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T107",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "a367f5488b8ad520c25dc2c26fe7bad2f2f1065a9442bf9c077a70697b33501e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:15+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t107): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming the connector's only consumer, massing_model (read-only), glb_writer, the forbidden neighbours and the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (scene_assembler.py 57a8afde, scene_api.py b2c14483, building_footprints_arcgis.py be407e64, test_scene_assembler.py fd5c5587, test_scene_api.py 94403239, test_building_footprints_arcgis.py b1be2943, M5-T107-producer-report.md 2b22fedf; identity a367f548; evaluate_task_refs ok); report M5-T107-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T108",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "2873d915f97d352ce0683e9acbb7c14f320f3ab1457158a1ee5cf6d533c63fc1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:21+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t108): the packet carries the graph-derived navigation block (832 files / 17984 nodes / 7700 edges) naming dxf_reader.py's consumers (read-only), validate_proposed_massing's home and consumers, the forbidden neighbours and the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T109",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "a9cf917aa8ec1486f93d0e0ec97e4f00585757e2",
+   "reviewed_manifest_sha256": "802274bdc19be7cfa8fbb3d417ce6921f95fdc130c39343d7b0b8a5893ec6775",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:46:43+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t109): the packet carries the graph-derived navigation block (regenerated at the contract seam, 832 files / 17984 nodes / 7700 edges) naming the writers' consumers and forbidden neighbours with the query.py --no-regen instruction; the graph stayed advisory and the harvest sweep found the one real consumer (test_glb_writer AS-5), handled in scope. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T114",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "7b3686f027b0e71aacdff4056daa456659ac2a79",
+   "reviewed_manifest_sha256": "24ac1f58b30e8ecab3b32535041b023eb8c9020dacd65694c052caecdbdf1e5e",
+   "producer": "product-design-director",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T05:53:37+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t114): the packet carries the navigation block (graph regenerated at the seam, 844 files / 18356 nodes / 7841 edges) naming the route/state entry points with the query.py --no-regen instruction; graph advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T112",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "bfefd93474318b2913f477bb1c0820f4f3be31d0",
+   "reviewed_manifest_sha256": "4b71b83987689a1ce831b24f25f0c8f58d6b82f6a50e3b378dab966f89a77ef5",
+   "producer": "3d-massing-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:29:46+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t112): the packet's navigation block names the consumers (scene_assembler.py -> scene_api.py, test_massing_model.py, test_scene_assembler.py), the regenerated graph and the query.py --no-regen instruction; graph advisory. Blob-level restamp predicate re-verified by the orchestrator at the accept head bfefd934 (massing_model.py 809ad7aa, massing_guards.py 5114dcf2, massing_triangulation.py cb8cf82b, massing_mesh.py d7fec512, test_massing_model.py d87db465, test_massing_split_equivalence.py a75f6863, test_massing_triangulation.py 44084bbb, M5-T112-producer-report.md f23d7184; identity 4b71b839; evaluate_task_refs ok); report M5-T112-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T113",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "c375457cfbe996454cf63a0554f7aa6f31bc0c94",
+   "reviewed_manifest_sha256": "804214cf70019d51953f05a11bc8ff6182aea66c94127379463d731c84ae6596",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:32:16+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t113): the packet's navigation block names the importers and the READ-ONLY pdf_object_streams.py + its test with the query.py --no-regen instruction; the producer reused apply_predictor and left both read-only files byte-unchanged. Blob-level restamp predicate re-verified by the orchestrator at the accept head c375457c (sheet_objects.py f99c5058, sheet_marked_content.py 6faf7291, sheet_interpreter.py 31ebc55e, sheet_reader.py aaf4f651, test_sheet_content_features.py bddceb42, test_sheet_reader.py 613bcd20, test_sheet_reader_split_equivalence.py 1d1f26de, M5-T113-producer-report.md cdc39739; identity 804214cf; evaluate_task_refs ok); report M5-T113-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T111",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "f2ada974c56c7c69639076f71e8e519e928d853b",
+   "reviewed_manifest_sha256": "3f87108f625842f409b03efb12aefb0d5741c329c32d25e0448ebcc34cd0e49a",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T06:34:06+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t111): the packet's navigation block names each route's sole importer (its own test), that app/main.py imports none, the READ-ONLY neighbours and the query.py --no-regen instruction; the consumer claims verified in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head f2ada974 (rate_limit.py 637c1b6a, test_rate_limit.py 0f2b0278, scene_api.py 9cdc8eb7, dxf_import_api.py 6a58ae1a, export_api.py 4177ba09, test_scene_api.py cd6232cf, test_dxf_import_api.py 233878ef, test_export_api.py ec9f9419, M5-T111-producer-report.md 70a7d045; identity 3f87108f; evaluate_task_refs ok); report M5-T111-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T115",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "675dc7a1ef571f3bc2c7c1000e87556265ceaea6",
+   "reviewed_manifest_sha256": "70ed25ba2dd8adb47b249cd76981936ecef3416e45e7faae1fae091dcf007bd8",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:10:05+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t115): the packet's navigation block names the live flow, PropertyOverview.tsx READ-ONLY and the query.py --no-regen instruction; the G0 report corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T117",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "3be7c22fcd16d32b17c18f2e68525c69735c480e",
+   "reviewed_manifest_sha256": "4b04fb332d1e1cee9b609321f48fac89c1862c45baf2801a18d2086cf26923cd",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:36:48+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t117): the packet's navigation block names rate_limit.py's consumers, the READ-ONLY neighbours and the query.py --no-regen instruction; the G0 report attests the regenerated graph. Blob-level restamp predicate re-verified by the orchestrator at the accept head 3be7c22f (rate_limit.py 10916271, test_rate_limit.py 2efb09a2, scene_api.py fa6a1181, test_scene_api.py d0851eab, test_dxf_import_api.py fccbf334, test_export_api.py d5500e8d, M5-T117-producer-report.md 8dd9dc70; identity 4b04fb33; evaluate_task_refs ok); report M5-T117-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T116",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "b1c43167dee08730def4fc553cb69e5a2f2e01cd",
+   "reviewed_manifest_sha256": "23fd4149109076437121ae6282d9b09539a9a4e3d4641c1decfe53268e5d8e59",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:47:32+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t116): the packet's navigation block names the consumers (export_api.py + tests READ-ONLY), the forbidden neighbours and the query.py --no-regen instruction; the G0 report corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T118",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "4db02f5d86a957600ad1b396ce80f42c074a6d45",
+   "reviewed_manifest_sha256": "47a4680373c6691e6959754e9867e47c401c5f17a7e52af5a1482a78688da477",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:51:40+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t118): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the sheet-reader consumers and the query.py --no-regen instruction; the G0 report corroborates the regen (F2 label nit only). Blob-level restamp predicate re-verified by the orchestrator at the accept head 4db02f5d (sheet_reader.py 277161a5, sheet_inline_image.py 0e4321da, sheet_interpreter.py c570b6c0, sheet_primitives.py 2bd28761, sheet_objects.py 6be11292, test_sheet_p3_features.py 092027b3, test_sheet_reader.py 4da538f7, test_sheet_reader_split_equivalence.py bb448f98, test_sheet_content_features.py bddceb42, M5-T118-producer-report.md 1b023958; identity 47a46803; evaluate_task_refs ok); report M5-T118-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T119",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "ed22997176cc991d6d6401e48b0be194c2a120f9",
+   "reviewed_manifest_sha256": "824d5bd9da82d36e51064b97c5fc62913086b0ad8292eb2ca496197d63ff12cd",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:36:47+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t119): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the renderers (ArchitectEntry overview view, ReportView printed brief - READ-ONLY), ArchitectShell and the three e2e specs, with the query.py --no-regen instruction; G0 confirms the regen. Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T121",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "8ecdbeb27fee7db6ccc333b986cb1f236f820e5c",
+   "reviewed_manifest_sha256": "243a7da1f600197b77561d059c79605a22e93dc43ae6cd1884f3fa43a1c6ddf0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:58:47+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t121): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges; no consumers - unmounted; the reader public types, dxf_import public names and app.scenario.proposal READ-ONLY) with the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T123",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "4c7437dd3eb0068ebff6c15221913e5bb7e6b801",
+   "reviewed_manifest_sha256": "7bd23182b1a5998ae9b4911af60f7de3bf4f62cf45e0ca02c5d6b73bcea8baf3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:40:24+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t123): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names rate_limit.py's importers, the three UNMOUNTED route modules' test-only importers and proposal_validation.py as a MOUNTED READ-ONLY route, with the query.py --no-regen instruction. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4c7437dd (scene_api.py 1f03ff7c, export_api.py 0d5f2f07, dxf_import_api.py 1329bc90, rate_limit.py 0ff04d27, test_rate_limit.py 4ee8baa2, test_scene_api.py 027116e2, test_export_api.py d6407d7d, test_dxf_import_api.py 0e789d64, M5-T123-producer-report.md ac510dcc; identity 7bd23182; evaluate_task_refs ok); report M5-T123-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T120",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "4975d73c033cbe8327cd1b0d717caacc43616276",
+   "reviewed_manifest_sha256": "80c33f6deaea51920c99496de59c0c959839bca0587aa4e607222c4976542d23",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:46:26+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t120): the packet's code-graph navigation block (844 files / 18356 nodes / 7841 edges) names the sheet-reader consumers, the forbidden neighbours and the query.py --no-regen instruction; G0 confirms the regeneration. Blob-level restamp predicate re-verified by the orchestrator at the accept head 4975d73c (sheet_path_state.py 64e5e088, sheet_interpreter.py 04f2e39a, sheet_inline_image.py 16bd1843, sheet_primitives.py 8e16392a, sheet_reader.py 84368ef7, test_sheet_p4_features.py 7e6527a9, test_sheet_p3_features.py 092027b3, test_sheet_reader.py cfd0def1, test_sheet_reader_split_equivalence.py 51197f59, test_sheet_content_features.py bddceb42, M5-T120-producer-report.md b134e064; identity 80c33f6d; evaluate_task_refs ok); report M5-T120-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T122",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "06086f5d14bcd49b0adbcb9163fe2685ff2e218c",
+   "reviewed_manifest_sha256": "356596f7f567543d81b41e475c0987ca9ab7017467509e577c61c78ebc320353",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:56:08+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t122): the packet's code-graph navigation block names every PropertyOverview.tsx importer (ArchitectEntry, ProfileViews, PropertyFacts, ReportView, ScenarioWorkspace) and the tests, with the query.py --no-regen instruction; each consumer verified in source. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-066",
+   "task_id": "M5-T124",
+   "applicable_requirement_ids": [
+    "D-066-R001"
+   ],
+   "reviewed_sha": "002f663c6050603e9a0e94f5040086ea2a98f8a4",
+   "reviewed_manifest_sha256": "005165359511993410727a049cba6e6602ebe10d9fe88d60cd86e481891f39d1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T10:33:24+00:00",
+   "requirements": [
+    {
+     "id": "D-066-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (dcv-t124): the packet carries the code-graph navigation block (844 files / 18356 nodes / 7841 edges) naming the module's inputs (the importers' draft block shape and validate_proposed_massing, both READ-ONLY) and no consumers (unmounted), with the query.py --no-regen instruction; G0 corroborates. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
+}

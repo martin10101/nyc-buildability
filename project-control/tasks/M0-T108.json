@@ -1,0 +1,110 @@
+{
+  "task_id": "M0-T108",
+  "title": "Control-plane security fix: close the readonly_agent_guard PowerShell/scripting write gap (G5 M0-T102 MEDIUM advisory)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Close the confirmed enforcement gap in .claude/hooks/readonly_agent_guard.py (G5 M0-T102 finding): (i) extend the PreToolUse matcher in .claude/settings.json to cover every write-capable shell tool the harness exposes on Windows (PowerShell, not only Bash); (ii) add a PowerShell mutation/redirection denylist mirroring the Bash pass (Set-Content, Out-File, Add-Content, New-Item, Move-Item, Remove-Item, Tee-Object, [IO.File]::Write*, redirection operators, git via PowerShell) with the same fail-closed-on-unparseable envelope; (iii) treat the scripting-language class generally (python -c file writes share the failure mode - document the residual honestly if not fully closable); (iv) regression tests analogous to the existing Bash tests, RED-on-mutant. Also reduce read-only false positives observed by M0-T102 reviewers (python -c pure reads containing open( were transiently denied). Land BEFORE any unit C-I reviewer dispatch into a write-capable working tree (G5 recommendation).",
+  "business_reason": "G5 M0-T102: a reviewer agent could mutate the working tree through PowerShell despite the read-only guard; machine enforcement must replace the procedural stopgap.",
+  "inputs": [],
+  "outputs": [
+    ".claude/hooks/readonly_agent_guard.py (PowerShell/scripting write interception, fail-closed envelope, reduced read-only false positives)",
+    ".claude/settings.json (PreToolUse matcher extension - reviewed config change)",
+    "regression tests for the guard (RED-on-mutant) alongside the existing guard tests",
+    "project-control/reports/M0-T108-guard-powershell-fix.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".claude/hooks",
+    ".claude/settings.json",
+    "tools/test_readonly_agent_guard_powershell.py",
+    "project-control/reports/M0-T108-guard-powershell-fix.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-26T22:31:58.338868+00:00",
+  "updated_at": "2026-08-27T04:55:21.512070+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-26T22:31:58.340873+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-27T02:22:16.450522+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 60,
+      "status": "rework",
+      "message": "Consolidated correction round (G3 FAIL + G5 C1-C4 blocking + G4 HIGH advisory). Confirmed-real bypasses to fix: [D1/C1/A2] PS write aliases ac/clc/mi/epcsv/sp/rp + mkdir; [D2] .NET ::new() writer constructors (StreamWriter/FileStream/BinaryWriter); [C2] COM (New-Object -ComObject) + CIM/WMI Win32_Process.Create; [D3] nested-shell (powershell/pwsh/cmd) laundering made shell-agnostic (Bash path too); [C3/A4] remove redundant _PS_ENCODED (fixes -Encoding read false-positive; encoded cmd already denied by nested-shell); [A3] ${null} redirect target; [A1] PS call-operator quoted-literal unwrap in _ps_normalize (Bash-side 'gh' quoted-literal is PRE-EXISTING in shared _MUTATING core -> documented residual + follow-up, not broadened to avoid grep-read FPs); [D4] read command text defensively from all tool_input string values so an unconfirmed PowerShell field name cannot fail open; [C4] honest residual docstring. Plus RED-on-mutant rows for each new tooth."
+    },
+    {
+      "at": "2026-08-27T02:38:53.577410+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "in_progress",
+      "message": "Correction round applied: all G3 D1-D4 + G5 C1-C4 + G4 A1-A3 addressed and proven RED-on-mutant (PS pack 138/138, 8 mutants; Bash pack 136/136 unchanged; ruff clean). Deliverable re-frozen for delta re-review."
+    },
+    {
+      "at": "2026-08-27T03:01:49.106440+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "rework",
+      "message": "G5 delta FAIL: 2 confirmed material bypasses on the correction delta. F1 (MEDIUM): New-Object -Com/-ComO/-ComObj prefix abbreviation reopens COM file-write (regex only matched -ComObject\\b). F2 (MEDIUM): start/saps (Start-Process aliases) fronting powershell/pwsh/cmd -enc = ungoverned encoded child shell; DENY->ALLOW regression from removing _PS_ENCODED wholesale. G3 delta PASS + G4 delta PASS hold (additive teeth, no regression to their scope). Round-3 fixes: F1 -Com\\w*; F2 add start/saps spawn-deny + scoped encoded-check (fires after powershell/pwsh token anywhere in segment); A1 broaden CIM/WMI (Set/New/Remove-CimInstance, Win32_Service Change); G3-A1 fix _launches_nested_shell docstring to match code (powershell/pwsh/cmd) + note bash/sh/wsl residual; G3-A2 report bookkeeping (mutant count, 707 lines); +RED-on-mutant rows for F1/F2."
+    },
+    {
+      "at": "2026-08-27T03:07:45.836300+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Round-3 fixes applied: F1 COM -Com\\w* prefix; F2 start/saps spawn-deny + scoped _PS_ENCODED_CMD (fires only with a powershell/pwsh token, no -Encoding collision); A1 all Invoke-Cim/WmiMethod + Set/New/Remove-CimInstance denied (Get-CimInstance read allowed); G3-A1 docstring parity; G3-A2 bookkeeping. PS pack 159/159 (13 mutants), Bash 136/136, ruff clean. Re-freezing for round-3 re-review."
+    },
+    {
+      "at": "2026-08-27T03:40:30.476502+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 88,
+      "status": "rework",
+      "message": "Round-3 re-review complete: G3 FAIL (D-R3-1 -Encoding+shell-word FP), G4 PASS (+ADV-3 fail-open COM -c/-co), G5 FAIL (NF1 COM -C/-Co + [activator]::CreateInstance reflection = arbitrary write; NF2 $z=powershell -enc/-e assignment-fronted encoded shell). All findings converge on command-position-aware detection. ROUND-4 (owner-authorized 'yes do it'): (1) COM tooth New-Object -c\\w* + deny GetTypeFromProgID/[activator]::CreateInstance; (2) command-position shell/spawn detection with assignment-RHS ($x=powershell) - fixes D-R3-1 FP AND NF2; remove _PS_ENCODED_CMD/_PS_HAS_SHELL; (3) start/saps as command-position _SPAWN_ALIAS (fixes ADV-1); (4) docstring honesty. +RED-on-mutant rows."
+    },
+    {
+      "at": "2026-08-27T03:47:31.506931+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 92,
+      "status": "in_progress",
+      "message": "Round-4 applied (owner-authorized): NF1 COM floor -c\\w* + Activator/GetTypeFromProgID reflection; NF2 command-position nested-shell via _effective_command_token (assignment-RHS $x=powershell) - removed fragile _PS_ENCODED_CMD/_PS_HAS_SHELL; D-R3-1/ADV-2 -Encoding+shell-word reads now ALLOW; ADV-1 start/saps moved to command-position _SPAWN_ALIAS; docstring honesty. PS pack 187/187 (15 mutants), Bash 136/136, ruff clean, modularity 0 failures. Re-freezing for round-4 re-review."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-27T04:55:21.512070+00:00"
+}

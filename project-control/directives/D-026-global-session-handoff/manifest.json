@@ -1,0 +1,98 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-026",
+ "version": 1,
+ "slug": "global-session-handoff",
+ "title": "Hybrid global/project /session-handoff: personal skill at ~/.claude/skills/session-handoff/SKILL.md (personal OVERRIDES project per official docs) doing live-git root detection and deliberately loading <repo-root>/.claude/session-handoff-profile.md (identity-verified, repo-root-relative routing), with a generic established-convention fallback, HANDOFF BLOCKED on ambiguity, and no writes outside a git repo without owner confirmation; the existing project skill is slimmed into a profile-following repository fallback (never deleted, no drift); all D-025 safe-landing behavior preserved; tested via structural checks, ctl24 dry-run, disposable-repo generic fallback, and non-git fail-safe; minimum governance record; no D-024 directive modification; no real handoff unless the owner invokes without dry-run.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-25",
+ "captured_at": "2026-08-25T20:40:00+00:00",
+ "created_at": "2026-08-25T20:40:00+00:00",
+ "updated_at": "2026-08-25T20:40:00+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-25T20:40:00+00:00",
+   "content_digest_sha256": "fdf02d638118427f98f37d36918486c60f6f086929049af0b3e8b52a895c2c12"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T098"
+ ],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "bounded-utility",
+  "task_ids": [
+   "M0-T098"
+  ],
+  "task_types": [
+   "governance"
+  ],
+  "allowed": "one small task (M0-T098): global personal skill (user dir), project profile, slimmed project fallback skill, tests, minimal control records",
+  "excluded": "modifying the D-024 directive or its capture; a second competing handoff system; broad user-folder access; running a real (non-dry-run) handoff without explicit owner invocation; deleting the project skill"
+ },
+ "applicability_note": "Prohibitions binding session conduct also bind the NON-LEDGER sentinel D-026-BOOTSTRAP; all rows bind ledger task M0-T098 and are verified at its DCV. Relationship: D-026 AMENDS THE IMPLEMENTATION delivered under D-025 (slims the project skill into a profile-following fallback) while preserving D-025's frontmatter and safe-landing behavior contract; it does not supersede or withdraw D-025. The verbatim source-001.md governs on any wording question.",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner terminal prompt 2026-08-25 ordering the hybrid structure with the documented personal-over-project precedence correction."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-026-R001",
+  "D-026-R002",
+  "D-026-R003",
+  "D-026-R004",
+  "D-026-R005",
+  "D-026-R006",
+  "D-026-R007",
+  "D-026-R008",
+  "D-026-R009",
+  "D-026-R010",
+  "D-026-R011",
+  "D-026-R012",
+  "D-026-R013",
+  "D-026-R014",
+  "D-026-R015",
+  "D-026-R016",
+  "D-026-R017",
+  "D-026-R018",
+  "D-026-R019",
+  "D-026-R020",
+  "D-026-R021",
+  "D-026-R022",
+  "D-026-R023",
+  "D-026-R024",
+  "D-026-R025",
+  "D-026-R026",
+  "D-026-R027"
+ ],
+ "requirements_id_digest_sha256": "347d4bd15b350e59b8ab2b1501e01e2dec033c77090b1f112413914f99fca9d5",
+ "requirements_content_digest_sha256": "11441325c8da621bab60ca3921a3e18656e66f7201219b0910395d41d1338cfe",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-25T20:40:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001.md verbatim (sha256 fdf02d638118427f98f37d36918486c60f6f086929049af0b3e8b52a895c2c12, 5805 bytes); decomposed into 27 requirements; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9; session Gate-0 re-verified before capture (cwd ctl24, branch control/D-024-fable-codex-loop @ a8cefe0, clean tree, 'claude mcp list' = no servers). D-026 amends the D-025 implementation (project skill becomes a profile-following fallback); D-024 campaign untouched (M0-T088 remains the campaign record's NEXT action)."
+  }
+ ]
+}

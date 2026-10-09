@@ -1,0 +1,27 @@
+M5-T021 CI evidence (captured by the orchestrator)
+
+Material: pins d62a779e + browserslist override 3cd3b93c + BOT lock d83bcfe5 (generate-lockfile
+run 34726113984 SUCCESS) + vitest-4 S4 focus correction 18ee6b79 (ratified into allowed_paths).
+
+Lockfile proof chain (the sanctioned thin-client path, .github/workflows/generate-lockfile.yml):
+  Run 34726060266  FAILURE (by design, fail-closed): blocking audit caught the browserslist
+    resolution preserved by npm install --package-lock-only; the bot committed NOTHING.
+  Run 34726113984  SUCCESS end-to-end after the browserslist 4.28.9 override: npm 11.18.0
+    pinned -> lock regenerated (.npmrc min-release-age=7 + save-exact honored) -> npm ci
+    deterministic (integrity + lock<->package.json) -> blocking npm audit PASS + audit JSON
+    total vulnerabilities == 0 across EVERY severity -> committed-lock release-age gate PASS
+    -> npm CLI advisory PASS -> bot commit d83bcfe5.
+
+Decisive CI runs:
+  Run 34726200121 (head d3c8e055): web-dependency-security SUCCESS for the FIRST TIME - the
+    last standing CI red RETIRED; web (build on next 15.5.24) + api SUCCESS. Two convergence
+    failures inventoried before fixing: web-e2e (1/448 vitest-4 focus-timing assertion in the
+    accepted S4 address test) and control-plane (pre-existing hardcoded-D-042 fixture
+    collision, separate task M0-T157).
+  Run 34726577993 (head 18ee6b79): **CONCLUSION SUCCESS - EVERY JOB GREEN. The first fully
+    green CI run on the branch.** web-dependency-security, web, web-e2e (448/448 on vitest
+    4.1.11), api, control-plane, contracts, typegen, bundle, modularity, supervisor-bridge -
+    zero failures, zero owner-gated reds remaining.
+
+Local: thin client - no npm ran locally at any point; the lockfile was generated and proven
+exclusively on the GitHub runner (deployment rule + LOW_STORAGE policy).

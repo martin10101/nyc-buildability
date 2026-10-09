@@ -1,0 +1,435 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-076",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All requirements bind the non-ledger sentinel D-076-BOOTSTRAP at capture; phase-B packets are bound by applicability append at contract time. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-24T21:33:43+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T048",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002",
+    "D-076-R003"
+   ],
+   "reviewed_sha": "499ae64208903a9161105adaf131b1c0a71426ba",
+   "reviewed_manifest_sha256": "41719272d3d07de52d0f7148c612a80d9bdd353566d05c467040d2729ed32271",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T11:49:14.717379+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: the increment equals the plan's B0 row exactly (proposed_massing input class, additive bump, server-side validation, typed refusals, NO evaluation change); name-status of both material commits entirely inside allowed_paths; builder/derive/api/rules/spatial/profile/connectors/web all untouched. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: proposals are a third input class - validate_proposed_massing returns None and computes NO allowance (grep-proven: allowance/far/floor_area/coverage/footprint/setback appear only in disclaiming docstrings); kind schema-enforced literal 'proposed'; contract.py threads without deriving. Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
+    },
+    {
+     "id": "D-076-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: closed-enum additive append ['1.0.0','1.1.0']; both schema copies byte-identical (LF sha256 dc41be0e... both; G1 additionally reproduced RAW-byte equality); 1.0.0 documents stay valid; TS regenerated via the accepted typegen with --check byte-identity; the released phase-B slice respected (no 3D/19-pack/GDS/master-plan change; hold cross-reference in place). Stamped at 499ae64208903a9161105adaf131b1c0a71426ba under the DCV empty-diff pre-authorization (project-control/reports/M5-T048-DCV.md) - reproduced at record time: git diff 15c1b3a4..499ae64208903a9161105adaf131b1c0a71426ba EMPTY on all 11 allowed_paths; evaluate_task_refs ok, applicable==cited (4 ids); foreground validator exit 0 at the target; the peer commits between freeze and target (gate records 8e728e91, M5-T050 material cherry-pick bcfcc538, DB-034 backlog append) are all inside the stated disjoint tolerance."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T053",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "ce11d09fea402cbfd5b0b0a64b4cc717790e6e09",
+   "reviewed_manifest_sha256": "9b8d80183dc72dfae6254f40bb7eebb18b624578a2a9de30706fa7a10ab804f0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T16:47:22.582647+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: validation-only wiring within the released phase-B slice - the 5 allowed_paths and nothing else; NO storage/derivation/evaluation; forbidden paths untouched; no 3D/pack/GDS/master-plan change. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: the acceptance echo = result/kind-literal/block_digest/correlation_id with the exact-key-set test + the zero-derived-value grep; the input gate is monotone over the accepted validator (counts first, delegates unchanged last, same-field spot proofs); the third-input-class discipline holds. Stamped at ce11d09fea402cbfd5b0b0a64b4cc717790e6e09 under the DCV pre-authorization (M5-T053-DCV.md) whose conditions the DCV itself reproduced AT 246514031: empty git diff 31cbc74b..target on all 5 allowed_paths; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T051",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "bdb54765f8828cb7d22dd1556f2d57ff77f4024c",
+   "reviewed_manifest_sha256": "bcacbc7d8b436b3c69023a9b7a69aaec50fe91c7491c974c22a4263c4bb2c809",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-19T16:59:58.953298+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: the increment equals the plan's B1 row 1:1 (title/gates/producer/scope); material name-status = only the in-scope files; NO rules/api/contract/spatial/master-plan/GDS/3D change. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified: facts never allowances - source_class 'proposed_derivation' on every EvidenceRecord; the declared gross-treatment vocabulary (never 'zoning floor area'); the binding no-allowance-language test; typed honest absence on the unattested street case; grep-clean module. Stamped at bdb54765f8828cb7d22dd1556f2d57ff77f4024c under the DCV pre-authorization (M5-T051-DCV.md) whose conditions the DCV itself reproduced AT bdb54765: empty git diff ce11d09f..target on all 6 allowed_paths + fixtures; evaluate_task_refs ok applicable==cited; validator exit 0; peers all inside the stated disjoint tolerance (gate records + the M5-T051/T053 lanes). Orchestrator re-reproduced all three conditions at the accept head after stamping."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T054",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "ca5585572546f26c7a41504a4e9e2d9b58560b16",
+   "reviewed_manifest_sha256": "7b69e1e66219434dbbe16e972d9dd925f1a694c848757357a27aa8a38f790081",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T06:06:06.492959+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 2): the increment equals the plan's B2 row verbatim (existing rule families vs proposal-derived facts through the EXISTING evaluator; scenario label on every result; COULD-NOT-CHECK first-class; numeric shortfalls provided/required/unit); no route change (api/ forbidden and absent from the material commit). Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 3): facts-vs-allowances structural (provided_value = PROVIDED fact source_class proposed_derivation; required_value = rule OUTPUT; derived facts never fed as rule INPUTS; summary always carries could_not_check_count); the AS-1 [ORCH-SCOPE-DISPOSITION] (G2 record + report section 4) ruled CONSISTENT with the requirement text - the commensurability refusal IS the mandated honesty; all four reviewers concurred explicitly. Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T057",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "2fbd661e0afdd664d5d83daafd46ebf9ef9bfec1",
+   "reviewed_manifest_sha256": "c662a1cd6f34419ac384b10b2f11533b51d0765cfe3fe3ae566bbfcc82eab9f9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T09:34:29.968177+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta re-affirmed SATISFIED at the rework identity (M5-T057-DCV.md delta SSB row 2): B3 slice 1 delivers the plan's route seam in the recorded order (B2 M5-T054 accepted first), grounded in existing machinery (check_proposal + scenario seams + T053 primitives re-verified in the NEW route source), one mount in byte-unchanged main.py, no contract-schema change, no new dependency (run_in_threadpool is transitive FastAPI runtime). The plan-row gate-shape observation (backend slice vs the plan's frontend B3 row) is recorded non-blocking; the UI slice must carry G1/HJ. Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta re-affirmed SATISFIED, strengthened by the rework (M5-T057-DCV.md delta SSB row 3): single engine entry (check_proposal exactly once via run_in_threadpool+partial, bound by the source assertion + counting spy), NO emission (report.as_dict() + correlation_id only; BP-6 test), could-not-check honesty channel intact (summary counts, per-result reasons, source_class proposed_derivation), and the rework WITHDREW a false boundary claim and closed the class - honesty moved in the required direction. 552-pass suite green at the DCV's own re-run. Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T061",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "5f7b032e1343d436aad56ea29315a3b5ad0d1aa6",
+   "reviewed_manifest_sha256": "51a173527473d916b2e29c75c99b639924b9e311c7220b0683a72b60d967aa61",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:13:31.264880+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: phase-B hardening of the released proposal-checks route (the B3 HTTP seam onto the accepted B2 engine) inside docs/PROPOSAL_EDITOR_PHASED_PLAN.md scope; no new flag (reuses INTERNAL_RULE_EVAL_ENABLED), no new dependency, (200/404/413/422/500) matrix unchanged (PROPOSAL_CHECKS_STATUS_STATE_MATRIX byte-checked)."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: proposal is a third input class validated only against registry-declared vocabulary/bounds (derive_input_domains copies every bound from InputSpec fields - no invented limit); route stores nothing and emits no scenario document; typed bounded refusals echo range/length only; producer-report honesty intact at the frozen identity (LF digest match, no post-hoc rewrite). Corroborated by G5's independent adversarial numeric-bypass probe (all refused typed, no echo)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T060",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "254841936d9ac14650f0b92a617ff78c3652941a",
+   "reviewed_manifest_sha256": "0b9ff84b481d309ae2e6fdb99b49f13d742180fe2d7034e446adcd1867ee9126",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T22:39:17.557850+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the B3 slice-2 flat numeric-2263 editor over the accepted route per docs/PROPOSAL_EDITOR_PHASED_PLAN.md; the three D-076-R003-deferred items (map drawing, 4326-to-2263 bridge, scenario emission) grep-proven ABSENT from the material; srid=2263 fixed in the request model."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: proposed-not-a-record labels on all three surfaces; no emission/persistence (no contract_version, no browser storage); typed bounded refusals with every reflected server string bounded; the client mirror value-for-value equal to the route source and documented as never widening server authority ('computes no legal value... the server refusal remains the single truth surface'); pass/fail/could-not-check distinct by icon+text with the announcer leading on fail/CNC counts. Corroborated independently by G3 (value-by-value mirror check), SEC (rendering/ephemerality walkthrough), and HJ (honesty framing judged strong)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T065",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "a3b62c906a6e1adeaaae664355f254349ce5d5ce",
+   "reviewed_manifest_sha256": "648929ec9214fe6f296d189b08eb1b6fc32a4aed0b946d04762adf392388e18b",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:55:56.560960+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: phase-B increment grounded in the EXISTING engine - the bridge reuses the two accepted connector representations of the SAME parcel read-only; adoption feeds the accepted draft model and the accepted proposal-checks engine (e2e AS-4 runs the check on the adopted shape); no parallel concept; report M5-T065-DCV.md."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: proposed third-input-class never a record ('your sketch, not a city record'; server disclosure 'not a survey'); every measurement server-side deterministic (client computes no coordinate); residual disclosed verbatim never laundered; adoption forces a fresh distinct-outcome check; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: grounded in the existing scenario machinery - consumes check_proposal, validate_proposed_massing, LotContext, and the accepted RuleRegistry; the candidate is the accepted B0 massing shape; no parallel concept; report M5-T064-DCV.md."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the fixed ENVELOPE_DISCLOSURE marks every output a rules-derived ESTIMATE never a record/permit/approval with professional review required; gaps kept distinct from binding values (XOR invariant test); every value carries provenance; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: phase-B increment over the existing engine - the click layer is pure input UI feeding the accepted drawing-bridge-adoption spine (outline-bridge-api FORBIDDEN and untouched); no new math path; e2e runs the accepted check on the adopted shape; report M5-T066-DCV.md."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: third-input-class honesty preserved and improved - HJ-1 copy describes the interaction that exists; proposed-not-a-record labels retained; NO client CRS math (grep-proven); keyboard parity complete (click is an addition); DB-043(a) focus remedy intact; HJ-4 persistent min-hint; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2): proposed-not-record labeling survives verbatim; the finiteness work is an input gate, not a calculation (no client measurement added; conversion stays server-side through the untouched bridge client); announced count == overlay count via finitePointCount; the count-only-enablement revert tooth reproduced; the mixed finite/untyped silent-drop found independently, judged a routed disclosure gap (DB-049(a)), not an R002 violation."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-076-R001",
+    "D-076-R002"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3, with the row-labeling note corrected in the map pre-accept): phase-B grounding verified - the increment builds on the existing scenario machinery as the phased plan requires, with the no-client-math doctrine confirmed by inspection (transport/bounding only, no client limit derivation)."
+     ]
+    },
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3, with the split-district rider): proposed stays a third input class end-to-end (verbatim candidate seeding, PROPOSED provenance, no record claims, no approval from a passing subset). HJ finding 1 (split-district silent omission) judged non-blocking ONLY because the route is verifiably unmounted (every include_router line checked); it MUST close before the mount - recorded as the top pre-mount closer."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T078",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "c5dd725ccedd73424ea5ca0a9f87fa926f4a7d5125480251306d7683caf1ce24",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: omission never silent (omittedRowsClause; omittedOnConvert names converted AND omitted counts); per-row incomplete markers + aria-invalid; the drawing total labelled 'a UI row tally, never a zoning number' and 'converted to official-grid feet on the server'; value and gap states stay distinct; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: adopt seeds 'Generated building option' and every value stays labelled proposed; street width server-determined, never client-inferred; could-not-check distinct from a value; no passing subset shown as whole-building approval; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-076",
+   "task_id": "M5-T095",
+   "applicable_requirement_ids": [
+    "D-076-R002"
+   ],
+   "reviewed_sha": "442b2dd263be079393d776d9d53f830d881cc1e3",
+   "reviewed_manifest_sha256": "d51ff82d96bbdc6ffd7907911d32059e187b002e6ca38bf6c4d51177545e4827",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:33:43+00:00",
+   "requirements": [
+    {
+     "id": "D-076-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: validate_proposed_massing stays a pure deterministic validator (no derivation, no allowance); refusals stay typed and field-named; decision identity proven by the producer's 360k probe + committed 24,159-ring corpus and independently by G3 (520k adversarial, EPSG:2263 magnitudes) and G5 (30k fuzz) - 0 disagreements; nothing is labelled a city record or approval. Blob-level restamp predicate re-verified by the orchestrator at the accept head 442b2dd2 (proposal.py d00b1728, test_proposal_validation_budget.py e25d19bb, M5-T095-producer-report.md eeb81b3a; identity d51ff82d; evaluate_task_refs ok); report M5-T095-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
+}

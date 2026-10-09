@@ -1,0 +1,141 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-091",
+ "version": 1,
+ "slug": "cloud-loop-dual-review",
+ "title": "Owner 2026-10-02 ('Move the loop here' + both Codex and Claude review finished work, then a higher-end model combines the best of both reviews): port the loop to the cloud server (option 2: Linux rework, review and certification, Codex after the dependency-security check, owner sign-in) with a dual-review-plus-combiner design; B-026 closes only by the real fix; NO stop condition lifted",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-10-02",
+ "captured_at": "2026-10-02T04:56:13+00:00",
+ "created_at": "2026-10-02T04:56:13+00:00",
+ "updated_at": "2026-10-02T23:36:05+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "c81ba14d6609e5bc892a33090c9311390d5866e4",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed it in-channel after the session's options reply, choosing option 2 and adding the review design. It lifts no hold and changes no gate. Codex is admitted only through dependency security; the Codex sign-in is the owner's; loop commissioning stays owner-typed; B-026 closes only by the real fix."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-091-R001",
+  "D-091-R002",
+  "D-091-R003",
+  "D-091-R004",
+  "D-091-R005",
+  "D-091-R006",
+  "D-091-R007",
+  "D-091-R008",
+  "D-091-R009"
+ ],
+ "requirements_id_digest_sha256": "30029590036b56e20e0c3deeb15ad8186ab2acb0a69499f4c10aad49e51d5285",
+ "requirements_content_digest_sha256": "e416ea7d525dcccabc0838c5755182f407f901ea1457bf59a7b62bb7396ef62b",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-10-02T04:56:13+00:00",
+   "content_digest_sha256": "efaf51b29b0853c024ec59f5f0e819624d4f662379367f24fffc297fb2ca0f1c"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-10-02T21:24:08+00:00",
+   "content_digest_sha256": "75e479ccf050bc1acea5e668505ea850a9e1d20e8fd57dfa0e9a2623d8485d07",
+   "amends": "source-001.md"
+  }
+ ],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [
+  "M0-T165",
+  "M0-T166",
+  "M0-T167",
+  "M0-T168",
+  "M0-T169",
+  "M0-T170",
+  "M0-T171",
+  "M0-T172",
+  "M0-T173",
+  "M0-T174",
+  "M0-T175",
+  "M0-T176",
+  "M0-T177",
+  "M0-T178",
+  "M0-T179"
+ ],
+ "affected_prs": [
+  284
+ ],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "loop_port_and_review_design",
+  "task_ids": [],
+  "task_types": [
+   "governance"
+  ],
+  "allowed": "designing and building, through ledger tasks and the normal gates, a Linux version of the loop on the cloud server with Codex and Claude reviews and a combining model; admitting Codex through the dependency-security gate",
+  "forbidden": "closing B-026 without the fix; installing Codex before its admission passes; handling the owner's credentials; doing owner-typed commissioning steps; weakening gates, reviewer independence or the controller's fail-closed checks; lifting any hold; any Tier D action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-10-02T04:56:13+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting, by script from session 9ee08959's transcript; nothing retyped. frozen_baseline_sha = integration head c81ba14d (origin/main d8b3899f). R001-R008 pending and bound to the sentinel D-091-BOOTSTRAP until tasks are contracted. Capture session: 9ee08959, claude-opus-5-5, Gate 0 passed."
+  },
+  {
+   "at": "2026-10-02T05:17:54+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "First wave contracted from the design (docs/D091_CLOUD_LOOP_DESIGN.md): M0-T165 (T1 platform seam; R001, R007), M0-T166 (T2 Linux launcher + bash shell-routing harness; R001, R007; depends M0-T165), M0-T167 (T4 Codex admission; R005, R001), M0-T168 (T5 Claude reviewer path; R002, R001, R007). Task ids appended to applicability.task_ids and maps_to.tasks of those rows (requirement text unchanged); content digest resynced. Design change: the recertification runs after all D-091 code tasks, not before T5/T6. R003/R008 wait for the owner's combiner choice; R004/R006 later."
+  },
+  {
+   "at": "2026-10-02T07:27:32+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "Wave 2 contracted: M0-T169 (T6 review combiner; R003, R001, R007; the combining model is a required setting with no default, so the build does not decide R008, which stays an open owner choice) and M0-T170 (T7 resource fit; R001, R007). Task ids appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. M0-T165, M0-T167 and M0-T168 are accepted."
+  },
+  {
+   "at": "2026-10-02T09:02:43+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "Wave 3 contracted from docs/D091_WAVE3_WIRING_PLAN.md: M0-T171 (TW1 atomic review slots; R001, R007), M0-T172 (TW2 dual-review conductor in the loop; R002, R003, R001, R007), M0-T173 (TW3 Linux resource wiring; R001, R007), M0-T174 (TW4 Linux recertification; R007, R001), M0-T175 (TW5 commissioning; R006, R008, R001, R007). Task ids appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. R008 stays the owner's choice (needed only to enable the combiner at TW5); R004 (B-026) is not bound."
+  },
+  {
+   "at": "2026-10-02T11:45:01+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "M0-T176 contracted (follow-up to accepted M0-T171; R001, R007): on windows-latest the review-slot lock refuses at once on a PermissionError (delete-pending lock file under contention), so RaceTests::test_global_last_slot_never_double_taken flaked 1 != 2 in PR #312 CI (run 37001721581). Fix: wait through that sharing violation to the deadline (fail closed at timeout). Task id appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. M0-T174 (recertification) now also depends on M0-T176."
+  },
+  {
+   "at": "2026-10-02T20:48:54+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "M0-T177 contracted (B-027, reproduced defect: the Linux loop cannot start a live worker; systemd control-group containment the gates can prove + the POSIX self-kill fix; R001, R007) and M0-T178 (DB-103: dual_review refuses equal combining and Claude reviewer models; R001, R007; depends on M0-T177). Task ids appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. A Linux recertification superseding M0-T174 follows both; the activation-PIN amendment is the owner's."
+  },
+  {
+   "at": "2026-10-02T21:24:08+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-002 (session 08a1e891 message 34: the owner approves amending the activation PIN so a proved systemd control group counts as containment) and requirement D-091-R009 (authorization, pending). Text extracted by script from the session transcript; nothing retyped. No existing row edited. Capture session: 08a1e891, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-02T23:36:05+00:00",
+   "actor": "orchestrator",
+   "action": "scope_binding",
+   "note": "M0-T179 contracted: the Linux recertification superseding M0-T174 after M0-T177 (B-027 containment) and M0-T178 (DB-103) changed tools/agent_supervisor (R001, R007; depends on both). Task id appended to applicability.task_ids and maps_to.tasks (requirement text unchanged); content digest resynced. Commissioning stays owner-typed (M0-T175)."
+  }
+ ]
+}

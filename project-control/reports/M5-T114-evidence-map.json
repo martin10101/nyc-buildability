@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T114",
+ "material_commit": "2f350015 (cherry-pick of wt-m5t114 c9349900; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T05:26:25+00:00",
+ "producer": "product-design-director (orchestrator-dispatched subagent; worktree wt-m5t114)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet carries the graph-derived navigation block (graph regenerated at the wave-1 contract seam 93b94019: 844 files / 18356 nodes / 7841 edges) naming the route/state entry points; the producer (no shell) used the accepted P0 route/state map instead of query.py and read the current web source at the pinned head; the graph stayed advisory. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-083-R001": [
+   "The spec's copy samples (section 9) and vocabulary (section 2.1) keep only the two honest source labels ('Proposed - not a city record', 'Generated building option') and ban permitted / approved / maximum-allowed claims; any meaning-changing copy is held in the meaning-change register (MR-1..MR-8), not adopted. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-086-R001": [
+   "docs/UI_DEEP_DIVE_ASSESSMENT.md is used as INPUT (section 14 P1 row, sections 4-11) - never as authorization; the phase label P1 is report-local and the ledger task id M5-T114 was assigned by the orchestrator. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-086-R002": [
+   "P1 (visual/state specification) is contracted as the gated ledger task M5-T114 after the accepted P0 (M5-T080), with the assessment's exit gate (a design walkthrough over normal/boundary/missing/failure states) mapped to G3 by the visual-quality-reviewer plus a human-journey review; deliverables: one status vocabulary, a 7 x 4 coverage matrix, per-surface desktop + mobile annotations, copy samples and one static mockup file. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-086-R003": [
+   "Preservation: section 7 is a checklist keeping the PRD section-29 disclaimer verbatim at full prominence, the exact returned disclosures and the city-warning visibility; every L-marked P0 ledger row for the seven surfaces is placed with its accessibility and print path; eight meaning-change items (MR-1..MR-8) are NOT adopted but routed to qualified review. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-086-R004": [
+   "Sequencing honoured: design-cleanup contracting follows the closed T072-T076 waves and the D-085 seam; P0 (M5-T080) was accepted first and P1 is the next phase in order. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-087-R001": [
+   "Capacity unit under D-087 + D-089 (overnight task-after-task): contracted at 93b94019 (G0), claimed at 275ef85f with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with three disjoint packets (M5-T111/T112/T113); no state or gate skipped. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ],
+  "D-087-R002": [
+   "G0 disjointness EMPTY vs every active task; one worktree wt-m5t114; the producer commit touches exactly the 3 allowed docs paths (verified by git show --stat), every file MATCH by blob. [ORCH-HARVEST] at the harvested head 2f350015 (cherry-pick 2f350015; Python 3.11 local): `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\9f312b0f-9155-4436-b27d-d471179bfe2b\\scratchpad\\checks\\p1_check.py` (cwd .) -> exit 0: P1 check: PASS (html 35591 chars, spec 60850 chars, report 10678 chars)."
+  ]
+ }
+}

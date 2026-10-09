@@ -1,0 +1,111 @@
+{
+ "requirements": {
+  "D-025-R001": [
+   ".claude/skills/session-handoff/SKILL.md",
+   "commit daabf2c (pushed to origin/control/D-024-fable-codex-loop)"
+  ],
+  "D-025-R002": [
+   "daabf2c touches no D-024 source/requirements/verification; only manifest scope-binding fix with append-only audit_log entry (outside M0-T097 allowed_paths)",
+   "project-control/directives/D-024-fable-codex-loop/manifest.json audit_log[-1]"
+  ],
+  "D-025-R003": [
+   "ledger: M0-T086..M0-T096 all backlog, none claimed during M0-T097",
+   "project-control/state.json @ daabf2c"
+  ],
+  "D-025-R004": [
+   ".claude/skills/session-handoff/SKILL.md exists at daabf2c"
+  ],
+  "D-025-R005": [
+   ".claude/skills/session-handoff/SKILL.md lines 1-6 (frontmatter exact)",
+   "project-control/reports/M0-T097-session-handoff-skill.md section How-it-was-tested item 1 (YAML parse + field comparison)"
+  ],
+  "D-025-R006": [
+   ".claude/skills/session-handoff/SKILL.md frontmatter contains no context: key (structural test)"
+  ],
+  "D-025-R007": [
+   ".claude/skills/session-handoff/SKILL.md frontmatter contains no agent/background execution key (structural test)"
+  ],
+  "D-025-R008": [
+   ".claude/skills/session-handoff/SKILL.md frontmatter contains no allowed-tools grant (structural test)"
+  ],
+  "D-025-R009": [
+   ".claude/skills/session-handoff/SKILL.md intro paragraph: runs inline in main conversation; never delegate to sub-agent/fork/background"
+  ],
+  "D-025-R010": [
+   ".claude/skills/session-handoff/SKILL.md frontmatter disable-model-invocation: true (owner-only)"
+  ],
+  "D-025-R011": [
+   ".claude/skills/session-handoff/SKILL.md ARGUMENTS paragraph: reason recorded verbatim; dry-run literal selects preview"
+  ],
+  "D-025-R012": [
+   ".claude/skills/session-handoff/SKILL.md intro + sections A/B/C: one handoff system - ledger, git, supervisor status/export-handoff, canonical docs/SESSION_HANDOFF.md"
+  ],
+  "D-025-R013": [
+   "project-control/tasks/M0-T097.json (single smallest task, gates G0/G2/G3, 3 allowed_paths); no D-024 rewrite"
+  ],
+  "D-025-R014": [
+   ".claude/skills/session-handoff/SKILL.md section A item 1"
+  ],
+  "D-025-R015": [
+   ".claude/skills/session-handoff/SKILL.md section A item 2"
+  ],
+  "D-025-R016": [
+   ".claude/skills/session-handoff/SKILL.md section A item 3 (healthy agent finishes; no productive kill; stops recorded)"
+  ],
+  "D-025-R017": [
+   ".claude/skills/session-handoff/SKILL.md section A items 4-5 (reconcile results; enumerate in-flight; ambiguity blocks readiness)"
+  ],
+  "D-025-R018": [
+   ".claude/skills/session-handoff/SKILL.md section B item 1 (only actually-completed work; never round up)"
+  ],
+  "D-025-R019": [
+   ".claude/skills/session-handoff/SKILL.md section B item 2 (minimum validation, exact commands+outcomes)"
+  ],
+  "D-025-R020": [
+   ".claude/skills/session-handoff/SKILL.md section B item 3 (policy-gated commit/push; never force-commit broken/unverified)"
+  ],
+  "D-025-R021": [
+   ".claude/skills/session-handoff/SKILL.md section B item 3 (uncommitted preserved untouched + recorded per file)"
+  ],
+  "D-025-R022": [
+   ".claude/skills/session-handoff/SKILL.md section A item 1 sentence 2 (no new implementation unit while landing)"
+  ],
+  "D-025-R023": [
+   ".claude/skills/session-handoff/SKILL.md section C header (REPLACE, current-only)"
+  ],
+  "D-025-R024": [
+   ".claude/skills/session-handoff/SKILL.md section C items 1-18"
+  ],
+  "D-025-R025": [
+   ".claude/skills/session-handoff/SKILL.md section C closing line (no secrets/credentials/enormous logs/transcript)"
+  ],
+  "D-025-R026": [
+   ".claude/skills/session-handoff/SKILL.md section D (six validation checks)"
+  ],
+  "D-025-R027": [
+   ".claude/skills/session-handoff/SKILL.md section D HANDOFF BLOCKED contract (explain; never instruct clearing the session)"
+  ],
+  "D-025-R028": [
+   ".claude/skills/session-handoff/SKILL.md section E (HANDOFF READY + 4 numbered print items incl. clean-start command with approved MCP posture)"
+  ],
+  "D-025-R029": [
+   ".claude/skills/session-handoff/SKILL.md section F (successor prompt: all nine required instructions)"
+  ],
+  "D-025-R030": [
+   ".claude/skills/session-handoff/SKILL.md DRY-RUN section (strictly read-only; no edit/commit/push/agent-stop/ledger change; DRY-RUN ONLY footer)"
+  ],
+  "D-025-R031": [
+   "project-control/reports/M0-T097-session-handoff-skill.md items 2-3: dry-run executed read-only (git status unchanged); real operation executed as this landing (validator EXIT=0, SESSION_HANDOFF replaced, commit daabf2c (pushed to origin/control/D-024-fable-codex-loop), HANDOFF READY printed)"
+  ],
+  "D-025-R032": [
+   "project-control/reports/M0-T097-session-handoff-skill.md item 4: structural registration verification (standard .claude/skills path, frontmatter shape == 12 working skills); interactive listing owner-observable; limitation reported truthfully"
+  ],
+  "D-025-R033": [
+   "commit daabf2c (pushed to origin/control/D-024-fable-codex-loop)",
+   "independent G3 + DCV recorded at daabf2c in this gate round (this submission)"
+  ],
+  "D-025-R034": [
+   "owner completion report delivered in the session terminal at task close (what was created / how tested / readiness), generated from the verification matrix"
+  ]
+ }
+}

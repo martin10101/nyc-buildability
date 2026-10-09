@@ -1,0 +1,33 @@
+{
+ "task_id": "M5-T060",
+ "material_commit": "d7d45e84 (clean cherry-pick of worktree producer commit 258cd17a; 18 files, ALL-MATCH LF-normalized digest verification post-pick)",
+ "produced_at": "2026-09-20T22:05:00+00:00",
+ "producer": "loop-1 worker (runs persistent-local-60..64; unit closed at the S13.8 consecutive_revision_loops breaker after the in-loop reviewer converged the report to bounded digest-section honesty and ruled 'No implementation change is established as necessary by this review'; commit/push/CI/gates explicitly orchestrator-owned per that ruling)",
+ "requirements": {
+  "D-066-R001": [
+   "Code graph regenerated at the T060 contract seam before the packet was authored (recorded at the 64a6f984-era seam; the packet's navigation block names the proposal-checks route consumer seam and the T058-HELD fixtures file as untouchable); the harvest consumer sweep confirms the material touches exactly the 18 allowed_paths - the FREE entry/workspace test updates the packet named are in-material, and the T058-held test-support/rule-evaluation-fixtures.ts is untouched."
+  ],
+  "D-076-R001": [
+   "The material is the phase-B3 slice-2 editor increment of docs/PROPOSAL_EDITOR_PHASED_PLAN.md under the D-076 scoped release: a flat outline-walls-floors-heights editor over the existing scenario engine, numeric-2263-authority table-first input per the contract-seam ruling; map drawing / 4326-to-2263 bridge / scenario emission remain DEFERRED to the D-076-R003 post-B3 owner checkpoint (absent from the material by design)."
+  ],
+  "D-076-R002": [
+   "Honesty/boundary discipline: the proposal is a third input class - the editor's draft model mirrors the route's caps client-side naming the route constant, every check result renders under the (status,state) matrix with COULD_NOT_CHECK reasons verbatim, shortfall phrasing is pinned to the accepted T057 rectangle-fixture arithmetic (coverage FAIL 0.125 shortfall, height PASS 30<=60), variations are labeled ephemeral, honesty labels present, and a markup-shaped id echoed by a mocked response renders as TEXT (bounded-echo spec; no dangerouslySetInnerHTML in the packet, grep-proved by test per the packet's AS-3)."
+  ],
+  "D-077-R002": [
+   "The lane ran the full contract drill (contract seam + ae20de35 packet fix after the documented-command-profile PolicyError; claim with the FULL worktree path wt-m5t060; runs 60-64 through the recorded stop classes - the 2400s timeout raise, the checkpoint-envelope short-sha refusal, one silent-start single-retry - each diagnosed from the audit triple and recovered without losing the worktree); orchestrator harvest at the S13.8 breaker close with the reviewer's explicit no-code-change ruling."
+  ],
+  "D-077-R003": [
+   "Scope stayed inside the released queue: B3 slice 2 per the phased plan (B3 contracts after T057 accepted - satisfied); exactly the packet's 18 allowed_paths changed; no held surface (no 3D massing, no map drawing, no scenario emission); the deferred-to-checkpoint items are absent from the diff."
+  ]
+ },
+ "orchestrator_evidence": {
+  "note": "THIN CLIENT: web behavior (vitest, typecheck, lint, e2e) proves ONLY in CI on the pushed head d7d45e84 - no local npm was run and no web behavior is claimed verified from local reasoning. Local evidence is limited to modularity + digest binding; the reviewers judge the specs by reading and CI by its checks.",
+  "commands": [
+   {"argv": "python tools/modularity_check.py --check", "cwd": "wt-m5t060 (repo root)", "exit": 0, "output_tail": "failures 0; warnings 20 (all pre-existing, none in the packet files)"}
+  ],
+  "web_proof": "CI at d7d45e84 (web jobs) - recorded in the submit note once complete",
+  "reviewed_file_digests": {
+   "note": "sha256 over LF-normalized bytes of each of the 18 changed files at 258cd17a/d7d45e84; values are content digests of repository files, not credentials; enumerated per-file in the gate wave reports (gitleaks generic-api-key FP on api-named keys adjacent to hex)"
+  }
+ }
+}

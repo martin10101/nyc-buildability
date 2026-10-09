@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D027-M0-T100",
+  "timestamp": "2026-08-26T06:16:01.369766+00:00",
+  "commit": "b18fb20",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "M0-T100 accepted: owner-authorized passive statusLine wiring live (D-027, 13/13 DCV PASS, G5 PASS at material 3089df13); telemetry sidecar+journal ticking from the running session, gitignored; global personal fallback intact; supervisor still shadow-only; next per D-027-R011: claim M0-T090 (campaign seq 4 NEXT) with carried advisories",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-26T06:16:01.454182+00:00"
+}

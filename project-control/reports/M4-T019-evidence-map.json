@@ -1,0 +1,49 @@
+{
+  "task_id": "M4-T019",
+  "assembled_by": "orchestrator",
+  "note": "Build task (B5 implementation half; D-052 is the specification). Two new files; the accepted classifier/connector byte-immutable; consumer wiring is B7's later work.",
+  "requirements": {
+    "D-052-R001": [
+      "services/api/app/connectors/dcm_street_width_policy.py - threshold: <75 narrow, >=75 (incl. exactly 75) wide; exceptions_checked is a typed precondition attestation - absent/false -> UNRESOLVED listing the failed attestation, never silently thresholded; boundary tests at 74.99/75.0/75.01 in the 93-test suite"
+    ],
+    "D-052-R002": [
+      "AttestedPreconditions frozen dataclass with NO field defaults (source_documented, source_version, street_status_checked, frontage_match_method, matched_geometry_ref, exceptions_checked); only FRONTAGE_MATCH_COVERAGE_ESTABLISHED satisfies frontage matching - FRONTAGE_MATCH_NEAREST_CENTERLINE_ONLY and any other value fail closed (typo-safe string-constant design); issued classifications carry the owner-approved-ASSUMPTION notice, never DCP-guarantee wording; precondition gate runs FIRST regardless of data"
+    ],
+    "D-052-R003": [
+      "one-sided-bound rule over CLASS_INTERPRETED_BOUNDS (one row per each of the accepted classifier's 24 ambiguity classes: 11 derivable - 3 one-sided-wide, 4 one-sided-narrow, 4 straddling; 13 not-derivable), import-time exhaustiveness assert against the classifier's class table + a test re-asserting len==24; the owner's R003 worked examples verified as EXACT test cases against real classifier output: '<75' narrow; '>75','>=75','75-90' wide; '<=75','60-75','70-80' UNRESOLVED"
+    ],
+    "D-052-R004": [
+      "not-derivable classes (approximations, hedges, probabilistic wording, labelled non-answers, schema drift, unrecognized) -> UNKNOWN + routed_to=map_resolution; negative tests prove each forbidden move does NOT occur (no tolerance invention, no averaging path, no rounding across 75, no endpoint-picking of straddling ranges)"
+    ],
+    "D-052-R005": [
+      "PolicyDecision carries the provenance quintuple on every decision incl. refusals: original_label, source_version, matched_geometry_ref, interpreted_bounds, classification_reason; producer flagged for reviewer confirmation that the qualitative interpreted-bounds representation (class-derived, since the accepted classifier's public API exposes ambiguity_class+raw_text+basis, not parsed numerics) satisfies R005 intent - routed to G3"
+    ],
+    "D-052-R006": [
+      "UNKNOWN is a first-class emitted data state distinct from UNRESOLVED (policy refusal) and from the classifier's narrow_fail_closed disposition - a dedicated test proves the classifier's fail-closed convention does NOT leak into the policy decision; the module emits data states only, consuming rules justify their own fallbacks (D-051-R003 separation)"
+    ],
+    "D-052-R007": [
+      "draft_label populated on every decision; test suite covers threshold boundaries, range handling, frontage-mismatch refusals, exceptions-unchecked UNRESOLVED; 93 tests passed in the producer worktree AND re-run by the orchestrator at the integrated head (93 passed); full accepted connectors suite regression 712 passed; ruff whole-tree EXIT 0 in both runs"
+    ],
+    "D-051-R002": [
+      "unknown-width inputs surface as UNKNOWN with routing and full provenance, never as a verified narrow: the policy layer independently resolves per D-052 rather than mirroring the classifier's narrow_fail_closed (dedicated non-leak test); raw label preserved end-to-end"
+    ],
+    "D-051-R003": [
+      "the module emits data states and NEVER a rule fallback; the UNRESOLVED/UNKNOWN vs narrow/wide type separation forces consuming rules (B7, later) to carry their own justified fallbacks - per-rule validation surface preserved"
+    ],
+    "D-045-R002": [
+      "A2 mechanics chain: the policy layer ships against its actual data input (the accepted 24-class classifier), with missing preconditions producing honest UNRESOLVED refusals rather than manufactured classifications; no guessed geometry (frontage matching typed as caller attestation pending B3/B4)"
+    ],
+    "D-045-R008": [
+      "bounded build packet under normal gates (G0 at 77fc6bf2; G3 code-vs-directive fidelity + G4 test adequacy required, reviewers != producer)"
+    ],
+    "D-045-R009": [
+      "producer commit 2eaba13d touches exactly two new files; git diff over the accepted classifier/connector EMPTY (byte-immutable confirmed); zero dependencies; DRAFT-until-G6 labels in every output; no hold lifted"
+    ],
+    "D-046-R001": [
+      "wave-4 parallel slot 2: dispatch record 9e89497a; producer in wt agent-acd38556e27cb595f pinned to 293d6c03 (backend-engineer with the recorded claude-sonnet-5 harness override, D-047-R001); integrated sequentially as cherry-pick a6c73ec0 (both file shas LF-normalized verified)"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint by construction: two services/api files sharing nothing with M4-T018's single report file"
+    ]
+  }
+}

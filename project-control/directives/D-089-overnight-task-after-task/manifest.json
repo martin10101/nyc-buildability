@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-089",
+ "version": 1,
+ "slug": "overnight-task-after-task",
+ "title": "Owner 2026-09-25 ('I am going to sleep u keep running till in the morning tesk after tesk'): continuous task-after-task operation overnight without waiting for owner replies - accept what is ready, contract, dispatch, review, accept, re-feed; the loop-lane share runs as orchestrator-dispatched producers while the owner-typed B-026 commissioning waits for the morning; NO stop condition lifted (Tier D, holds, PR #241, gate FAILs, dependency security, owner-typed commissioning)",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-25",
+ "captured_at": "2026-09-25T04:45:26+00:00",
+ "created_at": "2026-09-25T04:45:26+00:00",
+ "updated_at": "2026-09-25T04:45:26+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "68bcc5ea2b73af5e167ff70fd5ea7cf8ef918ee4",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the instruction directly in-channel before going to sleep, right after re-affirming D-088. It is a Tier A continuity instruction: keep completing gated ledger work task after task overnight without waiting for owner replies. It lifts no hold, changes no gate, and every packet still passes the normal contract/claim/gate process; the loop commissioning stays owner-typed (runbook section 12)."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-089-R001",
+  "D-089-R002",
+  "D-089-R003",
+  "D-089-R004"
+ ],
+ "requirements_content_digest_sha256": "dbcfcabd6c762261948f32d5506c5140d1b22c129f70e35c886ecf378e1e7d55",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-25T04:45:26+00:00",
+   "content_digest_sha256": "dcb952a93d2b9464a0eb8a376cb8db1ef5185d25dd0133f4f0d92555a486d905"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "operational_continuity",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "continuous overnight Tier A/B work: accepting fully gated tasks, contracting released non-held packets, dispatching orchestrator subagent producers (the B-026 workaround for the loop-lane share) with pairwise-disjoint scopes, running independent review waves, recording gates, accepting at seams, re-feeding",
+  "forbidden": "running the owner-typed commissioning or the canary approval; lifting any owner hold (expansion section 2 minus its scoped releases; PR #241; the unmounted max-envelope route; DWG licensing); skipping any contract/claim/gate step; any Tier D action; any dependency-security waiver; passing model: on a dispatch"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-25T04:45:26+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline), in the same commit as D-088 source-002. frozen_baseline_sha = this capture's parent (68bcc5ea). At capture: 294 accepted; M5-T109 awaiting only its accept; M5-T110 claimed as the D-088 lane-1 canary and kept reserved for it; B-026 open (commissioning owner-typed, not run); C: 3.45 GiB free. Relation: the D-080 overnight precedent; D-088 stays active and unchanged (its source-002 re-affirms it)."
+  }
+ ]
+}

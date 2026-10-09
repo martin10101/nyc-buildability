@@ -12,8 +12,11 @@ paths:
 - **Rule lifecycle:** `discovered → extracted_draft → needs_review → approved → published →
   (suspended | superseded | rejected)`. Only a `published` rule may produce a **Verified** result.
 - **No rule is `published`** without exact source linkage + version, deterministic tests
-  (positive/negative/boundary/exception), independent review, and **qualified-human approval (G6)**.
-  Agent consensus can never substitute for G6. AI may draft a rule; AI may never silently publish one.
+  (positive/negative/boundary/exception) and independent agent review. `published` means "shipped
+  under the standing not-professionally-reviewed label with a per-stat zoning-law link" (ADR-007);
+  professional review (G6) is advisory and recorded when it happens. Nothing is labelled `verified`
+  without a recorded professional review; agent consensus can never substitute for that. AI may
+  draft a rule; AI may never silently publish one.
 - Keep AI-drafted rules strictly separate from published rules. Rules are versioned JSON DSL; keep
   legal text out of UI components. Every result carries exactly one coverage status
   (`verified | conditional | professional_review_required | data_conflict | unsupported |

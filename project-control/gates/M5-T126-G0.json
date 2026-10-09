@@ -1,0 +1,21 @@
+{
+  "task_id": "M5-T126",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T126-G0.md",
+  "reviewed_at": "2026-10-06T20:59:38.866465+00:00",
+  "content_manifest_sha256": "94cdc3f2466dec7c3da93e3fe15a2d3973520142ffb7b3e8e83fd26ab06632e6",
+  "reviewed_sha": "c374dae210e45aa7f1b3a6c531d25e5d435db6fb",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T126-G0.md",
+      "reviewed_at": "2026-10-06T20:41:16.139374+00:00"
+    }
+  ],
+  "updated_at": "2026-10-06T20:59:38.995827+00:00"
+}

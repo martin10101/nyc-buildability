@@ -1,0 +1,21 @@
+{
+  "task_id": "M4-T023",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M4-T023-producer-report.md",
+  "reviewed_at": "2026-10-06T19:29:03.562351+00:00",
+  "content_manifest_sha256": "fc03d010be3cac32f74bbd97f49833c1d912faebda1d66fe7620b285850c7dde",
+  "reviewed_sha": "83d64fc7bc29b1e7400a03f275713230be1db000",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "self_check",
+      "result": "PASS",
+      "report_file": "project-control/reports/M4-T023-producer-report.md",
+      "reviewed_at": "2026-10-06T18:46:29.516860+00:00"
+    }
+  ],
+  "updated_at": "2026-10-06T19:29:03.702183+00:00"
+}

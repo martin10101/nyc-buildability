@@ -1,0 +1,28 @@
+{
+  "task_id": "M5-T026",
+  "prepared_by": "orchestrator",
+  "prepared_at": "2026-09-14",
+  "material_commit": "0b1123574f6a1fa49a89ba9b516c550c7ff5dabb",
+  "ci_evidence_head": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6",
+  "requirements": {
+    "D-057-R001": [
+      "apps/web/src/lib/rule-evaluation.ts (at 0b112357, carried unchanged to 2e2f7a1f): new exported constant INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR and ruleEvaluationDefaultOnEnabled() mirroring ruleEvaluationFlagEnabled's TRUE_TOKENS rule (absent/empty/unknown -> false); ruleEvaluationSurfaceEnabled extended to the exact D-057 decision table: main flag off -> false unconditionally (early return); param absent (raw === undefined) -> ruleEvaluationDefaultOnEnabled(); param present in any shape (string, array, empty array) -> existing TRUE_TOKENS check, kill switch preserved. Server-read only, never NEXT_PUBLIC_-prefixed (grep of diff added/removed lines: zero matches; producer report R001 section).",
+      "apps/web/src/lib/__tests__/rule-evaluation.test.ts: 50-row full decision matrix (5 default-on states x 10 param shapes) with hand-classified literal expected booleans plus 9-case token-classification block and 7-case main-flag-OFF-always-wins block; CI web-e2e (vitest) green on head 2e2f7a1f (run 34814460843, all 18 jobs pass)."
+    ],
+    "D-057-R002": [
+      "Purely additive: git show --stat 0b112357 touches exactly the 5 allowed_paths; no apps/web/e2e/** file, no playwright.config.ts, no component, no rule-evaluation-api.ts, no package/lockfile in the diff.",
+      "rule-evaluation.test.ts: dedicated describe 'D-057-R002 - zero behavior change where INTERNAL_RULE_EVAL_DEFAULT_ON is unset' (5 explicit it blocks reproducing every pre-D-057 scenario with identical expected outputs) plus the var-unset row of the 50-row matrix; module-scope beforeEach/afterEach clears the var around every test so all pre-existing tests (unmodified, byte-for-byte) run with the var absent.",
+      "CI executable authority on the pushed head (thin client, documented_test_commands): run 34814460843 at 2e2f7a1f - web (lint+typecheck+build) and web-e2e (vitest + Playwright incl. rule-evaluation-flag-off.spec.ts unchanged) both green."
+    ],
+    "D-057-R003": [
+      "docs/RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md new section 2a (OPTIONAL default-on mode): names INTERNAL_RULE_EVAL_DEFAULT_ON=1, WEB service only (not nycdf-api), what it does, the exposure-consequence sentence (anyone holding the URL sees the full internal flow on the plain URL), ?ruleeval=off stays the kill switch, server-read so env save + automatic restart suffices with no rebuild; plus section 9 pointer line and a provenance-summary table row.",
+      "rule-evaluation.ts factor-2 module comment block and apps/web/src/app/property/page.tsx docstring updated to the implemented semantics (no stale two-factor text) - S3 scenario; verified in G3 code review."
+    ],
+    "D-046-R001": [
+      "Task produced under the D-046 parallel-production regime: dispatched to an unnamed frontend-engineer producer (claude-sonnet-5 per D-047 dispatch override, recorded in the G0 report) in isolated worktree wt-m5t026 off claim head 554acac3, concurrent with the disjoint M5-T025 producer; orchestration per .claude/ORCHESTRATION_POLICY.md."
+    ],
+    "D-046-R002": [
+      "Disjointness held: M5-T026 allowed_paths (rule-evaluation.ts, rule-evaluation.test.ts, property/page.tsx, RENDER_INTERNAL_WEB_DEPLOY_CHECKLIST.md, M5-T026-producer-report.md) share zero files with the concurrent M5-T025 scope (provenance-link/ProvenanceDisclosure/RuleEvaluationResult/LotOutlineMap surfaces); forbidden_paths fence the shared surfaces; git show --stat 0b112357 confirms the producer stayed inside its 5 allowed files."
+    ]
+  }
+}

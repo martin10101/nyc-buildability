@@ -42,6 +42,8 @@ import pathlib
 import tomllib
 from typing import Any, Mapping
 
+from . import approved_models as approved_models_module
+from .approved_models import ApprovedModels
 from .models import digest_of
 
 #: Runtime modes (S12). Limited-auto is listed so it can be REFUSED by name.
@@ -63,6 +65,10 @@ PROVIDERS = ("codex", "claude")
 _CONTROLLER_ONLY_KEYS = frozenset({
     "allowed_models", "limits", "policy", "security", "controller", "audit",
     "tiers", "hard_deny", "grants",
+    # D-023-R013: which models the owner approved is controller authority. A
+    # runtime file that could name it would be a settings-fallback path into
+    # model selection, which is exactly what the directive prohibits.
+    "approved_models", "model_chain",
 })
 
 #: Keys that belong to the runtime selection file and must never appear in the
@@ -71,19 +77,29 @@ _RUNTIME_ONLY_KEYS = frozenset({
     "review_model", "advisory_model", "model", "fallback_models",
 })
 
-#: D-004-R751/R754/R758: the FIXED orchestrator-role model preference chain, in
-#: order. It is owner policy, so it lives in the IMMUTABLE controller config
-#: ([model_chain] below) and is owner-editable only; this tuple is the
-#: fail-closed default used when the section is absent, and it matches the order
-#: the owner named exactly. The ids are EXACT strings: nothing here normalizes,
-#: aliases, or resolves an id, so no entry can ever become a different model
-#: (notably never "claude-opus-5" - an id outside this chain is never selectable
-#: regardless of what a model picker shows).
-DEFAULT_ORCHESTRATOR_MODEL_CHAIN: tuple[str, ...] = (
-    "claude-fable-5", "claude-opus-4-8", "claude-opus-4-7",
-)
+#: D-004-R751/R754/R758 + D-023-R013: the owner-approved model ids, in the
+#: owner's order. There is deliberately NO default tuple here.
+#:
+#: Until M0-T080 this module carried a `DEFAULT_ORCHESTRATOR_MODEL_CHAIN` tuple
+#: of three literal model ids and used it whenever `[model_chain]` was absent, so
+#: a controller config that approved nothing still selected three models the
+#: owner had never written down. (The ids are named in the M0-T080 producer
+#: report, not here: a model id in this file, even in a comment, is one careless
+#: edit away from being a default again.) D-023-R013 forbids exactly that: only
+#: owner-approved, live-probed ids from protected config may be used, and no
+#: silent substitution of any kind - code default, settings fallback, Remote
+#: Control switch, or provider convenience - is permitted. An ABSENT list is
+#: therefore an EMPTY list, and every selection act against an empty list stops
+#: safely with a typed refusal (`approved_models.ApprovedModels.assert_populated`).
+#:
+#: The canonical section is `[approved_models] models`. `[model_chain]
+#: orchestrator_preference` is the LEGACY spelling of the same owner-approved
+#: list and is still accepted verbatim; naming both with different contents is a
+#: refusal rather than a silent precedence rule.
+APPROVED_MODELS_SECTION = approved_models_module.APPROVED_MODELS_SECTION
+APPROVED_MODELS_KEY = approved_models_module.APPROVED_MODELS_KEY
 
-#: The one key `[model_chain]` carries.
+#: The one key the legacy `[model_chain]` section carries.
 _MODEL_CHAIN_KEY = "orchestrator_preference"
 
 
@@ -117,25 +133,60 @@ def _walk_keys(node: Any, trail: tuple[str, ...] = ()) -> list[tuple[tuple[str, 
     return found
 
 
+#: The GPT-5.6 codex reasoning-effort enum (config reference: minimal/low/medium/
+#: high/xhigh; a value outside it fails closed under `codex --strict-config`).
+CODEX_REASONING_EFFORT_TIERS: tuple[str, ...] = (
+    "minimal", "low", "medium", "high", "xhigh",
+)
+
+#: The ONLY effort key D-004-R159 is superseded for: the supervisor-set Codex
+#: reviewer reasoning effort (owner directive D-024 Amendment 53, R774 - a NARROW,
+#: explicit lift). It lives in the runtime model-selection file under [codex] and
+#: names the reviewer's reasoning tier. Every OTHER effort key stays permanently
+#: prohibited, and user-injected `--effort`/`--reasoning-effort` argv flags stay
+#: hard-denied (process.EFFORT_ARGUMENT_PREFIXES) - this exception is config-file
+#: only and value-validated.
+PERMITTED_EFFORT_KEY_PATHS: frozenset[tuple[str, ...]] = frozenset({
+    ("codex", "review_reasoning_effort"),
+})
+
+
 def assert_no_effort_key(data: Mapping[str, Any], source: str) -> None:
-    """Refuse any key containing "effort", at any depth (D-004-R159, S3.1)."""
-    for path, _value in _walk_keys(data):
+    """Refuse any key containing "effort", at any depth (D-004-R159, S3.1), EXCEPT
+    the single narrowly-superseded Codex reviewer reasoning-effort key
+    (`codex.review_reasoning_effort`, D-024 Amendment 53 R774), whose value is
+    validated against CODEX_REASONING_EFFORT_TIERS. Every other effort key stays
+    permanently prohibited."""
+    for path, value in _walk_keys(data):
         leaf = path[-1]
-        if "effort" in leaf.lower():
-            raise ConfigError(
-                "effort_key_forbidden",
-                f"key {'.'.join(path)!r} is an effort key; effort keys are "
-                f"permanently prohibited in every configuration file, prompt, and "
-                f"CLI invocation",
-                source,
-            )
+        if "effort" not in leaf.lower():
+            continue
+        if tuple(path) in PERMITTED_EFFORT_KEY_PATHS:
+            tier = value if isinstance(value, str) else ""
+            if tier not in CODEX_REASONING_EFFORT_TIERS:
+                raise ConfigError(
+                    "effort_value_invalid",
+                    f"{'.'.join(path)!r} = {value!r} is not a valid Codex reasoning "
+                    f"effort; permitted tiers are {list(CODEX_REASONING_EFFORT_TIERS)}",
+                    source,
+                )
+            continue
+        raise ConfigError(
+            "effort_key_forbidden",
+            f"key {'.'.join(path)!r} is an effort key; effort keys are "
+            f"permanently prohibited in every configuration file, prompt, and "
+            f"CLI invocation (the ONLY exception is the supervisor-set "
+            f"codex.review_reasoning_effort, D-004-R159 superseded by D-024 "
+            f"Amendment 53 R774)",
+            source,
+        )
 
 
 def _load_toml(path: str | os.PathLike[str]) -> dict[str, Any]:
     """Parse ONE file as standalone TOML. Never concatenated with another file."""
     file_path = pathlib.Path(path)
     if not file_path.exists():
-        raise ConfigError("missing_file", f"configuration file not found", str(file_path))
+        raise ConfigError("missing_file", "configuration file not found", str(file_path))
     try:
         with file_path.open("rb") as handle:
             return tomllib.load(handle)
@@ -196,6 +247,16 @@ class Limits:
     max_consecutive_hard_denies: int = 3
     max_codex_reviews_per_checkpoint: int = 3
     max_consecutive_revision_loops: int = 4
+    #: Cross-lane concurrency admission for the shared cloud loop (D-091 T7,
+    #: docs/D091_CLOUD_LOOP_DESIGN.md §5). These are fail-closed ADMISSION caps
+    #: enforced by `run_budget.admit_review_or_combine`, NOT sampled gauges, so
+    #: they carry no gauge/counter wiring; they live in the immutable limits like
+    #: every other owner-set bound a model cannot raise. On the single-lane PC
+    #: they are harmless (one lane); on the 4-CPU/8-GiB Linux box running 5 lanes
+    #: the global cap stops all five spiking review/combine work at once (OOM),
+    #: and the per-lane cap keeps one lane from taking both global slots.
+    max_concurrent_reviews_or_combines: int = 2
+    max_concurrent_reviews_or_combines_per_lane: int = 1
     warn_ratio: float = 0.75
 
     @classmethod
@@ -224,7 +285,7 @@ class Limits:
 
 @dataclasses.dataclass(frozen=True)
 class ModelChain:
-    """The FIXED orchestrator-role model preference chain (D-004-R751/R758).
+    """The owner-approved model list, in the owner's order (D-004-R751/R758).
 
     Owner policy, not a judgement: an orchestrator-role session walks THIS list
     in THIS order, first-available-wins, availability decided by an actual launch
@@ -235,16 +296,17 @@ class ModelChain:
 
     Immutable, and read only from the immutable controller config, so a runtime
     file can never widen or reorder it.
+
+    M0-T080 / D-023-R013: `entries` now defaults to EMPTY and an empty chain is
+    LEGAL to construct. It was previously a construction-time `ConfigError`,
+    which forced a non-empty default to exist somewhere - and the default that
+    existed was three hard-coded model ids. The refusal did not disappear; it
+    MOVED to the point of use (`approved_models.ApprovedModels.assert_populated`),
+    where it can say which config file to populate and produce a typed,
+    machine-readable safe stop instead of a load-time crash.
     """
 
-    entries: tuple[str, ...] = DEFAULT_ORCHESTRATOR_MODEL_CHAIN
-
-    def __post_init__(self) -> None:
-        if not self.entries:
-            raise ConfigError(
-                "empty_model_chain",
-                f"[model_chain] {_MODEL_CHAIN_KEY} must name at least one model; an empty "
-                f"chain would leave an orchestrator-role session with nothing to launch")
+    entries: tuple[str, ...] = ()
 
     def __contains__(self, model: object) -> bool:
         """EXACT string membership. No normalization, no aliasing, no prefixes."""
@@ -281,9 +343,22 @@ class ControllerConfig:
     limits: Limits
     source_path: str
     raw: dict[str, Any] = dataclasses.field(default_factory=dict, repr=False)
-    #: D-004-R751/R758. Defaults to the fail-closed chain when `[model_chain]` is
-    #: absent, so a config that predates this section still has the owner's order.
+    #: D-004-R751/R758 + D-023-R013. EMPTY when the config approves nothing; there
+    #: is no default chain. `approved_models` is the canonical view and
+    #: `model_chain` is the same list under the name the rest of the package
+    #: already imports - they are built from one source and can never disagree.
     model_chain: ModelChain = dataclasses.field(default_factory=ModelChain)
+
+    @property
+    def approved_models(self) -> ApprovedModels:
+        """The owner-approved model ids, with the config file that approved them.
+
+        The one object every model-selection act asks. It carries `source` so a
+        refusal can name the exact file the owner has to populate rather than
+        saying "configuration" and leaving them to find it.
+        """
+        return ApprovedModels(entries=self.model_chain.entries,
+                              source=self.source_path)
 
     def allowlist(self, provider: str) -> tuple[str, ...]:
         """The allowlist for ONE provider. Never merged across providers."""
@@ -295,6 +370,17 @@ class ControllerConfig:
 
     def digest(self) -> str:
         return digest_of(self.raw)
+
+
+def default_config_path(*, os_name: str | None = None) -> pathlib.Path:
+    """Platform-correct default location of the IMMUTABLE controller config
+    (D-091 T1): Windows -> %ProgramFiles%\\SupervisorConfig\\config.toml; POSIX ->
+    /etc/nyc-supervisor/config.toml. Delegates to `platform_paths` so there is one
+    resolver and no hardcoded Windows path is ever used on Linux. Callers still
+    pass an explicit path to `load_controller_config`; this is the default a Linux
+    launcher/runbook resolves instead of hardcoding a Windows location."""
+    from . import platform_paths
+    return platform_paths.default_config_path(os_name=os_name)
 
 
 def load_controller_config(path: str | os.PathLike[str]) -> ControllerConfig:
@@ -362,38 +448,69 @@ def load_controller_config(path: str | os.PathLike[str]) -> ControllerConfig:
 
 
 def _load_model_chain(data: Mapping[str, Any], source: str) -> ModelChain:
-    """Read `[model_chain]` out of the immutable controller config (D-004-R758).
+    """Read the owner-approved model list out of the immutable controller config.
 
-    Absent -> the fail-closed default chain, in the owner's order. Present but
-    malformed -> refused; the chain is never silently repaired, reordered, or
-    partially applied, because a wrong chain is a wrong model selection.
+    Two accepted spellings of ONE list (D-004-R758, D-023-R013):
+
+    * `[approved_models] models` - canonical.
+    * `[model_chain] orchestrator_preference` - the legacy spelling, still read
+      verbatim so an existing controller config keeps working unchanged.
+
+    Both absent -> the approved list is EMPTY. That is not a failure to load and
+    not a reason to substitute a built-in chain (there is none); it is the honest
+    statement that the owner has approved nothing, and the refusal happens at the
+    point some code tries to SELECT a model, where it can be typed and
+    actionable. Both present with different contents -> refused, because a silent
+    precedence rule between two owner-authored lists is a wrong model selection
+    waiting to happen. Present but malformed -> refused; the list is never
+    repaired, reordered, or partially applied.
     """
-    section = data.get("model_chain", None)
-    if section is None:
-        return ModelChain()
-    if not isinstance(section, Mapping):
-        raise ConfigError("bad_section", "[model_chain] must be a table", source)
-    unknown = sorted(set(section) - {_MODEL_CHAIN_KEY})
-    if unknown:
-        raise ConfigError("unknown_model_chain_key",
-                          f"unrecognized [model_chain] keys: {unknown}; the only key is "
-                          f"{_MODEL_CHAIN_KEY!r}", source)
-    if _MODEL_CHAIN_KEY not in section:
+    legacy = _load_named_model_list(data, source, "model_chain", _MODEL_CHAIN_KEY,
+                                    optional_key=False)
+    canonical = _load_named_model_list(data, source, APPROVED_MODELS_SECTION,
+                                       APPROVED_MODELS_KEY, optional_key=False)
+    if legacy is not None and canonical is not None and legacy != canonical:
         raise ConfigError(
-            "missing_model_chain",
-            f"[model_chain] must declare {_MODEL_CHAIN_KEY} (the ordered list of models an "
-            f"orchestrator-role session may launch on); omit the whole section to accept "
-            f"the default chain {list(DEFAULT_ORCHESTRATOR_MODEL_CHAIN)}", source)
-    entries = _require_string_list(section[_MODEL_CHAIN_KEY],
-                                   f"model_chain.{_MODEL_CHAIN_KEY}", source)
+            "approved_models_conflict",
+            f"[{APPROVED_MODELS_SECTION}] {APPROVED_MODELS_KEY} = {list(canonical)} and the "
+            f"legacy [model_chain] {_MODEL_CHAIN_KEY} = {list(legacy)} name DIFFERENT "
+            f"owner-approved lists. They are two spellings of one list; refusing rather "
+            f"than picking one, because guessing which the owner meant is guessing which "
+            f"models are approved", source)
+    entries = canonical if canonical is not None else legacy
+    return ModelChain(entries=entries or ())
+
+
+def _load_named_model_list(data: Mapping[str, Any], source: str, section_name: str,
+                           key: str, *, optional_key: bool) -> tuple[str, ...] | None:
+    """One `[section] key = [...]` ordered model list, or None when absent."""
+    section = data.get(section_name, None)
+    if section is None:
+        return None
+    if not isinstance(section, Mapping):
+        raise ConfigError("bad_section", f"[{section_name}] must be a table", source)
+    unknown = sorted(set(section) - {key})
+    if unknown:
+        raise ConfigError(f"unknown_{section_name}_key",
+                          f"unrecognized [{section_name}] keys: {unknown}; the only key is "
+                          f"{key!r}", source)
+    if key not in section:
+        if optional_key:
+            return None
+        raise ConfigError(
+            f"missing_{section_name}",
+            f"[{section_name}] must declare {key} (the ordered list of owner-approved "
+            f"models a session may launch on); omit the whole section to approve NOTHING - "
+            f"there is no built-in default list (D-023-R013)", source)
+    entries = _require_string_list(section[key], f"{section_name}.{key}", source)
     for entry in entries:
         if entry != entry.strip():
             raise ConfigError(
                 "bad_model_name",
-                f"model_chain.{_MODEL_CHAIN_KEY} entry {entry!r} carries surrounding "
-                f"whitespace; chain ids are used verbatim as the launched --model and are "
-                f"never trimmed, normalized, or aliased", source)
-    return ModelChain(entries=entries)
+                f"{section_name}.{key} entry {entry!r} carries surrounding whitespace; "
+                f"approved ids are used verbatim as the launched --model and are never "
+                f"trimmed, normalized, or aliased", source)
+    return entries
 
 
 # --------------------------------------------------------------------------
@@ -409,6 +526,10 @@ class ProviderSelection:
     primary: str
     fallback_models: tuple[str, ...]
     advisory_model: str = ""
+    #: Supervisor-set reasoning-effort tier for this provider's REVIEW role
+    #: (codex only; D-024 Amendment 53 R774/R775). Empty string = the reviewer's
+    #: own default (max). Validated against CODEX_REASONING_EFFORT_TIERS at load.
+    reasoning_effort: str = ""
 
     def chain(self) -> tuple[str, ...]:
         """Primary first, then this provider's fallbacks, in order."""
@@ -465,6 +586,12 @@ def load_model_selection(path: str | os.PathLike[str]) -> ModelSelection:
                                                 "codex.advisory_model", source),
         fallback_models=_require_string_list(codex_section.get("fallback_models", []),
                                              "codex.fallback_models", source),
+        # D-024 Amendment 53 R774/R775: the supervisor-set Codex review reasoning
+        # tier (already value-validated in assert_no_effort_key above). Empty =
+        # the reviewer's own default (max).
+        reasoning_effort=_require_string_or_empty(
+            codex_section.get("review_reasoning_effort", ""),
+            "codex.review_reasoning_effort", source),
     )
     claude = ProviderSelection(
         provider="claude",

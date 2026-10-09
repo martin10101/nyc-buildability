@@ -1,0 +1,99 @@
+{
+  "contract_version": "1.0.0",
+  "groups": [
+    {
+      "group_id": "existing_building",
+      "title": "Existing building",
+      "lot_bbl": "1000010100",
+      "flags": [
+        {
+          "item_id": "existing_building.larger_than_today",
+          "group": "existing_building",
+          "title": "Existing building larger than today's rules",
+          "status": "flag",
+          "status_label": "Flag",
+          "detail": "The existing building is larger than today's zoning allows; demolition would reduce floor area. Existing 40,000 sq ft (Stated assumption) exceeds today's as-of-right 10,000 sq ft.",
+          "typical_source": "DOB filing or certificate of occupancy (existing zoning floor area, M2-07); the engine's as-of-right allowance",
+          "evidence": [
+            {
+              "label": "Existing zoning floor area (Stated assumption)",
+              "source": {
+                "kind": "assumption",
+                "dataset": null,
+                "dataset_version": null,
+                "retrieved_at": "2026-09-30T12:00:00Z",
+                "query_ref": null,
+                "document_ref": null,
+                "statement": "architect's stated assumption"
+              }
+            },
+            {
+              "label": "Today's as-of-right allowance",
+              "source": {
+                "kind": "rule_evaluation",
+                "statement": "R6B as-of-right, rule v1"
+              }
+            }
+          ],
+          "fact_refs": [
+            "1000010100:existing_zoning_floor_area"
+          ],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.non_conforming_use",
+          "group": "existing_building",
+          "title": "Non-conforming use",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Whether the use is non-conforming (and so loses its protection after major damage) is a determination against the district's currently permitted uses (the engine) read with the certificate of occupancy's legal use. No source establishes it, so a reviewer must check it; it is never guessed.",
+          "typical_source": "DOB filings/certificate of occupancy (legal use); zoning use rules (engine)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.legal_use_and_occupancy",
+          "group": "existing_building",
+          "title": "Legal use and occupancy on the certificate of occupancy",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No certificate-of-occupancy dataset carries a legal-use or occupancy column, and no certificate-document importer is connected, so the legal use and occupancy must be read from the certificate itself.",
+          "typical_source": "DOB certificate of occupancy (document)",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.rent_regulated_apartments",
+          "group": "existing_building",
+          "title": "Rent-regulated apartments",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "No DHCR or HPD rent-regulation source is connected, so whether the building has rent-regulated apartments cannot be determined from the data on record and is never guessed.",
+          "typical_source": "DHCR and HPD data",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        },
+        {
+          "item_id": "existing_building.harassment_certification",
+          "group": "existing_building",
+          "title": "Harassment-certification requirements",
+          "status": "check_needed",
+          "status_label": "Check needed",
+          "detail": "Whether a Certification of No Harassment applies depends on the building's location in an HPD program area (a map-based source) and HPD records, neither connected, so a reviewer must check it.",
+          "typical_source": "HPD Certification of No Harassment program (map-based) and HPD data",
+          "evidence": [],
+          "fact_refs": [],
+          "exception_label": null,
+          "phase": "1"
+        }
+      ]
+    }
+  ]
+}

@@ -51,45 +51,89 @@ export const DEFAULT_TIMEOUT_MS = 12_000;
 // The surface is OFF by default and is gated by TWO independent conditions,
 // both of which must hold:
 //
-//  1. ENVIRONMENT: the runtime, server-read variable INTERNAL_RULE_EVAL_UI
-//     holds an explicit true token. The name is intentionally NOT prefixed
-//     NEXT_PUBLIC_, so Next never inlines it into the browser bundle at build
-//     time and never leaks the flag or the endpoint to the client: the Server
-//     Component reads it once per request and passes a plain boolean into the
-//     client tree. Absent / empty / unknown -> disabled (fail safe), so a
-//     production deploy that never sets it keeps the surface unreachable.
+//  1. ENVIRONMENT: the runtime, server-read variable INTERNAL_RULE_EVAL_ENABLED
+//     holds an explicit true token. This is the SAME name the API service reads
+//     to gate the /rule-evaluation endpoint (services/api; e2e/harness fixture
+//     API) — the design-spec section 6 one-flag intent: both surfaces sit behind
+//     a single canonical INTERNAL_RULE_EVAL_ENABLED (M5-T019 / D-040-R002 closes
+//     the earlier split-name divergence recorded as the M5-T015 G5 F-1). The
+//     name is intentionally NOT prefixed NEXT_PUBLIC_, so Next never inlines it
+//     into the browser bundle at build time and never leaks the flag or the
+//     endpoint to the client: the Server Component reads it once per request and
+//     passes a plain boolean into the client tree. Absent / empty / unknown ->
+//     disabled (fail safe), so a production deploy that never sets it keeps the
+//     surface unreachable.
 //
-//  2. PER-REQUEST OPT-IN: the request explicitly asks for the surface via
-//     `?ruleeval=on`. Absent (or `off`) -> disabled. This second factor keeps
-//     the experimental surface silent unless deliberately requested even where
-//     the environment allows it, and lets the shared single-server e2e harness
-//     enable the surface for the rule-evaluation journeys WITHOUT rendering it
-//     (or issuing its fetch) on any other journey. In production, where the
-//     environment gate is closed, the opt-in has no effect at all.
+//  2. PER-REQUEST OPT-IN, or DEFAULT-ON when INTERNAL_RULE_EVAL_DEFAULT_ON is
+//     set (D-057): the request explicitly asks for the surface via
+//     `?ruleeval=on`, OR the `ruleeval` param is ABSENT and the second
+//     server-read var INTERNAL_RULE_EVAL_DEFAULT_ON holds a true token (same
+//     TRUE_TOKENS rule; absent / empty / unknown -> false, i.e. today's
+//     behavior when the var is unset — this mode is purely additive). A
+//     `ruleeval` param that IS present but is NOT a true token (`off`, `0`, an
+//     empty string, an unrecognized word, or an array that does not resolve to
+//     a true-token first element) is the FAIL-SAFE KILL SWITCH: it disables the
+//     surface unconditionally, regardless of either env var — this is what
+//     lets the shared single-server e2e harness enable the surface for the
+//     rule-evaluation journeys WITHOUT rendering it (or issuing its fetch) on
+//     any other journey, and lets a default-on deploy still be silenced per
+//     request. The e2e harness never sets INTERNAL_RULE_EVAL_DEFAULT_ON, so its
+//     param-absent requests stay OFF, byte-identical to pre-D-057 behavior. In
+//     production, where the environment gate (factor 1) is closed, neither the
+//     opt-in nor the default-on var has any effect.
 //
 // When the resulting boolean is false the surface is never rendered and the
 // rule-evaluation fetch is never issued.
 // ---------------------------------------------------------------------------
 
 const TRUE_TOKENS: ReadonlySet<string> = new Set(["1", "true", "yes", "on"]);
-export const INTERNAL_RULE_EVAL_UI_ENV_VAR = "INTERNAL_RULE_EVAL_UI";
+/** Canonical, backend-unified flag name (design-spec section 6; D-040-R002):
+ * the API service reads the SAME INTERNAL_RULE_EVAL_ENABLED to gate its
+ * endpoint. Server-side only — deliberately NOT NEXT_PUBLIC_. */
+export const INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = "INTERNAL_RULE_EVAL_ENABLED";
+
+/** D-057: the OPTIONAL default-on var. When it holds a true token, a request
+ * whose `ruleeval` param is ABSENT gets the surface anyway (no query param
+ * needed on the deployed URL). Absent / empty / unknown -> false, so a deploy
+ * that never sets it is byte-identical to pre-D-057 behavior. An explicit,
+ * present `ruleeval` param (any value) always overrides this — see
+ * `ruleEvaluationSurfaceEnabled`. Server-side only — never inlined into the
+ * browser bundle, and never build-inlined (read per request, like factor 1). */
+export const INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR = "INTERNAL_RULE_EVAL_DEFAULT_ON";
 
 /** The env-level flag: an explicit true token enables it; absent / empty /
  * unknown -> disabled (fail safe). Read server-side only. */
 export function ruleEvaluationFlagEnabled(
-  rawValue: string | undefined = process.env[INTERNAL_RULE_EVAL_UI_ENV_VAR],
+  rawValue: string | undefined = process.env[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR],
 ): boolean {
   return typeof rawValue === "string" && TRUE_TOKENS.has(rawValue.trim().toLowerCase());
 }
 
-/** Whether to render the rule-evaluation surface for THIS request: the env
- * flag must be on AND the request must explicitly opt in with `?ruleeval=on`.
- * Default (no env, no params, or `?ruleeval=off`) is OFF. */
+/** D-057: the optional default-on var, same TRUE_TOKENS / fail-safe rule as
+ * `ruleEvaluationFlagEnabled`. Read server-side only, per request. */
+export function ruleEvaluationDefaultOnEnabled(
+  rawValue: string | undefined = process.env[INTERNAL_RULE_EVAL_DEFAULT_ON_ENV_VAR],
+): boolean {
+  return typeof rawValue === "string" && TRUE_TOKENS.has(rawValue.trim().toLowerCase());
+}
+
+/** Whether to render the rule-evaluation surface for THIS request. The env
+ * flag (factor 1) must be on; then:
+ *   - `ruleeval` ABSENT -> on iff INTERNAL_RULE_EVAL_DEFAULT_ON holds a true
+ *     token (default OFF, i.e. unchanged, when that var is unset);
+ *   - `ruleeval` PRESENT and a true token (e.g. `on`, `1`, after array-first /
+ *     trim / lowercase handling) -> ON (bookmarked `?ruleeval=on` links keep
+ *     working, even on a default-on deploy);
+ *   - `ruleeval` PRESENT and NOT a true token (`off`, `0`, `""`, an
+ *     unrecognized word, or an array whose first element is not a true token)
+ *     -> OFF unconditionally — the fail-safe kill switch, never weakened by
+ *     either env var. */
 export function ruleEvaluationSurfaceEnabled(params?: {
   ruleeval?: string | string[] | undefined;
 }): boolean {
   if (!ruleEvaluationFlagEnabled()) return false;
   const raw = params?.ruleeval;
+  if (raw === undefined) return ruleEvaluationDefaultOnEnabled();
   const value = Array.isArray(raw) ? raw[0] : raw;
   return typeof value === "string" && TRUE_TOKENS.has(value.trim().toLowerCase());
 }
@@ -465,10 +509,50 @@ const PRESENTATION_ANNOUNCEMENTS: Record<RuleEvalPresentation, string> = {
     "Draft rule evaluation loaded: professional review required; the evidence needed for a draft determination is missing.",
 };
 
+// DB-042(c)/HJ-3: the screen-reader announcement must carry the SAME specificity
+// as the visible label. A condo_base_lot_unresolved fail-safe shows the visible
+// "Condo base lot needs site confirmation" line; the generic classifier would
+// announce it only as "missing_evidence", so the announced text would trail the
+// visible text. Name the condo/site-confirmation specifics instead.
+const CONDO_BASE_LOT_UNRESOLVED_ANNOUNCEMENT =
+  "Draft rule evaluation withheld: this condo billing lot resolves to more than one recorded base lot, or to none, so a site-definition confirmation is required before development limits can be shown; professional review required.";
+
 export function announcementForRuleEvaluation(outcome: RuleEvaluationOutcome): string {
   switch (outcome.kind) {
-    case "evaluation":
-      return PRESENTATION_ANNOUNCEMENTS[classifyRuleEvaluation(outcome.document)];
+    case "evaluation": {
+      const document = outcome.document;
+      // A substrate_substitution stamp renders the visible "analyzed on the base
+      // lot" record (AnalysisIdentityNotice); announce the same entered-vs-analyzed
+      // specifics so the announced text matches the visible label (DB-042(c)/HJ-3).
+      // [ORCH-CORRECTED per M5-T063 G3-F1/G4-C-1] Gated on the same in-document
+      // CORRESPONDENCE the visible stampLegitimate guard enforces — the stamp's
+      // entered_bbl must equal evaluated_input.bbl (a merely well-formed shape is
+      // NOT enough; a non-corresponding stamp is ignored by the visible record and
+      // must fall through to the generic classifier here too, never be announced
+      // as a substitution). The visible guard's additional requestedBbl check is
+      // out of this function's reach and is guarded upstream at the call site.
+      const substitution = document.substrate_substitution;
+      if (
+        substitution &&
+        typeof substitution.entered_bbl === "string" &&
+        substitution.entered_bbl.length > 0 &&
+        typeof document.evaluated_input.bbl === "string" &&
+        substitution.entered_bbl === document.evaluated_input.bbl &&
+        typeof substitution.analyzed_bbl === "string" &&
+        substitution.analyzed_bbl.length > 0 &&
+        substitution.analyzed_bbl !== substitution.entered_bbl
+      ) {
+        return (
+          `Draft rule evaluation loaded: analyzed on the recorded base tax lot ${substitution.analyzed_bbl} ` +
+          `for the condo billing lot ${substitution.entered_bbl} you entered — a city record of the resolution, ` +
+          "not a computed allowance; professional review required."
+        );
+      }
+      if (document.fail_safe_reason === "condo_base_lot_unresolved") {
+        return CONDO_BASE_LOT_UNRESOLVED_ANNOUNCEMENT;
+      }
+      return PRESENTATION_ANNOUNCEMENTS[classifyRuleEvaluation(document)];
+    }
     case "feature_unavailable":
       return "Draft rule evaluation is not available in this environment.";
     case "no_match":

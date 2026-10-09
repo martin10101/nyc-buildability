@@ -1,0 +1,44 @@
+{
+ "task_id": "M4-T024",
+ "material_commits": [
+  "2675a9d3 (producer rules-engineer, first build: the four cases as data files and rendered pages, the README, the helper's two returns, the checker, renderer, loader and test)",
+  "79b46cf6 (cherry-pick of the second producer's commit, row L7 corrected to 35 as a conditional value after an independent reviewer's ruling and scope correction 2) = material head"
+ ],
+ "contract_head": "34077761",
+ "claim_seam_head": "1fdd6d99",
+ "scope_correction_2_head": "de313009",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "pytest tests/rules/reference_cases: exit 0 (count in the producer report, Round 2)",
+  "r6b_reference_cases_render.py --check: exit 0, reference-case check PASSED",
+  "tools/modularity_check.py --check: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "full services/api pytest, run alone by the orchestrator at 79b46cf6 (the task branch with the integration branch merged in): exit 0, 8075 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R226": [
+   "Four worked cases under docs/reference-cases/R6B/cases/ (real-lot.json, interior-lots.json, corner-reach.json, suffix.json), each row holding the facts with their source, the law section with the quoted words and its capture (snapshot id, file, content digest) or the statement that it is not captured, why the rule applies, the arithmetic step by step, and the expected value; each case also exists as a page rendered from the data (docs/reference-cases/R6B/<case>.md).",
+   "The values come from an AI helper that worked from a sealed folder (the law captures and the lot's recorded facts) without the program; its two returns are in docs/reference-cases/R6B/provenance/ unchanged (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_the_two_returns_are_present_unchanged), and every row names where its value stands in them (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_every_row_names_its_place_in_the_independent_reading).",
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_all_arithmetic_recomputes recomputes every arithmetic step from the row's own operands with exact decimal arithmetic; services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_every_citation_matches_the_live_capture compares every cited capture's digest with the live capture file and finds the quoted words in it; services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_each_row_is_followable requires the facts, the law, the reason and the working on every row.",
+   "No value was produced or checked by the program: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_support_code_imports_no_engine proves by an import scan that the checker, renderer, loader and test import nothing from the rule or scenario engine."
+  ],
+  "D-090-R241": [
+   "No case file holds a program result: services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_no_program_result_in_any_case passes on the four files, and services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_a_program_result_field_is_refused and test_a_program_result_sentence_is_refused prove that a case which gains such a field or sentence fails. The work order's columns 'Program today' and 'First screen' are not copied.",
+   "The test of the cases compares each recorded result with a fresh recomputation from the operands and with the law capture, never with a saved program output; the expected values are the independent reading's.",
+   "docs/reference-cases/R6B/README.md, section 'The rule for changing an expected value': an expected value changes only with a recorded reason, and a disagreement between a case and the program is never on its own a reason to change the case; it is investigated on both sides (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_readme_states_the_change_rule).",
+   "One value was corrected before submission, with its reason recorded in the case's change log and in the packet (scope correction 2): row L7 was 'not known' and reads 35 as a value that holds only if the housing qualifies. The reason is the independent reading (the helper's return and the work order's independent value), ruled by an independent reviewer (project-control/reports/M4-T024-L7-ruling.md); it was not changed to agree with the program, which shows 'not available' for that row."
+  ],
+  "D-090-R259": [
+   "The reference cases are files of their own under docs/reference-cases/R6B/ (README.md, cases/*.json, one page per case, provenance/); their checker, renderer and loader are test support under services/api/tests/rules/reference_cases/ and the program never reads a case at run time (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_support_code_imports_no_engine; no file under services/api/app/ is changed).",
+   "Each row carries the facts, the law text relied on and the arithmetic, so a person can follow it with the source and a calculator (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_each_row_is_followable; the pages are byte-identical to the renderer's output, test_pages_are_byte_identical_to_the_renderer).",
+   "docs/reference-cases/R6B/README.md, section 'What a reference case is, and what it is worth', and each case's what_it_is_worth field say that the case was prepared by an AI helper and recomputed by a second AI, that agreement between two AI answers is not on its own proof, and that it is a draft reading, not professionally reviewed (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_each_case_says_what_it_is_worth).",
+   "The change rule and a change log per case, first entry the creation, dates ordered (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_readme_states_the_change_rule, test_change_log_starts_with_creation_and_is_ordered)."
+  ],
+  "D-090-R291": [
+   "Step 3 has started with step R0 of the work order: the independently calculated examples are saved as files to test against (docs/reference-cases/R6B/cases/*.json), with a loader for later tests (services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py; services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_loader_returns_value_kind_and_source_for_a_numeric_row, test_loader_returns_a_not_known_row, test_loader_fails_loudly_on_a_missing_row_or_case).",
+   "Each gap the independent reading could not settle is shown as 'not known' with its reason and no number: in the real-lot case rows L5, L8, L12, L14 and L15, and the 'not known' cells of the corner-reach case (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_the_named_rows_are_not_known_with_a_reason_and_no_number, test_a_not_known_row_with_a_number_is_refused).",
+   "The law text that is cited but not captured (the ZR 12-10 lot definitions, ZR 23-342, ZR 23-363) is named in docs/reference-cases/R6B/README.md, section 'Law text that is not yet captured', as waiting for step P1 (services/api/tests/rules/reference_cases/test_r6b_reference_cases.py::test_not_captured_sections_are_listed_in_the_readme); that capture is task M4-T025, contracted and not started.",
+   "NOT done by this task, and not claimed: no missing rule is resolved, no conflicting input is resolved, and no program result is compared with a case; those are the later steps of the work order. This task covers only the saving of the examples as files."
+  ]
+ }
+}

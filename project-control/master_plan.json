@@ -1,77 +1,77 @@
 {
-  "project": "NYC Buildability",
-  "version": 2,
-  "delivery_mode": "full_production",
-  "current_milestone": "M4",
-  "milestones": [
-    {
-      "id": "M0",
-      "name": "Engineering control plane and cloud foundation",
-      "status": "active",
-      "depends_on": []
-    },
-    {
-      "id": "M1",
-      "name": "Official-source registry and connector framework",
-      "status": "complete",
-      "depends_on": [
-        "M0"
-      ],
-      "summary": "9/9 tasks accepted (M1-T001..T009). Official-source registry + connector framework delivered."
-    },
-    {
-      "id": "M2",
-      "name": "Citywide property intelligence",
-      "status": "active",
-      "depends_on": [
-        "M1"
-      ],
-      "summary": "13/16 tasks accepted (M2-T001..T013). M2-T014/T015/T016 survey-planning tasks remain HELD (owner survey-dispatch hold), not accepted."
-    },
-    {
-      "id": "M3",
-      "name": "Versioned legal corpus",
-      "status": "planned",
-      "depends_on": [
-        "M1"
-      ],
-      "summary": "Versioned legal corpus. 0/5 accepted. Five-task chain contracted under D-002 (carried from PR #93, superseded): M3-T001 (source-authority hierarchy + coverage matrix + registry channels + legal-source-manifest + DOCUMENT_EVIDENCE_POLICY + construction-code-release-scope draft) is first-wave lane 1; M3-T002 immutable source capture + versioning; M3-T003 Document Evidence Verification Engine; M3-T004 cross-reference closure graph; M3-T005 DOB construction-code + amendment overlay. Dependency order T001->T002->T003->T004; T005 needs T001+T002+T003+B-001+B-011. M3-T002/T003/T005 acceptance blocked by B-001 (durable storage) while open; M3-T005 also by B-011 (construction-code scope). M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6."
-    },
-    {
-      "id": "M4",
-      "name": "Rule engineering and professional review",
-      "status": "active",
-      "depends_on": [
-        "M3"
-      ],
-      "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 = exact Decimal/legal-units arithmetic foundation (D-002 first-wave lane 2; DF-2/B-014), deterministic engineering acceptable independent of G6. The PR #91 yard/coverage footprint proposal (which sketched M4-T007..T010) is SUPERSEDED and, being downstream of accepted M3-T004 + canonical zoning-lot model (Area C), will be re-proposed at fresh IDs after those land; it does not reserve M4-T007."
-    },
-    {
-      "id": "M5",
-      "name": "Scenario and optimization engine",
-      "status": "planned",
-      "depends_on": [
-        "M2",
-        "M4"
-      ]
-    },
-    {
-      "id": "M6",
-      "name": "Reporting, operations, validation, and production launch",
-      "status": "planned",
-      "depends_on": [
-        "M5"
-      ]
-    },
-    {
-      "id": "M7",
-      "name": "Advanced production capabilities and Revit integration",
-      "status": "planned",
-      "depends_on": [
-        "M6"
-      ]
-    }
-  ],
-  "updated_at": "2026-07-23T01:50:47.314307+00:00",
-  "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T005 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3."
+ "project": "NYC Buildability",
+ "version": 2,
+ "delivery_mode": "full_production",
+ "current_milestone": "M4",
+ "milestones": [
+  {
+   "id": "M0",
+   "name": "Engineering control plane and cloud foundation",
+   "status": "active",
+   "depends_on": []
+  },
+  {
+   "id": "M1",
+   "name": "Official-source registry and connector framework",
+   "status": "complete",
+   "depends_on": [
+    "M0"
+   ],
+   "summary": "9/9 tasks accepted (M1-T001..T009). Official-source registry + connector framework delivered."
+  },
+  {
+   "id": "M2",
+   "name": "Citywide property intelligence",
+   "status": "active",
+   "depends_on": [
+    "M1"
+   ],
+   "summary": "13/16 tasks accepted (M2-T001..T013). M2-T014/T015/T016 survey-planning tasks remain HELD (owner survey-dispatch hold), not accepted."
+  },
+  {
+   "id": "M3",
+   "name": "Versioned legal corpus",
+   "status": "planned",
+   "depends_on": [
+    "M1"
+   ],
+   "summary": "Versioned legal corpus. 0/5 accepted. Five-task chain contracted under D-002 (carried from PR #93, superseded): M3-T001 (source-authority hierarchy + coverage matrix + registry channels + legal-source-manifest + DOCUMENT_EVIDENCE_POLICY + construction-code-release-scope draft) is first-wave lane 1; M3-T002 immutable source capture + versioning; M3-T003 Document Evidence Verification Engine; M3-T004 cross-reference closure graph; M3-T005 DOB construction-code + amendment overlay. Dependency order T001->T002->T003->T004; T005 needs T001+T002+T003+B-001+B-011. M3-T002/T003/T005 acceptance blocked by B-001 (durable storage) while open; M3-T005 also by B-011 (construction-code scope). M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6."
+  },
+  {
+   "id": "M4",
+   "name": "Rule engineering and professional review",
+   "status": "active",
+   "depends_on": [
+    "M3"
+   ],
+   "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 = exact Decimal/legal-units arithmetic foundation (D-002 first-wave lane 2; DF-2/B-014), deterministic engineering acceptable independent of G6. The PR #91 yard/coverage footprint proposal (which sketched M4-T007..T010) is SUPERSEDED and, being downstream of accepted M3-T004 + canonical zoning-lot model (Area C), will be re-proposed at fresh IDs after those land; it does not reserve M4-T007. D-045 CITYWIDE RULE-COVERAGE CAMPAIGN (owner directive 2026-09-13, integrated per D-045-R010): M4 now carries the full-coverage waves - A1 height/setback families R1-R4 + R6-R12 (D-045-R001), A2 geometry-dependent mechanics with their data inputs (R002) incl. the B2 street-width connector (R003), A3 contextual/Quality Housing + bonus programs (R004), C-district families (R005), M-district families (R006), and A4 special-purpose + waterfront as LATER waves (R007). Sequencing R008: one reviewed family at a time, bounded gated tasks citing D-045:<rid>, never a monolithic all-districts task; orchestrator wave order A1 -> A2+B2 -> A3 -> C -> M -> A4. Preservation R009 unchanged: DRAFT/needs_review until G6 qualified legal review (Section 20), no compliance declarations, section-G dependency policy for any new package, un-named gap-list rows stay owner-triage candidates. First campaign task: M4-T012 (A1 wave 1, R1+R2 series height/setback families, the numeric-limit families matching the R5 pilot discipline without the A2 geometry dependency)."
+  },
+  {
+   "id": "M5",
+   "name": "Scenario and optimization engine",
+   "status": "planned",
+   "depends_on": [
+    "M2",
+    "M4"
+   ]
+  },
+  {
+   "id": "M6",
+   "name": "Reporting, operations, validation, and production launch",
+   "status": "planned",
+   "depends_on": [
+    "M5"
+   ]
+  },
+  {
+   "id": "M7",
+   "name": "Advanced production capabilities and Revit integration",
+   "status": "planned",
+   "depends_on": [
+    "M6"
+   ]
+  }
+ ],
+ "updated_at": "2026-09-13T05:45:00+00:00",
+ "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T005 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3."
 }

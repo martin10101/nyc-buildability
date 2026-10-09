@@ -27,6 +27,20 @@ from random import Random
 
 import pytest
 
+from app.connectors.condo_base_lot import (
+    OUTCOME_ERROR,
+    OUTCOME_MULTI_LOT,
+    OUTCOME_RESOLVED_SINGLE,
+    OUTCOME_UNRESOLVED,
+    CondoResolution,
+)
+from app.connectors.dtm_condo_soda import (
+    CONDO_DATASET_ID,
+    DIVERGENT_ZONING_NOTICE,
+)
+from app.connectors.dtm_condo_soda import (
+    SOURCE_ID as CONDO_SOURCE_ID,
+)
 from app.connectors.pluto_soda import (
     TransportResponse,
 )
@@ -41,7 +55,10 @@ from app.connectors.ztldb_soda import (
 )
 from app.profile.builder import build_property_profile
 from app.profile.zoning_crosscheck import (
+    CONDO_RESOLUTION_FIELD,
+    CONDO_RESOLUTION_NOTE_PREFIX,
     ZONING_CROSSCHECK_FIELD_MAP,
+    condo_resolution_report,
     crosscheck_lot_zoning,
     external_observation,
 )
@@ -449,3 +466,115 @@ def test_integration_defaults_leave_existing_builder_behavior_unchanged() -> Non
         additional_notes=None,
     )
     assert baseline == explicit_defaults  # regression: pure additive change
+
+
+# --------------------------------------------------------------------------
+# M5-T045 - condo billing-BBL resolution reaches the profile through the
+# EXISTING contract-1.3.0 conflict/note channels (records, never allowances;
+# D-073-R006). condo_resolution_report maps a typed CondoResolution onto the
+# same CrosscheckReport shape crosscheck_lot_zoning emits.
+# --------------------------------------------------------------------------
+
+BILLING_BBL = "1010037501"
+
+
+def _condo_resolution(outcome: str, **overrides) -> CondoResolution:
+    fields = {
+        "outcome": outcome,
+        "input_bbl": BILLING_BBL,
+        "correlation_id": "cid-condo-profile",
+        "source_id": CONDO_SOURCE_ID,
+        "dataset_ids": (CONDO_DATASET_ID,),
+        "retrieved_at": "2026-09-18T12:00:00Z",
+        "divergent_zoning_notice": DIVERGENT_ZONING_NOTICE,
+    }
+    fields.update(overrides)
+    return CondoResolution(**fields)
+
+
+def _condo_profile(report, validator):
+    """Propagate a condo report through the EXISTING additive builder params and
+    assert the built profile stays canonical (contract 1.3.0+)."""
+    pluto = pluto_result("F01_single_lot_normal.json", "1000010100")
+    profile = build_property_profile(
+        pluto,
+        clock=FIXED_CLOCK,
+        additional_conflicts=report.conflicts,
+        additional_notes=report.notes,
+    )
+    errors = list(validator.iter_errors(profile))
+    assert errors == [], [error.message for error in errors]
+    return profile
+
+
+def test_condo_resolved_single_is_a_record_note_not_a_conflict(profile_validator) -> None:
+    resolution = _condo_resolution(
+        OUTCOME_RESOLVED_SINGLE,
+        base_bbls=("1003030019",),
+        resolved_base_bbl="1003030019",
+        condo_key="103343",
+        condo_number="3343",
+        resolution_path="billing",
+    )
+    report = condo_resolution_report(resolution)
+    assert report.conflicts == []  # a clean single resolution is not a disagreement
+    assert len(report.notes) == 1
+    note = report.notes[0]
+    assert note.startswith(f"{CONDO_RESOLUTION_NOTE_PREFIX}:")
+    assert "1003030019" in note and "RECORD" in note
+    profile = _condo_profile(report, profile_validator)
+    assert note in profile["reproducibility"]["connector_notes"]
+    # A single recorded base lot does not itself gate readiness.
+    assert profile["status_dimensions"]["analysis_readiness"] == "ready"
+
+
+def test_condo_multi_lot_is_unresolved_records_conflict_never_collapsed(
+    profile_validator,
+) -> None:
+    resolution = _condo_resolution(
+        OUTCOME_MULTI_LOT,
+        base_bbls=("3022640032", "3022640033"),
+        resolved_base_bbl=None,
+        condo_key="301313",
+        condo_number="1313",
+        resolution_path="billing",
+    )
+    report = condo_resolution_report(resolution)
+    assert [c["field"] for c in report.conflicts] == [CONDO_RESOLUTION_FIELD]
+    conflict = report.conflicts[0]
+    assert conflict["resolution"] == "unresolved"  # never adjudicated
+    recorded = [v["value"] for v in conflict["values"]]
+    assert recorded == ["3022640032", "3022640033"]  # every base lot, as records
+    assert all(v["source_id"] == CONDO_SOURCE_ID for v in conflict["values"])
+    assert "NO computed allowance" in conflict["reason"]
+    profile = _condo_profile(report, profile_validator)
+    entry = next(c for c in profile["conflicts"] if c["field"] == CONDO_RESOLUTION_FIELD)
+    assert [v["value"] for v in entry["values"]] == ["3022640032", "3022640033"]
+    # Visible in the profile; the fail-safe (absent substrate -> professional
+    # review) lives at the live-provider seam, so this visibility field is not a
+    # silent readiness gate (not in the builder's identity/critical set).
+    assert profile["status_dimensions"]["analysis_readiness"] == "ready"
+
+
+def test_condo_unresolved_is_an_honest_note_no_conflict(profile_validator) -> None:
+    report = condo_resolution_report(_condo_resolution(OUTCOME_UNRESOLVED))
+    assert report.conflicts == []
+    assert len(report.notes) == 1
+    note = report.notes[0]
+    assert note.startswith(f"{CONDO_RESOLUTION_NOTE_PREFIX}:")
+    assert "unresolved" in note and "no reference number" in note
+    profile = _condo_profile(report, profile_validator)
+    assert note in profile["reproducibility"]["connector_notes"]
+
+
+def test_condo_error_is_a_typed_failsafe_note_no_conflict(profile_validator) -> None:
+    report = condo_resolution_report(
+        _condo_resolution(OUTCOME_ERROR, error_type="rate_limited", dataset_ids=())
+    )
+    assert report.conflicts == []
+    note = report.notes[0]
+    assert "rate_limited" in note and "fail-safe" in note.lower()
+    # dataset_ids empty on an error outcome falls back to the connector dataset id.
+    assert CONDO_DATASET_ID in note
+    profile = _condo_profile(report, profile_validator)
+    assert note in profile["reproducibility"]["connector_notes"]

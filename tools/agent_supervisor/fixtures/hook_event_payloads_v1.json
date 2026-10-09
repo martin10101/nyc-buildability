@@ -1,0 +1,200 @@
+{
+  "schema": "hook_event_payloads/v1",
+  "directive": "D-024",
+  "task": "M0-T105",
+  "recorded": "2026-08-27",
+  "claude_version": "2.1.247 (Claude Code)",
+  "masking": "session ids -> [SESSION-D-FIXTURE], prompt UUIDs -> [UUID], home prefixes -> [HOME] (same convention as statusline_live_2026-08-27_2_1_247_r162_discharge.json; repo is PUBLIC)",
+  "confidence_note": "UserPromptSubmit is measured-live (masked copy of the R162-discharge canary capture on 2.1.247). Every other payload is documentation-confidence: the documented common input fields plus only per-event fields the official hooks docs name. No field is invented; the owner-gated C1 canary (R192/R197) upgrades these to measured-live per event.",
+  "common_fields": {
+    "session_id": "[SESSION-D-FIXTURE]",
+    "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+    "cwd": "[HOME]\\Downloads\\project",
+    "permission_mode": "default"
+  },
+  "payloads": {
+    "SessionStart": {
+      "confidence": "official-docs",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "SessionStart",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "source": "startup"
+      }
+    },
+    "SessionEnd": {
+      "confidence": "official-docs",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "SessionEnd",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "reason": "other"
+      }
+    },
+    "UserPromptSubmit": {
+      "confidence": "measured-live",
+      "source": "statusline_live_2026-08-27_2_1_247_r162_discharge.json payloads.round2_2_1_247.hook_userpromptsubmit_full_prompt (masked)",
+      "payload": {
+        "cwd": "[HOME]\\Downloads\\project",
+        "hook_event_name": "UserPromptSubmit",
+        "permission_mode": "auto",
+        "prompt": "Fixture prompt text: withheld by sanitization before any persistence (D-024 s5.3).",
+        "prompt_id": "[UUID]",
+        "session_id": "[SESSION-D-FIXTURE]",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl"
+      }
+    },
+    "UserPromptExpansion": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "UserPromptExpansion",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "prompt_id": "[UUID]"
+      }
+    },
+    "SubagentStart": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "SubagentStart",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "agent_id": "agent-d-fixture-001",
+        "agent_type": "qa-engineer"
+      }
+    },
+    "SubagentStop": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "SubagentStop",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "agent_id": "agent-d-fixture-001",
+        "agent_type": "qa-engineer"
+      }
+    },
+    "TaskCreated": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "TaskCreated",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "task_id": "task-d-fixture-001"
+      }
+    },
+    "TaskCompleted": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "TaskCompleted",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "task_id": "task-d-fixture-001"
+      }
+    },
+    "Stop": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "Stop",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "StopFailure": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "StopFailure",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "PreCompact": {
+      "confidence": "official-docs",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "PreCompact",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default",
+        "trigger": "auto"
+      }
+    },
+    "PostCompact": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "PostCompact",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "PostToolBatch": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "PostToolBatch",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "Notification": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "Notification",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "WorktreeCreate": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "WorktreeCreate",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "WorktreeRemove": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "WorktreeRemove",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    },
+    "ConfigChange": {
+      "confidence": "documented-common-fields",
+      "payload": {
+        "session_id": "[SESSION-D-FIXTURE]",
+        "hook_event_name": "ConfigChange",
+        "transcript_path": "[HOME]\\.claude\\projects\\[PROJECT]\\[SESSION-D-FIXTURE].jsonl",
+        "cwd": "[HOME]\\Downloads\\project",
+        "permission_mode": "default"
+      }
+    }
+  }
+}

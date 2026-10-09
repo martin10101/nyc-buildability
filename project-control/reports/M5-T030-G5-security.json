@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "decision": "CONTINUE",
+  "reviewed_task_id": "M5-T030",
+  "reviewed_checkpoint_id": "M5-T030-review",
+  "verified_repo_head": "0c6340b2e0824afc1b8b579668cb337d927c1ed9",
+  "verified_origin_main": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+  "model_used": "",
+  "verified_facts": [
+    {
+      "fact": "G5 PASS for the frozen candidate's security scope. No blocking security findings. This decision does not accept the task or assert deployment verification."
+    },
+    {
+      "fact": "Final checkout /workspace/scratch/cfa2464c5c7f/nycdf-source-review independently matches all 10 product/test hashes in M5-T030-scope.json and the tested files. Sorted manifest SHA-256: 446534176f962bed0b3abfda887d524fcb34e6c8de78d6a3059c8a588799b562. Producer report SHA-256: fcea9ebdb2efffe5849de78051ffb7d4e6bef2417dda142201d723270f8a610d. The orchestrator supplied remote commit 0c6340b2e0824afc1b8b579668cb337d927c1ed9, tree 2440fdaecd1e6c7a3c2fee67cb771c7754ecc6b9, and authoritative task content identity 5070647085f077de7f1565be58b0a1f399e7352ceb41888e2c8c31e12d6bfaf0 with error None."
+    },
+    {
+      "fact": "D-062-R001 — PASS within G5 scope. provenance-link.ts requires exact source nyc-dcp-pluto-soda, dataset 64uk-42ks, and ten ASCII digits beginning 1–5. Fact and report links require record/profile BBL equality when profile identity is supplied. Missing record dataset metadata falls back only to the same source; explicit invalid datasets are retained without substitution; same-source dataset conflicts suppress the current-record link. The legacy disclosure validates its own captured BBL because its existing props contain no profile identity. Current-record links precede About links."
+    },
+    {
+      "fact": "D-062-R002 — PASS within G5 scope. Inspection of all five production files and their actual application diff confirms captured fields, original/normalized values, units, versions, dates, conflict/review state, and existing review history remain. Full captured records and retrieval metadata use React text rendering of JSON, preserving metadata without inserting arbitrary HTML. Current records are explicitly distinguished from captured evidence; no current-data fetch replaces captured values."
+    },
+    {
+      "fact": "D-062-R003 — security-relevant component evidence verified; full live acceptance remains pending. The passing ESB component example renders captured lotarea 91351, BBL 1008350041, and the exact fixed official record URL while preserving the complete captured JSON. Capture SHA-256 matches ccaaf621f409c4d732d269ae31ef817e30c64ff296ab461ea6ca662ead1a7507. M5-T030-source-verification.md separately attributes successful one-row official responses for ESB and Brooklyn BBL 3021720001. Those observations are not evidence that the changed frontend has been deployed."
+    },
+    {
+      "fact": "D-062-R004 — PASS within G5 scope. Independently checked every destination blob hash in /workspace/scratch/cfa2464c5c7f/source-links-review-artifacts/application.diff against the final files. Its 10 paths exactly match the scope manifest and are all allowed by the task. The orchestrator-captured protected application diff is empty. The same scope record retains main d8b3899f61efa6620e18a26541ced96020f5bef9 and PR 241 open/unmerged at head 4174a3b2a547ae7d5df5d35cefb63767cbf84721. No backend, contract, dependency, configuration, calculation, or legal-rule change appears in the application diff."
+    },
+    {
+      "fact": "D-062-R005 — PASS for the reviewed draft's presentation and claim boundaries. The producer report explains captured evidence comparison and organization, identifies the manual alternative, limits draft checks to supported capabilities, preserves professional judgment, and makes no measured time-saving or complete-feasibility claim."
+    },
+    {
+      "fact": "Independent focused verification: from /workspace/scratch/cfa2464c5c7f/nycdf-source-links/apps/web, ran npm run test -- src/lib/__tests__/provenance-link.test.ts src/components/architect/__tests__/source-links.test.tsx src/components/property/__tests__/provenance-disclosure.test.tsx src/components/property/__tests__/sections.test.tsx. Exit 0; Test Files 4 passed (4); Tests 104 passed (104); duration 975 ms. Hash checks bind these results to the final reviewed product bytes. The unchanged sections test retains SHA-256 65f0c129173d7392ead34c7b146d5f2a8dc7460006b58bfc68b098b73bb6ef97."
+    },
+    {
+      "fact": "Unsafe-URL review passed: href values come exclusively from fixed HTTPS NYC prefixes and validated tokens. Exact lengths close trailing-newline regex acceptance; tests reject CR/LF, query injection, Unicode digits, oversized values, unknown sources, conflicting datasets, and valid-but-wrong BBLs. request_url never becomes an href. Every outbound link in the changed components has target=_blank and rel=noopener noreferrer. No added fetch, raw HTML insertion, or alternate navigation path was found."
+    },
+    {
+      "fact": "Modularity boundaries match the actual production diff: pure URL validation remains in the existing helper; presentation remains in four existing components; public dataset helper exports and legacy component props remain compatible; no extraction is needed for modules of 56, 82, 69, 59, and 107 physical lines. Independently ran PYTHONDONTWRITEBYTECODE=1 python tools/modularity_check.py --check: exit 0; selected 435 files; failures 0; warnings 18, all outside the five changed production modules. Boundary behavior is exercised by the focused tests."
+    }
+  ],
+  "unverified_claims": [
+    {
+      "claim": "D-062-R003 is complete on the changed deployed frontend.",
+      "why": "This review verified component behavior with the actual captured ESB fact and reviewed the separate official-source evidence. Post-deployment real-building DOM href inspection and an official HTTP response check remain pending."
+    },
+    {
+      "claim": "Full CI, browser journey verification, and delivery are complete.",
+      "why": "The orchestrator reported CI run 34915644821 running at the reviewed remote SHA. This read-only G5 review did not perform deployment or certify the remaining gates."
+    }
+  ],
+  "blocking_findings": [],
+  "reason_codes": [
+    "G5_PASS",
+    "FROZEN_CONTENT_MATCH",
+    "NO_SECURITY_FINDINGS",
+    "LIVE_VERIFICATION_PENDING"
+  ],
+  "next_claude_prompt": "Record G5 PASS for M5-T030 at commit 0c6340b2e0824afc1b8b579668cb337d927c1ed9 and task content identity 5070647085f077de7f1565be58b0a1f399e7352ceb41888e2c8c31e12d6bfaf0. Complete the remaining independent gates and same-SHA CI. After the reviewed candidate is green, perform the authorized delivery and verify the changed live UI with a real-building DOM href and official HTTP response. Keep task acceptance and D-062-R003 completion pending until that evidence exists.",
+  "owner_question": "",
+  "rotation_reason": "",
+  "evidence_refs": [
+    {
+      "path": "project-control/reports/M5-T030-scope.json"
+    },
+    {
+      "path": "project-control/reports/M5-T030-producer-report.md"
+    },
+    {
+      "path": "project-control/reports/M5-T030-source-verification.md"
+    },
+    {
+      "path": "project-control/reports/M5-T030-esb-captured-fact.json"
+    },
+    {
+      "path": "apps/web/src/lib/provenance-link.ts"
+    },
+    {
+      "path": "apps/web/src/components/architect/EvidenceRecord.tsx"
+    },
+    {
+      "path": "apps/web/src/components/architect/EvidenceInspector.tsx"
+    },
+    {
+      "path": "apps/web/src/components/architect/ReportSources.tsx"
+    },
+    {
+      "path": "apps/web/src/components/property/ProvenanceDisclosure.tsx"
+    },
+    {
+      "path": "apps/web/src/lib/__tests__/provenance-link.test.ts"
+    },
+    {
+      "path": "apps/web/src/components/architect/__tests__/source-links.test.tsx"
+    },
+    {
+      "path": "apps/web/src/components/property/__tests__/provenance-disclosure.test.tsx"
+    },
+    {
+      "path": "apps/web/src/components/property/__tests__/sections.test.tsx"
+    }
+  ]
+}

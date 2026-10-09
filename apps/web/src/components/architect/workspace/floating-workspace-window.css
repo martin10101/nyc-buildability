@@ -1,0 +1,224 @@
+.architect-shell .workspace-window {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  left: 8px;
+  top: 8px;
+  width: calc(100vw - 16px);
+  height: calc(100dvh - 16px);
+  max-width: calc(100vw - 16px);
+  max-height: calc(100dvh - 16px);
+  overflow: hidden;
+  color: #17243a;
+  background: #fff;
+  border: 1px solid #b8cadc;
+  border-radius: 8px;
+  box-shadow: 0 14px 50px #17243a35, 0 2px 8px #17243a1a;
+}
+.architect-shell .workspace-window[hidden] { display: none !important; }
+.architect-shell .workspace-window__header {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 50px;
+  padding: 4px 6px 4px 10px;
+  background: #e8f0f8;
+  border-bottom: 1px solid #cfdae5;
+}
+.architect-shell .workspace-window__heading { flex: 1; min-width: 0; margin: 0; font-size: 16px; line-height: 1.35; }
+.architect-shell .workspace-window__move {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 38px;
+  padding: 6px 10px 6px 0;
+  font: inherit;
+  font-weight: 650;
+  text-align: left;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+.architect-shell .workspace-window__move:active { cursor: grabbing; }
+.architect-shell .workspace-window__grip { flex: 0 0 auto; color: #526985; }
+.architect-shell .workspace-window__controls { display: flex; gap: 3px; flex: 0 0 auto; }
+.architect-shell .workspace-window__controls button {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  min-height: 38px;
+  padding: 2px;
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  color: #244365;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.architect-shell .workspace-window__controls button:hover { background: #fff; border-color: #bfcedd; }
+.architect-shell .workspace-window__controls .workspace-window__close:hover { color: #9c2626; background: #fdebeb; border-color: #edbebe; }
+.architect-shell .workspace-window button:focus-visible { outline: 3px solid #1762d6; outline-offset: -2px; }
+.architect-shell .workspace-window__controls button:disabled,
+.architect-shell .workspace-window__resize:disabled { opacity: .4; cursor: default; }
+/* Plan §5a item 5 (floating tool windows): a plain-English line naming what the window shows,
+   under the title. Readable (14 px), never small grey print; it is the window's own description,
+   not a repeat of any status-strip notice (plan §5a item 2). */
+.architect-shell .workspace-window__description {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 8px 18px 0;
+  color: #324258;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.architect-shell .workspace-window__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  padding: 18px 18px 30px;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  /* Plan §5a item 5: comfortable default text inside every tool window. */
+  font-size: 15px;
+  line-height: 1.55;
+}
+/* Plan §5a item 5 (readable text, no small grey print): raise EVERY legacy architect text style
+   that can render inside a floating tool window — most of all the Property report brief and its
+   print view — to ONE readable 14 px floor. Scoped to the window only, so the set-aside multi-page
+   screen (plan §3 #4) keeps its own styling; architect.css is never edited. The window base is
+   15 px, so once every explicit sub-14 px declaration below is lifted to 14 px, inheritance makes
+   it impossible for any text node in the window to compute below 14 px.
+
+   Completeness (D-03 slice 5 rework 2, PR #299 re-review): a grep of every `font-size:<14px`
+   declaration reachable from ReportView and the components it renders was taken. The ONLY CSS with
+   sub-14 rules is architect.css (components/property and components/compare ship NO css, so their
+   ZoningSection / Scenario* elements inherit; globals.css has none; parcel-map-view.css is map
+   chrome). The list below is that full architect.css set. Deliberately NOT lifted, each still
+   passing the sweep: `.architect-raw pre` (raw JSON dumps — §5a item-4 "details", and the sweep
+   skips `.architect-raw`); map attribution and the page chrome that only renders OUTSIDE a window
+   (`.architect-nav*`, `.architect-brand`, `.architect-search-*`, `.architect-suggestions*`,
+   `.architect-environment`, `.architect-shell-env-*`, `.architect-confirm-label`). Headings and the
+   large headline numbers (`.architect-metric`, `.architect-development-value`, `h1`–`h3`,
+   `.architect-fact-metrics strong`) are already ≥14 px and are not touched. */
+.architect-shell .workspace-window__content .section-note,
+.architect-shell .workspace-window__content .architect-alert,
+.architect-shell .workspace-window__content .architect-definition-list dt,
+.architect-shell .workspace-window__content .architect-definition-list dd,
+.architect-shell .workspace-window__content .provenance-details,
+.architect-shell .workspace-window__content .architect-citation,
+.architect-shell .workspace-window__content .architect-issue-list,
+.architect-shell .workspace-window__content .architect-inline-loading,
+.architect-shell .workspace-window__content .architect-eyebrow,
+.architect-shell .workspace-window__content .architect-status,
+.architect-shell .workspace-window__content .failure-meta,
+.architect-shell .workspace-window__content .architect-condo-reference-tag,
+.architect-shell .workspace-window__content .architect-condo-claim-tag,
+.architect-shell .workspace-window__content .architect-map-key,
+.architect-shell .workspace-window__content .architect-map-status,
+.architect-shell .workspace-window__content [data-testid="lot-outline-accuracy"],
+.architect-shell .workspace-window__content [data-testid="lot-outline-attribution"],
+.architect-shell .workspace-window__content .architect-fact-metrics p,
+.architect-shell .workspace-window__content .architect-fact-metrics span,
+.architect-shell .workspace-window__content .fact-value,
+.architect-shell .workspace-window__content .facts-table,
+.architect-shell .workspace-window__content .facts-table thead th,
+.architect-shell .workspace-window__content .coverage-badge,
+.architect-shell .workspace-window__content .field-label,
+.architect-shell .workspace-window__content .architect-fact-filter,
+.architect-shell .workspace-window__content .architect-panel-heading a,
+.architect-shell .workspace-window__content .architect-development-status,
+.architect-shell .workspace-window__content .architect-far-grid h3,
+.architect-shell .workspace-window__content .architect-far-grid a,
+.architect-shell .workspace-window__content .architect-draft-headline h2,
+.architect-shell .workspace-window__content .architect-bulk-rows > div,
+.architect-shell .workspace-window__content .architect-coverage-status,
+.architect-shell .workspace-window__content .architect-determination > summary,
+.architect-shell .workspace-window__content .architect-report-contents,
+.architect-shell .workspace-window__content .architect-report-sources th > p,
+.architect-shell .workspace-window__content .architect-print-controls label,
+.architect-shell .workspace-window__content .architect-exception-row,
+.architect-shell .workspace-window__content .architect-exception-row a,
+.architect-shell .workspace-window__content .architect-exception-strip .architect-exception-title,
+.architect-shell .workspace-window__content .architect-address-alias,
+.architect-shell .workspace-window__content .architect-zoning-context,
+.architect-shell .workspace-window__content .proposal-route-constant,
+.architect-shell .workspace-window__content .proposal-result-status,
+.architect-shell .workspace-window__content .proposal-result-provenance,
+.architect-shell .workspace-window__content .proposal-variation-summary,
+.architect-shell .workspace-window__content .proposal-compare-controls label,
+.architect-shell .workspace-window__content .proposal-editor thead th { font-size: 14px; }
+/* Generic (non-architect) classes defined in globals.css at <0.875rem (= <14 px at the 16 px root),
+   used by the SHARED report components (ZoningSection, Scenario constraints/assumptions, OpenIssues,
+   PropertyFacts) that have no CSS of their own. globals.css uses rem, so these were missed by the
+   first px-only pass (PR #299 re-review). `.fact-value`/`.fact-units`/`.facts-table th` inherit or
+   are already lifted above; these set their own size and must be lifted here. (`.completeness-banner p`,
+   `.field-hint`, `.legend-gloss`, `.confirm-row dt` are included for a complete window floor even
+   though they are not all on the brief today.) */
+.architect-shell .workspace-window__content .status-badge,
+.architect-shell .workspace-window__content .status-label,
+.architect-shell .workspace-window__content .criticality-tag,
+.architect-shell .workspace-window__content .facts-table caption,
+.architect-shell .workspace-window__content .completeness-banner p,
+.architect-shell .workspace-window__content .field-hint,
+.architect-shell .workspace-window__content .legend-gloss,
+.architect-shell .workspace-window__content .confirm-row dt { font-size: 14px; }
+/* The .primary-button / .secondary-button base (architect.css) is NOT !important, so this more
+   specific selector wins the 14 px floor without !important (PR #295 review N3). */
+.architect-shell .workspace-window__content .primary-button,
+.architect-shell .workspace-window__content .secondary-button { font-size: 14px; }
+/* These four bases ARE declared !important in architect.css, so they need !important here too
+   (a more specific selector alone cannot beat an !important declaration). */
+.architect-shell .workspace-window__content .architect-text-button,
+.architect-shell .workspace-window__content .facts-table tbody th,
+.architect-shell .workspace-window__content .architect-fact-metrics button,
+.architect-shell .workspace-window__content .architect-evidence-choice { font-size: 14px !important; }
+.architect-shell .workspace-window__resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  color: #476487;
+  background: #f2f6fa;
+  border: 0;
+  border-radius: 5px 0 0;
+  cursor: nwse-resize;
+  touch-action: none;
+}
+.architect-shell .workspace-window__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 640px) {
+  .architect-shell .workspace-window { border-radius: 8px 8px 4px 4px; }
+  .architect-shell .workspace-window__header { flex-wrap: wrap; padding: 4px 6px; }
+  .architect-shell .workspace-window__heading { min-width: 120px; font-size: 15px; }
+  .architect-shell .workspace-window__controls button { min-width: 40px; min-height: 40px; }
+  .architect-shell .workspace-window__description { padding: 8px 12px 0; }
+  .architect-shell .workspace-window__content { padding: 12px 12px 30px; }
+}
+
+/* Plan §5a item 5 (review #299 round 3): two relative sizes the readable floor missed — the
+   headline metric's unit suffix (.46em of the 26px metric) and <small>-wrapped links (e.g. the
+   development-limits "Evidence" link). The headline number itself stays large. */
+.architect-shell .workspace-window__content .architect-metric > span,
+.architect-shell .workspace-window__content small {
+  font-size: 14px;
+}

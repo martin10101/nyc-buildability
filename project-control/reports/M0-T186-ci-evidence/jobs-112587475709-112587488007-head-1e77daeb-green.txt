@@ -1,0 +1,14 @@
+# CI evidence for M0-T186 after the repair - the supervisor-bridge jobs (windows-latest) of both runs on head 1e77daeb93a73822d4d838c91e99193a11d474b0; written by the orchestrator, read-only
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/<id>/logs. For each job: this test file's progress line and the suite's summary line, timestamps stripped, otherwise unchanged. A dot is a passed test, s a skipped one, F a failed one.
+
+## run 37557648832 (event push, attempt 1), job 112587475709: conclusion success; runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+full log: 49957 bytes, sha256 25fc47ec055392f77e128e8c1c05970ecb2ec1744fb75541209e5214db1a8a64
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+...............................                                          [ 56%]
+================ 3962 passed, 60 skipped in 282.72s (0:04:42) =================
+
+## run 37557652598 (event pull_request, attempt 1), job 112587488007: conclusion success; runner: Microsoft Windows Server 2025; Image: windows-2025-vs2026
+full log: 50655 bytes, sha256 002eb87255fcd400f142de28103ad4de78eb6ad51efc44797d6836c42e95991a
+tools\test_agent_supervisor_mrl_subagent_contract.py ................... [ 55%]
+...............................                                          [ 56%]
+================ 3962 passed, 60 skipped in 306.14s (0:05:06) =================

@@ -1,0 +1,132 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-038",
+ "version": 1,
+ "slug": "build-product-not-self",
+ "title": "Owner directive 2026-09-08: run the codex loop nonstop and build the PRODUCT (software) — no more building itself (supervisor self-infrastructure). This session: skip credentials (owner declined Supabase B-001 / Geoclient B-004), pivot the loop OFF the M0 self-tooling line and onto unblocked product engineering (UI screens, deterministic rule families, scenario/optimization). Gates and holds unchanged.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-08",
+ "captured_at": "2026-09-08T05:14:41+00:00",
+ "created_at": "2026-09-08T05:14:41+00:00",
+ "updated_at": "2026-09-12T08:40:00+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "ebe4eaf63ef5d04120608230a5147d97ad658e3a",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-08T05:14:41+00:00",
+   "content_digest_sha256": "a237dd50672e4745aff5dc5b19cf79506252a0ff0742184576f99b29f7962212"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "engineering",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "keep the loop alive nonstop; contract ONE unblocked product task packet (G0) that needs no Supabase/Geoclient (UI screen, deterministic rule family, or scenario/optimization increment); stop the current M0-T153 self-infra run cleanly; relaunch the loop DETACHED from wt-controller-src pointed at the product packet; de-prioritize M0-T155 self-infra behind product",
+  "excluded": "deleting/reverting self-infra work; skipping gates or self-accepting; pushing/merging (incl. PR #241); activating R595 / continuous mode / autostart; installing new supervisor code without R247 recert; launching the supervisor from ctl24-cwd; lifting the expansion-planning hold; requiring credentials the owner declined this session",
+  "session": "2026-09-08 onward"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-08T05:14:41+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Verbatim owner prompt + two AskUserQuestion decisions (skip credentials; build unblocked product). Read-only diagnosis verified: product foundation dammed behind owner-only credentials (B-001 Supabase, B-004 Geoclient) + legal sign-off (B-010/G6), which is WHY the loop turned to M0 self-infra (M0-T036..T155). Pivot = orchestrator contracts a no-credential product task and re-points the one-task-per-launch loop. Specific product task id to be bound on packet creation."
+  },
+  {
+   "at": "2026-09-08T14:52:30+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "Contracted the second product task M5-T004 (Compare/Step-3 UI in apps/web consuming the accepted M5-T003 scenario endpoint; offline/fixtures, no creds) and appended it to the applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's own contracted-tasks mechanism ('further product tasks are appended as contracted'). No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from a237.. baseline to the new requirements.json bytes. Verification for R003/R004 wrt M5-T004 is produced by the independent verifier at M5-T004 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-08T17:26:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "Contracted the third product task M5-T005 (deterministic practical-usable-range derivation from explicit typed assumptions; contract-free service function under services/api/app/scenario/; pure-Python offline, no Supabase/Geoclient, not G6-acceptance-blocked) and appended it to the applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's contracted-tasks mechanism ('further product tasks are appended as contracted'). Owner directive 2026-09-08: park M5-T004 UI acceptance (frontend test-green unobtainable offline + no-push hold) and keep the loop building acceptable no-creds backend work. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced to f0e09ea0. Verification for R003/R004 wrt M5-T005 is produced by the independent verifier at M5-T005 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-08T18:50:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T005 ACCEPTED (168th) via full T-B gate wave + DCV. Contracted the fourth product task M5-T006 (derive.py hardening fast-follow closing the M5-T005 G5 LOW-1/LOW-2/LOW-3 findings: strict-JSON-safe malformed-cap transport, no-alias assumption copy + honest docstring, bounded reason echo; contract-free, pure-Python offline) and appended it to the applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced to 2f52d167. Verification for R003/R004 wrt M5-T006 is produced by the independent verifier at M5-T006 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-08T20:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T006 ACCEPTED (169th) via full T-B gate wave + DCV (G5 surfaced one NEW pre-existing non-blocking LOW SEC-L1, tracked as backlog not another micro-hardening). Owner directive 2026-09-08 ('keep building offline'): pivot the loop off the derive.py hardening-spiral onto a SUBSTANTIAL feature. Contracted the fifth product task M5-T007 (deterministic scenario ranking/scoring over EXPLICIT assumption-sets; contract-free new ranking.py consuming the accepted derive.py; named-objective + stable order + transparent breakdown; never invents scenarios, never Verified; pure-Python offline) and appended it to the applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered; no source text changed; requirements_content_digest_sha256 resynced to e6111fbf. Verification for R003/R004 wrt M5-T007 produced by the independent verifier at M5-T007 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-08T23:47:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T007 ACCEPTED (170th) via full T-B gate wave + DCV. Owner directive 2026-09-08 ('run it invisibly, now' - keep the loop building feature->feature, orchestrator gates+accepts silently). Contracted the next product task M5-T008 (deterministic single-assumption sensitivity/what-if analysis over an EXPLICIT value grid; contract-free new sensitivity.py consuming the accepted derive.py READ-ONLY; named variable+metric, total stable order, transparent per-point breakdown; never invents values, never Verified; pure-Python offline) and appended it to the applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced to 128c0b9f. Verification for R003/R004 wrt M5-T008 produced by the independent verifier at M5-T008 accept time."
+  },
+  {
+   "at": "2026-09-09T02:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T008 ACCEPTED (171st) via full T-B gate wave + DCV. Contracted M5-T009 (behavior-neutral extraction of the duplicated strict-JSON-safety sanitizer from ranking.py+sensitivity.py into a shared services/api/app/scenario/_json_safety.py + closing the G5 L1 deepcopy / L2 cycle-depth defense-in-depth gaps; per permanent modularity law + reviewer recommendation; contract-free, offline) and appended it to applicability.task_ids of D-038-R003 and D-038-R004. No requirement id added/removed/renumbered; no source text changed; requirements_content_digest_sha256 resynced to 84ab4118. Verification produced by the independent verifier at M5-T009 accept time."
+  },
+  {
+   "at": "2026-09-09T04:30:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T009 ACCEPTED (172nd) via full T-B gate wave + DCV. Owner directive 2026-09-09 ('go on' - continue the invisible-operator product cycle). Contracted the next product task M5-T010 (deterministic scenario COMPARISON/DELTA engine: new contract-free services/api/app/scenario/comparison.py exposing compare_scenario_assumption_sets over >=2 explicitly-declared named assumption-sets, echoing derive_practical_usable_range READ-ONLY and computing baseline-relative absolute+percent deltas per numeric metric; transports the canonical cap verbatim, never Verified; uses the shared _json_safety.py; pure-Python OFFLINE, no Supabase/Geoclient; backs the parked Compare Step-3 UI) and appended it to applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's contracted-tasks mechanism ('further product tasks are appended as contracted'). No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from 84ab4118 to 2e904ad6. Verification for R003/R004 wrt M5-T010 produced by the independent verifier at M5-T010 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-09T05:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T010 ACCEPTED (173rd) via full T-B gate wave + DCV (G1/G3/G4/G5 all PASS at reviewed_sha ea08f504, reviewers code-reviewer/qa-engineer/security-reviewer + ci-evidence-verifier each independent != producer; G3 mutation-verified 5/5; 323 scenario tests; DCV D-038-R003/R004 PASS, material identity b673b0fc). Continuing the invisible-operator cycle. Contracted the next product task M5-T011 (deterministic scenario BREAK-EVEN / THRESHOLD FINDER: new contract-free services/api/app/scenario/breakeven.py exposing find_scenario_threshold - over an explicit bounded candidate domain for one named variable, finds the first grid interval where a named derived response metric meets-or-crosses a numeric target; reports the honest bracketing interval + per-candidate breakdown, monotonicity-honest, never interpolates an invented crossing, cap verbatim, never Verified; consumes derive READ-ONLY; shared _json_safety.py; pure-Python OFFLINE, no Supabase/Geoclient; completes the derive/sensitivity/ranking/comparison toolkit) and appended it to applicability.task_ids of D-038-R003 and D-038-R004 per R003's contracted-tasks mechanism. No requirement id added/removed/renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from 2e904ad6 to 37035a7d. Verification for R003/R004 wrt M5-T011 produced by the independent verifier at M5-T011 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-09T12:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T011 ACCEPTED (174th) via full T-B gate wave + DCV, including the session's first GATE-FAIL -> REWORK -> re-gate -> accept arc (G5 BLOCKING-1: an uncaught RecursionError from a redundant recursive copy.deepcopy on a deeply-nested candidate; fix 14ae88cc; all five reviewers re-attested PASS at the new SHA; accept 52e98d5e, material identity d3c0697a). That completes the OFFLINE optimization toolkit (derive -> sensitivity -> ranking -> comparison -> breakeven + the shared _json_safety sanitizer). Owner directive 2026-09-09, after an unplanned PC shutdown ended the prior session mid-cycle: 'restart loop and you just be the monitor - if it breaks or errors then step in, otherwise keep building'; the owner also signalled that Supabase and NYC API credentials are arriving soon. Continuing the invisible-operator cycle: contracted the next product task M5-T012 (EXPOSE the accepted optimization toolkit via the internal flag-gated scenario API - one new route module services/api/app/api/v1/scenario_analysis.py serving four POST endpoints /api/v1/properties/{bbl}/scenario/sensitivity|ranking|comparison|threshold that rebuild the profile, rule_evaluation and scenario document SERVER-SIDE over the same trusted injected seams as the accepted M5-T003 route and then call the accepted engine functions READ-ONLY through the public app.scenario facade; the request body may carry ONLY illustrative analysis parameters and NEVER a fact - a body supplying a profile, a rule_evaluation, a scenario document, a cap value or a coverage/verification status is rejected with a typed 422; every body dimension is bounded and fails closed with no unhandled raise and no RecursionError; same INTERNAL_SCENARIO_ENABLED fail-safe generic-404 posture, include_in_schema=False, and a documented STATUS_STATE_MATRIX; the canonical cap is transported verbatim and nothing is ever Verified; config.py untouched and main.py additive-only; fully OFFLINE, no Supabase/Geoclient) and appended it to applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's contracted-tasks mechanism ('further product tasks are appended as contracted'). This is the first D-038 product task that touches the API layer rather than the contract-free engine package, and it is the landing pad for the incoming credentials: the seams behind these endpoints go live without re-shaping the surface. No requirement id added, removed or renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from 37035a7d to 32f8d252. Verification for R003/R004 wrt M5-T012 is produced by the independent verifier at M5-T012 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-10T03:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_appended",
+   "note": "M5-T012 ACCEPTED (175th) via a full T-B gate wave + DCV at reviewed_sha 12fda82f, material identity e5c95c27, accept commit b3fa1736 - the session's second GATE-FAIL -> REWORK -> re-attest -> accept arc and the most productive one yet. Orchestrator PRE-GATE validation caught a deadlocking AS-7 test (socket.socket replaced globally vs Starlette TestClient's anyio portal) that made a packet-documented command never terminate; then the wave returned G1 FAIL + G5 FAIL with three BLOCKING defects - an unpaired surrogate causing an unhandled UnicodeEncodeError on all four endpoints because _finish validated with ensure_ascii=True while Starlette renders with ensure_ascii=False (the validator and renderer disagreed about what is encodable, so strict-JSON-safe-before-send was FALSE), FORBIDDEN_FACT_KEYS enforced top-level only so a nested fact object was echoed in a 200 body, and the engine call plus _finish sitting outside any exception guard while the TRUSTED rebuild stage was guarded. All fixed in one pass and re-attested PASS by all five reviewers, each reproducing the fixes from the code rather than the producer's report. Now contracting the next product task M5-T013 (EVIDENCE / PROVENANCE ENDPOINT: new services/api/app/api/v1/evidence.py serving GET /api/v1/properties/{bbl}/evidence, assembling the provenance trail ALREADY present in the accepted documents - profile closed-provenance records, per-citation provenance from the rule_evaluation trace, input provenance, and a per-claim DRAFT-vs-Verified status - transported VERBATIM with NO legal interpretation, no new rule evaluation and no recomputation, so it is NOT G6-blocked; DELIBERATELY BODY-LESS so the untrusted-input surface that cost M5-T012 two blocking defects is exactly zero; honest about gaps via typed not_available / not_applicable / professional_review_required markers rather than silent omission or invention; reusing the EXISTING internal_rule_eval_enabled flag with config.py forbidden so no new flag or credential surface appears; and carrying M5-T012's gate findings forward UP FRONT as acceptance criteria - every stage exception-guarded so no untyped 500 can escape, and the response required to survive BOTH json.dumps(allow_nan=False) AND json.dumps(ensure_ascii=False, allow_nan=False).encode('utf-8') since those two disagree about unpaired surrogates and the renderer uses the second) and appended it to applicability.task_ids of D-038-R003 (product deliverable) and D-038-R004 (no-Supabase/no-Geoclient) per R003's contracted-tasks mechanism. This is the Evidence view named in the original pivot plan (Compare UI -> Evidence view -> rule families) and never built: the provenance data exists but no API surface exposes any of it, so a user sees conclusions with no way to audit them. WHY NOT THE GEOCLIENT CONNECTOR: B-004's research (M0-T002) is complete and the address->BBL connector is the obvious credential-unlock task, but section 8 of that research is explicitly a fixture plan 'to capture once credentials exist' - F14's response shape is recorded as UNKNOWN - so building it now would mean INVENTING response bytes for a recorded-official fixture, which this codebase never does. It is therefore genuinely credential-gated and is first in line the moment the owner supplies GEOCLIENT_SUBSCRIPTION_KEY. No requirement id added, removed or renumbered (locked_requirement_ids unchanged); no source text changed; requirements_content_digest_sha256 resynced from 32f8d252 to f62c6fc8. Verification for R003/R004 wrt M5-T013 produced by the independent verifier at M5-T013 accept time (not yet built)."
+  },
+  {
+   "at": "2026-09-12T08:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "digest_normalization_restamp",
+   "note": "M0-T156 (D-040-R003) digest normalization: registry text-artifact digests are now computed over CRLF-to-LF-normalized bytes (directive_registry.sha256_text_artifact; adopted at the c2 source check, the c14 requirements-body check and the migration-manifest check), so one recorded digest verifies on both a Windows CRLF working tree and the CI LF checkout (.gitattributes eol=lf). This entry re-stamps THIS manifest's affected digest value(s) from the legacy CRLF-bytes value to the normalized value - the underlying source/requirements CONTENT is byte-identical (sources immutable per D-040-R003); only the recorded representation-dependent hash changes. Tamper detection is unchanged: any content edit still fails c2/c14 (test_directive_compliance.LineEndingNormalizationTest). Re-stamped: requirements.json f62c6fc8 -> 0e9de4cc."
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner issued the directive and selected both decisions, 2026-09-08."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-038-R001",
+  "D-038-R002",
+  "D-038-R003",
+  "D-038-R004",
+  "D-038-R005",
+  "D-038-R006",
+  "D-038-R007"
+ ],
+ "requirements_content_digest_sha256": "0e9de4cc2c2979140dc4d3b555b5add31877e2c88c8855df9edf45ad194c9b34"
+}

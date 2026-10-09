@@ -1,0 +1,146 @@
+{
+ "task_id": "M0-T090",
+ "directive_id": "D-024",
+ "producer": "orchestrator",
+ "frozen_content_commit": "e8b21d1",
+ "requirements": {
+  "D-024-R002": [
+   "conduct: no transport/outage/controller surface touched; this unit is pre-spawn planning records only; frozen content e8b21d1 (5 modules + 53-test pack + report); composite suite at that tree 2653 passed / 3 skipped / 0 failed"
+  ],
+  "D-024-R003": [
+   "phased-program contribution: Phase C1 schemas/classifier/sizing delivered shadow-only; loop architecture untouched (no loop.py/cli.py edits); project-control/reports/M0-T090-bounded-contracts.md section 1"
+  ],
+  "D-024-R004": [
+   "no-violation: no Codex control-plane change; envelope names what evidence Codex inspects (evidence_inspection_plan field), leadership boundary unchanged"
+  ],
+  "D-024-R007": [
+   "conduct: produced from repository evidence + captured directive only; no owner questions asked (campaign NEXT + packet objective sufficed)"
+  ],
+  "D-024-R008": [
+   "conduct: zero routine questions to the owner this task; D-028 sleep instruction honored"
+  ],
+  "D-024-R010": [
+   "conduct: PR #241 and every pre-existing PR untouched (git log/push history)"
+  ],
+  "D-024-R017": [
+   "D-024-R101 cited in the packet objective, every new module docstring closing line, and the content commit message e8b21d1 (freeze rule section 3)"
+  ],
+  "D-024-R018": [
+   "survey-first production: existing rotation.py SMALL/MEDIUM/LARGE axis, context_pack_budget tiers, telemetry records REUSED not duplicated; project-control/reports/M0-T090-bounded-contracts.md section 4 records the distinct-axis and reuse decisions"
+  ],
+  "D-024-R020": [
+   "conduct: producer stayed in allowed_paths (content commit touches exactly the 3 scope areas); commits/pushes on the control branch only"
+  ],
+  "D-024-R021": [
+   "no-violation: no Codex action surface changed; envelope telemetry_sources restricted to the Phase B closed read-only set"
+  ],
+  "D-024-R022": [
+   "no-violation: nothing grants Codex mutation ability; all new records are controller-side dataclasses"
+  ],
+  "D-024-R023": [
+   "contract-level enforcement: assert_grantable refuses overlapping write scopes/resources and producer cap >3; role vocabulary read_only/review_only/write in tools/agent_supervisor/subagent_contracts.py"
+  ],
+  "D-024-R025": [
+   "no-violation: no dispatch/acceptance path added; decisions are records (SpawnDecision.to_dict), nothing acts on them"
+  ],
+  "D-024-R026": [
+   "no-violation: R595/activation untouched; supervisor SHADOW-ONLY; project-control/reports/M0-T090-bounded-contracts.md section 1 closing note"
+  ],
+  "D-024-R042": [
+   "envelope telemetry_confidence validated against telemetry_records.CONFIDENCE_LABELS (closed vocabulary); startup measurements labeled estimated with category cumulative; test_envelope_validation_fail_closed"
+  ],
+  "D-024-R045": [
+   "tools/agent_supervisor/subagent_contracts.py no-quota guard over EVERY worker-facing string (10 fail-closed pattern classes); independent-scan proof test_worker_prompt_contains_no_quota_language + 8 parametrized rejections + per-field coverage test"
+  ],
+  "D-024-R046": [
+   "contract layer: HealthBands (occupancy ladder, ordering invariant) + DetectorPolicy (no-progress window, repeated-attempt limit, scope-drift) as envelope fields; runtime evaluation deferred to the next Phase C units per the campaign split (project-control/reports/M0-T090-bounded-contracts.md section 1)"
+  ],
+  "D-024-R047": [
+   "two separate layers implemented as two linked records: WorkerAssignment (planning) + SupervisionEnvelope (invisible supervision inputs); validate_pair links them; tools/test_agent_supervisor_bounded_contracts.py (53/53 green)"
+  ],
+  "D-024-R048": [
+   "tools/agent_supervisor/workload_classifier.py four-class closed vocabulary with deterministic precedence + conservative unknown; tests for all four classes incl. never-optimistic cohesion"
+  ],
+  "D-024-R049": [
+   "tools/agent_supervisor/startup_overhead.py StartupObservation (packet size, repeated documents, startup tokens/time, files reopened, time-to-first-evidence, outcome) + median calibration over known values only; test_calibration_uses_known_values_only_and_filters"
+  ],
+  "D-024-R050": [
+   "HealthBands private + configurable ([subagent_health_bands] fail-closed loader); never rendered to workers (envelope-leak guard bans band names AND numeric thresholds from prompts); test_bands_from_config_fail_closed + test_envelope_numbers_never_leak_into_worker_text"
+  ],
+  "D-024-R051": [
+   "no maxTurns/maxBudgetUsd anywhere in the new modules (grep-clean); emergency_ceiling_note is a private envelope note documenting the catastrophic-failsafe posture; catastrophic-ceiling recovery TEST deferred with the runtime units"
+  ],
+  "D-024-R052": [
+   "calibration filterable per resolved_model and size_class (OverheadLedger.calibration kwargs); bands configurable per policy table; live-runtime calibration deferred to runtime units"
+  ],
+  "D-024-R053": [
+   "ExistingSubagentHealth.overloaded_or_confused (external-evidence quality signal) blocks resume regardless of counters; test_overloaded_subagent_never_resumed_to_save_startup"
+  ],
+  "D-024-R055": [
+   "WorkerAssignment carries every s6 worker-facing item (IDs, exact change, necessity, role, permitted/prohibited, deliverable schema, acceptance, evidence, checkpoints, honest-blocker default, commit-allowed flag, extension protocol, unrelated-discovery, handoff duties); SupervisionEnvelope carries every s6 controller item; validate_pair; tools/test_agent_supervisor_bounded_contracts.py (53/53 green)"
+  ],
+  "D-024-R056": [
+   "assert_no_envelope_leak: band names, band threshold strings (repr and percent forms), model window, detector counters all banned from worker text; rendered prompt re-proven on every render"
+  ],
+  "D-024-R057": [
+   "decide_spawn goldilocks precedence: stay-main for micro-spawn churn, split-first for oversized, resume-existing for healthy same-assignment, recon-first for unknown; tools/agent_supervisor/spawn_decision.py"
+  ],
+  "D-024-R058": [
+   "tools/agent_supervisor/startup_overhead.py measures the documented startup reload cost (packet bytes, repeated documents, files reopened); spawn_decision consumes calibration; fork gate honors isolated-context vs inheritance semantics"
+  ],
+  "D-024-R059": [
+   "classifier keeps frequent-decision/shared-context work in the main session; model_fit routes to lower tiers only with window+demonstrated capability; test_lower_tier_model_needs_window_and_demonstrated_capability"
+  ],
+  "D-024-R060": [
+   "PRODUCER_CAP=3 enforced by assert_grantable (fewer by default: cap is a refusal ceiling, not a target); read-only/review agents pass at any count; nested children flow through the same check; test_producer_cap_rejects_fourth_writer"
+  ],
+  "D-024-R061": [
+   "classifier/report guidance: verbose self-contained work to cohesive subagent; short shared-decision work stays main (requires_frequent_parent_decisions feature); return schema field bounds deliverables"
+  ],
+  "D-024-R062": [
+   "DetectorPolicy.repeated_attempt_limit as controller-side envelope field (worker never told); extension protocol default text authorizes in-scope self-correction; runtime detection deferred"
+  ],
+  "D-024-R063": [
+   "DEFAULT_EXTENSION_PROTOCOL carries the full s6.1 return list (proven/uncertain/blocking-why/least-costly-next/scope+completion/resume-vs-new/consequences/partial checkpoint); envelope extension_criteria field for the controller side"
+  ],
+  "D-024-R064": [
+   "DetectorPolicy docstring pins progress = durable evidence (not text volume/tool activity); no_progress_window_minutes counts absence of NEW durable evidence; runtime trigger deferred"
+  ],
+  "D-024-R079": [
+   "graph subsystem NOT edited; integration is by-value adaptation of the repo_views dict shape; supervisor package remains a leaf (no graph imports); project-control/reports/M0-T090-bounded-contracts.md section 4"
+  ],
+  "D-024-R080": [
+   "stale graph refused as fact: WorkloadFeatures.graph_stale yields unknown-recon-first; tier_signals raises stale_graph; test_stale_graph_is_reported_never_used"
+  ],
+  "D-024-R081": [
+   "tiers REUSED exactly via lazy import of tools.context_pack_budget.select_tier (no copied table, Section A constants untouched); parity test against direct select_tier + frozen withholding behavior test"
+  ],
+  "D-024-R092": [
+   "tools/agent_supervisor/workload_sizing.py packet_plan: role-scoped smallest-complete s13 category set, justified omissions mandatory, STOP on unprovable sufficiency (truncated/empty neighborhoods); test_packet_plan_marks_omissions_or_stops + test_unprovable_sufficiency_stops_instead_of_dropping_constraints"
+  ],
+  "D-024-R098": [
+   "assignment_id distinct from parent_task_id in both records (task/session/assignment boundaries separate); classifier chooses seams from ownership/proof boundaries, not task-id counting"
+  ],
+  "D-024-R101": [
+   "Phase C items 1 (schemas), 2 (classifier), 3 (startup measurement + goldilocks/resume/fork teaching), 5 (graph sizing + packet plans) delivered; item 4 contract-level guards delivered (cap/lease/no-quota), runtime enforcement + item 6 landing/handoffs deferred to the remaining Phase C/D campaign units; project-control/reports/M0-T090-bounded-contracts.md section 1"
+  ],
+  "D-024-R108": [
+   "s16.2 SIZING subset implemented per the packet objective (section 16.2 sizing cases incl. no-quota-in-worker-prompt proof): coverage map in project-control/reports/M0-T090-bounded-contracts.md section 2 (15 matrix rows mapped to named tests); runtime rows (landing direction, TaskStop reservation, catastrophic-ceiling recovery, child turnover) owed by the later Phase C/D units that implement those behaviors"
+  ],
+  "D-024-R120": [
+   "bounded rules encoded as refusal guards (cap, leases, vague-assignment rejection, quota rejection) that activation cannot bypass; no unlimited-subagent surface added"
+  ],
+  "D-024-R125": [
+   "Bootstrap Gate 0 verified at session start (M0-T100-G0-readiness.md) and unchanged; M0-T090-G0-readiness.md records it for this task"
+  ],
+  "D-024-R126": [
+   "MCP-clean: no servers this session (project settings default-deny; no MCP tools present); recorded in both G0 readiness reports"
+  ],
+  "D-024-R127": [
+   "conduct: no Gate-0 failure occurred; no fallback root used"
+  ],
+  "D-024-R128": [
+   "conduct: no failed-start adoption; single session, clean lineage from handoff HEAD 8bb829c"
+  ]
+ }
+}

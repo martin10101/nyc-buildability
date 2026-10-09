@@ -1,0 +1,64 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-047",
+ "version": 1,
+ "slug": "sonnet-producers-ramp-10",
+ "title": "Owner 2026-09-13: campaign producers switch to claude-sonnet-5 (builders ONLY - reviewers/orchestrator stay on the D-004 pinned set; twice-failed tasks rebuild on claude-opus-4-8) and the D-046 concurrency ceiling rises 3 -> 10 with a mandatory ramp (start 3-4, widen only while review/CI latency stays healthy).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-13",
+ "captured_at": "2026-09-13T04:43:49+00:00",
+ "created_at": "2026-09-13T04:43:49+00:00",
+ "updated_at": "2026-09-13T04:43:49+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "e0e59772fbbb2796632265045c70eed7a6128a0f",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner asked for Sonnet builders + 10-20 subagents verbatim, then resolved both scopes via structured questions: 'Builders only (Recommended)' and 'Up to 10, ramped' (source-001.md #scope-clarification-verbatim). Pricing and pipeline-bottleneck tradeoffs were presented before selection."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-047-R001",
+  "D-047-R002",
+  "D-047-R003",
+  "D-047-R004",
+  "D-047-R005"
+ ],
+ "requirements_content_digest_sha256": "aff2f5bc5f796f0a04b9157216dc88cc0efff303cd04e1534be6f510fbfa2e7a",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-13T04:43:49+00:00",
+   "content_digest_sha256": "66077b1819827202309c034a261c28c534a5880340939d9195d944c9eb2cbb17"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "execution_scaling_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "producer-agent model keys -> claude-sonnet-5 for D-045 campaign work; concurrency ceiling 10 with mandatory ramp; escalation rebuilds on claude-opus-4-8 after two review failures",
+  "prohibited": "any reviewer/orchestrator model change; exceeding 10 concurrent producers; skipping the ramp; any relaxation of D-046 R002/R003 (disjointness, gates, review independence, §G, sequential integration)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-13T04:43:49+00:00",
+   "actor": "orchestrator",
+   "event": "captured",
+   "note": "verbatim capture from the interactive companion session (peer-capture per D-042..D-046 precedent); supersedes ONLY the numeric ceiling in D-046-R001/R004 (3 -> 10 ramped) and D-004's producer model keys; relay to the live build session (ctl24-ce) follows immediately per R005"
+  }
+ ]
+}

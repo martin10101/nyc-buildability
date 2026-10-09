@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: "Run it locally … `npm run dev`" (never run npm, npx or node locally). This owner dashboard is not the architect dashboard in plan §3. The rest still applies.
+
 # Owner Mission-Control Dashboard (M0-T022)
 
 A **read-only** observability layer over the existing project-control system. It lets the

@@ -1,0 +1,219 @@
+{
+  "contract_version": "1.0.0",
+  "comparable_sales": {
+    "subject": {
+      "bbl": "4073340070",
+      "building_class_category": "22 STORE BUILDINGS",
+      "gross_square_feet": 5091
+    },
+    "criteria": {
+      "size_tolerance_fraction": 0.5,
+      "exclude_zero_price": true,
+      "require_recorded_size": true
+    },
+    "criteria_text": "Similar type: same DOF building class category \"22 STORE BUILDINGS\". Similar size: recorded gross floor area within +/-50% of the subject's recorded 5,091 sq ft. Market sales only: $0 sales (transfers without cash consideration, per DOF) are excluded. The subject lot itself is excluded. Candidates with no recorded gross floor area are listed separately, not size-matched.",
+    "not_a_valuation": "These are recorded sales selected by a simple, disclosed filter, not a valuation or an appraisal. How \"similar type and size\" should be defined is a product choice to confirm with the owner.",
+    "selected": [
+      {
+        "bbl": "4073140027",
+        "borough": "4",
+        "neighborhood": "BAYSIDE",
+        "block": "7314",
+        "lot": "27",
+        "address": "45-30 BELL BOULEVARD",
+        "zip_code": "11361",
+        "building_class_category": "22 STORE BUILDINGS",
+        "building_class_at_time_of_sale": "K1",
+        "residential_units": 0,
+        "commercial_units": 1,
+        "total_units": 1,
+        "year_built": 1996,
+        "land_square_feet": 5415,
+        "gross_square_feet": 3750,
+        "sale_price": 3700000,
+        "sale_date": "2025-11-20",
+        "source": {
+          "kind": "city_dataset",
+          "source_id": "nyc-dof-annualized-sales-soda",
+          "dataset_id": "w2pb-icbu",
+          "dataset": "DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+          "request_url": "https://data.cityofnewyork.us/resource/w2pb-icbu.json?neighborhood=BAYSIDE&building_class_category=22%20STORE%20BUILDINGS&$order=sale_date%20DESC&$limit=12",
+          "retrieved_at": "2026-10-02T11:00:00Z",
+          "dataset_last_modified": "2026-09-01"
+        }
+      },
+      {
+        "bbl": "4074730001",
+        "borough": "4",
+        "neighborhood": "BAYSIDE",
+        "block": "7473",
+        "lot": "1",
+        "address": "220-10 NORTHERN BOULEVARD",
+        "zip_code": "11361",
+        "building_class_category": "22 STORE BUILDINGS",
+        "building_class_at_time_of_sale": "K5",
+        "residential_units": 0,
+        "commercial_units": 1,
+        "total_units": 1,
+        "year_built": 1987,
+        "land_square_feet": 18600,
+        "gross_square_feet": 3900,
+        "sale_price": 7950000,
+        "sale_date": "2025-09-25",
+        "source": {
+          "kind": "city_dataset",
+          "source_id": "nyc-dof-annualized-sales-soda",
+          "dataset_id": "w2pb-icbu",
+          "dataset": "DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+          "request_url": "https://data.cityofnewyork.us/resource/w2pb-icbu.json?neighborhood=BAYSIDE&building_class_category=22%20STORE%20BUILDINGS&$order=sale_date%20DESC&$limit=12",
+          "retrieved_at": "2026-10-02T11:00:00Z",
+          "dataset_last_modified": "2026-09-01"
+        }
+      },
+      {
+        "bbl": "4062880039",
+        "borough": "4",
+        "neighborhood": "BAYSIDE",
+        "block": "6288",
+        "lot": "39",
+        "address": "214-17 41 AVENUE",
+        "zip_code": "11361",
+        "building_class_category": "22 STORE BUILDINGS",
+        "building_class_at_time_of_sale": "K2",
+        "residential_units": 0,
+        "commercial_units": 1,
+        "total_units": 1,
+        "year_built": 1910,
+        "land_square_feet": 4000,
+        "gross_square_feet": 4058,
+        "sale_price": 4350000,
+        "sale_date": "2025-03-14",
+        "source": {
+          "kind": "city_dataset",
+          "source_id": "nyc-dof-annualized-sales-soda",
+          "dataset_id": "w2pb-icbu",
+          "dataset": "DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+          "request_url": "https://data.cityofnewyork.us/resource/w2pb-icbu.json?neighborhood=BAYSIDE&building_class_category=22%20STORE%20BUILDINGS&$order=sale_date%20DESC&$limit=12",
+          "retrieved_at": "2026-10-02T11:00:00Z",
+          "dataset_last_modified": "2026-09-01"
+        }
+      },
+      {
+        "bbl": "4061480008",
+        "borough": "4",
+        "neighborhood": "BAYSIDE",
+        "block": "6148",
+        "lot": "8",
+        "address": "203-14 35 AVENUE",
+        "zip_code": "11361",
+        "building_class_category": "22 STORE BUILDINGS",
+        "building_class_at_time_of_sale": "K1",
+        "residential_units": 0,
+        "commercial_units": 3,
+        "total_units": 3,
+        "year_built": 1956,
+        "land_square_feet": 5811,
+        "gross_square_feet": 3850,
+        "sale_price": 1290000,
+        "sale_date": "2025-01-31",
+        "source": {
+          "kind": "city_dataset",
+          "source_id": "nyc-dof-annualized-sales-soda",
+          "dataset_id": "w2pb-icbu",
+          "dataset": "DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+          "request_url": "https://data.cityofnewyork.us/resource/w2pb-icbu.json?neighborhood=BAYSIDE&building_class_category=22%20STORE%20BUILDINGS&$order=sale_date%20DESC&$limit=12",
+          "retrieved_at": "2026-10-02T11:00:00Z",
+          "dataset_last_modified": "2026-09-01"
+        }
+      }
+    ],
+    "excluded": [
+      {
+        "bbl": "4062620025",
+        "address": "201-07 NORTHERN BOULEVARD",
+        "sale_date": "2025-04-30",
+        "reason": "zero_price_transfer"
+      },
+      {
+        "bbl": "4059000110",
+        "address": "23-46 BELL BOULEVARD",
+        "sale_date": "2025-04-09",
+        "reason": "zero_price_transfer"
+      },
+      {
+        "bbl": "4059000024",
+        "address": "211-01 26TH AVENUE",
+        "sale_date": "2025-04-09",
+        "reason": "zero_price_transfer"
+      },
+      {
+        "bbl": "4059000020",
+        "address": "210-29 26TH AVENUE",
+        "sale_date": "2025-04-09",
+        "reason": "zero_price_transfer"
+      },
+      {
+        "bbl": null,
+        "address": "212-15 26 AVENUE",
+        "sale_date": "2025-04-09",
+        "reason": "zero_price_transfer"
+      },
+      {
+        "bbl": "4073150030",
+        "address": "45-58 BELL BOULEVARD",
+        "sale_date": "2025-03-14",
+        "reason": "gross_floor_area_out_of_range"
+      },
+      {
+        "bbl": "4073300038",
+        "address": "47-48 BELL BOULEVARD",
+        "sale_date": "2025-02-27",
+        "reason": "gross_floor_area_out_of_range"
+      },
+      {
+        "bbl": "4062840041",
+        "address": "42-34 BELL BLVD",
+        "sale_date": "2024-12-10",
+        "reason": "zero_price_transfer"
+      }
+    ],
+    "source": {
+      "kind": "city_dataset",
+      "source_id": "nyc-dof-annualized-sales-soda",
+      "dataset_id": "w2pb-icbu",
+      "dataset": "DOF NYC Citywide Annualized Calendar Sales (w2pb-icbu)",
+      "request_url": "https://data.cityofnewyork.us/resource/w2pb-icbu.json?neighborhood=BAYSIDE&building_class_category=22%20STORE%20BUILDINGS&$order=sale_date%20DESC&$limit=12",
+      "retrieved_at": "2026-10-02T11:00:00Z",
+      "dataset_last_modified": "2026-09-01"
+    }
+  },
+  "unused_floor_area": {
+    "lot_bbl": "4073340070",
+    "role": "subject",
+    "status": "not_confirmed",
+    "label": "Remaining development capacity: Not confirmed",
+    "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+    "existing_floor_area_input": {
+      "known": true,
+      "value_sq_ft": 50000,
+      "unit": "square_feet",
+      "measurement": {
+        "rank": "assumed",
+        "label": "Assumed"
+      },
+      "source": {
+        "kind": "assumption",
+        "dataset": null,
+        "dataset_version": null,
+        "retrieved_at": "2026-09-30T12:00:00Z",
+        "query_ref": null,
+        "document_ref": null,
+        "statement": "architect's stated assumption"
+      },
+      "basis": "stated_assumption",
+      "basis_label": "Stated assumption",
+      "note": "50,000 sq ft entered as a stated assumption: architect's stated assumption Scope: stated for tax lot 4073340070; whether the figure covers only this tax lot or a zoning lot of several tax lots is not established. City-recorded building area is shown for reference only and is never used for it."
+    },
+    "detail": "Remaining development capacity: Not confirmed. Needs verified zoning-lot boundaries and existing zoning floor area. Existing zoning floor area on file: 50,000 sq ft (Stated assumption). Unused floor area is the zoning floor-area allowance minus the existing zoning floor area. The allowance and the subtraction are the rule engine's (Lane A), which is off; this data layer supplies only the existing-floor-area input and never computes a remaining capacity."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "task_id": "M4-T013",
+  "assembled_by": "orchestrator",
+  "note": "Research-only task (D-045-R003 first half). Evidence scoped to the research deliverable; the connector BUILD is a later packet that pins this report.",
+  "requirements": {
+    "D-045-R003": [
+      "project-control/reports/M4-T013-street-width-research.md - official-source research for the B2 street-width/mapped-street input: DCM Street Center Line identified as PRIMARY (DCP_GIS ArcGIS FeatureServer layer, keyless, EPSG:2263, geoJSON-capable, item 9ce5b83f...; SODA g6zj-tzgn as documented-stale fallback; BYTES bulk product noted as Render-worker-only under the thin client), with live URLs + retrieval dates + verbatim official quotes",
+      "width-concept finding with legal significance: Geoclient/Geosupport per-address streetWidth records PAVED/roadbed width from LION (30 ft vs DCM mapped 60 ft divergence observed on W 100 St) - KILLED for legal use, advisory cross-check only; the DCM Streetwidth field is FREE TEXT (ranges, inequalities, prose, n/a 2954, Unknown 1404) so the connector must parse conservatively and FAIL CLOSED TO NARROW (never over-states FAR)",
+      "re-runnable thin-client capture procedure designed (URL + timestamp + sha256, small verbatim samples embedded); six open questions recorded as open (incl. no field-level width definition - byte-verify mapped-ROW vs bed; the ZR-grounded fail-closed policy per ambiguity class flagged as a rule/legal decision, not assumed)",
+      "docs/research/source-registry-drafts/dcm-street-centerline.json - two registry records in the M2-T009 posture, draft_status non-final"
+    ],
+    "D-045-R008": [
+      "research-first sequencing held: zero connector code, fixtures, or schema in the diff (S6; producer git status = the two deliverable files + agent memory only)"
+    ],
+    "D-045-R009": [
+      "no rule promoted, no compliance language, no dependency change; the fail-closed-to-narrow recommendation explicitly routes the ambiguity-class policy to a rule/legal decision rather than deciding it"
+    ],
+    "D-046-R001": [
+      "wave-1 slot 2 executed in an isolated worktree (base 5450d39f) in parallel with M4-T014"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint scopes held: this task wrote only project-control/reports/M4-T013-street-width-research.md + docs/research/source-registry-drafts/ - zero overlap with M4-T014's rules dirs (producer git status captured in the report)"
+    ]
+  }
+}

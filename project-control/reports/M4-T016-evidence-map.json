@@ -1,0 +1,25 @@
+{
+  "task_id": "M4-T016",
+  "assembled_by": "orchestrator",
+  "note": "Research-only task (D-045-R002 research-first half). Evidence scoped to the research deliverable; the A2 BUILD packets are later tasks that pin this report.",
+  "requirements": {
+    "D-045-R002": [
+      "project-control/reports/M4-T016-a2-geometry-mechanics-research.md - evidenced ZR section map for the R6-R12 geometry-dependent mechanics: the routed chain 23-432 (height table, wide/narrow-independent) -> 23-433 (standard setback, wide/narrow-DEPENDENT depth 10ft wide / 15ft narrow) -> optional 23-73 series (R6-R10 un-suffixed only; 23-736 sky-exposure-plane slopes 2.7:1 narrow / 5.6:1 wide, alternates 3.7:1 / 7.6:1) -> 23-411/23-41 permitted obstructions; R11/R12 scoped to the table/setback regime only - every claim verbatim-quoted with official URL + retrieval date",
+      "OQ-4 geometry-mechanic design specified from the ZR text: DCM wide-disposed segment polyline (EPSG:2263) x 100-ft planar buffer x MapPLUTO lot polygon (EPSG:2263) intersection per steps A-D; identical CRS on both sources (US survey feet, corroborated via epsg.io after epsg.org 403) so no reprojection; edge cases inventoried (corner lots, multiple frontages, irregular/ambiguous segments, buffer-boundary contact)",
+      "data-input fit stated from the code as it exists: the DCM connector's ArcGIS query never sets returnGeometry so geometry arrives by default but parse_segment_page reads only attributes - a parse-and-expose gap, correcting the packet's own returnGeometry-flip shorthand; mappluto_geometry_arcgis fit-for-purpose for the lot side; mappluto_lot_outline explicitly display-only/EPSG:4326, must NOT be used for measurement; gaps recorded as build-packet requirements (recommended split B3-B7)",
+      "MATERIAL DISCOVERY kept visible, not resolved (permanent principle 4): live capture shows ZR 12-10 'street, wide' Last Amended 3/26/2026 with a materially fuller definition (C5-3/C6-4/C6-6 alternate-width clause + two named-street 'considered wide' designations) than the flat 75-ft text in the accepted M4-T013 pin / zr-12-10.snapshot.json - routed as open questions OQ-4-a/b/c for capture + review, never adjudicated in-task; print-render channel 504 for the large 12-10 page disclosed honestly with the sha256-pinned canonical-HTML substitute"
+    ],
+    "D-045-R008": [
+      "bounded research-only packet under the normal gated process (G0 recorded at 1cf2c488 contract seam; single deliverable file); wave-3 ordering per the orchestrator replanning judgment recorded in the packet business_reason (handoff seq 108 NEXT-ACTION 1; A2 unblocked by the accepted M4-T015 connector)"
+    ],
+    "D-045-R009": [
+      "coverage-scope-only work: no rule published, DRAFT-until-G6 language preserved; OQ-3 (ambiguity-class policy) surfaced and left fail-closed-to-narrow pending a G6-class ruling (scenario S3); no hold lifted; zero dependencies touched (producer S5 single-file commit 232a889b; the producer's separate out-of-scope agent-memory commit a34a61ca was disclosed and NOT integrated)"
+    ],
+    "D-046-R001": [
+      "wave-3 parallel slot 1: dispatched concurrently with M4-T017 into an isolated worktree (agent-a4bced1914f048c32) pinned to contract head 6dbf65fa; producer commit 232a889b cherry-picked to the integration branch by the orchestrator as eac7b42a (sequential integration; report sha256 ab12aab4 LF-normalized verified)"
+    ],
+    "D-046-R002": [
+      "pairwise-disjoint scope by construction: allowed_paths = exactly one report file (project-control/reports/M4-T016-a2-geometry-mechanics-research.md), sharing no file with M4-T017's single report file; producer self-check git status clean at the report-only commit"
+    ]
+  }
+}

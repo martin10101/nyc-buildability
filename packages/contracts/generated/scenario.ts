@@ -69,7 +69,7 @@ export interface IntegrityCheck {
   note: string;
 }
 export interface Scenario {
-  contract_version: "1.0.0";
+  contract_version: "1.0.0" | "1.1.0";
   scenario_kind: "preliminary" | "no_scenario" | "unsupported";
   coverage_status: DraftCoverageStatus;
   data_completeness: DataCompleteness;
@@ -85,5 +85,57 @@ export interface Scenario {
   reasons: string[];
   coverage_matrix: CoverageMatrixRow[];
   integrity_check: IntegrityCheck;
+  unused_draft_zoning_floor_area: {
+    state: "computed" | "over_built" | "not_computable";
+    unused_draft_zoning_floor_area_sq_ft: number | null;
+    unit: string | null;
+    label: NonEmptyString;
+    scope_note: NonEmptyString;
+    formula: string | null;
+    professional_review_required: boolean;
+    over_built_statement: string | null;
+    not_computable_reason: ("missing_existing_building_area" | "existing_building_area_unusable" | "no_draft_far_cap") | null;
+    inputs: {
+      draft_zoning_floor_area_cap: {
+        value_sq_ft: number | null;
+        unit: string | null;
+        provenance: unknown | null;
+      };
+      existing_building_floor_area: {
+        value_sq_ft: number | null;
+        unit: string | null;
+        coverage_status: string | null;
+        provenance_ref: string | null;
+        provenance: unknown | null;
+      };
+    };
+    assumptions: ScenarioAssumption[];
+  };
+  proposed_massing?: {
+    outline: {
+      srid: 2263;
+      vertices: number[][];
+    };
+    levels: {
+      level_index: number;
+      floor_count: number;
+      floor_to_floor_ft: number;
+      outline?: {
+        srid: 2263;
+        vertices: number[][];
+      } | null;
+    }[];
+    exterior_walls: {
+      id: NonEmptyString;
+      start_vertex_index: number;
+      end_vertex_index: number;
+    }[];
+    provenance: {
+      author: NonEmptyString;
+      kind: "proposed";
+      editor_version: NonEmptyString;
+      parent_scenario_id?: string | null;
+    };
+  };
   _expected_failure?: string;
 }

@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T085",
+ "material_commit": "519bc360 (cherry-pick of the wt-m5t085 in-worktree commit e8d43692; every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T08:20:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent, D-087 wave; worktree wt-m5t085)",
+ "requirements": {
+  "D-066-R001": [
+   "D-066-R001: the packet's CODE-GRAPH NAVIGATION BLOCK was embedded at the contract seam (graph regenerated: 815 files) naming consumers, forbidden neighbours and the `query.py --no-regen impact` instruction; the producer stayed inside the named scope (no forbidden neighbour touched - the cherry-pick diff lists only the allowed paths)."
+  ],
+  "D-087-R001": [
+   "D-087-R001: this packet is one of the seq-128 capacity-ramp units - contracted, claimed and gated like any ledger packet (G0 PASS at 5e704eeb, claim seam f9bfd54d); produced by an orchestrator-dispatched subagent in its own worktree (wt-m5t085) concurrently with the other D-087 units; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "D-087-R002: pairwise-disjoint allowed_paths recorded at G0 (EMPTY overlap vs every live packet); one isolated worktree (wt-m5t085); the in-worktree commit e8d43692 touches exactly the allowed paths (git diff --name-only e8d43692^ e8d43692); the shared package __init__ files stayed orchestrator-owned and untouched."
+  ],
+  "D-087-R005": [
+   "Blueprint WRITING released by R005: services/api/app/cad/pdf_sheet_writer.py renders a deterministic PDF 1.4 site-plan sheet from EPSG:2263 rings - lot + footprint to a chosen standard scale with scale bar, per-edge dimension strings in feet computed server-side (30.00/100.00/20.00/60.00 on the fixture), a GRID-north arrow labeled EPSG:2263, title block with 'PROPOSED - NOT A CITY RECORD' and 'Not for construction - professional review required'; its bytes round-trip through the in-repo strict PDF reader (17 segments, 2 rects, 19 text runs)."
+  ],
+  "D-087-R009": [
+   "D-087-R009: zero new dependencies (stdlib only; no requirements/lockfile change), no route/main.py/web change, max-envelope route still unmounted, no Tier D action, PR #241 untouched; ruff + modularity clean at the harvested head."
+  ]
+ }
+}

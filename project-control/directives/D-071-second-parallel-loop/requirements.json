@@ -1,0 +1,135 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-071",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T22:45:06.197528+00:00",
+ "requirements": [
+  {
+   "id": "D-071-R001",
+   "text": "Second parallel loop AUTHORIZED as a TRIAL (two loops total, never more without a new owner decision) under full isolation: the second supervisor instance runs with its own runtime identity (a distinct --checkout so it derives its own lock, journal, and audit chain), its own task worktree and branch, and a packet whose file scope is DISJOINT from every other live loop packet - the orchestrator verifies zero allowed_paths overlap before launch. Integration stays sequential: the orchestrator merges each loop's finished work one at a time at seams (ADR-005 unchanged).",
+   "source_ref": "source-001.md#owner-message-2-verbatim-the-authorization-after-the-orchestrator-assessment",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-071-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Second instance up with its own lock/journal/audit; overlap check recorded in the packet G0; both loops running concurrently without cross-writes.",
+   "required_evidence": "launcher-2 + runtime state dirs + G0 report overlap statement",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before setup.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-071-R002",
+   "text": "Loop-2 lane (owner choice): the context-panel parity increment (DB-016) - surface the already-fetched designations (zoning districts, commercial overlays, special districts, landmark/historic flags) with provenance and the validated ZoLa link alongside the computed answers in the architect flow; fold in the DB-005 ZoLa-link unification on the same surface (route every ZoLa link through the shared validated helper). Label display only - no new computation, no new data source; the computed-answer engine remains the differentiator.",
+   "source_ref": "source-001.md#owner-message-2-verbatim-the-authorization-after-the-orchestrator-assessment",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-071-BOOTSTRAP",
+     "M5-T036"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "A contracted ledger task carries this scope and cites this requirement.",
+   "required_evidence": "the loop-2 task packet + its gate reports",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before setup.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-071-R003",
+   "text": "Trial safeguards: during the first day of dual-loop operation the orchestrator watches machine contention (slowed/timed-out units, starving checks) and account usage, reports problems to the owner in plain language, and drops back to ONE loop on sustained contention rather than letting both degrade. A third loop requires a new owner decision.",
+   "source_ref": "source-001.md#context-the-orchestrator-assessment-the-owner-accepted-quoted-for-interpretation-only-the-owners-yes-set-it-up-above-is-the-authorization",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-071-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Watcher coverage over both runs; a dated observation note at the first seam after dual operation begins.",
+   "required_evidence": "watcher events + seam note",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before setup.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-071-R004",
+   "text": "Prohibition: the 3D lane stays under the expansion-planning hold (expansion-agent hold notice section 2). Neither loop receives a 3D massing packet unless the owner lifts that hold; this directive does not touch the hold.",
+   "source_ref": "source-001.md#context-the-orchestrator-assessment-the-owner-accepted-quoted-for-interpretation-only-the-owners-yes-set-it-up-above-is-the-authorization",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-071-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "No 3D-scoped packet exists for either loop while the hold stands.",
+   "required_evidence": "ledger task list",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured before setup.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

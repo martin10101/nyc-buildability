@@ -1,0 +1,65 @@
+{
+ "task_id": "M4-T036",
+ "material_commits": [
+  "9663a523 (the first builder's one commit, e215cf88 in its own worktree, cherry-picked onto the branch: 29 captures, their 29 copies, the report)",
+  "7c601b30 (the correcting commit by a second builder, as integrated on the branch: the two retrieval times and one note in each of the 29 captures and their copies; one further note in zr-36-233; the report) = material head"
+ ],
+ "claim_seam_head": "599f9b0ca0540212f3cdd670d1a4eb4aed78e093",
+ "new_capture_ids": [
+  "zr-23-241",
+  "zr-23-242",
+  "zr-23-243",
+  "zr-25-212",
+  "zr-25-22",
+  "zr-25-222",
+  "zr-25-23",
+  "zr-25-232",
+  "zr-32-131",
+  "zr-32-161",
+  "zr-33-10",
+  "zr-33-11",
+  "zr-33-12",
+  "zr-33-121",
+  "zr-33-122",
+  "zr-33-123",
+  "zr-36-23",
+  "zr-36-231",
+  "zr-36-232",
+  "zr-36-233",
+  "zr-36-24",
+  "zr-36-25",
+  "zr-36-30",
+  "zr-66-11",
+  "zr-73-432",
+  "zr-73-433",
+  "zr-74-52",
+  "zr-75-31",
+  "zr-appendix-i"
+ ],
+ "what_did_not_change": "No capture that existed before this task (156 of them); no rule, reference case, review-register entry, record or result; nothing is read for any lot. The correcting commit changes no word of any text, no table cell, no pin and no digest.",
+ "review_history": "The independent review at 6526d902 first returned G3 FAIL on one finding (zr-36-233: an unpaired mark and zero-width characters), G4 PASS. The same reviewer then read the saved bytes of the official page (equal to the capture's pins): the page itself prints the literal mark; it WITHDREW the finding and corrected G3 to PASS, with notes. The orchestrator sent the notes back for the correcting commit (the retrieval times recorded in all 29 captures were a constant later than the fetches and than the commit). Both returns and the confirmation: project-control/reports/M4-T036-G3G4.md.",
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (185 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/reference_cases: exit 0 (78 passed)",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "pytest (the FULL services/api suite, run alone at a6072e1e, both tasks and the correcting commit integrated): 8550 passed, 8 skipped, exit 0"
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "29 further texts are captured as source text from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ with its address, the time of its fetch, the amendment date the page shows, the verbatim text (tables cell by cell) and its digests (zr-23-241, zr-23-242, zr-23-243, zr-25-212, zr-25-22, zr-25-222, zr-25-23, zr-25-232, zr-32-131, zr-32-161, zr-33-10, zr-33-11, zr-33-12, zr-33-121, zr-33-122, zr-33-123, zr-36-23, zr-36-231, zr-36-232, zr-36-233, zr-36-24, zr-36-25, zr-36-30, zr-66-11, zr-73-432, zr-73-433, zr-74-52, zr-75-31, zr-appendix-i). They are the texts the two independent readings of step P5 named as not had (backlog row DB-188).",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 185 files); no existing capture was modified (only added files between the claim head and this head).",
+   "NOT done by this task, and not claimed: no rule and no conflicting input is resolved; the new text is read for no lot; no reference case, record or result changes. Row R291 covers the whole of step 3; this task's share is the capture. The reading of these texts into the reference cases is a later task."
+  ],
+  "D-090-R517": [
+   "The provisions the earlier readings lacked are captured from the official source itself, each with the page's own sha256 and byte count pinned: the maximum floor area ratio sections of Article III, Chapter 3 (zr-33-10, 33-11, 33-12, 33-121, 33-122, 33-123), the three sub-sections of ZR 23-24, the parking amounts and waivers, the mass-transit definitions and Appendix I, the parking reduction sections and two Use Group tables.",
+   "The independent reviewer fetched 22 of the 29 official pages itself and compared: the words of each capture equal its page; seven of the nine tables row by row; for the two large Use Group tables the columns and the parking category of eleven named rows, not every cell (project-control/reports/M4-T036-G3G4.md). Seven pages it checked from the captured text only.",
+   "Share of this task: the texts are at hand so that a statement of law can be checked at its source before a record changes. NOT done here: the comparison of any statement with these texts (a reading); the measurement-basis record still names Article III, Chapter 3 as not captured and is brought in line when these captures are read. The row stays open for that."
+  ],
+  "D-090-R526": [
+   "The texts on the AMOUNT of parking and its waivers that the readings lacked are captured as source text (zr-25-212, zr-25-22, zr-25-222, zr-25-23, zr-25-232, zr-36-23, zr-36-231, zr-36-232, zr-36-233, zr-36-24, zr-36-25, zr-36-30, zr-66-11, zr-appendix-i, zr-73-432, zr-73-433, zr-74-52, zr-75-31, zr-32-161, zr-32-131): the dwelling-unit parking tables by transit zone, the commercial waivers, the mass-transit-station definitions, Appendix I (its text; the fifteen transit-zone maps are images and are not captured as text, so a lot's transit zone stays a recorded value), the reduction and removal sections, and the Use Group tables with their parking requirement category column (the site's tables carry no loading category column).",
+   "The report and every capture state source text only: no sentence says what a text means for a lot or that an option needs or does not need anything (the reviewer's section E, project-control/reports/M4-T036-G3G4.md).",
+   "Share of this task: the text is captured before a result depends on it. NOT done here: no option's display carries the line on these requirements yet, and nothing is read for a lot. The row stays open for the reading and for the piece that shows the options."
+  ]
+ }
+}

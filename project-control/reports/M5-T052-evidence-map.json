@@ -1,0 +1,15 @@
+{
+  "task_id": "M5-T052",
+  "material_commit": "a6f35a0ffe4894d82e2ef6c4c0f5bf6edd8ee3a6",
+  "material_commits_note": "Three material commits on candidate: 365f492f (producer build), 46bf1105 (tagged consumer-sweep fix, outside allowed_paths, producer-routed), a6f35a0f (tagged timestamp fix). The field names the LATEST; all three are indexed in M5-T052-source-sections.md.",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T052 packet was contracted with a seam-regenerated code-graph NAV BLOCK in its inputs (project-control/tasks/M5-T052.json inputs[3]; G0 record M5-T052-G0.md) naming the six PropertyOverview consumers and three AnalysisIdentityNotice consumers with line anchors plus the resolver's accepted entry points, instructing query.py --no-regen checks, graph advisory.",
+      "The consumer discipline was acted on end-to-end: the producer's own consumer sweep (report §5) found the out-of-scope report-view.test.tsx consumer and ROUTED it rather than editing it or leaving it silently red; the orchestrator applied the routed fix as the tagged 46bf1105; all six named component consumers stayed byte-compatible (their suites green in CI run 35451055372)."
+    ],
+    "D-073-R006": [
+      "The records-vs-allowances distinction is the packet's core deliverable, enforced by ONE shared decision: deriveCondoSurface folds the accepted profile fail-safe guard (byte-unchanged, authoritative) with the production channel state, monotone (the channel can only ADD withholding); the screen and the printed brief render the SAME CondoRecordsChannelSection from that one decision so they can never disagree.",
+      "The multi-lot records section renders city RECORDS (billing lot, each recorded base lot with recorded zoning, provenance) UNDER the unchanged professional-review fail-safe, records-class heading and wording (the display test pins digit-free record wording where required); unresolved/error outcomes render honest absence (no records section, no fabrication); the substitution on the allow path is explained as a matched-identity RECORD (entered vs analyzed BBL), never a computation."
+    ]
+  }
+}

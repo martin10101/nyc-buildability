@@ -1,0 +1,38 @@
+{
+ "task_id": "M0-T119",
+ "note": "Evidence per D-024 Amendment-13/14 requirement applicable to M0-T119 (resolver set: R277/R280/R282/R283/R284/R293/R296/R297). Deliverable commit 882966b (recertification report + activation-package third refresh). Reviewers reproduce each claim at the frozen head.",
+ "requirements": {
+  "D-024-R277": [
+   "This unit delivers the THIRD element of the authorized Option-A chain (the R247 recertification window); the rerun+repin element stays bound to M0-T113 (R284/R285) and starts only after this unit's acceptance.",
+   "CLAIM: SATISFIED for this unit's slice of the authorization"
+  ],
+  "D-024-R280": [
+   "No DISABLE_UPDATES anywhere; CLI neither downgraded nor updated across the certification window (claude --version stamps identical at start 00:29:35Z and end 00:34:36Z, both 2.1.251); no unrelated global configuration change - the unit wrote only its two report files + control-plane records.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R282": [
+   "2.1.251 recorded as ADMITTED only in M0-T119-recertification.md section 4, and only after EVERY pass-list item held at the frozen identity: fixtures (T118 pack + T120 routing fixture), drift teeth (three version teeth green + the new routing tooth gating), live probes (control-response VERIFIED, capability/native measured, bounded routing probe), golden 42/42, gates (T117/T118/T120 all G0-G5 PASS), independent reviews (12 reviewer engagements + DCVs 7/7, 5/5, 8/8), manifest binding (119 files 774f9198 bound+verified at the final tree, doctor 43/43), frozen-identity certification (this unit).",
+   "CLAIM: HOLD HONORED - admission recorded exactly once, after the full pass list"
+  ],
+  "D-024-R283": [
+   "Full R247 recertification at ONE frozen final identity (material 7d8195b, tree 8d34ea53575f2cdf5b2d99029111c9e174339596, golden blob c54fd0d2d0e3833e54ba2ec9745ee6e7d9fdb550): golden 42/42; affected packs (13 modules) 672 passed/1 skipped/0 failed; WHOLE suite 2782 collected = 2712 M0-T116 baseline + 14 (T117) + 0 net (T118) + 56 (T120), 2780 passed, 2 skipped, 0 FAILED; counts independently reproduced at the same identity by the M0-T120 G4 reviewer and DCV; CI 20/20 on the pushed certification tip pinned in the progress log at submit.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R284": [
+   "The R276 resume sequence has NOT been rerun yet: this unit's report and the refreshed package both gate the rerun on this unit's acceptance; no start command, no dispatch, no journal write occurred in this unit; the rerun executes from the beginning (manifest already re-recorded at the final tree as certification evidence and will be re-verified at rerun time).",
+   "CLAIM: SEQUENCING HONORED (rerun pending acceptance)"
+  ],
+  "D-024-R293": [
+   "Broker and owner gates preserved across the whole certified window: policy/broker/cli byte-untouched in every accepted delta (per-unit G5 + DCV checks cited in the report); nothing broadly allowed; the certification itself is report-only.",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R296": [
+   "M0-T120 was kept separate (own packet/commits/reviews/acceptance) and its final identity IS the certified identity: this is the SINGLE recertification at the ONE final identity including M0-T120 - no second recert ran, and the voided pre-Amendment-14 partial runs are not cited as evidence anywhere in the report.",
+   "CLAIM: SATISFIED"
+  ],
+  "D-024-R297": [
+   "T119 held from the Amendment-14 capture until M0-T120's acceptance (hold + resolution recorded in the progress log with commit anchors); the certification runs in this unit all POST-DATE the hold resolution; the voided runs are explicitly excluded.",
+   "CLAIM: HOLD HONORED"
+  ]
+ }
+}

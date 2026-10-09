@@ -1,0 +1,23 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "tools/supervisor_command_doc_check.py",
+  "--doc",
+  "C:/Users/MLFLL/AppData/Local/Temp/claude/C--Users-MLFLL-Downloads-nyc-zoning-ctl24/9c483202-db08-4bca-9a76-58722f064678/scratchpad/mutated_runbook.md"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-02T03:10:50.083247+00:00",
+ "ended_at_utc": "2026-09-02T03:10:50.494306+00:00",
+ "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+ "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+ "executable_chain_sha256": "",
+ "returncode": 1,
+ "stdout_sha256": "5c063abdc6d6f460615638f91d0088e3be91a6dcf3b06fd57a2e1e0fd7e9b80a",
+ "stderr_sha256": "74e0b94c274f3767476f78600cf61ae844a8f46017c6515bdecc60bfec20ea06",
+ "stdout_bytes": 1829,
+ "stderr_bytes": 151,
+ "mutation": {
+  "killed": true,
+  "ok": true
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "body": {
+  "claude_flags": {
+   "--add-dir": "supported",
+   "--agent": "supported",
+   "--continue": "supported",
+   "--init-only": "not-detected-in-help",
+   "--mcp-config": "supported",
+   "--name": "supported",
+   "--output-format": "supported",
+   "--print": "supported",
+   "--resume": "supported",
+   "--settings": "supported",
+   "--strict-mcp-config": "supported",
+   "--worktree": "supported"
+  },
+  "codex_flags": {
+   "--cd": "supported",
+   "--json": "supported",
+   "--model": "supported",
+   "--output-schema": "supported",
+   "--profile": "supported",
+   "--sandbox": "supported",
+   "exec": "supported",
+   "resume": "supported"
+  },
+  "directive": "D-024",
+  "interactive_only_capabilities": {
+   "UserPromptExpansion_intercepts_before_expansion": "unknown",
+   "UserPromptSubmit_block_erases_prompt": "unknown",
+   "note": "documented in fixtures/capability_matrix_v1.json from official docs; live confirmation is a Phase B/F harness deliverable (D-024 15-B, 15-F), not guessable here",
+   "statusline_payload_shape": "unknown",
+   "subagentStatusLine_payload_shape": "unknown"
+  },
+  "probes": {
+   "claude_help": {
+    "exit_code": 0,
+    "first_line": "Usage: claude [options] [command] [prompt]",
+    "output_sha256": "a58ca2282c01312250fc8d861088dae6e46340ad55346557fcdbc0053f415367",
+    "status": "supported"
+   },
+   "claude_version": {
+    "exit_code": 0,
+    "first_line": "2.1.288 (Claude Code)",
+    "output_sha256": "633e048600d3b521510cbcd629063291d140105c64e042c345b30850e9cf0c2d",
+    "status": "supported"
+   },
+   "codex_exec_help": {
+    "exit_code": 0,
+    "first_line": "Run Codex non-interactively",
+    "output_sha256": "0e82cfde0122715250e93dc65866caa956b2ac5b9d0b20ec4ad4f9e81486509e",
+    "status": "supported"
+   },
+   "codex_help": {
+    "exit_code": 0,
+    "first_line": "Codex CLI",
+    "output_sha256": "75c90681ba095160666d9884d1eccce391be95c80da27641a3c8e1481bb02fac",
+    "status": "supported"
+   },
+   "codex_version": {
+    "exit_code": 0,
+    "first_line": "codex-cli 0.157.0",
+    "output_sha256": "d00c017b9d0d8a31179d3c791fb3604f6cab3df8d94a3f8548053cac16aec637",
+    "status": "supported"
+   }
+  },
+  "python_runtime": {
+   "local": "3.12.3",
+   "note": "repo CI runs Python 3.12; local sandbox may be older (M2-T015 lesson) - this module stays 3.11-compatible"
+  },
+  "schema": "capability_probe/v1",
+  "task": "M0-T086"
+ },
+ "probe_meta": {
+  "claude_binaries": [
+   "/usr/bin/claude",
+   "/bin/claude"
+  ],
+  "codex_binaries": [
+   "/usr/local/bin/codex"
+  ],
+  "generated_at": "2026-10-02T23:50:50+00:00",
+  "platform": "linux"
+ }
+}

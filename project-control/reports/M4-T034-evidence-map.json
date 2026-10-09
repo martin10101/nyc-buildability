@@ -1,0 +1,66 @@
+{
+ "task_id": "M4-T034",
+ "material_commits": [
+  "3736a22d M4-T034: law-text captures behind the owner's reviewer's check (cherry-pick of the builder's 5ab318e2)",
+  "b35cacfb M4-T034 round 2, the report only (cherry-pick of 0229ccf9)",
+  "material head: ecdfb8f8"
+ ],
+ "claim_seam_head": "d8ad46a8",
+ "new_capture_ids": [
+  "zr-12-10-building",
+  "zr-12-10-fully-electrified-building",
+  "zr-12-10-story",
+  "zr-12-10-ultra-low-energy-building",
+  "zr-23-24",
+  "zr-25-02",
+  "zr-25-20",
+  "zr-25-211",
+  "zr-25-221",
+  "zr-25-231",
+  "zr-25-80",
+  "zr-25-81",
+  "zr-25-811",
+  "zr-35-30",
+  "zr-35-31",
+  "zr-35-32",
+  "zr-35-33",
+  "zr-36-21",
+  "zr-36-31",
+  "zr-36-62",
+  "zr-36-70",
+  "zr-36-71",
+  "zr-36-711"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (156 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py: exit 0",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "pytest (the FULL services/api suite, run alone at fedd6ca1, the final content of all three tasks): 8519 passed, 8 skipped, exit 0"
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "23 further texts are captured as source text from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ with its address, the time of each request, the amendment date the page shows, the verbatim text and its digests (zr-12-10-building, zr-12-10-fully-electrified-building, zr-12-10-story, zr-12-10-ultra-low-energy-building, zr-23-24, zr-25-02, zr-25-20, zr-25-211, zr-25-221, zr-25-231, zr-25-80, zr-25-81, zr-25-811, zr-35-30, zr-35-31, zr-35-32, zr-35-33, zr-36-21, zr-36-31, zr-36-62, zr-36-70, zr-36-71, zr-36-711).",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 156 files); no existing capture was modified.",
+   "NOT done by this task, and not claimed: no rule and no conflicting input is resolved; the new text is read for no lot; no reference case, record or result changes. Row R291 covers the whole of step 3; this task's share is the capture."
+  ],
+  "D-090-R513": [
+   "The mixed-building floor-area section the reviewer names is captured: the site shows ZR 35-31 'Maximum Floor Area Ratio' (capture zr-35-31), a section under the header 35-30 (zr-35-30), with its siblings 35-32 and 35-33 (zr-35-32, zr-35-33). ZR 23-20, the other section the reviewer names, was captured by task M4-T033.",
+   "Share of this task: the text is captured before any record states the rule from it. NOT done here: the independent reading, the rule in the record, a worked mixed building in a reference case. The row stays open for them."
+  ],
+  "D-090-R516": [
+   "The two ZR 12-10 definitions behind the energy exclusion are captured, each whole: 'fully electrified building' (zr-12-10-fully-electrified-building) and 'ultra low energy building' (zr-12-10-ultra-low-energy-building), with the two defined terms they rest on ('building', 'story').",
+   "Disclosed limit: the print channel did not answer for the ZR 12-10 page, so list labels in these captures are positions in the page's markup; the item text is verbatim.",
+   "Share of this task: the text is captured. NOT done here: the eligibility conditions stated in the record from these definitions. The row stays open for that."
+  ],
+  "D-090-R517": [
+   "project-control/reports/M4-T034-producer-report.md section (5) lists each statement of law of the reviewer's message with the section the official site shows for it and the capture that holds the text (new or existing), and draws no verdict on whether a statement is right. The three section numbers the reviewer names (35-31, 23-24, 25-811) are each reported with what the site shows; all three are borne out.",
+   "The independent reviewer fetched official pages itself and compared (review record).",
+   "Share of this task: the texts are at hand so that each statement can be checked at its source before a record changes. NOT done here: the comparison of each statement with its text (a reading), and the imagery terms and the PDF tool's behaviour, which are not Zoning Resolution text. The row stays open for them."
+  ],
+  "D-090-R526": [
+   "The sections that say whether parking, loading berths and bicycle parking are required are captured (fourteen captures, under the bound of twenty): Article II Chapter 5: zr-25-02, zr-25-20, zr-25-211, zr-25-221, zr-25-231, zr-25-80, zr-25-81, zr-25-811; Article III Chapter 6: zr-36-21, zr-36-31, zr-36-62, zr-36-70, zr-36-71, zr-36-711. What the builder found beyond the bound is listed in its report as 'found, not captured'.",
+   "Share of this task: the text is captured before a result depends on it. NOT done here: no option's display carries the line on these requirements yet, and nothing is read for a lot. The row stays open for the piece that shows the options."
+  ]
+ }
+}

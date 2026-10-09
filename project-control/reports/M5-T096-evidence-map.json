@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T096",
+ "material_commit": "d59cbfca (cherry-pick of wt-m5t096 33a90617; 9 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T16:10:18+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t096)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block recorded that dxf_writer.py is imported by pdf_sheet_writer.py (CLAIM_CLASS_WORDS) and the two writer tests, and that CLAIM_CLASS_WORDS and every public name stay byte-compatible; the material keeps them unchanged and test_pdf_sheet_writer.py / test_glb_writer.py pass unchanged. [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ],
+  "D-087-R001": [
+   "Wave-5 capacity unit: contracted at 64fce622 (G0), claimed at 2e0b2351 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T097/T098/T099/T100 and M0-T160; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t096; material touches exactly the allowed paths (docs/samples/cad/** incl. a .gitattributes that marks the three samples binary so core.autocrlf cannot change their bytes), every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ],
+  "D-087-R004": [
+   "Closes the R004 owner-check gap (DB-057 a): committed owner-openable samples under docs/samples/cad/ - example-site-plan.dxf (7,936 B, sha256 4e19c669...), example-site-plan.pdf (1,839 B, 8f28f12d...), example-massing.glb (2,460 B, 0bc7a37d...) - built from one synthetic 100x80 ft lot + 60x40 ft 4-floor building in EPSG:2263, each labelled 'Example lot - not a real property' and proposed/not-a-city-record; a plain-English README tells the owner how to open each file in AutoCAD / a PDF viewer / a glTF viewer, what to expect and what to report back, with the sha256 of every file; test_cad_owner_samples.py regenerates every sample byte-identically; the DXF gains the STYLE (STANDARD) and VPORT (*ACTIVE) tables (DB-057 b) with AC1009 and $INSUNITS 21 unchanged. The owner's R008 'DXF as the middleman' confirmation is still pending. [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ],
+  "D-087-R006": [
+   "Writing/exporting through open formats only: DXF R12, PDF and glTF 2.0 GLB via the accepted writers' public functions; the sample DXF reads back through the accepted DXF reader (ok, AC1009, units 21 US survey feet, 31 primitives). [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ],
+  "D-087-R007": [
+   "Native DWG untouched; the stdlib-only import test is now an allowlist (only __future__, math, collections.abc, dataclasses; DB-057 f) - adding `import json` reddens it - so a DWG library import cannot slip in. [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; no route, main.py or web change; the writers stay unwired; the max-envelope route stays unmounted. [ORCH-HARVEST] at the cherry-picked head d59cbfca (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/cad/test_dxf_writer.py tests/cad/test_cad_owner_samples.py tests/cad/test_pdf_sheet_writer.py tests/cad/test_glb_writer.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 277 passed in 1.48s."
+  ]
+ }
+}

@@ -1,0 +1,17 @@
+{
+  "task_id": "M5-T024",
+  "producer_agent": "cloud-architect",
+  "report_file": "project-control/reports/M5-T024-producer-report.md",
+  "submitted_at": "2026-09-13T03:03:50.198186+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T024-evidence-map.json",
+  "content_manifest_sha256": "83abb75a24d65b673c3b7005897bc18b3192d8894317d88b1a5c7db2bbd512ba",
+  "reviewed_sha": "9ce7531636ba8e8a35d195d4e78c8a99e631f40d",
+  "applicable_requirements": [
+    "D-043-R001",
+    "D-043-R002",
+    "D-043-R003",
+    "D-043-R004"
+  ],
+  "updated_at": "2026-09-13T03:03:50.759624+00:00"
+}

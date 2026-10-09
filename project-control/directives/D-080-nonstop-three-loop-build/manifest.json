@@ -1,0 +1,62 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-080",
+ "version": 1,
+ "slug": "nonstop-three-loop-build",
+ "title": "Owner 2026-09-20 ('keep the loops running nonstop all 3 build build build'): continuous unattended three-lane operation while the owner sleeps - keep all three loops building, harvest/submit/review/accept/re-feed at seams without waiting for owner replies; re-affirms D-077-R002 cycling under ADR-006 Tier A; NO stop condition lifted (Tier D, holds, gate FAILs, dependency security, D-076-R003 post-B3 owner checkpoint all stand)",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-20",
+ "captured_at": "2026-09-20T08:10:00+00:00",
+ "created_at": "2026-09-20T08:10:00+00:00",
+ "updated_at": "2026-09-20T08:10:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "f86ae7353c8b2ff99220c51766aad23d595cc66f",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Direct owner instruction in interactive chat before sleeping, immediately after the status reply showing all three lanes armed (T057 harvested awaiting CI; T058/T059 loops relaunched). Re-affirms D-077-R002 cycling; grants no new scope."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-080-R001",
+  "D-080-R002",
+  "D-080-R003"
+ ],
+ "requirements_content_digest_sha256": "d198dc62cc2f52acd1959aef64ba1ed0d8065c5989d392e11b44333007e9b612",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-20T08:10:00+00:00",
+   "content_digest_sha256": "2d374b526dad224bceb233c754ee5f5f3fa7a5b4e8a4970108df1c1c4aa2adab"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "process_knowledge",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "continuous unattended three-lane loop operation (monitor, harvest, submit, wave, accept, re-feed, relaunch) from the released non-held queue under Tier A autonomy",
+  "forbidden": "lifting/bypassing any stop condition: Tier D / Section 20, owner holds, gate FAILs, dependency security, D-072 isolation, the D-076-R003 post-B3 owner checkpoint"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-20T08:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 239 accepted; M5-T057 harvested (material 3dbd056d) with CI 35498218087 green at f86ae735, submit + wave next; M5-T058/M5-T059 contracted at seam 2fba5ed3/f86ae735, loops 2/3 relaunched and holding locks (runs persistent2-local-21-m5t058, persistent3-local-06-m5t059); validator exit 0 at the seam."
+  }
+ ]
+}

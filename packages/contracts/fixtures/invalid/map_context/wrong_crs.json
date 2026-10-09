@@ -1,0 +1,153 @@
+{
+  "contract_version": "1.0.0",
+  "document_kind": "map_context",
+  "map_context": {
+    "crs": "EPSG:4326",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "subject_lot": {
+      "bbl": "3012340056",
+      "outline": [
+        [
+          [
+            987050,
+            200050
+          ],
+          [
+            987130,
+            200050
+          ],
+          [
+            987130,
+            200140
+          ],
+          [
+            987050,
+            200140
+          ],
+          [
+            987050,
+            200050
+          ]
+        ]
+      ]
+    },
+    "zoning_districts": {
+      "status": "available",
+      "attribution": "Zoning districts: NYC Department of City Planning, NYC GIS Zoning Features (nyzd), via NYC Open Data under the NYC Open Data Terms of Use; source edit date 2026-07-01.",
+      "accuracy": "Zoning-district boundaries are approximate: the DCP horizontal accuracy statement is approximately ± 20 ft, so a boundary drawn near the lot is not a lot-level determination.",
+      "use_limitation": "These features are not intended for determining zoning at the individual tax lot level.",
+      "entries": [
+        {
+          "zonedist": "R7A",
+          "outline": [
+            [
+              [
+                987000,
+                200000
+              ],
+              [
+                987200,
+                200000
+              ],
+              [
+                987200,
+                200200
+              ],
+              [
+                987000,
+                200200
+              ],
+              [
+                987000,
+                200000
+              ]
+            ]
+          ]
+        }
+      ],
+      "provenance": {
+        "source_id": "test-fixture-synthetic",
+        "dataset_id": "nyzd",
+        "request_url": "https://example.invalid/test-fixture-synthetic/nyzd",
+        "retrieved_at": "2026-07-01T00:00:00Z",
+        "raw_digest_sha256": "sha256:b885014ca753c994dd8b01898b2215e45f7bb7a1b91c53e5ac007c7bf76beefe",
+        "source_data_last_edited": "2026-07-01",
+        "dataset_version": "test-fixture-synthetic"
+      }
+    },
+    "building_footprints": {
+      "status": "available",
+      "attribution": "Building footprints: NYC Office of Technology and Innovation, Building Footprints (NYC Open Data 5zhs-2jue), under the NYC Open Data Terms of Use; source edit date 2026-09-20.",
+      "entries": [
+        {
+          "doitt_id": "200201",
+          "outline": [
+            [
+              [
+                987160,
+                200070
+              ],
+              [
+                987200,
+                200070
+              ],
+              [
+                987200,
+                200130
+              ],
+              [
+                987160,
+                200130
+              ],
+              [
+                987160,
+                200070
+              ]
+            ]
+          ]
+        },
+        {
+          "doitt_id": "200202",
+          "outline": [
+            [
+              [
+                987060,
+                200160
+              ],
+              [
+                987120,
+                200160
+              ],
+              [
+                987120,
+                200195
+              ],
+              [
+                987060,
+                200195
+              ],
+              [
+                987060,
+                200160
+              ]
+            ]
+          ]
+        }
+      ],
+      "provenance": {
+        "source_id": "test-fixture-synthetic",
+        "dataset_id": "5zhs-2jue",
+        "request_url": "https://example.invalid/test-fixture-synthetic/building-footprints",
+        "retrieved_at": "2026-09-20T00:00:00Z",
+        "raw_digest_sha256": "sha256:fd64cc4e267814c21bdb49864d83b4c4190975356b1eb30bd1a74c2446c161fa",
+        "source_data_last_edited": "2026-09-20",
+        "dataset_version": "test-fixture-synthetic"
+      }
+    }
+  },
+  "_expected_failure": "map_context.crs is 'EPSG:4326'; the only supported CRS is 'EPSG:2263' (US survey feet). Schema: crs const rejects it at /map_context/crs. Adapter load_map_context raises MapInputError('unsupported_crs') at the same location."
+}

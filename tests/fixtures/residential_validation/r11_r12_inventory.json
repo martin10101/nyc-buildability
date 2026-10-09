@@ -1,0 +1,10 @@
+{
+  "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=count%28%2A%29+AS+parcel_count&%24where=zonedist1+like+%27%25R11%25%27+OR+zonedist1+like+%27%25R12%25%27+OR+zonedist2+like+%27%25R11%25%27+OR+zonedist2+like+%27%25R12%25%27+OR+zonedist3+like+%27%25R11%25%27+OR+zonedist3+like+%27%25R12%25%27+OR+zonedist4+like+%27%25R11%25%27+OR+zonedist4+like+%27%25R12%25%27&%24limit=1",
+  "retrieved_at": "2026-09-15T23:29:33.676619+00:00",
+  "response_sha256": "4346720549f35611d7c8612f6cdb5605326b592eba7d9a6a1b39796273ec1cd4",
+  "records": [
+    {
+      "parcel_count": "628"
+    }
+  ]
+}

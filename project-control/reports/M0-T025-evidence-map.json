@@ -1,0 +1,6 @@
+{
+  "task_id": "M0-T025",
+  "schema": "evidence_map/v1",
+  "requirements": {},
+  "note": "evaluate_task_refs at submit (registry at merged HEAD 56db6a17): ok=true, applicable_ids=[] - the cited D-002:ALL binds no requirement rows to this governance task under the conjunction semantics (inert sentinel rows). Per the D-032/D-033/D-034 empty-set precedent the D-002 verification.json still receives a task row for M0-T025 before acceptance; producer evidence lives in project-control/reports/M0-T025-producer-report.md and the gate reports."
+}

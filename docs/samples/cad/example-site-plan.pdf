@@ -1,0 +1,74 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 792 612] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1293 >>
+stream
+1 w
+0 0 0 RG
+54 54 684 504 re S
+54 54 684 108 re S
+171 216 m
+531 216 l
+531 504 l
+171 504 l
+h S
+BT /F1 7 Tf 353 218 Td (100.00) Tj ET
+BT /F1 7 Tf 533 362 Td (80.00) Tj ET
+BT /F1 7 Tf 353 506 Td (100.00) Tj ET
+BT /F1 7 Tf 173 362 Td (80.00) Tj ET
+243 288 m
+459 288 l
+459 432 l
+243 432 l
+h S
+BT /F1 7 Tf 353 290 Td (60.00) Tj ET
+BT /F1 7 Tf 461 362 Td (40.00) Tj ET
+BT /F1 7 Tf 353 434 Td (60.00) Tj ET
+BT /F1 7 Tf 245 362 Td (40.00) Tj ET
+693 498 m 693 540 l S
+693 540 m 687 534 l S
+693 540 m 699 534 l S
+BT /F1 8 Tf 659 486 Td (GRID N \(EPSG:2263\)) Tj ET
+658 448 m 730 448 l S
+658 448 m 658 454 l S
+676 448 m 676 454 l S
+694 448 m 694 454 l S
+712 448 m 712 454 l S
+730 448 m 730 454 l S
+BT /F1 7 Tf 656 438 Td (0) Tj ET
+BT /F1 7 Tf 722 438 Td (20 ft) Tj ET
+BT /F1 9 Tf 62 146 Td (SITE: Example lot - not a real property) Tj ET
+BT /F1 9 Tf 62 134 Td (BBL: EXAMPLE-0000000000) Tj ET
+BT /F1 9 Tf 62 122 Td (Generated: 2026-09-24) Tj ET
+BT /F1 9 Tf 62 110 Td (Generator: NYC Buildability sample v1) Tj ET
+BT /F1 9 Tf 62 98 Td (Units: US survey feet   CRS: EPSG:2263) Tj ET
+BT /F1 9 Tf 62 86 Td (Scale: 1 in = 20 ft   Orientation: EPSG:2263 grid north) Tj ET
+BT /F1 9 Tf 62 74 Td (PROPOSED - NOT A CITY RECORD) Tj ET
+BT /F1 9 Tf 62 62 Td (Not for construction - professional review required) Tj ET
+
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f
+0000000009 00000 n
+0000000058 00000 n
+0000000115 00000 n
+0000000241 00000 n
+0000001586 00000 n
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1656
+%%EOF

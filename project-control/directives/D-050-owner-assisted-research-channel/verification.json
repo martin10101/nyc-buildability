@@ -1,0 +1,8 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-050",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-050 requirements bind the non-ledger sentinel D-050-BOOTSTRAP (D-038..D-049 precedent; validator c5 forbids sentinel task_ids in task_verifications). Campaign tasks that consume channel results verify through their own DCV rows. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": []
+}

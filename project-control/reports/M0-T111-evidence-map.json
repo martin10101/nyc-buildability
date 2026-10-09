@@ -1,0 +1,59 @@
+{
+ "task_id": "M0-T111",
+ "producer": "fable-orchestrator-session",
+ "deliverable_sha": "c9b3b9ab40a356c18bbb689c2315e52dc0c9930b",
+ "requirements": {
+  "D-024-R231": [
+   "project-control/directives/D-024-fable-codex-loop/source-008-amendment.md (verbatim capture incl. TELEGRAM REQUIREMENTS)",
+   "tools/test_agent_supervisor_telegram_sink.py::L8RequirementRegister::test_R231_the_amendment_is_captured_verbatim",
+   "CLAIM: DISCHARGED at capture (seq 23, validator EXIT=0), before this unit began"
+  ],
+  "D-024-R232": [
+   "This unit delivers required capability 2 (the Telegram sink); capability 1 (M0-T110) accepted at seq 24; the activation package stays unpresented behind R247/M0-T112",
+   "project-control/campaigns/D-024-fable-codex-loop.json restrictions (Amendment-8 sequencing row)",
+   "tools/test_agent_supervisor_telegram_sink.py::L8RequirementRegister::test_R232_the_pre_activation_hold_is_recorded",
+   "CLAIM: HOLD IN FORCE and honored - no continuous-mode activation, no activation-package presentation in this unit"
+  ],
+  "D-024-R241": [
+   "tools/agent_supervisor/telegram_sink.py::CONDITIONS (closed 8-tuple mapping the amendment's eight bullets exactly) + CONDITION_RISK (fixed) + notify_condition (single entry; typed unknown_condition refusal) + TelegramSink over the S13.10 NotificationSink boundary",
+   "tools/test_agent_supervisor_telegram_sink.py::L1Conditions (3 tests) + ::L8RequirementRegister::test_R241_the_bounded_sink_covers_exactly_the_eight (verbatim-bullet-to-condition map)",
+   "CLAIM: DISCHARGED - a bounded sink for exactly the eight conditions; mutants M1/M2 (accept-any / drop-one) killed"
+  ],
+  "D-024-R242": [
+   "One-way only: no getUpdates/webhook/poll/receive/approval/merge/execution/config surface; the transport speaks sendMessage only. AST functional-source scan (docstrings excluded so the honest documentation may NAME the bans) in ::L4OneWay::test_no_receive_or_command_surface_exists + ::L8::test_R242_one_way_only",
+   "CLAIM: PROHIBITION HONORED"
+  ],
+  "D-024-R243": [
+   "tools/agent_supervisor/telegram_sink.py::resolve_credentials (env-only SUPERVISOR_TELEGRAM_BOT_TOKEN/CHAT_ID; typed telegram_not_configured refusal; Credentials repr/str redacted; failure details carry status buckets/exception classes, never the URL that embeds the token)",
+   "tools/test_agent_supervisor_telegram_sink.py::L3Secrets (4 tests: sentinel token+chat id absent from outcome/queue/delivered/dedup rows, audit lines, CLI output; holder+errors secret-free) + ::L8::test_R243_secrets_only_in_the_local_mechanism",
+   "Both secret scanners green (gitleaks pre-commit + CI credential scan) with justification pragmas on the fake sentinels; repo is PUBLIC",
+   "CLAIM: DISCHARGED - secrets exist only in the owner's local environment and the HTTPS request itself"
+  ],
+  "D-024-R244": [
+   "Redaction: composition ONLY via the S13.10 build_notification (redact + leak-shape refusal + summary bound). Bounded retries: MAX_DELIVERY_ATTEMPTS=3 in-call with hard per-attempt timeout. Dedup: FIFO-bounded digest register (telegram_dedup). Failure isolation: deliver never raises; failed items REMAIN QUEUED (existing S13.10 semantics); unit_can_proceed=True structurally - run_must_pause can never be set by this sink",
+   "tools/test_agent_supervisor_telegram_sink.py::L5Isolation (6 tests) + ::L2ViewOnly (2) + ::L8::test_R244_redaction_retries_dedup_isolation; mutants M3/M4/M5/M6/M9/M11 killed",
+   "CLAIM: DISCHARGED - Telegram downtime cannot stop or pause the coding loop"
+  ],
+  "D-024-R245": [
+   "tools/agent_supervisor/telegram_sink.py::build_real_transport refuses construction without live_send_authorized=True (typed live_send_owner_gated naming D-024-R245 + the exact owner command); only the owner-typed CLI flag --live-canary-authorized-by-owner supplies it; every test injects a fake transport or a fake opener (no socket anywhere); this unit fired NO live send",
+   "tools/test_agent_supervisor_telegram_sink.py::L6OwnerGatedCanary (4 tests) + ::L8::test_R245_live_send_owner_gated; mutant M7 (gate removed) killed",
+   "CLAIM: HOLD IN FORCE and honored - the real send remains an owner-gated exact-command canary"
+  ],
+  "D-024-R246": [
+   "project-control/tasks/M0-T110.json + M0-T111.json + M0-T112.json (the durable bounded sequence); M0-T096 accepted unbroadened before the sequence began",
+   "tools/test_agent_supervisor_telegram_sink.py::L8RequirementRegister::test_R246_the_bounded_task_sequence_is_captured_durably",
+   "CLAIM: DISCHARGED"
+  ],
+  "D-024-R248": [
+   "No activation/4.8-bridge/PR-241/Agent-SDK/MCP/global-settings surface; .claude/hooks is a forbidden path this unit and untouched; stdlib urllib only (the authorized R241 delivery transport) - no requests/aiohttp/httpx, no new dependency/lockfile",
+   "tools/test_agent_supervisor_telegram_sink.py::L8RequirementRegister::test_R248_no_prohibited_surface (source scan of both new modules)",
+   "CI 20/20 green at c9b3b9a",
+   "CLAIM: PROHIBITIONS HONORED"
+  ],
+  "D-024-R249": [
+   "project-control/reports/D-024-amendment-8-owner-report.md (the five numbered first-report answers)",
+   "tools/test_agent_supervisor_telegram_sink.py::L8RequirementRegister::test_R249_the_first_report_answers_the_five_items",
+   "CLAIM: DISCHARGED at capture, before this unit began"
+  ]
+ }
+}

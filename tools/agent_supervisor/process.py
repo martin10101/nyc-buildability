@@ -63,7 +63,9 @@ import shutil
 import subprocess
 import sys
 import time
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, MutableMapping, Sequence
+
+from . import linux_containment as _linux
 
 #: Arguments that are refused unconditionally, whatever any model recommends.
 #: THIS IS A DENY LIST. The supervisor never passes any of these to anything.
@@ -79,6 +81,25 @@ HARD_DENY_ARGUMENTS: frozenset[str] = frozenset({
 #: D-007 S3.1). The installed Claude CLI does expose `--effort`; the supervisor
 #: never passes it, and `assert_argv_safe()` refuses it like a bypass flag.
 EFFORT_ARGUMENT_PREFIXES: tuple[str, ...] = ("--effort", "--reasoning-effort")
+
+#: Owner-gated ACTIVATION flags, denied in any argv this package SYNTHESIZES.
+#:
+#: M0-T079 C3 (G5 I1): `--owner-enable-bounded-auto` is a per-launch owner act,
+#: typed by a human at a terminal. Nothing here changes that - what it closes is
+#: REPLAY. Paths that build an argv from a stored prefix (a watchdog's launcher
+#: argv, an autostart task definition) would otherwise re-fire an enable the
+#: owner typed once, on every scheduler trigger, forever - and "per-launch" would
+#: quietly mean "per-launch until it is written into a scheduled task".
+#: `resume_scheduler` already guards its own argv with `assert_fixed_action`
+#: exact-list-equality; this is the same discipline for every other synthesized
+#: argv, enforced in the one shared checker rather than at each call site.
+#:
+#: Scope, stated plainly: this denies the flag in argv the SUPERVISOR builds. It
+#: does not and cannot police what an operator types directly, which is the
+#: intended way to enable the mode.
+OWNER_ACTIVATION_ARGUMENTS: frozenset[str] = frozenset({
+    "--owner-enable-bounded-auto",
+})
 
 #: Environment variables a child is allowed to inherit by default. Everything
 #: else is dropped: the worker receives no ambient credentials (S13.3).
@@ -167,6 +188,13 @@ def assert_argv_safe(argv: Sequence[Any]) -> list[str]:
                 item,
                 "effort flags are permanently prohibited in every configuration file, "
                 "prompt, and CLI invocation")
+        if lowered in OWNER_ACTIVATION_ARGUMENTS or any(
+                lowered.startswith(flag + "=") for flag in OWNER_ACTIVATION_ARGUMENTS):
+            raise HardDenyError(
+                item,
+                "owner activation flags are a per-launch human act and are denied in any "
+                "argv this package synthesizes; a stored launcher prefix must never be "
+                "able to replay an enable the owner typed once (M0-T079 C3)")
         out.append(item)
     return out
 
@@ -181,6 +209,101 @@ def minimal_env(extra: Mapping[str, str] | None = None,
     allowed = {name.upper() for name in allowlist}
     env = {key: value for key, value in os.environ.items() if key.upper() in allowed}
     env.update(extra or {})
+    return env
+
+
+#: Forced into the environment of EVERY controller-launched CLAUDE child process,
+#: unconditionally (D-024 Amendment 13, R278/R286). Background auto-updates are
+#: disabled so the certified Claude CLI identity cannot drift mid-run the way it
+#: did at seq-30 (installed 2.1.251 vs certified 2.1.248). `DISABLE_AUTOUPDATER`
+#: only blocks the background update attempt; `DISABLE_UPDATES` (which also blocks
+#: a manual `claude update`) is deliberately NOT used here (R280). This is
+#: CLAUDE-scoped on purpose - codex children (`codex_channel`) keep `minimal_env`
+#: untouched, so this pair is applied by `claude_child_env`, never by `minimal_env`.
+#: The Claude CLI background-autoupdater disable belt. Naming the key once keeps
+#: the per-child injection (`claude_child_env`) and the Linux bare-probe belt
+#: (`posix_autoupdater_belt`) from carrying two spellings of one name.
+AUTOUPDATER_DISABLE_ENV = "DISABLE_AUTOUPDATER"
+
+FORCED_CLAUDE_CHILD_ENV: dict[str, str] = {AUTOUPDATER_DISABLE_ENV: "1"}
+
+
+def posix_autoupdater_belt(*, os_name: str | None = None) -> dict[str, str]:
+    """The Linux autoupdater belt for the TWO BARE `claude --version`/`--help`
+    probes (D-091 T1; runbook §13).
+
+    Those two probes (`capability_probe._run`, `native_runtime` bare version/help)
+    launch the CLI with ``env=None`` and inherit the FULL parent environment, so
+    `claude_child_env`'s per-child injection deliberately does NOT reach them. On
+    Windows they are covered by the owner MACHINE-SCOPE ``DISABLE_AUTOUPDATER``
+    variable (runbook §13 R288). Linux has no per-machine belt, so the Linux
+    equivalent is to carry ``DISABLE_AUTOUPDATER=1`` in the controller's OWN
+    process environment (via the service unit, or `apply_posix_autoupdater_belt`);
+    a child launched with ``env=None`` then inherits it.
+
+    Returns ``{DISABLE_AUTOUPDATER: '1'}`` on POSIX, ``{}`` otherwise - Windows
+    behavior is unchanged (its belt stays `claude_child_env` + the machine-scope
+    variable). The platform is injectable for tests on any host.
+    """
+    name = os.name if os_name is None else os_name
+    return {AUTOUPDATER_DISABLE_ENV: "1"} if name == "posix" else {}
+
+
+def bare_probe_env(parent_env: Mapping[str, str] | None = None, *,
+                   os_name: str | None = None) -> dict[str, str]:
+    """Explicit environment for a bare `claude --version`/`--help` probe: the FULL
+    parent environment (a version/help check needs the real PATH, so it is NOT
+    `minimal_env`) PLUS the Linux autoupdater belt on POSIX. A caller that builds
+    the probe env explicitly uses this instead of ``env=None``."""
+    base = dict(os.environ if parent_env is None else parent_env)
+    base.update(posix_autoupdater_belt(os_name=os_name))
+    return base
+
+
+def apply_posix_autoupdater_belt(environ: MutableMapping[str, str] | None = None,
+                                 *, os_name: str | None = None) -> bool:
+    """Force the Linux bare-probe belt into a process environment (default
+    ``os.environ``) on POSIX, so every child that inherits it via ``env=None`` -
+    the two bare version/help probes included - runs with
+    ``DISABLE_AUTOUPDATER=1``.
+
+    Unconditional on POSIX (the forced value WINS, mirroring `claude_child_env`'s
+    'the forced pair wins' choice): no prior value can leave a bare probe without
+    the disable. No-op on Windows (returns False), so Windows behavior is unchanged.
+    Returns True when the belt was applied. Intended to be called once at Linux
+    controller startup / from the service launcher.
+    """
+    belt = posix_autoupdater_belt(os_name=os_name)
+    if not belt:
+        return False
+    target = os.environ if environ is None else environ
+    target.update(belt)
+    return True
+
+
+def claude_child_env(extra: Mapping[str, str] | None = None,
+                     allowlist: Sequence[str] = DEFAULT_ENV_ALLOWLIST) -> dict[str, str]:
+    """Child environment for a controller-launched CLAUDE process (R278/R286).
+
+    Identical to ``minimal_env(extra, allowlist)`` except that
+    ``FORCED_CLAUDE_CHILD_ENV`` is applied LAST - after both the allowlist filter
+    and the ``extra`` (config ``extra_env``) merge. Applying it last is the whole
+    point: neither omitting ``DISABLE_AUTOUPDATER`` from the env allowlist nor a
+    config ``extra_env`` supplying a conflicting value can drop or override the
+    forced disable.
+
+    Fail-closed choice for AS-6 - THE FORCED PAIR WINS. A conflicting
+    ``extra_env["DISABLE_AUTOUPDATER"]`` (e.g. ``"0"``) is overridden back to
+    ``"1"`` rather than raising a typed refusal. Rationale: the guarantee this
+    control exists to make is that NO input - parent env, allowlist, or config -
+    ever yields a controller-launched claude child without ``DISABLE_AUTOUPDATER=1``.
+    An unconditional forced value delivers that guarantee for every input; a
+    launch-time refusal is strictly weaker (it fails the launch on a config typo
+    instead of neutralizing it, and adds an error path that could itself regress
+    to fail-open). The forced pair is therefore made unconditional and total.
+    """
+    env = minimal_env(extra, allowlist)
+    env.update(FORCED_CLAUDE_CHILD_ENV)
     return env
 
 
@@ -265,7 +388,15 @@ def terminate_process_tree(pid: int, *, timeout: float = 15.0) -> bool:
     """Terminate a process and all of its descendants. Returns True on success.
 
     Windows uses `taskkill /PID <pid> /T /F`, invoked as an argv array (never a
-    shell string). POSIX kills the process group.
+    shell string). POSIX kills the WORKER's process group.
+
+    M0-T177 (B-027) self-kill guard: on POSIX this refuses — fail-closed with a
+    typed `ProcessError` — to `killpg` the CALLER's OWN process group. Every
+    worker/probe is now launched with `start_new_session=True`, so a worker leads
+    its own group and `getpgid(worker) != getpgrp()`; the only way `pid`'s group
+    equals ours is a worker that was NOT session-isolated (the exact B-027 defect:
+    a timeout then killed the supervisor's own group, SIGKILLing the service). We
+    never kill our own group, so that can never recur even if a launch regresses.
     """
     if os.name == "nt":
         taskkill = shutil.which("taskkill")
@@ -277,7 +408,18 @@ def terminate_process_tree(pid: int, *, timeout: float = 15.0) -> bool:
         # 128 = "process not found" (already exited): treat as success.
         return completed.returncode in (0, 128)
     try:
-        os.killpg(os.getpgid(pid), 9)
+        target_group = os.getpgid(pid)
+    except (ProcessLookupError, PermissionError):
+        return False
+    if target_group == os.getpgrp():
+        raise ProcessError(
+            "refuse_self_group_kill",
+            f"refusing to killpg process group {target_group}: it is the CALLER's own "
+            f"process group, so the kill would SIGKILL the supervisor itself (B-027). "
+            f"pid {pid} is not session-isolated — a worker must be launched with "
+            f"start_new_session=True so it leads its own group")
+    try:
+        os.killpg(target_group, 9)
         return True
     except (ProcessLookupError, PermissionError):
         return False
@@ -313,8 +455,81 @@ _ERROR_ACCESS_DENIED = 5
 
 #: Containment kinds, strongest first.
 CONTAINMENT_JOB_OBJECT = "job_object"
+#: M0-T177 (B-027): the POSIX kill-on-external-death mechanism. Returned on POSIX
+#: ONLY when `linux_containment.prove_systemd_containment()` PROVES the supervisor
+#: is the main process of a hardened systemd .service whose control group the
+#: kernel reaps on stop. Never on Windows; never assumed.
+CONTAINMENT_SYSTEMD_CGROUP = "systemd_cgroup"
 CONTAINMENT_PROCESS_GROUP = "process_group"
 CONTAINMENT_TASKKILL = "taskkill"
+
+#: The ONE shared set of containment kinds that satisfy the M0-T052 G5 C1 safety
+#: property (a worker cannot outlive an externally killed supervisor). Every gate
+#: — `cli.containment_precondition`, the loop post-cycle gate, and the turnover
+#: wiring — accepts EXACTLY this set, so none can widen independently. `taskkill`
+#: and `process_group` are deliberately absent: both terminate the worker only
+#: from the runner's `finally` block, which an external SIGKILL/OOM skips.
+CONTAINMENT_ACCEPT_SET: frozenset[str] = frozenset({
+    CONTAINMENT_JOB_OBJECT, CONTAINMENT_SYSTEMD_CGROUP})
+
+
+# --------------------------------------------------------------------------
+# POSIX systemd control-group proof (M0-T177, B-027)
+# --------------------------------------------------------------------------
+#
+# The in-process proof is PURE and injectable in `linux_containment`. Here we
+# add only the per-process caching and the re-entrancy guard the production host
+# needs, plus a test seam. The proof is computed at most once per process (it is
+# a property of how the process was STARTED, which cannot change under us) and
+# cached. The re-entrancy guard breaks the cycle
+#   default_containment_kind -> prove -> systemctl show via process.run
+#   -> ProcessContainer() -> default_containment_kind
+# by returning the honest `process_group` fallback for the NESTED call (the
+# short-lived systemctl child does not need systemd-strength containment), while
+# the OUTER proof result is the one that gets cached and returned.
+
+_systemd_proof_cache: "_linux.ContainmentProof | None" = None
+_systemd_proving = False
+
+
+def _systemd_containment_proof() -> "_linux.ContainmentProof":
+    """The cached systemd proof for THIS process (POSIX only)."""
+    global _systemd_proof_cache, _systemd_proving
+    if os.name == "nt":
+        return _linux.ContainmentProof.refused("not a POSIX host")
+    if _systemd_proof_cache is not None:
+        return _systemd_proof_cache
+    if _systemd_proving:  # re-entrant call from process.run launched BY the proof
+        return _linux.ContainmentProof.refused("re-entrant containment probe")
+    _systemd_proving = True
+    try:
+        proof = _linux.prove_systemd_containment()
+    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
+        proof = _linux.ContainmentProof.refused(f"the containment proof raised ({exc})")
+    finally:
+        _systemd_proving = False
+    _systemd_proof_cache = proof
+    return proof
+
+
+def set_systemd_containment_proof_for_testing(
+        proof: "_linux.ContainmentProof | None") -> None:
+    """Test seam: pin (or, with None, clear) the cached systemd proof so a test
+    can exercise the POSIX `systemd_cgroup` paths on any host without real systemd."""
+    global _systemd_proof_cache
+    _systemd_proof_cache = proof
+
+
+def reset_systemd_containment_cache() -> None:
+    """Test seam: clear the cached proof so the next read recomputes it."""
+    global _systemd_proof_cache
+    _systemd_proof_cache = None
+
+
+#: Membership checker seam. Production uses the real `/proc/<pid>/cgroup` reader;
+#: tests replace `ProcessContainer(membership_check=...)` or patch this name.
+def _default_membership_check(pid: int, expected_cgroup: str) -> bool:
+    return _linux.pid_in_service_cgroup(pid, expected_cgroup)
 
 
 def assert_no_breakaway(*, limit_flags: int = 0, creation_flags: int = 0) -> None:
@@ -532,14 +747,29 @@ class ProcessContainer:
     `killpg`), which `run()` already establishes.
     """
 
-    def __init__(self, *, prefer_job_object: bool = True) -> None:
+    def __init__(self, *, prefer_job_object: bool = True,
+                 posix_proof: "_linux.ContainmentProof | None" = None,
+                 membership_check: "Callable[[int, str], bool] | None" = None) -> None:
         self.prefer_job_object = prefer_job_object
         self._job: "WindowsJobObject | None" = None
         self._pids: list[int] = []
         self._fallback_reason = ""
         self._verified = False
+        #: On POSIX, the service control-group path a proof established, so an
+        #: adopted worker's membership can be VERIFIED against it.
+        self._service_cgroup = ""
+        self._membership_check = membership_check or _default_membership_check
         if os.name != "nt":
-            self.kind = CONTAINMENT_PROCESS_GROUP
+            # M0-T177 (B-027): `systemd_cgroup` when PROVED (the supervisor is the
+            # main process of a hardened systemd .service the kernel reaps on stop),
+            # else the honest `process_group` fallback. The proof is injectable for
+            # tests; production reads the cached per-process proof.
+            proof = posix_proof if posix_proof is not None else _systemd_containment_proof()
+            if proof.ok:
+                self.kind = CONTAINMENT_SYSTEMD_CGROUP
+                self._service_cgroup = proof.cgroup_path
+            else:
+                self.kind = CONTAINMENT_PROCESS_GROUP
             return
         if not prefer_job_object:
             self.kind = CONTAINMENT_TASKKILL
@@ -560,6 +790,18 @@ class ProcessContainer:
     def adopt(self, pid: int) -> str:
         """Put a running child under containment. Returns the kind achieved."""
         self._pids.append(pid)
+        if os.name != "nt":
+            # M0-T177 (B-027): under systemd_cgroup, VERIFY (never assume) the
+            # worker is really a member of the supervisor's own service cgroup —
+            # only then does the kernel's stop-time control-group kill cover it. A
+            # worker found in a foreign cgroup leaves `verified_in_job` False and
+            # the loop's post-cycle gate fails closed (`containment_unverified`).
+            if self.kind == CONTAINMENT_SYSTEMD_CGROUP and self._service_cgroup:
+                try:
+                    self._verified = bool(self._membership_check(pid, self._service_cgroup))
+                except Exception:
+                    self._verified = False
+            return self.kind
         if self._job is None:
             return self.kind
         try:
@@ -593,10 +835,17 @@ class ProcessContainer:
         return ok
 
     def close(self) -> None:
-        """Release the container. On Windows this KILLS anything still inside."""
+        """Release the container. On Windows this KILLS anything still inside; on
+        POSIX it terminates each adopted WORKER's own process group (kill-on-close
+        parity — the self-group guard in `terminate_process_tree` refuses to touch
+        our own group, so a session-isolated worker is reaped and the supervisor
+        is never harmed)."""
         if self._job is not None:
             self._job.close()
             self._job = None
+            return
+        if os.name != "nt":
+            self.terminate_all()
 
     def report(self) -> ContainmentReport:
         return ContainmentReport(
@@ -615,10 +864,117 @@ class ProcessContainer:
 
 
 def default_containment_kind() -> str:
-    """The containment `run()` uses on this host with no configuration at all."""
+    """The containment `run()` uses on this host with no configuration at all.
+
+    POSIX (M0-T177, B-027): `systemd_cgroup` ONLY when the in-process proof holds
+    (the supervisor is the main process of a hardened systemd .service), otherwise
+    the honest `process_group` fallback. Windows is byte-for-byte unchanged.
+    """
     if os.name != "nt":
-        return CONTAINMENT_PROCESS_GROUP
+        return (CONTAINMENT_SYSTEMD_CGROUP if _systemd_containment_proof().ok
+                else CONTAINMENT_PROCESS_GROUP)
     return CONTAINMENT_JOB_OBJECT if job_objects_available() else CONTAINMENT_TASKKILL
+
+
+# --------------------------------------------------------------------------
+# Shared containment-gate decisions (M0-T177). These live here, not in cli.py /
+# loop.py, so those grandfathered oversized files carry no message-building bulk.
+# --------------------------------------------------------------------------
+
+
+def containment_refusal_detail(kind: str) -> str:
+    """The C1 start-gate refusal message for a non-accepted containment kind."""
+    return (
+        f"this host's default containment is {kind!r}, not one of {sorted(CONTAINMENT_ACCEPT_SET)}. "
+        f"On Windows the supervisor must run under the kill-on-close Job Object; on Linux it must "
+        f"run as the MAIN process of a hardened systemd .service (KillMode=control-group/mixed, "
+        f"ExitType=main, SendSIGKILL=yes, bounded TimeoutStopSec - see "
+        f"tools/agent_supervisor/linux/nyc-supervisor.service.template) so systemd tears down the "
+        f"service control group on stop. Without kill-on-close, an external kill of the supervisor "
+        f"skips the runner's termination path and leaves a live orphaned worker, so a later `start` "
+        f"could double-launch over it (M0-T052 G5 C1; ACTIVATION-RECORD PIN 2026-08-08). "
+        f"Dispatch is REFUSED on this host")
+
+
+def containment_accept_detail(kind: str) -> str:
+    """The C1 start-gate ACCEPT message for an accepted containment kind."""
+    return (
+        f"the host's default containment is {kind!r}, an accepted kill-on-external-death "
+        f"mechanism ({sorted(CONTAINMENT_ACCEPT_SET)}), so a worker cannot outlive an "
+        f"externally killed supervisor")
+
+
+def evaluate_containment_precondition(
+        kind_reader: "Callable[[], str]") -> tuple[bool, str, str]:
+    """The C1 host-containment decision. `kind_reader` is the caller's
+    `default_containment_kind` (passed in so a test that patches cli's copy still
+    drives the gate). Returns ``(ok, kind, detail)``; fail closed — only
+    `CONTAINMENT_ACCEPT_SET` permits dispatch, anything unprovable is a refusal."""
+    try:
+        kind = kind_reader()
+    except Exception as exc:  # pragma: no cover - defensive; unprovable = refused
+        return False, "unknown", (
+            f"the host's default containment could not be determined ({exc}); an "
+            f"unprovable containment is a REFUSAL, never an assumption")
+    if kind in CONTAINMENT_ACCEPT_SET:
+        return True, kind, containment_accept_detail(kind)
+    return False, kind, containment_refusal_detail(kind)
+
+
+def posix_containment_doctor_detail(kind: str) -> str:
+    """doctor's POSIX `containment_default` detail (M0-T177). PASSES either way -
+    it REPORTS the proved kind; the start-path gate, not doctor, decides dispatch."""
+    if kind == CONTAINMENT_SYSTEMD_CGROUP:
+        return (f"default containment on this POSIX host is {kind!r} (hardened systemd service "
+                f"control group, proved from inside the process; the start gate ACCEPTS it)")
+    return (f"default containment on this POSIX host is {kind!r}; the start gate REFUSES dispatch "
+            f"until the supervisor runs as the MAIN process of a hardened systemd .service (see "
+            f"tools/agent_supervisor/linux/nyc-supervisor.service.template)")
+
+
+#: Per-reason basis strings for the loop's post-cycle containment stop (preserved
+#: verbatim through the move out of loop.py).
+CONTAINMENT_STOP_BASIS: dict[str, str] = {
+    "containment_degraded": ("M0-T053 G5 R4 achieved-containment enforcement (2026-08-08 "
+                             "pin criterion 2; S13.2 / S13.12 invariants 10-11)"),
+    "containment_unverified": ("M0-T056 / M0-T060 verified_in_job strengthening (M0-T053 G5 "
+                               "pin P3; S13.2 / S13.12 invariants 10-11)"),
+}
+
+
+def cycle_containment_stop(achieved: str, fallback_reason: str,
+                           verified_in_job: bool) -> "tuple[str, str] | None":
+    """The per-cycle achieved-containment decision. Returns
+    ``(reason_code, reason_text)`` when the cycle must FAIL CLOSED, else None.
+    (M0-T053 G5 R4 achieved-containment + M0-T056/T060 verified_in_job; M0-T177.)"""
+    if achieved not in CONTAINMENT_ACCEPT_SET:
+        text = (
+            f"the cycle achieved {achieved or 'unknown'!r} containment, not one of the "
+            f"kill-on-external-death kinds {sorted(CONTAINMENT_ACCEPT_SET)}: a child that "
+            f"spawns its own process tree can escape a non-contained launch, so an "
+            f"unattended run must fail closed rather than proceed on it")
+        if fallback_reason:
+            text += f" (fallback reason: {fallback_reason})"
+        return "containment_degraded", text
+    if verified_in_job is False:
+        text = (
+            f"the cycle reported {achieved!r} containment but its membership could not "
+            f"be verified (ContainmentReport.verified_in_job is False): an unverified "
+            f"containment assignment is not proof of kill-on-external-death containment, "
+            f"so an unattended run fails closed rather than proceed on an unconfirmed claim")
+        return "containment_unverified", text
+    return None
+
+
+def reprove_systemd_containment_ok() -> bool:
+    """A FRESH, UNCACHED re-proof of the systemd unit properties (G5 NB1).
+
+    The startup proof is cached per process; a mid-run `systemctl set-property`
+    weakening the unit would otherwise go unnoticed. This calls the pure proof
+    DIRECTLY (bypassing the cache) so the loop can re-check each cycle with a
+    cheap bounded `systemctl show`. Returns True only when the fresh proof holds.
+    """
+    return _linux.prove_systemd_containment().ok
 
 
 # --------------------------------------------------------------------------
@@ -739,6 +1095,22 @@ def run(
         stdout_truncated=stdout_truncated,
         stderr_truncated=stderr_truncated,
     )
+
+
+def posix_session_kwargs() -> dict[str, bool]:
+    """`Popen` kwargs that put a launched child in its OWN session / process group
+    on POSIX (`start_new_session=True`), and NOTHING on Windows (byte-for-byte
+    unchanged).
+
+    M0-T177 (B-027): the worker and the model probe MUST lead their own process
+    group. The timeout/cancel path kills the worker with
+    `killpg(getpgid(worker), 9)`; without session isolation the worker shares the
+    supervisor's group, so that kill SIGKILLed the service itself (the reproduced
+    self-kill defect). With session isolation `getpgid(worker) != getpgrp()`, so
+    the kill hits only the worker's tree and `terminate_process_tree`'s self-group
+    guard is never even reached.
+    """
+    return {"start_new_session": True} if os.name != "nt" else {}
 
 
 def python_argv(script: str | os.PathLike[str], *args: str) -> list[str]:

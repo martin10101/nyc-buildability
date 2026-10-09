@@ -1,0 +1,13 @@
+{
+  "schema": "owner_packet_queue/v1",
+  "authority": "D-033-R009 overnight continuation queue v4 (orchestrator, 2026-09-07): after run-06 (v3: M0-T025 + M0-T149) the loop proceeds to the D-033 implementation - the loop builds its own management layer. Task 1 = M0-T152 (T-A gate-wave engine + switch scaffold; G5 conditions F1/F2 BLOCKING). T-B/T-C are contracted after T-A lands. Supersedes v3 once its tasks land.",
+  "tasks": [
+    {
+      "task_id": "M0-T152",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M0-T152.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t152",
+      "branch": "task/M0-T152-gate-wave-engine",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t152"
+    }
+  ]
+}

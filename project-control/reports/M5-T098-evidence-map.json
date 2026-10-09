@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T098",
+ "material_commit": "4b25c60c (cherry-pick of wt-m5t098 b0fb6787; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T16:05:34+00:00",
+ "producer": "3d-massing-engineer (orchestrator-dispatched subagent; worktree wt-m5t098)",
+ "requirements": {
+  "D-066-R001": [
+   "The navigation block named massing_model.py's only importer (its test), proposal.py as a READ-ONLY import being changed in parallel by M5-T095, and max_envelope.py plus every other scenario module as FORBIDDEN; the material touches exactly the 3 allowed paths and imports only proposal.py's public NYC_2263_* constants. The harvest check runs the massing suite at the ctl24 head that already carries M5-T095's proposal.py. [ORCH-HARVEST] at the cherry-picked head 4b25c60c (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_massing_model.py tests/scenario/test_scenario_proposal.py tests/scenario/test_proposal_validation_budget.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 139 passed in 15.30s."
+  ],
+  "D-087-R001": [
+   "Wave-5 capacity unit: contracted at 64fce622 (G0), claimed at 2e0b2351 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with M5-T094/T095/T096/T097/T099/T100 and M0-T160; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head 4b25c60c (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_massing_model.py tests/scenario/test_scenario_proposal.py tests/scenario/test_proposal_validation_budget.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 139 passed in 15.30s."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task; one worktree wt-m5t098; material touches exactly the 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head 4b25c60c (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_massing_model.py tests/scenario/test_scenario_proposal.py tests/scenario/test_proposal_validation_budget.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 139 passed in 15.30s."
+  ],
+  "D-087-R003": [
+   "Closes DB-061 (a)-(d) on the 3D truth object before user geometry reaches it: a y-only magnitude violation is refused (mutant MD reddens); the LOT ring gets the NYC EPSG:2263 range check with a distinct typed reason lot_ring_out_of_nyc_bounds on field lot_ring (removing it reddens 3 tests); shapely GEOSException is wrapped into MassingModelError geometry_engine_error at the build boundary (removing the wrap reddens 2 tests); scan units are charged before the inner scan (mutant ME reddens); the no-dedupe output-size choice (DB-061 f) is documented in-module. DISCLOSED DEVIATION for the reviewers: one existing assertion (test_t088_as4 - a +/-1e8 lot builds successfully) contradicted the new range check and was replaced by an equivalent magnitude-inclusivity proof on _prepare_ring; the magnitude refusals stay unchanged. [ORCH-HARVEST] at the cherry-picked head 4b25c60c (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_massing_model.py tests/scenario/test_scenario_proposal.py tests/scenario/test_proposal_validation_budget.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 139 passed in 15.30s."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; the module stays unwired (no route, main.py, GLB or web change); proposal.py and every other scenario module untouched; the max-envelope route stays unmounted. [ORCH-HARVEST] at the cherry-picked head 4b25c60c (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python -m pytest tests/scenario/test_massing_model.py tests/scenario/test_scenario_proposal.py tests/scenario/test_proposal_validation_budget.py -q -p no:cacheprovider` (cwd services/api) -> exit 0: 139 passed in 15.30s."
+  ]
+ }
+}

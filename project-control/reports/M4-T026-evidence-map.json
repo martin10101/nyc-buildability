@@ -1,0 +1,33 @@
+{
+ "task_id": "M4-T026",
+ "material_commits": [
+  "7729a959 (cherry-pick of the producer's commit 245a8007, producer legal-corpus-engineer: 8 capture files, their 8 synced copies and the producer report) = material head"
+ ],
+ "claim_seam_head": "8dd39c9f",
+ "new_capture_ids": [
+  "zr-34-11",
+  "zr-34-111",
+  "zr-34-24",
+  "zr-35-53",
+  "zr-35-63",
+  "zr-35-631",
+  "zr-35-632",
+  "zr-35-633"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (45 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py: exit 0, 50 passed",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "tools/modularity_check.py --check: exit 0",
+  "pytest -q (the FULL services/api suite, run alone at c2f72cdb with all three pieces of the wave integrated): exit 0, 8108 passed, 8 skipped"
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "The Article III text that gap K9 of the work order waits for is captured as source text from the official Zoning Resolution site, each section whole and in a file of its own: docs/research/zr-snapshots/v1/zr-34-11, zr-34-111, zr-34-24, zr-35-53, zr-35-63 and the three sections the official page shows under 35-63 (zr-35-631, zr-35-632, zr-35-633); each `.snapshot.json` with its address, the time of each request, the amendment date the page shows (12/5/2024 in all eight), the verbatim text and its digests. The labels in front of list items are taken from each section's own print/PDF text, and each capture says so.",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 45 files); services/api/tests/rules/test_zr_snapshot_bundle.py recomputes each content digest.",
+   "From the captured text: the paragraphs the work order and one rule file name exist as named ('34-24(b)(1)', '35-631(b)', '35-632(a)'); the builder's report lists every other section the eight texts point to and whether it is captured (not captured: 34-21, 35-62, 35-64, 35-71, 36-64, 23-41, 23-43 as a whole, 23-434, 23-435, 23-436).",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved; the overlay text is not read for any lot; no result for a lot with an overlay is shown or changed. Row R291 covers the whole of step 3 (check the R6B answers); this task is one share of it: the text is captured. The independent reading of this text and any rule for a commercial overlay are later tasks."
+  ]
+ }
+}

@@ -1,0 +1,31 @@
+{
+  "task_id": "M0-T132",
+  "producer_agent": "orchestrator-admission-runner",
+  "report_file": "project-control/reports/M0-T132-recertification.md",
+  "submitted_at": "2026-09-01T03:37:20.452911+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T132-evidence-map.json",
+  "content_manifest_sha256": "e65ce96800966d2a9078031c9d8269f778c95be6d85a8e82a6fd7d710228c720",
+  "reviewed_sha": "259833dea33069e34fe4340efe68a6baa1223d54",
+  "applicable_requirements": [
+    "D-024-R431",
+    "D-024-R432",
+    "D-024-R433",
+    "D-024-R434",
+    "D-024-R435",
+    "D-024-R436",
+    "D-024-R437",
+    "D-024-R438",
+    "D-024-R439",
+    "D-024-R440",
+    "D-024-R441",
+    "D-024-R442",
+    "D-024-R443",
+    "D-024-R444",
+    "D-024-R445",
+    "D-024-R446",
+    "D-024-R447",
+    "D-024-R448"
+  ],
+  "updated_at": "2026-09-01T03:37:23.745871+00:00"
+}

@@ -1,0 +1,217 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-082",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-082-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-24T15:23:20+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T065",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ],
+   "reviewed_sha": "a3b62c906a6e1adeaaae664355f254349ce5d5ce",
+   "reviewed_manifest_sha256": "648929ec9214fe6f296d189b08eb1b6fc32a4aed0b946d04762adf392388e18b",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:55:56.560960+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 65faee54; 12 paths byte-stable to HEAD): keyboard-operable outline over the READ-ONLY composed LotOutlineMap; correspondence-not-projection bridge (no CRS lib, grep-proven) flag-gated OFF and UNMOUNTED (main.py reference-free + mount-absence test); adoption into the SAME accepted draft model; phase C/D not entered, emission deferred, no dependency touched; report M5-T065-DCV.md."
+     ]
+    },
+    {
+     "id": "D-082-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED for the delivered slice under the recorded [ORCH-SCOPE-DISPOSITION]: manual stays the option - adoptOutlineVertices replaces only vertices (unit-tested levels/walls preservation), numeric table stays visible/editable/authoritative, adoption resets the outcome forcing a fresh check; the max-first render clause is carried by M5-T064; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R002"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 812a5860, 5 paths blob-stable to HEAD): the authorized max-envelope continuation contracted at db81c35f under the gated process; route UNMOUNTED (main.py reference-free + non-vacuous mount-absence test) and flag-gated default-off; no scenario document or contract version emitted; phase C/D untouched; report M5-T064-DCV.md."
+     ]
+    },
+    {
+     "id": "D-082-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: deterministic maximum-first IN CODE - derive_max_envelope pure computation, registry-derived values with tightest-rule binding selection, per-dimension binding-rule provenance (id/version/out-competed/citations), honest typed gaps always enumerated, and the generator-checker consistency proof reusing the accepted check_proposal fail-closed; AS-2 registry-flip + AS-4 epsilon-mutation teeth verified; CI green at 366a50be; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 84132df5; disjoint-peer tolerance verified 11/11 blob-MATCH to HEAD): map-CLICK slice under the T065 [ORCH-SCOPE-DISPOSITION] - NEW ProposalOutlineMap interactive wrapper + three additive-optional props on LotOutlineMap gated by interactive = onOutlineMapClick != null (absent prop = byte-equivalent accepted display); phase C/D untouched; zero dependency files; contract c40c60db / widening 1986f589 verified as commits; report M5-T066-DCV.md."
+     ]
+    },
+    {
+     "id": "D-082-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: clicked display-4326 positions enter the SAME points state as keyboard entry (one draft model, one bridge, one adoption); numeric table retained as the authority (EPSG:2263 caption); HJ-2/AS-6 adoption reconciliation real (adoptOutlineVertices filters exterior_walls, danglingWallIds exported) and MUTATION-TESTED; dropped walls announced, never silent; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T068",
+   "applicable_requirement_ids": [
+    "D-082-R002"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "9f035ad43e2e54475d026cd0f7503e28e5a3cdc9b89c1d2463efbef8a3c80097",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T22:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 141007c3; disjoint-peer tolerance verified; addendum: validator direct exit 0): the six DB-046 a-f closures harden exactly the R002 proof surface - seven mutation-sensitive tests reproduced GREEN by the DCV itself (63 passed at frozen content) against confirmed non-vacuous production invariants (fail-closed raise :919-925, drift guard :113, conflict advisory :513-527, bounds gap :798-805, route candidate.*->500 split :314-323); G4 independently OBSERVED 3 mutants red->green incl. the fail-closed raise engine+route; report M5-T068-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-082-R001"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (report project-control/reports/M5-T071-DCV.md, Part 2): the (b) map-drawing release hardened in place - tri-state copy gate verified against the REAL leaf signals (LotOutlineMap.tsx:646/:632), five typed-fallback teeth + the fixed-bbl observer walk reproduced non-tautological; boundary clauses proven on the diffs (2396a000 + 0014ad8f = five web files + report only; no persistence/API/contracts/3D/plan); the HJ B1/B2 closures reproduced at 0014ad8f. Blob-SHA restamp predicate stated in Part 1."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-082-R001",
+    "D-082-R003"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (project-control/reports/M5-T070-DCV.md Part 2): the (a) capability surfaced; boundary clauses proven on all five identity commits; the AS-4 reachability limitation verified AT THE SERVER (empty segments -> lot_geometry_unsupported, no candidate) and the honesty regime judged SATISFIED (named in map+report, pinned by the committed production-reachable spec, routed as DB-050(a) = live M5-T076)."
+     ]
+    },
+    {
+     "id": "D-082-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2): max leads by DOM ORDERING in unit + real-browser e2e; manual editing survives adoption; honesty labels verified in copy and provenance notes; typed degradation never dead, never fabricated."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T078",
+   "applicable_requirement_ids": [
+    "D-082-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "c5dd725ccedd73424ea5ca0a9f87fa926f4a7d5125480251306d7683caf1ce24",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the B-track outline drawing + bridge feeding the same in-memory draft (additive onAdopt; no localStorage/sessionStorage/save/PDF import); web-only allowed_paths; services/api, e2e, outline-bridge-api.ts and app/ forbidden; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp c5dd725c; evaluate_task_refs ok); report M5-T078-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-082",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-082-R001"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-082-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: max-envelope-api.ts targets the INTERNAL, flag-gated, UNMOUNTED POST /api/v1/max-envelope; the computed maximum is presented and checked live, never persisted; services/api untouched; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
+}

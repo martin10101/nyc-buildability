@@ -43,9 +43,17 @@
 #   uv 0.11.28          lock generator / resolver (12.79d, advisory-free).
 #                       0.11.29 (wired before this task) was only 4.98d old ->
 #                       failed the 7-day gate, so it is downgraded to 0.11.28.
-#   pip 26.1.2          package installer, pinned so no unpinned
-#                       `pip install --upgrade pip` remains (50.03d, clean).
-#                       Fixes the un-pinned-pip CI gap; supersedes 25.x.
+#   pip 26.2            package installer, pinned so no unpinned
+#                       `pip install --upgrade pip` remains. Bumped 2026-08-27
+#                       (dedicated commit): PYSEC-2026-3721 was published
+#                       against 26.1.2 and turned the blocking pip-audit CI
+#                       gate red; 26.2 is the fix version (published
+#                       2026-07-29T21:57:54Z per live PyPI = 29.06d at
+#                       admission >= the 604800s gate; OSV query for
+#                       pip 26.2 returns zero advisories; sha256 whl
+#                       931c3036... / sdist 2d8542af... verified against the
+#                       registry). 26.2.1 exists but is newer than needed;
+#                       the oldest advisory-free fix version is admitted.
 #   setuptools 83.0.0   build backend (pyproject build-system requires
 #                       setuptools>=69); replaces the dynamically resolved
 #                       build tooling (16.11d, clean).
@@ -65,7 +73,7 @@
 #                       hash-locked here instead of pip/pipx-resolved (39.83d,
 #                       clean).
 uv==0.11.28
-pip==26.1.2
+pip==26.2
 setuptools==83.0.0
 wheel==0.46.2
 pytest==9.0.3
@@ -94,3 +102,22 @@ platformdirs==4.10.0
 #   tzdata 2025.2   IANA timezone data (498.45d at admission, advisory-free,
 #                   verified against live PyPI 2026-08-04; pure-data package).
 tzdata==2025.2
+
+# --- transitive advisory-fix pins (dedicated commit, 2026-09-30) ---
+# lock_tools.sh keeps the committed lock's pins as resolver preferences and never
+# upgrades on its own, so an advisory-fix bump of a TRANSITIVE is admitted by an
+# exact pin here (same pattern as the age-control pins above). Revisit
+# deliberately.
+#   urllib3 2.8.0   HTTP client, via requests. Bumped 2026-09-30 (dedicated
+#                   commit): GHSA-8988-9cw3-xx77 / CVE-2026-97687,
+#                   GHSA-gh4c-6fx4-qh6g / CVE-2026-97688 and
+#                   GHSA-vxq7-64xx-v4gw / CVE-2026-97689 were published against
+#                   2.7.0 and turned the blocking pip-audit CI gate red; OSV
+#                   lists 2.8.0 as the fix version for all three (published
+#                   2026-09-15T19:29:34Z per live PyPI = 15.01d at admission
+#                   >= the 604800s gate, no waiver; OSV query for urllib3
+#                   2.8.0 returns zero advisories; sha256 whl 0cf3cae5... /
+#                   sdist 63bf2ead... verified against the registry). No 2.7.x
+#                   patch exists; the oldest advisory-free fix version is
+#                   admitted.
+urllib3==2.8.0

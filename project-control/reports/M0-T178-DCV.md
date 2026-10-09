@@ -1,0 +1,22 @@
+# M0-T178 — directive-compliance verification (directive-compliance-verifier, independent, read-only)
+
+Saved verbatim by the orchestrator from the verifier's return. Frozen head `6f87b0b6`; PASS for this task's share of D-091-R001 and
+D-091-R007, with an up-front restamp pre-authorization (last section).
+
+---
+
+DCV — M0-T178 (D-091/DB-103 dual-review equal-model refusal), PR #345. Frozen head 6f87b0b6 (git rev-parse confirmed in /root/project/rv-T177, clean). VERDICT: PASS (this task's share of R001 and R007).
+
+D-091-R001 (this task's share) — PASS. The equal/empty-model refusal runs in _preflight BEFORE any slot or process: review() calls _preflight (dual_review.py:193) before _acquire_slot (:200) and before _run_codex/_run_claude (:213-215); _check_combiner_distinct_from_claude (:268) is invoked from _preflight (:263); _refuse (:539) returns "no slot, no process." Equal models → typed review_models_not_distinct (:292-298); either empty → review_models_unset (:286), with earlier combiner_model_unset/claude_reviewer_model_unset nets. Different allowlisted models proceed unchanged (Scenario7 proceed test: codex/claude calls (1,1), verdict PASS). I reran tools/test_agent_supervisor_dual_review.py = 21 passed (rc0); Scenario7's _assert_refused_before_process asserts codex.calls==0, claude.calls==0, runner.calls==0 and 0 active slots on every refusal. REMAINS for R001 overall (NOT claimed; evidence map defers correctly): Linux recert superseding M0-T174, owner-applied PIN amendment R009, owner combining-model choice R008, owner-typed commissioning M0-T175.
+
+D-091-R007 (this task's share) — PASS. Independent G3/G4 code-reviewer PASS and G5 security-reviewer PASS at reviewed head 434be42d, 0 blocking (reports M0-T178-G3G4.md, -G5.md); producer=backend-engineer ≠ both reviewers. Mutation anchored: neutralizing :292-298 makes the equal case return None → slot acquired, calls become 1, error_code wrong → equal-models test reddens (test asserts the 0-calls, verified by reading). Certification itself deferred to its own task (bundled with M0-T177) — evidence map does not over-claim.
+
+Gates: G0 orchestrator/administrative PASS (reviewed_sha c68ce354, manifest 66568f2e — pre-impl, expected); G2 orchestrator/self_check, G3+G4 code-reviewer, G5 security-reviewer — all PASS. G2/G3/G4/G5 content_manifest_sha256 all = 6f30d59f…3afd = submission (reports/M0-T178.json), reviewed_sha 5bbaac91. I recomputed _task_git_identity(M0-T178) at 6f87b0b6 = 6f30d59f…3afd (match). Material allowed_paths (dual_review.py, test, docs) byte-identical 603b58b9→6f87b0b6. Reviewers in roster; producer ≠ reviewers.
+
+Validator: `python tools/validate_directive_compliance.py --check; echo EXIT=$?` → EXIT=0 at 6f87b0b6. Registry now carries R009 (9 reqs R001-R009; came in via the M0-T177 accept-seam merge) and stays consistent. evaluate_task_refs(M0-T178): applicable==cited==[R001,R007]; R009 is D-091-BOOTSTRAP-only (not applicable). Dependency M0-T177 status = accepted. Blockers: no open blocker word-references M0-T178.
+
+Findings (benign, non-blocking): (a) a broad full-supervisor-suite run on this bare Linux host reproduces the same pre-existing unhardened-host C1-refusal failures (G3/G4 disclosed as out-of-scope, untouched files); dual_review's only importer is its own test and those 21 tests are fully green — not a regression. (b) G5 NB: the distinct check is raw-string equality, so an owner allowlisting BOTH an alias and its canonical id per lane could defeat the distinct intent (deliberate misconfiguration; accidental equal-string case is caught) — hardening note only.
+
+RESTAMP PRE-AUTHORIZATION: my PASS carries to the later accept head WITHOUT re-review iff, at that head: (1) _task_git_identity(M0-T178) still == 6f30d59f…3afd (equivalently the 4 allowed_paths blobs byte-identical to 6f87b0b6); (2) gate records M0-T178-G0/G2/G3/G4/G5.json and reports -G3G4.md/-G5.md unchanged, with G2/G3/G4/G5 manifest 6f30d59f; (3) submission reports/M0-T178.json (manifest 6f30d59f) and evidence-map unchanged; (4) requirements.json R001 and R007 bodies+applicability unchanged (M0-T178 still in both; R009 stays D-091-BOOTSTRAP-only); (5) validator exits 0. Disjoint-peer tolerance: I tolerate ANY number of disjoint peer commits — including a merge of the integration branch and a meaning-resolved state.json — provided none touch M0-T178's 4 allowed_paths blobs, the M0-T178 gate/submission/evidence records, or R001/R007.
+
+END-OF-REPORT

@@ -1,0 +1,105 @@
+{
+  "task_id": "M0-T119",
+  "title": "D-024 Amendment 13 unit S: third golden recertification at the frozen post-admission identity (2.1.251)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Full R247 recertification window at ONE frozen final post-admission identity (Amendment 13 R283; M0-T112/T116 pattern): FULL golden-run pack + all affected packs + the WHOLE supervisor suite with exact collected-count reconciliation against the M0-T116 baseline (2712 + additions) + CI green on the pushed certification tip + activation-package items 10-12 and top-banner refresh to the Amendment-13 state. The certification runs under the established DISABLE_AUTOUPDATER controls (M0-T117) so the CLI cannot change mid-window; the drift teeth must be green at 2.1.251 (M0-T118). Only when EVERY item of the R282 pass list holds at the frozen identity is 2.1.251 recorded as the admitted version. After acceptance, the R276 resume sequence reruns FROM THE BEGINNING (R284) with the one-time --repin-cli-identity + digest verification on the certified start (R285, executed under M0-T113). Supervisor-freeze qualifying evidence: D-024-R283.",
+  "business_reason": "Owner Amendment 13: certification must be re-established at the post-admission identity before the authorized limited-auto loop resumes.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-013-amendment.md (rows R282/R283/R284)",
+    "project-control/reports/M0-T116-recertification.md (baseline + pattern)",
+    "accepted M0-T117 + M0-T118 deliverables"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T119-recertification.md: full golden pack + affected packs + whole-suite run with exact collected-count reconciliation against the M0-T116 baseline (2712 + Amendment-13 additions), CI green on the pushed certification tip, at ONE frozen final identity",
+    "2.1.251 recorded as the ADMITTED version in the recertification report ONLY after the complete R282 pass list holds",
+    "M0-T096-activation-package.md items 10-12 + top banner refreshed to the Amendment-13 state (resume gated on this unit's acceptance + full R276 rerun with one-time repin)"
+  ],
+  "dependencies": [
+    "M0-T117",
+    "M0-T118"
+  ],
+  "allowed_paths": [
+    "project-control/reports/M0-T119-recertification.md",
+    "project-control/reports/M0-T096-activation-package.md"
+  ],
+  "forbidden_paths": [],
+  "acceptance_scenarios": [
+    {
+      "id": "AS-1",
+      "scenario": "Whole-suite total reconciles EXACTLY: M0-T116 baseline 2712 collected + M0-T117 additions + M0-T118 additions = new collected count; 0 failures; no test removed.",
+      "verification": "recertification report arithmetic + reviewer re-run"
+    },
+    {
+      "id": "AS-2",
+      "scenario": "Golden pack + affected packs pass at the frozen identity; CI green on the pushed tip; certified anchors (new material SHA, tree hash, golden blob) pinned in the report.",
+      "verification": "report + check-runs API"
+    },
+    {
+      "id": "AS-3",
+      "scenario": "Certification ran with DISABLE_AUTOUPDATER controls active and claude --version identical at window start and end (2.1.251).",
+      "verification": "version stamps in the report"
+    },
+    {
+      "id": "AS-4",
+      "scenario": "The R282 admission line appears ONLY after every pass-list item is recorded PASS in the same report.",
+      "verification": "report structure review"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "orchestrator-recert-runner",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T17:54:00.129217+00:00",
+  "updated_at": "2026-08-30T01:20:27.862607+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T17:54:00.129217+00:00",
+  "path_free_governance": true,
+  "path_free_justification": "Re-certification unit (M0-T112/T116 pattern): it RUNS the golden pack, affected packs, whole suite, and CI at the frozen post-admission identity and records results + refreshes activation-package items; it edits no production source. Its report files do not exist at packet-creation HEAD, so the path set resolves empty until delivery (same posture as M0-T116).",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T21:39:27.811145+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 15,
+      "status": "claimed",
+      "message": "R297 HOLD (Amendment 14, owner 2026-08-29): M0-T119 was claimed and its certification runs started ~35 min BEFORE the amendment arrived (golden 41/41 at 85cbcc4, affected packs 499/1, whole suite completed green in background). All pre-directive certification runs are VOID for certification purposes; the uncommitted activation-package draft was reverted. The unit HOLDS until M0-T120 (shell-routing compatibility) is accepted; then the SINGLE recertification re-runs IN FULL at the ONE final identity including M0-T120 (R296), and only then does the R276 rerun proceed. No submission, gate, or certification claim was made from the voided runs."
+    },
+    {
+      "at": "2026-08-30T00:29:35.281211+00:00",
+      "agent": "orchestrator-recert-runner",
+      "percent": 20,
+      "status": "claimed",
+      "message": "R297 HOLD RESOLVED: M0-T120 accepted at material 7d8195b (8-row DCV PASS, gates complete, suite 2782/2780/2/0 triple-reproduced). The single recertification now runs at the ONE final identity including M0-T120 (R296). Prior voided runs (pre-Amendment-14) remain void; this is a full fresh certification: golden pack (42) + affected packs + whole suite + CI at tip + activation-package refresh + the R282 admission line for 2.1.251."
+    },
+    {
+      "at": "2026-08-30T00:47:09.275889+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 80,
+      "status": "awaiting_gate",
+      "message": "CI PIN (closes G3 MINOR-F9): the pushed certification tip 357bb50 (deliverable 882966b, certified material 7d8195b) is 20/20 GREEN on the check-runs API (0 failed, 0 pending) - the supervisor-bridge whole-suite job is the confirming CI run for the 2782/2780/2/0 certification counts. G3 verdict received: PASS (all packs re-run to identical counts; anchors, admission discipline, manifest binding, package accuracy, voided-runs honesty all verified; F9 was the sole MINOR and is closed by this pin). Awaiting G4/G5."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-30T01:20:27.862607+00:00"
+}

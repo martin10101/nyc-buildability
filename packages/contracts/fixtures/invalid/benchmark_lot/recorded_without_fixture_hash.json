@@ -1,0 +1,569 @@
+{
+  "contract_version": "1.0.0",
+  "benchmark_id": "wallabout-298",
+  "purpose": "multi_lot_pilot",
+  "basis": "Plan section 11, Pilot B: 298 Wallabout Street, for multi-lot and condominium behavior (tasks M2-00..M2-08; directive D-090 Prompt 0 step 5).",
+  "identity": {
+    "bbls": [
+      "3022640032",
+      "3022640033"
+    ],
+    "billing_bbl": "3022647515",
+    "address": "298 Wallabout Street",
+    "borough": "Brooklyn",
+    "identity_source": "Plan section 3 step 2 and section 11 (Pilot B); billing-to-base resolution from the recorded DTM condominium response in services/api/tests/connectors/test_dtm_condo_soda.py (research record docs/research/condo-base-lot-resolution-sources.md section 3.3)."
+  },
+  "expected_values": [
+    {
+      "key": "billing_bbl",
+      "label": "Condominium billing BBL",
+      "value": "3022647515",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": null,
+        "pointer": "BILLING_3022647515_BODY[*].condo_billing_bbl",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 3.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "condo_number",
+      "label": "Condominium number",
+      "value": "1313",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "BILLING_3022647515_BODY[*].condo_number",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 3.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "condo_key",
+      "label": "Condominium key",
+      "value": "301313",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "BILLING_3022647515_BODY[*].condo_key",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 3.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "base_lot_count",
+      "label": "Number of base lots",
+      "value": 2,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "BILLING_3022647515_BODY (two rows)",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 3.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "base_lot_bbl_1",
+      "label": "Base lot 32",
+      "value": "3022640032",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "BILLING_3022647515_BODY[0].condo_base_bbl",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 3.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "base_lot_bbl_2",
+      "label": "Base lot 33",
+      "value": "3022640033",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "BILLING_3022647515_BODY[1].condo_base_bbl",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 3.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "condo_unit_lots_on_base_lot_32",
+      "label": "Condominium unit lots on base lot 32",
+      "value": 14,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "C3_UNIT_SPLIT_BODY[0].count_unit_bbl",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 4.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": "Count of condominium unit BBLs (DOF DTM Condominium Units), not a dwelling-unit count."
+    },
+    {
+      "key": "condo_unit_lots_on_base_lot_33",
+      "label": "Condominium unit lots on base lot 33",
+      "value": 6,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/connectors/test_dtm_condo_soda.py",
+        "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+        "pointer": "C3_UNIT_SPLIT_BODY[1].count_unit_bbl",
+        "cited_in": "docs/research/condo-base-lot-resolution-sources.md section 4.3",
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": "Count of condominium unit BBLs (DOF DTM Condominium Units), not a dwelling-unit count."
+    },
+    {
+      "key": "tax_block",
+      "label": "Tax block",
+      "value": 2264,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/fixtures/dtm_lot_outline/DTM_3022640032.geojson",
+        "sha256": "d1146380bbdb14f2e9477e6a7ede49c75953d6eed88135d66cff61930a2c599a",
+        "pointer": "features[0].properties.BLOCK",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dtm_polygon_count_3022640032",
+      "label": "DOF tax-lot polygons for base lot 32",
+      "value": 1,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/fixtures/dtm_lot_outline/MANIFEST.json",
+        "sha256": "9d856f4916b907b8270f571d58f40b34eb8e99df8ad2c1f40fd7a434b1fa644b",
+        "pointer": "captures[0].feature_count",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dtm_polygon_count_3022640033",
+      "label": "DOF tax-lot polygons for base lot 33",
+      "value": 1,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/fixtures/dtm_lot_outline/MANIFEST.json",
+        "sha256": "9d856f4916b907b8270f571d58f40b34eb8e99df8ad2c1f40fd7a434b1fa644b",
+        "pointer": "captures[1].feature_count",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dtm_polygon_count_3022647515",
+      "label": "DOF tax-lot polygons for the billing lot",
+      "value": 0,
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/fixtures/dtm_lot_outline/MANIFEST.json",
+        "sha256": "9d856f4916b907b8270f571d58f40b34eb8e99df8ad2c1f40fd7a434b1fa644b",
+        "pointer": "captures[2].feature_count",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": "The billing lot has no tax-lot polygon of its own; the site is its base lots."
+    },
+    {
+      "key": "dtm_condo_flag_lot_32",
+      "label": "DOF condo flag, lot 32",
+      "value": "C",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/fixtures/dtm_lot_outline/DTM_3022640032.geojson",
+        "sha256": "d1146380bbdb14f2e9477e6a7ede49c75953d6eed88135d66cff61930a2c599a",
+        "pointer": "features[0].properties.CONDO_FLAG",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "dtm_condo_flag_lot_33",
+      "label": "DOF condo flag, lot 33",
+      "value": "C",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "services/api/tests/fixtures/dtm_lot_outline/DTM_3022640033.geojson",
+        "sha256": "a77fdd5774299ba4f91aff4bd7744627c8d15cf3f2953151bed12dbb5d3520de",
+        "pointer": "features[0].properties.CONDO_FLAG",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "lot_outline_outcome_lot_32",
+      "label": "Tax-map outline outcome, lot 32",
+      "value": "single_lot",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640032.json",
+        "sha256": "226d59d2705feacf65492cc7c06a9efc4c9faac344e91c1249358ee53941d1b5",
+        "pointer": "outcome",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": "EPSG:4326 display-only outline: no area, dimension or measurement is derived from it (lot_geometry contract)."
+    },
+    {
+      "key": "lot_outline_outcome_lot_33",
+      "label": "Tax-map outline outcome, lot 33",
+      "value": "single_lot",
+      "unit": null,
+      "source": {
+        "kind": "recorded_fixture",
+        "ref": "packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640033.json",
+        "sha256": "a8e97a8402086099643f99445493cc5627e671c82fdf80be7ac887cca1b98572",
+        "pointer": "outcome",
+        "cited_in": null,
+        "quote": null
+      },
+      "verification_state": "recorded",
+      "review": null,
+      "note": "EPSG:4326 display-only outline: no area, dimension or measurement is derived from it (lot_geometry contract)."
+    },
+    {
+      "key": "zoning_district",
+      "label": "Zoning district",
+      "value": "R7-1",
+      "unit": null,
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Known'); not backed by a recorded fixture in the repo",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "Block 2264 was rezoned from M1-2 to R7-1 in 2001 (C 000109 ZMK)."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": "The research record docs/research/condo-base-lot-resolution-sources.md section 7 reports ZTLDB R7-1 for both base lots (retrieved 2026-09-18); that is a research observation, not a recorded fixture."
+    },
+    {
+      "key": "rezoning_2001",
+      "label": "2001 rezoning",
+      "value": "M1-2 to R7-1 (C 000109 ZMK)",
+      "unit": null,
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Known'); not backed by a recorded fixture in the repo",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "Block 2264 was rezoned from M1-2 to R7-1 in 2001 (C 000109 ZMK)."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "existing_building_stories",
+      "label": "Existing building stories",
+      "value": 7,
+      "unit": "stories",
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Reported by secondary sources'); not backed by a recorded fixture",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "a 7-story, 20-unit building from 2005; a 2023 stop-work order for an unpermitted extra floor."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "existing_building_units",
+      "label": "Existing building units",
+      "value": 20,
+      "unit": "dwelling_units",
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Reported by secondary sources'); not backed by a recorded fixture",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "a 7-story, 20-unit building from 2005; a 2023 stop-work order for an unpermitted extra floor."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "existing_building_year",
+      "label": "Existing building year",
+      "value": 2005,
+      "unit": null,
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Reported by secondary sources'); not backed by a recorded fixture",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "a 7-story, 20-unit building from 2005; a 2023 stop-work order for an unpermitted extra floor."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "stop_work_order_2023",
+      "label": "2023 stop-work order",
+      "value": "unpermitted extra floor",
+      "unit": null,
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Reported by secondary sources'); not backed by a recorded fixture",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "a 7-story, 20-unit building from 2005; a 2023 stop-work order for an unpermitted extra floor."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": null
+    },
+    {
+      "key": "street_widths",
+      "label": "Street widths",
+      "value": null,
+      "unit": null,
+      "source": {
+        "kind": "pending",
+        "ref": "Plan section 11, Pilot B ('Unconfirmed'); not backed by a recorded fixture",
+        "sha256": null,
+        "pointer": null,
+        "cited_in": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+        "quote": "Unconfirmed: lot 33 as a base lot, and the street widths."
+      },
+      "verification_state": "pending",
+      "review": null,
+      "note": "Unknown; never defaulted."
+    }
+  ],
+  "checks": [
+    {
+      "check_id": "C-1",
+      "title": "One source for heights",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03). Until R7 height rules exist, Wallabout shows floor-area results only, with the height gap named once (plan section 11).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-2",
+      "title": "Allowance vs. building",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-3",
+      "title": "Existing building",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-4",
+      "title": "Drawings match numbers",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-5",
+      "title": "Consistency sweep",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-6",
+      "title": "No duplicate options",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-7",
+      "title": "Current sources",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-8",
+      "title": "Same rule everywhere",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-9",
+      "title": "Zoning lot",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-10",
+      "title": "Lot-split ideas",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-11",
+      "title": "No template sentences",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-12",
+      "title": "Units in one place",
+      "applicability": "pending",
+      "reason": "The plan requires C-1..C-12 on 215-16 Northern (section 9a item 6); which checks gate Pilot B is not stated. To be set when the Milestone 2 queue is written (M2-01..M2-03).",
+      "pass_when": null
+    }
+  ],
+  "recorded_fixtures": [
+    {
+      "path": "services/api/tests/fixtures/dtm_lot_outline/DTM_3022640032.geojson",
+      "sha256": "d1146380bbdb14f2e9477e6a7ede49c75953d6eed88135d66cff61930a2c599a",
+      "dataset": "nyc-dof-digital-tax-map (TAX_LOT_POLYGON)",
+      "retrieved_at": "2026-09-26T20:21:53Z",
+      "note": "EPSG:4326 display-only outline: no area, dimension or measurement is derived from it (lot_geometry contract)."
+    },
+    {
+      "path": "services/api/tests/fixtures/dtm_lot_outline/DTM_3022640033.geojson",
+      "sha256": "a77fdd5774299ba4f91aff4bd7744627c8d15cf3f2953151bed12dbb5d3520de",
+      "dataset": "nyc-dof-digital-tax-map (TAX_LOT_POLYGON)",
+      "retrieved_at": "2026-09-26T20:21:57Z",
+      "note": "EPSG:4326 display-only outline: no area, dimension or measurement is derived from it (lot_geometry contract)."
+    },
+    {
+      "path": "services/api/tests/fixtures/dtm_lot_outline/DTM_3022647515.geojson",
+      "sha256": "1ce7eb457779acd1dc230a1bcb4692d06f27533481f26cbfe0e9e599134c0cd4",
+      "dataset": "nyc-dof-digital-tax-map (TAX_LOT_POLYGON)",
+      "retrieved_at": "2026-09-26T20:22:01Z",
+      "note": "0 features: the condominium billing lot has no tax-lot polygon."
+    },
+    {
+      "path": "services/api/tests/fixtures/dtm_lot_outline/MANIFEST.json",
+      "sha256": "9d856f4916b907b8270f571d58f40b34eb8e99df8ad2c1f40fd7a434b1fa644b",
+      "dataset": "nyc-dof-digital-tax-map",
+      "retrieved_at": null,
+      "note": "Capture manifest: request URLs, retrieval times, SHA-256 and feature counts of the three captures."
+    },
+    {
+      "path": "packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640032.json",
+      "sha256": "226d59d2705feacf65492cc7c06a9efc4c9faac344e91c1249358ee53941d1b5",
+      "dataset": "nyc-dof-digital-tax-map",
+      "retrieved_at": "2026-09-26T20:21:53Z",
+      "note": "lot_geometry contract fixture built from the recorded capture; display-only."
+    },
+    {
+      "path": "packages/contracts/fixtures/valid/lot_geometry/single_lot_dof_base_3022640033.json",
+      "sha256": "a8e97a8402086099643f99445493cc5627e671c82fdf80be7ac887cca1b98572",
+      "dataset": "nyc-dof-digital-tax-map",
+      "retrieved_at": "2026-09-26T20:21:57Z",
+      "note": "lot_geometry contract fixture built from the recorded capture; display-only."
+    },
+    {
+      "path": "services/api/tests/connectors/test_dtm_condo_soda.py",
+      "sha256": "a59b5c82ac772e08526b0d8709b667472e4a3d831631a010a1b891c312727a0a",
+      "dataset": "p8u6-a6it (DOF DTM Condominiums); eguu-7ie3 (DOF DTM Condominium Units)",
+      "retrieved_at": "2026-09-18",
+      "note": "Embeds the byte-faithful recorded responses of the research record: BILLING_3022647515_BODY (section 3.3) and C3_UNIT_SPLIT_BODY (section 4.3)."
+    },
+    {
+      "path": "docs/research/condo-base-lot-resolution-sources.md",
+      "sha256": "f758d701866e735a1c8bcdba48255d5d696b04d16e33b1cc44bccef0fb739077",
+      "dataset": "p8u6-a6it (DOF DTM Condominiums); eguu-7ie3 (DOF DTM Condominium Units)",
+      "retrieved_at": "2026-09-18",
+      "note": "Research record (DB-002) with the raw official responses (sections 3.3 and 4.3)."
+    }
+  ],
+  "reference_documents": [
+    {
+      "path": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+      "sha256": "0e1cb834d686a9a3fe310519fd6c8b7e598314a8f34b259c849d5b300761544f",
+      "role": "Plan section 11, Pilot B: the facts marked pending"
+    }
+  ],
+  "open_items": [
+    "Zoning district R7-1 and the 2001 rezoning (C 000109 ZMK) are plan facts not backed by a recorded fixture: record a zoning fixture for base lots 32 and 33 (Lane B, after GO; D-090-R009).",
+    "The existing building (7 stories, 20 units, 2005) and the 2023 stop-work order are reported by secondary sources only (plan section 11): record the permit and filing sources (task M2-00).",
+    "Street widths are unconfirmed (plan section 11).",
+    "Lot area, frontage and depth of base lots 32 and 33 are unknown: condo base lots have no separate PLUTO record (plan section 4). They need the EPSG:2263 tax-map measurement path or DOF dimensions, never the EPSG:4326 display outlines.",
+    "Plan section 11 lists 'lot 33 as a base lot' as unconfirmed, but the recorded DTM condominium response (research section 3.3; test_dtm_condo_soda.py) lists lot 33 as a base lot of condominium 1313: reconcile the plan wording.",
+    "Whether lots 32 and 33 touch (so the combination is offered, plan section 3 step 2) is not established by any recorded measurement in the repo."
+  ],
+  "_expected_failure": "A 'recorded' value whose recorded-fixture source carries no SHA-256: recorded values are pinned by path and hash."
+}

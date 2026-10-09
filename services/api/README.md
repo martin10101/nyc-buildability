@@ -1,9 +1,14 @@
+> **Superseded — see the [2026-09-28 plan](../../docs/PRODUCT_PLAN_CURRENT_2026-09-28.md).** The code under `app/` and the root `ARCHITECTURE.md` now describe the API. The remote-first development note below still applies.
+
 # NYC Buildability API (M0 placeholder)
 
 FastAPI service skeleton. Versioned REST endpoints live under `/api/v1`
-(PRD section 21). The only endpoint in M0 is the health check:
+(PRD section 21). Always-on endpoints:
 
 - `GET /api/v1/health` returns `{"status": "ok", "version": "<service version>"}`
+- `GET /api/v1/build-info` returns `{"commit": "<sha>|unknown", "version": "<service version>",
+  "flags": {"<FLAG>": true|false, ...}}`: the deployed commit and a fixed allowlist of boolean
+  flags, never a raw env value (plan M1-02; `app/api/v1/build_info.py`)
 
 ## Development (remote-first)
 

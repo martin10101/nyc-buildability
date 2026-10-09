@@ -270,6 +270,19 @@
     }
    ],
    "reviewed_manifest_sha256": "f103af3ef1433e58a0352bab74618eb2ef6da1f457e66a6e3310a999d9c3439f"
+  },
+  {
+   "task_id": "M0-T101",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "applicable_requirement_ids": [],
+   "reviewed_manifest_sha256": "4bab48e1e2a870dc1df85f0f948bf728ce2414dc6985333c8eb9aa9c0b2e51bc",
+   "reviewed_sha": "e8b21d1b12025c9171b18995e1f03c3276c52be9",
+   "frozen_content_commit": "4e894af779679a61cc34d96e9dd1a0f5f88396af",
+   "verified_at": "2026-08-26T07:40:00+00:00",
+   "requirements": [],
+   "directive_id": "D-020",
+   "note": "empty applicable set reproduced by the independent verifier (conjunction semantics; no D-020 row names M0-T101). Substance independently confirmed non-weakening: additive-only diff (+24/0), p1-p10 unchanged, unknown-key p9 fail-closed intact, live --check EXIT=0, 42/42 tests. Full report: project-control/reports/M0-T101-DCV.md."
   }
  ],
  "updated_at": "2026-08-19T23:45:00+00:00"

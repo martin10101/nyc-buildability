@@ -1,0 +1,60 @@
+{
+  "snapshot_id": "zr-12-10-fully-electrified-building",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - fully electrified building",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-07T20:58:43Z",
+    "http_status": 200,
+    "response_bytes": 1316758,
+    "raw_html_sha256": "3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc",
+    "portal_node_id": "18523",
+    "defined_term": "fully electrified building",
+    "defined_term_node_id": "22338",
+    "last_amended_machine_readable": "2023-12-06T12:00:00Z",
+    "last_amended_display": "12/6/2023",
+    "section_last_amended": "2023-12-06",
+    "section_last_amended_source_text": "Last Amended 12/6/2023 (ZR 12-10 term 'fully electrified building', /node/22338)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523) shows the date of the most-recently-amended term on the page; the operative provenance for THIS term is its own per-term Last Amended stamp (12/6/2023, /node/22338) recorded above.",
+    "capture_method": "M4-T034 in-task capture 2026-10-07 (one direct HTTPS GET, curl -A Mozilla/5.0; whole-page §12-10 HTML node 18523, sha256/bytes pinned).",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523, sha256 pinned). The whole-page print/PDF completeness channel returned 504 and the per-term PDF 403, so list-marker glyphs could not be confirmed; this is the documented DB-167 fallback used by the accepted zr-12-10 captures. The definition text was extracted programmatically (the extractor reproduces the committed zr-12-10-floor-area capture byte-for-byte) and is verbatim. Not re-read by a second agent, so raw_html_verified stays false. Nothing here is a Verified zoning determination, a rule, or an interpretation for any lot: it is the official source text of one ZR 12-10 defined term only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-07T20:58:43Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "per_term_pdf": {
+      "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/22338",
+      "http_status": 403,
+      "content_type": "text/html; charset=UTF-8",
+      "response_bytes": 57524
+    },
+    "method": "The §12-10 completeness channel is the whole-page print/PDF (entityprint/pdf/node/18523), which returned HTTP 504 (41-byte timeout body) on 2026-10-07 - the documented DB-167 behaviour. The per-term PDF (node 22338) returned HTTP 403. Per the documented fallback the sha256-pinned canonical §12-10 HTML was used; the definition was extracted from the defined-term article and self-checked for word-completeness against the raw HTML bytes.",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "A “fully electrified building” is a #building# existing on December 6, 2023 which complies with the requirements of Local Law 154 of 2021, as such requirements would apply to a new #building# where an application for the approval of construction documents is submitted to the Commissioner of Buildings after July 1, 2027.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph/list item of the defined term's definition body. Defined terms (bold-italic) written #term#. Whitespace and non-breaking spaces collapsed to one space; each block trimmed; embedded figures omitted; no word changed. This definition has no HTML ordered list; any parenthesised label (a),(b)... is LITERAL source text.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only for task M4-T034 (D-090 R291, R513, R516, R517, R526): the law texts behind the owner's reviewer's check (source-055-amendment). The capture holds the official source text and its provenance; it encodes no rule, no reading of the text for any lot, and no number derived from it.",
+    "Channel: canonical §12-10 whole-page HTML (node 18523; raw_html_sha256 and response_bytes pinned, byte-identical to the accepted zr-12-10 captures). The whole-page print/PDF completeness channel (entityprint/pdf/node/18523) returned HTTP 504 and the per-term print/PDF (node 22338) returned HTTP 403 on 2026-10-07 - the documented DB-167 fallback - so the Resolution's list-marker glyphs could not be confirmed from a glyph-authoritative channel for this term.",
+    "Other ZR 12-10 defined terms this definition names (each has its own §12-10 entry; captured here only where this task names it): 'building'.",
+    "This is one of the two §12-10 definitions behind the 'floor area' exclusion the reviewer cites (exclusion item (15)). It rests on the defined term #building# (captured as zr-12-10-building) and on Local Law 154 of 2021 (an external statute, not a ZR defined term).",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "2ea4afe29ec1037695e8df5e6d90bd313e611b3db2949b61cc9e115ceac9321c"
+}

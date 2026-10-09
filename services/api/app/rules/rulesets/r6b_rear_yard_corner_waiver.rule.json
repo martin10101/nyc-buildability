@@ -1,0 +1,82 @@
+{
+  "rule_id": "r6b-rear-yard-corner-waiver",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_rear_yard_corner_waiver",
+  "title": "R6B district - no rear yard required within 100 feet of the point of intersection of two street lines intersecting at 135 degrees or less (ZR 23-344 paragraph (a))",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "lane_flag": "A",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/rules/test_r6b_coverage_yard_units.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of ZR 23-344 paragraph (a) 'Within one hundred feet of corners' (Last Amended 2024-12-05) for R6B: 'no #rear yard# shall be required within 100 feet of the point of intersection of two #street lines# intersecting at an angle of 135 degrees or less.' The waiver is encoded as its two stated conditions: (1) the area evaluated lies within 100 feet of the point of intersection - a geometric site fact CONSUMED as the required boolean input within_100_ft_of_street_line_intersection, never derived here; (2) the two street lines intersect at 135 degrees or less - the rule compares the supplied angle (street_line_intersection_angle_degrees) against 135, inclusive. When both hold, the output rear_yard_required_within_100_ft_of_corner is 0 (no rear yard required there). When either does not hold the rule is not applicable: the rear yard of ZR 23-342 / 23-343 (not captured) is then NOT determined by this rule. When either input is unknown, no result is available: professional_review_required, missing_critical, naming the missing input. The section lists R1 through R12 and does not name R6B: the waiver reaches R6B through ZR 11-25 (suffix inheritance), flagged for the reviewer on every result. Own family, read by no consumer yet (the maximum envelope treats rear yards as a non-commensurable gap). NOT a Verified determination. Behind the lane A flag (lane_flag A): indexed only when LANE_A_ENABLED is on.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-344",
+      "section": "23-344(a)",
+      "quote": "In the districts indicated, no #rear yard# shall be required within 100 feet of the point of intersection of two #street lines# intersecting at an angle of 135 degrees or less.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007"
+    },
+    {
+      "snapshot_id": "zr-11-25",
+      "section": "11-25",
+      "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution. If a section lists an R4 District, therefore, the provisions of that section shall also apply to R4-1, R4A and R4B Districts, unless separate provisions for the districts with suffixes are listed within such section.",
+      "last_amended": "1994-06-29",
+      "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+    }
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "description": "Residence district governing the lot. Scope is enforced by applicability (in_set R6B), not an input enum: any other district is a visible not_applicable."},
+    {"name": "within_100_ft_of_street_line_intersection", "type": "boolean", "required": true, "description": "True iff the area of the zoning lot being evaluated lies within 100 feet of the point of intersection of two street lines (ZR 23-344(a)). A geometric site fact (Lane B) consumed as an input, never derived here. Not supplied -> the rear-yard result is not available (professional_review_required, missing_critical, no value)."},
+    {"name": "street_line_intersection_angle_degrees", "type": "number", "required": true, "unit": null, "exclusive_minimum": 0, "exclusive_maximum": 180, "description": "Angle, in degrees, at which the two street lines intersect at that point (a geometric site fact, Lane B; never derived here). ZR 23-344(a) requires 135 degrees or less; the rule applies that comparison (135 itself qualifies). Not supplied -> the rear-yard result is not available (professional_review_required, missing_critical, no value). Declared dimensionless because the legal unit vocabulary has no angle unit; the value is in degrees."},
+    {"name": "overlay_present", "type": "boolean", "required": false, "description": "True iff a commercial overlay is mapped on the lot (canonical profile zoning.commercial_overlays[] non-empty). Only adds the commercial-overlay note (exception commercial_overlay_not_captured); when not supplied the result escalates to professional review (fail-closed, DF-6)."},
+    {"name": "special_district_present", "type": "boolean", "required": false, "description": "True iff a special purpose district is mapped on the lot (canonical profile zoning.special_districts[] non-empty). When true -> professional_review_required; when not supplied -> professional_review_required (fail-closed, DF-6)."}
+  ],
+  "outputs": [
+    {"name": "rear_yard_required_within_100_ft_of_corner", "type": "integer", "unit": null, "description": "0 = no rear yard is required for the area within 100 feet of the point of intersection (ZR 23-344(a)). The rule never emits 1: where the waiver does not hold the rule is not applicable, and whether a rear yard is required (ZR 23-342 / 23-343, not captured) is not determined here."}
+  ],
+  "parameters": [
+    {"name": "rear_yard_required_when_waived", "value": 0, "citation_ref": "zr-23-344", "note": "ZR 23-344(a): 'no #rear yard# shall be required' - written 0 (not required). The two conditions (within 100 feet of the point of intersection; 135 degrees or less) are the applicability predicate."}
+  ],
+  "applicability": {
+    "all": [
+      {"op": "in_set", "input": "zoning_district", "values": ["R6B"]},
+      {"op": "equals", "input": "within_100_ft_of_street_line_intersection", "value": true},
+      {"op": "compare", "input": "street_line_intersection_angle_degrees", "compare": "le", "value": 135}
+    ]
+  },
+  "computation": {
+    "steps": [
+      {"id": "rear_yard_required", "op": "identity", "args": [{"param": "rear_yard_required_when_waived"}], "note": "ZR 23-344(a): no rear yard is required within 100 feet of the point of intersection of two street lines intersecting at an angle of 135 degrees or less (both conditions hold: see the applicability trace)."}
+    ],
+    "outputs": {
+      "rear_yard_required_within_100_ft_of_corner": {"step": "rear_yard_required"}
+    }
+  },
+  "exceptions": [
+    {"id": "suffix_inheritance_zr_11_25", "description": "ZR 23-344 lists 'R1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12' and does not name R6B. This waiver reaches R6B through ZR 11-25: provisions of a section that lists an R district also apply to that district with a suffix unless the section lists separate provisions for the suffixed districts, which 23-344 does not. This is a reading of 11-25, not an express naming of R6B and not an owner decision: the reviewer (Q12) must confirm it, including 11-25's 'except as otherwise set forth in express provisions of this Resolution'.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-11-25"},
+    {"id": "only_within_100_ft_of_the_intersection", "description": "The waiver covers only the area within 100 feet of the point of intersection. For any part of the zoning lot beyond it, the rear yard follows ZR 23-342 / 23-343 as modified by 23-344(b) to (d); 23-342 and 23-343 are not captured, and 23-344(b) to (d) are not encoded, so that part's rear yard is NOT determined by this rule.", "condition": null, "effect": "documented_limitation", "citation_ref": "zr-23-344"},
+    {"id": "commercial_overlay_not_captured", "description": "A commercial overlay is mapped on this lot. This is the R6B residence-district rear-yard waiver of ZR 23-344(a). The commercial-district provisions that apply to buildings in a commercial overlay (ZR Article III) have not been captured or encoded, so a reviewer must confirm this waiver governs the building proposed, in particular one with non-residential floor area.", "condition": {"op": "equals", "input": "overlay_present", "value": true}, "effect": "documented_limitation", "citation_ref": null},
+    {"id": "special_district_modification", "description": "A special purpose district is mapped on this lot and may modify residence-district yards; its provisions are not captured or evaluated here, so the result is not emitted as final. Professional review required.", "condition": {"op": "equals", "input": "special_district_present", "value": true}, "effect": "professional_review_required", "citation_ref": null}
+  ],
+  "special_district_interactions": [
+    {"id": "special_purpose_district_yard_modifier", "description": "Special Purpose Districts (ZR Articles VIII-XIV) may modify residence-district yards. When one is mapped, its provisions govern and must be evaluated by the corresponding special rule; this rule does not apply the modification and escalates to professional_review_required via special_district_modification.", "interaction_point": "residential_rear_yard", "special_rule_stub": "special-district-yard-modifier (not yet implemented)", "citation_ref": null}
+  ],
+  "uncertainty_policy": {
+    "geometry_uncertain_coverage": "professional_review_required",
+    "data_conflict_coverage": "data_conflict",
+    "note": "An uncertain, split, sliver, or invalid M2-T013 geometric district assignment is never collapsed into a single definitive district: coverage downgrades to professional_review_required (or data_conflict) and the geometric uncertainty is recorded in the trace."
+  },
+  "limitations": [
+    "Draft extraction pending independent review and G6 qualified-human legal approval; not a Verified determination.",
+    "Only paragraph (a) for R6B is encoded; paragraphs (b) to (d), including the R6-R12 waivers of (c)(3) and (d)(3) where a rear lot line coincides with a side lot line of an adjoining zoning lot, are captured in the snapshot but not encoded.",
+    "The 100-foot test and the intersection angle are site facts supplied by the caller; this rule never measures geometry.",
+    "Sections 23-342 (Rear yard requirements), 23-343 (Rear yard equivalent requirements), 23-38 and 23-72 - titles as shown in the portal navigation - have not been captured or evaluated."
+  ]
+}

@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T115",
+ "material_commit": "75c03f25 (cherry-pick of wt-m5t115 f94081ac; 8 files, every file MATCH by blob)",
+ "produced_at": "2026-09-25T06:26:29+00:00",
+ "producer": "frontend-engineer (orchestrator-dispatched subagent; worktree wt-m5t115)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the wave-1 seam: 844 files / 18356 nodes / 7841 edges) named the live flow (ArchitectEntry PropertySearch -> AddressAutocomplete / AddressResolutionScreen -> AddressConfirmCard -> LotOutlineMap), PropertyOverview.tsx as READ-ONLY and the four e2e specs that walk the flow; the producer edited only the PropertySearch block of ArchitectEntry.tsx and search/confirm-scoped CSS selectors. [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-083-R001": [
+   "No claim-class wording added; the new labels are identity/presentation only ('City-matched address', the environment badge + professional-review line); no permitted / approved / maximum-allowed wording; the section-29 text stays in the global footer via REQUIRED_DISCLAIMER (never retyped). [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R001": [
+   "The assessment and the accepted P1 spec are used as input; the ledger task id is orchestrator-assigned; the meaning-change register items MR-1..MR-8 are not adopted. [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R002": [
+   "P2 (address + confirmation slice) is the next contracted D-086 phase after P0 (M5-T080) and P1 (M5-T114), gated G0/G2/G3/G4 with a human-journey walkthrough as the assessment's P2 exit gate asks. [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R003": [
+   "Preservation: the producer reports no existing string, test id, role, DOM order or contract changed (additive visual layer); city warnings stay verbatim above Continue; the ledger proof table in the producer report maps each touched AD/AC/M/SH row to its test; the behaviours the P2 row names (no auto-pick, manual fallback keeping text, per-error recovery, identity distinctness, stable CTA, map states) already existed and are cited with their tests. [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-086-R004": [
+   "Sequencing honoured: contracted after the accepted P1 (M5-T114, 296th accept). [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Capacity unit under D-087 + D-089 (overnight): contracted at 6a712652 (G0), claimed at 01856916 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with disjoint backend packets; no state or gate skipped. [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 disjointness EMPTY vs every live packet; the declared-glob overlap with the dormant pre-regime M4-T005 (apps/web/src/app/property/**, apps/web/e2e/**) is recorded as excluded per the M5-T077 DCV F1 ruling (no frozen identity, no worktree, unchanged since 2026-07-22); one worktree wt-m5t115; the producer commit touches exactly 8 of its 19 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the harvested head 75c03f25 (cherry-pick 75c03f25; Python 3.11 local): `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}

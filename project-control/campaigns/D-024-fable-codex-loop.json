@@ -1,0 +1,35 @@
+{
+ "schema": "campaign_continuity/v1",
+ "campaign_id": "D-024-fable-codex-loop",
+ "directive_id": "D-024",
+ "state": "active",
+ "control_branch": "control/D-024-fable-codex-loop",
+ "ledger_lineage_base": "7649acfc95583287688a503fc5949cd04c9f6b60",
+ "authority": "project-control/directives/D-024-fable-codex-loop/source-001.md (owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537); ledger + git win over any prose",
+ "restrictions": [
+  "NEVER merge PR #241 or any pre-existing PR without separate owner authorization",
+  "continuous-mode activation: the owner exercised the R595 gate 2026-08-29 (Amendment 9, source-009-amendment.md, rows R250-R260) authorizing limited-auto via the certified item-3 start command with --owner-enable-bounded-auto ONLY, conditional on clean repo + certified identity/config match + all gates (R254) with stop-and-report on any mismatch (R259); every OTHER owner gate remains closed: autostart, PR #241, production, credentials, payments, legal, OS-ACL, C1 canary, Telegram live send, natural-event graduation, live 4.8 actuation (shadow-only), residual fixes (R257)",
+  "Bootstrap Gate 0 before any write in every session (D-024-R125..R128): primary cwd must BE this worktree root; /mcp must prove empty/allowlisted",
+  "supervisor changes require a cited D-024-R### qualifying-evidence id in packet + commit (freeze rule)",
+  "no worker-facing token quotas/countdowns ever (D-024-R045)",
+  "Amendment 3 (D-024-R146): no continuous-mode activation, no Agent SDK admission, no new MCP servers/channels, no merging/modifying protected or held PRs, no silent model substitution, no owner-gate bypass, no dangerous permission-bypass flags, no unbounded fan-out, ledger never replaced by Claude session state",
+  "Amendment 3 (D-024-R139): capture+verification+conversion COMPLETE (M0-T102 accepted; conversion applied seq 10) - M0-T092..T096 claims now follow the accepted dependency sequence only (T092 requires accepted M0-T103..M0-T106)",
+  "Amendment 7 (D-024-R220/R221): never block M0-T096/golden-run/provable readiness work waiting for a natural Fable 5 quota/refusal/availability/model-turnover event, and never consume owner allowance to provoke one; natural-event evidence stays pending_live_observation (R224) with the passive watcher + graduation protocol (R226/R227); feature-specific gating per R228 (4.8 bridge stays shadow-only fail-safe)",
+  "Amendment 8 (D-024-R232/R247): SATISFIED at seq 26 - M0-T110 + M0-T111 accepted and M0-T112 re-ran the golden certification at the final frozen post-addition identity (accepted); the R187/R595 activation package (M0-T096-activation-package.md, items 10-12 refreshed) is now PRESENTABLE to the owner; the presentation is an owner-facing step and ACTIVATION itself stays owner-gated (s18/R595); any later supervisor/operator-channel change re-invalidates the certification and re-triggers R247",
+  "Amendment 8 (D-024-R233): never represent a custom command as /btw-equivalent without a measured installed-version fixture; ordinary commands queue until the turn ends - second terminal stays the honest real-time path",
+  "Amendment 8 (D-024-R242/R243/R245): Telegram is one-way only; bot token/chat id only in an approved local secret mechanism (never Git/packets/logs/telemetry/reports/messages); the real send is an owner-gated exact-command canary",
+  "Amendment 13 (D-024-R280/R286/R287): never use DISABLE_UPDATES, never downgrade Claude, no unrelated global config changes; background updates stay disabled for controller-launched workers; every future Claude Code upgrade is a deliberate admission event (recapture fixtures -> recertify -> only then repin) - silent version-drift acceptance is prohibited; owner-side Windows environment changes are owner-executed only (R288)",
+  "Amendment 14 (D-024-R293/R296/R297): command broker and all owner gates preserved - never broadly allow Python, PowerShell, sed, heredocs, redirections, compound commands, or arbitrary scripts; M0-T119 HOLDS until M0-T120 is accepted and the single recertification runs at the one final identity including M0-T120; pre-directive T119 certification runs are VOID",
+  "Amendment 40 (D-024-R515-R606, 2026-09-01): M0-T134 ACCEPTED (archive stabilization/D-024-mrl@76c4edff, reviewed ad770ad4, identity 1c3078c6; carried onto candidate/D-024-mrl-option-b - project-control/reports/M0-T134-cross-sha-continuity.md); ONE bounded Tranche-B producer workflow (M0-T136) is authorized and R513 is lifted for it ONLY; local branch + local commits only - NO push, NO remote integration-branch creation, NO branch-protection change, NO PR create/update, NO merge, NO auto-acceptance, NO production deploy, NO real Codex-loop launch, NO live provider canary (present the exact owner-run PowerShell canary package and stop), NO Tranche C; PR #241 + all remote refs untouched; the rejected one-line 'git switch && git checkout' reapply is never run; foreground in-scope subagents only, primary session is the sole integrator/committer; modularity: delete ONLY the stale claude_runner.py exception entry after acceptance, never renew/extend/regenerate, baseline unchanged; model-selection standing policy recorded (main Fable 5.1 high, fallback claude-opus-4-8 xhigh, thematic subagent switch = M0-T137) with three UNRESOLVED owner-decision rows R603/R604/R605 - never interpreted silently"
+ ],
+ "next_action": {
+  "task_id": "M0-T136",
+  "description": "M0-T136 CLAIMED (seq 71, 2026-09-01): D-024 Amendment 40 MRL Tranche B on local branch candidate/D-024-mrl-option-b (base 6f5d12a6 = origin/control/D-024-fable-codex-loop; tools reapply 2f3ab124; governance continuity 1599daaf). Accepted: M0-T134 (identity 1c3078c6 reproduced at HEAD, all 22 blobs identical to ad770ad4). B0 remaining: prove claude_runner.py baseline limit + SLOC, delete ONLY its tools/modularity_exceptions.json entry, prove unpiped modularity exit 0; add concise defect-convergence guidance (root CLAUDE.md + /engineering-reliability); freeze B0 SHA and run 77 Tranche-A cases + affected supervisor suite + modularity + ruff + all validators. Then B1 launch manifest -> B2 executable chains -> B3 bounded subagents -> B4 one-shot wiring -> B5 single launch path + PowerShell tests + owner-run canary package; paired negative/mutation tests; gate_runner evidence; ONE final frozen verification; SESSION_HANDOFF only at the final freeze. Finish with exactly TRANCHE_B_OFFLINE_COMPLETE_CANARIES_READY or CONSOLIDATED_BLOCKED. M0-T137 (model selection) BACKLOG until owner decides R603/R604/R605. M0-T133 stays REWORK/unaccepted (R480); M0-T135 backlog. PRESERVED: PR #241 OPEN and untouched; archive branch stabilization/D-024-mrl unchanged; pure-ASCII."
+ },
+ "frozen": {
+  "head_sha": "1599daaf2bdfb971dcf2f30070cf9c61daeb6207",
+  "recorded_at": "2026-09-01T22:44:08+00:00"
+ },
+ "sequence": 71,
+ "updated_at": "2026-09-01T22:44:08+00:00"
+}

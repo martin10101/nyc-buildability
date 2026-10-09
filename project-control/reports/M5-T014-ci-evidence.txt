@@ -1,0 +1,5 @@
+M5-T014 S4 executable proof, captured by the orchestrator (evidence-capture division of labor)
+run: 34673373030 (push of f5a30e51, branch candidate/D-024-mrl-option-b, 2026-09-12T04:34:43Z)
+job: web-e2e (vitest + Playwright vs recorded-official-fixture API) -> conclusion: success
+context: FIRST green web-e2e since the M5-T004 acceptance; the only failing jobs on the run are the two owner-gated reds (web-dependency-security npm-audit/RCE authorization; control-plane digest-normalization decision); api and exact-production-install green.
+{"completedAt":"2026-09-12T04:38:06Z","conclusion":"success","name":"web-e2e (vitest + Playwright vs recorded-official-fixture API)","startedAt":"2026-09-12T04:35:02Z","url":"https://github.com/martin10101/nyc-buildability/actions/runs/34673373030/job/103498821628"}

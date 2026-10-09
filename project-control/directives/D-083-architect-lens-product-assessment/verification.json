@@ -1,0 +1,413 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-083",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All thirteen requirements bind the non-ledger sentinel D-083-BOOTSTRAP at capture; applicability binds onto each contracted increment's task_ids at its contract seam, and verification lands per-task at each acceptance. R011 (owner return item) is discharged by the owner-facing reply and audited here. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-25T10:33:24+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002",
+    "D-083-R003",
+    "D-083-R004"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2; the directive's FIRST verification rows): interim vocabulary in place (h2/h3 verified by content at the final identity); the never-one-building clause stated on screen; the copy wall's teeth proven by the LIVE CI red at run 35815456797 (it caught its own file's comment) plus the DCV's own zero-occurrence grep across all five walled files."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 2): the three claim classes verified in artifacts - regulatory limits w/ full per-dimension provenance, the Generated building option gated on a server-FITTED contained candidate, the demonstrated-maximum class withheld and wall-enforced."
+     ]
+    },
+    {
+     "id": "D-083-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3, with the recorded scope note): answer-first proven by the strict deep request assertion (profile-only, no geometry, no unexpected fields) + ordering in both surfaces; assumptions/gaps/advisories all render; the address-confirm landing is out of this packet's scope by contract (its accepted limits surface already exists)."
+     ]
+    },
+    {
+     "id": "D-083-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3): envelopeAggregateIsComplete is exactly the requirement (one gap OR one advisory forces visible incomplete), mutation-tested in both directions, re-asserted against the real DOM in e2e, and carried through the announcement path ('not a maximum permitted building')."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T079",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002",
+    "D-083-R004"
+   ],
+   "reviewed_sha": "a749d99591328190607c3356cd7422668ac6ce43",
+   "reviewed_manifest_sha256": "747ee06918acc75ded540783f9efa8778791eec27a2d8bbd0497c985b769d13d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T15:23:20+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: interim vocabulary ('Preliminary development limits', 'Generated building option'); zero matches for 'maximum allowed building' / 'demonstrated maximum' in the panel and client; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the three claim classes are distinguished - regulatory limits as the preliminary-limits ceilings, the generated option as the only building-shaped claim, the demonstrated maximum not presented; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: envelopeAggregateIsComplete + is-checked/is-incomplete + data-complete + role=status; any gap row or contract violation fails complete (G4-verified mutant); DimensionRow raw-presence XOR renders a typed contract failure that never shows a value; identity-level restamp predicate re-verified by the orchestrator at the accept head a749d995 (_task_git_identity == the frozen submission stamp 747ee069; evaluate_task_refs ok); report M5-T079-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T099",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "cf0da3587227911f3460f41f07e6bc313674e865",
+   "reviewed_manifest_sha256": "f46e45de86ac4c64e7b2043632cb95602feae3f77a873e10c47a9465535a2ba5",
+   "producer": "cloud-architect",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T21:04:35+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the plan labels proposed geometry 'Proposed - not a city record' and a fitted candidate 'Generated building option', uses 'Preliminary development limits' for per-rule ceilings, and names 'approved' / 'permitted' / 'maximum allowed building' / 'demonstrated maximum' only in prohibiting or withholding contexts; it never presents per-dimension ceilings as one permitted building. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the export and scene contracts keep regulatory limit / generated building option / demonstrated maximum distinct, with the demonstrated maximum WITHHELD (plan section 7 item 6) until its evidence standard is met. Blob-level restamp predicate re-verified by the orchestrator at the accept head cf0da358 (d087-export-and-3d-viewer-plan.md 557e2402, M5-T099-producer-report.md 135a6e76; identity f46e45de; evaluate_task_refs ok); report M5-T099-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T102",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "95bb73bdcefd95a73b2f5c412f4511b11b0ce3af",
+   "reviewed_manifest_sha256": "14376b051093ae5713c801e506c7bf564fc1eafc0ed61ad205939d9032e8fca2",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-24T22:38:50+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: one canonical CLAIM_CLASS_WORDS tuple + a separator-collapsing claim_key + one contains_claim_word screen, called by all three writers (DXF caller strings, GLB mesh/node names, PDF title-block address/bbl in raw and ASCII-sanitised forms); separator variants refused in every writer, each with a reddening consuming-namespace mutant. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: no writer can emit a barred claim word from caller text into an exported file (a refused write yields no output; the PDF title-block screen is load-bearing); the PDF refusal does not echo caller text, and the GLB/DXF refusal-message echo is the disclosed DB-059 (h) deferral that never reaches an exported file. Blob-level restamp predicate re-verified by the orchestrator at the accept head 95bb73bd (claim_words.py c7e2d3d8, dxf_writer.py 401ab6df, glb_writer.py 4584bc1f, pdf_sheet_writer.py d3ef3b25, test_claim_words.py 10f2fc0e, test_dxf_writer.py 26166349, test_glb_writer.py ad4f6a8e, test_pdf_sheet_writer.py 0db07ac9, M5-T102-producer-report.md cb340118; identity 14376b05; evaluate_task_refs ok); report M5-T102-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T107",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "a367f5488b8ad520c25dc2c26fe7bad2f2f1065a9442bf9c077a70697b33501e",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:15+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the only barred-word hit in the produced files is a negative disclosure; a test runs the shared claim-word screen over every assembler label, disclosure and datum string; proposal geometry is 'Proposed - not a city record'. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (scene_assembler.py 57a8afde, scene_api.py b2c14483, building_footprints_arcgis.py be407e64, test_scene_assembler.py fd5c5587, test_scene_api.py 94403239, test_building_footprints_arcgis.py b1be2943, M5-T107-producer-report.md 2b22fedf; identity a367f548; evaluate_task_refs ok); report M5-T107-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the proposed and generated-option sources and disclosures stay distinct; no demonstrated-maximum claim. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (scene_assembler.py 57a8afde, scene_api.py b2c14483, building_footprints_arcgis.py be407e64, test_scene_assembler.py fd5c5587, test_scene_api.py 94403239, test_building_footprints_arcgis.py b1be2943, M5-T107-producer-report.md 2b22fedf; identity a367f548; evaluate_task_refs ok); report M5-T107-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T108",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R006"
+   ],
+   "reviewed_sha": "1983bdd61deff2d00436e4fc9784dfb47db25a87",
+   "reviewed_manifest_sha256": "2873d915f97d352ce0683e9acbb7c14f320f3ab1457158a1ee5cf6d533c63fc1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:13:21+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the draft and candidate responses say 'Proposed - not a city record' / 'Nothing here is a city record or a permitted value'; a test asserts no barred claim word in the provenance or massing. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: DRAFT_INPUT_PRECISION = 'imported drawing - not survey-confirmed' is carried in the draft provenance and never upgraded; the candidates notice repeats it. Blob-level restamp predicate re-verified by the orchestrator at the accept head 1983bdd6 (dxf_import.py 124ad72b, dxf_import_api.py eacb56b8, test_dxf_import.py 8b64e4a9, test_dxf_import_api.py 2d6edbbd, M5-T108-producer-report.md 1f42b2f0; identity 2873d915; evaluate_task_refs ok); report M5-T108-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T109",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R002"
+   ],
+   "reviewed_sha": "a9cf917aa8ec1486f93d0e0ec97e4f00585757e2",
+   "reviewed_manifest_sha256": "802274bdc19be7cfa8fbb3d417ce6921f95fdc130c39343d7b0b8a5893ec6775",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T04:46:43+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: only the two honest source labels exist; the shared claim-word screen runs before any writer on every caller text field; no permitted/approved/maximum-allowed claim. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: 'Proposed - not a city record' and 'Generated building option' stay distinct; no demonstrated-maximum claim. Blob-level restamp predicate re-verified by the orchestrator at the accept head a9cf917a (export_service.py 2bf8963d, export_api.py dec92648, test_export_service.py 2fbce1cb, test_export_api.py 9301f098, pdf_sheet_writer.py 8064d845, test_pdf_sheet_writer.py 3935fa7c, test_glb_writer.py ca206312, M5-T109-producer-report.md ccf4480e; identity 802274bd; evaluate_task_refs ok); report M5-T109-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T114",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "7b3686f027b0e71aacdff4056daa456659ac2a79",
+   "reviewed_manifest_sha256": "24ac1f58b30e8ecab3b32535041b023eb8c9020dacd65694c052caecdbdf1e5e",
+   "producer": "product-design-director",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T05:53:37+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: 'Proposed - not a city record', 'Generated building option' and 'Preliminary development limits' are used; sections 2.1, 7 and 9 forbid permitted / approved / maximum-allowed; a claim-word grep of both files finds only prohibitions, the section-29 text or the 'Approved copy' heading. Blob-level restamp predicate re-verified by the orchestrator at the accept head 7b3686f0 (P1-VISUAL-STATE-SPEC.md 0b223036, P1-mockups.html 0f842cbd, M5-T114-producer-report.md ec2d4c77; identity 24ac1f58; evaluate_task_refs ok); report M5-T114-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T115",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "675dc7a1ef571f3bc2c7c1000e87556265ceaea6",
+   "reviewed_manifest_sha256": "70ed25ba2dd8adb47b249cd76981936ecef3416e45e7faae1fae091dcf007bd8",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:10:05+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the five new user-visible strings are honest (Internal build; the environment note; the BBL-alternative note; the professional-review line; City-matched address); no permitted / approved / maximum-allowed claim added. Blob-level restamp predicate re-verified by the orchestrator at the accept head 675dc7a1 (AddressResolutionScreen.tsx 1cd66f0f, AddressForm.tsx 2f0af0a3, SuggestionChooser.tsx 3dc70161, AddressOutcomeCards.tsx f7126347, AddressConfirmCard.tsx 4e139d5f, LotOutlineMap.tsx 6c5d0fe8, address-resolution.test.tsx 29ee3626, address-confirm.test.tsx a574ff92, lot-outline-map.test.tsx 535f7b27, AddressAutocomplete.tsx 53e44e55, ArchitectEntry.tsx 39979587, autocomplete.test.tsx 4ad628c5, entry.test.tsx 46eb31b5, architect.css d917ab02, confirm-journey.spec.ts 30ed69f8, lot-outline.spec.ts 60798f12, a11y-announcements.spec.ts 3402bad2, responsive-a11y.spec.ts 3a02a6b4, M5-T115-producer-report.md c8b11889; identity 70ed25ba; evaluate_task_refs ok); report M5-T115-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T116",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "b1c43167dee08730def4fc553cb69e5a2f2e01cd",
+   "reviewed_manifest_sha256": "23fd4149109076437121ae6282d9b09539a9a4e3d4641c1decfe53268e5d8e59",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T07:47:32+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the reconciled refusal detail is built server-side from the fixed reject code only (the bowtie test asserts the exact server template); only the two honest source labels exist; no claim wording. Blob-level restamp predicate re-verified by the orchestrator at the accept head b1c43167 (export_service.py 25437d25, test_export_service.py fb1ea711, M5-T116-producer-report.md bb2a479d; identity 23fd4149; evaluate_task_refs ok); report M5-T116-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T119",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "ed22997176cc991d6d6401e48b0be194c2a120f9",
+   "reviewed_manifest_sha256": "824d5bd9da82d36e51064b97c5fc62913086b0ad8292eb2ca496197d63ff12cd",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:36:47+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a grep over the four changed components + architect.css finds no permitted / approved / maximum-allowed wording (HJ grep-clean too); the new strings are honest ('Preliminary analysis - professional review required before any reliance', 'nothing here is a legal determination'). Blob-level restamp predicate re-verified by the orchestrator at the accept head ed229971 (OverviewExceptionStrip.tsx 2d0891cd, PropertyOverview.tsx dd1ed01f, DevelopmentLimits.tsx e0016bb3, ArchitectShell.tsx b3d37ec7, overview-exception-strip.test.tsx 2bb31414, development-limits.test.tsx e98835e5, workspace.test.tsx bcad93f3, architect.css 5aa998d1, development-limits.spec.ts d74c9f53, architect-workspace.spec.ts 18e6b07b, responsive-a11y.spec.ts 572cca1f, M5-T119-producer-report.md 2d4e8b8b; identity 824d5bd9; evaluate_task_refs ok); report M5-T119-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T121",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R006"
+   ],
+   "reviewed_sha": "8ecdbeb27fee7db6ccc333b986cb1f236f820e5c",
+   "reviewed_manifest_sha256": "243a7da1f600197b77561d059c79605a22e93dc43ae6cd1884f3fa43a1c6ddf0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T08:58:47+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: only honest labels ('Proposed - not a city record', 'imported drawing - not survey-confirmed', the local-frame note); no permit / approved / maximum-allowed wording (test_provenance_block_is_complete_and_honest scans for them); the service computes no regulatory ceiling. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the provenance block carries input_class 'imported_pdf', precision 'imported drawing - not survey-confirmed' (a set-once constant; test_mutation_precision_not_upgraded reddens on an upgrade) and the frame note that the outline is not aligned to the mapped lot. Blob-level restamp predicate re-verified by the orchestrator at the accept head 8ecdbeb2 (sheet_import.py faa95c04, test_sheet_import.py ecc14b54, M5-T121-producer-report.md ea826181; identity 243a7da1; evaluate_task_refs ok); report M5-T121-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T122",
+   "applicable_requirement_ids": [
+    "D-083-R001"
+   ],
+   "reviewed_sha": "06086f5d14bcd49b0adbcb9163fe2685ff2e218c",
+   "reviewed_manifest_sha256": "356596f7f567543d81b41e475c0987ca9ab7017467509e577c61c78ebc320353",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T09:56:08+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: a banned-wording grep over every changed file finds no permitted / approved / maximum-allowed wording in production code (the only match is a test asserting its absence); the new tags are P1 section 5.4 record labels, not claims. Blob-level restamp predicate re-verified by the orchestrator at the accept head 06086f5d (CondoRecordsSection.tsx 64b4d685, PropertyOverview.tsx 320c0050, OverviewExceptionStrip.tsx b49c7475, architect.css 8235b6ee, condo-records-section.test.tsx c00a834f, condo-resolution-display.test.tsx 1e563717, overview-exception-strip.test.tsx ea2ae851, architect-workspace.spec.ts ac0db8ac, responsive-a11y.spec.ts 2f649002, M5-T122-producer-report.md d2eeee41; identity 356596f7; evaluate_task_refs ok); report M5-T122-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-083",
+   "task_id": "M5-T124",
+   "applicable_requirement_ids": [
+    "D-083-R001",
+    "D-083-R006"
+   ],
+   "reviewed_sha": "002f663c6050603e9a0e94f5040086ea2a98f8a4",
+   "reviewed_manifest_sha256": "005165359511993410727a049cba6e6602ebe10d9fe88d60cd86e481891f39d1",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-25T10:33:24+00:00",
+   "requirements": [
+    {
+     "id": "D-083-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: every permit / approved / maximum-allowed / survey hit in drawing_alignment.py is a negative disclaimer or the unit name 'US survey feet'; the alignment block emits no claim-class vocabulary; a test scans the full JSON output. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
+     ]
+    },
+    {
+     "id": "D-083-R006",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: ALIGNMENT_PRECISION_NOTE states alignment does not upgrade input precision or claim survey accuracy; _input_precision carries the label unchanged (a mutation that upgrades it reddens); control pairs are never auto-matched from drawing content. Blob-level restamp predicate re-verified by the orchestrator at the accept head 002f663c (drawing_alignment.py eede1e29, test_drawing_alignment.py c1de0c40, M5-T124-producer-report.md 286dc10b; identity 00516535; evaluate_task_refs ok); report M5-T124-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
+}

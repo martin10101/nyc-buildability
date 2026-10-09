@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T176",
+  "material_commit": "5ba0b528 (producer commit in worktree w-M0-T176; 2 files)",
+  "produced_at": "2026-10-02T12:30:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T176)",
+  "requirements": {
+    "D-091-R001": [
+      "Review-slot lock liveness on Windows for the cloud loop's shared review slots: _SlotLock.acquire now treats a PermissionError from the O_EXCL lock create on Windows (a delete-pending lock file under contention) as busy and waits to the deadline, refusing only at the timeout (slot_lock_timeout); it never takes over on it. Every other OSError still refuses at once; POSIX unchanged. Fixes the windows-latest flake RaceTests::test_global_last_slot_never_double_taken (1 != 2, PR #312 CI run 37001721581).",
+      "Tests: tools/test_agent_supervisor_review_slots.py 17 passed + 2 subtests (13 existing + 4 new deterministic Windows sharing-violation tests via an _is_windows seam); real-process races 30/30 on POSIX; Windows proof is CI supervisor-bridge."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 at def78d01; submitted for G2, G3/G4 (code-reviewer), G5 (security-reviewer) and directive-compliance verification. No loop started; M0-T174 recertification now depends on this task."
+    ]
+  }
+}

@@ -1,0 +1,146 @@
+{
+  "task_id": "M5-T004",
+  "title": "Compare (Step 3) UI: apps/web Compare route + components consuming GET /api/v1/properties/{bbl}/scenario (offline/fixtures; no credentials)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Build the Step-3 Compare screen in apps/web consuming the accepted scenario endpoint (GET /api/v1/properties/{bbl}/scenario, scenario@1.0.0) through a NEW hardened typed client mirroring src/lib/api.ts (documented (HTTP status, body state) matrix classification; runtime contract-validate every 200 body BEFORE render; bounded/allowlisted reflected text + correlation id; AbortController/timeout). Render per docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md Step 3: max preliminary development potential, practical usable range, ranked scenario cards, objective + score breakdown, coverage labels (verified/conditional/review-required/conflict/unsupported - never encode certainty by color alone), main opportunity + main risk, one clear next action. Rewire the ConfirmScreen 'Next step' dead-end (steps 3-4 arrive later) to route to Compare. OFFLINE: consume committed fixtures / the flag-gated endpoint only; NO Supabase, NO Geoclient, NO backend change. Progressive disclosure, plain language first, accessible. Draft engineering (needs_review labels surfaced verbatim from the endpoint body, never recomputed in the client). TOOL DISCIPLINE (critical - the supervisor broker BLOCKS shell): do ALL reading/orientation with your Read, Grep, and Glob tools - NEVER use the Bash tool for git/ls/cat/find or any shell command (git is orchestrator-only and every shell command STALLS you waiting for an approval that will not come). Your only broker-auto actions are: writing files inside allowed_paths (compare route/components, lib/scenario-*.ts + validate-scenario.ts, ConfirmScreen.tsx, your producer report) and running the three documented_test_commands verbatim. Build the whole feature with Write/Edit + Read/Grep/Glob only; do not attempt commits (the orchestrator commits your output).",
+  "business_reason": "Owner directive D-038 (2026-09-08): build the PRODUCT. The scenario endpoint (M5-T003) is exposed but has NO UI and the Confirm screen dead-ends at 'steps 3-4 arrive later'. This delivers the Compare screen - the first user-facing scenario results - a demonstrable no-credential product increment on the live candidate line.",
+  "inputs": [
+    "services/api/app/api/v1/scenario.py (READ-ONLY; the accepted M5-T003 endpoint this UI consumes: GET /api/v1/properties/{bbl}/scenario, the exact (HTTP status, state) matrix, flag-off 404, correlation id)",
+    "packages/contracts/schemas/v1/scenario.schema.json + packages/contracts/generated/scenario.ts (READ-ONLY; scenario@1.0.0 - the contract to runtime-validate and render)",
+    "apps/web/src/lib/api.ts + src/lib/contract-matrix.ts + src/lib/bounded.ts + src/lib/validate-profile.ts (READ-ONLY TEMPLATE: hardened typed client pattern - matrix classification, bounded/allowlisted reflected text, runtime contract validation before render, AbortController)",
+    "apps/web/src/components/confirm/ConfirmScreen.tsx (the 'Next step' dead-end at line ~378 to rewire to Compare) + src/components/property/CoverageBadge.tsx/CoverageLegend.tsx (READ-ONLY; reuse the coverage-label vocabulary)",
+    "apps/web/e2e/harness/fixture_api.py (READ-ONLY; committed-official-fixture API server for offline e2e - proves no-credential path) + the M5-T003 committed fixtures",
+    "docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md (Step 3 Compare spec + UI rules), docs/ACCEPTANCE_SCENARIO_STANDARD.md, PRD.md \u00c2\u00a713"
+  ],
+  "outputs": [
+    "apps/web/src/app/property/compare/page.tsx (Step 3 Compare route)",
+    "apps/web/src/components/compare/CompareScreen.tsx + ranked scenario card / coverage-label / opportunity-risk subcomponents",
+    "apps/web/src/lib/scenario-api.ts (NEW hardened typed client for GET /properties/{bbl}/scenario) + scenario contract-matrix/validate helpers",
+    "apps/web/src/components/compare/__tests__/*.test.tsx (vitest + RTL; AS-1..AS-8)",
+    "the ConfirmScreen 'Next step' rewire to route to Compare",
+    "project-control/reports/M5-T004-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/app/property/compare/**",
+    "apps/web/src/components/compare/**",
+    "apps/web/src/lib/scenario-*",
+    "apps/web/src/lib/validate-scenario.ts",
+    "apps/web/src/components/confirm/ConfirmScreen.tsx",
+    "project-control/reports/M5-T004-producer-report.md",
+    "apps/web/src/app/globals.css",
+    "apps/web/src/app/property/error.tsx",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/e2e/compare-journey.spec.ts"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "packages/contracts/**",
+    "supabase/**",
+    ".claude/**",
+    "tools/**",
+    "apps/web/src/lib/api.ts",
+    "apps/web/src/lib/contract.ts",
+    "apps/web/src/lib/contract-matrix.ts",
+    "apps/web/src/lib/validate-profile.ts",
+    "apps/web/src/lib/bounded.ts",
+    "apps/web/src/components/property/**",
+    "apps/web/src/components/confirm/__tests__/**"
+  ],
+  "acceptance_scenarios": [
+    "AS-1 preliminary cap render (M5-T003 AS-1 fixture BBL 1000010100, 200 preliminary): Compare renders a ranked scenario card whose draft residential FAR floor-area cap is shown VERBATIM from the endpoint body (test asserts the rendered value === the body value; the client NEVER recomputes it), labelled draft/needs_review, with the optimized objective + score breakdown; the cap is never displayed as certain by color alone (a text label is always present).",
+    "AS-2 no_scenario / professional-review fixture (M5-T003 AS-2 body, scenario_kind no_scenario): the screen renders a visible reason + review-required label + preserved share ranges (never collapsed) and NO cap, and remains usable (an informative result, never an error page).",
+    "AS-3 coverage labels: verified / conditional / review-required / conflict / unsupported each render with a distinct TEXT label (not color-only) and the 8 MISSING envelope families from coverage_matrix are visibly listed as gaps.",
+    "AS-4 contract-safety (mirrors src/lib/api.ts S2/S3): every 200 body is runtime-validated against scenario@1.0.0 BEFORE any render; a body whose (HTTP status, state) pair is outside the documented matrix, or that fails validation, renders a distinct bounded error outcome carrying only the allowlisted correlation id - nothing partially rendered.",
+    "AS-5 flag-off / upstream failure / timeout: the generic 404 (INTERNAL_SCENARIO_ENABLED off) and the documented source_unavailable/rate_limited/timeout/schema_drift states each render a recoverable, non-leaking state with the correlation id; never a raw stack, secret, or invented scenario.",
+    "AS-6 navigation: the Confirm 'Next step' dead-end now routes to the Compare screen for the confirmed BBL with one clear next action; forward and back navigation preserve the analysis; the control is keyboard-reachable and labelled.",
+    "AS-7 offline / no-credentials (proves D-038-R004): AS-1..AS-6 run entirely under vitest with mocked/fixture endpoint responses (committed M5-T003 fixtures) and/or the Playwright e2e against apps/web/e2e/harness/fixture_api.py - NO network, NO Supabase, NO Geoclient.",
+    "AS-8 accessibility: outcome is announced to assistive tech (aria-live), focus is managed on step transition, headings are semantic, and no material state is encoded by color alone (jest-axe / RTL assertions)."
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "visual-quality-reviewer",
+    "human-journey-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Recomputing/deriving the cap in the client instead of surfacing the endpoint value verbatim (AS-1 guards this; the client transports+validates+classifies, it never computes zoning values - docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md).",
+    "Encoding legal certainty by color alone or up-labeling a needs_review value (AS-3/AS-8 guard this).",
+    "Rendering a body before contract validation, or routing by state alone rather than the (status,state) pair (AS-4 guards this).",
+    "Editing the read-only property client/templates or the built contract (forbidden_paths guard)."
+  ],
+  "documented_test_commands": [
+    "npm --prefix apps/web run test",
+    "npm --prefix apps/web run typecheck",
+    "npm --prefix apps/web run test:e2e"
+  ],
+  "test_evidence_capture_note": "documented_test_commands obey the closed command profile (M0-T149: one clean segment each, no chaining/cd/comments), so `--prefix apps/web` stands in for `cd apps/web`. Mapping: run test = vitest unit/component (AS-1..AS-8, jest-axe); run typecheck = tsc --noEmit (contract types); run test:e2e = Playwright vs apps/web/e2e/harness/fixture_api.py (committed-official-fixture API; OFFLINE, no Supabase/Geoclient - proves D-038-R004). Prereq `npm ci` runs once in CI (job 'web-e2e', .github/workflows/ci.yml). THIN-CLIENT (owner PC ~7GB, docs/LOW_STORAGE_CLOUD_DEVELOPMENT_POLICY.md): apps/web/node_modules is NOT installed locally and 'no local npm' is standing policy, so the loop worker cannot run these directly; frontend green evidence is CI- or orchestrator-captured at gate time (M5-T003 evidence-capture division of labor). The worker DELIVERS code + tests and must never claim green it did not run.",
+  "path_notes": [
+    "{'apps/web/src/lib/': 'NAME new lib files so they AUTO-APPROVE: allowed globs are apps/web/src/lib/scenario-* and apps/web/src/lib/validate-scenario.ts ONLY (e.g. scenario-api.ts, scenario-contract.ts, scenario-contract-matrix.ts, scenario-coverage.ts, validate-scenario.ts). The existing api.ts/contract.ts/contract-matrix.ts/validate-profile.ts/bounded.ts are forbidden - import them read-only, never modify. A differently-named lib file will defer for approval.', 'apps/web/src/components/confirm/ConfirmScreen.tsx': \"NARROW edit only: replace the 'steps 3-4 arrive later' dead-end with a labelled route to Compare; do not restructure the Confirm screen or its tests.\", 'forbidden:services/': 'the scenario endpoint + backend are ACCEPTED (M5-T003); consume over HTTP/fixtures only, never change backend.', 'forbidden:packages/contracts/': 'consume scenario.schema.json + generated/scenario.ts read-only; no contract change this task.', 'offline': 'consume the flag-gated endpoint / committed fixtures only; NO Supabase, NO Geoclient, NO new connector.'}",
+    "2026-09-11 orchestrator amendment: allowed_paths widened for the post-gate-wave rework. globals.css (G3-4/G4 MEDIUM-5: .status-label and .section-subtitle resolve to no rule in any of the three stylesheets; the producer could not fix this in the original scope). app/property/error.tsx (G5: no error boundary exists under /property, only /dashboard, so a non-string in unvalidated cap_provenance throws after validation passes and blanks the route). e2e/harness/fixture_api.py + e2e/compare-journey.spec.ts (G3-3b/G4 MEDIUM-6: the harness enables INTERNAL_RULE_EVAL_ENABLED not INTERNAL_SCENARIO_ENABLED and no spec visits /property/compare, so no browser can reach this screen anywhere in the repo; G3 owes step 3 of 8 and CI is the only place it can be discharged). rule-evaluation.ts deliberately NOT added - the transport-shell clone (G4 HIGH-1) is a separate orchestrator-scoped task, not this rework.",
+    "2026-09-11 RATIFICATION (G4 re-review MEDIUM). The widening above was made in the working copy BEFORE the rework was dispatched but was NOT COMMITTED until after the re-review flagged it. Orchestrator error, not a producer violation: the producer was told these four paths were in scope and worked to that instruction, and disclosed all four in its report. Every reviewer correctly read the 6-path committed packet and reported fixture_api.py, compare-journey.spec.ts, globals.css and error.tsx as outside allowed_paths. None was ever in forbidden_paths, so no prohibition was breached. Ratified explicitly here rather than letting acceptance imply it, so the next task inherits an accurate scope record. NOTE for the inputs field: fixture_api.py is labelled READ-ONLY there and was modified anyway - that label is now stale and is superseded by this amendment, because browser coverage of /property/compare is impossible without enabling INTERNAL_SCENARIO_ENABLED in the harness."
+  ],
+  "blockers": [],
+  "created_at": "2026-09-08T14:51:49.592393+00:00",
+  "updated_at": "2026-09-11T05:11:10.078748+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-038",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-09-08T14:51:49.592393+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/wt-m5t004",
+  "progress_log": [
+    {
+      "at": "2026-09-08T16:54:41.131816+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Loop run persistent-local-20 built M5-T004 to UNIT_COMPLETE (audit seq 27 claude_unit_completed); supervisor released lock cleanly (--max-tasks 1). Orchestrator committed the producer output (frontend-engineer) at a0bec4eb on task/M5-T004-compare-ui: Compare Step-3 route + 5 components + 3 scenario-* libs + AS-1..AS-8 tests + narrow ConfirmScreen rewire; no dep/config changes; gitleaks clean. Offline/fixtures, no Supabase/Geoclient (D-038-R004 by design). NEXT: independent gate wave (G1/G3/G4/G5 + visual/human-journey) then accept. ACCEPTANCE PARKED PENDING OWNER DECISION: executed frontend test-green (npm --prefix apps/web run test/typecheck/test:e2e) is not obtainable in-session (thin-client has no apps/web/node_modules; no-push hold D-038-R006 blocks CI) - same wall that parked M5-T002."
+    },
+    {
+      "at": "2026-09-08T17:04:27.145854+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "OWNER DECISION 2026-09-08: PARK M5-T004 acceptance. Local frontend test-run declined (thin-client/no-local-npm policy upheld); the only path to executed frontend-green is pushing the full 838-commit candidate line to CI (publishes the entire local-only build), which the owner declined to keep GitHub intentionally stale. M5-T004 stays committed-but-unaccepted at a0bec4eb (like M5-T002 parked on G6) until an acceptable frontend-test path exists. Loop re-pointed to acceptable no-creds backend work (scenario/optimization-engine depth) per D-038-R003 menu + D-038-R004 no-creds constraint. Not abandoned; resumes when a frontend-green path is available."
+    },
+    {
+      "at": "2026-09-11T03:02:08.255361+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "Gate wave at 84815a76 (manifest bc721e78): G1 FAIL, G3 FAIL, G4 FAIL, G5 PASS, DCV FAIL. Silent projection at the render layer - 8 schema-required fields never render under any path (contract_version, data_completeness, evaluated_input, assumptions, cap_provenance.citations, constraints[].note, constraints[].provenance, integrity_check.tolerance); 3 more drop per-branch; coverage_matrix silently filtered. DCV traced 515 leaves: 191 transported, 324 dropped, 0 authored legal/numeric values - transport CLEAN, so rework not rebuild. NOTE: all 8 acceptance scenarios PASS on their literal text; every failure is on gate criteria the AS list does not cover - the acceptance criteria under-specified the bar. Top defects: DRAFT label conditional on unvalidated needs_review (G1-9 + DCV AS-1); BBL identity authored from URL not document, demonstrated live by the shipped test (all four fixtures carry evaluated_input.bbl 1000477501 while the test renders 1000010100); cap_provenance unvalidated before cast, admits a max value with unnamed objective (G4-2); .status-label has no rule in any stylesheet so every draft warning renders undifferentiated (G3-4); AS-1 cap test is tautological - component and test call the same formatValue, so a rounding regression moves both and still passes. Converge on accepted sibling RuleEvaluationResult.tsx. Task stays in_progress: it was never submitted, so 'rework' is not a legal transition from here."
+    },
+    {
+      "at": "2026-09-11T03:04:35.563891+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "in_progress",
+      "message": "AMENDMENT to the gate-wave record (2026-09-11). Two reviewer-initiated corrections on re-examination, both narrowing severity; verdicts unchanged (G1/G3/G4/DCV FAIL, G5 PASS). (1) G1 finding 9 WITHDRAWN as stated and corrected HIGH->MEDIUM: needs_review:false does NOT make the DRAFT label vanish. ScenarioCard.tsx:47-49 is an unconditional static prefix ('Draft maximum residential zoning floor-area cap:') that no server field can switch off, plus three surviving signals (cap_label :61-65, not_verified_disclaimer ScenarioResult.tsx:173-175, page header CompareScreen.tsx:103-107). Only the additional inline label at :55-59 is conditional. AS-1 is PASS. The same claim in the DCV report's AS-1 section is superseded. (2) G3 finding 3(a) WITHDRAWN: 'no test was ever executed' was wrong - compare-screen.test.tsx runs under npm run test at ci.yml:96 in the web-e2e job and passed. 3(b) stands and is sharper: none of the 18 Playwright specs navigate to /property/compare, and fixture_api.py enables INTERNAL_RULE_EVAL_ENABLED not INTERNAL_SCENARIO_ENABLED, so no browser can reach this screen anywhere in the repo. Fold the harness flag + a compare-journey.spec.ts into the rework. G3 recommends not holding the FAIL on it. NEW: G5 rules the array/string bounding MUST land in the same rework, with a concrete spec (arrays reject at 64; free text truncate at 600 via existing MAX_REFLECTED_TEXT_LENGTH; identifiers truncate at 64 via boundedToken; 256 KiB Content-Length reject; cap_provenance per-field type checks) - called on cost and coherence, NOT because the rework creates a live vulnerability; findings stay MEDIUM. Also new: no error boundary exists under /property (only /dashboard), so a non-string in unvalidated cap_provenance throws 'Objects are not valid as a React child' AFTER validation passes and blanks the route. G4 confirms G3's CSS finding as MEDIUM not CRITICAL (undifferentiated, not invisible) and notes globals.css is outside allowed_paths, so the producer could not have fixed it. G1 final audit: 17 schema top-level properties vs 17 TS, zero drift; 20 fields dropped at render (19 required, 1 optional)."
+    },
+    {
+      "at": "2026-09-11T04:34:14.377373+00:00",
+      "agent": "orchestrator",
+      "percent": 99,
+      "status": "self_check",
+      "message": "Rework complete and re-verified 5-0 at 9b417875. Submitting for acceptance."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-11T05:11:10.078748+00:00"
+}

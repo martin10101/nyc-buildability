@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "M5-T029-acceptance",
+  "timestamp": "2026-09-14T22:18:55.241803+00:00",
+  "commit": "14c0525ddb28f81cd69da82834dbb24c21539210",
+  "branch": "task/M5-T029-architect-workspace",
+  "active_milestone": "M4",
+  "summary": "D-061 frontend accepted after exact-SHA G0-G5 and independent ten-requirement DCV PASS. Frozen CI34902199768 all18 jobs PASS; 617 unit tests and100 browser journeys. Actual desktop/mobile parcel rendering verified. Source/gates/rework history are in M5-T029 reports. Next: fast-forward candidate with acceptance records, preserve main/PR241; existing Render frontend deployment pending callable controls in a refreshed session.",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-14T22:18:55.250237+00:00"
+}

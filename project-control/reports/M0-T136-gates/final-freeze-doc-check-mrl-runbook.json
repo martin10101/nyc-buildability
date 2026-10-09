@@ -1,0 +1,19 @@
+{
+ "argv": [
+  "C:\\Users\\MLFLL\\AppData\\Local\\Programs\\Python\\Python311\\python.EXE",
+  "tools/supervisor_command_doc_check.py",
+  "--doc",
+  "docs/MRL_LAUNCH_RUNBOOK.md"
+ ],
+ "cwd": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24",
+ "started_at_utc": "2026-09-02T03:10:40.922677+00:00",
+ "ended_at_utc": "2026-09-02T03:10:41.334037+00:00",
+ "repo_head": "1489879e1f6787a9d53ed74db4524b24039e03a2",
+ "repo_tree": "0babc469a07fc9109e5f7ce18ea73bf932952801",
+ "executable_chain_sha256": "",
+ "returncode": 0,
+ "stdout_sha256": "fe8e8f372f929f2bdce88ca7d7ef7396f9b15769642714ed2aae22b85e4e8acb",
+ "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+ "stdout_bytes": 1217,
+ "stderr_bytes": 0
+}

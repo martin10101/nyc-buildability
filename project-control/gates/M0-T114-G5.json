@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T114",
+  "gate_id": "G5",
+  "reviewer": "security-reviewer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T114-G5-delta.md",
+  "reviewed_at": "2026-08-29T07:13:08.363054+00:00",
+  "content_manifest_sha256": "93e97aacabf2181befa482b38e75e166a1b871dd74e0a15840c5b26a893f981c",
+  "reviewed_sha": "86e0202e4b83cd51c2343a24a0d2adddd0f15c17",
+  "updated_at": "2026-08-29T07:13:08.899874+00:00"
+}

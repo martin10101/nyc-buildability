@@ -1,0 +1,20 @@
+{
+  "schema": "owner_packet_queue/v1",
+  "authority": "D-032 R001/R005 (owner 2026-09-05: full-time loop, orchestrator-executed activation); consumed by python -m tools.agent_supervisor start --packet-queue with --max-tasks 2. Entries bind committed claimed packets; worktrees are isolated task worktrees at the certified candidate e0dd4a3a; packet digests are snapshotted at queue read (edits after queueing are refused as STALE).",
+  "tasks": [
+    {
+      "task_id": "M0-T145",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M0-T145.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t145",
+      "branch": "task/M0-T145-brace-guard",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t145"
+    },
+    {
+      "task_id": "M0-T025",
+      "packet_path": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\ctl24\\project-control\\tasks\\M0-T025.json",
+      "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t025",
+      "branch": "task/M0-T025-path-containment",
+      "repo": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t025"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T091",
+ "material_commit": "d0919de6 (cherry-pick of wt-m5t091 d480fdb0; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T10:30:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t091)",
+ "requirements": {
+  "D-066-R001": [
+   "Navigation block at the contract seam named pdf_sheet_writer.py as unimported, app/cad/__init__.py orchestrator-owned, dxf_writer.py read-only (CLAIM_CLASS_WORDS import only) and glb_writer.py forbidden; the material touches exactly the 3 allowed paths (dxf_writer.py and glb_writer.py untouched)."
+  ],
+  "D-087-R001": [
+   "Wave-2 capacity unit: contracted at 5e9dbd07 (G0), claimed at 114e5e56 with the full worktree path, produced by an orchestrator-dispatched subagent concurrently with T088/T089/T090/T092; no state or gate skipped."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every live packet; one worktree wt-m5t091; the glb sibling built concurrently in wt-m5t092 on a disjoint file; the material touches only the 3 allowed paths."
+  ],
+  "D-087-R005": [
+   "Blueprint WRITING hardened before any wiring (DB-053 (a)-(d)): malformed vertices/rings/inputs return typed SitePlanRefusal values instead of raising; the number formatter refuses NaN/inf; caller text (address, BBL, generated_at, generator_version) is screened against the DXF writer's CLAIM_CLASS_WORDS (imported read-only; identity + hardcoded-list pin) before anything is drawn; unbalanced-paren addresses round-trip exactly through the in-repo strict reader; golden c38360f9 unchanged; 13 producer mutants all RED; [ORCH-HARVEST] at the cherry-picked head (Python 3.11.9, cwd services/api): `python -m ruff check .` -> All checks passed!; `python -m pytest tests/cad -q` -> 262 passed (dxf 24 + pdf 180 + glb 58); repo root `python tools/modularity_check.py --check` -> exit 0 (selected 486; failures 0; warnings 23, none on app/cad)."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies (stdlib numbers/re/collections.abc + app.cad.dxf_writer read-only); no route, main.py, web, requirements or lockfile change; module unwired."
+  ]
+ }
+}

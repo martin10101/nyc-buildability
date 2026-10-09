@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: "Make 3D a primary product surface" (plan §5c), opportunity search (its §1.4), the API product (its §1.10), the full pro forma (its §1.5), core/corridor/efficiency assumptions (Phase 2), amber/"conditional" results (plan §5) and the "Future Revit connection". The rest still applies.
+
 # Competitive Feature Expansion
 
 ## Purpose

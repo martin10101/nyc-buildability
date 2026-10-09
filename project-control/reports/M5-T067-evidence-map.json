@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T067",
+ "material_commit": "4e1491f8 (cherry-pick of the in-worktree commit dca90005; 4 files, ALL-MATCH LF-normalized digest verification; CI at the pushed harvest head cd808a2e = completed SUCCESS)",
+ "produced_at": "2026-09-21T04:40:00+00:00",
+ "producer": "backend-engineer (loop-2 worker, run persistent2-local-28; closed at the S13.8 consecutive_revision_loops breaker cycle 6 - the evidence-stalemate class; the producer report uses the honest [OBSERVED]/[BLOCKED]/[PREDICTED] evidence-status form, routing the scoped-pytest evidence to harvest because the broker runs documented commands from the worktree root; the orchestrator harvest supplied it: ruff 0, scoped 74 passed incl. 6 new mutation-sensitive tests, tests/api 650 passed, modularity exit 0)",
+ "requirements": {
+  "D-078-R001": [
+   "Task-scoped hardening of the accepted D-078 record substrate: the two LOW residuals the M5-T062 G5 review specified (M5-T062-G5.md LOW-1/LOW-2) are closed in the store exactly as specified - supersede reordered to bind the condo-key scope BEFORE the status read (store.py; foreign probes now an indistinguishable 404 whatever the record's status; the 409 reachable only on the record's own binding) and revoke's two not-found branches unified to byte-identical text (no existence oracle via message wording); no auth work (B-001-bound), no mount change, no new refusal code, no contract/route change."
+  ],
+  "D-078-R002": [
+   "The no-auto-selection discipline strengthened, not altered: supersede now mirrors revoke's accepted scope-before-status binding on the STORED record; the _record_insert collision/chain-depth guards still raise before any mutation (the reorder moved neither); mutation-sensitive tests prove both directions (reverting the reorder or diverging either message turns a test red); all pre-existing behavior on legitimate same-property paths byte-preserved (74 scoped + 650 full green)."
+  ],
+  "D-066-R001": [
+   "Packet carries the seam navigation block (793/16728/7304 regenerated at the T067 contract seam) naming store.py's consumers (routes + condo_records read path, both FORBIDDEN) and the consumer-sweep duty; honored - only the store + its two test suites changed; no out-of-scope test reddened (full tests/api 650 green at harvest and in CI cd808a2e)."
+  ],
+  "D-077-R002": [
+   "Full lane drill: contract seam f102a14c (binds + digest resyncs + G0 empty pairwise overlap), claim 0b6799fc with the FULL worktree path wt-m5t067, loop-2 run-28 build through the breaker close, orchestrator harvest with fresh explicit-cwd suites, in-worktree commit dca90005 cherry-picked 4e1491f8 ALL-MATCH x4, submit at the CI-green-verified head."
+  ],
+  "D-077-R003": [
+   "Scope inside the released queue (the G5-specified remediations on the just-accepted D-078 surface); exactly the packet's 4 allowed_paths changed; every forbidden path untouched (routes, records, __init__, condo_records, main.py, web, contracts); zero new dependencies; auth explicitly excluded (B-001-bound)."
+  ]
+ }
+}

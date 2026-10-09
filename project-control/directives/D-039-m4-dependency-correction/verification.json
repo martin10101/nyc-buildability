@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-039",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Ledger-correction directive; all requirements bind the non-ledger sentinel D-039-BOOTSTRAP, so no per-task rows accrue - the independent verifier records one bootstrap verification confirming R001-R005 against the tree after the correction executes. VALIDATOR c5 CORRECTION (2026-09-12): the bootstrap verification is recorded as the committed report project-control/reports/D-039-verification.md, NOT as a task_verifications row - the validator requires task-shaped task_ids there, so the sentinel row written at M4-T010 acceptance was removed; the D-038 precedent (BOOTSTRAP-bound requirements carry no task rows) applies.",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-M2-T020-submit",
+  "timestamp": "2026-09-07T00:14:51.550237+00:00",
+  "commit": "bc106d8d92affffca37ec99b0e21d23bedb57930",
+  "branch": "candidate/D-024-mrl-option-b",
+  "active_milestone": "M4",
+  "summary": "M2-T020 loop-produced candidate integrated: astra CONTINUE at cycle 3; S4 closed by orchestrator (ruff clean, modularity 0, no import cycle, 75 tests green); awaiting G2/G3/G4/G5",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-09-07T00:14:51.574005+00:00"
+}

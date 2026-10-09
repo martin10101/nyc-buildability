@@ -1,0 +1,39 @@
+{
+ "blocker_id": "B-030",
+ "title": "sharp 0.35.4 advisory GHSA-wq5f-xc86-pv6w (high; fixed in 0.35.5) fails the web-dependency-security gate on every new run since 2026-10-06 ~13:44 UTC; the fixed version already meets the 7-day age rule",
+ "status": "resolved",
+ "created_at": "2026-10-06T15:24:03+00:00",
+ "created_by": "orchestrator",
+ "affects": [
+  "Every open and future pull request into candidate/D-024-mrl-option-b: the web-dependency-security step 'npm audit --audit-level=low' fails with 1 high finding (first seen on the integration run after pull request 431: run 37485375037, job 112343905833, 2026-10-06).",
+  "The three reviewed pull requests waiting to merge (443, 447, 448) and the review register's pull request: none merges until a fresh run is green after the fix.",
+  "The integration branch's own run at head 12a12754 failed in its web-dependency-security job only; its build and browser-test jobs and every other job passed; the merged change (a plan document) did not cause it."
+ ],
+ "detail": "Advisory GHSA-wq5f-xc86-pv6w: 'sharp : Vulnerability in librsvg dependency CVE-2026-96889', severity high, vulnerable range < 0.35.5, first patched 0.35.5, published by the package's maintainer on 2026-09-30T19:22:51Z (api.github.com/repos/lovell/sharp/security-advisories/GHSA-wq5f-xc86-pv6w) and entered in GitHub's advisory database on 2026-10-06T13:43:57Z, which is when npm audit began to report it (the pull-request runs that finished before then were green). apps/web/package-lock.json locks sharp 0.35.4 as an optional dependency of next 15.5.24 (range ^0.34.3 || ^0.35.3), held by the exact override in apps/web/package.json. Registry facts read by the orchestrator on 2026-10-06 at 15:21 UTC from registry.npmjs.org: sharp 0.35.5 published 2026-09-27T13:46:24.509Z; its 16 @img/sharp-* platform packages at 0.35.5 (15 named by sharp 0.35.5 and @img/sharp-wasm32, a dependency of two of them) published 2026-09-27 between 13:45:21Z and 13:47:45Z; its 10 @img/sharp-libvips-* packages at 1.3.4 published 2026-09-27 between 12:10:37Z and 12:11:24Z; every one more than 604800 seconds old at that reading (the youngest 783261 s). Its other dependencies (semver ^7.8.5, @img/colour ^1.1.0, detect-libc ^2.1.2) are unchanged from 0.35.4. No package name is new to the lock. So the repair needs no exception: CLAUDE.md principle 15 is met by an exact pin to 0.35.5 and a lock regenerated and proven by the generate-lockfile workflow.",
+ "needs": [
+  "Through the dependency-security process: move the sharp override to exactly 0.35.5, regenerate and prove the lock through .github/workflows/generate-lockfile.yml (never locally), a security review of the change (gate G5), a green web-dependency-security run.",
+  "Then a fresh green run on each waiting pull request before it merges."
+ ],
+ "workaround_in_effect": "None. No waiver exists; nothing merges with a red check or on a run that predates the advisory.",
+ "candidate_followup": "Ledger task for the repair, contracted in the same commit as this record; this blocker is resolved at that task's merge with the green run ids as evidence.",
+ "scope_corrections": [
+  {
+   "at": "2026-10-06T15:38:47+00:00",
+   "actor": "orchestrator",
+   "change": "[ORCH-CORRECTED 2026-10-06, owner R438 and the producer's registry research] the advisory's two dates are now both given (the maintainer's publication on 2026-09-30 and its entry in GitHub's advisory database on 2026-10-06, the day the check began to report it; the record first said only 'published 2026-10-06'); the count of @img/sharp-* platform packages is 16, not 23, and @img/sharp-wasm32 stays in the lock and moves to 0.35.5 (the record first expected it to leave). No path, gate, reviewer or scenario changed."
+  }
+ ],
+ "history_note": "Found on 2026-10-06 at about 15:14 UTC: the integration run after pull request 431 merged failed this one check. Its state was read before anything else; nothing was rerun. Pull request 431's own runs had finished green at about 15:05 UTC with the same lock, because the audit service had not yet begun to report the advisory.",
+ "resolved_at": "2026-10-06T16:57:00+00:00",
+ "resolution": {
+  "summary": "Resolved by the fixed version under the normal dependency policy; no waiver and no exception. The ledger task contracted with this record (ACCEPTED) moved the sharp override to exactly 0.35.5. The lock was regenerated and validated by the generate-lockfile workflow and committed by the workflow itself; only sharp and its 26 platform packages moved (397 entries before and after, none added or removed); npm audit reports 0 at every severity; every moved package was more than 604800 s old. Gates G0/G2/G3/G4/G5 PASS (G3/G4 independent code-reviewer, G5 independent security-reviewer; agent reviews, not human reviews); directive check PASS for D-009-R017. Resolved at 16:57 UTC, when the integration branch's own run after the merge had completed with every job a success.",
+  "evidence": [
+   "PR #450 merged 2026-10-06T16:42:06Z as edb49725; 48 of 48 checks success on its final head bd073a40 (runs 37495850007 and 37495859311, 21 of 21 jobs each)",
+   "generate-lockfile run 37489036864 success; bot lock commit 148cf93e",
+   "integration branch CI at edb49725: run 37497774493 success, 21 of 21 jobs (web-dependency-security green)",
+   "project-control/reports/M0-T185-G3G4.md, M0-T185-G5.md, M0-T185-DCV.md; the independent pre-merge check of the final head returned MERGE-READY",
+   "the four waiting pull requests merged afterwards, one at a time, each on a fresh all-green run of its merge head (46 of 46 checks): #443 as 2bc7517e, #447 as be9df689, #448 as 12381eaa, #451 as 9c90ffbf; the integration run after each completed with 21 of 21 jobs a success (37500439775, 37502954248, 37505964724, 37508735979)"
+  ],
+  "follow_up": "None for this advisory. The one-time age exception for another package (source-map-js) is unrelated to this blocker; its removal is task M0-T183, not before 2026-10-07 14:09 UTC."
+ }
+}

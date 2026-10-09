@@ -1,4 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import { ArchitectEntry } from "@/components/architect/ArchitectEntry";
+import { surveyReviewEnabled } from "@/lib/surveyReview/config";
+import { proposalEditorEnabled } from "@/lib/architect/proposal-editor-flag";
+import { unusedFloorAreaSectionEnabled } from "@/lib/architect/unused-floor-area-flag";
 import { InternalBanner } from "@/components/property/InternalBanner";
 import { PropertyLookup } from "@/components/property/PropertyLookup";
 import { ruleEvaluationSurfaceEnabled } from "@/lib/rule-evaluation";
@@ -15,11 +20,26 @@ export const metadata: Metadata = {
  * disclaimer is rendered by the shared layout footer on every page.
  *
  * This is a Server Component, so it reads the non-public runtime flag
- * INTERNAL_RULE_EVAL_UI once per request (never inlined into the browser
+ * INTERNAL_RULE_EVAL_ENABLED once per request (never inlined into the browser
  * bundle) and passes a plain boolean into the client tree. When the flag is
  * off the rule-evaluation surface is never rendered and its fetch is never
- * issued (defense in depth; the endpoint is independently gated). A per-request
- * `?ruleeval=off` acts only as a fail-safe kill switch.
+ * issued (defense in depth; the endpoint is independently gated). With the
+ * flag on, the surface is either explicit opt-in-only (plain `/property`
+ * shows just the BBL form; append `?ruleeval=on`), or default-on when the
+ * optional INTERNAL_RULE_EVAL_DEFAULT_ON var is set (D-057; plain `/property`
+ * shows the full internal flow with no query param). A per-request, PRESENT
+ * `?ruleeval` value that is not a true token (e.g. `off`) acts as a fail-safe
+ * kill switch in BOTH modes — it always disables the surface, never
+ * weakened by the default-on var. See `ruleEvaluationSurfaceEnabled` in
+ * `@/lib/rule-evaluation` for the exact decision table.
+ *
+ * D-01 (plan §7): the set-aside proposal editor is read the same way, from the
+ * default-off server flag INTERNAL_PROPOSAL_EDITOR_ENABLED, and passed down as a
+ * plain boolean (`@/lib/architect/proposal-editor-flag`).
+ *
+ * D-06 (plan §3 step 4): the set-aside unused-floor-area section is read the same
+ * way, from the default-off server flag INTERNAL_UNUSED_FLOOR_AREA_SECTION_ENABLED
+ * (`@/lib/architect/unused-floor-area-flag`).
  */
 export default async function PropertyPage({
   searchParams,
@@ -28,6 +48,7 @@ export default async function PropertyPage({
 }) {
   const params = await searchParams;
   const ruleEvalEnabled = ruleEvaluationSurfaceEnabled({ ruleeval: params.ruleeval });
+  if (ruleEvalEnabled) return <Suspense fallback={null}><ArchitectEntry surveyEnabled={surveyReviewEnabled()} proposalEditorEnabled={proposalEditorEnabled()} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled()} /></Suspense>;
   return (
     <div className="property-shell">
       <InternalBanner />

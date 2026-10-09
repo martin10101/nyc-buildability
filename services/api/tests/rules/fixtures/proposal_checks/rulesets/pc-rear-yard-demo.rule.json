@@ -1,0 +1,29 @@
+{
+  "rule_id": "pc-rear-yard-demo",
+  "rule_version": "0.0.1-draft",
+  "family": "rear_yard",
+  "title": "SYNTHETIC minimum rear-yard depth (M5-T054 proposal-checks wiring proof)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "description": "SYNTHETIC fixture (M5-T054, D-076 phase B2) proving the proposal-checks module wires a MINIMUM allowance (a floor - a linear dimension, not a ratio times area) through the EXISTING evaluator with the correct fallback DIRECTION (D-051: a minimum, not fail-closed-to-narrow). Illustrative value only; not a Verified determination and not an official capture.",
+  "citations": [
+    {"snapshot_id": "pc-demo-synthetic", "section": "SYNTHETIC-REAR-YARD", "quote": "SYNTHETIC (illustrative, not verbatim): a minimum rear yard depth of 5 feet applies in the indicated district.", "last_amended": null}
+  ],
+  "inputs": [
+    {"name": "zoning_district", "type": "string", "required": true, "enum": ["R5"], "description": "District governing the lot."}
+  ],
+  "outputs": [
+    {"name": "min_rear_yard_depth_ft", "type": "number", "unit": "feet", "description": "Minimum required rear-yard depth in feet."}
+  ],
+  "parameters": [
+    {"name": "base_rear_yard_ft", "value": 5.0, "citation_ref": "pc-demo-synthetic", "note": "SYNTHETIC illustrative minimum rear-yard depth (feet)."}
+  ],
+  "applicability": {"op": "in_set", "input": "zoning_district", "values": ["R5"]},
+  "computation": {
+    "steps": [
+      {"id": "rear_yard", "op": "identity", "args": [{"param": "base_rear_yard_ft"}], "note": "Minimum rear-yard depth (feet)."}
+    ],
+    "outputs": {"min_rear_yard_depth_ft": {"step": "rear_yard"}}
+  },
+  "limitations": ["SYNTHETIC representability fixture; illustrative value; requires official capture + G6 before any use."]
+}

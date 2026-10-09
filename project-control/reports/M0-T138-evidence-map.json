@@ -1,0 +1,52 @@
+{
+  "task_id": "M0-T138",
+  "directive_id": "D-024",
+  "note": "Producer evidence map for Amendment 41 rows R607-R621 (all 15 applicable). Raw executable evidence: project-control/reports/M0-T138-gates/*.json recorded by tools/gate_runner.py at repo_head 435531de (R590). Independent verification belongs to the directive-compliance-verifier.",
+  "requirements": {
+    "D-024-R607": [
+      "Manual command substitution rejected: runbook section 4 presents exactly ONE concrete checked-in command (powershell.exe -File tools/controller_update/update_controller_from_candidate.ps1 -Phase install) plus one recovery command; no placeholder, no hand-edit points (docs/CONTROLLER_UPDATE_RUNBOOK.md s4; test_runbook_parse assertions in M0-T138-gates/m0t138-ps-tests-controller-update.json rc0)."
+    ],
+    "D-024-R608": [
+      "Sole checked-in procedure sources from immutable SHA 1489879e1f6787a9d53ed74db4524b24039e03a2: tools/controller_update/source_binding.json commit_sha pin; script refuses any non-40-hex source (not_a_full_sha; origin/main rejection case in m0t138-ps-tests-controller-update.json rc0); no ref resolution anywhere in the script; grep origin/main over the runbook returns nothing (test_runbook_parse)."
+    ],
+    "D-024-R609": [
+      "Pre-copy verification implemented fail-closed in update_controller_from_candidate.ps1 Assert-SourceIdentity + Assert-SourceWorktreeState: repo toplevel + normalized origin, commit exists and is a commit, commit tree == accepted 0babc469..., tools/agent_supervisor subtree == accepted 79af11a2..., required Tranche-B modules incl. mrl_launch_draft.py at the exact commit, source worktree DETACHED at the exact commit and clean; typed rejections tree_mismatch/subtree_mismatch/missing_module/source_not_detached/source_wrong_commit/source_unclean proven in m0t138-ps-tests-controller-update.json rc0."
+    ],
+    "D-024-R610": [
+      "Post-copy proof: complete bidirectional per-file raw SHA-256 comparison (Compare-InstalledTree; missing/unexpected/differing all refuse content_mismatch); destination-recorded manifest explicitly insufficient (runbook s5a rationale; verify-manifest phase re-proves against the ACCEPTED source); tamper-after-copy rejection case in m0t138-ps-tests-controller-update.json rc0."
+    ],
+    "D-024-R611": [
+      "Update evidence binds immutable source commit/tree/subtree and installed-file digests: controller_update_evidence.json written by -Phase install (commit_sha, commit_tree_sha, subtree_tree_sha, installed_files_sha256) and extended by -Phase verify-manifest (manifest_binding verdict); adversarial tests prove fail-closed binding (manifest_digest_mismatch / manifest_key_set_mismatch cases + m_manifest mutant DETECTED) - m0t138-ps-tests-controller-update.json rc0."
+    ],
+    "D-024-R612": [
+      "Exact PS 5.1 commands checked in and concrete: runbook s4/s5a fenced commands; parse-tested by test_runbook_parse (13/13 fenced blocks + operator script, zero PS 5.1 parser errors; no angle-bracket placeholder in s4); command-document tooth green over the repaired runbook (m0t138-doc-check-default.json rc0, 11 presented supervisor commands ok) and over MRL runbook + canary package (m0t138-doc-check-mrl.json / m0t138-doc-check-canary.json rc0)."
+    ],
+    "D-024-R613": [
+      "Negative/mutation coverage before any provider or canary: origin/main-as-source (not_a_full_sha), internally self-consistent wrong commit (tree_mismatch), missing Tranche-B module (missing_module), accepted SHA/tree mismatch (tree_mismatch/subtree_mismatch), destination changed after copying (content_mismatch), manifest recorded from wrong installed tree (manifest_digest_mismatch/manifest_key_set_mismatch); 4/4 targeted mutants DETECTED with a fail-closed generator (m0t138-ps-tests-controller-update.json rc0; test files tools/controller_update/ps_tests/test_source_binding.ps1 + test_mutants_detected.ps1)."
+    ],
+    "D-024-R614": [
+      "Exactly one consistent owner command chain: M0-T136-canary-package.md prerequisite 1 already demands installation 'from the frozen Tranche-B candidate SHA per CONTROLLER_UPDATE_RUNBOOK.md sections 3-8' - the repaired s4 now does precisely that, so the accepted package needed no edit (untouched in git); MRL_LAUNCH_RUNBOOK prerequisites unchanged and correct; docs/SESSION_HANDOFF.md seq-73 item 6 states the single chain; every stale origin/main instruction removed from the active path (test_runbook_parse assertion; historical reports unmodified by design)."
+    ],
+    "D-024-R615": [
+      "Blocking sequencing honored: no controller update and no canary executed; handoff seq-73 orders independent review FIRST, then the owner-typed update via repaired s3-s8, then the canary package; C:/SupervisorController untouched (no command in this task's evidence touches it)."
+    ],
+    "D-024-R616": [
+      "Scope holds: branch local-only, nothing pushed, no PR, PR #241 untouched; .github/workflows unchanged; tools/agent_supervisor/** unchanged (git diff of ec4ac9a3..HEAD names no such path); M0-T136 accepted records untouched; R603-R605 untouched (requirements.json diff adds only R607-R621); no Tranche C work; no canary/provider run."
+    ],
+    "D-024-R617": [
+      "Smallest honest repair: documentation (runbook, handoff) + checked-in operator validator (script + binding contract) + tests only; zero production supervisor code changes; the R611 'or equivalent fail-closed binding' arm satisfied via update-evidence binding + adversarial tests, so no manifest.py/cli.py expansion was needed (producer report s4)."
+    ],
+    "D-024-R618": [
+      "Method: one consolidated trace before editing (producer report s3; G0 readiness root-cause evidence); targeted Edit operations (runbook s4 block replacement, s5a insertion, s1/s10 line additions; handoff item-level edits); no modularity limit raised or exception added (m0t138-modularity.json rc0; tools/modularity_exceptions.json untouched); complete focused/affected verification with raw exit codes: new ps suite rc0, accepted supervisor ps suite rc0, 77 pytest command-docs/manifest tests rc0, doc tooth rc0 x3, directive registry rc0, context budget rc0, ruff rc1 byte-identical (stdout_sha256 74680cc7...) to the frozen pre-existing F28 record; failure inventory gathered first and EMPTY."
+    ],
+    "D-024-R619": [
+      "Canonical mechanics: exactly one follow-up task M0-T138 (new-task -> G0 -> claim with directive refs D-024:ALL -> implementation -> evidence -> submit awaiting_gate); one local commit sequence ec4ac9a3 -> 435531de -> evidence/submit commits; producer != reviewers (code-reviewer, qa-engineer, directive-compliance-verifier); NO self-acceptance."
+    ],
+    "D-024-R620": [
+      "Return report delivered with exact changed files, source-binding design, positive and mutant results, candidate SHA, final status, and the single terminal token CONTROLLER_UPDATE_SOURCE_BINDING_SUBMITTED (producer report + session return message)."
+    ],
+    "D-024-R621": [
+      "Bootstrap Gate 0 verified before any write: all seven owner-stated values matched live measurements (project-control/reports/M0-T138-G0-readiness.md); durable evidence read with targeted line ranges; ledger consulted via project_control.py status and campaign_continuity --status (rc0)."
+    ]
+  }
+}

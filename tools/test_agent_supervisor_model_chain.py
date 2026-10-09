@@ -40,6 +40,7 @@ HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parent
 sys.path.insert(0, str(REPO))
 
+from tools.agent_supervisor import approved_models as am  # noqa: E402
 from tools.agent_supervisor import claude_runner as cr  # noqa: E402
 from tools.agent_supervisor import cli  # noqa: E402
 from tools.agent_supervisor import config as cfg  # noqa: E402
@@ -74,6 +75,15 @@ FAKE_CLAUDE_CHAIN = textwrap.dedent('''
       FAKE_EXHAUST_AFTER   ids in FAKE_EXHAUSTED only refuse once the log
                            already has this many lines (0 = always refuse)
       FAKE_REPORT_MODEL    report THIS id instead of the one asked for
+      FAKE_STATUS          checkpoint status to report (default UNIT_COMPLETE).
+                           M0-T080: a session that came up after a rotation must
+                           answer READY before anything is forwarded (S11.3), so
+                           a fixture that drives the loop THROUGH a rotation has
+                           to model that contract.
+      FAKE_WORKTREE        worktree the checkpoint reports (default /fake). The
+                           post-launch identity check compares it to the worktree
+                           the successor was commanded onto.
+      FAKE_STARTING_SHA    starting_sha the checkpoint reports (default 40 a's).
     """
     import json, os, sys
 
@@ -123,9 +133,12 @@ FAKE_CLAUDE_CHAIN = textwrap.dedent('''
         "schema_version": "1.0.0", "run_id": "run-chain",
         "checkpoint_id": "cp-" + str(os.getpid()),
         "task_id": "M0-T036", "claude_session_id": "sess-" + reported,
-        "status": "UNIT_COMPLETE", "summary": "unit on " + reported,
-        "starting_sha": "a" * 40, "current_sha": "b" * 40,
-        "branch": "task/M0-T036-supervisor-bridge", "worktree": "/fake",
+        "status": os.environ.get("FAKE_STATUS", "") or "UNIT_COMPLETE",
+        "summary": "unit on " + reported,
+        "starting_sha": os.environ.get("FAKE_STARTING_SHA", "") or "a" * 40,
+        "current_sha": "b" * 40,
+        "branch": "task/M0-T036-supervisor-bridge",
+        "worktree": os.environ.get("FAKE_WORKTREE", "") or "/fake",
         "proposed_next_action": "await review", "usage": "unknown",
         "context_pressure": "unknown"}
     emit({"type": "result", "subtype": "success", "uuid": "u-r-" + str(os.getpid()),
@@ -198,6 +211,34 @@ class FakeReviewer:
                              tier=map_decision_to_tier(actual))
 
 
+def _make_live_checkout(root: pathlib.Path, *, task_id: str,
+                        status: str = "in_progress") -> pathlib.Path:
+    """A REAL git checkout with a ledger record, for the M0-T079 live probes.
+
+    `start` establishes task authority, the branch, the worktree, and Git state
+    by reading them now; a complete command line no longer certifies them.
+    """
+    import os
+    import subprocess
+
+    root.mkdir(parents=True, exist_ok=True)
+    tasks = root / "project-control" / "tasks"
+    tasks.mkdir(parents=True, exist_ok=True)
+    (tasks / f"{task_id}.json").write_text(
+        json.dumps({"task_id": task_id, "status": status, "blockers": []}),
+        encoding="utf-8")
+    env = {**os.environ,
+           "GIT_AUTHOR_NAME": "supervisor-test",
+           "GIT_AUTHOR_EMAIL": "test@example.invalid",
+           "GIT_COMMITTER_NAME": "supervisor-test",
+           "GIT_COMMITTER_EMAIL": "test@example.invalid"}
+    for argv in (["init", "-q", "-b", "main"],
+                 ["commit", "-q", "--allow-empty", "-m", "fixture"]):
+        subprocess.run(["git", *argv], cwd=str(root), check=True,
+                       capture_output=True, env=env)
+    return root
+
+
 class ChainTestBase(unittest.TestCase):
     def setUp(self) -> None:
         self._tmp = tempfile.TemporaryDirectory()
@@ -233,13 +274,23 @@ class ChainTestBase(unittest.TestCase):
         return [entry for entry in self.launches() if entry.get("started")]
 
     def runner_config(self, model: str, *, exhausted: str = "",
-                      exhaust_after: int = 0, report_model: str = "") -> RunnerConfig:
+                      exhaust_after: int = 0, report_model: str = "",
+                      status: str = "", worktree: str = "",
+                      starting_sha: str = "") -> RunnerConfig:
         env = {"FAKE_LAUNCH_LOG": str(self.launch_log),
                "FAKE_EXHAUSTED": exhausted,
                "FAKE_EXHAUST_AFTER": str(exhaust_after),
                "PYTHONIOENCODING": "utf-8"}
         if report_model:
             env["FAKE_REPORT_MODEL"] = report_model
+        # M0-T080: only fixtures that drive the loop THROUGH a rotation set these;
+        # every other chain test keeps the original checkpoint shape byte for byte.
+        if status:
+            env["FAKE_STATUS"] = status
+        if worktree:
+            env["FAKE_WORKTREE"] = worktree
+        if starting_sha:
+            env["FAKE_STARTING_SHA"] = starting_sha
         return RunnerConfig(executable=sys.executable, max_turns=2,
                             timeout_seconds=60.0, close_grace_seconds=10.0,
                             cwd=str(self.tmp), model=model, expected_model=model,
@@ -387,7 +438,13 @@ class RealProcessReturnTests(ChainTestBase):
         self.at_preflight()
         # The pin is exhausted for launches 2..3 only (cycle 1, then the seam probe)
         # and launchable again afterwards, so the run switches away and comes back.
-        config = self.runner_config(PIN, exhausted=PIN, exhaust_after=1)
+        # M0-T080: this run crosses TWO rotation seams, so the sessions that come
+        # up after them must answer the S11.3 READY checkpoint and report the
+        # task/branch/worktree/HEAD they were commanded onto - which the post-launch
+        # identity check now verifies. The fake reports the real ones.
+        config = self.runner_config(PIN, exhausted=PIN, exhaust_after=1,
+                                    status="READY", worktree=str(self.repo),
+                                    starting_sha="b" * 40)
         loop = self.build_loop(config, max_cycles=3)
 
         calls = {"n": 0}
@@ -571,6 +628,7 @@ class CrashResumeTests(ChainTestBase):
         # `start` builds the runner itself and passes only a minimal allowlisted
         # environment, so the fake falls back to its cwd - the worktree the
         # supervisor sets. Nothing about the launch is arranged by the test.
+        _make_live_checkout(self.repo, task_id="M0-T036")
         self.launch_log = self.repo / "fake_launches.jsonl"
         self.runtime = self.tmp / "runtime"
         self.config_path = self.tmp / "config.toml"
@@ -607,6 +665,51 @@ class CrashResumeTests(ChainTestBase):
                 "chain": [PIN, FIRST_FALLBACK, SECOND_FALLBACK]})
         finally:
             journal.close()
+
+    def test_a_config_conflict_is_a_typed_refusal_not_a_traceback(self) -> None:
+        """M0-T080 correction U11 (G4 F5).
+
+        `_run_loop` loads and cross-validates the controller config, and it sits
+        OUTSIDE the typed-refusal except guard, so every ConfigError it can raise
+        - including M0-T080's new `approved_models_conflict` - reached the
+        operator as a raw traceback at exit 1. That is the same defect T079-C5
+        fixed for the budget: a refusal is a report, not a crash.
+        """
+        import contextlib as _contextlib
+        import io
+
+        from tools.agent_supervisor.manifest import generate_manifest, write_manifest
+
+        # The two spellings of the owner-approved list, naming DIFFERENT lists.
+        conflicted = self.tmp / "conflicted.toml"
+        conflicted.write_text(
+            CONFIG_TOML
+            + f'\n[approved_models]\nmodels = ["{SECOND_FALLBACK}"]\n',
+            encoding="utf-8")
+        manifest = write_manifest(
+            generate_manifest(cli.PACKAGE_ROOT,
+                              extra_files=(("config.toml", conflicted),)),
+            self.tmp / "conflicted_manifest.json")
+
+        argv = ["start", "--mode", "supervised",
+                "--claude-executable", sys.executable,
+                "--codex-executable", sys.executable,
+                "--task-packet", str(self.packet),
+                "--config", str(conflicted),
+                "--manifest", str(manifest),
+                "--model-selection", str(self.selection_path),
+                "--run-id", "run-conflict", "--max-cycles", "1",
+                "--unit-timeout", "60",
+                "--checkout", str(self.repo),
+                "--runtime-base", str(self.runtime), "--json"]
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with _contextlib.redirect_stdout(stdout), _contextlib.redirect_stderr(stderr):
+            code = cli.main(list(argv))
+
+        combined = stdout.getvalue() + stderr.getvalue()
+        self.assertNotIn("Traceback", combined, "a refusal is a report, not a crash")
+        self.assertNotEqual(code, 0, "a refused config must not exit success")
+        self.assertIn("approved_models_conflict", combined)
 
     def test_effective_model_is_read_from_the_durable_record(self) -> None:
         self.assertEqual(lp.effective_model(self.journal, self.run_id, PIN), PIN)
@@ -789,16 +892,48 @@ class ModelChainConfigTests(unittest.TestCase):
         path.write_text(body, encoding="utf-8")
         return path
 
-    def test_the_default_chain_is_the_owners_order(self) -> None:
-        self.assertEqual(cfg.DEFAULT_ORCHESTRATOR_MODEL_CHAIN,
-                         (PIN, FIRST_FALLBACK, SECOND_FALLBACK))
-        self.assertNotIn(UNLISTED, cfg.DEFAULT_ORCHESTRATOR_MODEL_CHAIN)
+    def test_there_is_no_built_in_default_chain_anywhere(self) -> None:
+        # M0-T080 / D-023-R013. This test used to assert the OPPOSITE - that
+        # `cfg.DEFAULT_ORCHESTRATOR_MODEL_CHAIN` equalled three specific model
+        # ids - which is exactly the defect: a code default is a model selection
+        # the owner never approved and no launch probe ever proved. The constant
+        # is gone, and no replacement literal may take its place.
+        self.assertFalse(hasattr(cfg, "DEFAULT_ORCHESTRATOR_MODEL_CHAIN"))
+        self.assertEqual(cfg.ModelChain().entries, ())
+        self.assertEqual(lp.DEFAULT_MODEL_CHAIN, ())
+        source = (REPO / "tools" / "agent_supervisor" / "config.py").read_text(
+            encoding="utf-8")
+        for banned in (PIN, FIRST_FALLBACK, SECOND_FALLBACK, UNLISTED):
+            self.assertNotIn(f'"{banned}"', source,
+                             "a model id literal in config.py is a default chain by "
+                             "another name")
 
-    def test_an_absent_section_falls_back_to_that_exact_order(self) -> None:
+    def test_an_absent_section_approves_nothing_and_stops_safely(self) -> None:
         config = cfg.load_controller_config(self._write(
             '[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'))
-        self.assertEqual(config.model_chain.entries,
-                         (PIN, FIRST_FALLBACK, SECOND_FALLBACK))
+        self.assertEqual(config.model_chain.entries, ())
+        self.assertEqual(config.approved_models.entries, ())
+        # Loading succeeds; SELECTING is what refuses, with a typed, actionable
+        # refusal naming the file the owner has to populate.
+        with self.assertRaises(am.ModelRoutingError) as raised:
+            config.approved_models.assert_listed(PIN)
+        self.assertEqual(raised.exception.code, am.APPROVED_MODELS_EMPTY)
+        self.assertEqual(raised.exception.refusal.outcome, "halted")
+
+    def test_the_canonical_approved_models_section_is_read(self) -> None:
+        config = cfg.load_controller_config(self._write(
+            '[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
+            f'[approved_models]\nmodels = ["{PIN}", "{FIRST_FALLBACK}"]\n'))
+        self.assertEqual(config.approved_models.entries, (PIN, FIRST_FALLBACK))
+        self.assertEqual(config.model_chain.entries, (PIN, FIRST_FALLBACK))
+
+    def test_two_spellings_that_disagree_are_refused_not_resolved(self) -> None:
+        with self.assertRaises(cfg.ConfigError) as raised:
+            cfg.load_controller_config(self._write(
+                '[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
+                f'[approved_models]\nmodels = ["{PIN}"]\n'
+                f'[model_chain]\norchestrator_preference = ["{FIRST_FALLBACK}"]\n'))
+        self.assertEqual(raised.exception.code, "approved_models_conflict")
 
     def test_the_owner_may_reorder_the_chain_in_the_immutable_config(self) -> None:
         config = cfg.load_controller_config(self._write(
@@ -809,9 +944,10 @@ class ModelChainConfigTests(unittest.TestCase):
     def test_an_empty_or_malformed_chain_is_refused(self) -> None:
         for body, code in (
             ('[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
-             '[model_chain]\norchestrator_preference = []\n', "empty_model_chain"),
-            ('[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
              '[model_chain]\nmodels = ["a"]\n', "unknown_model_chain_key"),
+            ('[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
+             '[approved_models]\norchestrator_preference = ["a"]\n',
+             "unknown_approved_models_key"),
             ('[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
              '[model_chain]\norchestrator_preference = ["a", "a"]\n', "duplicate_model"),
             ('[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
@@ -833,8 +969,21 @@ class ModelChainConfigTests(unittest.TestCase):
         self.assertEqual(chain.candidates_after("claude-unlisted-pin"),
                          (PIN, FIRST_FALLBACK, SECOND_FALLBACK))
 
+    def test_an_explicitly_empty_list_approves_nothing_rather_than_defaulting(self) -> None:
+        # M0-T080: an explicitly empty list used to be a load-time ConfigError
+        # ("empty_model_chain"), which forced a non-empty default to exist. It is
+        # now LEGAL to declare and means what it says - nothing is approved - and
+        # the refusal happens where a model is actually selected.
+        config = cfg.load_controller_config(self._write(
+            '[codex]\nallowed_models = []\n[claude]\nallowed_models = []\n'
+            '[model_chain]\norchestrator_preference = []\n'))
+        self.assertEqual(config.approved_models.entries, ())
+        with self.assertRaises(am.ModelRoutingError) as raised:
+            config.approved_models.assert_populated()
+        self.assertEqual(raised.exception.code, am.APPROVED_MODELS_EMPTY)
+
     def test_the_ids_are_exact_strings_with_no_aliasing(self) -> None:
-        chain = cfg.ModelChain()
+        chain = cfg.ModelChain(entries=(PIN, FIRST_FALLBACK, SECOND_FALLBACK))
         for near_miss in ("claude-opus-48", "Claude-Opus-4-8", "opus-4-8",
                           "claude-opus-4-8 ", UNLISTED):
             with self.subTest(near_miss=near_miss):

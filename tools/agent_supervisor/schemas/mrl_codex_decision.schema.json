@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/mrl_codex_decision.schema.json",
+  "title": "MRL controller-built CodexDecision",
+  "description": "The controller-authoritative, git-bound review decision (D-024-R502/R503/R504/R505). The reviewer's UNTRUSTED verdict/rationale/evidence-refs are recorded, but 'decision' is the controller's alone; COMPLETE is produced only when verdict==APPROVE and every controller invariant and gate passed. The git binding is Option-B neutral: expected_base_ref is data, never a hard-coded origin/main, and the legacy verified_origin_main field is never repurposed. additionalProperties is false.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision", "verdict", "rationale", "evidence_ref_ids", "git", "reason"],
+  "properties": {
+    "decision": {"type": "string", "enum": ["COMPLETE", "REVISE", "HALT", "HOLD"]},
+    "verdict": {"type": "string", "enum": ["APPROVE", "REVISE", "HALT"]},
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "evidence_ref_ids": {
+      "type": "array", "minItems": 1, "maxItems": 64, "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 128}
+    },
+    "reason": {"type": "string", "minLength": 1, "maxLength": 4096},
+    "git": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["normalized_remote_url", "expected_base_ref", "observed_base_sha",
+                   "task_branch", "task_head_sha", "observed_at_utc"],
+      "properties": {
+        "normalized_remote_url": {"type": "string", "minLength": 1},
+        "expected_base_ref": {"type": "string", "minLength": 1},
+        "observed_base_sha": {"type": "string", "minLength": 40, "maxLength": 40},
+        "task_branch": {"type": "string", "minLength": 1},
+        "task_head_sha": {"type": "string", "minLength": 40, "maxLength": 40},
+        "observed_at_utc": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

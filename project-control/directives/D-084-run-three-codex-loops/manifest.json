@@ -1,0 +1,98 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-084",
+ "version": 1,
+ "slug": "run-three-codex-loops",
+ "title": "Owner 2026-09-23 ('run 3 codex loops'): run all three codex loop lanes concurrently - feed and launch lane 1 (superseding the seq-125 'after the T071 accept' lane-occupancy sequencing) and lane 2 on contracted, claimed, in-regime packets under the normal gated process (D-070 finished-seam standard), keep lane 3 live on its current M5-T070 increment-2 run and re-feed it at its natural close; lane occupancy only - no hold lifted, no gate changed",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-23",
+ "captured_at": "2026-09-23T04:10:00+00:00",
+ "created_at": "2026-09-23T04:10:00+00:00",
+ "updated_at": "2026-09-24T08:10:00+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "f58edd1990c97a99fe947e3296529520c07a0546",
+ "capture_head_sha": null,
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner typed the instruction directly in-channel mid-session without qualification. It is a Tier A dispatch instruction: occupy all three loop lanes with in-regime work. It lifts no hold (expansion section 2 minus its scoped releases, PR #241, phase C/D all unchanged), changes no gate, and every fed packet still passes the normal contract/claim/gate process."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-084-R001",
+  "D-084-R002",
+  "D-084-R003"
+ ],
+ "requirements_content_digest_sha256": "01ce68f69ccfa422e1cd8101b0a1bb318a2532dabb8d62ff2354b5bcb20307f1",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-23T04:10:00+00:00",
+   "content_digest_sha256": "f95ee41169ff90ae7b96a112448c580048a2ebb0bad247e40322d559ca5e8084"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "dispatch_authorization",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "feeding and launching the three supervisor loop lanes on contracted, claimed, in-regime ledger packets; lane-1 occupancy before the M5-T071 accept (lane-occupancy sequencing only)",
+  "forbidden": "lifting any owner hold (expansion section 2 minus the D-040/D-076/D-082 scoped releases; PR #241; phase C/D); skipping any contract/claim/gate step; restarting or displacing the live loop-3 run on this authority; any Tier D action"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-23T04:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim before acting (D-001 discipline). At capture: 252 accepted; loop-3 LIVE (persistent3-local-17, M5-T070 increment 2); loops 1/2 idle; CI at branch head f58edd19 red (secret-scan pragma miss on the T068 leak-absence sentinel + two web-e2e failures: the T070 copy-wall comment self-trip and the T071 DB-047(e) consumer-sweep miss in proposal-editor.test.tsx), fixes staged in the same push as this capture. frozen_baseline_sha = f58edd19 (this capture's parent, the seq-125 handoff head). Immediate planning effect: contract lane-1 and lane-2 packets now; bind their ids onto R001/R002 at those seams."
+  },
+  {
+   "at": "2026-09-23T04:40:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T072 (lane-1 feed: T069-G3-A2 revoke-text pin) onto R001 and M5-T073 (lane-2 feed: DB-045(a) real-parcel bridge-ring precondition validation) onto R002 at their shared contract seam; graph regenerated at this seam before authoring; digest resync same commit."
+  },
+  {
+   "at": "2026-09-23T05:20:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T074 (lane-3 re-feed after the run-17 cycle_closed harvest: DB-045(c) outline-bridge server-branch proof, test-only) onto R003 at its contract seam; digest resync same commit."
+  },
+  {
+   "at": "2026-09-23T05:55:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T075 (lane-1 re-feed after the T072 harvest/submit: DB-045(i) outline-bridge client browser-fault tests, web test-only) onto R001 at its contract seam; digest resync same commit."
+  },
+  {
+   "at": "2026-09-23T06:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Bound M5-T076 (lane-1 re-feed after the T075 COMPLETE close: DB-050(a) geometry-threading pre-mount packet, backend) onto R001 at its contract seam; digest resync same commit."
+  },
+  {
+   "at": "2026-09-24T08:05:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bind",
+   "note": "Seq-128 lane re-feed + D-086 P0 contract seam (after accepts #257-#259): bound D-084-R001 <- M5-T077; D-084-R002 <- M5-T078; D-084-R003 <- M5-T079; requirements digest resynced in the same commit."
+  },
+  {
+   "at": "2026-09-24T08:10:00+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_unbind",
+   "note": "B-026 workaround: the seq-128 lane launch refused (Claude Code 2.1.281 not yet admitted to the certified controller), so the three re-feed packets contracted at f57fccd5 run as orchestrator-dispatched subagent producers instead of loop lanes; their lane-occupancy bindings are removed (R001 <- M5-T077, R002 <- M5-T078, R003 <- M5-T079). The lanes receive fresh packets after the admission lane lands. Requirements digest resynced in the same commit."
+  }
+ ]
+}

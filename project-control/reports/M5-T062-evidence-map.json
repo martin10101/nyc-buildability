@@ -1,0 +1,59 @@
+{
+ "task_id": "M5-T062",
+ "material_commit": "0539cc84 (clean cherry-pick of worktree producer commit ad90a2ff; 8 files, ALL-MATCH LF-normalized digest verification post-pick) + the orchestrator test-portability correction 099c32a7 ([ORCH-CORRECTED per CI 35546337617]: the three mount-test route introspections expanded for the pinned fastapi-0.139 _IncludedRouter layout via the tests/api/test_evidence_api.py precedent - the CI red was the test's blind spot, NOT the mount; diagnostic run 35547075092 proved env/flag/modules correct with the routers invisible to the old introspection)",
+ "produced_at": "2026-09-21T00:05:00+00:00",
+ "producer": "backend-engineer (loop-2 worker, run persistent2-local-27; unit closed at the S13.8 consecutive_revision_loops breaker with the report converged to the revised evidence-handoff form - worker outcomes recorded separately in its section 4.1 with explicit cwd, supervisor collection specified as the harvest deliverable; commit/push/CI orchestrator-owned)",
+ "requirements": {
+  "D-066-R001": [
+   "Code graph regenerated at the fffbd002 contract seam before the packet was authored (783/16500/7221 in the packet's navigation block); the block's constraints honored in the material: the ONLY main.py change is the flag-gated include_router block + flag import (producer report section 1 anchors main.py:205-220), condo_records.py and the connectors consumed read-only and untouched."
+  ],
+  "D-077-R002": [
+   "Full contract drill (fffbd002 seam binds+resyncs+seeds+G0 three-way disjointness; ae8be2ed claim with the FULL worktree path wt-m5t062; loop-2 run 26 silent-start single-retry then run 27 built the 8-file material through the in-run REVISE arc to the honest evidence-handoff form; orchestrator harvest at the breaker close with fresh explicit-cwd suites)."
+  ],
+  "D-077-R003": [
+   "Scope inside the released queue: the DB-040-named mount-precondition closure on the accepted D-078 slice-1 substrate; exactly the packet's 8 allowed_paths changed; no forbidden path (condo_records/rule_evaluation/proposal/connectors/rules/scenario/spatial/profile/contracts/web all clean); pre-existing root lint deliberately NOT repaired (the packet's discovery-routing rule)."
+  ],
+  "D-078-R001": [
+   "Task-verified for M5-T062 (never a directive-complete stamp): slice 2a hardens the accepted slice-1 record substrate to mountable state - the confirm-UX/map/combined-land slices remain later work; the mount ships flag-gated DEFAULT OFF pending B-001 auth (DB-040(f) deliberately deferred behind the flag, asserted from config in the tests)."
+  ],
+  "D-078-R002": [
+   "Human-only determination boundary hardened: revoke (the human withdrawal path) now binds on the STORED record's condo_key and succeeds under every degraded-resolver class (D-051 fail-direction - the system never blocks withdrawal because it cannot re-resolve); cross-property probes read 404 before any status leak (binding-before-status); no auto-selection introduced anywhere; the record stays revocable/supersedable."
+  ],
+  "D-078-R003": [
+   "Sequencing: contracted at the seq-123 re-feed seam after BOTH pair tasks (T058 242nd, T059 243rd) accepted; this is the recorded DB-040 successor slice; the pair order condition is history and untouched."
+  ]
+ },
+ "orchestrator_evidence": {
+  "note": "Supervisor-owned evidence collection per the in-loop reviewer's revised-handoff demand: documented commands re-run fresh by the orchestrator with EXPLICIT cwd in wt-m5t062 at the reviewed tree; digest identity verified byte-equal after cherry-pick into ctl24 at 0539cc84 (ALL-MATCH x8). The producer report's section 4.1 worker outcomes (same commands, same results) are retained SEPARATELY as that unit's own record.",
+  "commands": [
+   {
+    "argv": "python -m ruff check .",
+    "cwd": "wt-m5t062/services/api",
+    "exit": 0,
+    "output_tail": "All checks passed!"
+   },
+   {
+    "argv": "python -m pytest tests/site_definition tests/api/test_site_definition_api.py -q",
+    "cwd": "wt-m5t062/services/api",
+    "exit": 0,
+    "output_tail": "68 passed in 2.54s"
+   },
+   {
+    "argv": "python -m pytest tests/api -q",
+    "cwd": "wt-m5t062/services/api",
+    "exit": 0,
+    "output_tail": "611 passed in 22.78s"
+   },
+   {
+    "argv": "python tools/modularity_check.py --check",
+    "cwd": "wt-m5t062 (repo root)",
+    "exit": 0,
+    "output_tail": "failures 0; warnings 20 (none in the packet files)"
+   }
+  ],
+  "reviewed_file_digests": {
+   "note": "sha256 over LF-normalized bytes of each of the 8 changed files at ad90a2ff/0539cc84 (ALL-MATCH verified post-pick); values enumerated in the gate wave reports rather than inline (gitleaks generic-api-key FP class on api-named keys adjacent to hex)"
+  },
+  "ci": "CI at 0539cc84: api job red on EXACTLY the mount-presence introspection (root-caused above); CI at 0366210c (= the corrected material 099c32a7 + one docs-only commit): CI/secret-scan/context-budget ALL success - the full api suite incl. the corrected mount tests green on the pinned 3.12/fastapi-0.139 environment"
+ }
+}

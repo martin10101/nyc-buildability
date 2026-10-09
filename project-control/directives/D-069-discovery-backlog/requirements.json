@@ -1,0 +1,85 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-069",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T20:20:00.000000+00:00",
+ "requirements": [
+  {
+   "id": "D-069-R001",
+   "text": "Create docs/DISCOVERY_BACKLOG.md - a NOT-auto-injected ledger of mid-work product/domain discoveries. Each entry carries: stable id (DB-nnn), date, the discovery, its source (task/report/probe), the pipeline implication, and a lifecycle status from exactly {OPEN, QUEUED(<task-id>), RESOLVED(<task-id or record>), WATCH(<review trigger>)}. Boundary: the backlog holds discoveries NOT already tracked as ledger tasks, blockers, or directive requirements - it never duplicates those systems, it feeds them.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-069-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": ["docs/DISCOVERY_BACKLOG.md"],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "File exists with the entry schema; seeded from the currently-scattered findings at creation.",
+   "required_evidence": "the file + git history",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Created in the capture-adjacent commit.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": ["docs/DISCOVERY_BACKLOG.md"], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-069-R002",
+   "text": "Record-at-discovery duty: when mid-work evidence surfaces a product/domain discovery with a pipeline implication (a data-model gap, a newly observed real-world case class, an advisory review finding routed to follow-up, an external-source condition), append a backlog entry in the same working session it was found - never defer to session end.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-069-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": ["docs/DISCOVERY_BACKLOG.md"],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Backlog grows at discovery time (commit timestamps near the discovery evidence).",
+   "required_evidence": "git history correlation",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing duty from receipt.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": ["docs/DISCOVERY_BACKLOG.md"], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-069-R003",
+   "text": "Sweep-at-planning duty: at every contract seam and every replan, the orchestrator sweeps the backlog's OPEN and WATCH entries and moves each touched entry forward - queue it as a ledger task (QUEUED), resolve it with the closing record (RESOLVED), or re-affirm WATCH with its trigger. No entry is ever silently dropped; deletion is prohibited (entries only change status).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-069-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": ["docs/DISCOVERY_BACKLOG.md"],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Contract/replan commits show backlog status transitions; handoffs reference the sweep.",
+   "required_evidence": "git history at contract seams",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing duty from receipt.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": ["docs/DISCOVERY_BACKLOG.md"], "tests": [], "tasks": []}
+  }
+ ]
+}

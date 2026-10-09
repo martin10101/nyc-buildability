@@ -1,0 +1,105 @@
+{
+  "contract_version": "1.0.0",
+  "benchmark_id": "pilot-a-placeholder",
+  "purpose": "pilot",
+  "basis": "Plan section 11, Pilot A, and section 13 decision Q1: the owner confirms the pilot lot and chooses the verifier.",
+  "identity": null,
+  "expected_values": [],
+  "checks": [
+    {
+      "check_id": "C-1",
+      "title": "One source for heights",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-2",
+      "title": "Allowance vs. building",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-3",
+      "title": "Existing building",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-4",
+      "title": "Drawings match numbers",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-5",
+      "title": "Consistency sweep",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-6",
+      "title": "No duplicate options",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-7",
+      "title": "Current sources",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-8",
+      "title": "Same rule everywhere",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-9",
+      "title": "Zoning lot",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-10",
+      "title": "Lot-split ideas",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-11",
+      "title": "No template sentences",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    },
+    {
+      "check_id": "C-12",
+      "title": "Units in one place",
+      "applicability": "pending",
+      "reason": "Pilot A lot not chosen yet (owner decision Q1).",
+      "pass_when": null
+    }
+  ],
+  "recorded_fixtures": [],
+  "reference_documents": [
+    {
+      "path": "docs/PRODUCT_PLAN_CURRENT_2026-09-28.md",
+      "sha256": "0e1cb834d686a9a3fe310519fd6c8b7e598314a8f34b259c849d5b300761544f",
+      "role": "Plan section 11 (Pilot A) and section 13 (Q1)"
+    }
+  ],
+  "open_items": [
+    "Owner decision Q1: pilot lot and verifier"
+  ]
+}

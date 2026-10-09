@@ -1,0 +1,26 @@
+{
+  "task_id": "M0-T110",
+  "producer_agent": "fable-orchestrator-session",
+  "report_file": "project-control/reports/M0-T110-codex-channel.md",
+  "submitted_at": "2026-08-28T21:48:41.326477+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T110-evidence-map.json",
+  "content_manifest_sha256": "0c97eb77e12a3dcac25a90e22fec81c3cba1a764d117d0e57d1e0828629f5f43",
+  "reviewed_sha": "c8b38ba1c6855dc7053f2f9404f68ef617a49e89",
+  "applicable_requirements": [
+    "D-024-R231",
+    "D-024-R232",
+    "D-024-R233",
+    "D-024-R234",
+    "D-024-R235",
+    "D-024-R236",
+    "D-024-R237",
+    "D-024-R238",
+    "D-024-R239",
+    "D-024-R240",
+    "D-024-R246",
+    "D-024-R248",
+    "D-024-R249"
+  ],
+  "updated_at": "2026-08-28T21:48:41.963822+00:00"
+}

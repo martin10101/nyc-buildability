@@ -1,0 +1,15 @@
+{
+  "checkpoint_id": "M5-T030-review",
+  "captured_at": "2026-09-15T01:04:35.064716+00:00",
+  "reviewed_sha": "0c6340b2e0824afc1b8b579668cb337d927c1ed9",
+  "tree_sha": "2440fdaecd1e6c7a3c2fee67cb771c7754ecc6b9",
+  "content_manifest_sha256": "5070647085f077de7f1565be58b0a1f399e7352ceb41888e2c8c31e12d6bfaf0",
+  "producer_report_sha256": "fcea9ebdb2efffe5849de78051ffb7d4e6bef2417dda142201d723270f8a610d",
+  "esb_capture_sha256": "ccaaf621f409c4d732d269ae31ef817e30c64ff296ab461ea6ca662ead1a7507",
+  "product_delta_from_fa3cea2d": [],
+  "ci_run": 34915644821,
+  "ci_url": "https://github.com/martin10101/nyc-buildability/actions/runs/34915644821",
+  "ci_state_at_capture": "running",
+  "protected_state_evidence": "project-control/reports/M5-T030-scope.json",
+  "note": "Remote source tree equals local submitted tree; product files match independent focused-test hashes. Functional review/CI precede authorized candidate deployment; final task acceptance waits for new live real-building verification."
+}

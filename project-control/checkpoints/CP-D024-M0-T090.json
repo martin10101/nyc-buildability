@@ -1,0 +1,21 @@
+{
+  "checkpoint_id": "CP-D024-M0-T090",
+  "timestamp": "2026-08-26T08:03:04.163355+00:00",
+  "commit": "2fba87f",
+  "branch": "control/D-024-fable-codex-loop",
+  "active_milestone": "M4",
+  "summary": "M0-T090 accepted (C1 bounded subagent contracts + structural workload sizing; DCV 46/46, 4 gates PASS, composite baseline 2653/3/0); M0-T100 statusLine activation (D-027) + M0-T101 validator-shape repair also accepted this session; campaign seq 6 NEXT=M0-T091 (C2 runtime supervision) with the carried pre-activation correction bundle; D-028 seam approaching (~494k ctx at acceptance)",
+  "post_accept_verifications_confirmed": {
+    "M0-T027": [
+      "D-004-R389",
+      "D-004-R486",
+      "D-004-R487",
+      "D-004-R488",
+      "D-004-R501"
+    ],
+    "M0-T048": [
+      "D-010-R152"
+    ]
+  },
+  "updated_at": "2026-08-26T08:03:04.269715+00:00"
+}

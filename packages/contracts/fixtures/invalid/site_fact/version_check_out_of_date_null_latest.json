@@ -1,0 +1,34 @@
+{
+  "contract_version": "1.1.0",
+  "fact_id": "fact-lot-area-out-of-date",
+  "key": "lot_area",
+  "lot_bbl": "5999999999",
+  "street": null,
+  "value": 5000,
+  "unit": "square_feet",
+  "measurement": {
+    "rank": "city_records",
+    "label": "City records"
+  },
+  "source": {
+    "kind": "city_dataset",
+    "dataset": "test-fixture-synthetic PLUTO",
+    "dataset_version": "26v1",
+    "retrieved_at": "2026-06-01T12:00:00Z",
+    "query_ref": "test-fixture-synthetic://pluto/5999999999",
+    "document_ref": null,
+    "statement": null,
+    "version_check": {
+      "status": "out_of_date",
+      "label": "Out of date",
+      "latest_known_version": null,
+      "latest_known_seen_at": null,
+      "latest_known_query_ref": null,
+      "reason": "A newer version is published but the fixture omits which one."
+    }
+  },
+  "blocks": [],
+  "editable": true,
+  "note": "Synthetic fixture (test-fixture-synthetic); not a real lot.",
+  "_expected_failure": "version_check.status 'out_of_date' with a null latest_known_version: 'current' and 'out_of_date' compared a readable published version, so latest_known_version must be non-null (the latest_known allOf anyOf matches no branch)."
+}

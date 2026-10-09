@@ -5,11 +5,14 @@ directive **D-007**. It is being built in five phases. **Phases 1, 2, 3 and 4
 exist today.**
 
 **Nothing in this package runs your project unattended.** The loop exists now,
-but it only runs in the two modes that cannot act on their own: `shadow` (which
-forwards *nothing*) and `supervised` (where you approve every single prompt).
-There is still no push, no merge, and no acceptance. The unattended writing mode
-(`limited-auto`) is not implemented at all, and turning it on later is a
-separate, explicit decision that only you can make.
+but by default it only runs in the two modes that cannot act on their own:
+`shadow` (which forwards *nothing*) and `supervised` (where you approve every
+single prompt). There is still no push, no merge, and no acceptance. The
+unattended writing mode (`limited-auto`) is now BUILT — M0-T079 gave it durable
+owner-controlled run budgets, wired circuit breakers, live pre-dispatch probes,
+and typed refusals — and it is **off**. Every launch that does not carry the
+explicit `--owner-enable-bounded-auto` input is refused by name, and actually
+turning it on for real work is still a separate decision that only you can make.
 
 What Phase 4 added — *validation*, the part that proves the first three phases
 actually behave:
@@ -66,6 +69,11 @@ python -m tools.agent_supervisor emergency-stop
 python -m tools.agent_supervisor start --mode shadow
 python -m tools.agent_supervisor start --mode supervised
 ```
+
+> **Operator launch path:** the commands on this page are pedagogical
+> `<placeholder>` templates. The ONE concrete operator launch path is the
+> manifest form — `mrl_launch_draft` then `start --launch-manifest <path>` —
+> documented in `docs/MRL_LAUNCH_RUNBOOK.md` (M0-T136 C-B5; D-024-R586).
 
 `start` runs the safety sequence first, every time — one supervisor per checkout,
 the after-a-crash check, and the integrity checks on its own records. Then it
@@ -266,7 +274,11 @@ Nothing is deferred. Every command in the directive's list is implemented.
   running a long-lived unattended pipe server is not built (caveat 4).
 * **The Phase 5 shadow pilot** — one real controlled task run in shadow mode,
   measured against the owner-touch budget, ending in a decision packet.
-* **`limited-auto`.** Not implemented at all, in any form.
+* **`limited-auto` ACTIVATION.** The mode itself is implemented (M0-T079) and is
+  OFF by default: without the explicit per-launch `--owner-enable-bounded-auto`
+  input it is a structured refusal (outcome `refused_mode`, exit 16). Activating
+  it on a live host is a separate owner act under the R595 pre-activation path,
+  and no measured unattended run has been performed.
 
 ---
 
@@ -371,6 +383,74 @@ complete audit record.
 
 ---
 
+## Claude Code version admission events
+
+The controller is certified against **one exact Claude CLI identity** (executable
+digest + reported version). A silent CLI auto-update breaks that certification: it
+happened mid-campaign (seq-30 — the installed CLI drifted to `2.1.251` while the
+certified fixture pins `2.1.248`), which is exactly the failure the drift-tooth
+tests are there to catch.
+
+So a Claude Code upgrade is never something that just *happens* to the controller —
+it is a **deliberate admission event** (D-024-R286/R287):
+
+1. **Background updates stay disabled for every claude child the supervisor launches
+   with a CONSTRUCTED environment.** Each such child is started with
+   `DISABLE_AUTOUPDATER=1` forced into its environment, unconditionally — see
+   `process.claude_child_env`, applied *after* the env allowlist and any config
+   `extra_env`, so neither can drop or override it. This is claude-scoped: codex
+   children keep the plain `minimal_env` and are untouched. `DISABLE_AUTOUPDATER` only
+   blocks the *background* update attempt; the manual `claude update` still works.
+   **`DISABLE_UPDATES` is deliberately NOT used** — it would also block a manual,
+   intentional update, and intentional updates are the whole point of an admission
+   event (D-024-R280).
+
+   *Exactly which claude launches are injection-forced* (every one that builds its
+   own env through `claude_child_env`):
+   - the **worker launch** (`claude_runner.ClaudeRunner.run_unit`);
+   - the **model-availability probe** (`claude_runner.probe_model_launch`);
+   - the **`doctor --live` control-response probe** run *inside* the certification
+     window (`preflight.control_response_round_trip`);
+   - the **turnover successor launch** — worker redispatch **and** orchestrator/handoff
+     start alike (`turnover_adapters.SupervisorLauncher._build_invocation`).
+
+   *What is NOT injection-forced, and why it is still covered.* Two seams launch the
+   CLI as a bare `claude --version` / `claude --help` capability probe and inherit the
+   **full parent environment** rather than a supervisor-constructed one:
+   `capability_probe.py` (`_run`, ~line 99, no `env=`) and `native_runtime.py`
+   (`_run`, ~line 101, `env=None`). They are deliberately NOT env-stripped (a version/
+   help check needs the real PATH), so the forced injection does not reach them; they
+   are covered instead by the owner's **machine-scope** `DISABLE_AUTOUPDATER` variable
+   when it is set. This split is the precise truth: *every claude child launched with
+   a supervisor-constructed environment is injection-forced; the two bare version/help
+   probes inherit the parent environment and rely on the owner belt.*
+
+   *Why the injection has to exist at all (G3 Finding-4).* `minimal_env`'s allowlist
+   **strips** `DISABLE_AUTOUPDATER` — it is not on `DEFAULT_ENV_ALLOWLIST` — so even
+   if the owner has set the machine-scope variable, a supervisor-constructed child
+   would *lose* it through the allowlist. The forced `claude_child_env` injection is
+   what re-establishes it for those launches; the two belts are complementary, not
+   redundant (allowlist stripping is exactly why the code-side injection is needed,
+   and the bare probes are exactly why the machine-scope belt is still worth setting).
+2. **To admit a new version, do it intentionally, in order:** update the CLI on
+   purpose → recapture the measured fixture pack at the new version → run the full
+   recertification (fixtures, drift teeth, live probes, golden suites, gates,
+   independent review, manifest binding, frozen-identity certification) → **only
+   then** repin the CLI identity with `--repin-cli-identity`. Never repin first, and
+   never silently accept version drift (D-024-R287).
+3. **The workstation-scope machine environment variable is owner-side only.** If the
+   certification window also needs `DISABLE_AUTOUPDATER=1` set at the Windows machine
+   scope (so no terminal anywhere can trigger a background update while certification
+   runs), that is an **owner action in an Administrator PowerShell**, given as an exact
+   command pair for the owner to run — an agent never sets a machine-scope environment
+   variable itself (D-024-R288). The forced per-child injection above does not depend
+   on it; the machine-scope control is defense in depth for the certification window.
+
+See `docs/CONTROLLER_UPDATE_RUNBOOK.md` for the step-by-step recertification/repin
+procedure and the exact owner-side command pack.
+
+---
+
 ## If you are not the person who wrote this
 
 This section is the plain-language guide D-007 §12.1 asks for. No code editing is
@@ -397,8 +477,9 @@ To clear it you must deliberately run `stop --clear`.
 | `ROTATION_PENDING` | a threshold was crossed; the current unit will **finish** first, then hand over to a fresh session |
 | `WAIT_FOR_OWNER` | a question is queued for you |
 | `USAGE_LIMIT_WAIT` / `SCHEDULED_RESUME` | a provider limit was hit; the wake-up is scheduled |
-| `PAUSED_RECOVERY` | something could not be verified after an interruption; it is waiting for you |
-| `EMERGENCY_STOPPED` / `HALTED` | stopped deliberately; only you restart it |
+| `PAUSED_RECOVERY` | something could not be verified after an interruption; it is waiting for you. You leave it with `clear-recovery` |
+| `HALTED` | stopped deliberately after an unrecoverable fault; you leave it with `owner-restart`, once the cause is addressed |
+| `EMERGENCY_STOPPED` | stopped hard; you leave it with the stronger `acknowledge-emergency-stop`, and never an ordinary restart |
 
 **Where queued questions are, and how to answer.** `pending-approvals` lists
 them, each with a long digest. Answer with `approve-once <id> <digest>` or
@@ -410,6 +491,29 @@ approval and will be refused.
 **How to restart after a crash.** Just run `start --mode shadow` again. It works
 out what happened before doing anything, and it will not resume anything it
 cannot verify.
+
+**How to leave a blocking state — an explicit, audited owner act.** When a run
+stops in a blocking state, `start` alone cannot leave it: leaving is a deliberate,
+audited owner decision, one command per state, each fail-closed. None clears a
+flag, resets a budget, or dispatches anything; each transitions the state exactly
+once and writes a durable audited owner-recovery record, and then `start`
+re-validates before any provider is contacted.
+
+| From | Command | Notes |
+|---|---|---|
+| `PAUSED_RECOVERY` | `clear-recovery` | resumes to preflight after you resolve the pause |
+| `WAIT_FOR_OWNER` (a held prompt) | `resume-pending-prompt --approve-prompt-digest <digest>` | forwards the exact approved prompt |
+| `WAIT_FOR_OWNER` (a question) | `resume-after-answer` | resumes to preflight once you have answered every queued question with `approve-once`/`deny` |
+| `HALTED` | `owner-restart` | leaves `HALTED` once the cause is addressed |
+| `EMERGENCY_STOPPED` | `acknowledge-emergency-stop --acknowledge-emergency-stop --confirm-emergency-token <token>` | the **stronger** exit; needs the explicit flag AND the journal token it prints, so an emergency stop is never left by habit or a script |
+
+Every one of these refuses while a durable emergency stop is set (clear it first
+with `stop --clear`), from any state other than its own, and while an owner ask is
+open, an external effect is unreconciled, a child is unaccounted for, the provider
+identity drifted, or recovery has not classified the checkpoint `SAFE_CHECKPOINT`.
+The ordinary `owner-restart` refuses an emergency stop; only
+`acknowledge-emergency-stop` leaves that state, and no automatic path leaves
+either.
 
 **Verified recovery vs. an ambiguous pause — the important distinction.**
 
@@ -596,6 +700,70 @@ a test for that too. The fix only ever adds a denial; it removes none.
 
 ---
 
+## The launch seam: one pre-provider-contact gate for every worker launch/resume
+
+`launch_seam.py` (M0-T123, D-024 Amendment 19) is the single seam every path
+capable of launching or resuming a Claude worker passes through **before the
+provider is contacted** — ordinary start, recovery start, controller restart,
+rotation, turnover, and checkpoint continuation. It exists because a reproduced
+live run (cycle 2 of the M0-T107 journey) fell through the one gap that had no
+guard: the ordinary `IDLE → PREFLIGHT → first-cycle` start never evaluated the
+rotation ceiling, and the launch cwd was never bound to the packet's isolated
+worktree. The result was a worker that resumed an over-ceiling session in the
+orchestrator's **primary control checkout**, ran to 640k tokens, and died with no
+checkpoint.
+
+The seam owns two guards and nothing else (no I/O, no journal writes, no provider
+contact):
+
+* **Context-rotation ceiling (400k).** A session at or above the ceiling is
+  **never resumed** — it rotates to a fresh session at the safe seam, or fails
+  closed. Missing or unknown token telemetry on a session that would be continued
+  is fail-closed, never assumed below the ceiling. Exactly-at-400k is at-or-above.
+* **cwd binding.** A launch bound to anything other than the packet's isolated
+  worktree fails closed — the primary control checkout (named specifically), any
+  unexpected directory, or an unbound (empty) worktree. The comparison folds
+  Windows path forms (drive-letter case, slash direction) so a primary-checkout
+  launch can never masquerade as the worktree.
+
+It is enforced at three points, each proven by the removal-sensitive reachability
+sweep in `test_agent_supervisor_launch_seam.py`:
+
+1. **The runner chokepoint** — `ClaudeRunner.run_unit` calls the seam immediately
+   before its one `subprocess.Popen`, so no worker unit reaches the provider
+   without passing it. (The model-availability probe `probe_model_launch` also
+   launches `claude`, but it runs no work unit, brokers no permission, and resumes
+   nothing, so the ceiling/cwd guards do not apply to it.)
+2. **The CLI worktree gate** — `cli._run_loop` refuses, before the runner is
+   built, when the bound worktree is not the isolated worktree the task packet
+   declares (the reproduced defect: packet declared `wt-m0t107`, launch bound to
+   `…/ctl24`). The refusal rides the existing typed-refusal path.
+3. **The loop pre-first-dispatch seam** — `SupervisedLoop.run` sheds a recorded
+   over-ceiling session (or an unconsumed durable `rotation_pending=context_*`
+   flag) to a fresh session at the safe seam **before the first dispatch**, so the
+   over-ceiling session receives no new events and the next unit launches as a
+   distinct fresh session in the packet worktree.
+
+**Refusal codes** (all fail closed, all typed):
+
+| Code | Meaning |
+|---|---|
+| `cwd_primary_checkout` | the launch/worktree is the orchestrator's primary control checkout, not the packet's isolated worktree |
+| `cwd_mismatch` | the launch cwd/worktree is some other directory the packet does not declare |
+| `cwd_unbound` | no worktree was bound, or the cwd is empty |
+| `over_ceiling_resume_forbidden` | the session to be continued is at/above the 400k ceiling; rotate to a fresh session instead |
+| `ceiling_telemetry_missing` | a resume was requested but the session's usage is unknown; fail closed, never assume below |
+
+**Operator guidance.** Always pass `--worktree` pointing at the packet's isolated
+worktree; a `cwd_primary_checkout` / `cwd_mismatch` refusal means the worktree the
+command bound does not match the packet's declared `worktree`. An
+`over_ceiling_resume_forbidden` or `ceiling_telemetry_missing` refusal means the
+recorded session crossed (or may have crossed) the rotation ceiling; the run does
+not resume it — it starts fresh at the safe seam. None of these clear a flag,
+reset a budget, or touch the audit chain.
+
+---
+
 ## The safety rules this code is built around
 
 * No `shell=True`, ever, and no command strings — argument arrays only.
@@ -639,3 +807,9 @@ a test for that too. The fix only ever adds a denial; it removes none.
   nonce, and an expiry. A bare "yes" is not an approval.
 * A model change needs a confirmation token derived from that exact change, and
   applies only at a checkpoint boundary.
+* A session at or above the 400k context-rotation ceiling is never resumed — it
+  rotates to a fresh session at the safe seam, or fails closed. Unknown token
+  telemetry on a resume is fail-closed, never assumed below the ceiling.
+* Every worker launch, resume, and rotation binds its working directory to the
+  packet's isolated worktree before the provider is contacted; the primary
+  control checkout, an unexpected directory, or an unbound cwd fails closed.

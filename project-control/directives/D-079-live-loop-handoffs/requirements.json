@@ -1,0 +1,110 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-079",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T07:15:00+00:00",
+ "requirements": [
+  {
+   "id": "D-079-R001",
+   "text": "Every session handoff carries an EXACT FILE MAP: the repository locations of all knowledge/record markdown produced through the work - at minimum docs/SESSION_HANDOFF.md (orientation), docs/DISCOVERY_BACKLOG.md (product/domain findings + sweeps), docs/WORKING_KNOWLEDGE.md (Tier-2 process knowledge), .claude/rules/PROGRAM_KNOWLEDGE.md (Tier-1 pointers), docs/PROPOSAL_EDITOR_PHASED_PLAN.md (the build plan), project-control/reports/ (producer reports, gate/wave records saved verbatim, recon briefs, release requests), project-control/directives/ (owner directives + index), and project-control/tasks|gates|state.json (the authoritative ledger) - named explicitly with what each holds, so the successor never hunts.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-079-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff document contains the file-map section; the successor locates every referenced artifact by the map alone.",
+   "required_evidence": "docs/SESSION_HANDOFF.md at each handoff seam.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; applies to every handoff from seq 121 onward.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-079-R002",
+   "text": "Every handoff states the MINIMUM loop-continuation facts per lane: task packet id + path, worktree path, launcher path, current run-id, live/down state, and the one next action - lean enough to act on immediately, never a re-derivation exercise.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-079-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff's lane table is sufficient, by itself, to monitor/relaunch each lane.",
+   "required_evidence": "docs/SESSION_HANDOFF.md lane table at each seam.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-079-R003",
+   "text": "Loops KEEP RUNNING across session handoffs and /clear: the detached supervisor processes are never stopped for a handoff; a successor session never disturbs a LIVE lane (no audit-writing CLI verbs against a live loop - the standing rule) and picks up monitoring (re-arm a read-only watcher) and seam work around them. This adjusts the D-070 finished-seam preference: a PLANNED handoff may leave lanes live; D-070's crash/forced-turnover fallback is unchanged.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-079-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Launcher/lock state shows lanes surviving handoffs; no chain-fork incidents from successor writes against live loops.",
+   "required_evidence": "Supervisor locks/journals + the successor's re-armed watcher.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-079-R004",
+   "text": "Fast resume: when a PLANNED handoff attests a clean, current state (ledger count, validator exit 0, CI green, lanes enumerated), the successor runs ONLY the cheap identity check (cwd, branch, HEAD==origin, Bootstrap Gate 0) and then CONTINUES IMMEDIATELY from the handoff's next-action line - no full re-reconciliation sweep, no re-running of the validation battery the handoff already records. Full reconciliation stays required on crash/forced turnover, on any contradiction between the handoff and observed state, or when the ledger disagrees with the prose (the ledger always wins).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-079-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff's COPY-INTO-THE-NEW-SESSION prompt instructs identity-check-then-continue; successor transcripts show immediate continuation on the planned path.",
+   "required_evidence": "The handoff prompt text + successor session behavior.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [], "tests": [], "tasks": []}
+  }
+ ]
+}

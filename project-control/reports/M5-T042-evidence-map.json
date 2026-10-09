@@ -1,0 +1,10 @@
+{
+  "task_id": "M5-T042",
+  "material_commit": "0a6c43c9 (cherry-pick of worktree 224807a8; one [ORCH-CORRECTED] comment-only gitleaks:allow marker included)",
+  "producer_report": "project-control/reports/M5-T042-producer-report.md",
+  "requirements": {
+    "D-066-R001": [
+      "The contract carried the seam navigation block naming the module's leaf status, the SODA-connector models to mirror (pluto_soda.py / ztldb_soda.py), the query.py instruction, and the advisory clause (packet inputs; G0 report M5-T042-G0.md). The producer stayed inside the named three-file surface: material 0a6c43c9 touches exactly services/api/app/connectors/dtm_condo_soda.py + its test + the producer report, all in allowed_paths; zero consumer imports anywhere under app/ (the module is a leaf by grep); the existing connector idioms were mirrored (transport stack reuse, typed error taxonomy, schema-shape guards per the accepted pluto/ztldb pattern). The full connectors suite (852 passed) proves no consumer surface regressed."
+    ]
+  }
+}

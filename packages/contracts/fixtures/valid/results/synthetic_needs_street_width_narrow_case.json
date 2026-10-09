@@ -1,0 +1,790 @@
+{
+  "contract_version": "1.0.0",
+  "results_id": "test-fixture-synthetic-results-003-narrow",
+  "study_id": "test-fixture-synthetic-study-003",
+  "option_id": "opt-a",
+  "revision": 1,
+  "computed_at": "2026-09-30T14:01:00Z",
+  "out_of_date": false,
+  "out_of_date_reason": null,
+  "depends_on_fact_ids": [
+    "fact-lot-area",
+    "fact-frontage-a",
+    "fact-frontage-b",
+    "fact-lot-depth",
+    "fact-lot-type",
+    "fact-zoning-district",
+    "fact-street-width-a",
+    "fact-street-width-b"
+  ],
+  "lot_selection_statement": "Based on the lots you selected — the app does not verify the zoning lot",
+  "with_approvals_label": null,
+  "answers": {
+    "floor_area_allowance": {
+      "status": "available",
+      "values": [
+        {
+          "key": "max_residential_far",
+          "label": "Maximum residential FAR",
+          "value": 2.0,
+          "unit": "ratio",
+          "zr_sections": [
+            "ZR 23-22"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-far@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-zoning-district"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "max_residential_floor_area",
+          "label": "Floor-area allowance",
+          "value": 10000,
+          "unit": "square_feet",
+          "zr_sections": [
+            "ZR 23-22"
+          ],
+          "sources": [
+            {
+              "kind": "site_fact",
+              "ref": "fact-lot-area"
+            },
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-far@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        }
+      ],
+      "measurement": {
+        "rank": "approximate_tax_map",
+        "label": "Approximate — tax map"
+      }
+    },
+    "permitted_envelope": {
+      "status": "available",
+      "values": [
+        {
+          "key": "min_base_height",
+          "label": "Minimum base height",
+          "value": 30,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-432"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "max_base_height",
+          "label": "Maximum base height",
+          "value": 45,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-432"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "max_building_height",
+          "label": "Maximum building height",
+          "value": 55,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-432"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "setback_depth_above_base_synthetic_street_a",
+          "label": "Setback above the base (Synthetic Street A)",
+          "value": 15,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-433"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-street-width-a"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "setback_depth_above_base_synthetic_street_b",
+          "label": "Setback above the base (Synthetic Street B, narrow-street case)",
+          "value": 15,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-433"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-street-width-b"
+            }
+          ],
+          "exception_label": "Needs street width"
+        },
+        {
+          "key": "max_lot_coverage",
+          "label": "Maximum lot coverage (corner lot)",
+          "value": 100,
+          "unit": "percent",
+          "zr_sections": [
+            "ZR 23-362"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-coverage-yards@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-lot-type"
+            }
+          ],
+          "exception_label": null
+        }
+      ],
+      "measurement": {
+        "rank": "assumed",
+        "label": "Assumed"
+      }
+    },
+    "building_option": {
+      "status": "available",
+      "values": [
+        {
+          "key": "achieved_zoning_floor_area",
+          "label": "Achieved zoning floor area",
+          "value": 10000,
+          "unit": "square_feet",
+          "zr_sections": [
+            "ZR 23-22"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-far@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-lot-area"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "floors",
+          "label": "Floors",
+          "value": 4,
+          "unit": "stories",
+          "zr_sections": [
+            "ZR 23-432"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "building_height",
+          "label": "Building height",
+          "value": 42,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-432"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-height-setback@0.1.0-draft"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "footprint_width",
+          "label": "Footprint width",
+          "value": 50,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-362"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-coverage-yards@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-frontage-a"
+            }
+          ],
+          "exception_label": null
+        },
+        {
+          "key": "footprint_depth",
+          "label": "Footprint depth",
+          "value": 50,
+          "unit": "feet",
+          "zr_sections": [
+            "ZR 23-362"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "test-fixture-synthetic-r6b-coverage-yards@0.1.0-draft"
+            },
+            {
+              "kind": "site_fact",
+              "ref": "fact-lot-depth"
+            }
+          ],
+          "exception_label": null
+        }
+      ],
+      "measurement": {
+        "rank": "assumed",
+        "label": "Assumed"
+      }
+    }
+  },
+  "remaining_floor_area": {
+    "status": "not_applicable",
+    "reason": "No existing building on the site."
+  },
+  "shortfall": {
+    "status": "none"
+  },
+  "addon_gains": [
+    {
+      "addon_id": "qualifying_affordable_or_senior_housing",
+      "name": "Qualifying affordable or senior housing",
+      "group": "A",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "Qualifying affordable or senior housing on the site"
+      ],
+      "gain": {
+        "status": "available",
+        "floor_area_sf": 2000,
+        "height_ft": 10,
+        "floors": 1
+      }
+    },
+    {
+      "addon_id": "neighbor_unused_floor_area",
+      "name": "A neighbor's unused floor area",
+      "group": "C",
+      "on": false,
+      "relative_to": "current_selection",
+      "requires": [
+        "A written agreement with the neighboring owner"
+      ],
+      "gain": {
+        "status": "not_available",
+        "reason": "The neighbor estimate is not built yet.",
+        "reason_kind": "rule_not_implemented"
+      }
+    }
+  ],
+  "best_combination": {
+    "status": "available",
+    "goal": {
+      "kind": "most_residential_floor_area",
+      "text": null
+    },
+    "selected_addon_ids": [
+      "qualifying_affordable_or_senior_housing"
+    ],
+    "excluded": [
+      {
+        "addon_id": "neighbor_unused_floor_area",
+        "reason": "Agreement add-ons are never part of Best combination."
+      }
+    ],
+    "goal_value_sf": 12000
+  },
+  "completeness_line": {
+    "text": "Not yet covered: community facility floor area, ground-floor commercial space",
+    "not_yet_covered": [
+      "Community facility floor area",
+      "Ground-floor commercial space"
+    ]
+  },
+  "status_strip": [
+    {
+      "text": "Zoning maximum"
+    },
+    {
+      "text": "Approximate measurements"
+    },
+    {
+      "text": "Needs street width"
+    }
+  ],
+  "notices_count": 4,
+  "floor_by_floor": [
+    {
+      "floor": 1,
+      "floor_label": "Floor 1",
+      "gross_sf": 2500,
+      "deductions_sf": 0,
+      "zoning_floor_area_sf": 2500,
+      "height_ft": 12,
+      "use": "residential"
+    },
+    {
+      "floor": 2,
+      "floor_label": "Floor 2",
+      "gross_sf": 2500,
+      "deductions_sf": 0,
+      "zoning_floor_area_sf": 2500,
+      "height_ft": 10,
+      "use": "residential"
+    },
+    {
+      "floor": 3,
+      "floor_label": "Floor 3",
+      "gross_sf": 2500,
+      "deductions_sf": 0,
+      "zoning_floor_area_sf": 2500,
+      "height_ft": 10,
+      "use": "residential"
+    },
+    {
+      "floor": 4,
+      "floor_label": "Floor 4",
+      "gross_sf": 2500,
+      "deductions_sf": 0,
+      "zoning_floor_area_sf": 2500,
+      "height_ft": 10,
+      "use": "residential"
+    }
+  ],
+  "floor_stack": {
+    "status": "available",
+    "floors_fit": 5,
+    "height_limit_ft": 55,
+    "levels": [
+      {
+        "floor": 1,
+        "floor_to_floor_ft": 12,
+        "top_of_floor_ft": 12,
+        "allowable_area_sf": 5000
+      },
+      {
+        "floor": 2,
+        "floor_to_floor_ft": 10,
+        "top_of_floor_ft": 22,
+        "allowable_area_sf": 5000
+      },
+      {
+        "floor": 3,
+        "floor_to_floor_ft": 10,
+        "top_of_floor_ft": 32,
+        "allowable_area_sf": 5000
+      },
+      {
+        "floor": 4,
+        "floor_to_floor_ft": 10,
+        "top_of_floor_ft": 42,
+        "allowable_area_sf": 5000
+      },
+      {
+        "floor": 5,
+        "floor_to_floor_ft": 10,
+        "top_of_floor_ft": 52,
+        "allowable_area_sf": 2975
+      }
+    ],
+    "zr_sections": [
+      "ZR 23-432",
+      "ZR 23-433",
+      "ZR 23-362"
+    ]
+  },
+  "existing_building": {
+    "status": "no_existing_building"
+  },
+  "unit_estimate": {
+    "status": "available",
+    "value": 14,
+    "formula": "10,000 ÷ 680 = 14.71",
+    "factor": {
+      "value": 680,
+      "unit": "square_feet_per_dwelling_unit"
+    },
+    "rounding_rule": "rounds up only at .75 or more",
+    "zr_sections": [
+      "ZR 23-52"
+    ]
+  },
+  "geometry": {
+    "status": "available",
+    "crs": "local_feet",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "lot_outline": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          50,
+          0
+        ],
+        [
+          50,
+          100
+        ],
+        [
+          0,
+          100
+        ],
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    "streets": [
+      {
+        "street": "Synthetic Street A",
+        "frontage_line": [
+          [
+            0,
+            0
+          ],
+          [
+            50,
+            0
+          ]
+        ],
+        "street_width_fact_id": "fact-street-width-a"
+      },
+      {
+        "street": "Synthetic Street B",
+        "frontage_line": [
+          [
+            0,
+            0
+          ],
+          [
+            0,
+            100
+          ]
+        ],
+        "street_width_fact_id": "fact-street-width-b"
+      }
+    ],
+    "yards": {
+      "status": "available",
+      "entries": [
+        {
+          "kind": "rear",
+          "status": "not_required",
+          "reason": "Corner lot: a rear yard is not required within 100 ft of the corner.",
+          "zr_sections": [
+            "ZR 23-344(a)"
+          ]
+        }
+      ]
+    },
+    "setback_lines_per_level": {
+      "status": "available",
+      "entries": [
+        {
+          "floor": 5,
+          "lines": [
+            [
+              [
+                15,
+                15
+              ],
+              [
+                50,
+                15
+              ]
+            ],
+            [
+              [
+                15,
+                15
+              ],
+              [
+                15,
+                100
+              ]
+            ]
+          ],
+          "zr_sections": [
+            "ZR 23-433"
+          ]
+        }
+      ]
+    },
+    "envelope": {
+      "status": "available",
+      "tiers": [
+        {
+          "bottom_ft": 0,
+          "top_ft": 45,
+          "outline": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                100
+              ],
+              [
+                0,
+                100
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ]
+        },
+        {
+          "bottom_ft": 45,
+          "top_ft": 55,
+          "outline": [
+            [
+              [
+                15,
+                15
+              ],
+              [
+                50,
+                15
+              ],
+              [
+                50,
+                100
+              ],
+              [
+                15,
+                100
+              ],
+              [
+                15,
+                15
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "floor_plates": {
+      "status": "available",
+      "entries": [
+        {
+          "floor": 1,
+          "outline": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        },
+        {
+          "floor": 2,
+          "outline": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        },
+        {
+          "floor": 3,
+          "outline": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        },
+        {
+          "floor": 4,
+          "outline": [
+            [
+              [
+                0,
+                0
+              ],
+              [
+                50,
+                0
+              ],
+              [
+                50,
+                50
+              ],
+              [
+                0,
+                50
+              ],
+              [
+                0,
+                0
+              ]
+            ]
+          ],
+          "gross_sf": 2500,
+          "use": "residential"
+        }
+      ]
+    }
+  },
+  "rule_versions": [
+    {
+      "rule_id": "test-fixture-synthetic-r6b-far",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-height-setback",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-coverage-yards",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    },
+    {
+      "rule_id": "test-fixture-synthetic-r6b-dwelling-units",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    }
+  ],
+  "draft": true,
+  "street_width_case": {
+    "marker": "Needs street width",
+    "assumptions": [
+      {
+        "street": "Synthetic Street B",
+        "assumed": "narrow",
+        "street_width_fact_id": "fact-street-width-b"
+      }
+    ],
+    "side_by_side_with": [
+      "test-fixture-synthetic-results-003-wide"
+    ]
+  }
+}

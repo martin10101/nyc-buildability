@@ -1,0 +1,557 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-077",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All four requirements bind the non-ledger sentinel D-077-BOOTSTRAP at capture; R002/R003/R004 re-bind to the contracted lane packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-23T07:10:00+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T054",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003",
+    "D-077-R004"
+   ],
+   "reviewed_sha": "ca5585572546f26c7a41504a4e9e2d9b58560b16",
+   "reviewed_manifest_sha256": "7b69e1e66219434dbbe16e972d9dd925f1a694c848757357a27aa8a38f790081",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T06:06:06.492959+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 4): lane-1 of the three D-077 lanes ran the full drill (contract 29c5bc0b, G0 455e598e, claim seam 92b0d265, full worktree path, loop-1 run persistent-local-58, harvest per the S14 pattern, submit at frozen 622757b1, independent wave G3/G4/G5/DCV all PASS zero blocking); pairwise disjointness vs T055/T056 independently reproduced (overlap = empty set). Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 5): released non-held scope only - B2 in the plan's recorded order (B1 accepted 236th before contract); material = 9 allowed-path files in the api rules tree + report; no held surface (expansion section 2, PR #241, Tier D, contracts, web) touched. Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    },
+    {
+     "id": "D-077-R004",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T054-DCV.md row 6): all four wiring preconditions bound and tested IN CODE at the first derive_proposal caller - list ceilings (MAX_LOT_LINE_SEGMENTS=1000/MAX_STREET_LINES=500, typed field+count), finiteness enforced at check_proposal:706 BEFORE derivation at :707 (ProposalCheckError proves pre-derivation refusal; no EvidenceRecord can carry NaN/inf), _capped_repr@120 on every refusal (DB-034(b)), and the DB-034(d) no-emission proof (grep+import tested) with the invariant disposition riding to B3. G5 additionally rules all three T051-G5 preconditions CLOSED and binds BP-1..BP-7 on B3. Stamped at ca5585572546f26c7a41504a4e9e2d9b58560b16 under the DCV restamp pre-authorization (M5-T054-DCV.md) whose three conditions the orchestrator reproduced at this head: git diff 622757b1..HEAD empty on every allowed_path incl. report+map; all four gate records carry the identical content_manifest_sha256 7b69e1e66219...; validator exit 0 + evaluate_task_refs ok applicable==cited (6 ids). Disjoint-peer tolerance stated by the DCV covers the T055/T056 sibling lanes."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T055",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "824b14bc2b5fafd063a490440a58ccb30d52ea19",
+   "reviewed_manifest_sha256": "0e1f9fb9a5273fabbf80158bd8054d8ea28015ac47bc3893e8b9569d64e5b735",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T07:02:39.286353+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T055-DCV.md): lane-2 full drill reproduced in git+ledger (contract 29c5bc0b, G0 455e598e, claim 92b0d265, harvest d6f9b63c, wave + the [ORCH-CORRECTED per G4-1 + CI 35493851185] correction cycle closed with four peer delta-attestations and the DCV extension; CI green 35494571792 independently confirmed by the DCV). Stamped at 824b14bc2b5fafd063a490440a58ccb30d52ea19 under the DCV restamp pre-authorization as EXTENDED to the corrected identity (M5-T055-DCV.md): spec blob 75d80a88 + the four unchanged artifact blobs reproduced at this head; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T054/T056/T057/D-078 peers."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T055-DCV.md): released non-held scope; additive spec extension proven (0 deletions vs S6); the G0 record's disclosure of the pre-claim spec-target correction verified accurate; no held surface. Stamped at 824b14bc2b5fafd063a490440a58ccb30d52ea19 under the DCV restamp pre-authorization as EXTENDED to the corrected identity (M5-T055-DCV.md): spec blob 75d80a88 + the four unchanged artifact blobs reproduced at this head; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T054/T056/T057/D-078 peers."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T056",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "8705be52a202d813e444056f46d64ff335025852",
+   "reviewed_manifest_sha256": "2399272a9c3d41c7ca649d24afaf0ae1e116b1551efa46cca74147b5f880631f",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T07:02:39.286353+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T056-DCV.md): lane-3 full drill reproduced (contract 29c5bc0b, G0 PASS at 29c5bc0b, claim seams 455e598e/92b0d265 with the FULL worktree path, harvest 7a10fb05, integration 5b7b4b30, in-worktree self-checks + G4 re-run + CI api/web green at the byte-stable material). Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV verified (M5-T056-DCV.md): released non-held scope; riders (a)/(d) explicitly preserved OPEN for their bound packets (boundedToken charset untouched, timestamps stay boundedTimestamp); zero forbidden paths. Stamped at 03f4cebdf7c0479f62c63da3ac3f2df0e0e614ae under the DCV restamp pre-authorization (M5-T056-DCV.md): git diff db0cf0f8..head empty over the 8 material files + evidence map; manifest carried from the four gate records; validator exit 0 + evaluate_task_refs ok. Disjoint-peer tolerance covers the T055 lane (incl. 05f1aea2 and its acceptance seam), T057, D-078. [Restamped to the accept head 8705be52 (was 03f4cebd) under the same pre-authorization; conditions re-reproduced: diff db0cf0f8..8705be52 empty over the 9 artifacts, manifest 2399272a carried, validator exit 0.]"
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T057",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "2fbd661e0afdd664d5d83daafd46ebf9ef9bfec1",
+   "reviewed_manifest_sha256": "c662a1cd6f34419ac384b10b2f11533b51d0765cfe3fe3ae566bbfcc82eab9f9",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T09:34:29.968177+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta re-affirmed SATISFIED including the rework leg as the drill itself (M5-T057-DCV.md delta SSB row 4): full contract drill reproduced (binds+resyncs, seeds, G0 disjointness, FULL worktree path, worktree at claim seam, fresh run-id); harvest at the breaker close; the wave's G3/G5/DCV FAILs handled by ONE bounded tagged correction cluster ca5c8895 -> legal ledger walk (awaiting_gate->rework->in_progress->submit) -> delta re-attestation by the SAME four reviewers, all PASS at a0cb3b79 -> gates re-recorded at this head. Lane cycling continued throughout (loops 2/3 building; loop-2 run-21 stall recovered by the clear-recovery drill). Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta re-affirmed SATISFIED (M5-T057-DCV.md delta SSB row 5): released non-held queue only (B2->B3 order), no held-scope artifact in either material commit, no new public surface (include_in_schema=False on the existing internal flag; no new flag), PR #241 OPEN unmerged, nothing merged to main, no dependency/deploy/workflow file touched, D-072 three-lane ceiling unchanged. Stamped at 2fbd661e under the DCV DELTA pre-authorization (M5-T057-DCV.md SSC, issued at frozen resubmission a0cb3b79) whose conditions the orchestrator reproduced at this head: all six LF-sha256 digests unchanged (SSA table incl. the report 7aa2a199...), git diff a0cb3b79..HEAD EMPTY on all six paths, resolver ok applicable==cited (5 ids), and the G2/G3/G4/G5 gate records all carry the identical content_manifest_sha256 c662a1cd6f34.... The only commits between the frozen sha and this head are the tolerated disjoint peers the pre-auth names (the M5-T059 lane cherry-pick 48fe290b->2fbd661e and project-control seam records). CI 35501675264 success at fd9c4a04 containing the rework material."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T061",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "5f7b032e1343d436aad56ea29315a3b5ad0d1aa6",
+   "reviewed_manifest_sha256": "51a173527473d916b2e29c75c99b639924b9e311c7220b0683a72b60d967aa61",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:13:31.264880+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full contract drill reproduced (64a6f984 contract seam with binds+digest resyncs+seeds+G0 disjointness; a444708d claim with the FULL worktree path wt-m5t061; loop-3 runs persistent3-local-07/-08; orchestrator harvest at the S13.8 consecutive_revision_loops breaker with supervisor-owned explicit-cwd evidence per the in-loop reviewer's six-REVISE handoff demand); wave G3/G4/G5 all PASS zero corrections at the frozen identity."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: material commit touches exactly the four allowed_paths (git diff-tree); DB-039 closure items a/b/d/e/g/h/i ruled CLOSED by G5; no held surface (no 3D/massing/19-task pack/GDS); M5-T058 HELD rule-evaluation surface untouched (peer-commit disjointness verified both directions)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T058",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "94610a06180f118ff81d885a1022f051625101e7c390dbeda9393490a3217109",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full contract drill (seam binds+resyncs, seeds, G0 pairwise disjointness, FULL worktree path wt-m5t058 in the packet, claim+progress 20); loop-2 runs 21-25 built the 19-file material; orchestrator harvest at the S13.8 breaker with supervisor-owned explicit-cwd evidence per the in-loop reviewer's rev7 evidence-handoff demand; producer commit 3bd196de cherry-picked to 7d02eddc with the DCV-reproduced --ignore-cr-at-eol empty diff."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: exactly the 19 allowed_paths in the material commit (one-for-one vs the packet); no held surface; the [ORCH-CORRECTED] 817a6546 guard admission ruled SANCTIONED (routed-sweep remedy, M5-T037/f954aa59 precedent, exactly the enum admission)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T059",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "431eefa5838f4410e13a3bf30c394528f9f46d1da41847507495da80b94287d3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED at 03882888: full contract drill for the loop-3 lane (seam binds, seeds w/ the F-1 count correction recorded, G0 disjointness, FULL worktree path wt-m5t059, claim); loop-3 build harvested at the breaker; the blocking C1/C-1/C-2 findings closed by ONE tagged [ORCH-CORRECTED] cluster with delta re-attestation by the SAME five reviewers, all PASS at the corrected identity."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED: exactly the 14 allowed_paths; site_definition route UNMOUNTED (no main.py edit - the mount is the named slice-2 packet under the DB-040 preconditions); no held surface."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T060",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "254841936d9ac14650f0b92a617ff78c3652941a",
+   "reviewed_manifest_sha256": "0b9ff84b481d309ae2e6fdb99b49f13d742180fe2d7034e446adcd1867ee9126",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T22:39:17.557850+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full contract drill (5b4836be seam binds+resyncs+seeds+G0 disjointness; ae20de35 packet fix after the documented-command PolicyError; ee07a10d claim with the FULL worktree path wt-m5t060); loop-1 runs 60-64 through the recorded stop classes (timeout raise, envelope refusal, silent-start single-retry); orchestrator harvest at the S13.8 breaker under the in-loop reviewer's explicit no-code-change ruling; material 258cd17a cherry-picked to d7d45e84 ALL-MATCH."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: B3 slice 2 in the recorded plan order (B3-after-T057 satisfied); exactly the 18 allowed_paths; no held surface; T058-HELD fixtures and T059-HELD PropertyOverview untouched. SEQUENCING FLAG recorded: this acceptance REACHES the D-076-R003 named post-B3 owner-review checkpoint - the owner review is queued and B4+/map-drawing/emission work is NOT contracted on this acceptance's authority."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T063",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "9a3d4883044f5ff575f06f5f000f3326641a6224",
+   "reviewed_manifest_sha256": "1cac065f15115a458a56b6dde7c78b68d847edc707f821a534477dd044020ebf",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:03:09.428806+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: G0 records the three-way disjointness (T063xT060 EMPTY, T063xT062 EMPTY); claim with the FULL worktree path wt-m5t063; material commits f33b752c+853a1d25 touch only allowed_paths; the genuine G3/G4 FAIL->delta-PASS cycle closed at the corrected identity with the SAME reviewers; report M5-T063-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: scope = the DB-036 rider cluster expressly named in the released queue (+ DB-038/DB-042 riders); normal directive_refs cited (applicable==cited, selective-citation guard independently grepped); G0 PASS at fffbd002; zero forbidden/held files touched; report M5-T063-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T062",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "e9283558a600c6540b20691aa5c30c8bd471753b",
+   "reviewed_manifest_sha256": "650a48c13ccc9273c82acdd5dbf45d2f0e8b4eae5a7c149db398c99eb8073def",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:08:27.520557+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill (G0 PASS at fffbd002; claim with the FULL worktree path wt-m5t062; progress 20->85; loop-2 run 27 built the 8-file material through the S13.8 breaker close; submitted at the CI-green head 0366210c - run 35547702435, 18/18 green, independently reproduced); report M5-T062-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: scope inside the released DB-040/D-078 site-definition queue; exactly the 8 allowed_paths; no held web lanes or forbidden paths; mount ships DEFAULT OFF (no new production surface); report M5-T062-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T065",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "a3b62c906a6e1adeaaae664355f254349ce5d5ce",
+   "reviewed_manifest_sha256": "648929ec9214fe6f296d189b08eb1b6fc32a4aed0b946d04762adf392388e18b",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:55:56.560960+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill (G0 at db81c35f; FULL worktree path wt-m5t065; loop-3 runs 10-12; STOP_FOR_OWNER honest close; orchestrator harvest cherry-pick d3793c2e ALL-MATCH x12; submit at the green-verified head; lane re-fed with M5-T066 at c40c60db); report M5-T065-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released phase-B scope only (D-082-R001 atop the B3-complete editor); exactly the 12 allowed_paths; zero new dependencies; the click-layer routed to the NEW contracted M5-T066, not scope-crept; phase C/D untouched; report M5-T065-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T064",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "715cbaa11d190592a95eca5f1f80e274210757c4",
+   "reviewed_manifest_sha256": "744875d57422ffc1b86983d5323a3c9b616c5ebebe2b4887e1223f0410b4f0fa",
+   "producer": "scenario-optimization-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T04:28:14.407410+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill through the interruption arc (run-65 opus-kill w/ preserved worktree -> run-66 resume -> S13.8 breaker close -> orchestrator harvest w/ fresh explicit-cwd suites; in-worktree commit 70ee0e4f cherry-picked 409a8a7d ALL-MATCH x5; FULL worktree path); report M5-T064-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the D-082-released capability only; exactly the 5 allowed_paths; every forbidden path untouched; zero new dependencies; UNMOUNTED default-off = no new production surface; report M5-T064-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T067",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "273e3ae0106644ab233f34f81135e9ad63f717a7",
+   "reviewed_manifest_sha256": "8e662633f9926b32912a64fbd4fa5357a69d96e0f99bc4a8e10c94ccdd2fa4b3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T05:42:55.233545+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill (contract f102a14c, claim 0b6799fc FULL worktree path, loop-2 run-28 build, breaker-close harvest, cherry-pick 4e1491f8 ALL-MATCH x4, submit at the CI-green-verified head); report M5-T067-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released store-hardening increment on the just-accepted D-078 surface; exactly the 4 allowed_paths; every forbidden path untouched; zero new dependencies; no held/Tier-D scope; report M5-T067-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T066",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "5aad9007248b3508656fa2cea4e4aef0806f2e42",
+   "reviewed_manifest_sha256": "2461f07d1fbb04cc8d4d88f52f3e293d7cfc71e77663c5f4411dbee0cc43036e",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T06:26:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: full lane drill reproduced - contract c40c60db, claim-then-hold until the T065 accept, widening 1986f589 w/ G0 re-record, loop-3 run-13 breaker-close harvest, in-worktree 0f1ffc1b cherry-picked abfd182b (LF-normalized 11/11 ALL-MATCH reproduced), submit at CI-green head (run 35564724576 SUCCESS); FULL worktree path in packet; report M5-T066-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released D-082 scope only - exactly 11 material files all within allowed_paths (new wrapper matches the packet glob); every forbidden path untouched; zero new dependencies; report M5-T066-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T068",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "9f035ad43e2e54475d026cd0f7503e28e5a3cdc9b89c1d2463efbef8a3c80097",
+   "producer": "qa-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T22:00:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: lane drill verified in git objects - contract 5aebc26c -> claim 63c15a0c (FULL worktree path) -> loop-1 run-67 breaker-close harvest -> in-worktree 4e49d8e7 cherry-picked 5aad9007 ALL-MATCH -> submit at the CI-green head (run 35769445255 SUCCESS, corroborated by the DCV's local ruff+63-passed reproduction); report M5-T068-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: TEST-ONLY scope - exactly 3 allowed_paths, 443 insertions / 0 deletions; forbidden engine/route/main blobs parent==child; zero dependency changes; report M5-T068-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T069",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "e9cd29d26ba16d510336267dfe35d7be729a66fdbeb8d1f9ba57f6cadc0b24a3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T21:47:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: lane drill w/ the broker-boundary honesty class - run-29 PAUSED_RECOVERY missing-checkpoint close, delivered-uncommitted candidate harvested per the producer recipe (six-mutation matrix at :878/:907, hash-verified restores), in-worktree c96e5387 cherry-picked 463f98f9 ALL-MATCH, submit at the CI-green head (run 35769445255 SUCCESS); the DCV reproduced ruff/77-passed/modularity and killed both new tests with its own constant mutation; G4 LIVE-OBSERVED A1/B1/C1; report M5-T069-DCV.md."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: released scope only - exactly the 4 allowed_paths; no forbidden path; zero dependency changes; report M5-T069-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T071",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "9b7c30a5c982f253cd3812ca944b4b346553ceba",
+   "reviewed_manifest_sha256": "7b6d66fde9942249b213216f6cbb6dcca41bf0d30f10715d22bc42bb5ab38e2c",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T06:55:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3): the full lane drill reproduced as git/ledger objects (one-commit contract seam w/ c14-safe binds, evaluate_task_refs ok cited==applicable, G0 at the contract head, FULL-path claim, worktree at/past the claim seam blob-identical to the cherry-pick, no placeholder debt); three lanes cycling at verification time; the run-id counted as prose only, the row rests on git objects."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 3): selection from the released queue only (DB-047(d)/(e) + DB-048 riders of the accepted T066 wave); no new scope, no dependency/lockfile/plan change, holds intact; all four gates PASS with the reviews pinned to the independently computed blob identity; the DB-048 file-wide residual stated conservatively and carried as DB-049(h)."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-077",
+   "task_id": "M5-T070",
+   "applicable_requirement_ids": [
+    "D-077-R002",
+    "D-077-R003"
+   ],
+   "reviewed_sha": "2c15ab5fded6317e518a3fd278e59d1f96f20089",
+   "reviewed_manifest_sha256": "269c3dfd97060cc1386aa6d930e46ce089611bd0bd1b6c02a24b5ae98cc40805",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-23T07:10:00+00:00",
+   "requirements": [
+    {
+     "id": "D-077-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 4): the full lane drill reproduced as git/ledger objects (contract seam 53b0e674 w/ five-directive binds incl. fresh D-083; G0 byte-equal; FULL-path claim 178f7a66; worktree at/past the claim seam with the increment-2 ALL-MATCH x3 reproduced by blob); lanes cycled throughout with all five D-084 packets contracted."
+     ]
+    },
+    {
+     "id": "D-077-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (Part 4): released D-082-R003 surfacing only; route verifiably UNMOUNTED; no phase-C/D, no held item, no plan/dependency change; all gates PASS with the final-identity re-records pinning the reviewed content (twelve blobs at da401d1d == HEAD)."
+     ]
+    }
+   ]
+  }
+ ]
+}

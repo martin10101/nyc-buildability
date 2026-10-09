@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/codex_discussion_reply.schema.json",
+  "title": "Codex discussion reply",
+  "description": "Exactly ONE reply in the owner's same-terminal Codex discussion channel (D-024 Amendment 8, M0-T110; rows R236/R238/R239). Flattened to the provider's strict structured-output subset like operator_ask_answer.schema.json: no combinators, additionalProperties false, every property required. Emit \"\" for unused strings. The supervisor-side codex_channel.validate_reply remains the authority for bounds, redaction, and the closed disposition vocabulary; this schema only shapes the provider output. The reply changes nothing by itself - dispositions are recorded durably and the owner decides.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "reply",
+    "disposition",
+    "updated_summary",
+    "confidence_note",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "reply": {
+      "type": "string",
+      "description": "The concise discussion reply, grounded ONLY in the bounded turn packet and read-only repository inspection. Say 'unknown from the provided state' rather than inventing a fact."
+    },
+    "disposition": {
+      "type": "string",
+      "enum": [
+        "ADVICE_ONLY",
+        "QUEUE_NEXT_BOUNDARY",
+        "REVISE_CURRENT_TASK",
+        "PROPOSE_NEW_TASK",
+        "URGENT_PAUSE",
+        "STOP_FOR_OWNER"
+      ],
+      "description": "REQUIRED closed vocabulary (D-024-R239). ADVICE_ONLY: information, no action. QUEUE_NEXT_BOUNDARY: nonurgent item for the next safe boundary. REVISE_CURRENT_TASK: an existing authorized repair finding for the current task (enters ONLY through the existing review route). PROPOSE_NEW_TASK: new scope needing explicit owner promotion and durable capture. URGENT_PAUSE / STOP_FOR_OWNER: genuine safety/integrity urgency only - the channel records attention durably; it never actuates."
+    },
+    "updated_summary": {
+      "type": "string",
+      "description": "The refreshed bounded durable thread summary carrying the discussion context forward (what was discussed, decided, open). \"\" keeps the prior summary."
+    },
+    "confidence_note": {
+      "type": "string",
+      "description": "One short sentence on how grounded the reply is (what was read vs assumed). \"\" if nothing to add."
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "STABLE references the reply rests on: commit SHAs, content digests, repo-relative paths, symbols, test names - never bare line numbers (D-024-R238). [] when none."
+    }
+  }
+}

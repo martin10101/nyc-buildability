@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nyc-buildability.local/agent_supervisor/operator_ask_answer.schema.json",
+  "title": "Operator ask answer",
+  "description": "Exactly ONE concise answer to a bounded owner question posed to the read-only Codex supervisor (D-024 R085/R104, unit G / M0-T094). Flattened to the provider's strict structured-output subset like codex_decision.schema.json: no combinators, additionalProperties false, every property required. Emit \"\" for unused strings. The supervisor-side operator_ask.validate_answer remains the authority for bounds and redaction; this schema only shapes the provider output.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "answer",
+    "confidence_note",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "answer": {
+      "type": "string",
+      "description": "The concise terminal answer to the owner's question, grounded ONLY in the bounded state packet and read-only repository evidence. Say 'unknown from the provided state' rather than inventing a fact."
+    },
+    "confidence_note": {
+      "type": "string",
+      "description": "One short sentence on how grounded the answer is (what was read vs assumed). \"\" if nothing to add."
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Repo-relative paths or packet field names the answer rests on. [] when none."
+    }
+  }
+}

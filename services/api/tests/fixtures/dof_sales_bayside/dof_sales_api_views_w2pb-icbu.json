@@ -1,0 +1,2220 @@
+{
+  "id" : "w2pb-icbu",
+  "name" : "NYC Citywide Annualized Calendar Sales Update",
+  "assetType" : "dataset",
+  "attribution" : "Department of Finance",
+  "averageRating" : 0,
+  "category" : "City Government",
+  "createdAt" : 1544567429,
+  "description" : "Annualized sales file displays yearly sales information of properties sold in New York City.",
+  "diciBackend" : false,
+  "displayType" : "table",
+  "downloadCount" : 13953,
+  "hideFromCatalog" : false,
+  "hideFromDataJson" : false,
+  "locked" : false,
+  "newBackend" : true,
+  "numberOfComments" : 0,
+  "oid" : 41294243,
+  "provenance" : "official",
+  "publicationAppendEnabled" : false,
+  "publicationDate" : 1745590357,
+  "publicationGroup" : 15760833,
+  "publicationStage" : "published",
+  "rowsUpdatedAt" : 1781030005,
+  "rowsUpdatedBy" : "5fuc-pqz2",
+  "tableId" : 19875300,
+  "totalTimesRated" : 0,
+  "viewCount" : 24727,
+  "viewLastModified" : 1781029911,
+  "viewType" : "tabular",
+  "approvals" : [ {
+    "reviewedAt" : 1545239478,
+    "reviewedAutomatically" : true,
+    "state" : "approved",
+    "submissionId" : 6864841,
+    "submissionObject" : "public_audience_request",
+    "submissionOutcome" : "change_audience",
+    "submittedAt" : 1545239478,
+    "targetAudience" : "public",
+    "workflowId" : 2285,
+    "submissionDetails" : {
+      "permissionType" : "READ"
+    },
+    "submissionOutcomeApplication" : {
+      "failureCount" : 0,
+      "status" : "success"
+    },
+    "submitter" : {
+      "id" : "5fuc-pqz2",
+      "displayName" : "NYC OpenData"
+    }
+  } ],
+  "clientContext" : {
+    "clientContextVariables" : [ ],
+    "inheritedVariables" : { }
+  },
+  "columns" : [ {
+    "id" : 609288402,
+    "name" : "BOROUGH",
+    "dataTypeName" : "text",
+    "description" : "The name of the borough in which the property is located",
+    "fieldName" : "borough",
+    "position" : 1,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638474,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "5",
+      "null" : "0",
+      "top" : [ {
+        "item" : "4",
+        "count" : "264577"
+      }, {
+        "item" : "3",
+        "count" : "239778"
+      }, {
+        "item" : "1",
+        "count" : "185836"
+      }, {
+        "item" : "5",
+        "count" : "83919"
+      }, {
+        "item" : "2",
+        "count" : "71497"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288403,
+    "name" : "NEIGHBORHOOD",
+    "dataTypeName" : "text",
+    "description" : "DOF assessors determine the neighborhood name in the course of valuing properties.",
+    "fieldName" : "neighborhood",
+    "position" : 2,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638491,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "WYCKOFF HEIGHTS",
+      "null" : "0",
+      "top" : [ {
+        "item" : "FLUSHING-NORTH",
+        "count" : "28905"
+      }, {
+        "item" : "UPPER EAST SIDE (59-79)",
+        "count" : "18925"
+      }, {
+        "item" : "UPPER EAST SIDE (79-96)",
+        "count" : "16693"
+      }, {
+        "item" : "UPPER WEST SIDE (59-79)",
+        "count" : "16078"
+      }, {
+        "item" : "BEDFORD STUYVESANT",
+        "count" : "13780"
+      }, {
+        "item" : "BOROUGH PARK",
+        "count" : "13232"
+      }, {
+        "item" : "MIDTOWN EAST",
+        "count" : "12121"
+      }, {
+        "item" : "BAYSIDE",
+        "count" : "11750"
+      }, {
+        "item" : "ASTORIA",
+        "count" : "11638"
+      }, {
+        "item" : "MIDTOWN WEST",
+        "count" : "10628"
+      }, {
+        "item" : "FOREST HILLS",
+        "count" : "10169"
+      }, {
+        "item" : "JACKSON HEIGHTS",
+        "count" : "9758"
+      }, {
+        "item" : "UPPER WEST SIDE (79-96)",
+        "count" : "9718"
+      }, {
+        "item" : "EAST NEW YORK",
+        "count" : "9630"
+      }, {
+        "item" : "BAY RIDGE",
+        "count" : "9203"
+      }, {
+        "item" : "LONG ISLAND CITY",
+        "count" : "8739"
+      }, {
+        "item" : "SHEEPSHEAD BAY",
+        "count" : "8697"
+      }, {
+        "item" : "ELMHURST",
+        "count" : "8597"
+      }, {
+        "item" : "CHELSEA",
+        "count" : "8574"
+      }, {
+        "item" : "FLATBUSH-EAST",
+        "count" : "8563"
+      } ],
+      "smallest" : "AIRPORT JFK",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288404,
+    "name" : "BUILDING CLASS CATEGORY",
+    "dataTypeName" : "text",
+    "description" : "This identifies properties broad usage (e.g. One Family Home).",
+    "fieldName" : "building_class_category",
+    "position" : 3,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638490,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "49 CONDO WAREHOUSES/FACTORY/INDUS",
+      "null" : "0",
+      "top" : [ {
+        "item" : "01 ONE FAMILY DWELLINGS",
+        "count" : "167887"
+      }, {
+        "item" : "02 TWO FAMILY DWELLINGS",
+        "count" : "141361"
+      }, {
+        "item" : "10 COOPS - ELEVATOR APARTMENTS",
+        "count" : "118705"
+      }, {
+        "item" : "13 CONDOS - ELEVATOR APARTMENTS",
+        "count" : "116803"
+      }, {
+        "item" : "03 THREE FAMILY DWELLINGS",
+        "count" : "39843"
+      }, {
+        "item" : "07 RENTALS - WALKUP APARTMENTS",
+        "count" : "26266"
+      }, {
+        "item" : "09 COOPS - WALKUP APARTMENTS",
+        "count" : "23659"
+      }, {
+        "item" : "01  ONE FAMILY DWELLINGS",
+        "count" : "18618"
+      }, {
+        "item" : "02  TWO FAMILY DWELLINGS",
+        "count" : "16508"
+      }, {
+        "item" : "04 TAX CLASS 1 CONDOS",
+        "count" : "14713"
+      }, {
+        "item" : "10  COOPS - ELEVATOR APARTMENTS",
+        "count" : "13358"
+      }, {
+        "item" : "15 CONDOS - 2-10 UNIT RESIDENTIAL",
+        "count" : "13268"
+      }, {
+        "item" : "13  CONDOS - ELEVATOR APARTMENTS",
+        "count" : "12681"
+      }, {
+        "item" : "44 CONDO PARKING",
+        "count" : "12397"
+      }, {
+        "item" : "17 CONDO COOPS",
+        "count" : "10614"
+      }, {
+        "item" : "05 TAX CLASS 1 VACANT LAND",
+        "count" : "9841"
+      }, {
+        "item" : "12 CONDOS - WALKUP APARTMENTS",
+        "count" : "8613"
+      }, {
+        "item" : "22 STORE BUILDINGS",
+        "count" : "7891"
+      }, {
+        "item" : "14 RENTALS - 4-10 UNIT",
+        "count" : "5389"
+      }, {
+        "item" : "29 COMMERCIAL GARAGES",
+        "count" : "4858"
+      } ],
+      "smallest" : "01  ONE FAMILY DWELLINGS",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288405,
+    "name" : "TAX CLASS AS OF FINAL ROLL",
+    "dataTypeName" : "text",
+    "description" : "Present Tax Class. Every property in the city is assigned to one of four tax classes (Classes 1,2, 3, and 4) based on the use of the property; See Data dictionary for more detail",
+    "fieldName" : "tax_class_as_of_final_roll",
+    "position" : 4,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638489,
+    "cachedContents" : {
+      "non_null" : "841424",
+      "largest" : "4",
+      "null" : "4183",
+      "top" : [ {
+        "item" : "1",
+        "count" : "389031"
+      }, {
+        "item" : "2",
+        "count" : "313757"
+      }, {
+        "item" : "4",
+        "count" : "59037"
+      }, {
+        "item" : "2A",
+        "count" : "22839"
+      }, {
+        "item" : "2C",
+        "count" : "20845"
+      }, {
+        "item" : "1A",
+        "count" : "14521"
+      }, {
+        "item" : "1B",
+        "count" : "11514"
+      }, {
+        "item" : "2B",
+        "count" : "6816"
+      }, {
+        "item" : "1C",
+        "count" : "1750"
+      }, {
+        "item" : "1D",
+        "count" : "1311"
+      }, {
+        "item" : "3",
+        "count" : "3"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288406,
+    "name" : "BLOCK",
+    "dataTypeName" : "text",
+    "description" : "A Tax Block is a sub-division of the borough on which real properties are located ",
+    "fieldName" : "block",
+    "position" : 5,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638465,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "9999",
+      "null" : "0",
+      "top" : [ {
+        "item" : "16",
+        "count" : "2635"
+      }, {
+        "item" : "1171",
+        "count" : "2384"
+      }, {
+        "item" : "8489",
+        "count" : "1788"
+      }, {
+        "item" : "5066",
+        "count" : "1735"
+      }, {
+        "item" : "1158",
+        "count" : "1602"
+      }, {
+        "item" : "1006",
+        "count" : "1503"
+      }, {
+        "item" : "3944",
+        "count" : "1451"
+      }, {
+        "item" : "1009",
+        "count" : "1330"
+      }, {
+        "item" : "437",
+        "count" : "1274"
+      }, {
+        "item" : "1179",
+        "count" : "1241"
+      }, {
+        "item" : "2450",
+        "count" : "1179"
+      }, {
+        "item" : "5953",
+        "count" : "1086"
+      }, {
+        "item" : "5893",
+        "count" : "950"
+      }, {
+        "item" : "248",
+        "count" : "929"
+      }, {
+        "item" : "1833",
+        "count" : "895"
+      }, {
+        "item" : "8720",
+        "count" : "884"
+      }, {
+        "item" : "1138",
+        "count" : "882"
+      }, {
+        "item" : "2180",
+        "count" : "879"
+      }, {
+        "item" : "1333",
+        "count" : "827"
+      }, {
+        "item" : "2135",
+        "count" : "818"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288407,
+    "name" : "LOT",
+    "dataTypeName" : "text",
+    "description" : "A tax Lot is a subdivision of a tax Block and represents the property unique location",
+    "fieldName" : "lot",
+    "position" : 6,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638464,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "997",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1",
+        "count" : "41044"
+      }, {
+        "item" : "20",
+        "count" : "9518"
+      }, {
+        "item" : "12",
+        "count" : "9205"
+      }, {
+        "item" : "23",
+        "count" : "9183"
+      }, {
+        "item" : "29",
+        "count" : "9051"
+      }, {
+        "item" : "10",
+        "count" : "9032"
+      }, {
+        "item" : "15",
+        "count" : "8985"
+      }, {
+        "item" : "25",
+        "count" : "8752"
+      }, {
+        "item" : "14",
+        "count" : "8694"
+      }, {
+        "item" : "50",
+        "count" : "8680"
+      }, {
+        "item" : "19",
+        "count" : "8637"
+      }, {
+        "item" : "7",
+        "count" : "8576"
+      }, {
+        "item" : "18",
+        "count" : "8555"
+      }, {
+        "item" : "40",
+        "count" : "8453"
+      }, {
+        "item" : "16",
+        "count" : "8429"
+      }, {
+        "item" : "37",
+        "count" : "8410"
+      }, {
+        "item" : "17",
+        "count" : "8397"
+      }, {
+        "item" : "22",
+        "count" : "8361"
+      }, {
+        "item" : "24",
+        "count" : "8336"
+      }, {
+        "item" : "6",
+        "count" : "8302"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288408,
+    "name" : "EASE-MENT",
+    "dataTypeName" : "text",
+    "description" : "An easement is a right, such as a right of way, which allows an entity to make limited use of another's real property",
+    "fieldName" : "ease_ment",
+    "position" : 7,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638488,
+    "cachedContents" : {
+      "non_null" : "0",
+      "null" : "845607",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288409,
+    "name" : "BUILDING CLASS AS OF FINAL ROLL",
+    "dataTypeName" : "text",
+    "description" : "The building classification is used to describe a property's constructive use; See Data dictionary for more detail",
+    "fieldName" : "building_class_as_of_final",
+    "position" : 8,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638487,
+    "cachedContents" : {
+      "non_null" : "841424",
+      "largest" : "Z9",
+      "null" : "4183",
+      "top" : [ {
+        "item" : "D4",
+        "count" : "129850"
+      }, {
+        "item" : "R4",
+        "count" : "127807"
+      }, {
+        "item" : "A1",
+        "count" : "69923"
+      }, {
+        "item" : "A5",
+        "count" : "58531"
+      }, {
+        "item" : "B1",
+        "count" : "48898"
+      }, {
+        "item" : "B2",
+        "count" : "48413"
+      }, {
+        "item" : "C0",
+        "count" : "44342"
+      }, {
+        "item" : "B3",
+        "count" : "37491"
+      }, {
+        "item" : "A2",
+        "count" : "28016"
+      }, {
+        "item" : "C6",
+        "count" : "26506"
+      }, {
+        "item" : "B9",
+        "count" : "15663"
+      }, {
+        "item" : "R3",
+        "count" : "14521"
+      }, {
+        "item" : "R1",
+        "count" : "14137"
+      }, {
+        "item" : "A9",
+        "count" : "12220"
+      }, {
+        "item" : "R9",
+        "count" : "11838"
+      }, {
+        "item" : "V0",
+        "count" : "11345"
+      }, {
+        "item" : "C3",
+        "count" : "10478"
+      }, {
+        "item" : "RG",
+        "count" : "9596"
+      }, {
+        "item" : "R2",
+        "count" : "8922"
+      }, {
+        "item" : "S2",
+        "count" : "7663"
+      } ],
+      "smallest" : "A0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288410,
+    "name" : "ADDRESS",
+    "dataTypeName" : "text",
+    "description" : "The street  address of the property as listed on the Sales File. Coop sales include the apartment in the address field",
+    "fieldName" : "address",
+    "position" : 9,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638486,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "ZEREGA AVENUE",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1335 AVENUE OF THE AMERIC",
+        "count" : "940"
+      }, {
+        "item" : "102 WEST 57TH STREET",
+        "count" : "774"
+      }, {
+        "item" : "23-15 44TH DRIVE",
+        "count" : "346"
+      }, {
+        "item" : "15 WEST 61ST STREET",
+        "count" : "287"
+      }, {
+        "item" : "184 KENT AVENUE",
+        "count" : "269"
+      }, {
+        "item" : "550 VANDERBILT AVENUE",
+        "count" : "264"
+      }, {
+        "item" : "1 WEST END AVENUE",
+        "count" : "252"
+      }, {
+        "item" : "360 FURMAN STREET",
+        "count" : "246"
+      }, {
+        "item" : "501 SURF AVENUE",
+        "count" : "245"
+      }, {
+        "item" : "1335 AVENUE OF THE AMER",
+        "count" : "240"
+      }, {
+        "item" : "2550 OLINVILLE AVENUE",
+        "count" : "236"
+      }, {
+        "item" : "131-03 40TH   ROAD",
+        "count" : "236"
+      }, {
+        "item" : "131-05 40TH   ROAD",
+        "count" : "231"
+      }, {
+        "item" : "11 HOYT STREET",
+        "count" : "229"
+      }, {
+        "item" : "138 WILLOUGHBY STREET",
+        "count" : "224"
+      }, {
+        "item" : "330 EAST 38TH STREET",
+        "count" : "217"
+      }, {
+        "item" : "429 KENT AVENUE",
+        "count" : "205"
+      }, {
+        "item" : "200 EAST 94TH   STREET",
+        "count" : "203"
+      }, {
+        "item" : "200 EAST 66TH STREET",
+        "count" : "199"
+      }, {
+        "item" : "205 EAST 45TH   STREET",
+        "count" : "195"
+      } ],
+      "smallest" : "000 112TH STREET",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288411,
+    "name" : "APARTMENT NUMBER",
+    "dataTypeName" : "text",
+    "description" : "",
+    "fieldName" : "apartment_number",
+    "position" : 10,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638463,
+    "cachedContents" : {
+      "non_null" : "208863",
+      "largest" : "ZJC2",
+      "null" : "636744",
+      "top" : [ {
+        "item" : "3A",
+        "count" : "3106"
+      }, {
+        "item" : "3B",
+        "count" : "2981"
+      }, {
+        "item" : "2",
+        "count" : "2865"
+      }, {
+        "item" : "2A",
+        "count" : "2832"
+      }, {
+        "item" : "2B",
+        "count" : "2797"
+      }, {
+        "item" : "1",
+        "count" : "2775"
+      }, {
+        "item" : "4A",
+        "count" : "2604"
+      }, {
+        "item" : "4B",
+        "count" : "2453"
+      }, {
+        "item" : "3",
+        "count" : "2395"
+      }, {
+        "item" : "4",
+        "count" : "2172"
+      }, {
+        "item" : "1A",
+        "count" : "2138"
+      }, {
+        "item" : "5A",
+        "count" : "2017"
+      }, {
+        "item" : "1B",
+        "count" : "1936"
+      }, {
+        "item" : "5B",
+        "count" : "1900"
+      }, {
+        "item" : "3C",
+        "count" : "1874"
+      }, {
+        "item" : "2C",
+        "count" : "1677"
+      }, {
+        "item" : "4C",
+        "count" : "1625"
+      }, {
+        "item" : "6A",
+        "count" : "1552"
+      }, {
+        "item" : "6B",
+        "count" : "1508"
+      }, {
+        "item" : "3D",
+        "count" : "1406"
+      } ],
+      "smallest" : "`",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288412,
+    "name" : "ZIP CODE",
+    "dataTypeName" : "text",
+    "description" : "The property's postal code",
+    "fieldName" : "zip_code",
+    "position" : 11,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638473,
+    "cachedContents" : {
+      "non_null" : "845540",
+      "largest" : "11697",
+      "null" : "67",
+      "top" : [ {
+        "item" : "10314",
+        "count" : "15427"
+      }, {
+        "item" : "10023",
+        "count" : "12935"
+      }, {
+        "item" : "11201",
+        "count" : "12128"
+      }, {
+        "item" : "11235",
+        "count" : "11737"
+      }, {
+        "item" : "11234",
+        "count" : "11721"
+      }, {
+        "item" : "10312",
+        "count" : "11487"
+      }, {
+        "item" : "11375",
+        "count" : "11308"
+      }, {
+        "item" : "10306",
+        "count" : "11025"
+      }, {
+        "item" : "10019",
+        "count" : "10730"
+      }, {
+        "item" : "10011",
+        "count" : "10667"
+      }, {
+        "item" : "11354",
+        "count" : "10594"
+      }, {
+        "item" : "11355",
+        "count" : "10343"
+      }, {
+        "item" : "11215",
+        "count" : "10193"
+      }, {
+        "item" : "10022",
+        "count" : "10102"
+      }, {
+        "item" : "10016",
+        "count" : "9912"
+      }, {
+        "item" : "11229",
+        "count" : "9895"
+      }, {
+        "item" : "10025",
+        "count" : "8866"
+      }, {
+        "item" : "10021",
+        "count" : "8445"
+      }, {
+        "item" : "10128",
+        "count" : "8132"
+      }, {
+        "item" : "10024",
+        "count" : "8127"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288413,
+    "name" : "RESIDENTIAL UNITS",
+    "dataTypeName" : "number",
+    "description" : "The number of residential units at the listed property",
+    "fieldName" : "residential_units",
+    "position" : 12,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638485,
+    "cachedContents" : {
+      "non_null" : "711941",
+      "largest" : "8764",
+      "null" : "133666",
+      "top" : [ {
+        "item" : "1",
+        "count" : "354810"
+      }, {
+        "item" : "2",
+        "count" : "160106"
+      }, {
+        "item" : "0",
+        "count" : "110772"
+      }, {
+        "item" : "3",
+        "count" : "46438"
+      }, {
+        "item" : "4",
+        "count" : "12692"
+      }, {
+        "item" : "6",
+        "count" : "6345"
+      }, {
+        "item" : "8",
+        "count" : "2883"
+      }, {
+        "item" : "5",
+        "count" : "2698"
+      }, {
+        "item" : "10",
+        "count" : "1234"
+      }, {
+        "item" : "7",
+        "count" : "1116"
+      }, {
+        "item" : "20",
+        "count" : "906"
+      }, {
+        "item" : "16",
+        "count" : "845"
+      }, {
+        "item" : "9",
+        "count" : "738"
+      }, {
+        "item" : "12",
+        "count" : "637"
+      }, {
+        "item" : "458",
+        "count" : "472"
+      }, {
+        "item" : "24",
+        "count" : "436"
+      }, {
+        "item" : "11",
+        "count" : "406"
+      }, {
+        "item" : "15",
+        "count" : "402"
+      }, {
+        "item" : "18",
+        "count" : "340"
+      }, {
+        "item" : "14",
+        "count" : "288"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288414,
+    "name" : "COMMERCIAL UNITS",
+    "dataTypeName" : "number",
+    "description" : "The number of commercial units at the listed property",
+    "fieldName" : "commercial_units",
+    "position" : 13,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638484,
+    "cachedContents" : {
+      "non_null" : "633860",
+      "largest" : "2261",
+      "null" : "211747",
+      "top" : [ {
+        "item" : "0",
+        "count" : "565759"
+      }, {
+        "item" : "1",
+        "count" : "52904"
+      }, {
+        "item" : "2",
+        "count" : "8062"
+      }, {
+        "item" : "3",
+        "count" : "2392"
+      }, {
+        "item" : "4",
+        "count" : "1265"
+      }, {
+        "item" : "5",
+        "count" : "770"
+      }, {
+        "item" : "6",
+        "count" : "534"
+      }, {
+        "item" : "7",
+        "count" : "348"
+      }, {
+        "item" : "8",
+        "count" : "227"
+      }, {
+        "item" : "10",
+        "count" : "181"
+      }, {
+        "item" : "12",
+        "count" : "127"
+      }, {
+        "item" : "9",
+        "count" : "123"
+      }, {
+        "item" : "15",
+        "count" : "89"
+      }, {
+        "item" : "252",
+        "count" : "87"
+      }, {
+        "item" : "11",
+        "count" : "75"
+      }, {
+        "item" : "22",
+        "count" : "70"
+      }, {
+        "item" : "20",
+        "count" : "66"
+      }, {
+        "item" : "13",
+        "count" : "63"
+      }, {
+        "item" : "14",
+        "count" : "52"
+      }, {
+        "item" : "16",
+        "count" : "37"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288415,
+    "name" : "TOTAL UNITS",
+    "dataTypeName" : "number",
+    "description" : "The total number of units at the listed property",
+    "fieldName" : "total_units",
+    "position" : 14,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638483,
+    "cachedContents" : {
+      "non_null" : "726245",
+      "largest" : "8812",
+      "null" : "119362",
+      "top" : [ {
+        "item" : "1",
+        "count" : "389364"
+      }, {
+        "item" : "2",
+        "count" : "158734"
+      }, {
+        "item" : "0",
+        "count" : "76962"
+      }, {
+        "item" : "3",
+        "count" : "54299"
+      }, {
+        "item" : "4",
+        "count" : "14145"
+      }, {
+        "item" : "6",
+        "count" : "7139"
+      }, {
+        "item" : "5",
+        "count" : "4075"
+      }, {
+        "item" : "8",
+        "count" : "3084"
+      }, {
+        "item" : "7",
+        "count" : "1879"
+      }, {
+        "item" : "10",
+        "count" : "1674"
+      }, {
+        "item" : "9",
+        "count" : "1114"
+      }, {
+        "item" : "20",
+        "count" : "920"
+      }, {
+        "item" : "16",
+        "count" : "790"
+      }, {
+        "item" : "12",
+        "count" : "676"
+      }, {
+        "item" : "11",
+        "count" : "551"
+      }, {
+        "item" : "15",
+        "count" : "518"
+      }, {
+        "item" : "458",
+        "count" : "472"
+      }, {
+        "item" : "24",
+        "count" : "447"
+      }, {
+        "item" : "14",
+        "count" : "356"
+      }, {
+        "item" : "17",
+        "count" : "354"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288416,
+    "name" : "LAND SQUARE FEET",
+    "dataTypeName" : "text",
+    "description" : "The land are of the property listed in square feet",
+    "fieldName" : "land_square_feet",
+    "position" : 15,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638482,
+    "cachedContents" : {
+      "non_null" : "619554",
+      "largest" : "9,999",
+      "null" : "226053",
+      "top" : [ {
+        "item" : "0",
+        "count" : "137610"
+      }, {
+        "item" : "2,000",
+        "count" : "34556"
+      }, {
+        "item" : "2,500",
+        "count" : "28504"
+      }, {
+        "item" : "4,000",
+        "count" : "26250"
+      }, {
+        "item" : "3,000",
+        "count" : "11205"
+      }, {
+        "item" : "1,800",
+        "count" : "10427"
+      }, {
+        "item" : "5,000",
+        "count" : "8448"
+      }, {
+        "item" : "2,200",
+        "count" : "4318"
+      }, {
+        "item" : "1,600",
+        "count" : "4255"
+      }, {
+        "item" : "2,400",
+        "count" : "4231"
+      }, {
+        "item" : "1,900",
+        "count" : "4195"
+      }, {
+        "item" : "6,000",
+        "count" : "4087"
+      }, {
+        "item" : "2000",
+        "count" : "3618"
+      }, {
+        "item" : "4000",
+        "count" : "3308"
+      }, {
+        "item" : "2500",
+        "count" : "3199"
+      }, {
+        "item" : "2,003",
+        "count" : "3024"
+      }, {
+        "item" : "2,600",
+        "count" : "3019"
+      }, {
+        "item" : "2,300",
+        "count" : "2837"
+      }, {
+        "item" : "2,375",
+        "count" : "2591"
+      }, {
+        "item" : "2,800",
+        "count" : "2477"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288417,
+    "name" : "GROSS SQUARE FEET",
+    "dataTypeName" : "text",
+    "description" : "The total area of all e floors of a building as measured from the exterior surfaces of the outside walls of the building , including the land area and space within any building structure on the property",
+    "fieldName" : "gross_square_feet",
+    "position" : 16,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638481,
+    "cachedContents" : {
+      "non_null" : "619559",
+      "largest" : "9,999",
+      "null" : "226048",
+      "top" : [ {
+        "item" : "0",
+        "count" : "148805"
+      }, {
+        "item" : "2,400",
+        "count" : "3562"
+      }, {
+        "item" : "1,600",
+        "count" : "3152"
+      }, {
+        "item" : "2,000",
+        "count" : "2984"
+      }, {
+        "item" : "3,000",
+        "count" : "2919"
+      }, {
+        "item" : "1,800",
+        "count" : "2903"
+      }, {
+        "item" : "1,440",
+        "count" : "2808"
+      }, {
+        "item" : "1,280",
+        "count" : "2562"
+      }, {
+        "item" : "1,200",
+        "count" : "2481"
+      }, {
+        "item" : "2,160",
+        "count" : "2265"
+      }, {
+        "item" : "2,200",
+        "count" : "2260"
+      }, {
+        "item" : "1,224",
+        "count" : "2115"
+      }, {
+        "item" : "2,700",
+        "count" : "2025"
+      }, {
+        "item" : "1,152",
+        "count" : "2020"
+      }, {
+        "item" : "1,400",
+        "count" : "1997"
+      }, {
+        "item" : "3,300",
+        "count" : "1910"
+      }, {
+        "item" : "3,600",
+        "count" : "1879"
+      }, {
+        "item" : "1,920",
+        "count" : "1835"
+      }, {
+        "item" : "1,344",
+        "count" : "1811"
+      }, {
+        "item" : "2,080",
+        "count" : "1722"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288418,
+    "name" : "YEAR BUILT",
+    "dataTypeName" : "number",
+    "description" : "Year the structure on the property was built.",
+    "fieldName" : "year_built",
+    "position" : 17,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638480,
+    "cachedContents" : {
+      "non_null" : "806197",
+      "largest" : "2025",
+      "null" : "39410",
+      "top" : [ {
+        "item" : "1920",
+        "count" : "60798"
+      }, {
+        "item" : "1930",
+        "count" : "51068"
+      }, {
+        "item" : "1925",
+        "count" : "43829"
+      }, {
+        "item" : "1910",
+        "count" : "33273"
+      }, {
+        "item" : "1950",
+        "count" : "32607"
+      }, {
+        "item" : "1960",
+        "count" : "28085"
+      }, {
+        "item" : "1940",
+        "count" : "24818"
+      }, {
+        "item" : "0",
+        "count" : "23934"
+      }, {
+        "item" : "1931",
+        "count" : "21043"
+      }, {
+        "item" : "1955",
+        "count" : "19651"
+      }, {
+        "item" : "1901",
+        "count" : "17270"
+      }, {
+        "item" : "1899",
+        "count" : "17068"
+      }, {
+        "item" : "1965",
+        "count" : "16047"
+      }, {
+        "item" : "1935",
+        "count" : "15503"
+      }, {
+        "item" : "1945",
+        "count" : "13975"
+      }, {
+        "item" : "1915",
+        "count" : "11346"
+      }, {
+        "item" : "1900",
+        "count" : "11194"
+      }, {
+        "item" : "2007",
+        "count" : "10773"
+      }, {
+        "item" : "1970",
+        "count" : "10587"
+      }, {
+        "item" : "1963",
+        "count" : "10336"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : {
+      "noCommas" : "true"
+    }
+  }, {
+    "id" : 609288419,
+    "name" : "TAX CLASS AT TIME OF SALE",
+    "dataTypeName" : "number",
+    "description" : "Tax Class at time of sale",
+    "fieldName" : "tax_class_at_time_of_sale",
+    "position" : 18,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638479,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "4",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1",
+        "count" : "418420"
+      }, {
+        "item" : "2",
+        "count" : "367178"
+      }, {
+        "item" : "4",
+        "count" : "60006"
+      }, {
+        "item" : "3",
+        "count" : "3"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288420,
+    "name" : "BUILDING CLASS AT TIME OF SALE",
+    "dataTypeName" : "text",
+    "description" : "The building classification at the time of sale",
+    "fieldName" : "building_class_at_time_of",
+    "position" : 19,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638478,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "Z9",
+      "null" : "0",
+      "top" : [ {
+        "item" : "D4",
+        "count" : "129797"
+      }, {
+        "item" : "R4",
+        "count" : "129484"
+      }, {
+        "item" : "A1",
+        "count" : "70063"
+      }, {
+        "item" : "A5",
+        "count" : "58553"
+      }, {
+        "item" : "B1",
+        "count" : "48858"
+      }, {
+        "item" : "B2",
+        "count" : "48343"
+      }, {
+        "item" : "C0",
+        "count" : "44417"
+      }, {
+        "item" : "B3",
+        "count" : "37328"
+      }, {
+        "item" : "A2",
+        "count" : "28229"
+      }, {
+        "item" : "C6",
+        "count" : "26396"
+      }, {
+        "item" : "B9",
+        "count" : "15675"
+      }, {
+        "item" : "R1",
+        "count" : "14562"
+      }, {
+        "item" : "R3",
+        "count" : "14554"
+      }, {
+        "item" : "A9",
+        "count" : "12263"
+      }, {
+        "item" : "R9",
+        "count" : "11853"
+      }, {
+        "item" : "V0",
+        "count" : "11354"
+      }, {
+        "item" : "C3",
+        "count" : "10473"
+      }, {
+        "item" : "RG",
+        "count" : "9906"
+      }, {
+        "item" : "R2",
+        "count" : "9455"
+      }, {
+        "item" : "S2",
+        "count" : "7665"
+      } ],
+      "smallest" : "A0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288421,
+    "name" : "SALE PRICE",
+    "dataTypeName" : "number",
+    "description" : "Price paid for the property",
+    "fieldName" : "sale_price",
+    "position" : 20,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638466,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "2397501899",
+      "null" : "0",
+      "top" : [ {
+        "item" : "0",
+        "count" : "262138"
+      }, {
+        "item" : "10",
+        "count" : "8901"
+      }, {
+        "item" : "650000",
+        "count" : "4258"
+      }, {
+        "item" : "750000",
+        "count" : "4110"
+      }, {
+        "item" : "600000",
+        "count" : "4013"
+      }, {
+        "item" : "700000",
+        "count" : "3933"
+      }, {
+        "item" : "800000",
+        "count" : "3797"
+      }, {
+        "item" : "850000",
+        "count" : "3704"
+      }, {
+        "item" : "550000",
+        "count" : "3695"
+      }, {
+        "item" : "1100000",
+        "count" : "3539"
+      }, {
+        "item" : "900000",
+        "count" : "3496"
+      }, {
+        "item" : "1200000",
+        "count" : "3491"
+      }, {
+        "item" : "950000",
+        "count" : "3406"
+      }, {
+        "item" : "450000",
+        "count" : "3378"
+      }, {
+        "item" : "400000",
+        "count" : "3267"
+      }, {
+        "item" : "500000",
+        "count" : "3217"
+      }, {
+        "item" : "1300000",
+        "count" : "2929"
+      }, {
+        "item" : "300000",
+        "count" : "2836"
+      }, {
+        "item" : "350000",
+        "count" : "2734"
+      }, {
+        "item" : "1250000",
+        "count" : "2572"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : {
+      "precisionStyle" : "currency"
+    }
+  }, {
+    "id" : 609288422,
+    "name" : "SALE DATE",
+    "dataTypeName" : "calendar_date",
+    "description" : "A $0 sale price indicates that there was a transfer of ownership without a cash consideration.",
+    "fieldName" : "sale_date",
+    "position" : 21,
+    "renderTypeName" : "calendar_date",
+    "tableColumnId" : 74638467,
+    "cachedContents" : {
+      "non_null" : "845607",
+      "largest" : "2025-12-31T00:00:00.000",
+      "null" : "0",
+      "top" : [ {
+        "item" : "2019-08-15T00:00:00.000",
+        "count" : "907"
+      }, {
+        "item" : "2016-06-30T00:00:00.000",
+        "count" : "745"
+      }, {
+        "item" : "2023-03-31T00:00:00.000",
+        "count" : "727"
+      }, {
+        "item" : "2022-06-30T00:00:00.000",
+        "count" : "700"
+      }, {
+        "item" : "2021-06-30T00:00:00.000",
+        "count" : "686"
+      }, {
+        "item" : "2021-12-29T00:00:00.000",
+        "count" : "665"
+      }, {
+        "item" : "2021-12-15T00:00:00.000",
+        "count" : "643"
+      }, {
+        "item" : "2019-06-27T00:00:00.000",
+        "count" : "643"
+      }, {
+        "item" : "2021-08-31T00:00:00.000",
+        "count" : "638"
+      }, {
+        "item" : "2021-09-30T00:00:00.000",
+        "count" : "625"
+      }, {
+        "item" : "2021-11-18T00:00:00.000",
+        "count" : "624"
+      }, {
+        "item" : "2019-06-28T00:00:00.000",
+        "count" : "615"
+      }, {
+        "item" : "2025-10-10T00:00:00.000",
+        "count" : "607"
+      }, {
+        "item" : "2020-12-23T00:00:00.000",
+        "count" : "601"
+      }, {
+        "item" : "2024-05-20T00:00:00.000",
+        "count" : "594"
+      }, {
+        "item" : "2022-04-28T00:00:00.000",
+        "count" : "589"
+      }, {
+        "item" : "2016-07-14T00:00:00.000",
+        "count" : "575"
+      }, {
+        "item" : "2022-03-31T00:00:00.000",
+        "count" : "573"
+      }, {
+        "item" : "2018-06-28T00:00:00.000",
+        "count" : "572"
+      }, {
+        "item" : "2021-12-16T00:00:00.000",
+        "count" : "571"
+      } ],
+      "smallest" : "2016-01-01T00:00:00.000",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : {
+      "view" : "date"
+    }
+  }, {
+    "id" : 609288423,
+    "name" : "Latitude",
+    "dataTypeName" : "number",
+    "description" : "Latitude of the building's location. ",
+    "fieldName" : "latitude",
+    "position" : 22,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638477,
+    "cachedContents" : {
+      "non_null" : "822329",
+      "largest" : "40.912869",
+      "null" : "23278",
+      "top" : [ {
+        "item" : "40.747575",
+        "count" : "1214"
+      }, {
+        "item" : "40.759289",
+        "count" : "1095"
+      }, {
+        "item" : "40.764455",
+        "count" : "852"
+      }, {
+        "item" : "40.690216",
+        "count" : "543"
+      }, {
+        "item" : "40.574897",
+        "count" : "542"
+      }, {
+        "item" : "40.746742",
+        "count" : "501"
+      }, {
+        "item" : "40.710061",
+        "count" : "486"
+      }, {
+        "item" : "40.692069",
+        "count" : "474"
+      }, {
+        "item" : "40.718491",
+        "count" : "436"
+      }, {
+        "item" : "40.693398",
+        "count" : "422"
+      }, {
+        "item" : "40.709319",
+        "count" : "418"
+      }, {
+        "item" : "40.76562",
+        "count" : "399"
+      }, {
+        "item" : "40.783742",
+        "count" : "393"
+      }, {
+        "item" : "40.755898",
+        "count" : "383"
+      }, {
+        "item" : "40.680309",
+        "count" : "382"
+      }, {
+        "item" : "40.709984",
+        "count" : "371"
+      }, {
+        "item" : "40.769912",
+        "count" : "354"
+      }, {
+        "item" : "40.75592",
+        "count" : "352"
+      }, {
+        "item" : "40.734072",
+        "count" : "340"
+      }, {
+        "item" : "40.767077",
+        "count" : "334"
+      } ],
+      "smallest" : "40.498887",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288424,
+    "name" : "Longitude",
+    "dataTypeName" : "number",
+    "description" : "Longitude of the building's location. ",
+    "fieldName" : "longitude",
+    "position" : 23,
+    "renderTypeName" : "number",
+    "tableColumnId" : 74638476,
+    "cachedContents" : {
+      "non_null" : "822329",
+      "largest" : "-73.700376",
+      "null" : "23278",
+      "top" : [ {
+        "item" : "-73.94454",
+        "count" : "1202"
+      }, {
+        "item" : "-73.713493",
+        "count" : "1092"
+      }, {
+        "item" : "-73.977532",
+        "count" : "851"
+      }, {
+        "item" : "-73.973978",
+        "count" : "545"
+      }, {
+        "item" : "-73.985327",
+        "count" : "539"
+      }, {
+        "item" : "-73.972741",
+        "count" : "499"
+      }, {
+        "item" : "-73.990092",
+        "count" : "485"
+      }, {
+        "item" : "-73.983135",
+        "count" : "475"
+      }, {
+        "item" : "-73.999488",
+        "count" : "450"
+      }, {
+        "item" : "-73.963698",
+        "count" : "434"
+      }, {
+        "item" : "-73.962846",
+        "count" : "403"
+      }, {
+        "item" : "-73.968475",
+        "count" : "399"
+      }, {
+        "item" : "-73.949952",
+        "count" : "393"
+      }, {
+        "item" : "-73.967923",
+        "count" : "381"
+      }, {
+        "item" : "-73.990397",
+        "count" : "381"
+      }, {
+        "item" : "-73.99068",
+        "count" : "370"
+      }, {
+        "item" : "-73.836119",
+        "count" : "359"
+      }, {
+        "item" : "-73.982494",
+        "count" : "351"
+      }, {
+        "item" : "-73.988713",
+        "count" : "339"
+      }, {
+        "item" : "-73.836083",
+        "count" : "336"
+      } ],
+      "smallest" : "-74.254937",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288425,
+    "name" : "Community Board",
+    "dataTypeName" : "text",
+    "description" : "The Community Board field indicates the New York City Community District where the building is located.",
+    "fieldName" : "community_board",
+    "position" : 24,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638472,
+    "cachedContents" : {
+      "non_null" : "822330",
+      "largest" : "595",
+      "null" : "23277",
+      "top" : [ {
+        "item" : "407",
+        "count" : "39871"
+      }, {
+        "item" : "108",
+        "count" : "35603"
+      }, {
+        "item" : "107",
+        "count" : "30614"
+      }, {
+        "item" : "503",
+        "count" : "30056"
+      }, {
+        "item" : "413",
+        "count" : "26839"
+      }, {
+        "item" : "412",
+        "count" : "26043"
+      }, {
+        "item" : "501",
+        "count" : "25770"
+      }, {
+        "item" : "106",
+        "count" : "24720"
+      }, {
+        "item" : "502",
+        "count" : "24066"
+      }, {
+        "item" : "315",
+        "count" : "20308"
+      }, {
+        "item" : "318",
+        "count" : "20260"
+      }, {
+        "item" : "411",
+        "count" : "20171"
+      }, {
+        "item" : "301",
+        "count" : "19137"
+      }, {
+        "item" : "302",
+        "count" : "18352"
+      }, {
+        "item" : "406",
+        "count" : "17485"
+      }, {
+        "item" : "408",
+        "count" : "17075"
+      }, {
+        "item" : "102",
+        "count" : "16830"
+      }, {
+        "item" : "410",
+        "count" : "16562"
+      }, {
+        "item" : "312",
+        "count" : "16552"
+      }, {
+        "item" : "405",
+        "count" : "16455"
+      } ],
+      "smallest" : "101",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288426,
+    "name" : "Council District",
+    "dataTypeName" : "text",
+    "description" : "The Council District field indicates the New York City Council District where the building is located.",
+    "fieldName" : "council_district",
+    "position" : 25,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638471,
+    "cachedContents" : {
+      "non_null" : "822330",
+      "largest" : "9",
+      "null" : "23277",
+      "top" : [ {
+        "item" : "4",
+        "count" : "38714"
+      }, {
+        "item" : "51",
+        "count" : "30419"
+      }, {
+        "item" : "50",
+        "count" : "28039"
+      }, {
+        "item" : "19",
+        "count" : "27398"
+      }, {
+        "item" : "6",
+        "count" : "27240"
+      }, {
+        "item" : "3",
+        "count" : "26738"
+      }, {
+        "item" : "33",
+        "count" : "25852"
+      }, {
+        "item" : "23",
+        "count" : "23881"
+      }, {
+        "item" : "20",
+        "count" : "23562"
+      }, {
+        "item" : "1",
+        "count" : "23263"
+      }, {
+        "item" : "5",
+        "count" : "22793"
+      }, {
+        "item" : "39",
+        "count" : "22378"
+      }, {
+        "item" : "49",
+        "count" : "22128"
+      }, {
+        "item" : "48",
+        "count" : "21836"
+      }, {
+        "item" : "29",
+        "count" : "21287"
+      }, {
+        "item" : "32",
+        "count" : "20268"
+      }, {
+        "item" : "27",
+        "count" : "19892"
+      }, {
+        "item" : "46",
+        "count" : "19278"
+      }, {
+        "item" : "2",
+        "count" : "19259"
+      }, {
+        "item" : "28",
+        "count" : "18442"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288428,
+    "name" : "BIN",
+    "dataTypeName" : "text",
+    "description" : "The BIN (Building Identification Number) is a unique identifier for each building in the City.",
+    "fieldName" : "bin",
+    "position" : 26,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638469,
+    "cachedContents" : {
+      "non_null" : "819128",
+      "largest" : "5516445",
+      "null" : "26479",
+      "top" : [ {
+        "item" : "3000000",
+        "count" : "6705"
+      }, {
+        "item" : "4000000",
+        "count" : "3529"
+      }, {
+        "item" : "5000000",
+        "count" : "2173"
+      }, {
+        "item" : "2000000",
+        "count" : "1791"
+      }, {
+        "item" : "1000000",
+        "count" : "1752"
+      }, {
+        "item" : "4005166",
+        "count" : "1204"
+      }, {
+        "item" : "1089771",
+        "count" : "912"
+      }, {
+        "item" : "1089420",
+        "count" : "850"
+      }, {
+        "item" : "3329438",
+        "count" : "542"
+      }, {
+        "item" : "3320627",
+        "count" : "540"
+      }, {
+        "item" : "1076166",
+        "count" : "533"
+      }, {
+        "item" : "3396962",
+        "count" : "472"
+      }, {
+        "item" : "4456885",
+        "count" : "459"
+      }, {
+        "item" : "4456886",
+        "count" : "456"
+      }, {
+        "item" : "4453535",
+        "count" : "442"
+      }, {
+        "item" : "3062358",
+        "count" : "433"
+      }, {
+        "item" : "4610766",
+        "count" : "430"
+      }, {
+        "item" : "3393008",
+        "count" : "418"
+      }, {
+        "item" : "1043871",
+        "count" : "397"
+      }, {
+        "item" : "1048916",
+        "count" : "393"
+      } ],
+      "smallest" : "1000000",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288429,
+    "name" : "BBL",
+    "dataTypeName" : "text",
+    "description" : "The BBL (Borough, Block, and Lot) is a unique identifier for each tax lot in the City.",
+    "fieldName" : "bbl",
+    "position" : 27,
+    "renderTypeName" : "text",
+    "tableColumnId" : 74638468,
+    "cachedContents" : {
+      "non_null" : "819128",
+      "largest" : "5080500094",
+      "null" : "26479",
+      "top" : [ {
+        "item" : "0",
+        "count" : "1421"
+      }, {
+        "item" : "2039447501",
+        "count" : "1407"
+      }, {
+        "item" : "4084890001",
+        "count" : "1357"
+      }, {
+        "item" : "1002487501",
+        "count" : "913"
+      }, {
+        "item" : "4004377502",
+        "count" : "856"
+      }, {
+        "item" : "1010090037",
+        "count" : "850"
+      }, {
+        "item" : "4058937501",
+        "count" : "761"
+      }, {
+        "item" : "3072797501",
+        "count" : "755"
+      }, {
+        "item" : "2039437501",
+        "count" : "746"
+      }, {
+        "item" : "1000940001",
+        "count" : "715"
+      }, {
+        "item" : "1009367501",
+        "count" : "583"
+      }, {
+        "item" : "4163500400",
+        "count" : "568"
+      }, {
+        "item" : "2039387501",
+        "count" : "546"
+      }, {
+        "item" : "1009437501",
+        "count" : "533"
+      }, {
+        "item" : "4020860050",
+        "count" : "502"
+      }, {
+        "item" : "2039377501",
+        "count" : "491"
+      }, {
+        "item" : "3023487501",
+        "count" : "433"
+      }, {
+        "item" : "4067150002",
+        "count" : "433"
+      }, {
+        "item" : "3002457501",
+        "count" : "418"
+      }, {
+        "item" : "3000860011",
+        "count" : "402"
+      } ],
+      "smallest" : "0",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288431,
+    "name" : "Census Tract 2020",
+    "dataTypeName" : "text",
+    "description" : "The Census Tract (Census 2020) is a small, relatively permanent statistical subdivisions of a county uniquely numbered in each county with a numeric code.",
+    "fieldName" : "census_tract_2020",
+    "position" : 28,
+    "renderTypeName" : "text",
+    "tableColumnId" : 147330725,
+    "cachedContents" : {
+      "non_null" : "822583",
+      "largest" : "99802",
+      "null" : "23024",
+      "top" : [ {
+        "item" : "138",
+        "count" : "4685"
+      }, {
+        "item" : "21",
+        "count" : "4458"
+      }, {
+        "item" : "134",
+        "count" : "4036"
+      }, {
+        "item" : "159",
+        "count" : "3843"
+      }, {
+        "item" : "137",
+        "count" : "3808"
+      }, {
+        "item" : "88",
+        "count" : "3350"
+      }, {
+        "item" : "75",
+        "count" : "3175"
+      }, {
+        "item" : "98",
+        "count" : "3096"
+      }, {
+        "item" : "33",
+        "count" : "2918"
+      }, {
+        "item" : "118",
+        "count" : "2861"
+      }, {
+        "item" : "37",
+        "count" : "2849"
+      }, {
+        "item" : "39",
+        "count" : "2689"
+      }, {
+        "item" : "7",
+        "count" : "2689"
+      }, {
+        "item" : "64",
+        "count" : "2681"
+      }, {
+        "item" : "157",
+        "count" : "2616"
+      }, {
+        "item" : "871",
+        "count" : "2597"
+      }, {
+        "item" : "74",
+        "count" : "2569"
+      }, {
+        "item" : "54",
+        "count" : "2568"
+      }, {
+        "item" : "77",
+        "count" : "2480"
+      }, {
+        "item" : "1502",
+        "count" : "2454"
+      } ],
+      "smallest" : "1",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  }, {
+    "id" : 609288432,
+    "name" : "Neighborhood Tabulation Area (NTA) (2020)",
+    "dataTypeName" : "text",
+    "description" : "The Neighborhood Tabulation Area (Census 2020) are small area boundaries, created by the Department of City Planning (DCP) to aggregate population projections in a small area. Each NTA approximates a minimum population of 15,000. While NTAs were initially created to support PlaNYC, the thirty-year (2000-2030) sustainability plan for NYC, NTAs are now also being used to present data from the Decennial Census and American Community Survey. NTA boundaries and their associated names do not definitively represent neighborhood boundaries.",
+    "fieldName" : "nta",
+    "position" : 29,
+    "renderTypeName" : "text",
+    "tableColumnId" : 147330726,
+    "cachedContents" : {
+      "non_null" : "822583",
+      "largest" : "SI0391",
+      "null" : "23024",
+      "top" : [ {
+        "item" : "MN0802",
+        "count" : "14334"
+      }, {
+        "item" : "MN0701",
+        "count" : "13672"
+      }, {
+        "item" : "QN0602",
+        "count" : "12876"
+      }, {
+        "item" : "MN0702",
+        "count" : "12776"
+      }, {
+        "item" : "QN0707",
+        "count" : "11857"
+      }, {
+        "item" : "MN0801",
+        "count" : "11597"
+      }, {
+        "item" : "MN0604",
+        "count" : "11502"
+      }, {
+        "item" : "SI0302",
+        "count" : "10310"
+      }, {
+        "item" : "BK1503",
+        "count" : "9893"
+      }, {
+        "item" : "MN0803",
+        "count" : "9672"
+      }, {
+        "item" : "MN0603",
+        "count" : "9157"
+      }, {
+        "item" : "MN0401",
+        "count" : "9110"
+      }, {
+        "item" : "QN1001",
+        "count" : "8627"
+      }, {
+        "item" : "BK1001",
+        "count" : "8428"
+      }, {
+        "item" : "MN0502",
+        "count" : "8361"
+      }, {
+        "item" : "BK0602",
+        "count" : "8329"
+      }, {
+        "item" : "BK0301",
+        "count" : "8173"
+      }, {
+        "item" : "QN0301",
+        "count" : "8127"
+      }, {
+        "item" : "MN0101",
+        "count" : "8034"
+      }, {
+        "item" : "BK0601",
+        "count" : "7851"
+      } ],
+      "smallest" : "BK0101",
+      "count" : "845607",
+      "cardinality" : "845607"
+    },
+    "format" : { }
+  } ],
+  "grants" : [ {
+    "inherited" : false,
+    "type" : "viewer",
+    "flags" : [ "public" ]
+  } ],
+  "metadata" : {
+    "attachments" : [ {
+      "filename" : "Annualized_Calendar_Sales_Update_Data_Dictionary.xlsx",
+      "assetId" : "84998c3c-4fd5-4373-81b8-178b6c542023",
+      "name" : "Annualized_Calendar_Sales_Update_Data_Dictionary.xlsx"
+    } ],
+    "custom_fields" : {
+      "Update" : {
+        "Automation" : "No",
+        "Date Made Public" : "12/19/2018",
+        "Update Frequency" : "Annually"
+      },
+      "Dataset Information" : {
+        "Agency" : "Department of Finance (DOF)"
+      }
+    },
+    "rowLabel" : "Annual Sales Information for  Properties Sold in New York City ",
+    "availableDisplayTypes" : [ "table", "fatrow", "page" ]
+  },
+  "owner" : {
+    "id" : "5fuc-pqz2",
+    "displayName" : "NYC OpenData",
+    "profileImageUrlLarge" : "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium" : "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall" : "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName" : "NYC OpenData",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "query" : { },
+  "rights" : [ "read" ],
+  "tableAuthor" : {
+    "id" : "5fuc-pqz2",
+    "displayName" : "NYC OpenData",
+    "profileImageUrlLarge" : "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium" : "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall" : "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName" : "NYC OpenData",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "tags" : [ "finance", "annualized calendar", "sale", "property sale", "by borough", "citywide" ],
+  "flags" : [ "default", "ownerMayBeContacted", "restorable", "restorePossibleForType" ]
+}

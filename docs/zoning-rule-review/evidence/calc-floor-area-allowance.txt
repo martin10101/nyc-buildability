@@ -1,0 +1,12 @@
+# Test-run evidence for the zoning-rule review register - calculation entries (M5-T146 PART D)
+# Committed log of one deterministic run of this calculation entry's linked test file,
+# executed in the task worktree on the integrated code head 423aa189. result_ways.py changed (the walkthrough correction, second round, M5-T146 W14 c: the withheld-building-option text removed from the drawing layers and the no-allowance paths), so the code module, combined code identity, commit and counts are resynced; the floor-area calculation is unchanged.
+# The automated-tests field records the result; the checker never re-runs tests, it only checks
+# that the recorded code-identity and test-file digests still match the files.
+entry: calc-floor-area-allowance
+command (from services/api): python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register_calculations.py
+run date: 2026-10-09
+commit tested: 423aa189fdb8fd7f16aead0dfec3af50e5bcbd66
+exit code: 0
+---
+53 passed

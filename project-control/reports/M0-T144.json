@@ -1,0 +1,19 @@
+{
+  "task_id": "M0-T144",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M0-T144-deficit-convergence-policy.md",
+  "submitted_at": "2026-09-04T16:43:37.493379+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T144-evidence-map.json",
+  "content_manifest_sha256": "76a75c6f2eeb9ef96fd6a94566cb4e2eaf2b4ff40d7125f40e9fa2df9d4fffb9",
+  "reviewed_sha": "069a411527a530d44dcec53a868a60191f7a8af2",
+  "applicable_requirements": [
+    "D-024-R761",
+    "D-024-R762",
+    "D-024-R763",
+    "D-024-R764",
+    "D-024-R765",
+    "D-024-R766"
+  ],
+  "updated_at": "2026-09-04T16:43:39.210349+00:00"
+}

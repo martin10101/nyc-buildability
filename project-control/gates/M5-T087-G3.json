@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T087",
+  "gate_id": "G3",
+  "reviewer": "geospatial-engineer",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T087-G3.md",
+  "reviewed_at": "2026-09-24T08:22:31.444183+00:00",
+  "content_manifest_sha256": "07cf9683e6b5937c8245b30adb68c003b1612bb2d386c3c2050dc7d4b91595ee",
+  "reviewed_sha": "d6fba6bb46082e20eb1d193a84bcbbdea4b33902",
+  "updated_at": "2026-09-24T08:22:32.939682+00:00"
+}

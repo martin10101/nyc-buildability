@@ -143,7 +143,9 @@ unexpected host, or any other fail-closed condition.
 - **Authority:** owner only. No agent may create, approve, or apply an age exception. The
   machine gates (`dependency_age_gate.mjs` / `.py`) contain no exception path, so a "paper"
   exception cannot make a gate pass — the owner action happens outside the tool and the gate is
-  only satisfied once real registry time proves the age.
+  only satisfied once real registry time proves the age. An approved exception is implemented by a
+  reviewed change to the gate that carries its own expiry and is removed by a second reviewed
+  change, as owner directive D-092 was (tasks M0-T182 and M0-T183).
 - **Scope:** a single, named `package==version`. No wildcard, no org-wide, no
   category-wide, no permanent, and no undocumented exception.
 - **Record fields (all required):** package name + exact version; the exact age at the moment of
@@ -155,6 +157,12 @@ unexpected host, or any other fail-closed condition.
 - **Still fully gated otherwise:** the package must still be advisory-free, integrity-matched,
   from the official registry, and pass every other check. An advisory or integrity/host/unverifiable
   condition is **never** exceptionable.
+
+### Exceptions on record
+
+| Package / version | Age at approval | Reason the wait cannot be met | Authorization | Pull request | Auto-expiry | Clean-up |
+|---|---|---|---|---|---|---|
+| `source-map-js` `1.2.2` | 487485 s | None given. The orchestrator recommended waiting; the owner decided to update early. | D-092, owner message 84, 2026-10-06, "Go ahead update it only this 1 time" | Pull request of task M0-T182, branch `task/M0-T182-source-map-js-one-time-age-exception` | 2026-10-07T14:08:09.382Z (registry publication 2026-09-30T14:08:09.382Z + 604800 s) | task M0-T183 removed the `.npmrc` `min-release-age-exclude[]=source-map-js` line and the checker's `OWNER_AGE_EXCEPTIONS` exception on 2026-10-07, after the expiry |
 
 ---
 

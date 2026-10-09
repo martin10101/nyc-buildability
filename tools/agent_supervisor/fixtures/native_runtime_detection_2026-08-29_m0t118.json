@@ -1,0 +1,25 @@
+{
+ "background_gaps": [],
+ "claude_version": "2.1.251 (Claude Code)",
+ "directive": "D-024",
+ "flags": {
+  "--agent": "supported",
+  "--background": "supported",
+  "--bg": "supported",
+  "--name": "supported",
+  "--permission-mode": "supported",
+  "--session-id": "supported",
+  "--strict-mcp-config": "supported",
+  "--tools": "supported",
+  "--worktree": "supported"
+ },
+ "schema": "native_runtime_detection/v1",
+ "task": "M0-T118",
+ "verbs": {
+  "agents": "supported",
+  "attach": "supported",
+  "logs": "supported",
+  "respawn": "supported",
+  "stop": "supported"
+ }
+}

@@ -1,0 +1,85 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-068",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-17T07:50:00.000000+00:00",
+ "requirements": [
+  {
+   "id": "D-068-R001",
+   "text": "Knowledge-capture scope (clarifies D-054): anything discovered during any work that is useful for later parts of the program - not only loop mechanics - is appended to the shared knowledge stores when discovered (.claude/rules/PROGRAM_KNOWLEDGE.md for program-wide pointers within budget, docs/WORKING_KNOWLEDGE.md for current-section detail).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-068-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "Knowledge stores gain entries as discoveries happen, not at session end.",
+   "required_evidence": "git history of the knowledge stores",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing duty from receipt.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-068-R002",
+   "text": "Create a terse coding-rules file (.claude/rules/CODING_RULES.md, auto-injected): very few words, plain do/don't lines only, covering coding and file-preparation rules derived from error classes actually hit that could recur as CI failures. Seeded from real defect arcs (strict-TS casts in web tests, focus-after-remount, empty test placeholders, thin-client npm prohibition, ruff-first for api, jsdom canvas noise masking, out-of-scope consumer sweeps, LF-normalized digests). No prose, no history, no duplication of PROGRAM_KNOWLEDGE control-plane content; stays inside the D-067 10000-token eager budget.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-068-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [".claude/rules/CODING_RULES.md"],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "File exists, terse do/don't form, context_budget_check passes.",
+   "required_evidence": "the file + passing budget check output",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Created in the capture-adjacent commit.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [".claude/rules/CODING_RULES.md"], "tests": [], "tasks": []}
+  },
+  {
+   "id": "D-068-R003",
+   "text": "Maintenance: when a new coding/file-preparation error class is hit that could recur as a CI failure, append one terse do/don't line to CODING_RULES.md at discovery time; compress or demote before adding if the eager budget would be exceeded; never let the file grow prose.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": ["D-068-BOOTSTRAP"],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [".claude/rules/CODING_RULES.md"],
+    "effective_date": "2026-09-17"
+   },
+   "dependencies": [],
+   "required_harness": "New defect classes appear as new lines in later commits.",
+   "required_evidence": "git history of CODING_RULES.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Standing duty from receipt.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {"files": [".claude/rules/CODING_RULES.md"], "tests": [], "tasks": []}
+  }
+ ]
+}

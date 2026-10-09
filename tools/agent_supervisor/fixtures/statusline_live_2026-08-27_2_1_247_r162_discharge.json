@@ -1,0 +1,372 @@
+{
+ "behavioral_result": "Owner-observed round-2 behavioral canary PASS (D-024-R207): exactly one Haiku subagent launched, completed naturally, and the main session returned exactly CANARY-DONE.",
+ "capture_method": "Two owner-approved (exact-command gates D-024-R197/R205) live interactive Claude Code TUI canaries in the isolated slcap246 scratch project (cwd outside the repository, D-024-R196), launched with --strict-mcp-config and --tools Agent, no permission flags. Project-level scratch settings wired statusLine, subagentStatusLine, and a UserPromptSubmit hook to tee scripts appending raw stdin JSON. Round 1 (2026-08-27T01:05:14Z, binary 2.1.246) FAILED TRANSPORT - the prompt argument truncated at its first embedded double quote (CommandLineToArgvW), so no subagent spawned; its statusLine/hook payloads are valid 2.1.246 captures preserved separately (D-024-R201/R210). Round 2 (2026-08-27T01:25:01Z) used a 287-char quote-free prompt transport-validated end-to-end as one argv entry (D-024-R203) and captured the full set on 2.1.247. Both canaries terminated with all descendants; zero-residue, git-clean, and scratch-confinement proofs recorded (D-024-R198/R199/R202/R212-R214).",
+ "captured_at_utc": "2026-08-27",
+ "discharges": "D-024-R162 + D-024-R183 statusLine live-payload deferral (M0-T103 G5 report section 6 / unit-C preconditions 1-2). The deferral anticipated the live proof on 2.1.246; the machine auto-updated mid-procedure, so the full proof is stamped at the actual observed 2.1.247 identity (owner labeling rule D-024-R208), with the round-1 2.1.246 partial capture preserved. Governed by D-024-R192..R199 (Amendment 4), R200..R206 (Amendment 5), R207..R219 (Amendment 6).",
+ "doc_url": "https://code.claude.com/docs/en/statusline",
+ "installed_version_proof": {
+  "auto_update_observed": "official binary advanced 2.1.246 -> 2.1.247 between the round launches (01:05:14Z -> 01:25:01Z); the orchestrator session's own process remains 2.1.220 (running processes keep their binary)",
+  "claude_version_output_after_round2": "2.1.247 (Claude Code)",
+  "cross_reference": "fixtures/capability_probe_live_2026-08-26_m0t103_post_update.json (2.1.246 probe; a 2.1.247 re-probe is owed to the next capability task per the drift-tooth discipline)",
+  "round1_payload_version_field": "2.1.246",
+  "round2_payload_version_field": "2.1.247"
+ },
+ "masking": "home-directory prefixes (slash and dash-encoded) masked to [HOME] via telemetry_redaction.redact_user_paths; canary/orchestrator session ids masked to role tokens; remaining UUIDs (prompt ids) masked to [UUID]; task-notification and tool-use ids masked to [OPAQUE-ID]; rate-limit windows retained as captured (public-safe percentages/epochs); all other content verbatim",
+ "observed_identity": "Claude Code 2.1.247 (round-2 full capture; the authoritative identity for every capability conclusion in this fixture). Round-1 partial capture observed 2.1.246. The slcap246 scratch-directory name is historical only (named before the auto-update was discovered).",
+ "payloads": {
+  "round1_2_1_246_failed_transport": {
+   "hook_userpromptsubmit_truncated_prompt": {
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "hook_event_name": "UserPromptSubmit",
+    "permission_mode": "auto",
+    "prompt": "CANARY CAPTURE (statusline fixture, will be terminated externally): Use the Agent tool exactly once: subagent_type general-purpose, model haiku, prompt = Without",
+    "prompt_id": "[UUID]",
+    "session_id": "[SESSION-CANARY-R1]",
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R1].jsonl"
+   },
+   "statusline_post_response": {
+    "context_window": {
+     "context_window_size": 1000000,
+     "current_usage": {
+      "cache_creation_input_tokens": 8704,
+      "cache_read_input_tokens": 0,
+      "input_tokens": 2,
+      "output_tokens": 504
+     },
+     "remaining_percentage": 99,
+     "total_input_tokens": 8706,
+     "total_output_tokens": 504,
+     "used_percentage": 1
+    },
+    "cost": {
+     "total_api_duration_ms": 12989,
+     "total_cost_usd": 0.22893200000000002,
+     "total_duration_ms": 164864,
+     "total_lines_added": 0,
+     "total_lines_removed": 0
+    },
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "effort": {
+     "level": "xhigh"
+    },
+    "exceeds_200k_tokens": false,
+    "fast_mode": false,
+    "model": {
+     "display_name": "Fable 5",
+     "id": "claude-fable-5"
+    },
+    "output_style": {
+     "name": "default"
+    },
+    "prompt_id": "[UUID]",
+    "rate_limits": {
+     "five_hour": {
+      "resets_at": 1787796000,
+      "used_percentage": 55.00000000000001
+     },
+     "seven_day": {
+      "resets_at": 1787878800,
+      "used_percentage": 54
+     }
+    },
+    "session_id": "[SESSION-CANARY-R1]",
+    "session_name": "Canary capture statusline fixture",
+    "thinking": {
+     "enabled": true
+    },
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R1].jsonl",
+    "version": "2.1.246",
+    "workspace": {
+     "added_dirs": [
+      "[HOME]\\.claude",
+      "[HOME]\\AppData\\Local\\Temp",
+      "[HOME]\\Downloads\\nyc zoning",
+      "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\dependency-security",
+      "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\orchestration"
+     ],
+     "current_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+     "project_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246"
+    }
+   },
+   "statusline_startup_pre_first_response": {
+    "context_window": {
+     "context_window_size": 1000000,
+     "current_usage": null,
+     "remaining_percentage": null,
+     "total_input_tokens": 0,
+     "total_output_tokens": 0,
+     "used_percentage": null
+    },
+    "cost": {
+     "total_api_duration_ms": 0,
+     "total_cost_usd": 0,
+     "total_duration_ms": 44805,
+     "total_lines_added": 0,
+     "total_lines_removed": 0
+    },
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "effort": {
+     "level": "xhigh"
+    },
+    "exceeds_200k_tokens": false,
+    "fast_mode": false,
+    "model": {
+     "display_name": "Fable 5",
+     "id": "claude-fable-5"
+    },
+    "output_style": {
+     "name": "default"
+    },
+    "prompt_id": "[UUID]",
+    "session_id": "[SESSION-CANARY-R1]",
+    "thinking": {
+     "enabled": true
+    },
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R1].jsonl",
+    "version": "2.1.246",
+    "workspace": {
+     "added_dirs": [
+      "[HOME]\\.claude",
+      "[HOME]\\AppData\\Local\\Temp",
+      "[HOME]\\Downloads\\nyc zoning",
+      "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\dependency-security",
+      "[HOME]\\Downloads\\nyc zoning\\nyc-development-feasibility-claude-pack\\.claude\\skills\\orchestration"
+     ],
+     "current_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+     "project_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246"
+    }
+   }
+  },
+  "round2_2_1_247": {
+   "hook_userpromptsubmit_full_prompt": {
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "hook_event_name": "UserPromptSubmit",
+    "permission_mode": "auto",
+    "prompt": "Canary capture task: use the Agent tool exactly once with subagent_type general-purpose and model haiku to list the numbers one to forty as English words without using tools. When the subagent returns reply CANARY-DONE and stop. Do not use any other tools and do not read or write files.",
+    "prompt_id": "[UUID]",
+    "session_id": "[SESSION-CANARY-R2]",
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R2].jsonl"
+   },
+   "hook_userpromptsubmit_subagent_completion_notification": {
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "hook_event_name": "UserPromptSubmit",
+    "permission_mode": "auto",
+    "prompt": "<task-notification>\n<task-id>[OPAQUE-ID]</task-id>\n<tool-use-id>[OPAQUE-ID]</tool-use-id>\n<output-file>[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R2]\\tasks\\a74398edf4d32e1d0.output</output-file>\n<status>completed</status>\n<summary>Agent \"List numbers as words\" finished</summary>\n<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>\n<result>one, two, three, four, five, six, seven, eight, nine, ten, eleven, twelve, thirteen, fourteen, fifteen, sixteen, seventeen, eighteen, nineteen, twenty, twenty-one, twenty-two, twenty-three, twenty-four, twenty-five, twenty-six, twenty-seven, twenty-eight, twenty-nine, thirty, thirty-one, thirty-two, thirty-three, thirty-four, thirty-five, thirty-six, thirty-seven, thirty-eight, thirty-nine, forty.\n\nDone.</result>\n<usage><subagent_tokens>4666</subagent_tokens><tool_uses>0</tool_uses><duration_ms>3669</duration_ms></usage>\n</task-notification>",
+    "prompt_id": "[UUID]",
+    "session_id": "[SESSION-CANARY-R2]",
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R2].jsonl"
+   },
+   "statusline_post_response": {
+    "context_window": {
+     "context_window_size": 1000000,
+     "current_usage": {
+      "cache_creation_input_tokens": 768,
+      "cache_read_input_tokens": 9147,
+      "input_tokens": 2,
+      "output_tokens": 10
+     },
+     "remaining_percentage": 99,
+     "total_input_tokens": 9917,
+     "total_output_tokens": 10,
+     "used_percentage": 1
+    },
+    "cost": {
+     "total_api_duration_ms": 20169,
+     "total_cost_usd": 0.21695499999999998,
+     "total_duration_ms": 92337,
+     "total_lines_added": 0,
+     "total_lines_removed": 0
+    },
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "effort": {
+     "level": "xhigh"
+    },
+    "exceeds_200k_tokens": false,
+    "fast_mode": false,
+    "model": {
+     "display_name": "Fable 5",
+     "id": "claude-fable-5"
+    },
+    "output_style": {
+     "name": "default"
+    },
+    "prompt_id": "[UUID]",
+    "rate_limits": {
+     "five_hour": {
+      "resets_at": 1787796000,
+      "used_percentage": 56.00000000000001
+     },
+     "seven_day": {
+      "resets_at": 1787878800,
+      "used_percentage": 55.00000000000001
+     }
+    },
+    "session_id": "[SESSION-CANARY-R2]",
+    "session_name": "Canary capture task",
+    "thinking": {
+     "enabled": true
+    },
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R2].jsonl",
+    "version": "2.1.247",
+    "workspace": {
+     "added_dirs": [
+      "[HOME]\\.claude",
+      "[HOME]\\AppData\\Local\\Temp",
+      "[HOME]\\Downloads\\nyc zoning"
+     ],
+     "current_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+     "project_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246"
+    }
+   },
+   "statusline_startup_pre_first_response": {
+    "context_window": {
+     "context_window_size": 1000000,
+     "current_usage": null,
+     "remaining_percentage": null,
+     "total_input_tokens": 0,
+     "total_output_tokens": 0,
+     "used_percentage": null
+    },
+    "cost": {
+     "total_api_duration_ms": 0,
+     "total_cost_usd": 0,
+     "total_duration_ms": 2297,
+     "total_lines_added": 0,
+     "total_lines_removed": 0
+    },
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "effort": {
+     "level": "xhigh"
+    },
+    "exceeds_200k_tokens": false,
+    "fast_mode": false,
+    "model": {
+     "display_name": "Fable 5",
+     "id": "claude-fable-5"
+    },
+    "output_style": {
+     "name": "default"
+    },
+    "prompt_id": "[UUID]",
+    "session_id": "[SESSION-CANARY-R2]",
+    "thinking": {
+     "enabled": true
+    },
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R2].jsonl",
+    "version": "2.1.247",
+    "workspace": {
+     "added_dirs": [
+      "[HOME]\\.claude",
+      "[HOME]\\AppData\\Local\\Temp",
+      "[HOME]\\Downloads\\nyc zoning"
+     ],
+     "current_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+     "project_dir": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246"
+    }
+   },
+   "subagent_statusline_completed": {
+    "columns": 114,
+    "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+    "prompt_id": "[UUID]",
+    "session_id": "[SESSION-CANARY-R2]",
+    "tasks": [
+     {
+      "contextWindowSize": 200000,
+      "cwd": "[HOME]\\AppData\\Local\\Temp\\claude\\[HOME]-Downloads-nyc-zoning-ctl24\\[SESSION-ORCHESTRATOR]\\scratchpad\\slcap246",
+      "description": "List numbers as words",
+      "id": "a74398edf4d32e1d0",
+      "label": "List numbers as words",
+      "model": "claude-haiku-4-5-20251001",
+      "startTime": 1787793909941,
+      "status": "completed",
+      "tokenCount": 4666,
+      "tokenSamples": [
+       0,
+       4666,
+       4666,
+       4666,
+       4666,
+       4666,
+       4666
+      ],
+      "type": "local_agent"
+     }
+    ],
+    "transcript_path": "[HOME]\\.claude\\projects\\[HOME]-AppData-Local-Temp-claude-[HOME]-Downloads-nyc-zoning-ctl24-[SESSION-ORCHESTRATOR]-scratchpad-slcap246\\[SESSION-CANARY-R2].jsonl"
+   }
+  }
+ },
+ "permission_mode_proof": {
+  "finding": "On 2.1.246 and 2.1.247 an unflagged interactive session resolves to permission_mode 'auto' (classifier-guarded), NOT bypassPermissions; the installed --permission-mode enum is acceptEdits, auto, bypassPermissions, manual, dontAsk, plan (no 'default' choice). Satisfies the M0-T103 G5 unit-C precondition 2 intent: sessions dispatched under the restarted daemon are NOT in bypass mode.",
+  "observed": "auto",
+  "source": "UserPromptSubmit hook payloads of both canary rounds (permission_mode field); sessions launched with NO permission flags"
+ },
+ "schema": "statusline_live_fixture/v2",
+ "shape_validation": [
+  {
+   "check": "round-1 statusline payloads all report version 2.1.246",
+   "result": "PASS"
+  },
+  {
+   "check": "round-2 statusline payloads all report version 2.1.247",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-startup: required primary fields present",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-startup: model id present",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-startup: context_window_size is int",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-post: required primary fields present",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-post: model id present",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-post: context_window_size is int",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-startup: pre-first-response current_usage is null",
+   "result": "PASS"
+  },
+  {
+   "check": "r2-post: post-response current_usage populated",
+   "result": "PASS"
+  },
+  {
+   "check": "subagent payload: columns + tasks[] present",
+   "result": "PASS"
+  },
+  {
+   "check": "subagent task: documented fields incl. v2.1.205+ model/contextWindowSize",
+   "result": "PASS"
+  },
+  {
+   "check": "subagent task: haiku model resolved",
+   "result": "PASS"
+  },
+  {
+   "check": "round-2 hook 1: full 287-char prompt intact, permission_mode auto",
+   "result": "PASS"
+  },
+  {
+   "check": "round-1 hook: truncated prompt ends at first embedded quote boundary",
+   "result": "PASS"
+  },
+  {
+   "check": "transcripts verifiably absent for both rounds (CHILD_SESSION inheritance; orchestrator-measured 01:38Z)",
+   "result": "PASS"
+  }
+ ],
+ "transcript_saving_note": "Both canaries inherited CLAUDE_CODE_CHILD_SESSION=1 (and related session env) from the orchestrator shell via Start-Process, ran flagged as child sessions, and displayed the child-session transcript-saving warning; both payload transcript_path files are verifiably ABSENT. The evidentiary basis of this fixture is exclusively the tee-captured stdin payloads; the missing transcripts are an inherited-environment launch artifact and are NOT treated as evidence (D-024-R211)."
+}

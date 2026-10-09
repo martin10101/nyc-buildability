@@ -1,0 +1,203 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-040",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-040 requirements bind the non-ledger sentinel D-040-BOOTSTRAP, so no per-task rows accrue here (D-038/D-039 precedent; validator c5 forbids sentinel task_ids in task_verifications). Independent verification of the executed unblocks is recorded as committed reports; tasks contracted UNDER this directive cite D-040:<requirement ids> and verify through their own DCV rows in the usual way.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": [
+  {
+   "directive_id": "D-040",
+   "task_id": "M0-T156",
+   "applicable_requirement_ids": [
+    "D-040-R003"
+   ],
+   "reviewed_sha": "16a2261eeca01356749d7147c407134f6f904717",
+   "reviewed_manifest_sha256": "73d2a7504119e1e8d640e7b0ce075649ecfeadfa44deea7ec6fc59ea04e568ce",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T10:45:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R003",
+     "state": "PASS",
+     "evidence": [
+      "SOURCES IMMUTABLE: git diff 2bdae13f~1..2bdae13f -- project-control/directives/** = ONLY the four manifest.json files (D-032/D-033/D-034/D-038); each changed exactly updated_at + the affected digest value(s) + one append-only digest_normalization_restamp audit_log entry; whole-commit scan finds zero edits to any source-*.md, amendment, requirements.json, verification.json, or index.json; locked_requirement_ids byte-preserved (AS-4).",
+      "FIX IN DIGEST COMPUTATION: tools/directive_registry.py@2bdae13f adds normalize_text_artifact_bytes (CRLF->LF, lone-CR->LF) + sha256_text_artifact, adopted at the c2 source-digest check; tools/validate_directive_compliance.py@2bdae13f adopts dr.sha256_text_artifact at the migration-manifest check and the c14 requirements-body check (three sites). sha256_file unchanged -> content-manifest raw-blob identity unchanged (identity 73d2a750 stable).",
+      "DIGESTS RECOMPUTED INDEPENDENTLY: sha256(CRLF->LF-normalized bytes) equals all six re-stamped manifest values exactly - 3704add2.., d8158188.., d0ae01b4.., d2876943.., dfab73c0.., 0e9de4cc..; raw CRLF hashes equal the retired values 3912bae0/e5ebf70c/0e0ed336/82f36c4b/610f4e61/f62c6fc8.",
+      "required_harness: python tools/validate_directive_compliance.py --check EXIT 0 reproduced by verifier on the CRLF working tree.",
+      "required_harness: CI run 34685572048 headSha 012ba064, control-plane job 103531898219 conclusion=success (gh run view corroborated); the only red is owner-gated web-dependency-security (D-040-R004 preserved).",
+      "tests: tools/test_directive_compliance.py LineEndingNormalizationTest -v = 3/3 OK (AS-1 load-bearing CRLF/LF/lone-CR equality + raw-hash inequality; AS-2 representation-flip clean; AS-5 content tamper still fails c2); test_project_control.py EXIT 0 (23 groups); test_directive_reminder.py EXIT 0.",
+      "gates G0/G1/G4/G5 all PASS (project-control/reports/M0-T156-G0.md,-G1.md,-G4.md,-G5.md); producer=orchestrator, reviewers code-reviewer/qa-engineer/security-reviewer (all != producer)."
+     ],
+     "verified_at": "2026-09-12T10:45:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "16a2261eeca01356749d7147c407134f6f904717"
+    }
+   ],
+   "note": "Independent DCV verification of M0-T156 (D-040-R003 registry-digest normalization). All D-040-R003 obligations reproduced from primary repository evidence at HEAD (git diff, digest recomputation, validator EXIT 0, gh-corroborated control-plane job success, reran adversarial tests). First real task_verification row in D-040 (per the authority_note: tasks contracted under D-040 verify through their own DCV rows). Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at the verified HEAD 16a2261e; re-stamp to git rev-parse HEAD at accept if HEAD advances (identity 73d2a750 unchanged while the 8 allowed_paths are unchanged since 012ba064)."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T019",
+   "applicable_requirement_ids": [
+    "D-040-R002"
+   ],
+   "reviewed_sha": "a8acf33b21a1491556a7354f102ac2d865e76dd6",
+   "reviewed_manifest_sha256": "bf156d465d6a7c1e39f1b4cd19b5ad8baf7a5bd804081b6781a34eed29cfe110",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T13:35:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R002",
+     "state": "PASS",
+     "evidence": [
+      "CLAUSE 1 (unify to canonical name): apps/web/src/lib/rule-evaluation.ts@a8acf33b :83 const INTERNAL_RULE_EVAL_ENABLED_ENV_VAR = \"INTERNAL_RULE_EVAL_ENABLED\" and :88 the flag read process.env[INTERNAL_RULE_EVAL_ENABLED_ENV_VAR] - byte-identical name to services/api/app/config.py:28 and design-spec section 6 (docs/design/address-entry-confirm-design-spec.md:118). Verifier repo-wide grep: INTERNAL_RULE_EVAL_UI survives in apps/web ONLY at rule-evaluation.test.ts:87/89/90 (inert-guard test literals; never an active read); NEXT_PUBLIC_*RULE_EVAL = no matches (server-side-only posture preserved).",
+      "CLAUSE 1 (semantics + second factor preserved): git diff b119edf1..b30f709c -- rule-evaluation.ts = only the env-var literal + doc comments; TRUE_TOKENS={1,true,yes,on}, .trim().toLowerCase(), the typeof-string absent/empty/unknown->false guard, and ruleEvaluationSurfaceEnabled's env-AND-?ruleeval=on two-factor gate (array-first coalescing) unchanged. New non-tautological guard rule-evaluation.test.ts:89-101 pins the retired name INTERNAL_RULE_EVAL_UI as inert (canonical deleted, only OLD set -> both helpers false); KEY literal updated :57; no assertion weakened/deleted.",
+      "CLAUSE 2 (owner return item): producer report M5-T019-producer-report.md:168-183 OWNER RETURN NOTE names the exact Render dashboard rename (INTERNAL_RULE_EVAL_UI -> INTERNAL_RULE_EVAL_ENABLED; API service unchanged). Verifier-confirmed facts: render.yaml carries neither flag (nycdf-web web-service block WITHHELD :156-168), no .github/** workflow sets either, both .env.example files omit both - no in-repo deployment file needs edits.",
+      "required_harness: task packet cites D-040:D-040-R002 (tasks/M5-T019.json:98-105); evaluate_task_refs ok=true, applicable==cited==[D-040-R002]. required_evidence: gates G0/G1/G4/G5 all PASS (reports/M5-T019-{G0,G1,G4,G5}.md; reviewers code-reviewer/qa-engineer/security-reviewer, all != producer frontend-engineer); CI run 34694372457@634f1060 web+web-e2e SUCCESS, only red owner-gated web-dependency-security (D-040-R004 preserved).",
+      "FROZEN IDENTITY: git log b30f709c..a8acf33b over the 7 allowed_paths = empty; all 5 intervening commits are project-control-only; git diff b30f709c..634f1060 -- apps/web empty (CI green binds to the frozen apps/web identity). Computed material identity bf156d46...cfe110 (pc._task_git_identity, reviewed_sha=None -> HEAD a8acf33b) == submit-record content_manifest_sha256 (reports/M5-T019.json:8).",
+      "INTEGRITY: python tools/validate_directive_compliance.py --check EXIT 0; test_project_control.py EXIT 0 (23 groups); test_directive_reminder.py EXIT 0 (12 tests). Source digest f9800941... = manifest sources[0]; applicability append audit-logged (27d6d1b8->a3fc9d01). Negative controls: (a) stale reviewed_sha fails closed; (b) missing row -> 'no task_verification row (fail closed)'; (c) row injected in-memory -> reasons=[] deferrals=[]."
+     ],
+     "verified_at": "2026-09-12T13:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a8acf33b21a1491556a7354f102ac2d865e76dd6"
+    }
+   ],
+   "note": "Independent DCV of M5-T019 (D-040-R002 web flag unification: web adopts canonical INTERNAL_RULE_EVAL_ENABLED). Both clauses reproduced from primary evidence at HEAD a8acf33b (source read + repo-wide grep of the exclusive rename, config.py:28 name match, design-spec section 6, render.yaml/.github/.env.example verified-absent, git frozen-identity diff over the 7 allowed_paths, validator EXIT 0, in-memory accept dry-run reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (frontend-engineer). reviewed_sha stamped at verified HEAD a8acf33b; it may be mechanically re-stamped to accept-time HEAD while the task's allowed_paths diff vs its frozen material (b30f709c, base b119edf1) stays empty; computed material identity bf156d465d6a7c1e39f1b4cd19b5ad8baf7a5bd804081b6781a34eed29cfe110 is unchanged while those allowed_paths are unchanged."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T020",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "3c11a701c0c951d111b78e7b97e421bb342456d0",
+   "reviewed_manifest_sha256": "ee2d7b2a82c312e787b752cd8713c8bae8346337fdc958d1bb776deb2e23e077",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T15:12:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "SERVER INCREMENT of the scoped lot-outline release. RESEARCH-FIRST: project-control/reports/D-040-R001-mappluto-research.md first committed 4bd7d894 (2026-09-12 08:48:40) PREDATES the packet-contracting commit a5e5e408 (09:41:24); present at HEAD. Packet inputs[0] pins it.",
+      "SCOPE EXACTLY LOT-OUTLINE: git diff --stat a5e5e408..3c11a701 = ONLY the 12 allowed_paths + control-plane files; project-control/master_plan.json untouched; NO 3D-massing / 19-task-pack / GDS P1-P8 / MASTER_EXECUTION_PLAN artifact anywhere in the diff. reg.evaluate_task_refs: ok=True, applicable==cited==[D-040-R001], reasons=[] (no uncited-but-applicable requirement).",
+      "CONNECTOR: services/api/app/connectors/mappluto_lot_outline.py@3c11a701 (NEW, +596) builds f=geojson&outSR=4326 via the immutable 2263 connector's imported normalize_bbl/constants/outcome vocabulary; display_only + accuracy_note + attribution + EPSG:4326 on every outcome (22 hits); NO measurement (no import shapely, no real .area/.length -- every measurement grep hit is a prohibition comment); confirmed by test_module_computes_no_area_and_does_not_import_shapely.",
+      "ROUTE: services/api/app/api/v1/lot_geometry.py@3c11a701 (NEW, +244) GET /properties/{bbl}/lot-geometry, include_in_schema=False (:162), flag-gated on internal_rule_eval_enabled (:172) -> generic 404 {detail:Not Found} (:114) when off, X-Correlation-ID (:106); config.py forbidden+byte-unchanged; main.py additive router mount only.",
+      "CONTRACT: packages/contracts/schemas/v1/lot_geometry.schema.json and services/api/app/_contract_schemas/v1/lot_geometry.schema.json BYTE-IDENTICAL (git hash-object both = e0b34bb1d55795b92431b9b106190f25149ffb0b), closed (additionalProperties:false x6); packages/contracts/generated/lot_geometry.ts present with in-suite structural drift guard (empirically fails on enum removal).",
+      "FIXTURES: MANIFEST.json sha256 recomputed by verifier for 3 fixtures -- LOT01 9e5e1261..., LOT05(holes) 859bacb7..., LOT06(multipolygon) 28a79e78... -- all match response_body_sha256; 6 raw live-captured + 2 documented synthetic negatives (LOT80/LOT96, derived_from LOT01, M2-T009 precedent); no 4326 byte derived from 2263.",
+      "PRESERVED PROHIBITIONS: R004 git diff a5e5e408..3c11a701 -- apps/web package.json package-lock requirements*.txt pyproject.toml = EMPTY; R005 credential scan (supabase|service_role|secret_key|api_key|bearer|token=) over work-product diff = zero hits (MANIFEST authentication=none/keyless); R006 .claude/rules + services/api/app/rules untouched, no rule promoted; S4 mappluto_geometry_arcgis.py + config.py byte-unchanged (empty diff).",
+      "HARNESS: python tools/validate_directive_compliance.py --check EXIT 0; the two new packs = 70 passed; full services/api/tests/connectors+api = 906 passed; modularity_check --check EXIT 0. GATES G0/G1/G4/G5 PASS (project-control/gates/M5-T020-*.json; reviewers data-contract-verifier/qa-engineer/security-reviewer all != producer backend-engineer); G1/G4/G5 recorded at content identity ee2d7b2a...; G4 PASS-with-corrections BLOCKING-1/2 discharged by test-only a3d59e03 (+69/-3) + 7a4897b7 via same-reviewer delta attestations with empirical mutant kills. CI run 34698587781@6f091098 all green except owner-gated web-dependency-security (D-040-R004 preserved).",
+      "FROZEN IDENTITY: git diff a3d59e03..3c11a701 over the 12 allowed_paths = EMPTY (post-correction commits are control-plane-only). Computed material identity ee2d7b2a...e23e077 (pc._task_git_identity, reviewed_sha=None -> HEAD 3c11a701) == submit-record content_manifest_sha256 (reports/M5-T020.json:8) == G1/G4/G5 gate content_manifest_sha256. Negative controls: (a) stale reviewed_sha 7d548dd7 fails closed; (b) missing row -> 'no task_verification row (fail closed)'; (c) row injected in-memory at HEAD -> reasons=[] deferrals=[].",
+      "OPEN WEB HALF: MapLibre GL JS dependency admission + apps/web lot-outline rendering are correctly deferred to follow-on packet(s) (producer report section 8; packet business_reason). D-040-R001 therefore remains OPEN at the directive level until the web-rendering half lands; THIS row verifies the SERVER increment only, which is fully satisfied."
+     ],
+     "verified_at": "2026-09-12T15:12:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "3c11a701c0c951d111b78e7b97e421bb342456d0"
+    }
+   ],
+   "note": "Independent DCV of M5-T020 (D-040-R001 SERVER increment: MapPLUTO display-only EPSG:4326 lot-outline transport + flag-gated GET /properties/{bbl}/lot-geometry route + closed lot_geometry contract). Every obligation reproduced from primary evidence at HEAD 3c11a701: research-first timing (git first-commit vs packet), full-diff scope containment, byte-identical schema copies (git hash-object), 3 recomputed fixture sha256s, forbidden-path immutability, validator EXIT 0, 70 new-pack + 906 regression tests, in-memory accept dry-run reasons=[] deferrals=[]. Verifier (directive-compliance-verifier) != producer (backend-engineer). reviewed_sha stamped at verified HEAD 3c11a701; it may be mechanically re-stamped to accept-time HEAD while this task's allowed_paths diff vs its frozen material (a3d59e03; producer 683b6095, base a5e5e408) stays empty; computed material identity ee2d7b2a82c312e787b752cd8713c8bae8346337fdc958d1bb776deb2e23e077 is unchanged while those 12 allowed_paths are unchanged. SCOPE NOTE: this row verifies the SERVER half only; D-040-R001 stays open at directive level until the follow-on web-rendering (MapLibre) packet lands and is independently verified."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T022",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "1feb1a0c7f8a1feb7630d9b3162dd36daad50b67",
+   "reviewed_manifest_sha256": "06293120034cb65efad5d80bf6b06924a8a5125eb769518b9549e53a7c2c26b8",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T01:35:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "DEPENDENCY-ADMISSION increment (web-half prerequisite) of the scoped lot-outline release. EXACT PIN: git show 1feb1a0c:apps/web/package.json = ONE added dependency \"maplibre-gl\": \"6.7.0\" (exact, no ^/~); next 15.5.24 / react|react-dom 19.1.2 byte-unchanged. Pin diff f17a5869 = single +line. MapLibre GL JS is the library .claude/rules/3d-ui-expansion.md mandates for the lot-outline increment.",
+      "LOCK RESOLVES 6.7.0 + 22-NODE TREE: node_modules/maplibre-gl version 6.7.0, resolved registry.npmjs.org, integrity sha512-Y1Q1+UP9WXou0DUrnaFdDsoMqiMCWy6aS968IBUaQ2eZi6H1/kPCfpfZOWXFJZbeKMkX9Wo6OFzY/k48qqPf3Q== (== registry). Independent bot-lock diff 6d776102 enumeration: 22 added node_modules entries (set identical to producer section-2 table), 0 added resolved off registry.npmjs.org, 0 added integrity non-sha512; only removed line is minimist \"dev\": true (dev->prod promotion, G5 LOW-2).",
+      "INERT WINDOW: git grep -iE 'maplibre|mapbox|maptiler|leaflet' 1feb1a0c -- apps/web/src apps/web/e2e = NO MATCHES (no source imports the package yet; intended).",
+      "PRESERVED HOLD NOT VIOLATED: git log f17a5869~1..1feb1a0c -- master_plan.json empty; material commits touch ONLY apps/web/package.json (f17a5869) + apps/web/package-lock.json (6d776102); git diff --stat f17a5869~1..6d776102 -- render.yaml .github/ services/ apps/web/src/ apps/web/e2e/ packages/ apps/web/.npmrc empty; no 3D-massing/19-task-pack/GDS P1-P8/MASTER_EXECUTION_PLAN artifact; no deploy (D-042-R003 unchanged).",
+      "AUTHORIZATION CHAIN: B-022 status=resolved, resolved_at 2026-09-13T00:50:00Z at commit 636bab06 which git merge-base --is-ancestor confirms precedes pin f17a5869 (authored 2026-09-13T01:07:47Z) -> resolved BEFORE the pin; D-042-R002 explicitly discharges B-022 and authorizes maplibre-gl@6.7.0 admission under its own G5 + age gate. evaluate_task_refs ok=True, applicable==cited==[D-040-R001], reasons=[] (no uncited-applicable requirement from any directive incl. D-042 whose reqs are all task_id-scoped, none path-based).",
+      "GATES (producer != reviewers): gates/M5-T022-{G1,G5}.json PASS with reviewers code-reviewer / security-reviewer (both != producer orchestrator); G0 PASS (orchestrator contracting gate). G5 = policy-15 new-package provenance review (reports/M5-T022-G5.md): 22 nodes OSV-clean, integrity==registry, ages recomputed (tightest maplibre-gl 10.45 d >= 604800 s; 6.8.0/6.9.0 excluded), zero install scripts, OIDC trusted-publishing. G1/G5 recorded content_manifest_sha256 06293120... == submit manifest.",
+      "FROZEN IDENTITY: git log 6d776102..1feb1a0c over the 3 allowed_paths = only 44c1012d (producer report); dependency files unchanged since 6d776102; git log 44c1012d..1feb1a0c over all 3 allowed_paths EMPTY. Computed material identity 06293120034cb65efad5d80bf6b06924a8a5125eb769518b9549e53a7c2c26b8 (pc._task_git_identity, reviewed_sha=None -> HEAD 1feb1a0c) == submit-record content_manifest_sha256 (reports/M5-T022.json) == G1/G5 gate manifests.",
+      "HARNESS: python tools/validate_directive_compliance.py --check EXIT 0; test_directive_reminder.py 12/12 OK. NEGATIVE CONTROLS reproduced in-process: (a) stale reviewed_sha -> fail closed; stale content identity -> fail closed; (b) missing row -> 'no task_verification row (fail closed)'; (c) well-formed row injected in-memory -> reasons=[] deferrals=[]; producer==verifier -> fail closed.",
+      "OPEN WEB HALF: this row verifies the DEPENDENCY-ADMISSION prerequisite ONLY. The apps/web lot-outline web RENDERING is the LAST open R001 increment and has not landed; D-040-R001 remains OPEN at the directive level until that rendering packet lands and is independently verified."
+     ],
+     "verified_at": "2026-09-13T01:35:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "1feb1a0c7f8a1feb7630d9b3162dd36daad50b67"
+    }
+   ],
+   "note": "Independent DCV of M5-T022 (D-040-R001 DEPENDENCY-ADMISSION increment: maplibre-gl@6.7.0 exact pin + bot-proven 22-node transitive lock, the web-half prerequisite). Every obligation reproduced from primary evidence at HEAD 1feb1a0c: exact pin diff, lock 6.7.0 + 22-node registry/sha512 enumeration, inert-window grep, master-plan/forbidden-path immutability, B-022-before-pin ancestry + D-042-R002 discharge, evaluate_task_refs applicable==cited, G1/G5 producer!=reviewer with G5 provenance PASS, validator EXIT 0, in-process accept dry-run reasons=[] deferrals=[]. Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD 1feb1a0c; it may be mechanically re-stamped to accept-time HEAD while this task's allowed_paths diff vs its frozen material (dependency files at 6d776102; producer report at 44c1012d) stays empty; computed material identity 06293120034cb65efad5d80bf6b06924a8a5125eb769518b9549e53a7c2c26b8 is unchanged while those 3 allowed_paths are unchanged. SCOPE NOTE: this row verifies the dependency-admission half only; D-040-R001 stays OPEN at directive level until the follow-on apps/web lot-outline web-rendering packet lands and is independently verified."
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T023",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "318c8794d2de76fdbef6e930b5baf76091afe725",
+   "reviewed_manifest_sha256": "ceb64b3d94debedac93006b1114020d76860b26a030b6c54b768bfd35b3faae8",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T05:20:00+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "FINAL WEB-RENDERING INCREMENT of the scoped lot-outline release (Packet 3, MapLibre GL JS per .claude/rules/3d-ui-expansion.md item 5). LotOutlineMap.tsx@HEAD is a NEW focused client module (401 SLOC) that dynamically imports maplibre-gl at line 238 - verified by grep to be the ONLY maplibre-gl JS import site in apps/web/src (plus the additive CSS import at layout.tsx:10) i.e. the FIRST import of the M5-T022-admitted package; it builds a GeoJSON Feature with the contract geometry VERBATIM (line 264-272, 'Coordinates VERBATIM from the contract'), adds fill (273-278) + line (279-284) layers and camera-only fitBounds (285-287).",
+      "MULTIPOLYGON/HOLES: lot-geometry-api.ts validateOutlineGeometry (lines 215-233) preserves every polygon and interior ring structurally unchanged (isValidPolygonCoords over every ring; MultiPolygon via coords.every(isValidPolygonCoords)); geometry travels ONLY on single_lot (line 259 `geometry: isSingle ? rawGeometry : null`) so multiple_features never yields a silent first-pick; LotOutlineMap.geometryBounds flattens rings for camera framing only (lines 95-98).",
+      "DISPLAY-ONLY DISCIPLINE (R001/3d-ui-expansion item 8-9): independent grep of the two new source files for area/turf/measure/distance/getArea/polygonArea found ONLY affirming comments ('no measurement is derived', 'NEVER measurement', 'This is NOT a measurement'); no coordinate-derived value is computed or shown. lot-geometry-api docstring lines 22-28 and validateOutlineGeometry are a finite-number transport check, not measurement.",
+      "HONEST TYPED STATES: single_lot (map when WebGL present, else a non-blank WebGL-unavailable fallback), no_outline (condo_unit_lot_no_polygon vs no-lot), multiple_features (review posture, never first-pick), invalid_geometry, and transport failures route_absent/network_error/client_timeout/error/unexpected_response - each a distinct testid'd fallback keeping the ZoLa link (LotOutlineMap.tsx 315-398); one bounded fetch per BBL, aborts on unmount, no retry storm (205-218).",
+      "CONSUMES THE ACCEPTED M5-T020 ROUTE + CLOSED CONTRACT: lot-geometry-api.ts (NEW, 430 SLOC) fetches GET /api/v1/properties/{bbl}/lot-geometry (line 311), mirrors the route's documented (status,state) matrix (DOCUMENTED_PAIRS 52-62), enforces 200 body document_kind='lot_outline' & display_only===true & crs==='EPSG:4326' & known outcome (382-398), maps the generic 404 to route_absent (403-404); bounded reflection of every reflected string via boundedText/boundedToken.",
+      "DCP ATTRIBUTION + +/-20FT COPY + ZoLa KEPT: DCP_ATTRIBUTION constant (LotOutlineMap.tsx:119) passed to the MapLibre AttributionControl (259) - G5 F-1 remediation, since customAttribution renders as HTML; view.attribution shown only as React-escaped text (178). +/-20ft copy present ('plus or minus 20 feet', outcomeSummary:149; view.accuracyNote rendered 175). AddressConfirmCard.tsx keeps the ZoLa link (123-134) and its BBL-absent branch (135-139) verbatim; the LotOutlineMap mounts only on a canonical BBL (151) with NO second flag read (comment 142-150) - flag discipline confirmed by grep (no NEXT_PUBLIC flag mirror, no client INTERNAL_RULE_EVAL read in the address surface).",
+      "GENERATOR FOLLOW-UP CLOSED (the recorded M5-T020 debt): python packages/contracts/scripts/generate_ts_types.py --check EXIT 0 reproduced by verifier ('OK: generated lot_geometry TypeScript types are up to date.'); committed packages/contracts/generated/lot_geometry.ts blob = b17f5f3e98c5937cc1be903376277c57e0847faf (git hash-object) - BYTE-IDENTICAL to the M5-T020-generated artifact; .github/workflows/ci.yml runs `python3 packages/contracts/scripts/generate_ts_types.py --check` at the 'Check generated TypeScript types are up to date' step (~line 392), so CI drift coverage follows with no ci.yml change.",
+      "HOLD BOUNDARY PRESERVED (R001 'everything else REMAINS HELD'): git diff c6aca328..3ff94619 over project-control/master_plan.json = EMPTY; over .claude/rules/3d-ui-expansion.md and .claude/rules/expansion-agent-dispatch-hold.md = EMPTY; no 3D-massing / 19-task-pack / GDS-P1-P8 / MASTER_EXECUTION_PLAN artifact in the range. M5-T023's code commits (b99ca6c0, 8b3428b7, 3ff94619) stay inside the packet allowed_paths; the only out-of-set path is the orchestrator-bundled sibling project-control/reports/M5-T024.json in b99ca6c0 (confirmed as the intended G1-A1 orchestrator bundling; a control-plane record, not an M5-T023 deliverable, and outside the identity computed over M5-T023's allowed_paths). maplibre-gl@6.7.0 pin in apps/web/package.json untouched by M5-T023 (git diff over package.json/package-lock.json EMPTY) - no new dependency admitted.",
+      "GATES (producer != reviewers): G0 PASS (orchestrator, administrative). G1 PASS (code-reviewer), G3 PASS (human-journey-reviewer), G4 PASS (qa-engineer), G5 PASS (security-reviewer) - all four reviewers != producer frontend-engineer; each substantive gate recorded content_manifest_sha256 = ceb64b3d94debedac93006b1114020d76860b26a030b6c54b768bfd35b3faae8 == verifier-computed identity at HEAD, with G1/G3/G5 delta attestations at 83ac97f0 and G4 at abef3e5d clearing the round-2 rework (RC-CI-1 e2e locator + G3-A1 + G5-F-1) with no residual blocking.",
+      "EXECUTABLE AUTHORITY (independently corroborated via read-only gh run view): CI run 34736197598 headSha 3ff9461991525d5fd62098733591e2571ffaef26 (== frozen candidate), conclusion=success, 18/18 jobs, zero non-success; web-e2e vitest 481/481 and Playwright 83 passed incl. all 4 lot-outline.spec.ts journeys (single_lot, condo honest-empty, multiple_features review, upstream-failure fallback); web (typecheck+lint+build with the first maplibre import), contracts-typegen (byte-identical incl. lot_geometry), and modularity jobs green. Verifier also reproduced python tools/modularity_check.py --check EXIT 0 (16 warnings all pre-existing under tools/agent_supervisor/**; none of M5-T023's files flagged).",
+      "FROZEN IDENTITY: git merge-base --is-ancestor 3ff94619 HEAD = true; git diff 3ff94619..HEAD over all 17 allowed_paths = EMPTY; commits 3ff94619..HEAD (56c49e26, 83ac97f0, ff303de0, abef3e5d, 7782be59, plus 56943e06/48287404 M5-T024) are control-plane/CI-evidence/sibling-acceptance only. Computed material identity ceb64b3d... (frozen_git_identity over allowed_paths at HEAD 7782be59) == the four gate content_manifest_sha256 values.",
+      "INCREMENT CHAIN COMPLETE: this row verifies the WEB-RENDERING half; combined with the accepted M5-T020 (server route) and M5-T022 (maplibre-gl admission) rows, the D-040-R001 lot-outline increment is now fully delivered (research -> server route -> dependency admission -> web rendering). No open R001 increment remains."
+     ],
+     "verified_at": "2026-09-13T05:20:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "318c8794d2de76fdbef6e930b5baf76091afe725"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-040",
+   "task_id": "M5-T025",
+   "applicable_requirement_ids": [
+    "D-040-R001"
+   ],
+   "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6",
+   "reviewed_manifest_sha256": "8fa2c7a4610cd2a7efcbdc8bb56943bf2ad167a4b1e5cf62569187b9e6a9b05d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:01:28+00:00",
+   "requirements": [
+    {
+     "id": "D-040-R001",
+     "state": "PASS",
+     "evidence": [
+      "Work confined to the released lot-outline increment (LotOutlineMap.tsx on the address confirm card, MapLibre GL JS per the path-scoped technical rules); expansion-hold section 2.1 scoped release cited via task directive_refs D-040:D-040-R001; everything else under the hold undisturbed; no expansion-pack task IDs anywhere.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    }
+   ]
+  }
+ ]
+}

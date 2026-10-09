@@ -1,0 +1,113 @@
+{
+  "task_id": "M0-T179",
+  "title": "D-091: Linux recertification of the supervisor after M0-T177 and M0-T178 (supersedes M0-T174)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Recertify the supervisor controller on this Linux server at the tree that includes M0-T177 (B-027 systemd control-group containment and the self-kill fix) and M0-T178 (DB-103 equal-model refusal): pin the certified tools/agent_supervisor tree hash and the installed CLI identities, re-run the live claude-version teeth (capability_probe for claude and codex, native_adapter, event_bus S8), the shell-routing harness with mutants and the Linux containment suite, cite the CI real-unit R3 proof and the windows freeze baseline, recapture all three claude drift families (capability probe, native-runtime detection, hook-event catalog) at the installed claude version because the host CLI moved from 2.1.287 to 2.1.288 (a deliberate admission event under D-024-R287; old fixtures kept) and re-point event_drift.py to the recaptured catalog, and write the certification report superseding M0-T174. All local probes; no provider call; no owner-typed step.",
+  "business_reason": "Owner directive D-091: the moved loop is reviewed and certified before use (R007); M0-T177 and M0-T178 voided the M0-T174 certification.",
+  "inputs": [
+    "project-control/reports/M0-T174-producer-report.md and M0-T174-DCV.md (the certification being superseded and its scope)",
+    "project-control/reports/M0-T159-recertification.md (precedent); docs/D091_WAVE3_WIRING_PLAN.md section 2",
+    "project-control/reports/B-027-linux-containment-causal-trace.md; M0-T177 and M0-T178 reports (the supervisor changes that void M0-T174)",
+    "tools/agent_supervisor/capability_probe.py, native_runtime.py, event_drift.py, linux/sh_tests/"
+  ],
+  "outputs": [
+    "project-control/reports/M0-T179-producer-report.md: the Linux certification report superseding M0-T174 (installed CLI identities; the supervisor tree hash certified; each tooth re-run with its command, cwd and result; CI evidence; what remains owner-typed)",
+    "recaptured claude fixtures under tools/agent_supervisor/fixtures/ at the installed version (capability probe, native-runtime detection, hook-event catalog; old fixtures kept) and the event_drift.py catalog re-point"
+  ],
+  "dependencies": [
+    "M0-T177",
+    "M0-T178"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/fixtures/",
+    "tools/agent_supervisor/event_drift.py",
+    "tools/test_agent_supervisor_capability_probe.py",
+    "tools/test_agent_supervisor_native_adapter.py",
+    "tools/test_agent_supervisor_event_bus.py",
+    "project-control/reports/M0-T179-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "any tools/agent_supervisor/*.py source change other than the event_drift.py hook-catalog re-point to the recaptured catalog fixture (the M0-T159 and M0-T174 recertification precedent); a source change after this task voids the certification",
+    "creating /etc/nyc-supervisor/config.toml, record-manifest, or installing systemd units (owner-typed commissioning, M0-T175)",
+    "any provider call; codex login or handling any owner credential",
+    "starting or commissioning a live loop, systemd-run, or killing a supervisor on this host",
+    "weakening any fail-closed check, gate, reviewer-independence rule or the orchestrator's sole authority (ADR-005)",
+    "project-control/** except the producer report (orchestrator-only), .claude/**, .github/**, product code (services/**, apps/**, packages/**)",
+    "running whole RealProcess test classes or the whole tools/test_agent_supervisor_model_chain.py on this host"
+  ],
+  "acceptance_scenarios": [
+    "identity: the report pins the certified tools/agent_supervisor tree hash at the producer commit and the installed CLI versions (claude at /usr/bin/claude, now 2.1.288; codex at /opt/nyc-codex, 0.157.0); the three claude drift families are recaptured at 2.1.288 and the 2.1.287 fixtures are kept",
+    "teeth: the live claude-version teeth (capability_probe live re-probe for claude and codex, native_adapter, event_bus S8) pass on this server",
+    "shell harness: tools/agent_supervisor/linux/sh_tests passes with every mutant detected",
+    "containment: the Linux containment suite passes here (the real-unit R3 proof is cited from CI on the merged head); this host's default containment still refuses outside a hardened service, as designed",
+    "baseline: the supervisor-freeze baseline is re-established by CI supervisor-bridge (windows-latest, >= 1165 tests, 0 failures) at the certified tree",
+    "failure: a tooth that cannot run fails closed and the certification is not claimed"
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "control-plane-verifier",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "any later tools/agent_supervisor/** change voids this certification",
+    "commissioning stays owner-typed (M0-T175): root config, Codex sign-in, record-manifest/verify-controller, unit install, start"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-02T23:36:05.344526+00:00",
+  "updated_at": "2026-10-03T00:17:36.696980+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-091",
+      "requirement_ids": [
+        "D-091-R001",
+        "D-091-R007"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-02T23:36:05.344776+00:00",
+  "worktree": "/root/project/w-M0-T179",
+  "progress_log": [
+    {
+      "at": "2026-10-02T23:37:04.480256+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "in_progress",
+      "message": "Scenarios in the packet; producer dispatched in /root/project/w-M0-T179"
+    },
+    {
+      "at": "2026-10-02T23:48:44.172072+00:00",
+      "agent": "backend-engineer",
+      "percent": 30,
+      "status": "in_progress",
+      "message": "Scope corrected (recapture at 2.1.288 + event_drift re-point); producer relaunched in /root/project/w-M0-T179"
+    },
+    {
+      "at": "2026-10-03T00:00:15.331149+00:00",
+      "agent": "backend-engineer",
+      "percent": 85,
+      "status": "in_progress",
+      "message": "Producer done at 4ca72d56 (claude 2.1.288 admitted: three drift families recaptured, event_drift re-pointed; certification claimed)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-02T23:40:00+00:00",
+      "actor": "orchestrator",
+      "change": "Added tools/agent_supervisor/event_drift.py (hook-catalog re-point only) and switched the premise to recapturing all three claude drift families at the installed 2.1.288: the producer's first run (57f7e515) failed closed because the host claude auto-updated 2.1.287 -> 2.1.288 (installed 2026-10-02 23:17 UTC) and event_bus S8 reads event_drift.CATALOG_FIXTURE_PATH. Same shape as M0-T174 round 1 and M0-T159. Admission is deliberate under D-024-R287 (update, recapture, recertify, then repin)."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-03T00:17:36.696757+00:00"
+}

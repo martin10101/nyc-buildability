@@ -1,0 +1,7 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-031",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. Conduct-only directive bound to the non-ledger sentinel D-031-BOOTSTRAP (D-029 pattern); verified at the session-handoff seam DCV (R001/R002 evidence accrues during the session; R003/R004 verifiable at the handoff commit).",
+ "producer": "orchestrator",
+ "task_verifications": []
+}

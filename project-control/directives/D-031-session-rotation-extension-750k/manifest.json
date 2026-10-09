@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-031",
+ "version": 1,
+ "slug": "session-rotation-extension-750k",
+ "title": "Owner directive 2026-08-27: continue working in the CURRENT session (session_01HfptKuEs3RDxaxsSHJjc7t) until context occupancy reaches approximately 750k of the 1M window, then perform the session handoff. Session-scoped extension of the D-010 R113/R114 ~400k rotate-at-seam ceiling, granted by the owner directly for this session only; D-010 R113/R114 unchanged for every other session. Conduct-only directive bound to the non-ledger sentinel D-031-BOOTSTRAP (D-029 pattern).",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-27",
+ "captured_at": "2026-08-27T17:06:11+00:00",
+ "created_at": "2026-08-27T17:06:11+00:00",
+ "updated_at": "2026-08-27T17:06:11+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "8e3c697ef3099279d5bbc4ba24f6a649f238795d",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-27T17:06:11+00:00",
+   "content_digest_sha256": "1c462219ab26b8eb101186c540650c891796982164c1f7a18ab202fe53ea74e0"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "continue the D-024 campaign work in the current session (next: claim and work M0-T106 unit E under the standard controlled-task lifecycle and gates) past the ~400k rotation ceiling, monitoring context occupancy via the measured statusLine feed",
+  "excluded": "continuing past approximately 750k context occupancy without the session handoff; treating this as a durable amendment of D-010 R113/R114 (one-session grant only); any change to gates, holds, owner boundaries, or the PR #241 / continuous-mode restrictions",
+  "session": "session_01HfptKuEs3RDxaxsSHJjc7t (2026-08-27)"
+ },
+ "audit_log": [
+  {
+   "at": "2026-08-27T17:06:11+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "verbatim capture at frozen baseline 8e3c697 (seq-15 seam, M0-T105 accepted); measured occupancy at issuance 439,582 tokens (44%) per the statusLine sidecar"
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner terminal message 2026-08-27 granting the in-session continuation to ~750k context then handoff, immediately after the measured 44%/439,582-token occupancy report."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-031-R001",
+  "D-031-R002",
+  "D-031-R003",
+  "D-031-R004"
+ ],
+ "requirements_content_digest_sha256": "101e51bf70c4a70138e62ffb2a58269aa403108ef03a2122ca76141a4421bf1e"
+}

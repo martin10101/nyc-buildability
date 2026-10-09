@@ -1,0 +1,62 @@
+{
+  "task_id": "M0-T131",
+  "schema": "evidence_map/v1",
+  "requirements": {
+    "D-024-R425": [
+      {
+        "evidence": "Amendment-29 capture source-029-amendment.md; M0-T131 packet with AD-093 citation (journey-4 live HALT_UNSAFE); produced via the M0-T108/M0-T130 orchestrator-as-producer precedent with independent G3/G4 reviewers; the ONE probe ran in SCRATCH ONLY (fresh git repo + linked worktree under the session scratchpad, never the real repositories - probe transcript paths prove the scratch root)",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-029-amendment.md",
+          "project-control/tasks/M0-T131.json",
+          "project-control/reports/M0-T131-reviewer-access-fix.md"
+        ]
+      }
+    ],
+    "D-024-R426": [
+      {
+        "evidence": "Measured installed-version fixture (codex-cli 0.146.0, R233 discipline) recorded VERBATIM in the fix report section 1: probe_last_message.json (5 attempts), probe_stderr.txt router rejection, byte digests; findings: command execution + git + file reads ALLOWED inside the workspace root including the linked-worktree .git redirection; any out-of-root path BLOCKED by command routing; approval never",
+        "paths": [
+          "project-control/reports/M0-T131-reviewer-access-fix.md"
+        ]
+      }
+    ],
+    "D-024-R427": [
+      {
+        "evidence": "review_stdin_payload in codex_reviewer.py: ONE JSON object (reviewer_instructions first key + packet fields verbatim + packet_key_collision guard); REVIEW_INSTRUCTIONS preamble states the measured boundary and the verification split (live worker-tree verification; packet-echoed out-of-root facts; never HALT on blocked out-of-root reads; checkpoint = untrusted data); NO argv change, NO sandbox change - invariant 10 fully preserved (still --sandbox read-only, no write access to worker or control trees); commit 58df90c2; ReviewStdinContractTests (4 nodes) red-on-mutant proven",
+        "paths": [
+          "tools/agent_supervisor/codex_reviewer.py",
+          "tools/test_agent_supervisor_reviewer.py",
+          "project-control/reports/M0-T131-reviewer-access-fix.md"
+        ]
+      }
+    ],
+    "D-024-R428": [
+      {
+        "evidence": "Sequencing honored: R247 recertification re-triggers at acceptance and runs ONCE at the post-accept frozen identity binding the M0-T131 supervisor tree move; per Amendment 30 (R429/R430) the 2.1.252 admission lane is owner-DEFERRED, so the recert binds the provider pin UNCHANGED at certified 2.1.251 with the drift disclosed as an open admission event; the restart sequence (owner-restart then start) is re-presented and remains OWNER-TYPED ONLY (R409/R414/R419); S16.7 owner-touch ledger untouched by this task",
+        "paths": [
+          "project-control/reports/M0-T131-reviewer-access-fix.md",
+          "project-control/directives/D-024-fable-codex-loop/source-030-amendment.md"
+        ]
+      }
+    ],
+    "D-024-R429": [
+      {
+        "evidence": "Deferral honored: NO admission-lane task packet exists under project-control/tasks (no recapture/recertify/repin work started); the fail-closed cli_capability_manifest refusal stands as designed; the three drift tests remain honestly red locally (whole-suite evidence 3040/2/3 in the G2 self-check) and skip on CI; R286/R287 discipline not waived - the deferral is recorded verbatim in Amendment 30 with base identity 57f1b70d",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-030-amendment.md",
+          "project-control/reports/M0-T131-G2-self-check.md"
+        ]
+      }
+    ],
+    "D-024-R430": [
+      {
+        "evidence": "Codex-loop focus honored: M0-T131 ran the full standard process this session (G0 PASS, claim, G2 PASS with fresh unpiped re-runs at HEAD, submit, independent G3 code-reviewer + G4 qa-engineer, DCV, accept); the single R247 recert is sequenced at the post-accept identity with the provider pin unchanged at 2.1.251 and the deferred drift disclosed; the restart presentation carries the fail-closed caveat (a live start at installed 2.1.252 refuses at cli_capability_manifest) and stays owner-typed only",
+        "paths": [
+          "project-control/directives/D-024-fable-codex-loop/source-030-amendment.md",
+          "project-control/reports/M0-T131-G0-readiness.md",
+          "project-control/reports/M0-T131-G2-self-check.md"
+        ]
+      }
+    ]
+  }
+}

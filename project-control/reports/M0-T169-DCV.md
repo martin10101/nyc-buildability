@@ -1,0 +1,62 @@
+<!-- Directive-compliance verification of M0-T169 (independent directive-compliance-verifier, read-only; restamp pre-authorization: content identity unchanged, disjoint peer commits tolerated unless they touch this task's allowed_paths); saved verbatim by the orchestrator. -->
+=== FULL REPORT: DCV M0-T169 ===
+Per-task directive-compliance verification for ACCEPTANCE of M0-T169 (D-091 T6: review combiner). PR #300. Read-only pass; producer ≠ verifier.
+
+OVERALL VERDICT: PASS. All three applicable requirements (D-091-R001, D-091-R003, D-091-R007) SATISFIED on reproduced primary evidence; no VIOLATED/BLOCKED/UNVERIFIABLE. Four non-blocking notes (N2 is a recommended orchestrator correction to a stale out-of-scope artifact before accept).
+
+VALUES TO TRANSCRIBE INTO verification.json (M0-T169 task_verifications row):
+- verifier: "directive-compliance-verifier"
+- reviewed_sha: "0c88d6286eba34f0219b0034bb604181149a27b2"
+- reviewed_manifest_sha256: "e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec"
+- D-091-R001: state PASS, reviewed_sha 0c88d628...
+- D-091-R003: state PASS, reviewed_sha 0c88d628...
+- D-091-R007: state PASS, reviewed_sha 0c88d628...
+
+IDENTITY / HEAD (reproduced):
+- `gh pr view 300 --json headRefOid` = 0c88d6286eba34f0219b0034bb604181149a27b2 = rv-300 HEAD. PR OPEN, base candidate/D-024-mrl-option-b.
+- I recomputed frozen_git_identity over M0-T169 allowed_paths at HEAD (require_clean=True) → e2d4588c54ba4b8f15f9d5abaaaf9cd82b8c9688350274c4537a85f00cdec2ec, err None — MATCHES your value AND the content_manifest_sha256 in gates G2/G3/G4/G5.
+- packet directive_refs: R003, R001, R007; status awaiting_gate.
+- Material commits: ef6dcd7c (original combiner, review_combiner.py + test) and 877a405b (the advisory-only rework). Both within allowed_paths (review_combiner.py, test, producer report only). The material files + producer report are byte-stable from the round-2 review sha f6996ca5 to HEAD 0c88d628 (`git diff f6996ca5 0c88d628 -- tools/ project-control/reports/M0-T169-producer-report.md` empty), so the content identity is unchanged across the ledger-only gate-record commits to HEAD.
+
+GATE RECORDS (independent gates at content identity e2d4588c):
+- G0 PASS (orchestrator/administrative) at old identity 177cfaa8, sha 8b300649 — administrative, fine.
+- G2 PASS (orchestrator, self_check) at e2d4588c, sha f64855b5.
+- G3 PASS (code-reviewer, independent_review) at e2d4588c, sha f64855b5; history[0] = round-1 FAIL (G3-1).
+- G4 PASS (code-reviewer, independent_review) at e2d4588c, sha f64855b5; history[0] = round-1 PASS.
+- G5 PASS (security-reviewer, independent_review) at e2d4588c, sha f6996ca5; history[0] = round-1 FAIL (B1/B2).
+Required gates for T169 are G0,G2,G3,G4,G5 — all present and PASS at the current content identity. Producer (ai-pipeline-engineer) ≠ code-reviewer ≠ security-reviewer ≠ orchestrator.
+
+D-091-R003 FIDELITY JUDGMENT (the central question) — SATISFIED, together with the never-weaker rules.
+R003 text: "An additional, higher-end model reviews both outputs, takes the best of both and combines them." Orchestrator's labeled reading: "both outputs" = the two reviews of the same finished work. The shipped combiner (verified in review_combiner.py):
+- Reviews BOTH outputs: combine() reads codex_review and claude_review (the two reviews) of one frozen head; _assert_same_frozen_head refuses different heads / non-40-hex head. ✓
+- Combines them: the combined finding set is the UNION of both reviews' findings, each source-tagged codex/claude (_collect_findings), and NO finding is ever removed (_apply_disputes returns `[resolved[f.finding_id] for f in findings]`). ✓
+- Verdict = worst_verdict(review_verdict(codex), review_verdict(claude)) with PASS<FAIL<UNVERIFIED, computed in CODE at combine() step 4 BEFORE any model call and never reassigned; a missing/malformed/empty/timed-out/raised review → UNVERIFIED, never PASS. ✓ (design §2 rule 4 "monotone, never weaker").
+- The combining model contributes ONLY advisory, evidence-bound disputes: a dispute is recorded on a reviewer `blocking` finding (disputed=True + cited evidence + reason + an "ADVISORY ONLY" note) for the human gate, but the finding STAYS and the verdict is UNCHANGED; synthetic `verdict` and `unverified` findings are non-disputable; model launch failure/timeout/garbage → no dispute (fail-safe). ✓
+
+PLAINLY, on "take the best of both": the combiner does NOT let the model (or code) autonomously pick one review as the "better" one and discard the other's findings, nor let the model choose the combined verdict. That literal facet of "take the best of both" is DELIBERATELY not delivered — because the independent round-1 reviews proved a model-can-remove design is a prompt-injection hole (G3-1: a trivially-satisfiable sha refutation; G5 B1: the universally-present frozen head as a drop primitive; G5 B2: presence-not-relevance) that flips FAIL→PASS and violates the never-weaker rule (design §2 rule 4) and CLAUDE.md principle 1 (AI drafts/explains; deterministic code calculates; humans approve). The reworked design realizes "best of both" the only safe way: keep EVERY finding from both reviews (the strongest, most complete finding set), take the WORSE verdict, and surface the model's "which position is better" judgment as advisory, human-weighed evidence rather than an autonomous override. No binding part of R003 is unmet; the only thing withheld is the unsafe interpretation the directive's own frame and the orchestrator's labeled reading exclude. I independently confirmed the exploit is dead (see below). Judgment: R003 faithfully implemented → PASS.
+
+Evidence reproduced for R003:
+- review_combiner.py: worst_verdict (lines 103-105), has_vouched_sha rejecting the frozen head/prefix (147-157), finding-bound evidence_supports_dispute (214-251: file_line must equal the finding's own location AND be a real diff new-side line; command_output ≥20 chars present; sha must be a vouched non-head extra_sha), _apply_disputes never drops a finding (362-412), COMBINER_INSTRUCTIONS state the advisory role (739-764).
+- Tests reproduced locally: `PYTHONPATH=/root/project/rv-300 python3 tools/test_agent_supervisor_review_combiner.py` → Ran 47 tests, OK, EXIT 0 (incl. the never-weaker red/green cases: head-sha citation stays FAIL, valid bound dispute does not drop the finding or flip to PASS, FAIL+PASS is always FAIL, verdict/unverified findings non-disputable).
+- Independent G5 round-2 (security-reviewer, M0-T169-G5-r2.md) adversarially re-probed B1/B2 with an injected runner: head-SHA dispute REJECTED, unrelated file_line REJECTED, short command_output REJECTED — all leave the finding present and verdict FAIL; a fully-valid bound dispute is recorded but advisory (finding stays, verdict FAIL); an injected `"verdict":"PASS"` is ignored. Independent G3/G4 round-2 (code-reviewer, M0-T169-G3G4-r2.md) re-ran its round-1 exploit and confirmed it is dead.
+
+D-091-R008 STILL NOT DECIDED (confirmed): ReviewCombinerConfig.model defaults to "" (NO default); combine() step 1 raises `combiner_model_unset` ("the combining model is a required setting with no default (D-091-R008); unset means the combiner refuses before any process"); the model is only ever read from self.config.model (owner-set) and passed to build_reviewer_argv; nothing in the module, packet, or reports picks or hard-codes a model. R008 remains the owner's open choice.
+
+D-091-R001 — "Move the loop to this cloud server" (this task's share = the combining stage). SATISFIED. review_combiner.py implements the D091_CLOUD_LOOP_DESIGN.md §2/§4 combining stage; default OFF (ReviewCombinerConfig.enabled=False; review_combiner_enabled fail-closed; combine() raises `combiner_disabled` when off); NOT wired — grep of loop.py = NONE, no non-test importer of review_combiner/ReviewCombiner; the single-reviewer loop is byte-unchanged.
+
+D-091-R007 — "reviewed and certified before use" (this task's share = reviewed/gated before use; certification later). SATISFIED. Gated G0,G2,G3,G4,G5 all PASS at e2d4588c; the independent G3 (G3-1) and G5 (B1/B2) round-1 FAILs forced the advisory-only rework (877a405b), re-checked PASS in round 2 by the same independent reviewers; nothing started/commissioned/wired; the live Claude-CLI envelope (model invoked read-only via claude_reviewer.build_argv) is confirmed by the later D-091 recertification before the switch is ever turned on (producer report + evidence-map). Pre-launch refusals (model-unset, disabled, empty-identity, producer/reviewer independence, same-frozen-head) all run before any process.
+
+PROHIBITED-ACTION EVIDENCE: PR #300 OPEN (not merged/accepted); task awaiting_gate; nothing merged/accepted/deployed/dispatched/started/installed/purchased/closed; no combining model chosen (R008 deferred); no credential handling; loop byte-unchanged.
+
+RESTAMP PRE-AUTHORIZATION (stated up front, same predicate as prior tasks):
+You MAY restamp reviewed_sha from 0c88d628 to the later accept-seam HEAD WITHOUT re-review iff the path-scoped content identity recomputed at the new HEAD over M0-T169 allowed_paths (tools/agent_supervisor/review_combiner.py, tools/test_agent_supervisor_review_combiner.py, project-control/reports/M0-T169-producer-report.md), require_clean=True, is byte-identical to reviewed_manifest_sha256 e2d4588c…. Equivalently `git diff <reviewed_sha> <newHEAD> -- . ':!project-control'` is empty AND the only project-control deltas are additive D-091 / M0-T169 / state / verification ledger records (the producer-report.md inside allowed_paths is covered by the content-identity predicate). Keep reviewed_manifest_sha256 fixed; only reviewed_sha moves.
+Disjoint peer commits: TOLERATED unless they touch review_combiner.py, its test, or the producer report. review_combiner.py imports from claude_reviewer/codex_reviewer/models/process but does not include them in its allowed_paths, so a disjoint peer editing those modules would NOT change this task's content identity (it would, however, be caught by CI). The content-identity predicate is the guard and catches any allowed-path collision automatically.
+
+NON-BLOCKING NOTES:
+N1. `gh pr checks 300` at review time = 9 pass, 11 pending (incl. supervisor-bridge, control-plane, modularity) — CI is re-running on the ledger-only HEAD 0c88d628. The material code surface is byte-identical to the round-2 head f6996ca5, where BOTH independent reviewers recorded CI GREEN (G3G4-r2: "20 pass, 0 non-pass; supervisor-bridge PASS; control-plane PASS"; G5-r2 confirmed local reruns). Standard: the orchestrator must confirm CI green on 0c88d628 (esp. supervisor-bridge, control-plane, modularity) before accept (Tier A required-checks-pass). My requirement verdicts rest on reproduced local evidence (47 tests, direct code read, modularity EXIT 0), not pending CI.
+N2. RECOMMENDED ORCHESTRATOR CORRECTION BEFORE ACCEPT (not a requirement violation): the submit artifact project-control/reports/M0-T169-evidence-map.json is STALE — it cites material_commit "ef6dcd7c", describes the SUPERSEDED round-1 "a finding drops only for a refutation whose cited evidence code confirms present" design, and says "43 passed", whereas the shipped code is the round-2 advisory-only design (findings never drop; verdict is worst-of-two; 47 tests; material 877a405b). The content-identity-bound producer report IS current (it carries an accurate advisory-only "Rework" section). The evidence-map is OUTSIDE allowed_paths, so an `[ORCH-CORRECTED]` refresh (material_commit → 877a405b, description → advisory-only disputes, 47 tests) moves no material identity; do it before accept so the frozen evidence map matches the shipped behavior. I verified the requirements against the actual code, not this map.
+N3. Modularity: review_combiner.py grew to 764 lines but `python3 tools/modularity_check.py --check` → 0 failures, EXIT 0, and review_combiner.py is NOT flagged (cohesive single responsibility, heavily docstring/comment). Reproduced; both reviewers concur.
+N4. (Carried from G5/G3) No model allowlist is enforced on the combiner's owner-set model string — not an escalation (the model is a single argv token; bypass-flag models are hard-denied by assert_argv_safe), and the future wiring task should bind the controller's model allowlist. `command_output` dispute evidence remains presence-based (≥20-char floor) but is advisory-only, so it can never drop a finding or change the verdict.
+
+END-OF-REPORT
+=== END REPORT ===

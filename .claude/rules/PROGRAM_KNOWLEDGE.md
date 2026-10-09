@@ -1,0 +1,213 @@
+# PROGRAM_KNOWLEDGE — compressed pointers (D-054 Tier 1; auto-injected every session)
+
+Hard-won program-wide knowledge as one-line pointers. APPEND when you discover something
+program-wide useful (any session, when discovered — not at session end). BUDGET: eager total
+(tools/context_budget_check.py) must stay under 10000 tok (owner-raised from 6000, D-067-R003)
+— compress or demote before adding; never raise the cap again without a new owner
+authorization. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
+Pointers only — the ledger/registry stays authoritative; no secrets (public repo).
+
+## Control-plane mechanics (proven arcs)
+
+- Directive capture = 4 files + **index.json entry in the SAME commit** (unindexed capture is
+  invisible: validator passes around it, `new-task --directive-refs` fails closed).
+- `classification` vocab (validator c1): obligation|prohibition|hold|sequencing|dependency|
+  decision|harness|evidence|external_fact|**return**|authorization (`return_item` invalid).
+- Requirement-body edits after capture (even vocab fixes) = digest resync
+  (`directive_registry.sha256_text_artifact`) + `audit_log` entry, SAME commit (c14).
+- Applicability binds via `requirements.json → applicability.task_ids` append; run
+  `reg.evaluate_task_refs(task)` BEFORE claim (applicable must == cited).
+- Contract seam order: new-task → patch packet JSON (inputs/outputs/paths/scenarios) → bind
+  task_ids + digest resyncs → **seed committed placeholders for every new allowed_paths file**
+  (gate fails closed on zero tracked files) → G0 report → ONE commit → gate G0 at HEAD →
+  claim → progress 20 → commit (stage `state.json` — claim/progress modify it!).
+- `gate --sha` must equal live HEAD at record time; task allowed_paths must be clean. A
+  disjoint peer commit between rework and gate record is fine when task identity is
+  byte-stable — record an identity note in the gate report.
+- `new-task` WITHOUT `--gates` defaults to the FULLER set G0,G2,G3,G4,G5 (not G0,G3,G4). G2 =
+  producer self-check, recorded by `--reviewer orchestrator` (the CLI rejects the producer's
+  own name). A required gate ALSO needs its reviewer in the packet's `reviewer_agents` — fix a
+  missing one by ADDING the reviewer, never by dropping the gate.
+- ANY material edit after `submit` (even an orchestrator comment fix) invalidates the frozen
+  submission identity; `accept` fails closed "frozen-evidence identity mismatch". Fix = walk
+  `awaiting_gate → rework → in_progress → submit` to re-freeze; gates recorded AFTER the edit
+  stay valid and need no re-run. Lifecycle forbids `rework→awaiting_gate` and
+  `awaiting_gate→in_progress` directly.
+- `accept` also scans EVERY open blocker's `affects` **and `detail`** for a word-bounded task id
+  (`_blocker_references`, deliberately over-blocking). Historical prose naming a packet will
+  block it: correct the reference + keep the facts + log a dated `scope_corrections` entry —
+  NEVER close/downgrade a blocker to get past it.
+- `submit` needs `--evidence-map` (JSON in reports/, per applicable requirement id) and
+  `--report` UNDER project-control/reports/ (build tasks: save the producer return verbatim
+  there as M4-Txxx-producer-report.md).
+- Accept flow (frozen-head pattern): integrate producer commits → ONE material commit →
+  submits at that sha → reviews pinned there, commits HELD → gates at head → DCV (request
+  **conditional restamp pre-authorization UP FRONT** — verifier rules per-commit in ~4 min,
+  can extend its own imperfect condition) → assemble v2 blocks (reviewed_sha = restamp
+  target; `reviewed_manifest_sha256` from the gate records; producer = the task's MATERIAL
+  producer) → accept (reads disk vs HEAD) → one seam commit → push.
+- Evidence-map `material_commit` = the CHERRY-PICK commit itself, never the follow-up seam
+  commit (that one carries only state/task files) — reviewers catch the mislabel; the map is
+  outside allowed_paths so an `[ORCH-CORRECTED]` fix there moves no material identity.
+- "PASS with required corrections" = record PASS, corrections BLOCK acceptance: apply as
+  tagged `[ORCH-CORRECTED per <gate> Fn]` edits → progress --status rework → resubmit at new
+  head → SendMessage delta-attestation to the SAME reviewer agents (~1 min; they stay
+  resumable) → gates at corrected head. If a second reviewer's surface includes the edited
+  file, get its identity-carry attestation too.
+- Transient c14 INVALID while the companion writes a directive = real signature (requirements
+  lands before manifest): re-run validator at the settled head with a DIRECT exit code
+  (`| tail` eats `$?`) before reacting.
+- DCV restamp pre-auths: with parallel lanes, a DISJOINT peer material commit landing between
+  freeze and record voids literal all-product-dirs-empty conditions — ask the DCV to state
+  its disjoint-peer tolerance UP FRONT (M5-T042 pattern); else a delta-attestation extension
+  is needed (M5-T040). Gitleaks false-positives on fixture VAR NAMES containing KEY: inline
+  `# gitleaks:allow` on that line; never quote the flagged line verbatim in evidence files.
+
+- `accept` fail-closes unless EVERY v2 row's reviewed_sha == the LIVE HEAD at accept time -
+  assemble v2 rows and accept BACK-TO-BACK (a disjoint material commit between them forces a
+  DCV-predicate restamp: T066 a234a508->5aad9007); the full validator now runs ~12 min wall
+  (verification-row growth) - sequence the one-budgeted-run-per-seam so accept never waits.
+- Contract seam: an IN-REGIME task appended to `manifest.affected_tasks` needs a PROVISIONAL
+  `task_verifications` row (verifier `""`, pending) in the SAME commit — c14 fails closed
+  otherwise; the control-plane CI job catches its absence (M0-T181 b5cdbdeb).
+
+## Dispatch / review mechanics
+
+- BUILD packets go to builder types (backend-/frontend-engineer…); a `qa-engineer` given a build
+  packet returned a BLOCKED gate, wrote nothing (R137, DB-128). State the producer role first.
+- Producers: unnamed spawns only (named = readonly-guard silent denial), isolation worktree,
+  prompt MUST carry: show-toplevel guard (STOP if primary checkout), `git reset --hard
+  <contract-head>` (worktrees spawn off stale bases), exact single-scope, self-check commands,
+  lean return (<64k, reference files). Never resume a killed producer. Cherry-pick producer
+  commits; verify sha256 with LF-normalization (checkout CRLF smudges raw digests).
+- api producers/pre-gate: `cd services/api && python -m ruff check .` is the api CI job's
+  FIRST step — a lint miss costs a CI round. Bash tool `cd` PERSISTS cwd — cd back.
+- Reviewers read-only, may land in PRIMARY checkout: pin HEAD in prompt (worktree-landed
+  reviewers verify via .git plumbing), forbid writes, HOLD commits till the wave returns.
+- Shared checkout with the companion session: heads-up before commits both ways; peer sticks
+  to directive-capture + owner-facing docs; ledger/git is orchestrator-only (ADR-005).
+
+- CI's lane-path check runs on every PR and enforces `lane-*` branches: a cross-lane `[ORCH-CORRECTED]` commit fails
+  the control-plane job (#387 b70b869f). Put the correction on its own `task/` PR, merge it first, then
+  rebuild the lane branch = reviewed head + one base merge (remerge-diff 0, patch-id unchanged, blobs same).
+
+## Key files / commands
+
+- Ledger: `python tools/project_control.py status|new-task|claim|progress|submit|gate|accept|
+  checkpoint`; validator `python tools/validate_directive_compliance.py --check`; registry
+  helpers `tools/directive_registry.py`; budget `python tools/context_budget_check.py`;
+  modularity `python tools/modularity_check.py --check`.
+- Rules: `services/api/app/rules/rulesets/*.rule.json`; ZR snapshots
+  `docs/research/zr-snapshots/v1/`; snapshot sync `sync_zr_snapshots`.
+- Wide-street stack (all accepted): moved to Tier 2, section "Wide-street stack" (2026-10-09). Lot side:
+  `mappluto_geometry_arcgis.py` (2263, measurement) vs `mappluto_lot_outline.py` (4326, display only, NEVER measure).
+
+## Domain anchors (verified)
+
+- ZR capture channels: `zoningresolution.planning.nyc.gov` HTML + print/PDF
+  `…/entityprint/pdf/node/<id>` (proven completeness channel; §12-10 = node 18523, BIG page
+  504s → documented fallback: direct GET w/ browser UA, sha256-pinned). Load-bearing captures
+  need print/PDF-class or disclosed fallback; snapshot notes never assert beyond the channel.
+- §12-10 "street, wide" AMENDED 3/26/2026 (C5-3/C6-4/C6-6 alternate-width; 70-ft connector;
+  named: Broadway W94–97 CD7, Allen St Rivington–Delancey CD3). "narrow" = <75 (1961).
+- D-052 policy: <75 narrow, **=75 WIDE**, one-sided bounds only ('<=75','60-75','70-80' stay
+  UNRESOLVED), UNKNOWN→map resolution, exceptions-checked-first, provenance quintuple.
+- D-051: fail-closed-to-narrow is NOT universally conservative (§23-431 street-wall 8ft-wide/
+  10ft-narrow counterexample) — every consuming rule validates its own fallback direction.
+  Bounded negatives only ("not located in X", never "city never documented").
+- Widths: DCM Streetwidth = MAPPED width (usually incl. sidewalks, feet; free-text field, no
+  official field-level spec — RQ-005 residual); LION StreetWidth = PAVED ("narrowest width…
+  of the paved area", 26C p24); Geoclient width = paved, KILLED for legal use. Variable width
+  = centerline SEGMENTATION (E 96 St 60/60-75/75-90/90) — never one width per street name.
+  Admin Code §25-101: the adopted City Map is conclusive. EPSG:2263 = US survey feet.
+- R6–R12 height/setback chain: 23-432 (table; 100-ft-of-wide-street rows) → 23-433 (setback
+  10 wide/15 narrow) → optional 23-73x sky-plane (un-suffixed R6–R10 only; 23-736 slopes
+  2.7/5.6, alt 3.7/7.6) → 23-411/12/13 obstructions. C-districts: 33-121 overlay FAR (keyed
+  by underlying R), 34-111 overlay governing rule, 34-112 equivalents table (C4-6→R10).
+- Owner research (Astra) = discovery aid ONLY (D-050-R002); RQ queue commits+pushes in the SAME
+  step (R006) and appends get a seam line + PushNotification (R005). Detail: Tier 2.
+
+## Session habits
+
+- Never ask the owner for professional/legal review (ADR-007, D-090-R164): label + per-stat
+  law link + say not-sure. Lane A merge yes/no is the orchestrator's call (R163).
+- D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
+  packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
+  only verifies+launches; crash/forced turnover = the only fallback.
+
+- Discoveries → `docs/DISCOVERY_BACKLOG.md` (D-069, NOT injected): append product/domain
+  findings AT discovery; SWEEP OPEN/WATCH entries at every contract seam and replan; entries
+  end as QUEUED(task)/RESOLVED/WATCH, never deleted, never duplicating ledger/blockers.
+- Every wave: cite ruff pre-gate for api producers; budget ONE full validator run per seam;
+  **D-064**: subagents+loop worker = opus-4-8 xhigh, main stays fable-5 (supersedes
+  D-047/D-055/D-058/D-060 fable defaults); lean comms = CLAUDE.md p19.
+- Loop-run and Windows-PC notes (worker pins, the claim-seam worktree, audit-chain forks,
+  PS5.1, Fable exhaustion, the Opus 5.5 pin) moved to Tier 2 on 2026-10-06, unchanged, to make
+  room for the owner's working guidance in CLAUDE.md: `docs/WORKING_KNOWLEDGE.md`, section
+  "Loop-run and Windows-PC notes". Read it before launching or repairing the loop.
+- Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
+- Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
+  owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.
+  It can also block on BATCH SHAPE alone (`set -e` + shell-function wrapper over 14 denies,
+  seq 123): the identical verbs pass as plain single/sequential commands — reshape, don't
+  re-batch. And retype digests EXACTLY (an ab→af slip cost a deny round; the error echoes
+  the stored digest).
+- Placeholder seeding: an EMPTY .test.ts placeholder FAILS web-e2e (vitest: no suite) — seed
+  web test placeholders with a trivial passing test; empty py test files are fine.
+- `submit --evidence-map` shape = top-level `requirements: {id: [prose evidence]}` (file-list
+  shapes fail closed). Git-Bash-parsed CLI digests carry \r — strip before `deny`.
+- Reviewer returns TRUNCATE mid-report routinely (5x seq 124): dispatch prompts MUST require
+  an explicit END-OF-REPORT marker + proactive short-part splitting; on truncation, ask the
+  SAME reviewer for the remainder FROM THE EXACT cut phrase (never the whole report again),
+  then join verbatim at that point with the transmission history noted in the record header.
+- Re-recording G0 (e.g. after a scope correction) resets a task in `rework` to `ready`:
+  re-`claim` it (same FULL worktree path) before `submit` (seq 128 T078).
+- Seam scripts run `python -u`, never under a `timeout` shorter than the tool limit (or use
+  run_in_background): a kill loses the buffered log MID-SEAM (wave-4: both commits landed, the
+  worktrees did not). After any silent exit check `git log` + task status before re-running.
+- Agent `isolation: worktree` needs the session cwd inside a git repo (cd ctl24 first; from the
+  scratchpad it fails "not in a git repository"); from ctl24 it fails transiently ("could not
+  read git config" / "metadata could not be resolved") - retry once, one dispatch per call.
+- DCVs pre-authorize restamps well: ask for a blob-level predicate + broad disjoint-peer
+  tolerance UP FRONT; then 9 accepts landed in one session with zero re-reviews (seq 128).
+- NEVER pass `model:` on an Agent dispatch: it OVERRIDES the agent file's claude-opus-4-8 xhigh
+  pin (owner: "sub agent stays 4.8", D-085 src-003); "opus" = Opus 5.5 - 20 seq-128 spawns
+  drifted (report D-085-subagent-model-deviation-2026-09-24.md). Verify via subagent transcripts.
+- DCV dispatch prompts MUST FORBID running the full `tools/test_directive_compliance.py`
+  (~7.6 min/TEST vs the grown registry = ~16h; T076-DCV F3 measured it; two DCVs stalled 3h+
+  on it, seq 127): the authoritative harness evidence is `validate_directive_compliance.py
+  --check` w/ a DIRECT exit code + the CI control-plane job at a verified head +
+  test_project_control.py + test_directive_reminder.py; the full suite is CI's job.
+- Option-B merge authority (owner, 2026-09-30) lives ONLY in USER-level `autoMode`
+  (`~/.claude/settings.json`). Project settings are ignored. A custom `allow` list REPLACES the
+  built-ins unless it includes `"$defaults"`. The classifier refuses ANY session write to it, even
+  a dry run on a copy, so the OWNER applies it. Verify it with `claude auto-mode config`.
+- Stale merge ref: close/reopen does NOT promptly recompute GitHub's PR merge ref, and the push
+  run on the old head stays red. Instead, merge the base into the branch, then have the reviewer
+  prove the merge empty (`git show --remerge-diff`) and the net diff byte-identical.
+- `gh pr edit --body-file` fails (Projects-classic GraphQL deprecation). Use
+  `gh api -X PATCH repos/<o>/<r>/pulls/N -F body=@file`.
+- PR bodies drift. 8 of the 16 evening PRs (2026-09-30/10-01: #261, #263, #265, #266, #269, #275,
+  #276, #278) misstated behavior in the body, caught only by the reviewer. The reviewer
+  verifies the BODY before every merge, and a separate writer agent (never the
+  orchestrator from memory) rewrites stale bodies.
+- Golden digests pin rule NOTE text: rewording one rule's note breaks stacked PRs' goldens.
+  Recompute them independently, and trace-diff to prove the change is text-only (#262 → #269
+  `cb6f5c77`).
+- Re-run `git ls-remote` before telling the owner a branch lacks something: the owner may push
+  mid-chat (control/session14, 2026-09-30).
+- This gh build has no `gh pr checks --json`; read `gh pr view N --json statusCheckRollup` (CheckRun
+  .status/.conclusion, StatusContext .state). `gh pr merge --match-head-commit` needs the FULL 40-char sha.
+- `readonly_agent_guard` fails CLOSED for any agent type not in `.claude/agents/` (general-purpose, Explore,
+  Plan): they cannot edit or commit. Writing producers = roster producer types only (backend-/frontend-engineer,
+  cloud-architect...).
+- Base merge after review: prove identity with `git show --remerge-diff --format= <merge> | wc -l` == 0 and an
+  unchanged `git patch-id --stable` of the net diff vs the merge base (short two-dot diffs mislead).
+- A branch ref moved by ANOTHER worktree's `checkout -B`/rebase leaves the first worktree's index
+  stale (phantom entries): `git -C <wt> reset --hard HEAD` before reviewing there.
+- Write a PR body's CI claim only AFTER the run completes (two bodies corrected this way); the
+  reviewer verifies the body.
+- PR branch holding TWO unmerged PR heads = GitHub CONFLICTING (git merges clean), no PR check run (23 not 46):
+  after the parents merge, empty base merge + the same reviewer's identity note (#438).
+- Merge step FAILS CLOSED on the LIVE rollup's `nonsuccess>0` (jq count, `exit 1` before `gh pr merge`): keying
+  on a watcher's DONE merged #411 with a FAILURE check.

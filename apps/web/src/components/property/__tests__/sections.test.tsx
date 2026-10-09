@@ -2,10 +2,46 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ConflictsSection } from "@/components/property/ConflictsSection";
 import { MissingInputsSection } from "@/components/property/MissingInputsSection";
+import { ProvenanceDisclosure } from "@/components/property/ProvenanceDisclosure";
 import { baseProfile } from "@/test-support/fixtures";
-import type { Conflict } from "@/lib/contract";
+import type { Conflict, Reproducibility, SourceFact } from "@/lib/contract";
 
 afterEach(cleanup);
+
+/** A minimal, contract-shaped SourceFact record for standalone rendering. */
+function sourceFactRecord(overrides: Partial<SourceFact> = {}): SourceFact {
+  return {
+    provenance_id: "prov-1",
+    source_id: "nyc-dcp-pluto-soda",
+    original_field_name: "lotarea",
+    original_value: "2500",
+    normalized_value: 2500,
+    retrieved_at: "2026-07-16T00:00:00Z",
+    dataset_version: "26v1",
+    effective_date: null,
+    bbl: "1000010010",
+    confidence: 1,
+    user_confirmed_or_overridden: "none",
+    conflict_status: "none",
+    ...overrides,
+  } as SourceFact;
+}
+
+function reproducibility(overrides: Partial<Reproducibility> = {}): Reproducibility {
+  return {
+    correlation_id: "corr-1",
+    source_id: "nyc-dcp-pluto-soda",
+    dataset_id: "64uk-42ks",
+    dataset_version: "26v1",
+    request_url: "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
+    retrieved_at: "2026-07-16T00:00:00Z",
+    record_count: 1,
+    drift_signals: [],
+    connector_notes: [],
+    coverage_policy: "pluto-authoritative",
+    ...overrides,
+  } as Reproducibility;
+}
 
 describe("ConflictsSection (S1/S6)", () => {
   it("shows every conflicting value WITH its source and the unresolved label", () => {
@@ -108,5 +144,172 @@ describe("MissingInputsSection (S6 / D3 policy + M2-T002 D1/D4)", () => {
     // The exception's own reason stays visible inline.
     expect(screen.getByText(/official dictionary p\.28 rule/)).toBeInTheDocument();
     expect(entries.filter((entry) => entry.reason === shared).length).toBeGreaterThan(0);
+  });
+});
+
+describe("ProvenanceDisclosure — safe outbound source link (M5-T025, D-056-R001)", () => {
+  it("valid dataset_id: renders a clickable link with the EXACT expected href, target=_blank, rel=noopener noreferrer", () => {
+    render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord()]}
+        reproducibility={reproducibility({ dataset_id: "64uk-42ks" })}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    const link = screen.getByTestId("provenance-source-link");
+    expect(link).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+    expect(link).toHaveTextContent("64uk-42ks");
+  });
+
+  it("invalid dataset_id: honest text, no anchor", () => {
+    render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord()]}
+        reproducibility={reproducibility({ dataset_id: "not-a-valid-id" })}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    expect(screen.queryByTestId("provenance-source-link")).toBeNull();
+    expect(screen.getByTestId("provenance-dataset-id")).toHaveTextContent(
+      "not-a-valid-id",
+    );
+  });
+
+  it("absent reproducibility: no dataset-id row at all, no anchor (existing behavior preserved)", () => {
+    render(
+      <ProvenanceDisclosure records={[sourceFactRecord()]} label="Source for Lot area" />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    expect(screen.queryByTestId("provenance-source-link")).toBeNull();
+    expect(screen.queryByTestId("provenance-dataset-id")).toBeNull();
+  });
+
+  it("NEGATIVE: a hostile request_url NEVER appears in any href, regardless of its value", () => {
+    const hostile = "https://evil.example.com/steal?x=<script>alert(1)</script>";
+    render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord()]}
+        reproducibility={reproducibility({
+          dataset_id: "not-a-valid-id",
+          request_url: hostile,
+        })}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    // No anchor exists at all in this invalid-id case...
+    expect(screen.queryByTestId("provenance-source-link")).toBeNull();
+    cleanup();
+    // ...and even generally: no href anywhere in the rendered tree contains
+    // the hostile request_url content, no matter what value it carries.
+    const { container } = render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord()]}
+        reproducibility={reproducibility({
+          dataset_id: "64uk-42ks",
+          request_url: hostile,
+        })}
+        label="Source for Lot area 2"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area 2"));
+    const hrefs = Array.from(container.querySelectorAll("a")).map((a) =>
+      a.getAttribute("href"),
+    );
+    for (const href of hrefs) {
+      expect(href ?? "").not.toContain("evil.example.com");
+    }
+    // The valid dataset id link is still exactly the constant-prefix href.
+    expect(screen.getByTestId("provenance-source-link")).toHaveAttribute(
+      "href",
+      "https://data.cityofnewyork.us/d/64uk-42ks",
+    );
+  });
+});
+
+describe("ProvenanceDisclosure — ZoLa-first human-readable lot link (M5-T032, D-064-R005)", () => {
+  const ZOLA_PREFIX = "https://zola.planning.nyc.gov/bbl/";
+
+  it("valid PLUTO fact: the ZoLa lot page is the PRIMARY link and the raw PLUTO JSON record is demoted to a clearly secondary link", () => {
+    const { container } = render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord()]}
+        reproducibility={reproducibility({ dataset_id: "64uk-42ks" })}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    const zola = screen.getByTestId("zola-lot-link");
+    expect(zola).toHaveAttribute("href", `${ZOLA_PREFIX}1000010010`);
+    expect(zola).toHaveAttribute("target", "_blank");
+    expect(zola).toHaveAttribute("rel", "noopener noreferrer");
+    // The human-readable primary link is NOT the demoted-secondary style…
+    expect(zola).not.toHaveClass("section-note");
+    // …while the raw PLUTO JSON record is present but demoted (secondary).
+    const raw = screen.getByRole("link", { name: "Current PLUTO record (JSON)" });
+    expect(raw).toHaveAttribute(
+      "href",
+      "https://data.cityofnewyork.us/resource/64uk-42ks.json?bbl=1000010010",
+    );
+    expect(raw).toHaveClass("section-note");
+    // Primary first: ZoLa renders before the raw record in the DOM.
+    // [ORCH-CORRECTED per web CI on 3250fbc9] typed as HTMLElement so
+    // indexOf accepts the getByRole results.
+    const links = Array.from(container.querySelectorAll<HTMLElement>("a"));
+    expect(links.indexOf(zola)).toBeLessThan(links.indexOf(raw));
+  });
+
+  it("a same-source dataset conflict closes BOTH the ZoLa link and the raw record (honest absence), keeping the fact's own About link", () => {
+    render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord({ dataset_id: "abcd-1234" })]}
+        reproducibility={reproducibility({ dataset_id: "64uk-42ks" })}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    expect(screen.queryByTestId("zola-lot-link")).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Current PLUTO record (JSON)" }),
+    ).toBeNull();
+    // The fact's own dataset About link is preserved (its independent metadata).
+    expect(screen.getByTestId("provenance-source-link")).toHaveAttribute(
+      "href",
+      "https://data.cityofnewyork.us/d/abcd-1234",
+    );
+  });
+
+  it("a non-PLUTO source renders no ZoLa link and no raw record (no borrowed lot identity)", () => {
+    render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord({ source_id: "nyc-dob-now" })]}
+        reproducibility={reproducibility()}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    expect(screen.queryByTestId("zola-lot-link")).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Current PLUTO record (JSON)" }),
+    ).toBeNull();
+  });
+
+  it("a BBL that fails canonical validation renders no ZoLa link even for a PLUTO fact", () => {
+    render(
+      <ProvenanceDisclosure
+        records={[sourceFactRecord({ bbl: "12345" })]}
+        reproducibility={reproducibility({ dataset_id: "64uk-42ks" })}
+        label="Source for Lot area"
+      />,
+    );
+    fireEvent.click(screen.getByText("Source for Lot area"));
+    expect(screen.queryByTestId("zola-lot-link")).toBeNull();
+    expect(
+      screen.queryByRole("link", { name: "Current PLUTO record (JSON)" }),
+    ).toBeNull();
   });
 });

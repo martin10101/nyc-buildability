@@ -1,0 +1,15 @@
+{
+  "task_id": "M0-T171",
+  "material_commit": "6217ca98 (producer commit in worktree w-M0-T171; 2 files)",
+  "produced_at": "2026-10-02T09:45:00+00:00",
+  "producer": "backend-engineer (orchestrator-dispatched subagent; worktree /root/project/w-M0-T171)",
+  "requirements": {
+    "D-091-R001": [
+      "Atomic review slots for the cloud loop: tools/agent_supervisor/review_slots.py makes count + run_budget.admit_review_or_combine decision + reservation ONE step under an exclusive O_CREAT|O_EXCL lock in the runtime directory, so two lanes can never both take the last of the 2 global review-or-combine slots or exceed 1 per lane (closes M0-T170 review note 1). Dead or reused-pid holders are reclaimed; an unassessable holder is kept; unreadable or malformed state and lock errors refuse with no slot.",
+      "Tests: tools/test_agent_supervisor_review_slots.py 13 passed, including real separate-process races (6 racers / 2 global slots -> exactly 2 win; 6 racers / 1 lane -> exactly 1 wins). Not yet called by the loop (M0-T172 wires it; disclosed)."
+    ],
+    "D-091-R007": [
+      "Gated before use: G0 at 12364237; submitted for G2, G3/G4 (code-reviewer), G5 (security-reviewer) and directive-compliance verification. No PC/Windows default changed; no loop started; recertification is M0-T174."
+    ]
+  }
+}

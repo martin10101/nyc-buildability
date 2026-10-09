@@ -1,0 +1,520 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
+import {
+  addLevel,
+  addVertex,
+  addWall,
+  adoptOutlineVertices,
+  danglingWallIds,
+  emptyDraft,
+  rectangleSampleDraft,
+  removeLevel,
+  removeVertex,
+  removeWall,
+  toProposalCheckRequest,
+  updateLevel,
+  updateVertex,
+  updateWall,
+  validateDraft,
+  type DraftProblem,
+  type DraftVertex,
+  type ProposalDraft,
+  type ProposalVariation,
+} from "@/lib/architect/proposal-draft";
+import {
+  announcementForProposalCheck,
+  fetchProposalCheck,
+  type ProposalCheckOutcome,
+} from "@/lib/proposal-checks-api";
+import { ProposalCheckReport } from "./ProposalCheckReport";
+import { ProposalOutlineDraw } from "./ProposalOutlineDraw";
+import { ProposalVariations } from "./ProposalVariations";
+
+/**
+ * Proposal editor container (task M5-T060, D-076 phase B3 slice 2). A
+ * keyboard-first draft editor whose primary input is the NUMERIC EPSG:2263
+ * vertex table (the draft authority); levels and exterior walls are numeric
+ * forms beside it. A run-check POSTs the draft to /api/v1/proposal-checks and
+ * renders the grouped report; saved variations are client-local and ephemeral.
+ *
+ * The recorded lot-outline map is COMPOSED read-only beside the form for
+ * context only (display CRS is display-only; nothing is measured from it). When
+ * a BBL is present, the released map-drawing input (task M5-T065, D-082-R001) is
+ * offered beside it: the architect sketches a 4326 outline, the server bridges
+ * it to authoritative EPSG:2263 by correspondence (no client-side transform),
+ * and the converted vertices land in this numeric draft EXACTLY as if typed —
+ * the table stays the visible, editable authority (manual remains the option,
+ * D-082-R003). Scenario emission stays deferred.
+ *
+ * D-01 (M1-06b, plan §9 "no example data in real work"): a real property ALWAYS
+ * starts from the empty draft — every lot input and outline value is unknown until
+ * the analyst enters it, and "Add vertex" / "Add level" leave the new coordinates
+ * and floor-to-floor height unknown (never 0 or a sample height). The worked
+ * rectangle example (rectangleSampleDraft) is reachable only through the explicit
+ * `example` prop, which is ignored whenever a BBL is mounted. The whole editor is
+ * set aside behind the default-off INTERNAL_PROPOSAL_EDITOR_ENABLED flag (plan §7).
+ */
+
+let variationSeq = 0;
+
+function numInputValue(n: number): string {
+  return Number.isFinite(n) ? String(n) : "";
+}
+function parseNum(raw: string): number {
+  return raw.trim() === "" ? Number.NaN : Number(raw);
+}
+
+export function ProposalEditor({
+  bbl,
+  fetchImpl,
+  adoptedDraft,
+  example = false,
+}: {
+  bbl?: string | null;
+  fetchImpl?: typeof fetch;
+  /** Explicit example/demo path only: start from the worked rectangle example. Ignored
+   * when a real property (`bbl`) is mounted — a real property never starts from it. */
+  example?: boolean;
+  /** A draft adopted from the Generated building option (task M5-T070, D-083-R002).
+   * When it changes to a new non-null draft it REPLACES the working draft as the
+   * proposed starting point; the numeric table stays the editable authority and
+   * manual entry is unchanged. */
+  adoptedDraft?: ProposalDraft | null;
+}) {
+  const [exampleSeeded] = useState(() => example && !bbl);
+  const [draft, setDraftState] = useState<ProposalDraft>(() => (exampleSeeded ? rectangleSampleDraft() : emptyDraft()));
+  const [draftRevision, setDraftRevision] = useState(0);
+  const [outcome, setOutcome] = useState<ProposalCheckOutcome | null>(null);
+  const [checking, setChecking] = useState(false);
+  const [announcement, setAnnouncement] = useState("");
+  const [draftProblems, setDraftProblems] = useState<DraftProblem[]>([]);
+  const [variations, setVariations] = useState<ProposalVariation[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  // Mirror of the current draft so adoption can report exactly which walls it
+  // reconciles WITHOUT reading stale closure state or nesting setState calls.
+  const draftRef = useRef(draft);
+  const revisionRef = useRef(0);
+  const pendingCheck = useRef<{ revision: number; controller: AbortController } | null>(null);
+  const mounted = useRef(false);
+  const cancelCheck = useCallback(() => {
+    const request = pendingCheck.current;
+    pendingCheck.current = null;
+    request?.controller.abort();
+  }, []);
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+      cancelCheck();
+    };
+  }, [cancelCheck]);
+
+  // Invalidate synchronously at every edit/adoption/variation switch. Aborting
+  // transport alone is insufficient: a response may already be parsing.
+  const setDraft = useCallback((update: ProposalDraft | ((current: ProposalDraft) => ProposalDraft)) => {
+    const next = typeof update === "function" ? update(draftRef.current) : update;
+    draftRef.current = next;
+    revisionRef.current += 1;
+    setDraftRevision(revisionRef.current);
+    cancelCheck();
+    setChecking(false);
+    setOutcome(null);
+    setDraftProblems([]);
+    setAnnouncement("");
+    setDraftState(next);
+  }, [cancelCheck]);
+
+  // Adopt the Generated building option (task M5-T070, D-083-R002 / AS-4): when a
+  // NEW adopted draft arrives, seed THIS draft model from it and clear stale
+  // results — the numeric table stays the visible, editable authority and manual
+  // entry (numeric table + the T066 drawing) remains fully available afterwards.
+  const lastAdoptedRef = useRef<ProposalDraft | null>(null);
+  useEffect(() => {
+    if (!adoptedDraft || adoptedDraft === lastAdoptedRef.current) return;
+    lastAdoptedRef.current = adoptedDraft;
+    setDraft(adoptedDraft);
+    setDraftProblems([]);
+    setOutcome(null);
+    setActiveId(null);
+    setAnnouncement(
+      "Adopted the Generated building option as a proposed starting draft. Every value here is " +
+        "proposed — edit it in the table, or keep entering your own; run the check when ready.",
+    );
+  }, [adoptedDraft, setDraft]);
+
+  const runCheck = useCallback(async () => {
+    cancelCheck();
+    const checkedDraft = draftRef.current;
+    const problems = validateDraft(checkedDraft);
+    setDraftProblems(problems);
+    if (problems.length > 0) {
+      // Mirror validation blocked the draft client-side (each problem names its
+      // route constant). The server refusal remains the truth; this only spares
+      // an obviously-doomed POST.
+      setChecking(false);
+      setOutcome(null);
+      setAnnouncement("Proposal not sent: the draft has input problems, listed below.");
+      return;
+    }
+    const request = { revision: revisionRef.current, controller: new AbortController() };
+    pendingCheck.current = request;
+    setChecking(true);
+    setAnnouncement("");
+    const result = await fetchProposalCheck(toProposalCheckRequest(checkedDraft), {
+      fetchImpl,
+      signal: request.controller.signal,
+    });
+    if (!mounted.current || pendingCheck.current !== request ||
+        revisionRef.current !== request.revision || request.controller.signal.aborted) return;
+    pendingCheck.current = null;
+    setChecking(false);
+    setOutcome(result);
+    setAnnouncement(announcementForProposalCheck(result));
+    if (result.kind === "report" && activeId) {
+      // Saved variations are snapshots; a working edit must not attach its
+      // report to a different saved draft that happens to retain the active id.
+      setVariations((vs) => vs.map((v) =>
+        v.id === activeId && v.draft === checkedDraft ? { ...v, report: result.report } : v,
+      ));
+    }
+  }, [fetchImpl, activeId, cancelCheck]);
+
+  const saveVariation = useCallback(() => {
+    variationSeq += 1;
+    const id = `variation-${variationSeq}`;
+    const report = outcome && outcome.kind === "report" ? outcome.report : null;
+    setVariations((vs) => [
+      ...vs,
+      { id, label: draft.scenario_label.trim() || `Variation ${vs.length + 1}`, draft, report },
+    ]);
+    setActiveId(id);
+    setAnnouncement("Saved the current proposal as a variation (this browser session only).");
+  }, [draft, outcome]);
+
+  // Adopt map-drawn vertices into the numeric draft EXACTLY as if typed (task
+  // M5-T065, D-082-R001/R003): the converted EPSG:2263 vertices from the
+  // outline-bridge replace the draft outline, the numeric table stays the
+  // visible/editable authority, and a fresh check must be run on the adopted
+  // shape (the old outcome no longer describes the current draft).
+  const adoptDrawnOutline = useCallback((vertices: DraftVertex[]) => {
+    // Also guard the receiving draft: numeric edits can supersede a bridge
+    // request before the drawing component observes the new revision prop.
+    if (revisionRef.current !== draftRevision) return;
+    // DB-045(f)/HJ-2: adopting an outline with a different vertex count would
+    // orphan exterior walls that reference removed vertices. adoptOutlineVertices
+    // reconciles by dropping them; announce exactly which so the change is never
+    // silent (the frontend "no silent scenario-changing default" rule).
+    const dropped = danglingWallIds(draftRef.current.exterior_walls, vertices.length);
+    setDraft((d) => adoptOutlineVertices(d, vertices));
+    setDraftProblems([]);
+    setOutcome(null);
+    setAnnouncement(
+      `Adopted ${vertices.length} drawn points into the numeric outline — proposed input you can edit; run the check when ready.` +
+        (dropped.length
+          ? ` Removed ${dropped.length} wall${dropped.length === 1 ? "" : "s"} that referenced deleted vertices (${dropped.join(", ")}); re-add walls if needed.`
+          : ""),
+    );
+  }, [draftRevision, setDraft]);
+
+  const selectVariation = useCallback(
+    (id: string) => {
+      const found = variations.find((v) => v.id === id);
+      if (!found) return;
+      setActiveId(id);
+      setDraft(found.draft);
+      setDraftProblems([]);
+      setOutcome(
+        found.report
+          ? { kind: "report", report: found.report, correlationId: found.report.correlationId }
+          : null,
+      );
+      setAnnouncement(`Loaded variation ${found.label}.`);
+    },
+    [variations, setDraft],
+  );
+
+  return (
+    <div className="proposal-editor" data-testid="proposal-editor">
+      <OutcomeAnnouncer testId="proposal-check-announcer" message={announcement} />
+      <header className="proposal-editor-head">
+        <h2>Proposal editor</h2>
+        <p className="proposal-honesty" data-testid="editor-honesty">
+          Proposed — your input, not a city record. You enter the numbers; the check compares them
+          against the rules and returns a preliminary result that requires professional review.
+        </p>
+        {exampleSeeded ? (
+          <p className="proposal-honesty" data-testid="editor-example-note">
+            Worked example — sample values for a fictional lot, not a real property.
+          </p>
+        ) : null}
+      </header>
+
+      <div className="proposal-editor-grid">
+        <form className="proposal-editor-form" onSubmit={(e) => e.preventDefault()}>
+          <div className="field-group">
+            <label className="field-label" htmlFor="proposal-scenario-label">
+              Proposal label
+            </label>
+            <input
+              id="proposal-scenario-label"
+              className="text-input"
+              value={draft.scenario_label}
+              onChange={(e) => setDraft((d) => ({ ...d, scenario_label: e.target.value }))}
+            />
+          </div>
+          <div className="field-group">
+            <label className="field-label" htmlFor="proposal-id">
+              Proposal id (optional)
+            </label>
+            <input
+              id="proposal-id"
+              className="text-input"
+              value={draft.proposal_id}
+              onChange={(e) => setDraft((d) => ({ ...d, proposal_id: e.target.value }))}
+            />
+          </div>
+          <div className="field-group">
+            <label className="field-label" htmlFor="proposal-zoning-district">
+              Zoning district (caller-attested)
+            </label>
+            <input
+              id="proposal-zoning-district"
+              className="text-input"
+              placeholder="Unknown"
+              value={draft.zoning_district}
+              onChange={(e) => setDraft((d) => ({ ...d, zoning_district: e.target.value }))}
+            />
+          </div>
+          <div className="field-group">
+            <label className="field-label" htmlFor="proposal-street-width">
+              Street width class (caller-attested)
+            </label>
+            <select
+              id="proposal-street-width"
+              className="text-input"
+              value={draft.street_width_class}
+              onChange={(e) =>
+                setDraft((d) => ({ ...d, street_width_class: e.target.value as ProposalDraft["street_width_class"] }))
+              }
+            >
+              <option value="">Not attested</option>
+              <option value="wide">Wide</option>
+              <option value="narrow">Narrow</option>
+            </select>
+          </div>
+          <div className="field-group">
+            <label className="field-label" htmlFor="proposal-lot-area">
+              Lot area (sq ft, caller-attested)
+            </label>
+            <input
+              id="proposal-lot-area"
+              type="number"
+              className="text-input"
+              placeholder="Unknown"
+              value={draft.lot_area_sq_ft === null ? "" : numInputValue(draft.lot_area_sq_ft)}
+              onChange={(e) =>
+                setDraft((d) => ({ ...d, lot_area_sq_ft: e.target.value.trim() === "" ? null : parseNum(e.target.value) }))
+              }
+            />
+          </div>
+
+          <table className="proposal-vertex-table">
+            <caption>Outline vertices (EPSG:2263 feet) — the numeric authority for this proposal</caption>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">X (ft)</th>
+                <th scope="col">Y (ft)</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {draft.vertices.map((v, i) => (
+                <tr key={i}>
+                  <th scope="row">{i}</th>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Vertex ${i} X coordinate`}
+                      placeholder="Unknown"
+                      value={numInputValue(v.x)}
+                      onChange={(e) => setDraft((d) => updateVertex(d, i, { x: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Vertex ${i} Y coordinate`}
+                      placeholder="Unknown"
+                      value={numInputValue(v.y)}
+                      onChange={(e) => setDraft((d) => updateVertex(d, i, { y: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => setDraft((d) => removeVertex(d, i))} aria-label={`Delete vertex ${i}`}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* D-01: a new vertex is UNKNOWN until typed (never a 0,0 default); the mirror
+              validation blocks sending until both coordinates are finite. */}
+          <button type="button" className="secondary-button" onClick={() => setDraft((d) => addVertex(d, { x: Number.NaN, y: Number.NaN }))}>
+            Add vertex
+          </button>
+
+          <table className="proposal-level-table">
+            <caption>Levels</caption>
+            <thead>
+              <tr>
+                <th scope="col">Level</th>
+                <th scope="col">Floor count</th>
+                <th scope="col">Floor-to-floor (ft)</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {draft.levels.map((l, i) => (
+                <tr key={i}>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Level ${i} index`}
+                      value={numInputValue(l.level_index)}
+                      onChange={(e) => setDraft((d) => updateLevel(d, i, { level_index: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Level ${i} floor count`}
+                      value={numInputValue(l.floor_count)}
+                      onChange={(e) => setDraft((d) => updateLevel(d, i, { floor_count: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Level ${i} floor to floor height`}
+                      placeholder="Unknown"
+                      value={numInputValue(l.floor_to_floor_ft)}
+                      onChange={(e) => setDraft((d) => updateLevel(d, i, { floor_to_floor_ft: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => setDraft((d) => removeLevel(d, i))} aria-label={`Delete level ${i}`}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* D-01: the floor-to-floor height is UNKNOWN until typed (never a sample 10 ft);
+              the mirror validation blocks sending until it is finite. */}
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => setDraft((d) => addLevel(d, { level_index: d.levels.length, floor_count: 1, floor_to_floor_ft: Number.NaN }))}
+          >
+            Add level
+          </button>
+
+          <table className="proposal-wall-table">
+            <caption>Exterior walls</caption>
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Start vertex</th>
+                <th scope="col">End vertex</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {draft.exterior_walls.map((w, i) => (
+                <tr key={i}>
+                  <td>
+                    <input
+                      aria-label={`Wall ${i} id`}
+                      value={w.id}
+                      onChange={(e) => setDraft((d) => updateWall(d, i, { id: e.target.value }))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Wall ${i} start vertex index`}
+                      value={numInputValue(w.start_vertex_index)}
+                      onChange={(e) => setDraft((d) => updateWall(d, i, { start_vertex_index: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      aria-label={`Wall ${i} end vertex index`}
+                      value={numInputValue(w.end_vertex_index)}
+                      onChange={(e) => setDraft((d) => updateWall(d, i, { end_vertex_index: parseNum(e.target.value) }))}
+                    />
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => setDraft((d) => removeWall(d, i))} aria-label={`Delete wall ${i}`}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => setDraft((d) => addWall(d, { id: `W-${d.exterior_walls.length}`, start_vertex_index: 0, end_vertex_index: 0 }))}
+          >
+            Add wall
+          </button>
+
+          <div className="proposal-run">
+            <button type="button" className="primary-button" onClick={runCheck} disabled={checking} data-testid="run-check">
+              {checking ? "Checking…" : "Run check"}
+            </button>
+          </div>
+
+          {draftProblems.length ? (
+            <section className="card failure-state proposal-draft-problems" role="alert" data-testid="draft-problems">
+              <strong>Proposal not sent</strong>
+              <p>The draft was blocked before sending. Fix these to match what the checking service will accept:</p>
+              <ul>
+                {draftProblems.map((p, i) => (
+                  <li key={i}>
+                    {p.message} <span className="proposal-route-constant">(route: {p.routeConstant})</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+        </form>
+
+        <aside className="proposal-editor-aside">
+          {bbl ? (
+            <div className="proposal-map-context" data-testid="proposal-map-context">
+              <ProposalOutlineDraw bbl={bbl} onAdopt={adoptDrawnOutline} fetchImpl={fetchImpl} adoptionRevision={draftRevision} />
+            </div>
+          ) : null}
+          <ProposalCheckReport outcome={outcome} checking={checking} bbl={bbl ?? ""} />
+          <ProposalVariations
+            variations={variations}
+            activeId={activeId}
+            canSave={draft.vertices.length > 0}
+            onSave={saveVariation}
+            onSelect={selectVariation}
+          />
+        </aside>
+      </div>
+    </div>
+  );
+}
+

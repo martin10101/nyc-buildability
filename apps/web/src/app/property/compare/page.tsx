@@ -1,0 +1,32 @@
+import type { Metadata } from "next";
+import { ArchitectEntry } from "@/components/architect/ArchitectEntry";
+import { ruleEvaluationSurfaceEnabled } from "@/lib/rule-evaluation";
+import { surveyReviewEnabled } from "@/lib/surveyReview/config";
+import { proposalEditorEnabled } from "@/lib/architect/proposal-editor-flag";
+import { unusedFloorAreaSectionEnabled } from "@/lib/architect/unused-floor-area-flag";
+import { Suspense } from "react";
+import { CompareEntry } from "@/components/compare/CompareScreen";
+
+export const metadata: Metadata = {
+  title: "Compare scenario — NYC Buildability (internal)",
+};
+
+/**
+ * PRODUCT_FLOW step 3 route (task M5-T004). INTERNAL/DEV ONLY — same B-001
+ * deployment restriction as the Property and Confirm screens. The PRD section
+ * 29 disclaimer is rendered by the shared layout footer on every page; the
+ * internal banner renders inside CompareEntry.
+ *
+ * The Suspense boundary is required by Next.js for useSearchParams during
+ * prerendering; the fallback is the empty shell (the client resolves the BBL
+ * parameter immediately on hydration).
+ */
+export default async function ComparePage({ searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
+  const params = await searchParams;
+  if (ruleEvaluationSurfaceEnabled({ ruleeval: params.ruleeval })) return <Suspense fallback={null}><ArchitectEntry defaultView="scenarios" requireBbl surveyEnabled={surveyReviewEnabled()} proposalEditorEnabled={proposalEditorEnabled()} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled()} /></Suspense>;
+  return (
+    <Suspense fallback={null}>
+      <CompareEntry unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled()} />
+    </Suspense>
+  );
+}

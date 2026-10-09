@@ -1,0 +1,17 @@
+{
+ "task_id": "M0-T159",
+ "material_commit": "cfc3d22c (cherry-pick of the wt-m0t159 in-worktree commit a3f24ff3 on the certified controller base a5886dab; 12 files, every file MATCH by git blob identity)",
+ "produced_at": "2026-09-24T09:20:00+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m0t159)",
+ "requirements": {
+  "D-024-R287": [
+   "Runbook section 13 order honoured (recapture fixtures -> recertify -> only then repin): the four 2.1.281 fixtures were captured LIVE with the precedent instruments (capability probe, hook-event catalog, native runtime detection, shell routing on claude-opus-5-5 = native_preferred 3/0, 0 worker writes); the version teeth were re-pointed and proven removal-sensitive; the WHOLE supervisor suite recertified at one frozen candidate (a5886dab + a3f24ff3): 3662 passed / 2 skipped / 0 failed of 3664, reconciling exactly with the a5886dab baseline (3659 passed + the 3 CLI-drift teeth, no test removed); record-manifest into a TEMP dir bound the current config.toml (147 files, digest 55dc71350b) and verify-controller passed; non-live doctor PASS 41/41. The manifest overwrite, install and --repin-cli-identity stay OWNER-TYPED commissioning steps (presented in M0-T159-recertification.md section 5, never run) - the M0-T132 precedent."
+  ],
+  "D-087-R001": [
+   "The loop-lane share of today's capacity ramp: this packet is the B-026 remedy that lets the three codex lanes launch again on CLI 2.1.281; contracted (G0 PASS at 125efaa1), claimed with a FULL worktree path (wt-m0t159 at the certified a5886dab), produced by an orchestrator-dispatched subagent concurrently with the D-087 units; no state or gate skipped."
+  ],
+  "D-066-R001": [
+   "The packet's CODE-GRAPH NAVIGATION BLOCK named the controller tree's consumers and the forbidden live surfaces (C:\\SupervisorController*, wt-controller-src, Program Files config, lane journals); the producer stayed inside the 12 allowed paths (git show --stat a3f24ff3) and proved every lane journal byte-untouched (size + mtime before and after each probe and suite)."
+  ]
+ }
+}

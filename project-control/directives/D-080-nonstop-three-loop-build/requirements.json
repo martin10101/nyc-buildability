@@ -1,0 +1,103 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-080",
+ "version": 1,
+ "requirement_count": 3,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-20T08:10:00+00:00",
+ "requirements": [
+  {
+   "id": "D-080-R001",
+   "text": "Continuous three-lane operation while the owner is away ('keep the loops running nonstop all 3 build build build'): the orchestrator keeps all three supervised build lanes cycling without waiting for owner replies - monitor the loops, harvest each unit at its close, commit/cherry-pick/push, submit at CI-green heads, dispatch independent review waves, accept at seams under the standard v2 flow, and re-feed every finished lane with the next released packet (full contract drill per D-077-R002) and relaunch its loop. Ordinary Tier A actions (ADR-006) proceed autonomously overnight.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-080-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "The session record shows lanes re-fed at seams without owner round-trips: harvests, submits, waves, accepts, contract seams, and relaunches recorded in the ledger/git/CI while the owner is away.",
+   "required_evidence": "Ledger progress entries, seam commits, gate records, and loop journals across the unattended window.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance; in force for the current unattended window.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-080-R002",
+   "text": "'Nonstop' lifts NO stop condition: Tier D / Section 20 hard stops, owner holds (expansion section 2 minus the D-040/D-076 scoped releases; the PR #241 hold), gate FAIL handling, genuine blockers, the dependency-security policy, and D-072 loop isolation all stand unchanged. When a lane hits a stop condition, park THAT lane (blocker or queued owner item) and keep the other lanes building; never bypass, waive, or reinterpret a stop to keep a lane moving.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-080-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Any stop condition hit overnight appears as a blocker/queued item with the lane parked, never as bypassed or silently continued work.",
+   "required_evidence": "Blocker records / queued owner items for any stop condition encountered; absence of waivers.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-080-R003",
+   "text": "Sequencing boundary: lanes are re-fed ONLY from the released, non-held queue under existing directives (D-077-R003 unchanged; D-078 pair order per D-078-R003; B3-UI contracts after M5-T057 accepts per the phased plan). The D-076-R003 owner-review checkpoint after phase B3 is a NAMED owner checkpoint: if reached overnight it WAITS for the owner - 'build build build' does not substitute for that review; phase C does not start.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-080-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-20"
+   },
+   "dependencies": [],
+   "required_harness": "Every overnight contract seam cites its released-queue source; no phase-C packet exists before the owner walkthrough.",
+   "required_evidence": "Contract-seam commits + packet directive_refs across the unattended window.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at issuance.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

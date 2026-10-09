@@ -1,0 +1,16 @@
+{
+  "task_id": "M5-T005",
+  "reviewed_sha": "cdd7165d3fef6b43ca72f48f6bd5427cce0e2103",
+  "requirements": {
+    "D-038-R003": [
+      "services/api/app/scenario/derive.py: pure derive_practical_usable_range(scenario_document) - scenario/optimization-engine PRODUCT domain logic (fills the Compare UI practical-usable-range), NOT M0 self-infra; milestone M5, task_type backend",
+      "G0 packet project-control/gates/M5-T005-G0.json PASS; AS-1..AS-7 map to real tests in services/api/tests/scenario/test_scenario_derive.py",
+      "reproduced python -m pytest services/api/tests/scenario -q -> 102 passed (48 new derive tests)"
+    ],
+    "D-038-R004": [
+      "derive.py imports = math, typing.Any, .constants only; negative grep for supabase/geoclient/requests/httpx/socket/os.environ/open( -> no matches",
+      "pure dict->dict function, no persistence/network/address-resolution; scenario document consumed READ-ONLY (test_as7 asserts unchanged)",
+      "offline proof: socket-blocked test run -> 48 passed; documented_test_commands fixtures only, no Supabase/Geoclient"
+    ]
+  }
+}

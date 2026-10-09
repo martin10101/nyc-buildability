@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T145",
+  "producer_agent": "supervised-loop-fable-worker",
+  "report_file": "project-control/reports/M0-T145-guard-brace-residual.md",
+  "submitted_at": "2026-09-06T09:37:58.936663+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T145-evidence-map.json",
+  "content_manifest_sha256": "99cd3433b32205540e863d67c83944dcf06b3612b50ec3a9056d3308febfb18f",
+  "reviewed_sha": "47ee3a04b46d02bed6af71c849b0793491270aa5",
+  "applicable_requirements": [],
+  "updated_at": "2026-09-06T09:37:59.404419+00:00"
+}

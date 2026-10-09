@@ -1,0 +1,55 @@
+{
+ "task_id": "M5-T142",
+ "material_commits": [
+  "69b126f6 (the one builder commit: the reader's list, the card, the stylesheet, the panel's announcer, three test files, the report; 8 files) = material head"
+ ],
+ "claim_seam_head": "a1859c23edcc40fb84ca7a497bf2fba1851f70ec",
+ "files_changed": [
+  "apps/web/src/components/architect/ResultsPanel.tsx",
+  "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+  "apps/web/src/components/architect/answers/AnswerCard.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/answers/three-answers.css",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "apps/web/src/lib/architect/three-answers.ts",
+  "project-control/reports/M5-T142-producer-report.md"
+ ],
+ "what_did_not_change": "No server file, no contract, no browser spec or harness, no package file, no CI file, no switch. The document's words and numbers on the screen are the same; the website adds two texts ('Conditional'; 'Development results are ready.').",
+ "known_limits": [
+  "Weights and spacing rest on the stylesheet; unit tests pin the structure and the walkthrough judged the pictures. No narrow-window picture was made.",
+  "The walkthrough's suggestions for later (its F1 to F3): the word 'Conditional' is quieter than the large figure; on a withheld row the kind-of-gap line is bold while 'Not known' is not; no word says that all listed conditions must hold.",
+  "The test review's notes (its F1 to F3): an empty list element for a settled value would be caught by no test; the recorded journey's own condition texts are rendered but not asserted item by item; the marker is asserted inside its card, not as the figure's direct neighbour.",
+  "A conditional state that names no condition would show no marker; the contract's schema and the website's own document check refuse such a document before the card (the code review's F1).",
+  "Both switches stay off; nothing is visible to a user."
+ ],
+ "checks_at_material_head": [
+  "CI: on the push of `69b126f6`: CI run 37865020367, attempt 1, 21 of 21 jobs success (among them the website's lint, typecheck and build, the whole unit and browser suite, and the dependency audits); secret-scan 37865020380 success; context-budget 37865020327 success; read at 00:36 UTC on 2026-10-09. Nothing was rerun.",
+  "orchestrator: lint exit 0; typecheck exit 0; `vitest run src/lib/architect src/components/architect` plus the two results test files of `src/lib/__tests__`: 61 files, 1311 tests passed; build exit 0 (made for the pictures). No whole-suite run and no browser test on the build machine: those are CI's."
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: test 'S5: each withheld envelope value shows 'Not known' + reason + its own kind-of-gap line, not inline-joined, no figure'.",
+   "project-control/reports/M5-T142-G3G4.md: the G3 return's check 3 (a withheld value: no number, no fallback value) and the walkthrough's point 4."
+  ],
+  "D-090-R258": [
+   "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: test S5 (the kind-of-gap line is its own element after the reason).",
+   "project-control/reports/M5-T142-G3G4.md: the walkthrough's point 4 (marker, reason and kind of gap can be told apart) and its finding F2."
+  ],
+  "D-090-R267": [
+   "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: tests S2, S3 and S4 (every conditional figure carries the word 'Conditional' and one list item per condition; the headline number never renders without the marker); apps/web/src/lib/architect/__tests__/three-answers.test.ts: the list tests and S12.",
+   "project-control/reports/M5-T142-G3G4.md: the G3 return's checks 2 and 3; the G4 return's mutations (the marker dropped; the conditions joined again); the walkthrough's points 1 and 2 and its finding F1."
+  ],
+  "D-090-R268": [
+   "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: tests S1 and S6 (settled, conditional and withheld in one card are told apart by their text; a settled value carries no marker).",
+   "project-control/reports/M5-T142-G3G4.md: the walkthrough's points 1, 3 and 5."
+  ],
+  "D-090-R269": [
+   "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: test S4 (a conditional headline figure renders with the marker).",
+   "project-control/reports/M5-T142-G3G4.md: the walkthrough's points 1 and 2: on the running screen for the recorded lot every height of the district's table is marked 'Conditional' with its unchecked conditions listed."
+  ],
+  "D-090-R570": [
+   "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: test S5 (no figure on a withheld row); the earlier no-number tests of the card and of the website's document check are unchanged.",
+   "project-control/reports/M5-T142-G3G4.md: the G3 return's check 3; the G4 return's check 6 (no existing assertion weakened); the walkthrough's points 4 and 8."
+  ]
+ }
+}

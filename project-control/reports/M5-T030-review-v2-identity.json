@@ -1,0 +1,10 @@
+{
+  "captured_at": "2026-09-15T01:26:38.312793+00:00",
+  "reviewed_sha": "2cee838cf49cbb0bb7cf0c796d81141182909502",
+  "tree_sha": "c6ecd539e46807a72f61dc061f40d15847ef8a47",
+  "content_manifest_sha256": "003f07771e693873864325d7fd69a712d78939faccab09bef0c92292ca229bf8",
+  "identity_error": null,
+  "producer_report_sha256": "aec30940e3ca00167621d1de8f98ce8dd86aa12b20d6840ebe74bc14e4a29198",
+  "scope": "project-control/reports/M5-T030-scope-v2.json",
+  "note": "Frozen remote rework tree equals local submitted tree. CI starts at this SHA. Real changed live UI verification remains pending authorized delivery."
+}

@@ -1,0 +1,1294 @@
+{
+  "captured_at": "2026-09-15T23:37:27.153060+00:00",
+  "unique_parcels": 21,
+  "boroughs": [
+    "BK",
+    "BX",
+    "MN",
+    "QN",
+    "SI"
+  ],
+  "parcels": [
+    {
+      "bbl": "5000920001",
+      "case": "R1_Staten",
+      "address": "196 HENDERSON AVENUE",
+      "borough": "SI",
+      "source_record": {
+        "bbl": "5000920001.00000000",
+        "borough": "SI",
+        "block": "92",
+        "lot": "1",
+        "address": "196 HENDERSON AVENUE",
+        "zonedist1": "R1-2",
+        "spdist1": "HS",
+        "splitzone": false,
+        "lotarea": "203835",
+        "bldgarea": "47304",
+        "builtfar": "0.23000000000",
+        "residfar": "0.75000000000",
+        "affresfar": "1.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27SI%27+AND+zonedist1%3D%27R1-2%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:27:56.441766+00:00",
+      "contexts": [
+        "special_district"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "5000920001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "5000920001",
+          "status": "pass",
+          "expected": [
+            "R1-2"
+          ],
+          "observed": [
+            "R1-2"
+          ]
+        },
+        {
+          "layer": "application_identity",
+          "case": "bbl",
+          "status": "pass",
+          "expected": "5000920001",
+          "observed": "5000920001"
+        },
+        {
+          "layer": "application_display",
+          "case": "built_far",
+          "status": "gap",
+          "expected": "0.23000000000",
+          "observed": null,
+          "reason": "Missing is not zero."
+        },
+        {
+          "layer": "application_display",
+          "case": "reference_far",
+          "status": "pass",
+          "expected": "0.75000000000",
+          "observed": "0.75"
+        },
+        {
+          "layer": "application_calculation",
+          "case": "project_allowance",
+          "status": "gap",
+          "expected": null,
+          "observed": {
+            "calculated_far": null,
+            "calculated_floor_area_sq_ft": null,
+            "calculation_status": "not_calculated"
+          },
+          "reason": "Display/source comparison does not validate project eligibility or a computed allowance; no independent property case supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "4032110010",
+      "case": "R2_Queens",
+      "address": "69-02 KESSEL STREET",
+      "borough": "QN",
+      "source_record": {
+        "bbl": "4032110010.00000000",
+        "borough": "QN",
+        "block": "3211",
+        "lot": "10",
+        "address": "69-02 KESSEL STREET",
+        "zonedist1": "R2",
+        "splitzone": false,
+        "lotarea": "6000",
+        "bldgarea": "1828",
+        "builtfar": "0.30000000000",
+        "residfar": "0.75000000000",
+        "affresfar": "1.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27QN%27+AND+zonedist1%3D%27R2%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:27:56.115567+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "4032110010",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "4032110010",
+          "status": "pass",
+          "expected": [
+            "R2"
+          ],
+          "observed": [
+            "R2"
+          ]
+        },
+        {
+          "layer": "application_identity",
+          "case": "bbl",
+          "status": "pass",
+          "expected": "4032110010",
+          "observed": "4032110010"
+        },
+        {
+          "layer": "application_display",
+          "case": "built_far",
+          "status": "gap",
+          "expected": "0.30000000000",
+          "observed": null,
+          "reason": "Missing is not zero."
+        },
+        {
+          "layer": "application_display",
+          "case": "reference_far",
+          "status": "pass",
+          "expected": "0.75000000000",
+          "observed": "0.75"
+        },
+        {
+          "layer": "application_calculation",
+          "case": "project_allowance",
+          "status": "gap",
+          "expected": null,
+          "observed": {
+            "calculated_far": null,
+            "calculated_floor_area_sq_ft": null,
+            "calculation_status": "not_calculated"
+          },
+          "reason": "Display/source comparison does not validate project eligibility or a computed allowance; no independent property case supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "3065090024",
+      "case": "R2X",
+      "address": "946 EAST 7 STREET",
+      "borough": "BK",
+      "source_record": {
+        "bbl": "3065090024.00000000",
+        "borough": "BK",
+        "block": "6509",
+        "lot": "24",
+        "address": "946 EAST 7 STREET",
+        "zonedist1": "R2X",
+        "spdist1": "OP",
+        "splitzone": false,
+        "lotarea": "6250",
+        "bldgarea": "0",
+        "builtfar": "0.00000000000",
+        "residfar": "1.00000000000",
+        "affresfar": "1.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R2X%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:27:56.208927+00:00",
+      "contexts": [
+        "special_district"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "3065090024",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "3065090024",
+          "status": "pass",
+          "expected": [
+            "R2X"
+          ],
+          "observed": [
+            "R2X"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "2034300037",
+      "case": "R3_Bronx",
+      "address": "925 HARDING PARK",
+      "borough": "BX",
+      "source_record": {
+        "bbl": "2034300037.00000000",
+        "borough": "BX",
+        "block": "3430",
+        "lot": "37",
+        "address": "925 HARDING PARK",
+        "zonedist1": "R3-2",
+        "zonedist2": "R3A",
+        "splitzone": true,
+        "lotarea": "1776",
+        "bldgarea": "608",
+        "builtfar": "0.34000000000",
+        "residfar": "0.75000000000",
+        "affresfar": "1.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27BX%27+AND+zonedist1%3D%27R3-2%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:27:55.784361+00:00",
+      "contexts": [
+        "split"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "2034300037",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "2034300037",
+          "status": "pass",
+          "expected": [
+            "R3-2",
+            "R3A"
+          ],
+          "observed": [
+            "R3-2",
+            "R3A"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "4001170001",
+      "case": "R4_Queens",
+      "address": "50-01 39 AVENUE",
+      "borough": "QN",
+      "source_record": {
+        "bbl": "4001170001.00000000",
+        "borough": "QN",
+        "block": "117",
+        "lot": "1",
+        "address": "50-01 39 AVENUE",
+        "zonedist1": "R4",
+        "splitzone": false,
+        "lotarea": "184000",
+        "bldgarea": "378186",
+        "builtfar": "2.06000000000",
+        "residfar": "1.00000000000",
+        "affresfar": "1.50000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27QN%27+AND+zonedist1%3D%27R4%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:01.348609+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "4001170001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "4001170001",
+          "status": "pass",
+          "expected": [
+            "R4"
+          ],
+          "observed": [
+            "R4"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "3005250001",
+      "case": "R5_Brooklyn",
+      "address": "401 COLUMBIA STREET",
+      "borough": "BK",
+      "source_record": {
+        "bbl": "3005250001.00000000",
+        "borough": "BK",
+        "block": "525",
+        "lot": "1",
+        "address": "401 COLUMBIA STREET",
+        "zonedist1": "R5",
+        "splitzone": false,
+        "lotarea": "88000",
+        "bldgarea": "85302",
+        "builtfar": "0.97000000000",
+        "residfar": "1.50000000000",
+        "affresfar": "2.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27BK%27+AND+zonedist1%3D%27R5%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:01.216089+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "3005250001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "3005250001",
+          "status": "pass",
+          "expected": [
+            "R5"
+          ],
+          "observed": [
+            "R5"
+          ]
+        },
+        {
+          "layer": "application_identity",
+          "case": "bbl",
+          "status": "pass",
+          "expected": "3005250001",
+          "observed": "3005250001"
+        },
+        {
+          "layer": "application_display",
+          "case": "built_far",
+          "status": "gap",
+          "expected": "0.97000000000",
+          "observed": null,
+          "reason": "Missing is not zero."
+        },
+        {
+          "layer": "application_display",
+          "case": "reference_far",
+          "status": "pass",
+          "expected": "1.50000000000",
+          "observed": "1.5"
+        },
+        {
+          "layer": "application_calculation",
+          "case": "project_allowance",
+          "status": "gap",
+          "expected": null,
+          "observed": {
+            "calculated_far": null,
+            "calculated_floor_area_sq_ft": null,
+            "calculation_status": "not_calculated"
+          },
+          "reason": "Display/source comparison does not validate project eligibility or a computed allowance; no independent property case supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "2033310040",
+      "case": "R5D",
+      "address": "3104 DECATUR AVENUE",
+      "borough": "BX",
+      "source_record": {
+        "bbl": "2033310040.00000000",
+        "borough": "BX",
+        "block": "3331",
+        "lot": "40",
+        "address": "3104 DECATUR AVENUE",
+        "zonedist1": "R5D",
+        "splitzone": false,
+        "lotarea": "1500",
+        "bldgarea": "1500",
+        "builtfar": "1.00000000000",
+        "residfar": "2.00000000000",
+        "affresfar": "2.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R5D%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:01.067749+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "2033310040",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "2033310040",
+          "status": "pass",
+          "expected": [
+            "R5D"
+          ],
+          "observed": [
+            "R5D"
+          ]
+        },
+        {
+          "layer": "application_identity",
+          "case": "bbl",
+          "status": "pass",
+          "expected": "2033310040",
+          "observed": "2033310040"
+        },
+        {
+          "layer": "application_display",
+          "case": "built_far",
+          "status": "gap",
+          "expected": "1.00000000000",
+          "observed": null,
+          "reason": "Missing is not zero."
+        },
+        {
+          "layer": "application_display",
+          "case": "reference_far",
+          "status": "pass",
+          "expected": "2.00000000000",
+          "observed": "2"
+        },
+        {
+          "layer": "application_calculation",
+          "case": "project_allowance",
+          "status": "gap",
+          "expected": null,
+          "observed": {
+            "calculated_far": null,
+            "calculated_floor_area_sq_ft": null,
+            "calculation_status": "not_calculated"
+          },
+          "reason": "Display/source comparison does not validate project eligibility or a computed allowance; no independent property case supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1005060012",
+      "case": "R6",
+      "address": "40 CHARLTON STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1005060012.00000000",
+        "borough": "MN",
+        "block": "506",
+        "lot": "12",
+        "address": "40 CHARLTON STREET",
+        "zonedist1": "R6",
+        "splitzone": false,
+        "lotarea": "11596",
+        "bldgarea": "49475",
+        "builtfar": "4.27000000000",
+        "residfar": "2.43000000000",
+        "affresfar": "3.90000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R6%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:00.836462+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1005060012",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1005060012",
+          "status": "pass",
+          "expected": [
+            "R6"
+          ],
+          "observed": [
+            "R6"
+          ]
+        },
+        {
+          "layer": "application_identity",
+          "case": "bbl",
+          "status": "pass",
+          "expected": "1005060012",
+          "observed": "1005060012"
+        },
+        {
+          "layer": "application_display",
+          "case": "built_far",
+          "status": "gap",
+          "expected": "4.27000000000",
+          "observed": null,
+          "reason": "Missing is not zero."
+        },
+        {
+          "layer": "application_display",
+          "case": "reference_far",
+          "status": "pass",
+          "expected": "2.43000000000",
+          "observed": "2.43"
+        },
+        {
+          "layer": "application_calculation",
+          "case": "project_allowance",
+          "status": "gap",
+          "expected": null,
+          "observed": {
+            "calculated_far": null,
+            "calculated_floor_area_sq_ft": null,
+            "calculation_status": "not_calculated"
+          },
+          "reason": "Display/source comparison does not validate project eligibility or a computed allowance; no independent property case supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "2032730231",
+      "case": "R6B",
+      "address": "2531 BELMONT AVENUE",
+      "borough": "BX",
+      "source_record": {
+        "bbl": "2032730231.00000000",
+        "borough": "BX",
+        "block": "3273",
+        "lot": "231",
+        "address": "2531 BELMONT AVENUE",
+        "zonedist1": "R6B",
+        "splitzone": false,
+        "lotarea": "2185",
+        "bldgarea": "2600",
+        "builtfar": "1.19000000000",
+        "residfar": "2.00000000000",
+        "affresfar": "2.40000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R6B%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:06.554481+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "2032730231",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "2032730231",
+          "status": "pass",
+          "expected": [
+            "R6B"
+          ],
+          "observed": [
+            "R6B"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1003430001",
+      "case": "R7A",
+      "address": "80 ATTORNEY STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1003430001.00000000",
+        "borough": "MN",
+        "block": "343",
+        "lot": "1",
+        "address": "80 ATTORNEY STREET",
+        "zonedist1": "R7A",
+        "zonedist2": "R8A",
+        "splitzone": true,
+        "lotarea": "80750",
+        "bldgarea": "123410",
+        "builtfar": "1.53000000000",
+        "residfar": "4.00000000000",
+        "affresfar": "5.01000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R7A%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:06.504004+00:00",
+      "contexts": [
+        "split"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1003430001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1003430001",
+          "status": "pass",
+          "expected": [
+            "R7A",
+            "R8A"
+          ],
+          "observed": [
+            "R7A",
+            "R8A"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1022150042",
+      "case": "R7_1",
+      "address": "150 WEST 225 STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1022150042.00000000",
+        "borough": "MN",
+        "block": "2215",
+        "lot": "42",
+        "address": "150 WEST 225 STREET",
+        "zonedist1": "R7-1",
+        "splitzone": false,
+        "lotarea": "53700",
+        "bldgarea": "461475",
+        "builtfar": "8.59000000000",
+        "residfar": "3.44000000000",
+        "affresfar": "5.01000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R7-1%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:06.575008+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1022150042",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1022150042",
+          "status": "pass",
+          "expected": [
+            "R7-1"
+          ],
+          "observed": [
+            "R7-1"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1000940001",
+      "case": "R8_Manhattan",
+      "address": "80 GOLD STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1000940001.00000000",
+        "borough": "MN",
+        "block": "94",
+        "lot": "1",
+        "address": "80 GOLD STREET",
+        "zonedist1": "R8",
+        "zonedist2": "C6-4",
+        "spdist1": "LM",
+        "splitzone": true,
+        "lotarea": "357935",
+        "bldgarea": "2163399",
+        "builtfar": "6.04000000000",
+        "residfar": "6.02000000000",
+        "affresfar": "7.20000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27MN%27+AND+zonedist1%3D%27R8%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:06.585347+00:00",
+      "contexts": [
+        "split",
+        "special_district"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1000940001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1000940001",
+          "status": "pass",
+          "expected": [
+            "C6-4",
+            "R8"
+          ],
+          "observed": [
+            "C6-4",
+            "R8"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1003720012",
+      "case": "R8B",
+      "address": "278 EAST 3 STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1003720012.00000000",
+        "borough": "MN",
+        "block": "372",
+        "lot": "12",
+        "address": "278 EAST 3 STREET",
+        "zonedist1": "R8B",
+        "splitzone": false,
+        "lotarea": "5095",
+        "bldgarea": "26780",
+        "builtfar": "5.26000000000",
+        "residfar": "4.00000000000",
+        "affresfar": "4.80000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R8B%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:11.455764+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1003720012",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1003720012",
+          "status": "pass",
+          "expected": [
+            "R8B"
+          ],
+          "observed": [
+            "R8B"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1009150032",
+      "case": "R9",
+      "address": "633 2 AVENUE",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1009150032.00000000",
+        "borough": "MN",
+        "block": "915",
+        "lot": "32",
+        "address": "633 2 AVENUE",
+        "zonedist1": "R9",
+        "spdist1": "TA",
+        "splitzone": false,
+        "lotarea": "1495",
+        "bldgarea": "4387",
+        "builtfar": "2.93000000000",
+        "residfar": "7.52000000000",
+        "affresfar": "9.02000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R9%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:11.505021+00:00",
+      "contexts": [
+        "special_district"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1009150032",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1009150032",
+          "status": "pass",
+          "expected": [
+            "R9"
+          ],
+          "observed": [
+            "R9"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1005500022",
+      "case": "R10",
+      "address": "1 5 AVENUE",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1005500022.00000000",
+        "borough": "MN",
+        "block": "550",
+        "lot": "22",
+        "address": "1 5 AVENUE",
+        "zonedist1": "R10",
+        "splitzone": false,
+        "lotarea": "12000",
+        "bldgarea": "238923",
+        "builtfar": "19.91000000000",
+        "residfar": "10.00000000000",
+        "affresfar": "12.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R10%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:11.475991+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1005500022",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1005500022",
+          "status": "pass",
+          "expected": [
+            "R10"
+          ],
+          "observed": [
+            "R10"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1010110001",
+      "case": "R10H",
+      "address": "919 7 AVENUE",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1010110001.00000000",
+        "borough": "MN",
+        "block": "1011",
+        "lot": "1",
+        "address": "919 7 AVENUE",
+        "zonedist1": "R10H",
+        "zonedist2": "C5-1",
+        "splitzone": true,
+        "lotarea": "20083",
+        "bldgarea": "353996",
+        "builtfar": "17.63000000000",
+        "residfar": "10.00000000000",
+        "affresfar": "12.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=zonedist1%3D%27R10H%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:11.509488+00:00",
+      "contexts": [
+        "split"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1010110001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1010110001",
+          "status": "pass",
+          "expected": [
+            "C5-1",
+            "R10H"
+          ],
+          "observed": [
+            "C5-1",
+            "R10H"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1002737501",
+      "case": "condo",
+      "address": "142 HENRY STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1002737501.00000000",
+        "borough": "MN",
+        "block": "273",
+        "lot": "7501",
+        "address": "142 HENRY STREET",
+        "zonedist1": "R7-2",
+        "splitzone": false,
+        "lotarea": "2115",
+        "bldgarea": "18240",
+        "builtfar": "8.62000000000",
+        "residfar": "3.44000000000",
+        "affresfar": "5.01000000000",
+        "condono": "1438",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=condono+%3E+0+AND+zonedist1+like+%27R%25%27&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:16.226800+00:00",
+      "contexts": [
+        "condominium_billing_lot"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1002737501",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1002737501",
+          "status": "gap",
+          "expected": 1,
+          "observed": 0,
+          "reason": "ZTLDB match absent or ambiguous; no inferred match."
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "3052960043",
+      "case": "alias",
+      "address": "3622 13 AVENUE",
+      "borough": "BK",
+      "source_record": {
+        "bbl": "3052960043.00000000",
+        "borough": "BK",
+        "block": "5296",
+        "lot": "43",
+        "address": "3622 13 AVENUE",
+        "zonedist1": "M1-2/R6A",
+        "spdist1": "MX-12",
+        "splitzone": false,
+        "lotarea": "2400",
+        "bldgarea": "6271",
+        "builtfar": "2.61000000000",
+        "residfar": "3.00000000000",
+        "affresfar": "3.90000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=bbl%3D3052960043&%24limit=1&%24order=bbl",
+      "retrieved_at": "2026-09-15T23:28:16.423764+00:00",
+      "contexts": [
+        "special_district",
+        "mixed_district",
+        "reported_address_alias_benchmark"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "3052960043",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "3052960043",
+          "status": "pass",
+          "expected": [
+            "M1-2/R6A"
+          ],
+          "observed": [
+            "M1-2/R6A"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "3005270001",
+      "case": "R5_small",
+      "address": "260 HAMILTON AVENUE",
+      "borough": "BK",
+      "source_record": {
+        "bbl": "3005270001.00000000",
+        "borough": "BK",
+        "block": "527",
+        "lot": "1",
+        "address": "260 HAMILTON AVENUE",
+        "zonedist1": "R5",
+        "splitzone": false,
+        "lotarea": "8580",
+        "bldgarea": "1600",
+        "builtfar": "0.19000000000",
+        "residfar": "1.50000000000",
+        "affresfar": "2.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&%24where=borough%3D%27BK%27+AND+zonedist1%3D%27R5%27+AND+lotarea+%3E+0+AND+lotarea+%3C%3D10000&%24order=bbl&%24limit=1",
+      "retrieved_at": "2026-09-15T23:29:18.472687+00:00",
+      "contexts": [],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "3005270001",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "3005270001",
+          "status": "pass",
+          "expected": [
+            "R5"
+          ],
+          "observed": [
+            "R5"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1007990008",
+      "case": "R11_mixed",
+      "address": "165 WEST 23 STREET",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1007990008.00000000",
+        "borough": "MN",
+        "block": "799",
+        "lot": "8",
+        "address": "165 WEST 23 STREET",
+        "zonedist1": "C6-3X",
+        "zonedist2": "M1-8A/R11",
+        "spdist1": "MSX",
+        "splitzone": true,
+        "lotarea": "2475",
+        "bldgarea": "8459",
+        "builtfar": "3.42000000000",
+        "residfar": "9.00000000000",
+        "affresfar": "10.80000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&bbl=1007990008&%24limit=1",
+      "retrieved_at": "2026-09-15T23:34:19.578830+00:00",
+      "contexts": [
+        "split",
+        "special_district"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1007990008",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1007990008",
+          "status": "pass",
+          "expected": [
+            "C6-3X",
+            "M1-8A/R11"
+          ],
+          "observed": [
+            "C6-3X",
+            "M1-8A/R11"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    },
+    {
+      "bbl": "1007590037",
+      "case": "R12_mixed",
+      "address": "501 8 AVENUE",
+      "borough": "MN",
+      "source_record": {
+        "bbl": "1007590037.00000000",
+        "borough": "MN",
+        "block": "759",
+        "lot": "37",
+        "address": "501 8 AVENUE",
+        "zonedist1": "M1-9A/R12",
+        "zonedist2": "C6-4M",
+        "spdist1": "MSX",
+        "spdist2": "HY",
+        "splitzone": true,
+        "lotarea": "11275",
+        "bldgarea": "266912",
+        "builtfar": "23.67000000000",
+        "residfar": "15.00000000000",
+        "affresfar": "18.00000000000",
+        "version": "26v2"
+      },
+      "source_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?%24select=bbl%2Cborough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Czonedist3%2Czonedist4%2Cspdist1%2Cspdist2%2Csplitzone%2Clotarea%2Cbldgarea%2Cbuiltfar%2Cresidfar%2Caffresfar%2Ccondono%2Cversion&bbl=1007590037&%24limit=1",
+      "retrieved_at": "2026-09-15T23:34:24.203597+00:00",
+      "contexts": [
+        "split",
+        "special_district",
+        "mixed_district"
+      ],
+      "checks": [
+        {
+          "layer": "city_identity",
+          "case": "1007590037",
+          "status": "pass",
+          "expected": null,
+          "observed": null
+        },
+        {
+          "layer": "city_zoning_crosscheck",
+          "case": "1007590037",
+          "status": "pass",
+          "expected": [
+            "C6-4M",
+            "M1-9A/R12"
+          ],
+          "observed": [
+            "C6-4M",
+            "M1-9A/R12"
+          ]
+        },
+        {
+          "layer": "application_display",
+          "case": "not_observed",
+          "status": "gap",
+          "expected": null,
+          "observed": null,
+          "reason": "No dated application observation supplied."
+        }
+      ]
+    }
+  ],
+  "live_origin": "Five observations are copied with permission from orchestrator actual browser baseline; source producer did not rerun that browser.",
+  "limitations": [
+    "Representative sample, not all tax lots or every geometric condition.",
+    "Reference matches cannot verify project allowance.",
+    "R11/R12 occur in mixed/special assignments in this sample; no general-rule legal conclusion is made.",
+    "Condo billing BBL1002737501 has no match in the ZTLDB batch; unresolved source identity coverage."
+  ]
+}

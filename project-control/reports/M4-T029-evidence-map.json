@@ -1,0 +1,55 @@
+{
+ "task_id": "M4-T029",
+ "material_commits": [
+  "eba169c5 (cherry-pick of the producer's commit ef6dc3b7, producer legal-corpus-engineer: 26 capture files, their 26 synced copies and the producer report)",
+  "2e60a66e (cherry-pick of the same producer's round-2 commit d5477af0: the capture zr-12-10-residence-or-residential with its synced copy, and the report corrected, after the review's finding F1 and notes F2 and F3)",
+  "material head: 2e60a66e"
+ ],
+ "claim_seam_head": "cc30ab18",
+ "new_capture_ids": [
+  "zr-12-10-base-plane",
+  "zr-12-10-lot-depth",
+  "zr-12-10-lot-line-front",
+  "zr-12-10-lot-line-rear",
+  "zr-12-10-lot-line-side",
+  "zr-12-10-lot-width",
+  "zr-12-10-manhattan-core",
+  "zr-12-10-residence-or-residential",
+  "zr-12-10-special-downtown-brooklyn-district",
+  "zr-12-10-street-line",
+  "zr-12-10-zoning-lot",
+  "zr-23-343",
+  "zr-23-41",
+  "zr-23-411",
+  "zr-23-412",
+  "zr-23-413",
+  "zr-23-43",
+  "zr-23-434",
+  "zr-23-435",
+  "zr-23-436",
+  "zr-34-112",
+  "zr-34-113",
+  "zr-34-21",
+  "zr-35-62",
+  "zr-35-64",
+  "zr-35-71",
+  "zr-36-64"
+ ],
+ "checks_at_material_head": [
+  "ruff check . (services/api): exit 0",
+  "scripts/sync_zr_snapshots.py --check: exit 0 (72 files byte-identical)",
+  "pytest tests/rules/test_zr_snapshot_bundle.py tests/rules/test_zoning_rule_review_register.py: exit 0, 50 passed",
+  "scripts/lanes/check_lane_paths.py --coverage: exit 0",
+  "tools/modularity_check.py --check: exit 0",
+  "full services/api suite, run alone by the orchestrator at 2e60a66e with all three pieces and every correction integrated: exit 0, 8128 passed, 8 skipped (an earlier full run at eba169c5, before the last three small commits: the same counts)"
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "27 further texts are captured as source text from the official Zoning Resolution site, each in a file of its own under docs/research/zr-snapshots/v1/ with its address, the time of each request, the amendment date the page shows, the verbatim text and its digests: sixteen sections (ZR 23-343; 23-41 with 23-411, 23-412 and 23-413; 23-43, 23-434, 23-435, 23-436; 34-112, 34-113, 34-21; 35-62, 35-64, 35-71; 36-64) and eleven ZR 12-10 definitions (lot line front, rear and side; lot width; lot depth; zoning lot; street line; residence, or residential; Manhattan Core; base plane; Special Downtown Brooklyn District). The two tables (23-434, 34-112) are held cell by cell.",
+   "The synced copies under services/api/app/_zr_snapshots/v1/ are byte-identical (services/api/scripts/sync_zr_snapshots.py --check: exit 0, 72 files); services/api/tests/rules/test_zr_snapshot_bundle.py recomputes each content digest.",
+   "One error of the first pass, found by the independent review and corrected: the builder's first report said ZR 12-10 does not define 'residential'. It does, inside the article titled 'residence, or residential'. The review failed the gates on that statement; the same builder then captured the whole article (ending '\"Residential\" means pertaining to a #residence#.') and corrected its report, and found no other named term in a combined article.",
+   "Named in the builder's report as NOT captured, with the reason: ZR 35-641, 35-642 and 35-643 (the sections under ZR 35-64, whose own body is empty; outside this packet's list). Also still not captured: ZR 34-22 and 34-23, and the further sections the new texts point to (listed in the report). A conflict on the official site is recorded and not resolved: ZR 34-24(b)(3) points to 'Section 35-71, inclusive' for sky exposure plane buildings, and the page of ZR 35-71 is titled 'Planting'; the capture holds what the page shows.",
+   "NOT done by this task, and not claimed: no missing rule and no conflicting input is resolved; the new text is not read for any lot; no reference case and no result changes. Row R291 covers the whole of step 3; this task is one share of it: the text is captured."
+  ]
+ }
+}

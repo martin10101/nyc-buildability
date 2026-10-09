@@ -1,0 +1,48 @@
+{
+  "contract_version": "1.0.0",
+  "study_id": "test-fixture-synthetic-study",
+  "option_id": "option-1",
+  "revision": 2,
+  "inputs": [
+    {
+      "key": "lot_area_sq_ft",
+      "value": 5200,
+      "unit": "square_feet",
+      "fact_id": "test-fixture-synthetic:lot-area:city-entered",
+      "rank": "entered",
+      "label": "City records",
+      "source_kind": "architect_entry",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "lot_type",
+      "value": "interior",
+      "unit": null,
+      "fact_id": "test-fixture-synthetic:lot-type:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    },
+    {
+      "key": "zoning_district",
+      "value": "R6B",
+      "unit": null,
+      "fact_id": "test-fixture-synthetic:zoning-district:city",
+      "rank": "city_records",
+      "label": "City records",
+      "source_kind": "city_dataset",
+      "governing": true,
+      "displaced": []
+    }
+  ],
+  "site_measurement_rank": "entered",
+  "depends_on_fact_ids": [
+    "test-fixture-synthetic:lot-area:city-entered",
+    "test-fixture-synthetic:lot-type:city",
+    "test-fixture-synthetic:zoning-district:city"
+  ],
+  "_expected_failure": "Label 'City records' on rank 'entered': the rank/label tie (site_fact.schema.json #/$defs/measurement_known) forbids an entered value from being shown as a city fact (M1-08 done-when: entered values stay distinct from facts)."
+}

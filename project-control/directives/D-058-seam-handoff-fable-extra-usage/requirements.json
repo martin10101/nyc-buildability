@@ -1,0 +1,138 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-058",
+ "version": 1,
+ "requirement_count": 4,
+ "producer": "orchestrator",
+ "updated_at": "2026-09-14T07:55:00+00:00",
+ "requirements": [
+  {
+   "id": "D-058-R001",
+   "text": "SEAM LANDING — the session lands per /session-handoff: every in-flight agent reconciled or honestly enumerated, only completed work committed (never rounded up), SESSION_HANDOFF.md replaced within the D-044 8k budget, branch pushed.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-058-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "handoff file + seam commits + push record",
+   "required_evidence": "docs/SESSION_HANDOFF.md; git history",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-058-R002",
+   "text": "LOOP CONTINUITY — the D-053 loop operation continues shift after shift: the benign unit-complete close of persistent-local-34 is recorded (work committed at wt-m4t020 d7766b8d), and the successor's runbook carries the exact relaunch pattern for the next packet with authority unchanged (no auto-accept/merge, R595 shadow).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-058-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "handoff next-actions + WORKING_KNOWLEDGE runbook state",
+   "required_evidence": "handoff file; audit chain seq 845-847; wt-m4t020 commit",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-058-R003",
+   "text": "KNOWLEDGE FILES — session-learned program-wide knowledge lands in the D-054 tiers: Tier-1 PROGRAM_KNOWLEDGE.md append (within the eager context budget; if the permission layer blocks the .claude write, the pointers persist in Tier-2 with the block recorded as an owner item) and Tier-2 WORKING_KNOWLEDGE.md brought current at the seam.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-058-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "the two files' diffs at the seam; context_budget_check PASS",
+   "required_evidence": "git diff; budget check output",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  },
+  {
+   "id": "D-058-R004",
+   "text": "FABLE EXTRA USAGE (owner decision) — the regular weekly Fable quota is exhausted (owner-stated); the loop worker and the D-055 reviewer set CONTINUE on claude-fable-5 via the account's extra usage: the model_selection.toml fable-5 pin stays (no D-036-R002-style opus actuation this cycle); the quota_exhausted fallback chain stays armed only as last resort; extra-usage enablement/limits remain owner account settings.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-058-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-09-14"
+   },
+   "dependencies": [],
+   "required_harness": "model_selection.toml unchanged fable-5 pin + this record; next run's model events",
+   "required_evidence": "model_selection.toml; supervisor audit of the next run",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   },
+   "reviewed_sha": null,
+   "status_reason": "",
+   "evidence_paths": [],
+   "amendment_sequence": 1
+  }
+ ]
+}

@@ -1,0 +1,506 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-046",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All D-046 requirements bind the non-ledger sentinel D-046-BOOTSTRAP (D-038..D-045 precedent; validator c5 forbids sentinel task_ids in task_verifications). This directive shapes EXECUTION of the D-045 campaign; individual campaign tasks verify through their own DCV rows, and D-046 rows accrue at verification time. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": [
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T013",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3",
+   "reviewed_manifest_sha256": "232efa20a94973a13e4cd1a347eb5d4ccb9004fd994e4410dafdf238e4820262",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T07:15:00+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "PARALLEL WAVE-1 EXECUTION: M4-T013 ran as wave-1 slot 2 (research lane) in its own isolated worktree wt-m4t013 (base 5450d39f per project-control/reports/M4-T013-evidence-map.json) concurrently with M4-T014 (rules lane, producer rules-engineer, its own worktree) - two concurrent writing producers on disjoint D-045 tasks, within the 3-producer ceiling (D-046-R004). Recorded in tasks/M4-T013.json progress_log ('D-046/D-047 wave-1 slot 2 (research lane, disjoint from all rules dirs)') and worktree field 'wt-m4t013'.",
+      "ISOLATED-WORKTREE DISCIPLINE: the two producers' materials landed as distinct commits (M4-T013 = 05b5721f, M4-T014 = c8d94f38), each confined to its own task deliverables under the standing orchestration policy; the orchestrator integrated them sequentially (05b5721f is an ancestor of c8d94f38)."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "ALLOWED_PATHS PROVABLY PAIRWISE-DISJOINT (the exact R002 invariant: 'concurrent writing producers whose allowed_paths overlap any file'). Verifier computed prefix-aware overlap between M4-T013 allowed_paths [project-control/reports/M4-T013-street-width-research.md, docs/research/source-registry-drafts] and M4-T014 allowed_paths [services/api/app/rules/rulesets, services/api/app/rules/schemas, services/api/app/_zr_snapshots, services/api/tests/rules, project-control/reports/M4-T014-producer-report.md, project-control/reports/M4-T014-source-capture.md, docs/research/zr-snapshots] = NONE. Zero file overlap in the deliverable scopes.",
+      "ONLY COMMIT-FILE INTERSECTION is .claude/agent-memory/rules-engineer/MEMORY.md (git show 05b5721f/--c8d94f38 --name-only) - which is OUTSIDE both tasks' allowed_paths and is governed by the separate per-agent memory permission (.claude/rules/project-control.md: agents write only under .claude/agent-memory/<self>/). It is NOT a parallel-producer write collision on deliverables: the two commits are SEQUENTIAL (05b5721f is an ancestor of c8d94f38), and 05b5721f's inclusion of the rules-engineer memory is an orchestrator cross-worktree memory-preservation bundling (commit message: 'producer agent memories preserved from worktrees'), not the official-source-researcher writing into another agent's dir. The R002 disjointness invariant on allowed_paths is therefore not breached.",
+      "SHARED SURFACES not edited in parallel: this research task touched no registry-wiring, coverage-table, or shared-schema file (its scope is the research report + source-registry-drafts draft only), consistent with R002's 'shared surfaces integrated sequentially by the orchestrator'. Independent G1 corroborated D-046-R002 PASS (zero overlap with any rules dir)."
+     ],
+     "verified_at": "2026-09-13T07:15:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "6fc8a878ccf71254915239ad4459c5d55d5102e3"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T014",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f",
+   "reviewed_manifest_sha256": "b20678d4f2c6ff96cea6319aa6626498ad72109145775d26a4bafc9501e86224",
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:05:00+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "PARALLEL WAVE-1 EXECUTION: M4-T014 ran as the wave-1 RULES lane in its own isolated worktree wt-m4t014 (tasks/M4-T014.json worktree field) concurrently with M4-T013 (research lane, producer official-source-researcher, worktree wt-m4t013) - two concurrent writing producers on disjoint D-045 tasks, within the 3-producer ceiling (D-046-R004). progress_log records 'wave-1 rules lane (partner M4-T013 research lane, pairwise-disjoint)' and the FIRST claude-sonnet-5 dispatch (D-047).",
+      "SEQUENTIAL INTEGRATION by the orchestrator: the two producers' materials landed as distinct commits (M4-T014 = c8d94f38 + rework 346f8535, M4-T013 = 05b5721f), integrated sequentially on candidate/D-024-mrl-option-b; each producer confined to its own task deliverables."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "ALLOWED_PATHS PROVABLY PAIRWISE-DISJOINT (the exact R002 invariant). Verifier computed prefix-aware overlap between M4-T014 allowed_paths [services/api/app/rules/rulesets, services/api/app/rules/schemas, services/api/app/_zr_snapshots, services/api/tests/rules, project-control/reports/M4-T014-producer-report.md, project-control/reports/M4-T014-source-capture.md, docs/research/zr-snapshots] and M4-T013 allowed_paths [project-control/reports/M4-T013-street-width-research.md, docs/research/source-registry-drafts] = NONE. Zero deliverable-scope overlap.",
+      "ONLY COMMIT-FILE INTERSECTION between the two producers' material commits (c8d94f38 vs 05b5721f) is .claude/agent-memory/rules-engineer/MEMORY.md - OUTSIDE both tasks' allowed_paths, governed by the separate per-agent memory permission; the commits are sequential (05b5721f is an ancestor of c8d94f38), so no parallel-write collision on deliverables. NOTE: c8d94f38 (the orchestrator's material-capture commit) also carried project-control/tasks/M4-T014.json + state.json - orchestrator control-plane writes (the pre-capture packet correction + lifecycle), not producer scope breaches; the producer rules-engineer wrote only rulesets/snapshots/tests/its two reports + its own agent-memory.",
+      "M4-T012 BLOCKED WITH CLEAN WORKTREE THROUGHOUT: tasks/M4-T014.json path_notes records M4-T012 is BLOCKED on B-023 with a clean worktree and no live producer and MUST NOT be re-dispatched while M4-T014 is in flight; verifier confirmed the only commits touching the rules dirs in this window are M4-T014's own (no concurrent M4-T012 producer). The engine/evaluator/api/packages/tools/.github/deps forbidden paths were untouched (verifier git diff 1cca43f7..HEAD = empty over those globs).",
+      "PACKET CORRECTION recorded PRE-CAPTURE: allowed_paths gained docs/research/zr-snapshots (the canonical dir the sync_zr_snapshots mechanism requires alongside the bundle copies) via an orchestrator packet correction logged before material capture (progress_log 2026-09-13T05:20:02, M4-T006 precedent) - a disclosed disjoint-scope adjustment, not a mid-flight overlap."
+     ],
+     "verified_at": "2026-09-13T08:05:00+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "38eee3a561cb185ca1688e7925aab848fe0c015f"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T015",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3",
+   "reviewed_manifest_sha256": "e393fc35419395130b516d3dc35727b441f166a982c36c826bcf2c03c010be18",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T08:34:47+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave 2 ran 2-wide: both producers dispatched 2026-09-13T06:49:18 (progress logs: wave 2 slot 1 of 2 / slot 2 of 2), isolated worktrees wt-m4t012-r2 (base dbd07817) and wt-m4t015 (base 2c127706), within the D-047-R004 ramp (start 3-4, never exceeded).",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise disjointness proven: producer material file sets dd7c8b74 (17 files) and 8538c272 (34 files) intersect in ZERO files (verifier-computed); allowed_paths disjoint by construction; the orchestrator rework 4f8b093f also intersects 8538c272 in zero files; shared surfaces integrated sequentially by the orchestrator only.",
+      "Full verifier basis: project-control/reports/M4-T012-M4-T015-dcv-verification.md (verbatim return; 16/16 rows PASS)."
+     ],
+     "verified_at": "2026-09-13T08:34:47+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "f5b8742b1e16b412a4ea9ad87f5b97efc39e39c3"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T016",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+   "reviewed_manifest_sha256": "d6d2d728c3b9ef308087f950097aa9a4cc2927bfc387032a436c83e3dce50030",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T19:35:51+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-3 parallel slot 1: dispatch record commit 8de6ad9f (both producers running parallel in isolated worktrees pinned to 6dbf65fa); producer commit 232a889b authored in wt agent-a4bced1914f048c32, integrated sequentially by the orchestrator as cherry-pick eac7b42a (report sha256 ab12aab4 LF-normalized verified).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise disjointness by construction: allowed_paths = exactly [project-control/reports/M4-T016-a2-geometry-mechanics-research.md], zero files shared with M4-T017's single report file; material commit touches only its own report (verifier-reproduced via git show --stat).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T017",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100",
+   "reviewed_manifest_sha256": "d69be5e784eecbe51f0f8c53f5e0d20502ef391e6ebecd3c2b3fa30107cb3b63",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T19:35:51+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-3 parallel slot 2: dispatch record commit 8de6ad9f; producer commit 46a8a110 authored in wt agent-ac05120d1954c8141, integrated sequentially by the orchestrator as cherry-pick 9fe63924 (report sha256 e0561742 LF-normalized verified).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise disjointness by construction: allowed_paths = exactly [project-control/reports/M4-T017-c-district-research.md], zero files shared with M4-T016's single report file; material commits touch only its own report (verifier-reproduced via git show --stat).",
+      "Full verifier basis: project-control/reports/M4-T016-M4-T017-dcv-verification.md (verbatim return; 10/10 rows SATISFIED; Addendum A transient-artifact resolution; Addendum B restamp ruling)."
+     ],
+     "verified_at": "2026-09-13T19:35:51+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "920110be2ee4e4d82b7d9671d31a6c570b9aa100"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T018",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "8f2059989c1646290b055de449a974a0b0f793c8fac77afb3068847628d08c0f",
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-4 parallel slot 1: dispatch 9e89497a, isolated worktree pinned 293d6c03, sequential orchestrator integration (cherry-pick 00b28626, sha LF-verified).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "allowed_paths (one report file) provably disjoint from M4-T019's two services/api files; material commits touch only allowed files.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T019",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb",
+   "reviewed_manifest_sha256": "634c209226edc3860ddf66f6dff7cb4fc392fb7103edab43d9933ccd6b2d817f",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T03:30:50+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Wave-4 parallel slot 2: dispatch 9e89497a, isolated worktree pinned 293d6c03 (backend-engineer with the recorded claude-sonnet-5 override), sequential integration (cherry-pick a6c73ec0, shas LF-verified).",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "allowed_paths (two new services/api files) provably disjoint from M4-T018's single report file.",
+      "Full verifier basis: project-control/reports/M4-T018-M4-T019-dcv-verification.md (verbatim return; 20/20 rows SATISFIED; restamp pre-auth conditions verified TRUE at the recorded sha)."
+     ],
+     "verified_at": "2026-09-14T03:30:50+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "d752c09b3399de75ebcf4ff978d3f4b9336ac6fb"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T025",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6",
+   "reviewed_manifest_sha256": "8fa2c7a4610cd2a7efcbdc8bb56943bf2ad167a4b1e5cf62569187b9e6a9b05d",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:01:28+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production under the standing orchestration policy: isolated worktree wt-m5t025 concurrent with the D-053 loop worker on wt-m4t020 (services/api scope); concurrency 2 <= ceiling 3; recorded in the task packet path_notes/progress_log and the D-056 capture context.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise scope disjointness reproduced from packet files: M5-T025 allowed_paths share zero files with M4-T020 and with M5-T026 (lib/__tests__/rule-evaluation.test.ts != components/rule-evaluation/__tests__/rule-evaluation.test.tsx); producer commit 10aaedcc touched exactly the 9 allowed files; shared-surface integration was sequential orchestrator commits.",
+      "Full verifier basis: project-control/reports/M5-T025-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; conditional restamp 89de3794 -> 2e2f7a1f pre-authorized and all three condition limbs verified TRUE at the recorded sha; nine-commit intervening set ruled disjoint incl. peer producer 0b112357)."
+     ],
+     "verified_at": "2026-09-14T07:01:28+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "2e2f7a1fd126f76fe5f19eebd7ea1af926d90ab6"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T026",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b",
+   "reviewed_manifest_sha256": "858707a7a70dcabf054aa84db3a535be9744964a2a79a9b0e163b22a4c2c250f",
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T07:19:22+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production under the standing policy: producer in isolated worktree wt-m5t026, concurrent with the D-053 loop worker (wt-m4t020) and the M5-T025 producer (wt-m5t025); concurrent writers <= 3; dispatch shape recorded in the task packet path_notes/progress_log.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise allowed_paths intersections computed by the verifier: M5-T026 vs M5-T025 = empty, M5-T026 vs M4-T020 = empty; producer commit touched only the 5 allowed files; no forbidden path touched.",
+      "Full verifier basis: project-control/reports/M5-T026-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp f5d9719e -> 67af2a20 authorized unconditionally at the verified pin; identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records)."
+     ],
+     "verified_at": "2026-09-14T07:19:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "67af2a209e9250dd8f0d4daf5643824c3820637b"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T020",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e",
+   "reviewed_manifest_sha256": "b5de6b518f245e8605285cd6bb5706d79c3e8c163917913fa44b563f90ce8e20",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T08:25:49+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production per the standing policy: loop worker (run persistent-local-34) in isolated worktree wt-m4t020 live 04:31-06:15, concurrent with disjoint M5-T025 (wt-m5t025, claimed 05:26) and M5-T026 (wt-m5t026, claimed 06:00); concurrency 2-3 <= ceiling 3; bindings recorded in the D-046 manifest audit_log.",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise allowed_paths intersections all empty (M4-T020 x M5-T025, M4-T020 x M5-T026, M5-T025 x M5-T026); only ba301b67 touches M4-T020's files in the whole range; no services/api commit after it.",
+      "Full verifier basis: project-control/reports/M4-T020-dcv-verification.md (verbatim return; 5/5 requirement rows PASS; restamp 72ee474c -> a7b10f8c AUTHORIZED, identity recomputed via the CLI's own _task_git_identity byte-equal to both gate records; patch-id + per-file blob identity d7766b8d == ba301b67 == pin)."
+     ],
+     "verified_at": "2026-09-14T08:25:49+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "a7b10f8c372b89b67f2903b390980f1fb6b3459e"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T027",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c",
+   "reviewed_manifest_sha256": "7d1697b004c9751842e5c9c26806162ae25861c398435b29175f3c3d7c79f58d",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T09:41:22+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production under the standing policy: M5-T027 ran in an isolated worktree concurrently with the in-flight M4-T021 connectors lane - 2 concurrent producers, within the ceiling of 3, confirmed by the verifier from commit interleaving and both task files' timestamps rather than from either task's prose.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Disjointness confirmed by direct allowed_paths set comparison performed by the verifier: M5-T027 (three scenario modules + three test files + own report) and M4-T021 (one connector module + its test + own report) share zero paths; the material commit touched exactly the contracted files with no forbidden path touched.",
+      "Full verifier basis: project-control/reports/M5-T027-dcv-verification.md (verbatim return; 6/6 requirement rows PASS; restamp condition re-verified by the orchestrator at the accept head - _task_git_identity recomputed to the gate-recorded manifest with a clean tree and no post-gate commit touching any allowed_path)."
+     ],
+     "verified_at": "2026-09-14T09:41:22+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "386222dc2f9265bcf550b73a5b168a1af69d246c"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M5-T028",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701",
+   "reviewed_manifest_sha256": "1b1c4bab5cfe6f64d2db568e57eaaa1dcf208cfda7c86ce11c720e9ffd608648",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T10:19:05+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "Parallel production verified from PRIMARY task-packet timestamps by the verifier, not from any gate's claim: M4-T021's producer was active (claimed 09:05:42Z, rework 09:40:40Z, in_progress 09:59:41Z) throughout M5-T028's entire producer window (claimed 09:22:44Z, G2 self-check 09:45:31Z) - 2 concurrent writing producers, within the ceiling of 3. Both gate reports had deferred this requirement to DCV as outside code-review scope.",
+      "Full verifier basis: project-control/reports/M5-T028-dcv-verification.md (verbatim return; 3/3 requirement rows PASS; restamp condition empirically re-verified by the verifier at two successive live heads during its own session)."
+     ],
+     "verified_at": "2026-09-14T10:19:05+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Disjointness confirmed by direct allowed_paths comparison: M4-T021 (one connector module + its test + report) and M5-T028 (five scenario modules + five tests + report) share zero paths; git show --stat on the producer commit = exactly the 11 contracted files, with M5-T027's constants.py/builder.py (forbidden here) confirmed untouched so the accepted derivation seam could not be mutated by this packet.",
+      "Full verifier basis: project-control/reports/M5-T028-dcv-verification.md (verbatim return; 3/3 requirement rows PASS; restamp condition empirically re-verified by the verifier at two successive live heads during its own session)."
+     ],
+     "verified_at": "2026-09-14T10:19:05+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "327b47bd0d849a78ce3891d02813cd690338d701"
+    }
+   ]
+  },
+  {
+   "directive_id": "D-046",
+   "task_id": "M4-T021",
+   "applicable_requirement_ids": [
+    "D-046-R001",
+    "D-046-R002"
+   ],
+   "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a",
+   "reviewed_manifest_sha256": "7413f6e4f3594881e1b206aba19c094ef5ee965e9dc15ab3d1436c31fbe9dbd0",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-14T11:11:54+00:00",
+   "requirements": [
+    {
+     "id": "D-046-R001",
+     "state": "PASS",
+     "evidence": [
+      "SATISFIED, NOT MERELY EXCUSED - explicit verifier ruling (c) on the loop-substitution deviation. The requirement names a MECHANISM (concurrent writing producers on disjoint tasks, each in its own isolated worktree under the standing orchestration policy), not a specific dispatcher. The D-053 loop's Fable-exhaustion safe-stop (blocker B-024) was a failure of one dispatch channel; the orchestrator's substitution under the disclosed D-060-R001 deviation - an orchestrator-dispatched, isolation-worktree, unnamed producer, transparently logged rather than hidden - preserved exactly that mechanism. The verifier independently confirmed genuine THREE-way concurrency in the same window (wt-m4t021, wt-m5t027, wt-m5t028), within the ceiling of 3.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    },
+    {
+     "id": "D-046-R002",
+     "state": "PASS",
+     "evidence": [
+      "Pairwise allowed_paths intersections computed by the verifier across all three concurrent tasks: M4-T021 x M5-T027 = empty, M4-T021 x M5-T028 = empty, M5-T027 x M5-T028 = empty. No shared control-plane surface was edited by more than one producer - only the orchestrator, sequentially.",
+      "Full verifier basis: project-control/reports/M4-T021-dcv-verification.md (verbatim return; 5/5 requirement rows PASS with four explicit rulings (a)-(d); restamp pre-authorized and re-verified by the orchestrator at the accept head - identity recomputes to the gate manifest with a clean tree)."
+     ],
+     "verified_at": "2026-09-14T11:11:54+00:00",
+     "verified_by": "directive-compliance-verifier",
+     "reviewed_sha": "9f10b71830d933248d441465058b9102245b8a8a"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,16 @@
+# CI evidence after the repair - supervisor-bridge (windows-latest) on head 3da6dd759ba78cc383a7d307c28ee3103601ca8c
+# (commits A + B + C of M0-T184 and the ci-exp excerpt; branch task/M0-T184-review-slot-lock-release, PR #449)
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/<job>/logs, read 2026-10-06 by the orchestrator.
+# For each job: the full log's byte count and sha256, the review-slots progress line (with its timestamp) and the summary line.
+# 22 dots = all 22 tests of tools/test_agent_supervisor_review_slots.py passed on Windows, the two Windows-only tests included.
+# 3957 passed = the 3952 of the unrepaired tree + the 5 new tests. Both CI runs of this head ended with every job a success.
+
+## job 112205608287 (run 37444399337, attempt 1, event push); runner image: Microsoft Windows Server 2025
+full log: 49983 bytes, sha256 3d158afdc1eacb9d69afc57341881a71945bbffa704fd9340610c9400a511d8d
+2026-10-06T09:43:16.8412559Z tools\test_agent_supervisor_review_slots.py ......................       [ 80%]
+================ 3957 passed, 60 skipped in 263.22s (0:04:23) =================
+
+## job 112205718974 (run 37444432633, attempt 1, event pull_request); runner image: Microsoft Windows Server 2025
+full log: 50589 bytes, sha256 13cf199006f822d4396099358e6be9c68475d7600a36598854d7e8a493ede1d9
+2026-10-06T09:43:33.1158292Z tools\test_agent_supervisor_review_slots.py ......................       [ 80%]
+================ 3957 passed, 60 skipped in 257.04s (0:04:17) =================

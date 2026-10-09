@@ -1,0 +1,33 @@
+M0-T094 whole-suite baseline, composed from 4 sequential same-tree chunks
+tree: HEAD 8ae669b + unit-G working set (frozen during the run; no edits between chunks)
+method: prior single background runs were externally killed (recorded in G2); chunked foreground per the carried lesson
+chunk 1/4 (20 files):
+........................................................................ [ 93%]
+....................................................                     [100%]
+844 passed in 107.34s (0:01:47)
+chunk 2/4 (20 files):
+........................................................................ [ 95%]
+......................................                                   [100%]
+900 passed, 2 skipped in 348.45s (0:05:48)
+chunk 3/4 (20 files):
+........................................................................ [ 91%]
+...................................................................      [100%]
+787 passed in 401.14s (0:06:41)
+chunk 4/4 (20 files):
+..............................chunk 4a/4 (10 files; the single-run chunk 4 attempt hit the tool timeout at 25m and was re-split - no edits between chunks):
+..................................chunk 4a-rest (7 files; test_directive_compliance.py isolated to its own dedicated run below - it is the >29m outlier; concurrent with it, all suites temp-dir isolated):
+.............................                                            [100%]
+173 passed in 588.21s (0:09:48)
+chunk 4b/4 (10 files):
+.....................................................                    [100%]
+124 passed, 1 skipped in 679.21s (0:11:19)
+dedicated: tools/test_directive_compliance.py (the >29m outlier; its background single-run was also externally killed, so it ran as 3 sequential foreground class groups at the same frozen tree):
+  group 1 (PositiveTests NegativeValidatorTests ResolverTests MultipleDirectivesTest ContentManifestTests StdlibOnlyTests): 29 passed in 1170.82s (0:19:30)
+  group 2 (ClaudeMdSectionTests C15AcceptedTaskTests RequirementsBodyDigestTest GitContentIdentityTests MultiTaskVerificationTests): 26 passed in 242.68s (0:04:02)
+  group 3 (AcceptanceOrderingClassifierTests CarriedForwardAttestationTests DeferredDischargeStandardTests ReviewedShaComparisonTests ControlPlaneMaterialIdentityTests EmptyIdentityGuardTests ValidatorEmptyIdentityTests): 65 passed in 42.61s
+probe runs (full-file, foreground, same tree; run while isolating the outlier and part of the composition):
+  tools/test_context_pack.py: 15 passed in 79.24s (0:01:19)
+  tools/test_context_pack_index.py: 8 passed in 39.54s
+---- composed totals (all 80 test files, identical frozen tree, zero edits between runs) ----
+844 + 900 + 787 + 173 + 124 + 120 + 15 + 8 = 2971 passed, 3 skipped, 0 failed
+(M0-T039 suite-baseline duty >= 1165 tests / 0 failures: MET. CI supervisor-bridge on the pushed SHA is the confirming single-run evidence.)

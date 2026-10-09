@@ -1,0 +1,30 @@
+{
+  "schema": "loop_interception_detection/v1",
+  "directive": "D-024",
+  "task": "M0-T094",
+  "recorded": "2026-08-27",
+  "claude_version": "2.1.248 (Claude Code)",
+  "selected_event": "UserPromptSubmit",
+  "selection_basis": {
+    "UserPromptSubmit": {
+      "payload": "measured-live on this workstation (hook_event_payloads_v1.json payloads.UserPromptSubmit, masked copy of the 2.1.247 R162-discharge canary capture; event set verified identical on 2.1.248 in hook_event_catalog_2_1_248.json). Carries the `prompt` field the interceptor exact-matches.",
+    "response_contract": "official-docs: stdout JSON {\"decision\": \"block\", \"reason\": ...} prevents prompt processing, erases the submitted prompt from model context, and shows the reason to the user. The additionalContext path (exit 0 + stdout) is measured-live in THIS repository every session via .claude/hooks/directive_reminder.py on the same event.",
+      "why_selected": "the only pre-model path on the installed version with a measured payload AND a documented block/display/erasure contract (R084's complete zero-context contract)"
+    },
+    "UserPromptExpansion": {
+      "payload": "documented-common-fields only (hook_event_payloads_v1.json payloads.UserPromptExpansion); present in the 2.1.248 event catalog",
+      "response_contract": "UNPROVEN on the installed version: no measured or documented field-level response semantics were captured for this workstation. R084 prefers this event only \"where its required behavior is supported\"; adopting an unproven contract would violate R149.",
+      "hook_behavior": "a matching prompt passes through unchanged on this event (never a faked expansion, R088); flipping selected_event to UserPromptExpansion requires a measured-live capture of its response contract first"
+    }
+  },
+  "zero_context_proof": {
+    "status": "pending-owner-C1",
+    "note": "the R088 zero-context measurement (intercepted /loop-status absent from the Fable transcript, context occupancy unchanged within measurable noise) is the owner-gated C1 live interception canary (R192/R197 exact-command approval). Until it is captured, the documented-contract analysis above is the confidence ceiling and the second-terminal supervisor CLI (status/ask/pause/graceful-stop/stop/emergency-stop) is the advertised zero-context real-time path (R088's truthful fallback).",
+    "measurement_method": "compare the session transcript JSONL and context occupancy before/after an intercepted command, per the unit-D/E capture pattern (statusline_live_2026-08-27_2_1_247_r162_discharge.json); record as a masked fixture"
+  },
+  "queued_input_behavior": {
+    "status": "pending-owner-C1",
+    "note": "whether the installed CLI queues slash input submitted while a response is active is a live measurement (R089). Until measured, queued behavior is NOT advertised as real-time control: the second-terminal CLI is the immediate path for pause/stop/emergency-stop while Fable is mid-response."
+  },
+  "upgrade_path": "the owner-gated C1 canary upgrades zero_context_proof and queued_input_behavior to measured-live; a future measured UserPromptExpansion response contract may flip selected_event after re-running the section-16.5 matrix"
+}

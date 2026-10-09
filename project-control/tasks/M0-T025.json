@@ -1,5 +1,10 @@
 {
   "task_id": "M0-T025",
+  "documented_test_commands": [
+    "python -m pytest tools/test_directive_compliance.py -k test_real_registry_valid -q",
+    "python tools/validate_directive_compliance.py --check",
+    "python -m ruff check tools/directive_registry.py tools/validate_directive_compliance.py tools/test_directive_compliance.py"
+  ],
   "title": "Control-plane hardening: path containment for trusted checked-in requirements_file/verification_file references (LOW-1)",
   "task_type": "governance",
   "milestone_id": "M0",
@@ -38,19 +43,19 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "supervised-loop-fable-worker",
   "reviewer_agents": [
     "code-reviewer",
     "control-plane-verifier",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [],
   "blockers": [],
   "created_at": "2026-07-24T02:50:32.021489+00:00",
-  "updated_at": "2026-07-24T02:50:32.021489+00:00",
+  "updated_at": "2026-09-07T06:18:54.488567+00:00",
   "directive_refs": [
     {
       "directive_id": "D-002",
@@ -58,5 +63,11 @@
     }
   ],
   "directive_regime_version": "1.0",
-  "directive_regime_entered_at": "2026-07-24T02:50:32.021489+00:00"
+  "directive_regime_entered_at": "2026-07-24T02:50:32.021489+00:00",
+  "worktree": "C:\\Users\\MLFLL\\Downloads\\nyc-zoning\\wt-m0t025",
+  "notes": [
+    "2026-09-07 orchestrator: documented commands trimmed to the fast registry-validity subset for the supervised loop (full tools/test_directive_compliance.py takes ~27 min, beyond the 300s supervisor transcript cap and the unit timeout); the FULL suite remains a mandatory orchestrator gate-wave step before acceptance."
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-09-07T06:18:54.488567+00:00"
 }

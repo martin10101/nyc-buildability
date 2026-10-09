@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T152",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T152-G2-selfcheck.md",
+  "reviewed_at": "2026-09-07T08:38:44.758429+00:00",
+  "content_manifest_sha256": "183da5e5e30938b08d6b81b5048b22f4fc7e762e72fe6700ecaa37bfc459ca2d",
+  "reviewed_sha": "26693cf7fd77b110cbf577fb42c7426d9d06312f",
+  "updated_at": "2026-09-07T08:38:45.330351+00:00"
+}

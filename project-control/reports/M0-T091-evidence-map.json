@@ -1,0 +1,146 @@
+{
+ "task_id": "M0-T091",
+ "directive_id": "D-024",
+ "producer": "orchestrator",
+ "frozen_content_commit": "ee564dd",
+ "requirements": {
+  "D-024-R002": [
+   "conduct: no transport/outage/controller-loop surface touched; this unit is runtime supervision records/refusals only (no spawn/resume/stop/message surface); frozen content ee564dd (5 new modules + 3 corrected C1 modules + 54-test pack + report); composite suite at that tree 2707 passed / 3 skipped / 0 failed"
+  ],
+  "D-024-R003": [
+   "phased-program contribution: Phase C2 runtime supervision delivered shadow-only; loop architecture untouched (no loop.py/cli.py edits); project-control/reports/M0-T091-runtime-supervision.md section 1"
+  ],
+  "D-024-R004": [
+   "no-violation: Codex remains read-only supervisor - ExtensionDecision is a RECORD with no apply/execute surface (test_extension_decision_is_a_record_not_a_code_edit); leadership boundary unchanged"
+  ],
+  "D-024-R007": [
+   "conduct: produced from repository evidence + captured directives only; the one mid-task owner message (D-029) was captured verbatim, not paraphrased from memory"
+  ],
+  "D-024-R008": [
+   "conduct: zero routine questions to the owner this task; owner-initiated D-029 hold honored (finish-and-hold, no continuation past the seam)"
+  ],
+  "D-024-R010": [
+   "conduct: PR #241 and every pre-existing PR untouched (git log/push history: only control-branch commits 6968ed5/9e47c27/ee564dd + lifecycle commits)"
+  ],
+  "D-024-R017": [
+   "D-024-R101 cited in the packet objective, every new module docstring closing line, the test-pack docstring, and the content commit message ee564dd (freeze rule section 3)"
+  ],
+  "D-024-R018": [
+   "survey-first production: runtime modules REUSE the accepted C1 schemas (HealthBands, DetectorPolicy, SupervisionEnvelope, assert_grantable, guards) and telemetry_records vocabularies instead of duplicating them; report section 4 records the false-friend check against the D-007 turnover modules"
+  ],
+  "D-024-R020": [
+   "conduct: producer stayed in allowed_paths (content commit ee564dd touches exactly tools/agent_supervisor/*, the named test file, and the named report); commits/pushes on the control branch only"
+  ],
+  "D-024-R021": [
+   "no-violation: no Codex action surface changed; TelemetrySnapshot consumes the Phase B closed read-only source set (TELEMETRY_SOURCES) by value"
+  ],
+  "D-024-R022": [
+   "no-violation: nothing grants Codex mutation ability; extension decisions, band evaluations, findings, handoffs, and recovery plans are all controller-side records"
+  ],
+  "D-024-R023": [
+   "RUNTIME enforcement delivered: LeaseLedger serializes grants (fold-in active set), refuses overlap/cap violations at grant time, and assert_write_within_scope fails closed on out-of-lease writes; test_scope_enforcement_fails_closed + ledger tests"
+  ],
+  "D-024-R025": [
+   "no-violation: no dispatch/acceptance path added; decide_extension/evaluate_band return records, nothing acts on them"
+  ],
+  "D-024-R026": [
+   "no-violation: R595/activation untouched; supervisor SHADOW-ONLY; report section 1 closing note"
+  ],
+  "D-024-R042": [
+   "TelemetrySnapshot validates source against TELEMETRY_SOURCES and confidence against telemetry_records.CONFIDENCE_LABELS (closed vocabularies, fail-closed); unknown values are None never zero; test_snapshot_validation_fail_closed"
+  ],
+  "D-024-R045": [
+   "no-quota guard EXTENDED per the carried corrections: percent_numeric (spaced '70 %' and spelled '70 percent') + conserve_synonym (save/spare/economize/economical/frugal aimed at tokens/context/budget/window/capacity) added to _QUOTA_PATTERNS; worker_text_fields now fails closed on unscannable field types (G5 N1); the ONE runtime worker message (LANDING_DIRECTION_TEXT) is guard-proven at send; test_quota_guard_catches_paraphrased_pressure + test_landing_direction_passes_both_guards_and_carries_no_numbers"
+  ],
+  "D-024-R046": [
+   "RUNTIME health-band evaluation delivered: evaluate_band maps live occupancy to the private band ladder with conservative unknown handling; AssignmentMonitor implements no-progress/repeated-attempt/scope-drift detection on an injected clock; findings force review regardless of tokens; tools/test_agent_supervisor_runtime_supervision.py band + detector sections"
+  ],
+  "D-024-R047": [
+   "the two-layer split is now complete: C1 assignment planning (accepted) + this unit's invisible runtime supervision layer; measurements never enter worker instructions (no API produces worker text except the single guard-proven landing sentence)"
+  ],
+  "D-024-R048": [
+   "classifier untouched except the SIZE_CLASS_ERROR_CODES consistency registry (G3 MINOR-5); four-class vocabulary and precedence preserved (C1 pack 53/53 green under the corrected modules)"
+  ],
+  "D-024-R049": [
+   "startup_overhead untouched (accepted C1 measurement pipeline reused as-is); runtime decisions consume its calibration via the accepted spawn_decision layer"
+  ],
+  "D-024-R050": [
+   "bands stay PRIVATE and configurable: bands_for_model adds per-resolved-model calibration ([subagent_model_bands] fail-closed, falls back to [subagent_health_bands]); numeric_strings extended with spaced/spelled percent forms so thresholds cannot leak by reformatting; band-name leak guard rebuilt on word-boundary vocabulary tokens (no false positives on landing/island/observe prose, still fail-closed on band vocabulary); test_bands_calibrated_per_resolved_model_fail_closed + leak-guard tests"
+  ],
+  "D-024-R051": [
+   "validate_platform_caps REFUSES maxTurns/maxBudgetUsd-style routine caps outright; CatastrophicCeiling must sit >= min_multiple (5) x the normal range; ceiling_fired produces PartialStateRecovery (quarantine + reconcile steps, false completion impossible) - the catastrophic-ceiling partial-state recovery TEST the C1 unit deferred now exists; test_platform_caps_rejected_as_routine_sizing + test_catastrophic_ceiling_must_sit_far_outside_normal_range + test_ceiling_fire_produces_partial_state_recovery"
+  ],
+  "D-024-R052": [
+   "live calibration surface delivered: bands_for_model(config, resolved_model) per-model band tables; evaluate_band consumes live occupancy snapshots; decisions record reasons so later calibration can learn (BandEvaluation.reasons, ExtensionDecision.reasons)"
+  ],
+  "D-024-R053": [
+   "quality signals override counters at runtime: model_reports_losing_thread escalates to LAND at ANY counter level (test_model_losing_thread_is_immediate_quality_signal); ProgressAssessment carries coherence separately from usage"
+  ],
+  "D-024-R055": [
+   "assignment/envelope records unchanged structurally; DEFAULT_EXTENSION_PROTOCOL completed with the s6.1 likely-evidence-sources clause (DCV R063); C1 pack still green (53/53) proving no contract field regressed"
+  ],
+  "D-024-R056": [
+   "leak guard GRADUATED per G3 MAJOR-1/G5 M2: _BAND_LEAK_PATTERNS word-boundary vocabulary-token + band-context matching replaces bare substring scan; numeric leak set extended with '70 %'/'70 percent' forms (G5 M1/MINOR-3); runtime landing message re-proven through assert_no_envelope_leak at send time; test_leak_guard_* trio"
+  ],
+  "D-024-R057": [
+   "spawn_decision untouched (accepted goldilocks layer); runtime adds the enforcement side it planned for: scope hold at prepare-to-land prevents new children (SupervisionState.scope_held, TurnoverCoordinator.may_spawn_children)"
+  ],
+  "D-024-R058": [
+   "no change to the startup-overhead measurement; the runtime honors the same economics by resuming nothing itself (shadow-only records)"
+  ],
+  "D-024-R059": [
+   "conduct/no-violation: no model-routing change; bands_for_model keeps per-model supervision conservative and configurable"
+  ],
+  "D-024-R060": [
+   "cap RUNTIME-enforced: LeaseLedger.grant applies assert_grantable against the LIVE active set with nested children flowing through the same fold (parent_assignment_id chain); test_nested_children_cannot_evade_producer_cap_or_leases + test_read_only_agents_do_not_consume_the_producer_cap"
+  ],
+  "D-024-R061": [
+   "verbose child output stays out of the primary context BY CONSTRUCTION: ChildHandoff.bounded_summary hard-capped (transcript_not_summary refusal); test_verbose_child_transcript_stays_out_of_primary_context"
+  ],
+  "D-024-R062": [
+   "RUNTIME repeated-attempt detection delivered: AssignmentMonitor counts command/hypothesis signatures and cycling test failures against DetectorPolicy.repeated_attempt_limit; findings are controller records with no worker-visible surface (test_repeated_corrections_get_outside_decision_without_countdown); in-scope self-correction remains authorized (findings fire only at the limit, evidence resets counters)"
+  ],
+  "D-024-R063": [
+   "s6.1 extension gate RUNTIME delivered: ExtensionRequest validates every s6.1 return item fail-closed (incl. likely_evidence_sources - the R063 advisory clause now in both the default worker text and the runtime record); decide_extension defaults deny-to-backlog, approves only blocking discoveries for the least costly bounded experiment; test_extension_request_validation_fail_closed + extension decision tests"
+  ],
+  "D-024-R064": [
+   "RUNTIME no-progress triggering delivered: only durable-evidence events (closed s6.2 vocabulary) reset the window; text volume/tool activity explicitly non-progress (test_text_volume_and_tool_activity_are_not_progress); landing/extension review triggers regardless of token counters (evaluate_band requires_review path; test_low_usage_repeated_speculation_triggers_review)"
+  ],
+  "D-024-R079": [
+   "graph subsystem NOT edited; runtime modules import no graph/index machinery; leaf package preserved (report section 4)"
+  ],
+  "D-024-R080": [
+   "no-violation: no graph consumption added; conservative-unknown discipline extended to telemetry (unknown occupancy -> observe, never optimistic normal; test_unknown_occupancy_is_conservative_never_normal)"
+  ],
+  "D-024-R081": [
+   "packet tiers untouched; workload_sizing change is ADDITIVE hardening only (NON_OMITTABLE_CATEGORIES refusing omission of mandatory s13 categories, G4 ADV-1); existing omission/sufficiency tests still green in the C1 pack"
+  ],
+  "D-024-R092": [
+   "packet planning hardened: bounded_task_and_acceptance / authority_and_prohibitions / return_schema can never be omitted for any role (non_omittable_category, fail-closed); test_mandatory_packet_categories_cannot_be_omitted"
+  ],
+  "D-024-R098": [
+   "assignment/parent/task id separation preserved in every new record (LeaseGrant.parent_assignment_id, ChildHandoff.parent_task_id, snapshot/evaluation unlinked-record refusals)"
+  ],
+  "D-024-R101": [
+   "Phase C items 4 and 6 DELIVERED (the C1 report section 1 deferral is discharged): item 4 - scope/write-lease runtime enforcement (LeaseLedger + assert_write_within_scope), retained cap with nested pass-through, invisible health bands (evaluate_band), no-progress rules (AssignmentMonitor), extension requests (extension_gate); item 6 - sparse landing direction (SupervisionState one-message discipline), emergency task stop (closed s5.5 condition set, TaskStop reserved), durable child handoffs (ChildHandoff + TurnoverCoordinator draining); project-control/reports/M0-T091-runtime-supervision.md sections 1-3"
+  ],
+  "D-024-R108": [
+   "s16.2 SUPERVISION rows implemented as executable tests (the packet's named cases): forty-minute-equivalent landing in accelerated time, high-usage-near-seam completion, observe-produces-no-message, plus TaskStop reservation, catastrophic-ceiling recovery, child turnover rows; coverage map report section 3 (25+ matrix rows mapped to named tests); 54/54 green"
+  ],
+  "D-024-R120": [
+   "bounded rules encoded as refusal guards activation cannot bypass (routine_cap refusal, non_omittable_category, transcript_not_summary, unbounded_approval, children_not_drained, scope_violation); no unlimited-subagent surface added"
+  ],
+  "D-024-R125": [
+   "Bootstrap Gate 0 verified at session start BEFORE any write and recorded in M0-T091-G0-readiness.md (root/branch/HEAD/clean tree/MCP-empty)"
+  ],
+  "D-024-R126": [
+   "MCP-clean: no servers this session (no mcp__* tools present); recorded in M0-T091-G0-readiness.md"
+  ],
+  "D-024-R127": [
+   "conduct: no Gate-0 failure occurred; no fallback root used"
+  ],
+  "D-024-R128": [
+   "conduct: no failed-start adoption; single session, clean lineage from handoff HEAD 1d8d53f"
+  ]
+ }
+}

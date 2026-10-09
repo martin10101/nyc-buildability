@@ -1,0 +1,11 @@
+{
+  "task_id": "M5-T047",
+  "requirements": {
+    "D-066-R001": [
+      "Code graph regenerated at the contract seam (743 files / 15656 nodes) and the navigation block embedded in the packet inputs - including the load-bearing PropertyOverview->LotOutlineMap edge that drove the LotOutlineMap prohibition (protecting the live M5-T045 lane), the lot_geometry route consumers, and the read-only pluto fetch path. The producer's report section 0 then verified the changed surface in source (git status = exactly the 9 allowed files; AddressResolutionScreen unchanged with its existing wiring anchored at L247-L253). Graph advisory; conclusions verified in source (packet input 4; producer report sections 0-1; G0 report)."
+    ],
+    "D-073-R006": [
+      "Records-vs-allowances delivered end to end: the additive route returns the lot's PLUTO address-of-record as an official RECORD with provenance (source id, dataset id, PLUTO version, retrieved_at) and three honest typed outcomes where absence is address=null - never a fabricated or empty-string line (lot_geometry.py record-address section); the client library's module doc states RECORD NOT MEASUREMENT and the confirm card shows the record line ONLY when it differs from the city-matched frontage, honestly nothing otherwise; the HJ A2 layout-neutral copy and A3a display-trim (raw value preserved in the title attribute) land with their tests updated in the same change (AddressConfirmCard.tsx + address-confirm.test.tsx S9/S10). No computed value is implied by any address line; acceptance scenarios AS-1..AS-4/AS-8 carry the distinction."
+    ]
+  }
+}

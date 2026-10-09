@@ -1863,6 +1863,56 @@
    "reviewed_sha": "db82e0abb86aa6fe5e2858a29978315a553c881c",
    "reviewed_manifest_sha256": "a0f4aef4a2a42f4c08fe68300c52a4ec875d960a47b2f3c6da8646df3dd395ce",
    "note": "Empty-but-present: 0 D-001 requirements applicable to M0-T075 (confirmed by evaluate_task_refs and independently by the DCV run; the task's corrective scope binds D-018 rows only). Row present for coverage at reviewed_sha db82e0a. Producer (orchestrator) != verifier."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T145",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "47ee3a04b46d02bed6af71c849b0793491270aa5",
+   "reviewed_manifest_sha256": "99cd3433b32205540e863d67c83944dcf06b3612b50ec3a9056d3308febfb18f",
+   "producer": "supervised-loop-fable-worker",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-06T10:20:00+00:00",
+   "note": "EMPTY-SET verification. M0-T145 cites D-001:ALL, but the shared canonical resolver (directive_registry.evaluate_task_refs / derive_applicable) independently derives ZERO applicable D-001 requirements for this packet: all 136 D-001 requirements carry applicability.task_ids == ['M0-T023'] (verified 136/136; none with an empty task_ids wildcard), so none match task_id M0-T145. No selective citation: evaluate_task_refs returns ok=true, applicable_ids=[], cited_ids=[], missing_ids=[], invalid_refs=[], unresolved=[] -- no OTHER active directive's requirement becomes applicable via M0-T145's allowed_paths (.claude/hooks/readonly_agent_guard.py, tools/test_readonly_agent_guard_powershell.py, project-control/reports/M0-T145-guard-brace-residual.md). This row exists because accept() fail-closes when a cited directive has no task_verification row, independent of applicability (mirrors the D-001/M0-T033 empty-set precedent). Path-scoped content identity at HEAD = 99cd3433... = M0-T145 G2/G3/G4/G5 recorded content_manifest_sha256. Gate evidence: G2/G3/G4/G5 all PASS, reviewed at content identity bac01a561e20398d3606bd770703f8311a89e029 (reports M0-T145-G3/G4/G5-report.md); validate_directive_compliance.py --check exit 0. Verifier != producer. CAVEAT (integration state, not a D-001 finding): the reviewed brace-fix code at bac01a56 (guard blob 1d092652, marker _PS_BRACED_VAR) is NOT integrated into HEAD 47ee3a04 -- HEAD carries the pre-fix M0-T109 blobs (guard ad009d4f, test 0fd81db3) and the recorded gate content_manifest 99cd3433 reflects that un-integrated HEAD content; the orchestrator must reconcile the code integration before accepting M0-T145.",
+   "requirements": []
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T156",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "16a2261eeca01356749d7147c407134f6f904717",
+   "reviewed_manifest_sha256": "73d2a7504119e1e8d640e7b0ce075649ecfeadfa44deea7ec6fc59ea04e568ce",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-12T10:45:00+00:00",
+   "note": "EMPTY-SET verification. M0-T156 cites D-001:ALL for s19 governance coverage, but the canonical resolver derives ZERO D-001 requirements applicable to this packet: all 136 D-001 requirements bind by task_ids conjunction that EXCLUDES M0-T156 (evaluate_task_refs: ok=true, applicable_ids=['D-040-R003'], D-001 applicable subset empty, missing/invalid/unresolved/reasons all empty). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independent of whether any of its requirements are applicable (reproduced: _directive_accept_reasons returned 'D-001/M0-T156: no task_verification row'). Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD 16a2261e; re-stamp to HEAD at accept if it advances (identity unchanged while the 8 allowed_paths are unchanged since 012ba064)."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T157",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "e0f7b2d10c7d17726dddea32e5468939ab3584aa",
+   "reviewed_manifest_sha256": "a015e85ae77bb0f34c0f4e6eb272141d8eb2e6b1d810623770692b2f4b3c270b",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T00:40:00+00:00",
+   "note": "EMPTY-SET verification. M0-T157 cites D-001:ALL for s19 governance coverage, but the canonical resolver derives ZERO D-001 requirements applicable to this packet: all 136 D-001 requirements bind by a task_ids conjunction that EXCLUDES M0-T157 (reg.evaluate_task_refs: ok=True, applicable_ids=[], reasons=[], invalid_refs=[]). This row exists because accept() fail-closes when a CITED directive has no task_verification row independent of applicability (reproduced: pc._directive_accept_reasons returned 'D-001/M0-T157: no task_verification row (fail closed)'; with this row injected in-memory reasons=[] deferrals=[]). Material verified from primary evidence at HEAD e0f7b2d1: git show 14bdcc73 = one test function (test_s12 derives max D-nnn+500, assertNotIn before use; +8/-1); resolver/validator/registry forbidden paths byte-unchanged; ResolverTests 5/5 OK; control-plane CI green (run 34726577993 @18ee6b79); validate_directive_compliance.py --check EXIT 0; git log 14bdcc73..e0f7b2d1 over the 2 allowed_paths EMPTY. Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD e0f7b2d1; re-stamp to git rev-parse HEAD at accept if HEAD advances (computed material identity a015e85ae77bb0f34c0f4e6eb272141d8eb2e6b1d810623770692b2f4b3c270b unchanged while the 2 allowed_paths are unchanged since 14bdcc73)."
+  },
+  {
+   "directive_id": "D-001",
+   "task_id": "M0-T158",
+   "applicable_requirement_ids": [],
+   "reviewed_sha": "b7d2d7021a3375b11fec0ab72550dbf7c6728bdd",
+   "reviewed_manifest_sha256": "c99f8161b6b0fbdcf9677a0f54d11bfbd4692371d604be8b3d4cc40a5169e91e",
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-13T02:05:00+00:00",
+   "requirements": [],
+   "note": "EMPTY-SET verification. M0-T158 cites D-001:ALL for s19 governance coverage, but the canonical resolver derives ZERO D-001 requirements applicable to this packet (evaluate_task_refs ok=True, applicable_ids=['D-044-R001','D-044-R002']; D-001 applicable subset empty; reasons=[]). This row exists because accept() fail-closes when a CITED directive has no task_verification row, independent of applicability (reproduced in-process: D-001/M0-T158 'no task_verification row (fail closed)'; injecting this empty-set row -> reasons=[] deferrals=[]). Verifier (directive-compliance-verifier) != producer (orchestrator). reviewed_sha stamped at verified HEAD b7d2d702; re-stamp to accept-time HEAD if it advances - identity c99f8161b6b0fbdcf9677a0f54d11bfbd4692371d604be8b3d4cc40a5169e91e is unchanged while the task's 2 allowed_paths are unchanged."
   }
  ],
  "updated_at": "2026-08-18T23:10:02+00:00"

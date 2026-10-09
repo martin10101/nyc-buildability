@@ -1,0 +1,16 @@
+{
+  "task_id": "M5-T023",
+  "assembled_by": "orchestrator",
+  "note": "M5-T023 is the WEB half closing the D-040-R001 lot-outline increment (server half M5-T020 accepted; MapLibre admission M5-T022 accepted). Evidence below covers the rendering deliverable + the recorded generator-wiring follow-up. Executable authority for the JS/TS toolchain is CI on the pushed head (thin client, no local npm).",
+  "requirements": {
+    "D-040-R001": [
+      "apps/web/src/components/address/LotOutlineMap.tsx + apps/web/src/components/address/AddressConfirmCard.tsx at b99ca6c0 - the lot-outline placeholder (formerly AddressConfirmCard.tsx:141-145) replaced by MapLibre GL JS rendering of the accepted /api/v1/properties/{bbl}/lot-geometry contract (first import of admitted maplibre-gl@6.7.0, WebGL-gated dynamic import, GeoJSON fill/line layers, fitBounds, NYC DCP attribution control, +/-20ft approximate-outline copy, ZoLa link + BBL-absent branch kept)",
+      "apps/web/src/lib/lot-geometry-api.ts - hardened typed client mirroring the address-api.ts discipline (status matrix, bounded reflection, cancellable + time-bounded fetch, coordinate number-validation, typed outcomes incl. route_absent/unexpected_response); honest typed states for condo-unit no_outline, multiple_features review posture, transport failures, WebGL-unavailable",
+      "tests: apps/web/src/lib/__tests__/lot-geometry-api.test.ts + apps/web/src/components/address/__tests__/lot-outline-map.test.tsx (maplibre mocked at module boundary; fixture-geometry structural assertions incl. MultiPolygon; holes via labelled synthetic in-test polygon - disclosed: no committed contract fixture carries an interior ring) + apps/web/e2e/lot-outline.spec.ts over the harness lot-outline seam (recorded contract fixtures through the real builder)",
+      "generator follow-up closed: packages/contracts/scripts/generate_ts_types.py wires lot_geometry into --check/--write; orchestrator reproduced at b99ca6c0: --check exit 0 naming lot_geometry, generated/*.ts all byte-identical (git diff empty; lot_geometry.ts blob b17f5f3e), producer mutation run proved --check exit 1 on a perturbed file; python tools/modularity_check.py --check exit 0 (generator deduplicated to 651 SLOC, no new exception - tools/modularity_exceptions.json untouched)",
+      "flag discipline: the surface inherits the PropertyLookup.tsx:265 server-read gate; no client-side or NEXT_PUBLIC flag read added (producer report scope-compliance section)",
+      "producer report: project-control/reports/M5-T023-producer-report.md (self-checks with real output incl. FastAPI TestClient outcomes for the four fixture BBLs; disclosures: local tsc/eslint/next build/vitest/playwright not runnable on the thin client - CI authority; synthetic e2e address-resolver scaffolding; no basemap tile source wired by design)",
+      "CI evidence (executable authority): the 'web' and 'web-e2e' jobs on pushed head b99ca6c0 - captured by the orchestrator into the gate evidence when the run completes"
+    ]
+  }
+}

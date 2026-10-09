@@ -1,0 +1,68 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-028",
+ "version": 1,
+ "slug": "sleep-handoff-650k",
+ "title": "Owner sleep instruction 2026-08-26: continue only authorized campaign work unattended; at approximately 650k main-agent context tokens (plus/minus 50k; alert at 600k, never past ~700k without the handoff) hold at a clean seam and produce the session handoff, reserving ~50k headroom for the handoff itself. Session-conduct directive bound to the non-ledger sentinel D-028-BOOTSTRAP; the permanent D-010 R113-R114 rotation rule is not amended.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-08-26",
+ "captured_at": "2026-08-26T06:55:00+00:00",
+ "created_at": "2026-08-26T06:55:00+00:00",
+ "updated_at": "2026-08-26T06:55:00+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-08-26T06:55:00+00:00",
+   "content_digest_sha256": "f40f7fe75405e84a79a5f32a2c72b8da263dd72596e598fc15b893cc481a3af3"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "control/D-024-fable-codex-loop"
+ ],
+ "scope": {
+  "kind": "session-conduct",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "continue the already-authorized D-024 campaign chain and its bounded follow-ups unattended; generate the session handoff at the ~650k seam",
+  "excluded": "any new owner-authority action; running past ~700k main-agent context tokens without the handoff; amending D-010"
+ },
+ "applicability_note": "Conduct-only: all rows bind the NON-LEDGER sentinel D-028-BOOTSTRAP and are verified at the next session-seam DCV; no ledger task is created by this directive. The verbatim source-001.md governs on any wording question; the interpretation note in the same file records the 650k/±50k reading and the D-010 R113-R114 tension (this instruction governs THIS session's seam point only).",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner mid-turn terminal message 2026-08-26 announcing sleep and ordering the ~650k-token session-handoff seam."
+ },
+ "enforcement_pointers": {
+  "cli": "tools/project_control.py",
+  "validator": "tools/validate_directive_compliance.py",
+  "registry": "tools/directive_registry.py"
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "locked_requirement_ids": [
+  "D-028-R001",
+  "D-028-R002",
+  "D-028-R003"
+ ],
+ "requirements_id_digest_sha256": "8f772be084ed54e2ace940ae7fec9631a5bb21e8ff909f73dba6c4216532dab0",
+ "requirements_content_digest_sha256": "542e35eb5061704564a7a1de2c12e830f4892a7b67538b3b347c99ffd90bb2b9",
+ "final_reviewed_sha": null,
+ "final_reviewed_manifest_sha256": null,
+ "audit_log": [
+  {
+   "at": "2026-08-26T06:55:00+00:00",
+   "actor": "orchestrator",
+   "event": "captured source-001.md verbatim (sha256 f40f7fe75405e84a79a5f32a2c72b8da263dd72596e598fc15b893cc481a3af3, 1627 bytes); decomposed into 3 conduct requirements bound to sentinel D-028-BOOTSTRAP; origin/main frozen at d8b3899f61efa6620e18a26541ced96020f5bef9. Received mid-M0-T090 production; campaign work continues to the ~650k seam, then session handoff."
+  }
+ ]
+}

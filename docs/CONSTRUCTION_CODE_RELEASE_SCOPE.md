@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by plan §2, §7 and P2-1: building-code rules are Phase 2 (deferred). Phase 1 has no building-code deductions.
+
 # Construction-Code Release Scope — DRAFT for owner approval (B-011)
 
 > **THIS IS A DRAFT. IT CARRIES NO AUTHORITY.** It proposes *which* construction-code domains the platform

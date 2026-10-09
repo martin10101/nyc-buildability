@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T049",
+  "material_commit": "d52b1402e8a494ebc7b4e94a596b19d96172f2f1",
+  "integration_commit": "b5d3343f3c630b31f096a67561b52cdd854ff4f5",
+  "requirements": {
+    "D-066-R001": [
+      "The M5-T049 packet was contracted with a seam-regenerated code-graph NAV BLOCK in its inputs (see project-control/tasks/M5-T049.json inputs; G0 record M5-T049-G0.md) instructing query.py --no-regen consumer checks before sweeps, graph advisory.",
+      "The extraction preserved every consumer import path via the compatibility facade: named_street_override_status.py, spatial/wide_street_live_provider.py, tests/rules/test_wide_street_wiring.py all import through app.rules.named_street_override unchanged (producer report 'Byte-identity / correctness proof' item 3; facade __all__ unchanged, 17 names).",
+      "Verified in source, not just the graph: the unchanged acceptance suite test_named_street_override.py (63 collected items) passes at the harvested head in CI run 35435873943 (api job success), the byte-identity behavior proof (M5-T049-ci-evidence.md)."
+    ]
+  }
+}

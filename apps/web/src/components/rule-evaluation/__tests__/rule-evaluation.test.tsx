@@ -99,8 +99,74 @@ describe("RuleEvaluationResult — the five document-derived states", () => {
 });
 
 // --------------------------------------------------------------------------
-// The sixth state — network / server failure — is recoverable and never blocks.
+// D-056-R001: the citation provenance rows render a safe outbound link ONLY
+// when a validated dataset id is present. Real ZR legal-text citations never
+// carry a dataset_id (they cite zoningresolution.planning.nyc.gov, not a
+// Socrata dataset — see provenance.request_url in the committed fixture), so
+// these tests mutate a clone to prove the (forward-compatible, guarded-key)
+// code path itself, same pattern as the existing "Source"/"Retrieved from"
+// guarded rows above it.
 // --------------------------------------------------------------------------
+
+function withCitationDatasetId(datasetId: unknown): import("@/lib/rule-evaluation-contract").RuleEvaluation {
+  const doc = draftApplicableDoc();
+  const provenance = doc.evaluations[0].citations[0].provenance as Record<string, unknown>;
+  if (datasetId === undefined) {
+    delete provenance.dataset_id;
+  } else {
+    provenance.dataset_id = datasetId;
+  }
+  return doc;
+}
+
+describe("RuleEvaluationResult — citation provenance safe source link (M5-T025, D-056-R001)", () => {
+  it("valid dataset_id: renders a clickable link with the EXACT expected href, target=_blank, rel=noopener noreferrer", () => {
+    render(<RuleEvaluationResult document={withCitationDatasetId("64uk-42ks")} />);
+    const provenance = screen.getByTestId("rule-eval-provenance");
+    fireEvent.click(provenance.querySelector("summary") as Element);
+    const link = screen.getByTestId("rule-eval-source-link");
+    expect(link).toHaveAttribute("href", "https://data.cityofnewyork.us/d/64uk-42ks");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("invalid dataset_id: honest text, no anchor", () => {
+    render(<RuleEvaluationResult document={withCitationDatasetId("not-a-valid-id")} />);
+    const provenance = screen.getByTestId("rule-eval-provenance");
+    fireEvent.click(provenance.querySelector("summary") as Element);
+    expect(screen.queryByTestId("rule-eval-source-link")).toBeNull();
+    expect(within(provenance).getByText("not-a-valid-id")).toBeInTheDocument();
+  });
+
+  it("absent dataset_id (the real, current ZR-citation shape): no dataset-id row, no anchor", () => {
+    render(<RuleEvaluationResult document={withCitationDatasetId(undefined)} />);
+    const provenance = screen.getByTestId("rule-eval-provenance");
+    fireEvent.click(provenance.querySelector("summary") as Element);
+    expect(screen.queryByTestId("rule-eval-source-link")).toBeNull();
+    expect(within(provenance).queryByText(/^Dataset id$/)).toBeNull();
+  });
+
+  it("NEGATIVE: a hostile citation request_url NEVER appears in any href, regardless of its value", () => {
+    const doc = withCitationDatasetId("64uk-42ks");
+    const provenanceRecord = doc.evaluations[0].citations[0].provenance as Record<string, unknown>;
+    provenanceRecord.request_url = "https://evil.example.com/steal?x=<script>alert(1)</script>";
+    const { container } = render(<RuleEvaluationResult document={doc} />);
+    const provenance = screen.getByTestId("rule-eval-provenance");
+    fireEvent.click(provenance.querySelector("summary") as Element);
+    const hrefs = Array.from(container.querySelectorAll("a")).map((a) =>
+      a.getAttribute("href"),
+    );
+    for (const href of hrefs) {
+      expect(href ?? "").not.toContain("evil.example.com");
+    }
+    // The valid dataset id link is still exactly the constant-prefix href —
+    // the hostile request_url never displaces it or leaks into it.
+    expect(screen.getByTestId("rule-eval-source-link")).toHaveAttribute(
+      "href",
+      "https://data.cityofnewyork.us/d/64uk-42ks",
+    );
+  });
+});
 
 describe("RuleEvaluationFailure — the sixth state", () => {
   it("renders a recoverable network failure with a working retry", () => {

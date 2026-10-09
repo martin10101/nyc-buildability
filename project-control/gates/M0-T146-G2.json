@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T146",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T146-codex-max-effort.md",
+  "reviewed_at": "2026-09-04T19:56:24.988250+00:00",
+  "content_manifest_sha256": "6c35f7db2a0f698c4d1de78b16f2877bef9b62cf9a37560afdc684a8f985919a",
+  "reviewed_sha": "781e068798be240a5448ca14953076313d1227a1",
+  "updated_at": "2026-09-04T19:56:25.574217+00:00"
+}

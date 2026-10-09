@@ -1,0 +1,88 @@
+{
+  "task_id": "M0-T115",
+  "title": "D-024 unit O: broker answer paths must resolve their queued_asks rows + recovery-probe read-time reconciliation (restart-blocking defect from the first live limited-auto run)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "PROPOSED bounded control-plane correction (Amendment 11 R270; owner approval required before claim). ROOT CAUSE (primary evidence, first live run run_M0_T107_unitJ): ApprovalBroker.deny_request and approve_once mark the approval record answered but never resolve the linked queued_asks row ask_<request_id> - the exact omission M0-T070 fixed in revoke_all only; revoke_all cannot clear DENIED records; recovery_probes.probe_pending_requests reads raw journal.open_asks() WITHOUT the M0-T070 read-time broker-reconciliation the status command applies (cli.py ~1487). NET EFFECT: after an owner deny, S11.5 revalidation fails pending_requests forever and the certified deny->clear-recovery->restart path is permanently blocked (observed live: restart refused UNSAFE_OR_DRIFTED, 0 provider calls, exit 11). FIX (root-cause, H2 RepairRecord 8-predicate gate): (1) deny_request and approve_once resolve their ask_<request_id> row exactly as revoke_all does (answered history, never deleted); (2) probe_pending_requests applies the M0-T070 read-time reconciliation (broker-origin ask whose approval record is resolved is NOT an open owner question) so journals written BEFORE this fix - including the live one with 3 denied-but-unanswered rows - become truthful WITHOUT hand-editing any runtime journal; (3) regression tests that fail if either fix is removed (deny leaves ask row resolved; probe passes on reconciled pre-fix journal shape; probe still FAILS on a genuinely unanswered non-broker ask). CONSEQUENCE (R271): this is a supervisor-source change - it invalidates the R247 golden certification; the full re-certification cycle (M0-T112 pattern: golden pack + affected packs + whole suite + CI at the new frozen identity + activation-package items 10-12 refresh) MUST run before autonomous operation resumes. Owner may optionally schedule M0-T114 (residuals) into the same window to avoid a second recert cycle - owner decision, not bundled by default (corrections stay separate). Supervisor-freeze qualifying evidence: D-024-R270.",
+  "business_reason": "Owner standing rule (Amendment 11 R270/R271): on a blocked/recurring stop, no restart-looping - stop safely and propose a bounded separate correction; recertify before resuming if certification is invalidated.",
+  "inputs": [],
+  "outputs": [
+    "deny_request/approve_once ask-row resolution (mirror of the revoke_all M0-T070 fix)",
+    "probe_pending_requests read-time broker-reconciliation (pre-fix journals stay truthful)",
+    "regression tests failing if either fix is removed",
+    "project-control/reports/M0-T115-repair-record.md (H2 RepairRecord, 8-predicate gate)",
+    "OWNER NOTE: completing this task re-triggers the R247 golden re-certification cycle before autonomous resume (R271)"
+  ],
+  "dependencies": [
+    "M0-T112"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor/broker.py",
+    "tools/agent_supervisor/recovery_probes.py",
+    "tools/test_agent_supervisor_command_authority.py",
+    "tools/test_agent_supervisor_recovery_probes.py",
+    "project-control/reports/M0-T115-repair-record.md",
+    "tools/agent_supervisor/loop_turnover.py",
+    "tools/test_agent_supervisor_turnover_live_seam.py"
+  ],
+  "forbidden_paths": [
+    ".claude",
+    "apps",
+    "packages",
+    "services",
+    "supabase",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/agent_supervisor/cli.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-29T05:38:25.765325+00:00",
+  "updated_at": "2026-08-29T06:50:10.809226+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-29T05:38:25.765325+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-29T06:15:10.265931+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 70,
+      "status": "in_progress",
+      "message": "Unit O implemented at 91664bb: deny_request/approve_once resolve their ask_<request_id> rows (revoke_all M0-T070 pattern); probe_pending_requests read-time broker-reconciliation (pre-fix journals truthful, zero journal writes, R273). RED 4-failed recorded pre-fix; GREEN 117/117; REVERT-PROOF stash->4 FAIL->pop->4 PASS (R274). Guards: pending/no-record/non-broker/digest-mismatch still block. Affected packs 353/353; modularity EXIT=0. Repair record (H2 8-predicate) + evidence map + G2 self-check written; submitting."
+    },
+    {
+      "at": "2026-08-29T06:29:04.944203+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 75,
+      "status": "in_progress",
+      "message": "G3 FAIL (BLOCKER-1) -> ONE consolidated correction round: 4th open_asks consumer loop_turnover.py:86 feeds RAW asks into turnover_seam approval_pending -> rotation refusal carries the same defect class for pre-fix journals incl. the live run. Scope extended (loop_turnover.py + turnover_live_seam test pack) with recorded reason: completing the reviewed root cause per H2 predicates 7/8 - NOT R272 broadening. Plan: single shared broker.owner_unanswered_asks() helper (no third predicate copy); probe refactored onto it; seam feed extracted into named seam_safety_state() using it; defect-named seam tests (pre-fix DENIED/APPROVED not refused, PENDING/non-broker still refuse) + G5 LOW-2 all_state-unreadable test; G4 MINOR-1/2 + DCV count NOTE corrected in the revised repair record; G5 LOW-1 declined-with-reason (predicate consistency across surfaces, single source). Then resubmit at corrected identity + SendMessage delta re-attestations to the same four reviewers."
+    }
+  ],
+  "scope_extension_note": "Rework scope extension recorded by the orchestrator at the G3 FAIL seam (BLOCKER-1): loop_turnover.py:86 feeds RAW open_asks() into turnover_seam.safety_state_from_run, so the IDENTICAL defect class refuses the first rotation seam of any pre-fix journal (including the live run_M0_T107_unitJ that R276 resumes). Extending the fix to this fourth consumer COMPLETES the contracted root cause (H2 predicates 7/8) found by the independent gate inside this unit's own review - it is not new scope under R272's no-broadening rule, which guards against scope creep, not against finishing the reviewed defect. Implementation avoids a third predicate copy: one shared broker.owner_unanswered_asks() helper used by both the probe and the seam feed; cli.py (forbidden path) keeps its accepted inline copy with a convergence follow-up noted.",
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-29T06:50:10.809226+00:00"
+}

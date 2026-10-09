@@ -1,0 +1,20 @@
+# Frozen CI evidence - supervisor-bridge job 111247302687 (run 37138313731, attempt 1)
+# Head 1ed2a55f25f432851ca0ac900af2404bae70d74b, branch task/docs-seam-2026-10-03, runner image: Microsoft Windows Server 2025 (windows-latest)
+# Full job log: 51228 bytes, sha256 6afc11b2c2a829b5580bba3f3fca795ff042e9a448366bd375848959c3494b47
+# Source: gh api repos/martin10101/nyc-buildability/actions/jobs/111247302687/logs, read 2026-10-03 by the orchestrator. Excerpt = the FAILURES section through the summary line, timestamps stripped. Read-only for the producer.
+
+================================== FAILURES ===================================
+_____________ RaceTests.test_global_last_slot_never_double_taken ______________
+
+self = <test_agent_supervisor_review_slots.RaceTests testMethod=test_global_last_slot_never_double_taken>
+
+    def test_global_last_slot_never_double_taken(self) -> None:
+        # 6 racers, distinct lanes, 2 global slots -> exactly 2 win.
+        winners = self._run_race(n=6, global_limit=2, lane_limit=1, same_lane=False)
+>       self.assertEqual(winners, 2)
+E       AssertionError: 1 != 2
+
+tools\test_agent_supervisor_review_slots.py:176: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/test_agent_supervisor_review_slots.py::RaceTests::test_global_last_slot_never_double_taken - AssertionError: 1 != 2
+=========== 1 failed, 3949 passed, 60 skipped in 322.47s (0:05:22) ============

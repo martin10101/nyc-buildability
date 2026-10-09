@@ -1,0 +1,103 @@
+{
+  "task_id": "M0-T094",
+  "title": "D-024 F: operator channel (one-command start, status, zero-context /loop-* commands, ask-Codex)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Expose the owner surface on the existing supervisor CLI: canonical idempotent no-duration start (documented 'Start the agent loop' intent/alias; running campaign reported, never duplicated), status/current-task/checkpoint/health reporting per section 14 (concise default, verbose/JSON diagnostics, notification-sink interface with terminal implementation only - no email/credentials), durable pause/resume/graceful-stop/emergency-stop acknowledged only after durable state update, and a new 'ask' operation delivering bounded owner questions to the read-only Codex supervisor (short response window, durable request ID fallback). Add feature-detected pre-model /loop-* interception inside Claude Code (user-only skills/commands; UserPromptExpansion preferred, UserPromptSubmit block/display/erasure otherwise; exact-match only, safe argument/stdin handling, secrets/terminal-escape redaction, bounded I/O, timeouts without zombie duplicates) and PROVE zero Fable-context pollution on the installed version - or truthfully document the second-terminal CLI fallback; test while idle and while a response is active; queued slash input must not be advertised as real-time control. Supervisor-freeze qualifying evidence: D-024-R104 (Phase F). (Amendment 3 conversion, M0-T102 accepted: implement as thin skills with disable-model-invocation:true calling the external supervisor directly (R158) + narrowly matched UserPromptExpansion interception with zero-model-context proof or the honest second-terminal fallback (R159); no collision with built-in /loop; G5 unit-G security preconditions apply; sensitive controls not advertised to Remote Control/SDK command lists.)",
+  "business_reason": "D-024 sections 4, 11, 14, 15-F, 16.5: the owner needs real control and truth about what is happening without polluting the producer's context.",
+  "inputs": [
+    "project-control/directives/D-024-fable-codex-loop/source-001.md (verbatim owner directive v4, sha256 0611bb45c087c31aa4e0f4e0d5a5036bfc3cb921a09486dd35f1061b3f754537)",
+    "project-control/directives/D-024-fable-codex-loop/requirements.json (D-024-R001..R128)"
+  ],
+  "outputs": [
+    "canonical start/status/control/ask CLI operations on the existing supervisor command surface",
+    "feature-detected /loop-* pre-model interception (or documented truthful fallback) with zero-context proof",
+    "tools/test_agent_supervisor_operator_channel.py (section 16.5 matrix incl. metacharacter/Unicode safety, timeout single-request, hook fail-closed)",
+    "project-control/reports/M0-T094-operator-channel.md (exact owner commands)"
+  ],
+  "dependencies": [
+    "M0-T092"
+  ],
+  "allowed_paths": [
+    "tools/agent_supervisor",
+    ".claude/hooks",
+    ".claude/skills",
+    ".claude/settings.json",
+    "tools/test_agent_supervisor_operator_channel.py",
+    "project-control/reports/M0-T094-operator-channel.md"
+  ],
+  "forbidden_paths": [
+    ".claude/ORCHESTRATION_POLICY.md",
+    "apps",
+    "packages",
+    "project-control/directives/D-001-owner-directive-compliance-system",
+    "project-control/tasks",
+    "services",
+    "supabase",
+    "tools/directive_registry.py",
+    "tools/project_control.py",
+    "tools/validate_directive_compliance.py"
+  ],
+  "acceptance_scenarios": [],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "fable-orchestrator-session",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [],
+  "blockers": [],
+  "created_at": "2026-08-24T12:35:22+00:00",
+  "updated_at": "2026-08-28T03:56:00.649367+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-024",
+      "requirement_ids": "ALL"
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-08-24T12:35:22+00:00",
+  "worktree": "C:/Users/MLFLL/Downloads/nyc-zoning/ctl24",
+  "progress_log": [
+    {
+      "at": "2026-08-27T23:49:25.372112+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 15,
+      "status": "in_progress",
+      "message": "Unit G STAGED to the claim+G0+scenario-pack seam (rotate-at-seam ceiling D-010 R113/R114; same pattern that staged unit F at seq 16 and delivered it at seq 17). Applicable set 54 requirements (R104 Phase-F core, R034-R036 start/status/stop, R083-R089 operator surface + bridge security, R158/R159 thin skills + UserPromptExpansion, R111 section-16.5 matrix, R125-R128 Gate-0, R176). Reuse boundary mapped (report section 0): existing cli.py verb surface (start/status/stop/resume/watchdog/answer groups), refusals, NotificationSink, codex_reviewer read-only contract, unit-F stop_intent/epoch_lease/bootstrap_gate consumed; genuine gaps = ask operation, graceful-stop verb, section-14 status fields, 8 thin /loop-* skills, feature-detected interception hook, R035 alias doc. Scenario pack S1-S14 + owner-gated C1 live interception canary recorded (report section 1). NO implementation this session; successor implements from the frozen pack with fresh context. Supervisor-freeze qualifying evidence: D-024-R104."
+    },
+    {
+      "at": "2026-08-28T03:23:53.005689+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 85,
+      "status": "self_check",
+      "message": "Unit G implemented at f6edf11 (branch control/D-024-fable-codex-loop). Deliverables: operator_status.py + operator_ask.py + operator_channel_cli.py + durable_state.ask_by_id + operator_ask_answer schema + loop_command_interceptor.py hook + additive settings registration + 8 /loop-* skills + detection fixture (UserPromptSubmit selected; zero-context proof pending-owner-C1 with documented second-terminal fallback per R088). Tests: matrix 52/52 PASS; mutation 10/10 non-equivalent killed; regression 332 PASS; composed whole-suite 2971 passed / 3 skipped / 0 failed (M0-T094-full-suite-T1.txt). modularity 0 failures; ruff clean on touched files. Next authorized action: submit for the 4-reviewer gate cycle (G3/G4/G5 + DCV). Supervisor-freeze qualifying evidence: D-024-R104."
+    },
+    {
+      "at": "2026-08-28T03:43:06.559151+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 90,
+      "status": "rework",
+      "message": "Correction round C1-C3 applied at db689c8 after G3/G4/G5 all returned PASS with converged MINOR findings: C1 status --json now redacted (G3/G5 MINOR-1, behavioral test), C2 report count 51->52 (G3 adv/G4 MINOR-1), C3 /loop-ask '--' end-of-options separator (G5 ADVISORY-2, argv-echo test). Matrix 54/54; regression slice 200 PASS; modularity 0 failures. G5 ADVISORY-3/4 carried non-blocking to M0-T109. Delta re-attestations requested from all three reviewers; DCV dispatched over the 54-req applicable set at db689c8. Supervisor-freeze qualifying evidence: D-024-R104."
+    },
+    {
+      "at": "2026-08-28T03:52:30.759635+00:00",
+      "agent": "fable-orchestrator-session",
+      "percent": 92,
+      "status": "rework",
+      "message": "Prose-count re-flow (52/52 -> 54/54, DCV recommendation) moved the report identity; verification set committed at ca3318d (G3/G4/G5 delta re-attestations all PASS at db689c8 + DCV 54/54 PASS at db689c8). Re-submitting at ca3318d; DCV delta-ack over the count-only diff requested next. Supervisor-freeze qualifying evidence: D-024-R104."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-08-28T03:56:00.649367+00:00"
+}

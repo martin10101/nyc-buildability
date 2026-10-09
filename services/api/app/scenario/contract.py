@@ -18,6 +18,8 @@ import json
 from functools import lru_cache
 from importlib import resources
 
+from .proposal import ProposedMassingError, validate_proposed_massing
+
 __all__ = [
     "ScenarioContractError",
     "assert_scenario_not_verified",
@@ -130,3 +132,29 @@ def validate_scenario_document(document: dict) -> None:
             f"{first.message}",
             location=location,
         )
+
+    # Contract 1.1.0 (task M5-T048, phase B0, D-076): thread the OPTIONAL
+    # proposed_massing INPUT CLASS through its focused validator. The block is
+    # absent on every 1.0.0 document, so this is byte-for-byte inert for the
+    # prior shape. When present it must accompany a 1.1.0 version stamp (the
+    # block is the reason a document emits 1.1.0), and its semantic invariants
+    # (closed simple outline, level consistency, EPSG:2263 unit sanity, bounded
+    # ceilings) are enforced as TYPED refusals. A proposed building is a THIRD
+    # input class - never a city record, never a rule (D-076-R002); nothing here
+    # computes or implies an allowance.
+    proposed = document.get("proposed_massing")
+    if proposed is not None:
+        if document.get("contract_version") != "1.1.0":
+            raise ScenarioContractError(
+                "scenario document carries a proposed_massing block but its "
+                f"contract_version is {document.get('contract_version')!r}; the "
+                "block is admitted only on a 1.1.0 document",
+                location="contract_version",
+            )
+        try:
+            validate_proposed_massing(proposed)
+        except ProposedMassingError as exc:
+            raise ScenarioContractError(
+                f"scenario document proposed_massing block is invalid: {exc}",
+                location=exc.field,
+            ) from exc

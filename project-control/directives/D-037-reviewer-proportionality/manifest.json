@@ -1,0 +1,63 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-037",
+ "version": 1,
+ "slug": "reviewer-proportionality",
+ "title": "Owner directive 2026-09-07: stop the Codex reviewer over-revising on minor non-blockers - add a proportionality/blocking-threshold rule so REVISE is reserved for real acceptance-criteria/gate failures; minor polish passes as done-with-advisory. Real gates stay blocking.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-07",
+ "captured_at": "2026-09-07T18:19:50+00:00",
+ "created_at": "2026-09-07T18:19:50+00:00",
+ "updated_at": "2026-09-07T18:32:49+00:00",
+ "channel": "owner_terminal_prompt",
+ "frozen_baseline_sha": "9f7f121f498ba14482c70e7ca9b50caf30f850f5",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-07T18:19:50+00:00",
+   "content_digest_sha256": "2a2b04738ac02632475567d670178d23228ad594e0e606fc9306c59964e0f743"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "engineering",
+  "task_ids": [
+   "M0-T155"
+  ],
+  "task_types": [],
+  "allowed": "one bounded gated supervisor task editing prompts/codex_review.md to add the proportionality rule + a reviewer-decision test; freeze-rule recert before the running controller uses it",
+  "excluded": "weakening any real gate; live-editing the running controller prompt without gates/recert; touching HALT_UNSAFE/STOP_FOR_OWNER/read-only discipline; R595 activation",
+  "session": "2026-09-07 onward"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-07T18:19:50+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "verbatim capture; lever verified read-only = prompts/codex_review.md has no REVISE-vs-COMPLETE proportionality rule, so the reviewer redoes on non-blockers. Some current REVISEs (1001-SLOC modularity) are real hard CI rules and stay blocking."
+  }
+ ],
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner raised the concern and asked to figure out a way, 2026-09-07."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-037-R001",
+  "D-037-R002"
+ ],
+ "requirements_content_digest_sha256": "42140b3a8b31f2c10220ab6f1d38316f027f782b43f116761ac66631e9a77e6e"
+}

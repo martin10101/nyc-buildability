@@ -1,0 +1,175 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-078",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. All three requirements bind the non-ledger sentinel D-078-BOOTSTRAP at capture; they re-bind to the delivering packets via applicability.task_ids appends (with digest resync) at their contract seams, and verification lands against those packets' gate evidence. No completion claim exists at capture time.",
+ "verified_by": "directive-compliance-verifier",
+ "verified_at": "2026-09-22T21:47:00+00:00",
+ "task_verifications": [
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T058",
+   "applicable_requirement_ids": [
+    "D-078-R002",
+    "D-078-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "94610a06180f118ff81d885a1022f051625101e7c390dbeda9393490a3217109",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (task-verified for M5-T058's applicable portions): no code path auto-selects a base lot (fail-safe branch returns substrate=None + CONDO_BASE_LOT_UNRESOLVED_CAUSE; substitution only on OUTCOME_RESOLVED_SINGLE via resolved_base_bbl, never indexing base_bbls); honest refusal vocabulary condo_base_lot_unresolved only for the condo cause; stamp provenance carried verbatim; web notice display-only with the correspondence-gated guard that never relaxes the withhold. Reproduced tests: no_auto_pick parametrized (zero geometry lookups), route stamp + refusal tests within the 168."
+     ]
+    },
+    {
+     "id": "D-078-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: contracted after M5-T056 accepted (07:07:56Z < 07:48:35Z); additive 1.2.0 proven (enum grown, block optional, old documents valid, mirrors byte-identical); accept ORDER honored - this acceptance precedes M5-T059's, which follows immediately under its own delta pre-auth."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T059",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002",
+    "D-078-R003"
+   ],
+   "reviewed_sha": "bc703fccdafb052f93d288e242ca89a7a2668d65",
+   "reviewed_manifest_sha256": "431eefa5838f4410e13a3bf30c394528f9f46d1da41847507495da80b94287d3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-20T21:36:05.846730+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED as TASK-VERIFIED for M5-T059 (explicitly NOT a directive-complete stamp, per the pre-auth voiding clause): slice 1 delivers the site-definition confirmation RECORD substrate (records module + ABC/in-memory store + unmounted route + condo-records display channel); the confirm UX, multi-parcel map, and calculations-on-combined-land are later slices."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED: the confirmation is a human professional input by construction (record carries confirmer identity; revocation/supersession paths exist; the G3/G4/G5 blocking findings on cross-condo revoke binding closed mutation-proven at 03882888); no auto-selection anywhere; honest refusal stands where no confirmation exists."
+     ]
+    },
+    {
+     "id": "D-078-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV delta SATISFIED: the pairing/sequencing condition (accept AFTER M5-T058) is satisfied AT THIS ACCEPT - M5-T058 accepted immediately prior in the same seam; contracted after M5-T056 per the capture record."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T062",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002",
+    "D-078-R003"
+   ],
+   "reviewed_sha": "e9283558a600c6540b20691aa5c30c8bd471753b",
+   "reviewed_manifest_sha256": "650a48c13ccc9273c82acdd5dbf45d2f0e8b4eae5a7c149db398c99eb8073def",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T03:08:41.213723+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (task-scoped slice 2a): flag-gated mount default OFF (site_definition_write_enabled false on absent/empty/unknown, site_definition.py:121-135; router registered only when true; three-layer default-OFF tests + the non-vacuous fastapi-0.139 introspection fix); record substrate hardened; 298-Wallabout multi-lot flow end-to-end; all green in CI 35547702435; report M5-T062-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: no auto-selection - create requires an explicit human confirmer + parcels from the request body (site_definition.py:492-533); revoke binds on the STORED record scope-before-status and never re-selects (store.py:350-431); AS-1 no cross-property status oracle + AS-2 degraded-safe revoke reproduced in source with green mutation-resistant tests; report M5-T062-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R003",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: sequencing honored - M5-T056 accepted (239th) before T062's G0 at fffbd002; the T058/T059 pair accepted; T062 is the recorded DB-040 successor slice; no phase order, hold, or Tier-D stop altered; report M5-T062-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T067",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002"
+   ],
+   "reviewed_sha": "273e3ae0106644ab233f34f81135e9ad63f717a7",
+   "reviewed_manifest_sha256": "8e662633f9926b32912a64fbd4fa5357a69d96e0f99bc4a8e10c94ccdd2fa4b3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-21T05:42:55.233545+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 4ed36c5e; manifest 8e662633 independently re-derived matching all four gate records): supersede reordered scope-before-status exactly per the M5-T062-G5 LOW-1 remediation (_require_active deleted, single caller swept); revoke's not-found branches byte-identical per LOW-2; only the 4 allowed_paths changed; no route/mount/contract change; report M5-T067-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: refusal ordering/message change only - no auto-selection introduced; _record_insert collision/chain guards unmoved; legitimate same-property paths keep status/state/refusal code; refused probes mutate nothing (after==before pinned); the G4 reviewer's LIVE mutant harnesses elevated the mutation claims to OBSERVED; report M5-T067-DCV.md."
+     ]
+    }
+   ]
+  },
+  {
+   "directive_id": "D-078",
+   "task_id": "M5-T069",
+   "applicable_requirement_ids": [
+    "D-078-R001",
+    "D-078-R002"
+   ],
+   "reviewed_sha": "68061b1863f43bb6a7ff2cca81b1c8f613d671e6",
+   "reviewed_manifest_sha256": "e9cd29d26ba16d510336267dfe35d7be729a66fdbeb8d1f9ba57f6cadc0b24a3",
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "verified_at": "2026-09-22T21:47:00+00:00",
+   "requirements": [
+    {
+     "id": "D-078-R001",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED (fresh dispatch at frozen 141007c3; own live store probe): all three supersede not-found branches return byte-identical text == the shared _NOT_FOUND_FOR_ADDRESSED_PROPERTY constant with no id echo; scope-before-status order byte-preserved vs the accepted T067 state (control-flow anchors diffed; only raise-arg text changed); G5 by the ORIGINAL T067 LOW-1 finder declares the oracle CLOSED; report M5-T069-DCV.md."
+     ]
+    },
+    {
+     "id": "D-078-R002",
+     "state": "PASS",
+     "evidence": [
+      "DCV SATISFIED: the material diff is exclusively one string constant + message-text substitution + pure test additions - no auto-selection/inference/defaulting path added anywhere; the human-only site-determination boundary untouched; report M5-T069-DCV.md."
+     ]
+    }
+   ]
+  }
+ ]
+}

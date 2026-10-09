@@ -1,0 +1,23 @@
+{
+ "task_id": "M5-T104",
+ "material_commit": "c0ce1ae3 (cherry-pick of wt-m5t104 42a3995a; 3 files, every file MATCH by blob)",
+ "produced_at": "2026-09-24T22:28:42+00:00",
+ "producer": "backend-engineer (orchestrator-dispatched subagent; worktree wt-m5t104)",
+ "requirements": {
+  "D-066-R001": [
+   "The packet's navigation block (graph regenerated at the contract seam) named the reader modules' consumers and fenced the parallel M5-T103's files as forbidden; the new tests use only the public read_sheet contract + stable facade names, so they do not depend on M5-T103-owned internals. [ORCH-HARVEST] at the cherry-picked head c0ce1ae3 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py` (cwd .) -> exit 0: 55 passed in 2.49s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R001": [
+   "Wave-8 capacity unit: contracted at 8e20acf2 (G0), claimed at e9a268a5 with the full worktree path, produced by an orchestrator-dispatched subagent in parallel with the file-disjoint M5-T103; no state or gate skipped. [ORCH-HARVEST] at the cherry-picked head c0ce1ae3 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py` (cwd .) -> exit 0: 55 passed in 2.49s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R002": [
+   "G0 EMPTY overlap vs every active task incl. M5-T103; one worktree wt-m5t104; the producer commit touches exactly the 3 allowed paths, every file MATCH by blob. [ORCH-HARVEST] at the cherry-picked head c0ce1ae3 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py` (cwd .) -> exit 0: 55 passed in 2.49s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R005": [
+   "The architect-sheet reader's test debt is closed without behaviour change: DB-055 (a) the mid-path-cm test now pins the value the bug displaces (points[1]); DB-055 (i) every listed operator is executed with an asserted outcome and a true rotated rectangle is asserted vertex by vertex; DB-064 (a) two distinct Form XObjects decode and place; DB-064 (b) a multi-stream document refuses on per-document byte accounting; DB-055 (e) the apply_matrix citation fixed. Each new test was shown to redden under its mutant (recorded in the report). [ORCH-HARVEST] at the cherry-picked head c0ce1ae3 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py` (cwd .) -> exit 0: 55 passed in 2.49s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ],
+  "D-087-R009": [
+   "Zero new dependencies; unwired; production code unchanged except the one-line citation text; the split-equivalence golden untouched and green. [ORCH-HARVEST] at the cherry-picked head c0ce1ae3 (Python 3.11 local): `python -m ruff check .` (cwd services/api) -> exit 0: All checks passed!; `python C:\\Users\\MLFLL\\AppData\\Local\\Temp\\claude\\C--Users-MLFLL-Downloads-nyc-zoning-ctl24\\4598a04e-a86e-466c-9a14-eaa63bdf9a90\\scratchpad\\shims\\run_sheet_split_tests.py` (cwd .) -> exit 0: 55 passed in 2.49s; `python tools/modularity_check.py --check` (cwd .) -> exit 0:   warn review_signal: tools/agent_supervisor/gate_wave.py - above the justification threshold; record a cohesion justification in review."
+  ]
+ }
+}

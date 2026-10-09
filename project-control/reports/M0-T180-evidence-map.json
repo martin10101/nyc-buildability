@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T180",
+  "requirements": {
+    "D-090-R083": [
+      "This task's share of 'start building': the green baseline. Every PR had been red on web-dependency-security since 2026-10-03 ~01:00 UTC (GHSA-vfj7-8cjw-p6xm, braces <= 3.0.3, no patched version, dev-only chain eslint-config-next -> @next/eslint-plugin-next -> fast-glob -> micromatch -> braces). The chain is removed: eslint-config-next 15.5.21 and @eslint/eslintrc 3.3.6 dropped; the lint config rewritten as a native flat config over an admitted set (@eslint/js 9.39.5, typescript-eslint 8.70.1, eslint-plugin-react-hooks 7.1.1, globals 17.12.0 - each exact-pinned, >= 604800 s old at research time, advisory query empty, integrity recorded in project-control/reports/M0-T180-registry-research.md). Producer commit 5526e756 integrated as 4a783382; producer report project-control/reports/M0-T180-producer-report.md.",
+      "Workflow-proven lock (S4): generate-lockfile run 37095335970 SUCCESS on 4a783382 -> bot commit 4844b56b (npm 11.18.0; npm ci; npm audit --audit-level=low; audit JSON total 0; committed-lock 7-day age gate; npm CLI advisory check). Lock parse at the head: no node_modules/braces, micromatch, fast-glob, @next/eslint-plugin-next or eslint-config-next (S1); 588 -> 397 packages; runtime deps and overrides unchanged (S6).",
+      "Scope correction (S3, recorded in the re-recorded G0 at 2c0735ee): the admitted config's @eslint/js recommended flagged 4 base-code lines (run 37095482896 at 1d127077); four behavior-identical fixes applied by the orchestrator [ORCH-CORRECTED per S3] (justified no-control-regex disables at address-search.ts:56 and source-links.ts:3; /PASS {2}/ in the age-gate TEST regex; \\uFEFF for the literal BOM in loader.server.ts:31); no rule disabled in the config; the age-gate script untouched.",
+      "CI on the corrected head 2ad88408 (runs 37095868671 push / 37095870850 pull_request): web-dependency-security PASS (the step that failed on 37089049103 now passes), web (lint + typecheck + build) PASS, web-e2e PASS - see the gate records for the per-reviewer verification (G3/G4 code-reviewer, G5 security-reviewer) at this head.",
+      "Not claimed under R083: the lane work itself (A-01 #349, A-04 #353, B-11 slice 2 #352, D-03 R082 pass #350, C-06 slice 1 #351 run under their own reviews); the recorded loss of the Next/jsx-a11y/import lint rule sets is a documented trade-off, not a repair; blocker B-028 is resolved in this task's acceptance seam."
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+{
+ "schema": "directive_manifest/v1",
+ "directive_id": "D-065",
+ "version": 1,
+ "slug": "affordable-far-scenarios",
+ "title": "Owner 2026-09-17: affordable-housing FAR pathways are part of the calculations - computed as separate labeled conditional scenarios beside the as-of-right result, with the evaluated rule as the single point of truth (PLUTO columns are cross-checks) and commitments shown as explicit conditions.",
+ "status": "active",
+ "lifecycle_state": "active",
+ "issued_by": "owner",
+ "issued_at": "2026-09-17",
+ "captured_at": "2026-09-17T05:09:45.139356+00:00",
+ "created_at": "2026-09-17T05:09:45.139356+00:00",
+ "updated_at": "2026-09-17T05:09:45.139356+00:00",
+ "channel": "interactive_chat",
+ "frozen_baseline_sha": "d8b3899f61efa6620e18a26541ced96020f5bef9",
+ "capture_head_sha": "33eb083a2d6fa1780ba52fa804751863b40503cc",
+ "owner_approval": {
+  "state": "authorized",
+  "note": "Owner gave the instruction directly in-session, correcting the refuse-only posture for affordable FAR. Scope lands in the established D-045 sequence; G6 legal review unchanged."
+ },
+ "requirements_file": "requirements.json",
+ "verification_file": "verification.json",
+ "final_reviewed_sha": null,
+ "locked_requirement_ids": [
+  "D-065-R001",
+  "D-065-R002",
+  "D-065-R003",
+  "D-065-R004",
+  "D-065-R005",
+  "D-065-R006"
+ ],
+ "requirements_content_digest_sha256": "9d4b9864c3e7f3aa0e45bee228e59353fd03a1c50365a04d9283f66a1e3c79f9",
+ "sources": [
+  {
+   "file": "source-001.md",
+   "kind": "original",
+   "sequence": 1,
+   "recorded_at": "2026-09-17T05:09:45.139356+00:00",
+   "content_digest_sha256": "8cfdd551db238c3874992eb9f5a754b30857b80c2e48e9ba5deee6aec2431183"
+  }
+ ],
+ "amendments": [],
+ "supersedes": [],
+ "superseded_by": null,
+ "affected_tasks": [],
+ "affected_prs": [],
+ "affected_branches": [
+  "candidate/D-024-mrl-option-b"
+ ],
+ "scope": {
+  "kind": "product_scope_requirement",
+  "task_ids": [],
+  "task_types": [],
+  "allowed": "research, rule engineering, scenario computation and presentation for affordable-housing FAR pathways as conditional scenarios in the D-045 sequence",
+  "prohibited": "promoting a PLUTO reference column to an evaluated allowance; assuming program eligibility or developer commitments; publishing pathway rules without G6 qualified legal review; displacing the in-flight M5-T032 packet or the spatial diagnosis"
+ },
+ "audit_log": [
+  {
+   "at": "2026-09-17T05:09:45.139356+00:00",
+   "actor": "orchestrator",
+   "action": "captured",
+   "note": "Captured verbatim from the live owner session; corrects the refuse-only affordable-FAR posture to a computed conditional-scenario requirement."
+  }
+ ]
+}

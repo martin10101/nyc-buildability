@@ -543,38 +543,34 @@ class RotationLedgerTests(JournalTestBase):
         self.assertEqual(self.ledger.stored_handoff()["handoff_digest"],
                          self.handoff.digest())
 
-    def test_a_new_session_id_is_always_new(self) -> None:
-        first = rot.new_session_id()
-        self.assertNotEqual(first, rot.new_session_id(first))
+    def test_a_rotation_record_key_is_always_new_and_never_looks_like_a_session(self) -> None:
+        # M0-T080: this used to be `new_session_id`, which minted `sup-<uuid4>` and
+        # was stored where the NEW SESSION's identity belonged - an id no provider
+        # had ever issued. It is now named for what it is (supervisor-internal
+        # bookkeeping) and carries a prefix that can never be mistaken for a
+        # provider session id, and `ClaudeRunner.with_resume` refuses one outright.
+        first = rot.new_rotation_record_key()
+        self.assertNotEqual(first, rot.new_rotation_record_key(first))
+        self.assertTrue(first.startswith("sup-rot-"))
+        self.assertFalse(hasattr(rot, "new_session_id"),
+                         "the old name must be gone, not aliased: an alias would let a "
+                         "caller keep minting a fake session identity")
 
-    def test_ready_checkpoint_is_required(self) -> None:
-        checkpoint = ClaudeCheckpoint(
-            schema_version="1.0.0", run_id="r", checkpoint_id="c", task_id="t",
-            claude_session_id="new-1", status="IN_PROGRESS", summary="working",
-            starting_sha="a" * 40, current_sha="a" * 40, branch="b", worktree="w",
-            proposed_next_action="continue")
-        with self.assertRaises(rot.RotationError) as raised:
-            self.ledger.assert_ready_checkpoint(checkpoint, expected_session_id="new-1")
-        self.assertEqual(raised.exception.code, "ready_checkpoint_required")
-
-    def test_ready_checkpoint_must_come_from_the_new_session(self) -> None:
-        checkpoint = ClaudeCheckpoint(
-            schema_version="1.0.0", run_id="r", checkpoint_id="c", task_id="t",
-            claude_session_id="old-1", status="READY", summary="re-oriented",
-            starting_sha="a" * 40, current_sha="a" * 40, branch="b", worktree="w",
-            proposed_next_action="continue")
-        with self.assertRaises(rot.RotationError) as raised:
-            self.ledger.assert_ready_checkpoint(checkpoint, expected_session_id="new-1")
-        self.assertEqual(raised.exception.code, "wrong_session_ready")
-
-    def test_a_valid_ready_checkpoint_is_accepted(self) -> None:
-        checkpoint = ClaudeCheckpoint(
-            schema_version="1.0.0", run_id="r", checkpoint_id="c", task_id="t",
-            claude_session_id="new-1", status="READY", summary="re-oriented",
-            starting_sha="a" * 40, current_sha="a" * 40, branch="b", worktree="w",
-            proposed_next_action="implement recovery.py")
-        self.ledger.assert_ready_checkpoint(checkpoint, expected_session_id="new-1",
-                                            previous_session_id="old-1")
+    def test_there_is_exactly_one_ready_gate_and_it_is_the_live_one(self) -> None:
+        # M0-T080 correction U4. `RotationLedger.assert_ready_checkpoint` used to
+        # live here with three tests of its own, but it had ZERO production
+        # callers, its docstring falsely claimed `turnover_seam.SeamTurnover` as
+        # one, and it DISAGREED with the live gate: it demanded
+        # `claude_session_id == expected_session_id`, unsatisfiable on a
+        # reorientation because the successor's provider id does not exist until
+        # the successor reports it. Two gates that disagree are worse than one.
+        # The dead duplicate is gone; the live gate is covered by
+        # `test_agent_supervisor_turnover_live_seam.py::SeamTurnoverTests`.
+        self.assertFalse(hasattr(self.ledger, "assert_ready_checkpoint"),
+                         "the dead duplicate READY gate must not come back as a decoy")
+        from tools.agent_supervisor import turnover_seam as ts
+        self.assertTrue(callable(getattr(ts.SeamTurnover, "require_ready", None)),
+                        "the live READY gate is SeamTurnover.require_ready")
 
     def test_an_archived_session_is_never_resumed(self) -> None:
         self.ledger.archive_session("old-1", reason="rotation")
@@ -586,30 +582,95 @@ class RotationLedgerTests(JournalTestBase):
     def test_completing_a_rotation_archives_and_clears_pending(self) -> None:
         rot.observe_mid_unit(self.journal, reason_code="context_pressure")
         self.assertTrue(rot.rotation_pending(self.journal))
-        record = self.ledger.complete_rotation(old_session_id="old-1",
-                                               new_session_id_value="new-1",
-                                               handoff_digest=self.handoff.digest())
+        record = self.ledger.complete_rotation(
+            previous_provider_session_id="old-1",
+            rotation_record_key="sup-rot-abc",
+            handoff_digest=self.handoff.digest(),
+            continuity_mode="reorientation",
+            provider_session_none_reason="cross_model")
         self.assertFalse(rot.rotation_pending(self.journal))
         self.assertIn("old-1", self.ledger.archived_sessions())
         self.assertEqual(record["tier"], "NOTIFY")
+        # M0-T080: BOTH identities are on the record, and the internal key is
+        # never archived as though it were a session.
+        self.assertEqual(record["previous_provider_session_id"], "old-1")
+        self.assertEqual(record["rotation_record_key"], "sup-rot-abc")
+        self.assertEqual(record["provider_session_id"], "")
+        self.assertEqual(record["provider_session_none_reason"], "cross_model")
+        self.assertNotIn("sup-rot-abc", self.ledger.archived_sessions())
 
-    def test_a_rotation_that_reuses_the_session_id_is_refused(self) -> None:
+    def test_a_resume_names_the_session_and_does_not_archive_it(self) -> None:
+        # A rotation recorded as a RESUME continues the same provider session, so
+        # archiving it would make the very resume being recorded illegal (S15).
+        record = self.ledger.complete_rotation(
+            previous_provider_session_id="prov-1",
+            rotation_record_key="sup-rot-xyz",
+            handoff_digest=self.handoff.digest(),
+            continuity_mode="resume",
+            provider_session_id="prov-1")
+        self.assertEqual(record["continuity_mode"], "resume")
+        self.assertEqual(record["provider_session_id"], "prov-1")
+        self.assertNotIn("prov-1", self.ledger.archived_sessions())
+        self.ledger.assert_not_archived("prov-1")
+
+    def test_a_resume_with_no_provider_session_id_is_refused(self) -> None:
         with self.assertRaises(rot.RotationError) as raised:
-            self.ledger.complete_rotation(old_session_id="s-1", new_session_id_value="s-1",
-                                          handoff_digest="d")
-        self.assertEqual(raised.exception.code, "session_not_rotated")
+            self.ledger.complete_rotation(
+                previous_provider_session_id="prov-1",
+                rotation_record_key="sup-rot-xyz", handoff_digest="d",
+                continuity_mode="resume")
+        self.assertEqual(raised.exception.code, "resume_without_provider_session")
+
+    def test_a_reorientation_must_say_why_resume_was_impossible(self) -> None:
+        with self.assertRaises(rot.RotationError) as raised:
+            self.ledger.complete_rotation(
+                previous_provider_session_id="prov-1",
+                rotation_record_key="sup-rot-xyz", handoff_digest="d",
+                continuity_mode="reorientation")
+        self.assertEqual(raised.exception.code, "reorientation_without_reason")
+
+    def test_resuming_an_archived_session_is_refused_at_completion(self) -> None:
+        self.ledger.archive_session("prov-1", reason="an earlier rotation")
+        with self.assertRaises(rot.RotationError) as raised:
+            self.ledger.complete_rotation(
+                previous_provider_session_id="prov-1",
+                rotation_record_key="sup-rot-xyz", handoff_digest="d",
+                continuity_mode="resume", provider_session_id="prov-1")
+        self.assertEqual(raised.exception.code, "archived_session_resume")
+
+    def test_the_internal_key_may_never_equal_the_provider_session_id(self) -> None:
+        # M0-T080 replacement for the old "a rotation that reuses the session id is
+        # refused": the two values are different KINDS of identity now, so holding
+        # the same value is a conflation, not merely a non-rotation.
+        with self.assertRaises(rot.RotationError) as raised:
+            self.ledger.complete_rotation(
+                previous_provider_session_id="s-1", rotation_record_key="s-1",
+                handoff_digest="d", continuity_mode="reorientation",
+                provider_session_none_reason="cross_model")
+        self.assertEqual(raised.exception.code, "identity_conflated")
+
+    def test_an_unknown_continuity_mode_is_refused(self) -> None:
+        with self.assertRaises(rot.RotationError) as raised:
+            self.ledger.complete_rotation(
+                previous_provider_session_id="s-1", rotation_record_key="sup-rot-1",
+                handoff_digest="d", continuity_mode="probably-resumed")
+        self.assertEqual(raised.exception.code, "unknown_continuity_mode")
 
     def test_export_payload_requires_a_ready_first_response(self) -> None:
         payload = rot.export_handoff_payload(self.handoff, self.verification,
-                                             new_session="new-1",
+                                             rotation_record_key="sup-rot-1",
                                              evidence=("packet-1",))
-        self.assertEqual(payload["new_session_id"], "new-1")
+        self.assertEqual(payload["rotation_record_key"], "sup-rot-1")
+        # M0-T080: the payload must NOT claim a new session id. The successor's
+        # provider session identity does not exist until the provider issues it.
+        self.assertNotIn("new_session_id", payload)
         self.assertIn("READY", payload["required_first_response"])
         self.assertEqual(payload["handoff_digest"], self.handoff.digest())
 
     def test_export_refuses_clear_automation(self) -> None:
         handoff = good_handoff(exact_next_action="continue")
-        payload = rot.export_handoff_payload(handoff, self.verification, new_session="n")
+        payload = rot.export_handoff_payload(handoff, self.verification,
+                                             rotation_record_key="sup-rot-1")
         self.assertNotIn("/clear", str(payload))
 
 

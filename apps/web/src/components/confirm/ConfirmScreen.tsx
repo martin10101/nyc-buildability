@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { announcementForOutcome } from "@/lib/announce";
 import { fetchPropertyProfile, type LookupOutcome } from "@/lib/api";
 import { validateBblInput } from "@/lib/bbl";
@@ -377,11 +377,18 @@ function ConfirmCard({ profile }: { profile: PropertyProfile }) {
       <section className="card next-action" data-testid="confirm-next-action">
         <h2 className="section-title">Next step</h2>
         <p className="section-note">
-          Rule evaluation and scenario comparison (steps 3–4) arrive with
-          the rules and scenario milestones; this build does not pretend to
-          run them.
+          Continue to the preliminary scenario comparison (Step 3) for this
+          property. It is draft engineering only — never a Verified
+          determination — and this build does not pretend otherwise.
         </p>
-        <Link className="primary-button next-action-link" href="/property">
+        <Link
+          className="primary-button next-action-link"
+          href={`/property/compare?bbl=${encodeURIComponent(profile.identity.bbl)}`}
+          data-testid="confirm-next-compare"
+        >
+          Compare preliminary scenario
+        </Link>{" "}
+        <Link className="next-action-link" href="/property">
           Back to property lookup
         </Link>
       </section>
@@ -415,8 +422,12 @@ export function ConfirmScreen({ bbl }: { bbl: string }) {
   }, [bbl, attempt]);
 
   // D1 (M2-T005): when an outcome arrives (success or failure), focus
-  // moves deterministically to the outcome heading.
-  useEffect(() => {
+  // moves deterministically to the outcome heading. D-flake: a LAYOUT effect,
+  // so focus moves in the same commit that removes the focused loading card
+  // (an arrival is never a discrete-input commit, so a passive effect could
+  // run after a paint and leave focus on <body> meanwhile). The retry hand-off
+  // to the loading card is a layout effect too (LoadingStages).
+  useLayoutEffect(() => {
     if (!loading && outcome) {
       outcomeRef.current
         ?.querySelector<HTMLElement>("[data-outcome-heading]")

@@ -1,0 +1,130 @@
+{
+  "task_id": "M5-T029",
+  "reviewed_sha": "1e93d0ccb0e6a3b49a5f761c530b717d3bbf8bf0",
+  "recorded_at": "2026-09-14T21:44:22.162Z",
+  "source": "GitHub Actions connector reads; run34899412894",
+  "result": "FAIL",
+  "jobs": [
+    {
+      "id": 104161480938,
+      "name": "web (lint + typecheck + build)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481113,
+      "name": "api (ruff + pytest)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481121,
+      "name": "model-routing (frozen corpus + allowlist boundary tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481140,
+      "name": "web-dependency-security (audit + committed-lock age gate + npm CLI advisory)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481146,
+      "name": "api-tooling-lock-verify (tooling lock byte-identical + age-gate unit tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481206,
+      "name": "web-e2e (vitest + Playwright vs recorded-official-fixture API)",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 104161481222,
+      "name": "api-lock-verify (requirements.txt is a fresh hash-pinned uv lock)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481260,
+      "name": "contracts-schema-bundle (runtime schema drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481289,
+      "name": "contracts-typegen (TS drift check, byte-identical)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481291,
+      "name": "code-graph (determinism --check + fixture tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481345,
+      "name": "context-pipeline (Units B-F suites + integration/adversarial tests)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481421,
+      "name": "product-map (owner-dashboard metadata integrity)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481433,
+      "name": "context-index-a1 (fingerprint + cache + baseline)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481468,
+      "name": "contracts (JSON Schema validation)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481471,
+      "name": "control-plane (workflow regression test, ADR-005)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481485,
+      "name": "modularity (deterministic size/responsibility regression gate)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481488,
+      "name": "exact-production-install (Render pip install path + validate_profile + pip-audit)",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 104161481590,
+      "name": "supervisor-bridge (pytest tools/test_agent_supervisor_*.py)",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "web_e2e": {
+    "unit_files": 37,
+    "unit_tests": 612,
+    "browser_passed": 98,
+    "browser_failed": 1,
+    "failures": [
+      "Legacy lot-outline.spec.ts:57 requires visible City Planning attribution; compact label was NYC DCP / MapPLUTO"
+    ],
+    "artifact_id": 10369948132,
+    "artifact_sha256": "b0974b448874a77e9041cb04acf070cdca73cacf1593043f3b8fbf9e95c8ef6c",
+    "artifact_bytes": 93066373
+  },
+  "notes": "All 18 jobs completed; 17 success and browser regression failed. All new architect journeys passed. Screenshots undergo independent visual review; no acceptance or candidate update at this version."
+}

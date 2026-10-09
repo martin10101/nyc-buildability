@@ -1,0 +1,24 @@
+{
+  "task_id": "M0-T128",
+  "note": "Evidence per D-024 requirement applicable to M0-T128 (resolver set, 6 rows: R400-R405). Producer: supervisor-wiring-producer (fresh unnamed roster spawn, isolated worktree off 7576e0d; single-return bounded production; return captured VERBATIM as M0-T128-producer-return-1.md; patch sha256 e5b0d3f0... captured at the seam per the standing R395 discipline; context retired). Material identity: commit 1485c73.",
+  "requirements": {
+    "D-024-R400": [
+      "run_task_queue (next_task.py:763) wired at the existing cmd_start dispatch branch (cli.py:3069) strictly behind the pre-existing bounded_mode_gate (cli.py:2918); first task = the owner-typed --task-packet; successors from the owner-supplied ordered --packet-queue (cli.py:3304); bounded by --max-tasks default 1 (cli.py:3303) so every certified single-task command shape keeps its exact current behavior; no new activation surface, no R595/broker/allowlist change; live-path family-1 test drives the REAL SupervisedLoop + journal + plan_close_run + advancement with only the provider faked at the standard seam."
+    ],
+    "D-024-R401": [
+      "All tests use temp runtime dirs (runtime_dir_for base=tmp); the live runtime dir and preserved artifacts were never opened by the producer; journal remains PAUSED_RECOVERY / transitions 22 / audit 53 (verified unchanged through the window at the M0-T127 DCV and re-checkable at accept)."
+    ],
+    "D-024-R402": [
+      "Advancement via the EXISTING single-winner CAS record_advancement (next_task.py:187) recorded BEFORE selection; completion gated by run_reached_complete (next_task.py:702) - checkpoint + Codex-review completion required before any advancement; between_task_seam (next_task.py:664) re-checks stop/pause/graceful/emergency intents + durable budget + rotation ceiling before every next-task dispatch; per-task isolation re-enforced via launch_seam.enforce_launch_bindings in driver eligibility AND the _run_loop backstop (cli.py:2655); typed audit rows for selection/skip/advancement/dispatch; only NEW durable keys written."
+    ],
+    "D-024-R403": [
+      "No PR #241 action, no clear-recovery, no loop start against any real checkout, no live commissioning during the window; the wiring activates nothing - the owner-typed start remains the sole trigger."
+    ],
+    "D-024-R404": [
+      "tools/test_agent_supervisor_cross_task.py: 35 removal-sensitive tests covering all ten families (live-path cross-task selection through the real loop; per-category eligibility skips; dependency ordering; isolated-worktree binding refusal; checkpoint+review completion gating; duplicate advancement; crash BEFORE advancement and AFTER advancement/BEFORE dispatch via genuine journal reopen; stale packet content; NO_ELIGIBLE_WORK landing; between-task intent stops). Family-to-test map in M0-T128-design-record.md section 9. Orchestrator reproduced the pack (35) plus the 5-pack battery (335) at the integrated tree."
+    ],
+    "D-024-R405": [
+      "evaluate_eligibility (next_task.py:551): eleven fail-closed categories (owner-gated, blocked, wrong-status - eligible set is the narrow documented {claimed}, unaccepted dependencies, stale/changed content, missing/unparseable packet, missing/dirty/primary-checkout worktree, binding violations), each a VISIBLE skip with code + reason + audit row, never silent; an exhausted eligible set lands the existing NO_ELIGIBLE_WORK family and stops cleanly."
+    ]
+  }
+}

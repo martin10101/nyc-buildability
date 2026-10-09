@@ -147,6 +147,29 @@ _PERMISSION_DENIED = re.compile(
     re.IGNORECASE,
 )
 
+#: Public aliases for the shared negative-guard patterns (M0-T093, D-024-R018:
+#: the guardrail-refusal classifier must REUSE these guards, never duplicate
+#: them, while keeping its own triggers/counters/transitions per D-024-R075).
+#: The underscore names above remain this module's own vocabulary.
+LIMIT_HINT_PATTERN = _LIMIT_HINT
+NETWORK_AMBIGUITY_PATTERN = _NETWORK_AMBIGUITY
+PERMISSION_DENIED_PATTERN = _PERMISSION_DENIED
+
+
+def normalize_output_text(text: Any) -> str:
+    """Public alias of `_normalize` (M0-T093, D-024-R018 reuse)."""
+    return _normalize(text)
+
+
+def references_fable(result: Mapping[str, Any] | None, model_id: str) -> bool:
+    """Public Fable-attribution check (M0-T093, D-024-R018 reuse).
+
+    Accepts a `None` structured result so text-only evidence can still be
+    attributed through `model_id` alone.
+    """
+    return _references_fable(result if isinstance(result, Mapping) else {},
+                             model_id)
+
 
 def _normalize(text: Any) -> str:
     """Coerce to text and fold typographic apostrophes to ASCII. Never raises."""

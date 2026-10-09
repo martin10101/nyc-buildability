@@ -1,15 +1,14 @@
 import { formatValue, urlHost } from "@/lib/format";
+import { sourceFactLinks } from "@/lib/provenance-link";
 import type { Reproducibility, SourceFact } from "@/lib/contract";
 
 /**
  * Per-fact provenance drill-down (PRD sections 9/19; task M2-T001 output 2).
  *
  * Uses a native <details> disclosure: keyboard-accessible without JS.
- * Renders ONLY documented source_fact keys from the record; the dataset id
- * and request-URL host come from the documented profile-level
- * `reproducibility` object (the per-record dataset_id/request_url keys the
- * builder also emits are NOT documented in source_fact.schema.json and are
- * deliberately not consumed).
+ * This legacy surface receives no profile identity. Its current-record link
+ * uses the captured fact's validated BBL and same-source dataset metadata.
+ * Captured metadata stays escaped text; request_url never becomes an href.
  */
 export function ProvenanceDisclosure({
   records,
@@ -32,12 +31,21 @@ export function ProvenanceDisclosure({
       </p>
     );
   }
+  const entries = records.map(record => ({ record, links: sourceFactLinks(record, reproducibility) }));
   return (
     <details className="provenance-details">
       <summary>{label}</summary>
       {joinNote ? <p className="section-note">{joinNote}</p> : null}
-      {records.map((record) => (
+      {entries.some(({ links }) => links.currentRecordUrl) ? <p className="section-note">Current records may differ from the captured evidence shown here.</p> : null}
+      {entries.map(({ record, links }) => (
         <div className="provenance-body" key={record.provenance_id}>
+          {/* ZoLa-first (D-064-R005): the human-readable lot page is the PRIMARY
+              link; the raw PLUTO JSON record is demoted to a clearly secondary
+              link. Both are gated by the SAME valid, conflict-free lot identity
+              (sourceFactLinks), so a wrong-lot / wrong-source / dataset-conflict
+              record renders neither — honest absence, never a guessed link. */}
+          {links.zolaUrl ? <p><a href={links.zolaUrl} target="_blank" rel="noopener noreferrer" data-testid="zola-lot-link">View this lot on ZoLa</a></p> : null}
+          {links.currentRecordUrl ? <p><a className="section-note" href={links.currentRecordUrl} target="_blank" rel="noopener noreferrer">Current PLUTO record (JSON)</a></p> : null}
           <dl>
             <dt>Source</dt>
             <dd>{record.source_id}</dd>
@@ -64,17 +72,42 @@ export function ProvenanceDisclosure({
             </dd>
             <dt>Conflict status</dt>
             <dd>{record.conflict_status}</dd>
-            {reproducibility ? (
+            <dt>Fact review</dt>
+            <dd>{record.user_confirmed_or_overridden}</dd>
+            {links.datasetId !== undefined ? (
               <>
                 <dt>Dataset id</dt>
-                <dd>{reproducibility.dataset_id}</dd>
-                <dt>Retrieved from</dt>
-                <dd>{urlHost(reproducibility.request_url)}</dd>
+                <dd data-testid="provenance-dataset-id">
+                  {links.datasetUrl ? (
+                    <a
+                      href={links.datasetUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      data-testid="provenance-source-link"
+                    >
+                      About this dataset · {links.datasetId}
+                    </a>
+                  ) : (
+                    links.datasetId
+                  )}
+                </dd>
               </>
             ) : null}
+            {reproducibility?.source_id === record.source_id ? <>
+              <dt>Retrieved from</dt>
+              <dd>{urlHost(reproducibility.request_url)}</dd>
+            </> : null}
           </dl>
+          <details className="provenance-details">
+            <summary>Full captured source record</summary>
+            <pre>{JSON.stringify(record, null, 2)}</pre>
+          </details>
         </div>
       ))}
+      {reproducibility ? <details className="provenance-details">
+        <summary>Full captured profile metadata</summary>
+        <pre>{JSON.stringify(reproducibility, null, 2)}</pre>
+      </details> : null}
     </details>
   );
 }

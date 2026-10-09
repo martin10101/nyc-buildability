@@ -3,7 +3,7 @@ name: supabase-engineer
 description: Implements and tests Supabase Postgres/PostGIS/Auth/Storage/pgvector, migrations, RLS, functions, indexes, and tenant isolation.
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 model: claude-opus-4-8
-effort: high
+effort: xhigh
 permissionMode: default
 isolation: worktree
 memory: project

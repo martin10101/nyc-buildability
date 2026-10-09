@@ -1,3 +1,5 @@
+> **Superseded — see the [2026-09-28 plan](docs/PRODUCT_PLAN_CURRENT_2026-09-28.md).** Replaced by the expansion hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2, §2.3) and the plan. Do not paste the continuation prompt or add the pack's work as tasks.
+
 # NYC Buildability — 3D, Competitive Features & Premium UI Expansion Pack
 
 This is a **separate additive pack** for the existing NYC Development Feasibility Claude project.

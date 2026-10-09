@@ -1,3 +1,5 @@
+> **Partly set aside — the [2026-09-28 plan](PRODUCT_PLAN_CURRENT_2026-09-28.md) wins on conflict.** Set aside: values "shown with the provisional value clearly labeled" (its §7.2; plan §5, §5a.3), the separate full review screen (its §10.1; plan §3) and edits to extracted boundary geometry (its §10.2–10.4; plan §4). Deferred, outside Phase 1; owner question OD-5. The rest still applies.
+
 # Survey Review Workflow (canonical)
 
 **Status:** Canonical, implementation-ready workflow specification for the survey **review
