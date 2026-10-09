@@ -151,8 +151,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A calculation entry read as a reviewed or legal determination -> every page carries the standing draft_note and ADR-007 label; no human verdict is entered; legal_vs_design marks each figure",
     "An expected value taken from a program run rather than an independent record -> expected is sourced only from the reference cases (step-P5, real-lot, step-P6) and the checker/tests keep expected and actual apart",
@@ -164,7 +164,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T06:44:55.210953+00:00",
-  "updated_at": "2026-10-09T08:12:06.386027+00:00",
+  "updated_at": "2026-10-09T08:27:58.026944+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -228,5 +228,7 @@
       "status": "claimed",
       "message": "Reviews G3 (data-contract-verifier) and G4 (qa-engineer) PASS at fedef10b, none blocking; record project-control/reports/M4-T038-G3G4.md (both returns unchanged); evidence map of 23 rows with the known limits; the reviews' notes kept as backlog row DB-211. CI on fedef10b read green by the orchestrator at 08:08 UTC (run 37902086129, 21 of 21 jobs). Written at 08:12 UTC."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T08:27:58.026763+00:00"
 }
