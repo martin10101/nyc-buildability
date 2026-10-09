@@ -426,6 +426,76 @@ def test_a_step_with_an_invalid_verdict_is_caught():
 
 
 # --------------------------------------------------------------------------
+# each listed gap that names a withheld program result uses the program's own kind
+# (work_owed -> code not built; missing_information -> a missing fact about the property)
+# --------------------------------------------------------------------------
+_GAP_KIND_TO_PAGE_KIND = {
+    "work_owed": "code not built",
+    "missing_information": "a missing fact about the property",
+}
+_REASON_KIND_TO_PAGE_KIND = {
+    "rule_not_implemented": "code not built",
+    "missing_input": "a missing fact about the property",
+}
+
+
+def _result_blocks(doc: dict) -> dict:
+    blocks: dict = {}
+    for ans in doc["answers"].values():
+        if isinstance(ans, dict):
+            for k, v in ans.get("value_states", {}).items():
+                blocks[k] = v
+    blocks["building_option"] = doc["answers"]["building_option"]
+    for k in ("floor_stack", "unit_estimate"):
+        blocks[k] = doc[k]
+    return blocks
+
+
+def _expected_page_kind(block: dict):
+    gk = block.get("gap_kind")
+    if gk:
+        return _GAP_KIND_TO_PAGE_KIND.get(gk)
+    return _REASON_KIND_TO_PAGE_KIND.get(block.get("reason_kind"))
+
+
+def _gap_kind_mismatches(closing: dict, blocks: dict) -> list:
+    bad = []
+    for row in closing["disagreements"] + closing["missing_facts"]:
+        for key in row["program_results"]:
+            want = _expected_page_kind(blocks[key])
+            if want is None or row["kind"] != want:
+                bad.append((key, row["kind"], want))
+    return bad
+
+
+def test_every_listed_withheld_gap_kind_agrees_with_the_program():
+    # Every closing gap that names a withheld program result uses the kind the program itself
+    # records for that result in the committed results document.
+    blocks = _result_blocks(_fixture())
+    c = BY_ID["calc-first-building-option-complete"]
+    assert _gap_kind_mismatches(c["closing"], blocks) == []
+    named = {k for row in c["closing"]["disagreements"] + c["closing"]["missing_facts"]
+             for k in row["program_results"]}
+    want = {"legal_unit_limit_standard", "max_lot_coverage", "building_option", "rear_yard"}
+    assert want <= named
+    # the corrected row: the legal unit limit is code not built (gap_kind work_owed)
+    lul = [r for r in c["closing"]["missing_facts"]
+           if "legal_unit_limit_standard" in r["program_results"]]
+    assert lul and lul[0]["kind"] == "code not built"
+
+
+def test_a_mismatched_gap_kind_is_caught():
+    # mutation proof (a deep copy, not the committed file): mislabel the withheld legal unit
+    # limit as 'unresolved law' and the enforcement catches it against the program's work_owed kind.
+    blocks = _result_blocks(_fixture())
+    c = copy.deepcopy(BY_ID["calc-first-building-option-complete"])
+    for r in c["closing"]["missing_facts"]:
+        if "legal_unit_limit_standard" in r["program_results"]:
+            r["kind"] = "unresolved law"
+    assert _gap_kind_mismatches(c["closing"], blocks) != []
+
+
+# --------------------------------------------------------------------------
 # the calculation history is append-only and a separate list from the rule history
 # --------------------------------------------------------------------------
 def test_calculations_history_is_append_only_and_separate():

@@ -82,10 +82,10 @@ Planned, not built:
 - Commit tested: `28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
-- Counts: 40 passed
+- Counts: 42 passed
 - Evidence: [run log](../evidence/calc-lot-coverage-by-portion.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

@@ -2987,11 +2987,11 @@
         "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
-        "counts": "40 passed",
+        "counts": "42 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
         "tested_code_identity_sha256": "f20a1f2b02229642e15aa76fbe5e6a18bc3513bb6590d29df0b45139e5d51e76",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
@@ -3144,11 +3144,11 @@
         "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
-        "counts": "40 passed",
+        "counts": "42 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
         "tested_code_identity_sha256": "10d71edb28fb4c4186425c053b368f04bce81ca1e258ea78ddb4fbf426d52908",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
@@ -3325,11 +3325,11 @@
         "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
-        "counts": "40 passed",
+        "counts": "42 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
         "tested_code_identity_sha256": "16b8e100a9a37e748976de50233bcda66782c874c52f58c77b853f0bbdf377f3",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
@@ -3465,7 +3465,7 @@
       "applicable_to": null,
       "applies_where": "The legal ceiling on dwelling units: the maximum residential floor area divided by the ZR 23-52(b) factor 680, with the fraction counted as one unit only at three-quarters or more. The engine computes 29 for the benchmark lot (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit because there is no evidence of whether the lot is in a special density area (ZR 23-52(a)(1)) and the shown form was not checked against an independent example.",
       "exceptions": [
-        "In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)); the benchmark lot's special-density status is not known, so the limit is withheld.",
+        "In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)). The law is read and the cases read this Queens lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district); the program has not connected that evidence or built the checked conditional display (gap_kind work_owed = code not built), so it withholds the limit.",
         "Qualifying senior housing has no factor (ZR 23-52(a)(2)); qualifying affordable housing is a separate labelled limit."
       ],
       "interpretation": "max dwelling units = maximum residential floor area / 680; a fraction of .75 or more counts as one unit, otherwise it is dropped. The engine computes 20,150 / 680 = 29.63 -> 29 through the r6b-dwelling-units rule, but the document withholds the limit pending special-density evidence and an independent check.",
@@ -3508,7 +3508,9 @@
         "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
         "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
         "docs/reference-cases/R6B/cases/real-lot.json (real-lot#L6, independent)",
-        "docs/reference-cases/R6B/cases/step-p6-worked.json (real-unit-limit, independent)"
+        "docs/reference-cases/R6B/cases/step-p6-worked.json (real-unit-limit, independent)",
+        "docs/reference-cases/R6B/cases/step-p3-worked.json (special-density status, independent)",
+        "docs/reference-cases/R6B/cases/step-p1-worked.json (special-density-areas-list, independent)"
       ],
       "test_links": [
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
@@ -3518,11 +3520,11 @@
         "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
-        "counts": "40 passed",
+        "counts": "42 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
         "tested_code_identity_sha256": "e353aa1181e2ce0ac8a513233cacc24e26781b67e2ac45e4a9c16f6119cef008",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
@@ -3542,9 +3544,9 @@
         "verdict": "Not reviewed"
       },
       "gaps": [
-        "The withhold decision (special-density area unknown) is not built as a conditional result; r6b-dwelling-units covers the formula only."
+        "The withhold is code not built (the program's own gap_kind is work_owed): the connected special-density evidence and the checked conditional display are not built; r6b-dwelling-units covers the formula only. It is not unresolved law - the law is read and the cases settle the lot's status."
       ],
-      "coverage_gap": "The legal dwelling-unit-limit decision is withheld because the special density area is unknown; r6b-dwelling-units covers the formula only, not the withhold decision.",
+      "coverage_gap": "The legal dwelling-unit-limit decision is withheld as code not built (work_owed): the program has not connected the special-density evidence (the cases read the lot outside both areas) or built the checked conditional display; r6b-dwelling-units covers the formula only.",
       "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
       "inputs": [
         "zoning_district = R6B",
@@ -3589,7 +3591,7 @@
             "dwelling_units_before_rounding": 29.63235294117647,
             "max_dwelling_units": 29
           },
-          "engine_note": "The engine computes 29 internally through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit: there is no evidence of whether the lot is in a special density area (ZR 23-52(a)(1)) and the shown form was not checked against an independent example (fixture legal_unit_limit_standard way=withheld)."
+          "engine_note": "The engine computes 29 internally through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit (fixture legal_unit_limit_standard way=withheld, gap_kind work_owed): the program has not connected the special-density evidence or built the checked conditional display. The law is read and the cases read this lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district), so the withhold is code not built, not unresolved law."
         },
         "agrees": null
       }
@@ -3676,11 +3678,11 @@
         "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
-        "counts": "40 passed",
+        "counts": "42 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
         "tested_code_identity_sha256": "1274168775754628a8e2d2f19c0033a383beb0bff43c449db02f22be79b561c2",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
@@ -3903,11 +3905,11 @@
         "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
-        "counts": "40 passed",
+        "counts": "42 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
         "tested_code_identity_sha256": "7fc008514bf9285d47e97c7371cf047cb1baf4713f4de2fb3ca1a78f91a718f3",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
@@ -4092,16 +4094,19 @@
         "disagreements": [
           {
             "kind": "a design assumption that differs",
-            "what": "The engine stacks one uniform widest plate to a partial top floor (on the made-up lot: 3 floors of 8,000/8,000/4,000 = 20,000 sq ft at 30 ft), while the independent example offers two buildings - the widest footprint in whole storeys to the floor-area maximum (building A) and the fewest storeys reaching the 30 ft minimum base height (building B). Backlog row DB-210; which building the first option shows is the owner's pending decision. Not resolved here.",
+            "program_results": [],
+            "what": "The engine stacks one uniform widest plate to a partial top floor (on the made-up lot: 3 floors of 8,000/8,000/4,000 = 20,000 sq ft at 30 ft), while the independent example offers two buildings - the widest footprint in whole storeys to the floor-area maximum (building A) and the fewest storeys reaching the 30 ft minimum base height (building B). Backlog row DB-210; which building the first option shows is the owner's pending decision. (This row is the method difference only; the building_option withhold itself is listed below as code not built, its program gap_kind work_owed.) Not resolved here.",
             "would_settle": "The building-option generator's design and the owner's choice on which building to show (DB-210 point b)."
           },
           {
             "kind": "a missing fact about the property",
-            "what": "The recorded lot area 10,075 sq ft and the tax-map outline area 10,387.99 sq ft disagree (about 313 sq ft); the program shows both and chooses neither. The maximum floor area rests on the recorded area (20,150 sq ft); the footprint rests on the outline, so the widest same-plan building is one storey (DB-210 point a).",
+            "program_results": [],
+            "what": "The recorded lot area 10,075 sq ft and the tax-map outline area 10,387.99 sq ft disagree (about 313 sq ft); the program shows both and chooses neither (the floor area is available-conditional, not withheld). The maximum floor area rests on the recorded area (20,150 sq ft); the footprint rests on the outline, so the widest same-plan building is one storey (DB-210 point a).",
             "would_settle": "A survey or deed dimensions naming the document; DB-210 point a."
           },
           {
             "kind": "a missing fact about the property",
+            "program_results": [],
             "what": "The two independent readings differ in the decimals of the real lot's footprint (corner 9,997.60 vs 9,997.46; strip 390.39 vs 390.52; total 10,309.91 vs 10,309.88); both figures are held, no single figure.",
             "would_settle": "A surveyed outline."
           }
@@ -4109,17 +4114,29 @@
         "missing_facts": [
           {
             "kind": "code not built",
-            "what": "Lot coverage by portion, the building-option generator and floor schedule, and the preliminary apartment estimate are not built; the document withholds them.",
+            "program_results": [
+              "max_lot_coverage",
+              "building_option",
+              "floor_stack",
+              "unit_estimate"
+            ],
+            "what": "Lot coverage by portion, the building-option generator and floor schedule, and the preliminary apartment estimate are not built; the document withholds them. This matches the program's own kinds: max_lot_coverage and building_option carry gap_kind work_owed, floor_stack and unit_estimate reason_kind rule_not_implemented.",
             "would_settle": "Building the generators and checking each against the independent example."
           },
           {
-            "kind": "unresolved law",
-            "what": "The legal dwelling-unit limit is withheld because there is no evidence of whether the lot is in a special density area (ZR 23-52(a)(1)); the engine computes 29 internally.",
-            "would_settle": "Sourced evidence of the special density area, then showing the limit as a conditional result."
+            "kind": "code not built",
+            "program_results": [
+              "legal_unit_limit_standard"
+            ],
+            "what": "The legal dwelling-unit limit is withheld: the program's own gap_kind is work_owed and its reason is that how the limit is shown 'has not been worked out and checked against an independently worked example'. The law is read (ZR 23-52(a)(1); the special density areas are the Manhattan Core and the Special Downtown Brooklyn District, step-p1#special-density-areas-list) and the cases read this Queens lot as outside both (step-p3#manhattan-core: 'not in the Manhattan Core'; step-p3#special-downtown-brooklyn-district: 'outside ... on the recorded facts'), while the program lacks the connected evidence and the checked conditional display - so the kind is code not built, not unresolved law. The engine computes 29 internally.",
+            "would_settle": "Connecting the sourced special-density evidence (the cases) and building the checked conditional display in the decision layer (result_ways.py / three_way_document.py)."
           },
           {
             "kind": "a missing fact about the property",
-            "what": "The rear yard beyond the corner, the adjoining lot-line types, the neighbouring street walls and the ground elevations are not known (step-p6#real-lot-missing-facts).",
+            "program_results": [
+              "rear_yard"
+            ],
+            "what": "The rear yard beyond the corner, the adjoining lot-line types, the neighbouring street walls and the ground elevations are not known (step-p6#real-lot-missing-facts); the program's rear_yard gap_kind is missing_information.",
             "would_settle": "A survey, a deed, or a record of the neighbouring lots and buildings."
           }
         ]

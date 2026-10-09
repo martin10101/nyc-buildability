@@ -77,10 +77,13 @@ the property - recorded lot area 10,075 vs outline 10,387.99 (~313 sq ft); floor
 recorded area, footprint on the outline, so the widest same-plan building is one storey (DB-210 a);
 settled by a survey/deed. (c) missing fact - the two readings differ in the footprint decimals; both
 held; settled by a surveyed outline. Missing facts: code not built (coverage by portion, the
-building-option generator and floor schedule, the estimate); unresolved law (the legal unit limit
-withheld under ZR 23-52(a)(1) special-density; the engine computes 29 internally); missing property
+building-option generator and floor schedule, the estimate - program gap_kind work_owed /
+rule_not_implemented); code not built (the legal dwelling-unit limit - the program's gap_kind is
+work_owed and its reason is the display "has not been worked out and checked against an independently
+worked example"; the law is read and the cases read the lot outside both special density areas, so
+the kind is code not built, not unresolved law; the engine computes 29 internally); missing property
 facts (rear yard beyond the corner, adjoining lot-line types, neighbouring street walls, ground
-elevations - step-p6#real-lot-missing-facts).
+elevations - step-p6#real-lot-missing-facts; program gap_kind missing_information).
 
 ## Coverage gaps stated (9; R703)
 
@@ -104,29 +107,57 @@ ft. Different from the inventory: (1) the inventory (written at 65c60679) treate
 side to it - no entry waits on a gap. (2) A few inventory line numbers have drifted slightly from the
 current head (the functions are the same); I fingerprinted whole modules, not lines.
 
+## Correction (second commit): each gap's kind agrees with the program's own kind and the cases
+
+The orchestrator read the six-step page and asked that the kind of every gap naming a withheld result
+match the program's own `gap_kind` for that result and the reference cases. I added a structured
+`program_results` field to each closing row and verified it against the committed results document.
+The one changed kind:
+
+| Page (closing row) | Old kind | New kind | Rests on |
+|---|---|---|---|
+| calc-first-building-option-complete / legal dwelling-unit limit | unresolved law | code not built | fixture `legal_unit_limit_standard.gap_kind` = `work_owed` + its reason ("has not been worked out and checked against an independently worked example"); the law is read and step-p3#manhattan-core ("not in the Manhattan Core"), step-p3#special-downtown-brooklyn-district ("outside ... on the recorded facts") and step-p1#special-density-areas-list read the lot outside both special density areas, so the gap is the unbuilt connected-evidence/checked display, not the law |
+
+Every other listed kind already matched the program and is unchanged: the coverage/generator/estimate
+cluster = code not built (max_lot_coverage and building_option `gap_kind` work_owed; floor_stack and
+unit_estimate `reason_kind` rule_not_implemented); the rear yard = a missing fact about the property
+(rear_yard `gap_kind` missing_information). I also aligned the `calc-legal-dwelling-unit-limit`
+component page's prose (exceptions, gaps, coverage_gap, engine note) and linked the two step-p3 /
+step-p1 special-density cases. New test `test_every_listed_withheld_gap_kind_agrees_with_the_program`
+enforces this for every listed gap naming a withheld result; mutation proof
+`test_a_mismatched_gap_kind_is_caught` (a deep copy, not the committed file) mislabels the legal unit
+limit "unresolved law" and the enforcement catches it.
+
+The engine-method recompute (point 3): the floors 8,000 / 8,000 / 4,000 at 30 ft are recomputed
+through the engine by `test_engine_sample_stack_differs_from_independent_two_buildings`, which calls
+`app.scenario.three_answers.building_option.compute_building_option(allowance_sf=20000.0,
+plate_sf=8000.0, max_building_height_ft=55.0, floor_to_floor_ft=10.0)` and asserts
+`floor_rows == [8000.0, 8000.0, 4000.0]`, `building_height_ft == 30.0`, `floors_built == 3`.
+
 ## Checks (each with its direct exit code; lanes venv, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider)
 
 1. `cd services/api && ruff check .` -> **0** (All checks passed).
 2. `cd services/api && pytest tests/rules/test_zoning_rule_review_register.py
-   tests/rules/test_zoning_rule_review_register_calculations.py` -> **0** (84 passed: 44 existing +
-   40 new).
+   tests/rules/test_zoning_rule_review_register_calculations.py` -> **0** (86 passed: 44 existing +
+   42 new).
 3. `render_review_register.py --check` -> **0** (register check PASSED).
-4. `tools/modularity_check.py --check` -> **0** (0 failures; the new module warns at 699 SLOC, above
+4. `tools/modularity_check.py --check` -> **0** (0 failures; the new module warns at 715 SLOC, above
    the 600 warning threshold and below the 750 justification threshold - see note).
 5. `scripts/lanes/check_lane_paths.py --coverage` -> **0** (LANE COVERAGE PASS).
 6. (brief's extra) `cd services/api && pytest tests/rules/reference_cases tests/journey` -> **0** (101
    passed). The journey test proves the committed results document byte-equal to the program output,
    so the document-read actual side equals the program (ruling C2).
 
-The 40 new tests include the six required mutation proofs, each on an in-memory/temp copy (never a
+The 42 new tests include the required mutation proofs, each on an in-memory/temp copy (never a
 committed file): a changed code module is caught; a cited row that does not exist is refused; a
 superseded cited row is refused; a 'not known' reading cannot be a forced single figure; the words
 'preliminary assumption' removed is refused; a figure left unmarked is refused; a decision typed into
-a human-review block without a named reviewer/identity is refused.
+a human-review block without a named reviewer/identity is refused; and a gap kind that disagrees with
+the program's own kind is caught.
 
 ## Modularity note (cohesion justification)
 
-`review_register_calculations.py` is 699 SLOC, above the 600 warning threshold (a warn, not a CI
+`review_register_calculations.py` is 715 SLOC, above the 600 warning threshold (a warn, not a CI
 failure; under the 750 justification and 1000 hard thresholds). The allowed paths permit exactly one
 new module, and the packet mandates one focused module for the calculation collection, so the file is
 not split. It has a single responsibility - the review register's calculation collection - and is

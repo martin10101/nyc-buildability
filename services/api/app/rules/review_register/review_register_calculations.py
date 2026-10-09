@@ -77,7 +77,9 @@ STEP_KEYS = {"step", "name", "component_ref", "expected", "actual", "verdict", "
 STEP_EXPECTED_KEYS = {"value", "basis_kind", "cited_rows", "prepared_by"}
 STEP_ACTUAL_KEYS = {"value", "state", "source"}
 CLOSING_KEYS = {"disagreements", "missing_facts"}
-DISAGREEMENT_KEYS = {"kind", "what", "would_settle"}
+# program_results names the committed-results-document result(s) a gap row is about, so a test can
+# confirm the row's kind matches the program's own gap_kind for that result (M4-T038 correction).
+DISAGREEMENT_KEYS = {"kind", "what", "would_settle", "program_results"}
 
 _COMMON_KEYS = {
     "entry_id", "entry_kind", "title", "family", "law", "combines_rule_ids",
@@ -460,6 +462,10 @@ def comparison_errors(entry: dict) -> list[str]:
         if row["kind"] not in DISAGREEMENT_KINDS:
             errs.append(f"{eid}: closing row kind {row['kind']!r} is not one of "
                         f"{list(DISAGREEMENT_KINDS)}")
+        if not isinstance(row["program_results"], list) or not all(
+            isinstance(x, str) for x in row["program_results"]
+        ):
+            errs.append(f"{eid}: closing row program_results must be a list of result keys")
     # The difference of method is recorded as a disagreement that names backlog row DB-210 (C4).
     text = json.dumps(closing)
     if "DB-210" not in text:
@@ -703,12 +709,17 @@ def _steps_lines(entry: dict) -> list[str]:
                 f"({s['actual']['state']}; source: {s['actual']['source']})",
                 f"- Verdict: {s['verdict']}", f"- {s['note']}", ""]
     cl = entry["closing"]
-    settle = "- [{kind}] {what} - would be settled by: {would_settle}"
+
+    def _row(r: dict) -> str:
+        pr = (" (program result(s): " + ", ".join(r["program_results"]) + ")"
+              if r["program_results"] else "")
+        return f"- [{r['kind']}]{pr} {r['what']} - would be settled by: {r['would_settle']}"
+
     out += ["## Every disagreement and missing fact (and what would settle it)", "",
             "Disagreements:"]
-    out += [settle.format(**r) for r in cl["disagreements"]] or ["- (none recorded)"]
+    out += [_row(r) for r in cl["disagreements"]] or ["- (none recorded)"]
     out += ["", "Missing facts:"]
-    out += [settle.format(**r) for r in cl["missing_facts"]] or ["- (none recorded)"]
+    out += [_row(r) for r in cl["missing_facts"]] or ["- (none recorded)"]
     out.append("")
     return out
 

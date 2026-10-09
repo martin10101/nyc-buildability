@@ -34,7 +34,7 @@ The legal ceiling on dwelling units: the maximum residential floor area divided 
 
 ## Exceptions and limits
 
-- In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)); the benchmark lot's special-density status is not known, so the limit is withheld.
+- In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)). The law is read and the cases read this Queens lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district); the program has not connected that evidence or built the checked conditional display (gap_kind work_owed = code not built), so it withholds the limit.
 - Qualifying senior housing has no factor (ZR 23-52(a)(2)); qualifying affordable housing is a separate labelled limit.
 
 ## How the program reads it
@@ -66,7 +66,7 @@ The benchmark lot's legal dwelling-unit ceiling.
 - Program's actual answer: none
 - Standing of the program's answer: withheld
 - What the engine computes (the document withholds it): dwelling_units_before_rounding = 29.63235294117647; max_dwelling_units = 29
-  - The engine computes 29 internally through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit: there is no evidence of whether the lot is in a special density area (ZR 23-52(a)(1)) and the shown form was not checked against an independent example (fixture legal_unit_limit_standard way=withheld).
+  - The engine computes 29 internally through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit (fixture legal_unit_limit_standard way=withheld, gap_kind work_owed): the program has not connected the special-density evidence or built the checked conditional display. The law is read and the cases read this lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district), so the withhold is code not built, not unresolved law.
 - Do they agree? not determined - a side is withheld/not built, or the two readings differ
 
 ## What the program does today versus what is planned
@@ -88,10 +88,10 @@ Planned, not built:
 - Commit tested: `28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
-- Counts: 40 passed
+- Counts: 42 passed
 - Evidence: [run log](../evidence/calc-legal-dwelling-unit-limit.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2c3f31d06f8d408c6e5dc9be8ed269a00b92cdd59e4573c6f9960e0712fb2dad`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -100,6 +100,8 @@ Planned, not built:
 - services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)
 - docs/reference-cases/R6B/cases/real-lot.json (real-lot#L6, independent)
 - docs/reference-cases/R6B/cases/step-p6-worked.json (real-unit-limit, independent)
+- docs/reference-cases/R6B/cases/step-p3-worked.json (special-density status, independent)
+- docs/reference-cases/R6B/cases/step-p1-worked.json (special-density-areas-list, independent)
 
 ## Code and tests
 
@@ -117,9 +119,9 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
-- The withhold decision (special-density area unknown) is not built as a conditional result; r6b-dwelling-units covers the formula only.
+- The withhold is code not built (the program's own gap_kind is work_owed): the connected special-density evidence and the checked conditional display are not built; r6b-dwelling-units covers the formula only. It is not unresolved law - the law is read and the cases settle the lot's status.
 
-- Coverage gap: The legal dwelling-unit-limit decision is withheld because the special density area is unknown; r6b-dwelling-units covers the formula only, not the withhold decision.
+- Coverage gap: The legal dwelling-unit-limit decision is withheld as code not built (work_owed): the program has not connected the special-density evidence (the cases read the lot outside both areas) or built the checked conditional display; r6b-dwelling-units covers the formula only.
 
 ## Human review
 
