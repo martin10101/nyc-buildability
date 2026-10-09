@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 778,
+ "requirement_count": 799,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T19:04:43+00:00",
+ "updated_at": "2026-10-09T19:30:18+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -26414,6 +26414,657 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (a one-off test PDF to see what the program produces today).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R779",
+   "text": "'Apply this below for the pdf as well': the workflow that follows applies to the PDF. ORCHESTRATOR'S READING: to the one-off test PDF now (row R776) and, as a standing rule, to the program's own report PDF when it is built; the results screen keeps the statuses the owner decided for it (row R641) unless the owner extends this to the screen.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The next version of the test PDF and the packet of the PDF step cite these rows.",
+   "required_evidence": "The test PDF and the PDF step's packet.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R780",
+   "text": "'Apply the status labels Verified, Provisional, Illustrative, Conditional, Pending verification, and Unresolved consistently throughout the PDF.' 'Use these labels to distinguish confirmed outputs, provisional or illustrative material, conditional results, items awaiting verification, and matters that cannot yet support a conclusion.': the six status labels Verified, Provisional, Illustrative, Conditional, Pending verification and Unresolved are used consistently throughout the PDF to tell confirmed outputs, provisional or illustrative material, conditional results, items awaiting verification and matters that cannot yet support a conclusion apart.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Every output in the PDF carries one of the six labels, spelled exactly so.",
+   "required_evidence": "The PDF and its final check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R781",
+   "text": "'Establish the required outputs' 'Prepare the main results first, alongside the site or building drawing and a compact floor schedule, so the outcome is understandable at a glance.': the main results come first, together with the site or building drawing and a compact floor schedule, so the outcome can be understood at a glance.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The first pages of the PDF hold the main results, the drawing and the compact floor schedule.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R782",
+   "text": "'Identify all required deliverables, including:' 'Site and building drawings' 'Floor schedules' 'Development-option comparisons' 'Required report sections' 'Supporting calculations and evidence references': all required deliverables are identified: site and building drawings, floor schedules, development-option comparisons, the required report sections, and supporting calculations with evidence references.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A list of required deliverables in the PDF, each present or marked Pending verification or Unresolved.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R783",
+   "text": "'Assign one status label to every output:' 'Verified: supported by completed checks and evidence' 'Provisional: prepared but subject to confirmation or revision' 'Illustrative: included to demonstrate a possible arrangement or test case' 'Conditional: dependent on stated assumptions or future checks' 'Pending verification: awaiting a specific review, measurement, approval, or calculation' 'Unresolved: not capable of supporting a conclusion because necessary information or checks are unavailable': every output carries exactly one status label, with these meanings: Verified, supported by completed checks and evidence; Provisional, prepared but subject to confirmation or revision; Illustrative, included to demonstrate a possible arrangement or test case; Conditional, dependent on stated assumptions or future checks; Pending verification, awaiting a specific review, measurement, approval or calculation; Unresolved, not capable of supporting a conclusion because necessary information or checks are unavailable. ORCHESTRATOR'S READING: how the program's own states map onto the labels is written in the PDF's legend; nothing is labelled Verified until the owner says what checks it requires (a question entered in the owner's questions file).",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A legend of the six labels with the mapping; one label per output.",
+   "required_evidence": "The PDF's legend and tables.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R784",
+   "text": "'Distinguish completed outputs from those awaiting verification or further review.' 'Show the status in headings, tables, captions, schedules, and cross-references.': completed outputs are told apart from those awaiting verification or further review, and the status is shown in headings, tables, captions, schedules and cross-references.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Status labels appear in every heading, table, caption, schedule and cross-reference that carries an output.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R785",
+   "text": "'Prepare the comparison of development options' 'Present the development options in a concise comparison table or equivalent graphic.' 'For each option, show:' 'The allowed capacity' 'The capacity or arrangement achieved by the proposed building' 'The assumptions used' 'The relevant status label' 'The required comparison outputs for the final report' 'Any unresolved condition affecting interpretation': the development options are presented in a concise comparison table or graphic showing for each option the allowed capacity, the capacity or arrangement the proposed building achieves, the assumptions used, its status label, the comparison outputs the final report requires, and any unresolved condition affecting interpretation. ORCHESTRATOR'S READING: the options listed are the eleven options in the order the owner approved (row R547); an option the program does not work yet is listed and marked.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A comparison table with one row per option and these columns.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R786",
+   "text": "'Do not describe an Illustrative, Conditional, Provisional, or Pending verification option as optimal, compliant, feasible, or preferred.': no Illustrative, Conditional, Provisional or Pending verification option is described as optimal, compliant, feasible or preferred.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A text search of the PDF finds none of these words applied to such an option.",
+   "required_evidence": "The final check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R787",
+   "text": "'Mark any option affected by unresolved information as Unresolved.' 'Ensure that the comparison distinguishes what is permitted from what has actually been demonstrated by the proposal.': an option affected by unresolved information is marked Unresolved, and the comparison keeps what is permitted apart from what the proposal has actually demonstrated.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The comparison table has separate columns for permitted and demonstrated; affected options read Unresolved.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R788",
+   "text": "'Display unresolved conditions with the affected results' 'Keep important unresolved conditions visible beside the results they affect.' 'State shared conditions once, then provide expandable or referenced detail where appropriate.' 'For every affected result, identify whether it is:' 'Conditional on stated assumptions' 'Subject to further review' 'Dependent on unresolved information' 'Unresolved because the available information or checks do not support a conclusion': important unresolved conditions stay visible beside the results they affect; shared conditions are stated once with referenced detail; every affected result says whether it is conditional on stated assumptions, pending verification, subject to further review, dependent on unresolved information, or unresolved because the information or checks do not support a conclusion.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each affected result carries its condition beside it, or a numbered reference to a shared condition stated once.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R789",
+   "text": "'Do not hide unresolved conditions in supporting material or imply that a result is final before the necessary checks are complete.': unresolved conditions are not hidden in supporting material, and no result is implied to be final before the necessary checks are complete.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No condition appears only in an appendix.",
+   "required_evidence": "The final check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R790",
+   "text": "'Link supporting evidence through the review register' 'Keep full formulas, legal readings, test comparisons, and review history in the existing review register.' 'Link each relevant register entry from the corresponding result, drawing, schedule, comparison, or report section.': full formulas, legal readings, test comparisons and review history stay in the existing review register, and each relevant register entry is linked from the result, drawing, schedule, comparison or report section it supports.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each output that a register entry covers links to it; the links resolve.",
+   "required_evidence": "The PDF's links.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R791",
+   "text": "'For every evidence item, record:' 'The linked output' 'The source or calculation' 'The review status' 'The applicable status label' 'Any assumptions, limitations, or unresolved matters' 'The date and history of review where relevant': for every evidence item the PDF records the linked output, the source or calculation, the review status, the applicable status label, any assumptions, limitations or unresolved matters, and the date and history of review where relevant.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "An evidence table with these columns.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R792",
+   "text": "'Supporting evidence must remain traceable without overstating its significance.' 'Evidence does not convert an unverified, provisional, illustrative, conditional, or unresolved result into a confirmed conclusion.': supporting evidence stays traceable without overstating its significance: evidence never turns an unverified, provisional, illustrative, conditional or unresolved result into a confirmed conclusion.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No evidence entry raises the label of the output it supports.",
+   "required_evidence": "The final check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R793",
+   "text": "'Assemble and review the PDF structure' 'Apply the same hierarchy and status-labeling scheme throughout the full PDF.' 'Include drawings, schedules, comparisons, concise explanatory notes, referenced detail, and all promised report sections.': the same hierarchy and labelling scheme runs through the whole PDF, which includes drawings, schedules, comparisons, concise explanatory notes, referenced detail and all promised report sections. ORCHESTRATOR'S READING: a promised section the program does not produce yet appears with its heading and the label Pending verification or Unresolved.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Every promised section has a heading in the PDF.",
+   "required_evidence": "The PDF's contents list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R794",
+   "text": "'Before issue, confirm that:' 'Every required output is present or explicitly marked Pending verification or Unresolved' 'Completed content is distinguished from evidence or material awaiting resolution' 'Verification status is visible wherever it affects interpretation' 'Conditional assumptions are stated beside the affected result' 'Unresolved conditions are not concealed' 'Status labels are used consistently in headings, tables, captions, schedules, and cross-references' 'All links to supporting evidence and review-register entries work' 'The PDF does not imply that an unverified result is final, compliant, feasible, optimal, or preferred': before issue, a check list confirms: every required output present or marked Pending verification or Unresolved; completed content apart from material awaiting resolution; verification status visible where it affects interpretation; conditional assumptions beside the affected result; unresolved conditions not concealed; labels consistent in headings, tables, captions, schedules and cross-references; every evidence and register link works; nothing implies an unverified result is final, compliant, feasible, optimal or preferred.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The check list, each item answered with how it was checked.",
+   "required_evidence": "The check list kept with the PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R795",
+   "text": "'Apply calculation and drawing safeguards' 'Continue the current calculation work using actual calculated geometry for drawings.' 'Do not substitute conceptual geometry for calculated dimensions without identifying the limitation.': the current calculation work continues to use actual calculated geometry for drawings; conceptual geometry never stands in for calculated dimensions unless the limitation is identified. ORCHESTRATOR'S READING: it applies to the program's drawings as well as to the PDF (for example the engine's simplified rectangle stays labelled as such).",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each drawing names the geometry it is drawn from; any simplified shape is labelled as a limitation.",
+   "required_evidence": "The drawings and their captions.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R796",
+   "text": "'Label any illustrative design, test case, or provisional arrangement as Illustrative or Provisional, as applicable.' 'The three-storey example may remain a candidate for testing, but label it Conditional, Pending verification, or Unresolved wherever appropriate.': an illustrative design, test case or provisional arrangement is labelled Illustrative or Provisional; the three-storey example may remain a candidate for testing but is labelled Conditional, Pending verification or Unresolved wherever appropriate.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The three-storey example carries those labels in every place it appears.",
+   "required_evidence": "The PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R797",
+   "text": "'Do not describe the three-storey example, or any other unverified arrangement, as optimal, compliant, feasible, or preferred until the necessary checks are complete.' 'Do not present any Illustrative, Provisional, Conditional, Pending verification, or Unresolved design as the preferred solution or as evidence that the proposal can be delivered.': the three-storey example or any other unverified arrangement is not described as optimal, compliant, feasible or preferred until the necessary checks are complete, and no Illustrative, Provisional, Conditional, Pending verification or Unresolved design is presented as the preferred solution or as evidence that the proposal can be delivered. ORCHESTRATOR'S READING: it also governs how the orchestrator words recommendations to the owner about what the results show.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A text search of the PDF and the updates finds no such description.",
+   "required_evidence": "The final check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R798",
+   "text": "'Complete the final production check' 'Before issuing the PDF, perform a final status and calculation review:' 'Confirm that every number has an appropriate status label' 'Recheck calculations against the actual geometry shown' 'Confirm that comparisons use the correct allowed capacity' 'Verify that assumptions are stated and traceable' 'Confirm that unresolved conditions remain visible' 'Check that required outputs and report sections are complete or clearly marked as outstanding' 'Confirm that no provisional, illustrative, conditional, pending, or unresolved material is presented as a confirmed conclusion': before the PDF is issued a final status and calculation review confirms: every number has a status label; calculations recheck against the geometry shown; comparisons use the correct allowed capacity; assumptions are stated and traceable; unresolved conditions stay visible; required outputs and sections are complete or marked outstanding; nothing provisional, illustrative, conditional, pending or unresolved is presented as a confirmed conclusion.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The final review's list, each item answered with how it was checked.",
+   "required_evidence": "The list kept with the PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R799",
+   "text": "'Record any remaining issue in the review register and mark the affected output Unresolved or Pending verification as appropriate': any issue that remains is recorded in the review register and the affected output is marked Unresolved or Pending verification. ORCHESTRATOR'S READING: an issue about a rule or a calculation goes into the register through its existing process, inside a task's scope; an issue that is a defect of code goes into the discovery backlog; for the one-off test PDF the issues are listed in its check list and entered by the task that next changes the register.",
+   "source_ref": "source-078-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each remaining issue is found in the register or the backlog, and its output is marked.",
+   "required_evidence": "The register, the backlog and the PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the PDF production workflow and its six status labels).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

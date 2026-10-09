@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T19:04:43+00:00",
+ "updated_at": "2026-10-09T19:30:18+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -799,10 +799,31 @@
   "D-090-R775",
   "D-090-R776",
   "D-090-R777",
-  "D-090-R778"
+  "D-090-R778",
+  "D-090-R779",
+  "D-090-R780",
+  "D-090-R781",
+  "D-090-R782",
+  "D-090-R783",
+  "D-090-R784",
+  "D-090-R785",
+  "D-090-R786",
+  "D-090-R787",
+  "D-090-R788",
+  "D-090-R789",
+  "D-090-R790",
+  "D-090-R791",
+  "D-090-R792",
+  "D-090-R793",
+  "D-090-R794",
+  "D-090-R795",
+  "D-090-R796",
+  "D-090-R797",
+  "D-090-R798",
+  "D-090-R799"
  ],
- "requirements_id_digest_sha256": "8c32be1bcc4fc9e1351177aa329908fc398f5a24c3a511c9ddfc0c8cfe7e0196",
- "requirements_content_digest_sha256": "1cd8db525cabf11d6f264be8ab4509b9900daa0daf4aa4fb041e266da68fd974",
+ "requirements_id_digest_sha256": "4f38270b92d34d7bbc28f95acad5926d7d17ab3c7a04c2622457b08aed2c2fa7",
+ "requirements_content_digest_sha256": "162148693033919396ab296ee5a59775f9e9f55b14b7ffcd4bb3acc6047e12fc",
  "sources": [
   {
    "file": "source-001.md",
@@ -1418,6 +1439,14 @@
    "recorded_at": "2026-10-09T19:04:43+00:00",
    "content_digest_sha256": "487425cee569dd9962ad52a0b50096bc72e746db81bc0cf20a28d2c25c7032eb",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-078-amendment.md",
+   "kind": "amendment",
+   "sequence": 78,
+   "recorded_at": "2026-10-09T19:30:18+00:00",
+   "content_digest_sha256": "1744fbd45b0350a004b6e439cb340337057a649eced5c296649610eba18105ec",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1496,7 +1525,8 @@
   "source-074-amendment.md",
   "source-075-amendment.md",
   "source-076-amendment.md",
-  "source-077-amendment.md"
+  "source-077-amendment.md",
+  "source-078-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2302,6 +2332,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-077 (session 013RaGmC: the owner asks for a test PDF of everything the program can produce today for one R6 address, 2026-10-09) and requirements D-090-R776 to R778, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T19:30:18+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-078 (session 013RaGmC: the owner's PDF production workflow with six status labels, 2026-10-09) and requirements D-090-R779 to R799, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
