@@ -95,7 +95,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "import-guard trip -> the new module must import only from .engine_conditions and must NOT contain the substring 'result_way'; if any needed import forces that substring into the file, add three_way_scope_lines.py to the permitted set in test_result_ways.py (lines 85-98) in this same task and say so in the report.",
     "hidden wording drift -> S2's full-document deep-equality to the committed fixture, plus running the drawings/CAD/PDF snapshot tests that render the fixture, proves no string moved.",
@@ -106,7 +106,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T01:25:49.508134+00:00",
-  "updated_at": "2026-10-09T01:27:16.279026+00:00",
+  "updated_at": "2026-10-09T03:13:58.240144+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -132,6 +132,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted and claimed. The draft was read against the code first (the block to move and its one call site; every importer of the emitter; the guard test that reads app files for the decision module's name; the journey's byte-exact test). At the claim base: ruff exit 0; tests/scenario/three_answers, tests/journey and tests/api/test_results_read_api.py 460 passed, 2 skipped. Not pushed: the contract and claim seams ride with the push of the head under review. Next: one builder (backend-engineer) in an isolated worktree reset to the claim-seam head."
+    },
+    {
+      "at": "2026-10-09T03:13:58.240035+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "The builder's three commits integrated by cherry-pick (4e7b9663 the move and the first tests; bb49fcba the gap (a) test replaced by a completeness guard, sent back by the orchestrator before any review; 71334640 after the test review's two notes: the fallback texts really in the text guard's list, the guard's reason for the geometry block made true, a known defect of the emitter pinned by a strict expected-failure test and NOT repaired here). CI was read green on bb49fcba (run 37874041571, 02:26 UTC) BEFORE the two full reviews (G3 code-reviewer PASS, G4 qa-engineer PASS) and on 71334640 (run 37877222923, 03:09 UTC) BEFORE the two delta confirmations (both CONFIRMED) and before any gate. Returns kept unchanged in M5-T143-G3G4.md. Owner message 127 was recorded on this branch meanwhile (source-065, registry files only)."
     }
   ]
 }
