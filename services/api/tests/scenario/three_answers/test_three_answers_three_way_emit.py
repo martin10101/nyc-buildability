@@ -1144,48 +1144,135 @@ def test_t139_only_the_two_choice_lines_differ_with_user_choices(evidence_benchm
 # changes: the scope-line code moved behind the old import path and the two fallback texts were
 # hoisted BYTE-IDENTICAL so the text guard above already covers them. NO behaviour of the emitter
 # changes in this task.
-def _all_numbers_anywhere(node) -> list[float]:
-    """Every number carried ANYWHERE in the document - the WHOLE-document scan DB-199 (a) asks for,
-    not only the named result blocks _all_result_numbers visits (it skips geometry, scope and the
-    top level)."""
-    out: list[float] = []
+# --- DB-199 (a): a completeness guard over the blocks of the emitted document (corrected) ---
+# _all_result_numbers stays exactly as it is. The gap DB-199 (a) names is that a NEW block carrying
+# a withheld result's number could pass every existing guard unseen, because _all_result_numbers
+# walks only some blocks (a plain whole-document walk is not the answer: the document rightly
+# carries numbers - coordinates, measurements, inputs, counts - outside the result blocks). This
+# guard closes the hole by forcing EVERY block to be classified. The two result sets were read FROM
+# _all_result_numbers above (not guessed): at the TOP LEVEL it walks each of these blocks whole, so
+# every number inside them is a result number -
+_RESULT_NUMBER_BLOCKS = frozenset({
+    "addon_gains", "best_combination", "floor_by_floor", "floor_stack", "shortfall",
+    "unit_estimate",
+})
+# - and INSIDE each answer it walks ONLY values[] (the shown value objects); it enters no other key.
+_ANSWER_RESULT_KEYS = frozenset({"values"})
 
-    def walk(n):
-        if isinstance(n, bool):
-            return
-        if isinstance(n, (int, float)):
-            out.append(float(n))
-        elif isinstance(n, dict):
-            for v in n.values():
-                walk(v)
-        elif isinstance(n, list):
-            for v in n:
-                walk(v)
+# Every OTHER top-level block carries no result number (one line each, saying what its numbers are):
+_NO_RESULT_NUMBER_BLOCKS = {
+    "answers": "entered in part: result numbers live inside each answer's values[]; keys below",
+    "contract_version": "a contract-version identifier string",
+    "results_id": "an identifier string",
+    "study_id": "an identifier string",
+    "option_id": "an identifier string",
+    "revision": "a document revision counter (metadata), not a zoning result",
+    "computed_at": "a timestamp string",
+    "draft": "a draft flag (boolean)",
+    "out_of_date": "an out-of-date flag (boolean)",
+    "out_of_date_reason": "prose or null",
+    "notices_count": "a count of notices (document metadata), not a zoning result",
+    "depends_on_fact_ids": "fact identifier strings",
+    "rule_versions": "rule id and version identifier strings",
+    "completeness_line": "a prose status line",
+    "status_strip": "a prose status strip",
+    "lot_selection_statement": "a prose statement",
+    "with_approvals_label": "a prose label",
+    "street_width_case": "a street-width case label or identifier",
+    "existing_building": "a fact block about the existing building (an input, not a result)",
+    "remaining_floor_area": "a not_available status/reason block (carries no number)",
+    "scope": (
+        "scope assumptions: each condition's recorded/measured/entered value, a measurement (the "
+        "corner reach, the angle) or a design-choice input (floor-to-floor) - inputs and "
+        "measurements, not results"
+    ),
+    "geometry": (
+        "the lot-and-envelope geometry: polygon coordinates and the dimensions that RENDER the "
+        "shown results in 3D; every figure it renders is a shown value in an answer's values[] "
+        "(walked), and a withheld result's geometry layer follows it to not_available, so no "
+        "result number hides here"
+    ),
+}
 
-    walk(node)
-    return out
+# Every key INSIDE an answer other than values[] carries no result number:
+_ANSWER_NO_RESULT_KEYS = {
+    "status": "an availability flag string",
+    "measurement": "the answer's measurement label and figure - a measurement, not a result",
+    "value_states": "per-value way/reason/condition prose; a withheld entry carries no number",
+    "reason": "prose (a not_available answer)",
+    "reason_kind": "a reason-kind identifier string",
+    "resolved_by": "prose (what would resolve the gap)",
+    "gap_kind": "a gap-kind identifier string",
+}
 
 
-def test_db199a_injected_number_caught_only_by_the_whole_document_scan(benchmark):
-    """DB-199 (a): the named-block walk _all_result_numbers does not visit every block, so a result
-    number hidden in a block it skips passes it unseen; the whole-document scan catches it. State:
-    the real benchmark document with a sentinel number injected into geometry, a block the named
-    walk never visits. MUTATION PROOF (producer report): making _all_numbers_anywhere delegate to
-    the named-block walk makes the 'caught' assertion below fail."""
-    doc = benchmark.document
-    sentinel = 424242.0
-    assert isinstance(doc["geometry"], dict)
-    # the real emit carries the sentinel nowhere, by either scan
-    assert sentinel not in _all_result_numbers(doc)
-    assert sentinel not in _all_numbers_anywhere(doc)
+def _unclassified_blocks(doc: dict) -> list[str]:
+    """Every top-level block, and every key inside each answer, must be classified above as a
+    result-number block (walked by _all_result_numbers) or a no-result-number block (named, with a
+    reason). Return the keys classified as NEITHER - the DB-199 (a) hole, where a new block could
+    hide a withheld result's number unseen."""
+    bad: list[str] = []
+    classified_top = _RESULT_NUMBER_BLOCKS | set(_NO_RESULT_NUMBER_BLOCKS)
+    for key in doc:
+        if key not in classified_top:
+            bad.append(key)
+    classified_answer = _ANSWER_RESULT_KEYS | set(_ANSWER_NO_RESULT_KEYS)
+    for name, ans in doc.get("answers", {}).items():
+        if not isinstance(ans, dict):
+            continue
+        for key in ans:
+            if key not in classified_answer:
+                bad.append(f"answers.{name}.{key}")
+    return bad
 
-    injected = json.loads(json.dumps(doc))
-    injected["geometry"]["injected_result_number"] = sentinel  # a block the named walk skips
 
-    # the named-block walk MISSES it (the hole DB-199 a names) ...
-    assert sentinel not in _all_result_numbers(injected)
-    # ... the whole-document scan CATCHES it
-    assert sentinel in _all_numbers_anywhere(injected)
+def test_db199a_every_block_of_the_emitted_document_is_classified(benchmark, evidence_benchmark):
+    """DB-199 (a): over the REAL emitted documents the existing guards use - the benchmark, the
+    evidence benchmark, the made-up interior and corner lots, the lane-off and the no-profile
+    documents - every top-level block and every key inside each answer is classified as a
+    result-number block (walked by _all_result_numbers) or a no-result-number block (named, with a
+    reason). A block in NEITHER set fails here, naming it. This is the guard the first version of
+    this gap test lacked (it only showed a second helper could see an injected number; no guard of
+    the real document used it)."""
+    docs = [benchmark.document, evidence_benchmark.document]
+    _e1, interior = _emit_made_up(
+        lot_area=5355, lot_type="interior",
+        way_inputs=plain_inputs(
+            lot_type=LotType.INTERIOR, area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0),
+            **k20(True),
+        ),
+    )
+    _e2, corner = _emit_made_up(
+        lot_area=4800, lot_type="corner",
+        way_inputs=plain_inputs(
+            lot_type=LotType.CORNER, reach=c2_reach(),
+            area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0),
+            large_lot_threshold_met=False, **k20(True),
+        ),
+    )
+    docs += [interior, corner]
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_benchmark_adapter(mp, env={}).document)  # lane A off (S20)
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_benchmark_adapter(mp, profile_on=False).document)  # no property profile (S11)
+    for doc in docs:
+        assert _unclassified_blocks(doc) == [], _unclassified_blocks(doc)
+
+
+def test_db199a_completeness_guard_catches_a_new_numeric_block(benchmark):
+    """DB-199 (a) state: a NEW block carrying a number - at the top level, and inside an answer - is
+    caught by the completeness guard (it is in neither set), so a withheld result's number can never
+    be added in a new block unseen. MUTATION PROOFS (producer report): removing a name from either
+    set makes the guard fail on the real document; skipping the inside-an-answer keys leaves the
+    inside-an-answer case below unseen."""
+    top_injected = json.loads(json.dumps(benchmark.document))
+    top_injected["unreviewed_block"] = {"value": 100.0}
+    assert "unreviewed_block" in _unclassified_blocks(top_injected)
+
+    inside = json.loads(json.dumps(benchmark.document))
+    name = next(n for n, a in inside["answers"].items() if a.get("status") == "available")
+    inside["answers"][name]["unreviewed_value"] = 100.0
+    assert f"answers.{name}.unreviewed_value" in _unclassified_blocks(inside)
 
 
 def _interior_shown_limit_engine_and_ways():
@@ -1210,9 +1297,16 @@ def test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_num
     with its two exact texts and NO number - it never invents a figure (ruling B5 b; the fallback
     in _apply_answer reached by no test before this one). State: the interior lot whose ways show
     the limit, with the engine document's inner unit_estimate forced not-available before the
-    transform runs. MUTATION PROOF (producer report): reverting the fallback to append a value
-    object makes the 'no number' assertion fail."""
+    transform runs. MUTATION PROOFS (producer report): changing the fallback's gap_kind, and
+    reverting the fallback to append a value object with the figure, each turn this test red."""
     engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    # the figure this limit WOULD have for this lot, read from the UNFORCED engine document (16 for
+    # this made-up lot); the forced document's result numbers are 2, 2.4, 30, 45, 55, 65, 10710,
+    # 12852 - 16 is not among them, so the 'no number' assertion below genuinely bites.
+    unforced = emit_three_way_document(json.loads(json.dumps(engine_doc)), ways)
+    would_have = _value(unforced["answers"]["floor_area_allowance"], "legal_unit_limit_standard")
+    would_have_value = float(would_have["value"])
+    # now the engine's inner unit_estimate is not available for this lot
     engine_doc["unit_estimate"] = {
         "status": "not_available", "reason": "x", "reason_kind": "missing_input",
     }
@@ -1227,8 +1321,10 @@ def test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_num
     )
     assert state["resolved_by"] == STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY
     assert state["resolved_by"] == "A recorded lot area, or a survey or deed dimensions."
-    # no value object for the limit, and no number appears for it
+    assert state["gap_kind"] == "missing_information"  # the kind of gap the fallback writes
+    # no value object for the limit, and the figure it would have (16) is not a result number
     assert _value(fa, "legal_unit_limit_standard") is None
+    assert would_have_value not in _all_result_numbers(emitted)
     assert emitted["unit_estimate"]["status"] == "not_available"  # still the reserved block
 
 

@@ -47,19 +47,16 @@ is importable from the old path. No emitted or shown string changed anywhere.
 
 | id | input (state) | expected | test(s) |
 |----|---------------|----------|---------|
-| S1 | import the facade names from `three_way_document`; import the bridge and the route | every name resolves to the same object; the five public names are in `__all__` | whole folder imports resolve (464 passed); runtime identity check in this report |
+| S1 | import the facade names from `three_way_document`; import the bridge and the route | every name resolves to the same object; the five public names are in `__all__` | whole folder imports resolve (465 passed); runtime identity check in this report |
 | S2 | emit the committed journey/benchmark input and each made-up input in the test file | document deep-equals the committed journey fixture; no string moved | `tests/journey/test_215_16_northern_journey.py` (byte-exact) + the whole `tests/scenario/three_answers` folder |
 | S3 | `python tools/modularity_check.py --check` | passes; emitter ~415, new module ~213, both < 600 | modularity check, exit 0 |
-| S4 / DB-199 a | real benchmark document with a sentinel number injected into `geometry` (a block the named walk skips) | the named-block walk misses it; the whole-document scan catches it | `test_db199a_injected_number_caught_only_by_the_whole_document_scan` |
-| S5 / DB-199 b | interior lot whose ways SHOW the standard limit, engine inner `unit_estimate` forced not-available | limit is a withheld value_state with its two exact texts; no number; both texts under the text guard | `test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_number` |
+| S4 / DB-199 a (corrected) | the REAL emitted documents (benchmark, evidence benchmark, made-up interior/corner, lane-off, no-profile); and copies with a NEW numeric block at the top level and inside an answer | every top-level block and every key inside each answer is classified as a result-number block (walked) or a no-result-number block (named, with a reason); a new unclassified block is caught | `test_db199a_every_block_of_the_emitted_document_is_classified`; `test_db199a_completeness_guard_catches_a_new_numeric_block` |
+| S5 / DB-199 b | interior lot whose ways SHOW the standard limit, engine inner `unit_estimate` forced not-available | limit is a withheld value_state with its two exact texts, `gap_kind == missing_information`, no value object, and the figure it would have (16) is not a result number; both texts under the text guard | `test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_number` |
 | S6 / DB-199 c | interior lot whose ways SHOW the standard limit, with `rule_versions` present, then absent | present -> sources include `rule_table` + `zoning_resolution`; absent -> only `zoning_resolution` | `test_db199c_shown_standard_limit_carries_rule_table_source_with_the_list`; `test_db199c_missing_list_drops_rule_table_source_todays_behaviour_not_required` |
 
 ## Red proofs (before the fixes; outputs kept)
 
-- (a) named walk is blind to an unvisited block. Script on the committed journey fixture:
-  `real doc: sentinel in named-block walk : False`; `real doc: sentinel in whole-document scan :
-  False`; `injected: sentinel MISSED by named walk : True`; `injected: sentinel CAUGHT by whole
-  scan : True`. Exit 0.
+- (a) see the Correction section below (the first-version red proof was superseded).
 - (b) fallback branch untested. A temporary `raise AssertionError(...)` placed in the fallback
   else-branch, then `tests/scenario/three_answers` run: `353 passed, 2 skipped` (GREEN, exit 0) -
   no existing test reaches the branch. The raise was removed.
@@ -73,11 +70,9 @@ is importable from the old path. No emitted or shown string changed anywhere.
 
 ## Mutation proofs (one per pinned branch; in place, reverted exactly)
 
-- (a) `_all_numbers_anywhere` made to delegate to the named-block walk ->
-  `test_db199a_...whole_document_scan` goes RED at `assert sentinel in _all_numbers_anywhere(
-  injected)`. Reverted.
-- (b) fallback reverted to append a value object -> `test_db199b_...withheld_with_no_number` goes
-  RED (`way` is `conditional` not `withheld`; a number reappears). Reverted.
+- (a) see the Correction section below (the first-version mutation was superseded).
+- (b) `_rule_version`-independent fallback mutations - see the Correction section below (gap b was
+  strengthened with two more assertions and two more mutation proofs).
 - (c) `_rule_version` forced to return None ->
   `test_db199c_...carries_rule_table_source_with_the_list` goes RED at `assert "rule_table" in
   kinds`, while `test_db199c_missing_list_...` stays GREEN. Reverted.
@@ -100,8 +95,9 @@ recorded in backlog DB-199 (c); no behaviour of the emitter changes in this task
 
 - a. `python -m ruff check .` (from `services/api`): "All checks passed!", exit 0.
 - b. `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey
-  tests/api/test_results_read_api.py`: 464 passed, 2 skipped, exit 0 (claim-head baseline 460
-  passed, 2 skipped; +4 new tests).
+  tests/api/test_results_read_api.py`: 465 passed, 2 skipped, exit 0 after the correction (claim-head
+  baseline 460 passed, 2 skipped; +5 new tests). The first commit 7d8b0845 had 464 (+4); the
+  correction replaced the one gap (a) test with two, so +1.
 - c. `python3 tools/modularity_check.py --check` (repo root): selected 735 files; failures 0; exit
   0. `three_way_document.py` 415 lines, `three_way_scope_lines.py` 213 lines (both < 600).
 - d. `grep -c "result_way" .../three_way_scope_lines.py`: prints `0` (grep exit 1 is the normal
@@ -111,3 +107,62 @@ recorded in backlog DB-199 (c); no behaviour of the emitter changes in this task
   `git diff --name-status 64ee307a..HEAD` lists exactly the four allowed paths and
   `git diff --stat 64ee307a..HEAD -- packages services/api/tests/drawings services/api/tests/cad
   services/api/tests/documents apps` is empty.
+
+## Correction (2026-10-09; second commit on top of 7d8b0845; test file + report only)
+
+The orchestrator corrected ruling B5 (a): the first gap (a) test guarded nothing (it only showed a
+second helper `_all_numbers_anywhere` could see an injected number; no guard of the REAL document
+used it), and a plain whole-document walk is wrong (the document rightly carries coordinates,
+measurements, inputs and counts outside the result blocks - four existing tests fail if
+`_all_result_numbers` walks the whole document). This commit REPLACES the first gap (a) test and the
+`_all_numbers_anywhere` helper with a COMPLETENESS guard, and strengthens gap (b). No production file
+changes (the two app files are byte-identical to 7d8b0845); the emitter's behaviour and every
+emitted/shown text are unchanged.
+
+Gap (a), the completeness guard. `_all_result_numbers` is kept exactly as it is. Two literal sets in
+the test file, derived by READING `_all_result_numbers` (not guessed):
+- RESULT-NUMBER blocks (walked; every number in them is a result): top level
+  `{addon_gains, best_combination, floor_by_floor, floor_stack, shortfall, unit_estimate}`; inside
+  each answer ONLY `{values}`.
+- NO-RESULT-NUMBER blocks (named, each with a one-line reason): top level `answers` (entered in
+  part), `contract_version`/`results_id`/`study_id`/`option_id`/`street_width_case` (identifiers),
+  `revision`/`notices_count` (metadata counts), `computed_at` (timestamp), `draft`/`out_of_date`
+  (flags), `out_of_date_reason`/`completeness_line`/`status_strip`/`lot_selection_statement`/
+  `with_approvals_label` (prose), `depends_on_fact_ids`/`rule_versions` (identifiers),
+  `existing_building` (an input fact), `remaining_floor_area` (a not_available block), `scope`
+  (condition values / measurements / the floor-to-floor input), `geometry` (polygon coordinates and
+  the dimensions that RENDER shown results); inside each answer `{status, measurement, value_states,
+  reason, reason_kind, resolved_by, gap_kind}`. One test asserts every block of the real documents
+  (benchmark, evidence benchmark, made-up interior/corner, lane-off, no-profile) is in exactly one
+  set; another asserts a NEW numeric block (top level and inside an answer) is caught.
+- Classification I had to reason about: `geometry` carries the building height (e.g. 55.0), which IS
+  a shown result. It is classified NO-RESULT-NUMBER because geometry only RENDERS results that are
+  already shown in an answer's `values[]` (walked), and a withheld result's geometry layer follows
+  it to `not_available` (reading O29/O31) - so geometry never hides a withheld result's number. No
+  non-walked block carries a result figure that is not also a shown value; nothing to STOP on.
+
+Gap (a) red proof (before the guard): a copy of the committed journey document with a NEW top-level
+numeric block leaves `_all_result_numbers` unchanged and the injected 100.0 unseen
+(`_all_result_numbers unchanged by the new block: True`; `injected 100.0 NOT seen: True`) - the only
+existing numeric guard is blind to it. Exit 0.
+
+Gap (a) mutation proofs (each reverted exactly): (m1) remove `unit_estimate` from the walked set ->
+`test_db199a_every_block_...` RED on the real document; (m2) remove `remaining_floor_area` from the
+no-result-number set -> same; (m3) make `_unclassified_blocks` skip the inside-an-answer keys ->
+`test_db199a_completeness_guard_catches_a_new_numeric_block` RED (the inside-an-answer case goes
+unseen).
+
+Gap (b), strengthened. Two assertions added: `state["gap_kind"] == "missing_information"` (nothing
+pinned the kind before); and that the figure the limit WOULD have for this lot (read from the
+unforced emit: 16) is NOT in `_all_result_numbers` of the forced document (whose result numbers are
+2, 2.4, 30, 45, 55, 65, 10710, 12852 - 16 is not among them, so the assertion bites). Mutation
+proofs (each reverted exactly): (m-b1) fallback `gap_kind` changed to `work_owed` ->
+`test_db199b_...` RED at the `gap_kind` assertion; (m-b2) fallback made to append a value object with
+the figure -> `test_db199b_...` RED (first at `way == withheld`; under the mutation the figure 16
+also appears in `_all_result_numbers`, confirmed separately, so the figure assertion is
+load-bearing).
+
+Correction checks (direct exit codes): ruff `check .` from `services/api` exit 0 ("All checks
+passed!"); `pytest tests/scenario/three_answers tests/journey tests/api/test_results_read_api.py`
+465 passed, 2 skipped, exit 0; `git diff --stat HEAD -- services/api/app` empty before the commit (no
+production change); `git status --porcelain` clean after the commit.
