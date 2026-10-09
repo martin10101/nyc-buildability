@@ -1,0 +1,95 @@
+{
+ "task_id": "M4-T037",
+ "material_commits": [
+  "c531db3e (the step-P6 case of 30 rows with its page, the two readings saved unchanged, the support module and tests, one older row superseded; 15 files)",
+  "4cc729b5 (one correction before review: one current answer for the unit limits; 8 files = material head)"
+ ],
+ "claim_seam_head": "c346d5a2c9e48ff04f25f085e6bd1d1fcffe27c4",
+ "files_changed": [
+  "docs/reference-cases/R6B/README.md",
+  "docs/reference-cases/R6B/cases/real-lot.json",
+  "docs/reference-cases/R6B/cases/step-p4-worked.json",
+  "docs/reference-cases/R6B/cases/step-p6-worked.json",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-13.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-14.md",
+  "docs/reference-cases/R6B/real-lot.md",
+  "docs/reference-cases/R6B/step-p4-worked.md",
+  "docs/reference-cases/R6B/step-p6-worked.md",
+  "project-control/reports/M4-T037-producer-report.md",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p6.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_round2.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p4.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py"
+ ],
+ "what_did_not_change": "No rule file, no engine code, no capture, no fixture, no result, no register entry; nothing of the program in a case; no human verdict; the reach rows of cases/corner-reach.json byte-identical.",
+ "known_limits": [
+  "THE PROGRAM'S SIDE OF THE COMPARISON IS NOT IN THIS TASK: the case is the independent side; the comparison is task M4-T038's.",
+  "Both worked buildings are a plain same-plan stack: the method of the example given in the readers' brief, an assumption. On the benchmark lot the widest such building is ONE storey, because the floor area rests on the recorded lot area and the footprint on the outline (backlog row DB-210; which building the first option shows is the owner's pending decision).",
+  "The made-up lot's required street-wall place stays not known: its neighbours are stated as 35 ft high and the line-up words count only a neighbour higher than 35 ft (a limit of the orchestrator's made-up facts).",
+  "The benchmark lot's footprint figures differ between the two readings in the decimals (10,309.91 against 10,309.88): both are held; the coverage by portion stays not known; the rear yard beyond the corner area stays not known.",
+  "The made-up lot's unit limit of 29 still carries one condition of an earlier reading that readings 13 and 14 did not examine.",
+  "The floor-schedule row has no test of its own content (the review's note); its lines are the seven both readings cover."
+ ],
+ "checks_at_material_head": [
+  "CI: on the push of `22262650`: CI run 37894474011, attempt 1, 21 of 21 jobs success (among them the server's whole suite); secret-scan 37894473947 success; context-budget 37894473941 success; read at 06:44 UTC on 2026-10-09, before the review was started. Nothing was rerun.",
+  "orchestrator: at `22262650`: ruff exit 0; the reference-case tests with the two tests of other tasks that read reference rows: 118 passed (91 at the claim base); the renderer's check, the size check and the path-coverage check exit 0. No whole-suite run on the build machine: that is CI's."
+ ],
+ "requirements": {
+  "D-090-R291": [
+   "docs/reference-cases/R6B/cases/step-p6-worked.json with its page and the two readings saved unchanged as provenance 13 and 14; services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_the_two_step_p6_readings_are_present_unchanged, test_step_p6_case_validates_clean, test_step_p6_not_known_rows_with_a_kind_of_gap.",
+   "project-control/reports/M4-T037-G3G4.md: checks 1 (nothing of the program in a case), 2 and 3."
+  ],
+  "D-090-R519": [
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_every_storey_table_sums_to_its_total_and_total_plus_unused_is_the_maximum, test_plan_area_times_storeys_equals_building_a_floor_area, test_building_b_plan_area_is_the_maximum_divided_by_its_storeys, test_a_building_row_without_the_point5_words_is_refused (each building is worked floor by floor from a stated shape; the same-plan stack is said to be the method of the example; both buildings stay at or below the maximum base height).",
+   "project-control/reports/M4-T037-G3G4.md: checks 5 and 6."
+  ],
+  "D-090-R545": [
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_an_estimate_row_calling_its_figures_validated_is_refused, test_an_estimate_row_whose_share_lacks_preliminary_assumption_is_refused.",
+   "project-control/reports/M4-T037-G3G4.md: check 6 (no place calls the values or the example validated)."
+  ],
+  "D-090-R650": [
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_step_p6_not_known_rows_with_a_kind_of_gap.",
+   "project-control/reports/M4-T037-G3G4.md: check 3 (the three not-known rows each name the kind of their gap); project-control/reports/M4-T037-G0.md: the remaining pieces, each with its kind."
+  ],
+  "D-090-R651": [
+   "project-control/reports/M4-T037-G0.md: the quoted list of necessary readings with its own time (2026-10-09 04:42 UTC) and the time the two readers were started (05:16 UTC).",
+   "project-control/reports/WAVE17-2026-10-09-concurrency-record.md: the readers, their start and that they wrote no repository file."
+  ],
+  "D-090-R664": [
+   "project-control/reports/M4-T037-G0.md: 'THE SMALLEST REMAINING WORK': five pieces in order, each with its kind and what it depends on, and the one point of the study that was corrected.",
+   "docs/DISCOVERY_BACKLOG.md: the two sweep lines of wave 17 (the pieces that follow)."
+  ],
+  "D-090-R686": [
+   "project-control/tasks/M4-T037.json: the objective's paragraphs 'THE SIX STEPS OF THE COMPLETE CALCULATION' and 'LEGAL REQUIREMENT OR DESIGN ASSUMPTION', scenarios S13 and S14, and the seven rows of the owner's message bound.",
+   "project-control/reports/M4-T037-G0.md: the paragraph on the owner's message of 05:36 UTC and this task's share."
+  ],
+  "D-090-R687": [
+   "docs/reference-cases/R6B/cases/step-p6-worked.json: for each lot and each building the six steps as rows and as numbers (`numbers_block`); services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_building_blocks_recompute_clean, test_real_building_a_holds_both_readers_footprints_and_both_give_one_storey, test_estimate_four_figures_follow_from_the_floor_area.",
+   "project-control/reports/M4-T037-G3G4.md: check 5 (every figure recomputed by the reviewer, expected against recorded). THIS TASK'S SHARE IS THE INDEPENDENT SIDE: the program's side and the comparison are task M4-T038's."
+  ],
+  "D-090-R688": [
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_made_up_unit_ceiling_is_the_current_conditional_29_superseding_step_p4, test_real_unit_ceiling_is_pinned_to_the_live_value_of_real_lot_L6 (the legal ceiling is a row of its own with its own source); test_estimate_four_figures_follow_from_the_floor_area (the estimate rows).",
+   "project-control/reports/M4-T037-G3G4.md: checks 6 and 7."
+  ],
+  "D-090-R689": [
+   "docs/reference-cases/R6B/README.md and the headers of provenance files 13 and 14 (the readers were given 34 earlier answers as settled); project-control/reports/M4-T037-G0.md: the paragraph on reuse.",
+   "project-control/reports/M4-T037-G3G4.md: checks 2 and 3."
+  ],
+  "D-090-R690": [
+   "docs/reference-cases/R6B/cases/step-p6-worked.json: rows `six-steps-closing`, `real-lot-missing-facts`, `both-readers-did-not-have`, `settled-answer-contradicted`; services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_step_p6_rows_name_both_readings, test_a_step_p6_value_where_the_readings_differ_is_refused.",
+   "project-control/reports/M4-T037-G3G4.md: check 3 (the two readings number the rear-yard variants in opposite order and the case records them by content; what only one reading names is kept out of the joint list)."
+  ],
+  "D-090-R699": [
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_a_building_figure_marked_as_neither_is_refused, test_an_assumption_marked_as_a_legal_requirement_is_refused.",
+   "project-control/reports/M4-T037-G3G4.md: check 6 and mutation M5."
+  ],
+  "D-090-R700": [
+   "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p6.py: test_an_estimate_row_whose_share_lacks_preliminary_assumption_is_refused.",
+   "project-control/reports/M4-T037-G3G4.md: check 6 (the words stand at every occurrence) and mutation M4."
+  ]
+ }
+}
