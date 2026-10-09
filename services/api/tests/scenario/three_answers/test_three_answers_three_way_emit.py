@@ -59,9 +59,13 @@ from app.scenario.three_answers.three_way_document import (
     HOUSING_PROGRAM_KEY,
     RESERVED_UNIT_ESTIMATE_REASON,
     SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
+    STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
+    emit_three_way_document,
+)
+from app.scenario.three_answers.three_way_scope_lines import (
     _scope_statement,
     _user_choice_statement,
-    emit_three_way_document,
 )
 from app.spatial.site_geometry import (
     derive_site_geometry,
@@ -1133,3 +1137,131 @@ def test_t139_only_the_two_choice_lines_differ_with_user_choices(evidence_benchm
         return copy
 
     assert _blanked(d1) == _blanked(d0)  # nothing else moved
+
+
+# =========================================================================== DB-199 gaps (M5-T143)
+# Three states the three-way emitter lacked a test for (backlog DB-199 a, b, c). No app wording
+# changes: the scope-line code moved behind the old import path and the two fallback texts were
+# hoisted BYTE-IDENTICAL so the text guard above already covers them. NO behaviour of the emitter
+# changes in this task.
+def _all_numbers_anywhere(node) -> list[float]:
+    """Every number carried ANYWHERE in the document - the WHOLE-document scan DB-199 (a) asks for,
+    not only the named result blocks _all_result_numbers visits (it skips geometry, scope and the
+    top level)."""
+    out: list[float] = []
+
+    def walk(n):
+        if isinstance(n, bool):
+            return
+        if isinstance(n, (int, float)):
+            out.append(float(n))
+        elif isinstance(n, dict):
+            for v in n.values():
+                walk(v)
+        elif isinstance(n, list):
+            for v in n:
+                walk(v)
+
+    walk(node)
+    return out
+
+
+def test_db199a_injected_number_caught_only_by_the_whole_document_scan(benchmark):
+    """DB-199 (a): the named-block walk _all_result_numbers does not visit every block, so a result
+    number hidden in a block it skips passes it unseen; the whole-document scan catches it. State:
+    the real benchmark document with a sentinel number injected into geometry, a block the named
+    walk never visits. MUTATION PROOF (producer report): making _all_numbers_anywhere delegate to
+    the named-block walk makes the 'caught' assertion below fail."""
+    doc = benchmark.document
+    sentinel = 424242.0
+    assert isinstance(doc["geometry"], dict)
+    # the real emit carries the sentinel nowhere, by either scan
+    assert sentinel not in _all_result_numbers(doc)
+    assert sentinel not in _all_numbers_anywhere(doc)
+
+    injected = json.loads(json.dumps(doc))
+    injected["geometry"]["injected_result_number"] = sentinel  # a block the named walk skips
+
+    # the named-block walk MISSES it (the hole DB-199 a names) ...
+    assert sentinel not in _all_result_numbers(injected)
+    # ... the whole-document scan CATCHES it
+    assert sentinel in _all_numbers_anywhere(injected)
+
+
+def _interior_shown_limit_engine_and_ways():
+    """A made-up interior R6B lot whose ways SHOW the standard unit limit (the user states the lot
+    is not in a special density area, as in S19): the engine document and the ways."""
+    engine_doc = generate_results(
+        _benchmark_inputs(
+            lot_area_sq_ft=5355.0, lot_type="interior", overlay_present=False,
+            lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=None,
+        ), env=_ON,
+    ).document
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.INTERIOR, area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0),
+        special_density=DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, **k20(True),
+    ))
+    return engine_doc, ways
+
+
+def test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_number():
+    """DB-199 (b): when the module SHOWS the standard unit limit but the engine's inner
+    unit_estimate block is not available, the transform carries the limit as a WITHHELD value_state
+    with its two exact texts and NO number - it never invents a figure (ruling B5 b; the fallback
+    in _apply_answer reached by no test before this one). State: the interior lot whose ways show
+    the limit, with the engine document's inner unit_estimate forced not-available before the
+    transform runs. MUTATION PROOF (producer report): reverting the fallback to append a value
+    object makes the 'no number' assertion fail."""
+    engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    engine_doc["unit_estimate"] = {
+        "status": "not_available", "reason": "x", "reason_kind": "missing_input",
+    }
+    emitted = emit_three_way_document(engine_doc, ways)
+    fa = emitted["answers"]["floor_area_allowance"]
+    state = _states(fa)["legal_unit_limit_standard"]
+    assert state["way"] == "withheld"
+    assert state["reason"] == STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON
+    assert state["reason"] == (
+        "The legal dwelling-unit limit is not known: the figure it would be read "
+        "from is not available for this lot."
+    )
+    assert state["resolved_by"] == STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY
+    assert state["resolved_by"] == "A recorded lot area, or a survey or deed dimensions."
+    # no value object for the limit, and no number appears for it
+    assert _value(fa, "legal_unit_limit_standard") is None
+    assert emitted["unit_estimate"]["status"] == "not_available"  # still the reserved block
+
+
+def test_db199c_shown_standard_limit_carries_rule_table_source_with_the_list():
+    """DB-199 (c), the REQUIREMENT: a shown standard unit limit carries its rule-table source when
+    the engine document holds the rule-versions list. State: the interior lot whose ways show the
+    limit, emitted with rule_versions present. MUTATION PROOF (producer report): forcing
+    _rule_version to return None drops the rule-table source and this assertion fails."""
+    engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    assert any(
+        isinstance(r, dict) and r.get("rule_id") == "r6b-dwelling-units"
+        for r in engine_doc["rule_versions"]
+    )
+    emitted = emit_three_way_document(json.loads(json.dumps(engine_doc)), ways)
+    obj = _value(emitted["answers"]["floor_area_allowance"], "legal_unit_limit_standard")
+    assert obj is not None
+    kinds = {s["kind"] for s in obj["sources"]}
+    assert "rule_table" in kinds and "zoning_resolution" in kinds
+    assert any(
+        s["kind"] == "rule_table" and "r6b-dwelling-units" in s["ref"] for s in obj["sources"]
+    )
+
+
+def test_db199c_missing_list_drops_rule_table_source_todays_behaviour_not_required():
+    """DB-199 (c), TODAY'S BEHAVIOUR (NOT a requirement of this task): with the engine document's
+    rule-versions list absent/empty the rule-table source of a shown standard unit limit is dropped
+    silently and only the zoning-resolution source remains. Whether such a limit should instead be
+    withheld is an OPEN question (backlog DB-199 c); this test pins only what the emitter does today
+    and no behaviour of the emitter changes in this task."""
+    engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    engine_doc["rule_versions"] = []
+    emitted = emit_three_way_document(engine_doc, ways)
+    obj = _value(emitted["answers"]["floor_area_allowance"], "legal_unit_limit_standard")
+    assert obj is not None
+    kinds = {s["kind"] for s in obj["sources"]}
+    assert kinds == {"zoning_resolution"}  # the rule_table source is dropped; only ZR remains
