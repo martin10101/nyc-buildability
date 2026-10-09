@@ -10,8 +10,8 @@ import type { Results } from "@/lib/architect/three-answers";
  * [WIRING] The website's own check of a returned results document (task M5-T140, ruling R9).
  * It verifies the SHAPE the reader consumes and REFUSES a document in which a key is withheld
  * in value_states and also present among the answer's shown values (scenario S21; R556, R570).
- * The committed journey fixture is a real contract-1.3.0 document, so a check that accepts it
- * and rejects deliberate breakages is never vacuous.
+ * The committed journey fixture is now the regenerated real contract-1.4.0 document (M5-T146 part E),
+ * so a check that accepts it and rejects deliberate breakages is never vacuous.
  */
 
 const JOURNEY = "recorded_215_16_northern_journey";
@@ -25,12 +25,14 @@ function probe(overrides: (doc: Results) => void): unknown {
 }
 
 describe("validateResultsDocument — shape of the blocks the panel reads [WIRING]", () => {
-  it("accepts the committed journey document (real contract-1.3.0, never vacuous)", () => {
-    const result = validateResultsDocument(loadResultsFixture(JOURNEY));
+  it("accepts the committed journey document (regenerated contract-1.4.0, never vacuous)", () => {
+    const doc = loadResultsFixture(JOURNEY);
+    expect(doc.contract_version).toBe("1.4.0");
+    const result = validateResultsDocument(doc);
     expect(result.ok).toBe(true);
   });
 
-  it("refuses a document whose contract version is not the three-way 1.3.0 layer", () => {
+  it("refuses a document whose contract version is below the three-way 1.3.0 layer", () => {
     const body = probe(doc => {
       (doc as { contract_version: string }).contract_version = "1.2.0";
     });

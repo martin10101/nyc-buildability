@@ -146,3 +146,86 @@ part A's `building_option` reason naming `building_alternatives`; my part C clos
   (ruling W7; the input path is not wired end to end) — recorded, work owed.
 
 END-OF-REPORT
+
+## Second half — the website against the REGENERATED document
+
+Base (reset HEAD): `455caec46895298a772505cdf34325d7fd758d96` (first half cherry-picked as `b6540dc67`,
+plus the server wiring and the regenerated benchmark document at contract 1.4.0).
+
+### What the regenerated document changed, and what I did
+- Each listed building gained an OPTIONAL `fit_note`; the `label` became a short name. The screen now
+  reads `fit_note` (view `BuildingAlternativeView.fitNote`) and shows it beside the building as plain
+  text (`FirstBuildingOptions.tsx`, testid `building-alternative-fit-note`). Point 2 met.
+- The older blocks changed meaning: `unit_estimate` and `floor_stack` now say "given in
+  building_alternatives" (a pointer, and the text names the contract field); the older coverage answer
+  (`max_lot_coverage` value state) carries the SAME reason as `coverage_by_portion`. My first half
+  rendered a "Legal dwelling-unit limit" block FROM `unit_estimate`; against the regenerated document
+  that mislabelled a pointer AND leaked the machine field name `building_alternatives` onto the panel
+  (it reddened the whole-panel snake_case guards in `results-panel.test.tsx` and
+  `three-answers-panel.test.tsx`). Fix: I removed the legal-limit-from-`unit_estimate` rendering
+  entirely (`first-building-options.ts` + `FirstBuildingOptions.tsx`). Point 3 handled — see below.
+- Ruling W7: corrected `first-building-options.ts` (the comment that called the share/size "editable")
+  and the on-screen heading (`Preliminary assumptions you can change:` → `Preliminary assumptions used
+  (not editable here):`). No user-visible text now says they can be changed here.
+
+### What the panel does with each older block (point 3 — no contradiction)
+- `building_option` (answer): not_available; the card shows a plain pointer "Not available — the
+  worked building options are shown below" (first-half override), never the document's machine reason.
+- `unit_estimate`: NOT rendered by the panel (it is a pointer to the list). The legal dwelling-unit
+  limit itself is a withheld value_state (`legal_unit_limit_standard`) of the floor-area-allowance
+  answer, shown by that answer card as "Not known — …" with no number — proven by
+  journey-215-16-northern.test.tsx S4.
+- `floor_stack`: never rendered by this panel (it was not in the reader before and is not now); no
+  contradiction with the shown floor schedule.
+- older `max_lot_coverage` value state: shown by the envelope card as withheld with its reason; it
+  agrees with the withheld `coverage_by_portion` block (same reason), so no contradiction.
+
+### Tests updated to follow the regenerated document (committed-document leg)
+- journey-215-16-northern.test.tsx: contract assertion 1.3.0 → 1.4.0; added S1/S2/S6 (building B,
+  floor schedule, conditions, not-checked, estimate), fit_note, S3 (coverage withheld, no figure),
+  S4 (legal limit withheld on the allowance card, no number), and the building-option pointer guard.
+- three-answers-panel.test.tsx: the S5 journey test now reads the withheld-gap split from the
+  document (coverage + rear yard are missing_information, setback work_owed) and asserts the single
+  building option carries no gap-kind line and still reads "Not available".
+- three-answers.test.ts: the building_option gapKindLine test rewritten for the override (points to
+  the list, no gap line).
+- first-building-options.test.ts/.tsx: dropped the legal-limit assertions; added fit_note mapping;
+  S4 now asserts the section does NOT restate the legal limit.
+- results-contract-checks.test.ts: comment + the committed-document test follow 1.4.0 (version
+  acceptance already included 1.4.0 from the first half).
+
+### Checks (THIS Linux machine; direct exit codes)
+- `npm run lint` → 0 (0 errors; 2 pre-existing warnings in files I did not touch).
+- `npm run typecheck` → 0.
+- `npx vitest run src/components/architect src/lib` → 0; **Test Files 103 passed (103); Tests 2206
+  passed (2206)** (frozen baseline before edits was 5 failed across 4 files; all closed).
+- `python tools/modularity_check.py --check` → 0.
+- `npm run build` → 0 (needed so `next start` serves the e2e servers).
+- e2e, lanes venv first on PATH + `PYTHONPATH=<worktree>/services/api`,
+  `npx playwright test e2e/results.flag-on.spec.ts` → 0 (1 passed). See STOP below for why the new
+  section is NOT asserted in the browser test.
+
+### Mutation proof (point 2)
+In `FirstBuildingOptions.tsx` I guarded the fit_note render with `false && …`; vitest then reddened
+`journey-215-16-northern.test.tsx > … shows fit_note beside the building as plain text` ("Unable to
+find [data-testid=building-alternative-fit-note]"); 17 passed | 1 failed. Reverted with an Edit; the
+suite is green again.
+
+### STOP (server-side, outside this task's files)
+The LIVE results route cannot show the first-building-option section in the browser on this lot. I
+ran the real engine through the e2e harness (`e2e/harness/fixture_api.py`, which imports THIS
+worktree's `app` — verified `three_way_document.__file__` is in this worktree and `_apply_first_option`
+is present) and POSTed BBL 4073340070 with three request bodies — default,
+`floor_to_floor_ft=14`, and with the special-density statement. ALL returned **contract 1.3.0 with
+`building_alternatives` absent and `coverage_by_portion` absent**, even though the floor-area answer
+carries the `contradicted_record` condition. So the server-side `_apply_first_option` gate in
+`services/api/app/scenario/three_answers/three_way_document.py` does not emit the 1.4.0 blocks for the
+harness document, whereas the REGENERATED committed document (produced by part E) IS 1.4.0 and carries
+them — the live engine output and the regenerated fixture disagree for this lot. `services/api` is a
+forbidden path and the harness may not be changed, so I did NOT assert the new section in
+`e2e/results.flag-on.spec.ts`; I left a NOTE there and kept the existing journey green (exit 0). The
+new section's screen behaviour is fully proven by the vitest leg against the regenerated committed
+document. The orchestrator should confirm whether the live read route is expected to emit the 1.4.0
+blocks for this lot (a part B / part E consistency question) before relying on the browser leg.
+
+END-OF-SECOND-HALF

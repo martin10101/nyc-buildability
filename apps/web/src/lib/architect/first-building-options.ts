@@ -1,17 +1,23 @@
 // Display rules for the first-building-options blocks of a results document (results contract 1.4.0;
-// M5-T146 / M5-T147; rulings W1–W5; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R688). Pure
+// M5-T146 / M5-T147; rulings W1–W7; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R688). Pure
 // functions over a `results` document: no fetching, no legal logic, no arithmetic on the numbers —
-// every value, ratio, condition, label and reason is READ from the document and only formatted for
-// reading. A withheld result carries NO number and NEVER a substitute (R556/R570); the single
-// building-option answer that points to this list is handled in three-answers.ts. Nothing is called
-// feasible, complies, confirmed, validated or legally correct, and no human verdict is entered.
+// every value, ratio, condition, label, reason and fit note is READ from the document and only
+// formatted for reading. A withheld result carries NO number and NEVER a substitute (R556/R570); the
+// single building-option answer that points to this list is handled in three-answers.ts. Nothing is
+// called feasible, complies, confirmed, validated or legally correct, and no human verdict is entered.
+//
+// Ruling W7: the share range and the apartment size are SHOWN with the values used and called
+// preliminary assumptions; they are NOT editable on this screen (work owed, DB-213(a)).
+//
+// The legal dwelling-unit limit is NOT rendered here: on the benchmark it is a withheld value_state
+// of the floor-area-allowance answer (shown by that answer card), and the top-level unit_estimate
+// block is now a pointer to this list (M5-T146 parts B/E) — so this section never restates it.
 
 import type {
   BuildingAlternative,
   CoverageByPortion,
   FloorScheduleRow,
   PreliminaryCapacityEstimate,
-  Results,
 } from "../../../../../packages/contracts/generated/results";
 import {
   NOT_AVAILABLE,
@@ -19,7 +25,6 @@ import {
   conditionList,
   displayQuantity,
   gapKindLine,
-  hasBuildingAlternatives,
   quantityText,
   uniqueSections,
   type ThreeAnswersResults,
@@ -53,10 +58,6 @@ export function twoDp(value: number): string {
   return TWO_DP.format(value);
 }
 
-/** The fixed label the legal dwelling-unit limit carries on screen (D-090-R688): a value that is
- * kept SEPARATE from the preliminary capacity estimate and is NEVER a substitute for it. */
-export const LEGAL_UNIT_LIMIT_LABEL = "Legal dwelling-unit limit";
-
 /** One storey of a worked building's floor schedule, each field in plain words. */
 export interface FloorRowView {
   storey: number;
@@ -69,7 +70,8 @@ export interface FloorRowView {
 
 /** A worked building's own preliminary capacity estimate: either the two quotients across the
  * owner's preliminary share range (label "Preliminary capacity estimate"), or "Not known" with its
- * reason and NO number. The share and the apartment size are the owner's PRELIMINARY ASSUMPTIONS. */
+ * reason and NO number. The share and the apartment size are the owner's PRELIMINARY ASSUMPTIONS,
+ * shown but not editable on this screen (ruling W7). */
 export type CapacityView =
   | {
       kind: "known";
@@ -81,7 +83,8 @@ export type CapacityView =
       /** The whole numbers just below the low quotient and just above the high quotient. */
       wholeBelowLow: number;
       wholeAboveHigh: number;
-      /** The owner's preliminary share range and apartment size (editable preliminary assumptions). */
+      /** The owner's preliminary share range and apartment size (preliminary assumptions, shown not
+       * editable here — ruling W7). */
       shareLow: string;
       shareHigh: string;
       apartmentSize: string;
@@ -112,16 +115,13 @@ export type CoverageView =
       zrSections: readonly string[];
     };
 
-/** The legal dwelling-unit limit, kept apart from the estimate. A withheld limit carries NO number
- * and never an older or substitute value (R556/R570/R688). */
-export type LegalLimitView =
-  | { kind: "value"; label: string; valueText: string; zrSections: readonly string[] }
-  | { kind: "not_known"; label: string; reason: string };
-
 /** One worked first-building alternative, read from the document; NONE is preferred (ruling W3). */
 export interface BuildingAlternativeView {
   building: string;
   label: string;
+  /** The sentence why the plan fits (contract 1.4.0 optional `fit_note`); null when absent. Shown as
+   * plain text beside the building; it checks the plan against coverage only, not placement. */
+  fitNote: string | null;
   floorSchedule: readonly FloorRowView[];
   storeyCount: number;
   height: string;
@@ -145,8 +145,6 @@ export interface FirstBuildingOptionsView {
   draftHiddenText: string;
   alternatives: readonly BuildingAlternativeView[];
   coverage: CoverageView | null;
-  /** Shown only on a lot with worked alternatives (the estimate context); null otherwise. */
-  legalLimit: LegalLimitView | null;
 }
 
 function floorRowView(row: FloorScheduleRow): FloorRowView {
@@ -183,6 +181,7 @@ function alternativeView(alternative: BuildingAlternative): BuildingAlternativeV
   return {
     building: alternative.building,
     label: alternative.label,
+    fitNote: alternative.fit_note ?? null,
     floorSchedule: alternative.floor_schedule.map(floorRowView),
     storeyCount: alternative.storey_count,
     height: feet(alternative.height_ft),
@@ -222,18 +221,6 @@ function coverageView(coverage: CoverageByPortion): CoverageView {
   };
 }
 
-function legalLimitView(unitEstimate: Results["unit_estimate"]): LegalLimitView {
-  if (unitEstimate.status === "available") {
-    return {
-      kind: "value",
-      label: LEGAL_UNIT_LIMIT_LABEL,
-      valueText: quantityText(displayQuantity(unitEstimate.value, "dwelling_units")),
-      zrSections: uniqueSections(unitEstimate.zr_sections),
-    };
-  }
-  return { kind: "not_known", label: LEGAL_UNIT_LIMIT_LABEL, reason: unitEstimate.reason };
-}
-
 /**
  * The first-building-options section of a results document (results contract 1.4.0), or null when
  * the document carries neither a `building_alternatives` list nor a `coverage_by_portion` block — so
@@ -255,6 +242,5 @@ export function firstBuildingOptionsView(
     draftHiddenText: `${NOT_AVAILABLE} — ${RULES_NOT_REVIEWED_REASON}`,
     alternatives: alternatives.map(alternativeView),
     coverage: coverage ? coverageView(coverage) : null,
-    legalLimit: hasBuildingAlternatives(results) ? legalLimitView(results.unit_estimate) : null,
   };
 }

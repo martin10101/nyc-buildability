@@ -414,6 +414,13 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* The sentence why the plan fits (contract 1.4.0 fit_note): plain text beside the building; it
+   qualifies the plan against coverage only, never a statement that the building fits the lot. */
+.ta-option-fit-note {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
 .ta-floor-schedule {
   margin: var(--space-3, 0.75rem) 0 0;
   width: 100%;

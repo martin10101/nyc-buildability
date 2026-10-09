@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  BUILDING_OPTIONS_BELOW_REASON,
   GAP_KIND_LINES,
   NOT_AVAILABLE,
   RULES_NOT_REVIEWED_REASON,
@@ -353,12 +354,17 @@ describe("gapKindLine — the kind of gap in plain words (R258, ruling R6)", () 
     expect(view.withheld[0].gapKindLine).toBe("Missing information about this property.");
   });
 
-  it("a whole not-available answer that carries a gap_kind says which kind (building_option)", () => {
+  it("a building option on a lot with worked alternatives points to the list, with no gap-kind line (override)", () => {
+    // On the regenerated 1.4.0 journey the single building option is superseded by the worked
+    // alternatives; its card points to the list in plain words (never the machine reason that names
+    // the building_alternatives field), so it carries no gap-kind line (R556, §5a item 5).
     const doc = loadResultsFixture("recorded_215_16_northern_journey");
     expect(doc.answers.building_option.status).toBe("not_available");
+    expect((doc.building_alternatives?.length ?? 0)).toBeGreaterThan(0);
     const view = answerView(doc, "building_option", true);
     if (view.kind !== "not_available") throw new Error("expected a not_available view");
-    expect(view.gapKindLine).toBe("Not built yet: this part of the program is still owed.");
+    expect(view.text).toBe(notAvailableText(BUILDING_OPTIONS_BELOW_REASON, "building_option"));
+    expect(view.gapKindLine).toBeNull();
   });
 });
 

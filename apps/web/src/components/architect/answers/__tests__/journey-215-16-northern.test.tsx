@@ -1,6 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Results } from "@/lib/architect/three-answers";
+import { twoDp } from "@/lib/architect/first-building-options";
 import { loadResultsFixture } from "@/test-support/results-fixtures";
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
 
@@ -80,10 +81,12 @@ describe("journey cards leg: 215-16 Northern recorded-data scope (D-090-R137)", 
     expect(screen.getByTestId("three-answers-scope").textContent ?? "").not.toMatch(SNAKE_CASE);
   });
 
-  it("renders the committed journey fixture at contract 1.3.0 with the three-way layer", () => {
+  it("renders the regenerated committed journey fixture at contract 1.4.0 with the three-way layer", () => {
     const { doc } = journey();
-    expect(doc.contract_version).toBe("1.3.0");
-    // the building option is a whole not-available answer; coverage and the rear yard are withheld.
+    expect(doc.contract_version).toBe("1.4.0");
+    // the regenerated document carries the worked first-building alternatives (contract 1.4.0).
+    expect((doc.building_alternatives?.length ?? 0)).toBeGreaterThan(0);
+    // the single building option is a whole not-available answer; coverage and the rear yard withheld.
     expect(doc.answers.building_option.status).toBe("not_available");
     const env = doc.answers.permitted_envelope;
     if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
@@ -110,5 +113,96 @@ describe("journey cards leg: 215-16 Northern recorded-data scope (D-090-R137)", 
     expect(coverageRow).not.toMatch(/\d+%/);
     // no headline number is the coverage figure (it never falls back to a shown value)
     expect(within(card).queryAllByTestId("answer-withheld-value").length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("M5-T147 PART C: the first building option on the regenerated screen (contract 1.4.0)", () => {
+  type Alternative = NonNullable<Results["building_alternatives"]>[number];
+
+  function firstAlternative(doc: Results): Alternative {
+    const alternatives = doc.building_alternatives;
+    if (!alternatives || alternatives.length === 0) {
+      throw new Error("fixture changed: the regenerated journey must carry building_alternatives");
+    }
+    return alternatives[0];
+  }
+
+  it("S1/S2/S6: building B is a labelled alternative with its floor schedule, conditions, what was not checked and its estimate", () => {
+    const doc = loadResultsFixture(JOURNEY_FIXTURE);
+    const buildingB = firstAlternative(doc);
+    const estimate = buildingB.capacity_estimate;
+    if (estimate.label !== "Preliminary capacity estimate") throw new Error("fixture changed");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const section = screen.getByTestId("first-building-options");
+    const block = within(section).getAllByTestId("building-alternative")[0];
+    expect(within(block).getByTestId("building-alternative-label").textContent).toBe(buildingB.label);
+    const rows = within(within(block).getByTestId("floor-schedule")).getAllByTestId("floor-schedule-row");
+    expect(rows).toHaveLength(buildingB.storey_count);
+    // the estimate under the owner label, its quotients read from the document
+    expect(within(block).getByTestId("capacity-estimate-label").textContent).toBe("Preliminary capacity estimate");
+    const range = within(block).getByTestId("capacity-estimate-range").textContent ?? "";
+    expect(range).toContain(twoDp(estimate.quotient_low));
+    expect(range).toContain(twoDp(estimate.quotient_high));
+    // what was not checked, each item read from the document
+    expect(
+      within(block)
+        .getAllByTestId("building-alternative-not-checked-item")
+        .map(element => element.textContent),
+    ).toEqual(buildingB.not_checked);
+    // conditional, never settled; the marker is a word, not a colour
+    expect(within(block).getByTestId("option-conditional-marker").textContent).toBe("Conditional");
+    // nothing is called feasible
+    expect(section.textContent ?? "").not.toMatch(/feasible|complies|legally correct/i);
+  });
+
+  it("shows fit_note beside the building as plain text (read from the document)", () => {
+    const doc = loadResultsFixture(JOURNEY_FIXTURE);
+    const buildingB = firstAlternative(doc);
+    if (!buildingB.fit_note) throw new Error("fixture changed: the regenerated journey must carry fit_note");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const block = within(screen.getByTestId("first-building-options")).getAllByTestId("building-alternative")[0];
+    expect(within(block).getByTestId("building-alternative-fit-note").textContent).toBe(buildingB.fit_note);
+  });
+
+  it("S3: coverage by portion is withheld with its reason and NO figure", () => {
+    const doc = loadResultsFixture(JOURNEY_FIXTURE);
+    const coverage = doc.coverage_by_portion;
+    if (!coverage || coverage.status !== "withheld") {
+      throw new Error("fixture changed: the regenerated journey coverage must be withheld");
+    }
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const block = within(screen.getByTestId("first-building-options")).getByTestId("coverage-by-portion");
+    expect(within(block).getByTestId("coverage-by-portion-reason").textContent).toBe(
+      `Not known — ${coverage.reason}`,
+    );
+    expect(within(block).queryByTestId("coverage-footprint")).toBeNull();
+  });
+
+  it("S4: the legal dwelling-unit limit shows withheld on the allowance card, with no number", () => {
+    const doc = loadResultsFixture(JOURNEY_FIXTURE);
+    const allowance = doc.answers.floor_area_allowance;
+    if (allowance.status !== "available" || !allowance.value_states) throw new Error("fixture changed");
+    const limit = allowance.value_states.legal_unit_limit_standard;
+    if (!limit || limit.way !== "withheld") {
+      throw new Error("fixture changed: the legal dwelling-unit limit must be withheld");
+    }
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const card = screen.getByTestId("answer-floor_area_allowance");
+    const row = within(card)
+      .getAllByTestId("answer-withheld-value")
+      .find(entry => (entry.querySelector("dt")?.textContent ?? "") === limit.label);
+    if (!row) throw new Error("the legal-limit withheld row is missing");
+    const reason = within(row).getByTestId("answer-withheld-reason");
+    expect(reason.textContent).toBe(`Not known — ${limit.reason}`);
+    // the withheld legal limit carries no number, no older or substitute value (R556/R570)
+    expect(reason.textContent ?? "").not.toMatch(/\d/);
+  });
+
+  it("the single building-option card points to the list, never the machine field name", () => {
+    const doc = loadResultsFixture(JOURNEY_FIXTURE);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const card = screen.getByTestId("answer-building_option");
+    expect(card.textContent ?? "").toContain("Not available");
+    expect(card.textContent ?? "").not.toMatch(SNAKE_CASE);
   });
 });

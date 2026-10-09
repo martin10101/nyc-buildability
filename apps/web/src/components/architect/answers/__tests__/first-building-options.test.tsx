@@ -134,22 +134,15 @@ describe("PART C: the first-building-options section on the results screen (cont
     expect(block.textContent ?? "").toContain(feet(coverage.corner_lot_distance_ft));
   });
 
-  it("S4: shows the legal dwelling-unit limit withheld — no number, separate from the estimate", () => {
+  it("S4: the legal dwelling-unit limit is NOT restated in this section (it is the allowance card's)", () => {
+    // On the regenerated benchmark the legal dwelling-unit limit is a withheld value_state of the
+    // floor-area-allowance answer (shown by that card; see journey-215-16-northern.test.tsx S4), and
+    // the top-level unit_estimate is a pointer to this list — so this section must NOT restate it (no
+    // contradiction with the shown estimate, coordinator point 3; R688).
     const doc = loadResultsFixture(BENCHMARK);
-    const unit = doc.unit_estimate;
-    if (unit.status !== "not_available") {
-      throw new Error("fixture changed: the benchmark legal limit must be withheld");
-    }
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const block = within(optionsSection()).getByTestId("legal-unit-limit");
-    expect(within(block).getByTestId("legal-unit-limit-label").textContent).toBe("Legal dwelling-unit limit");
-    expect(within(block).getByTestId("legal-unit-limit-not-known").textContent).toBe(
-      `Not known — ${unit.reason}`,
-    );
-    // no number, and no older or substitute value (R556/R570).
-    expect(within(block).queryByTestId("legal-unit-limit-value")).toBeNull();
-    expect(within(block).getByTestId("legal-unit-limit-not-known").textContent ?? "").not.toMatch(/\d/);
-    // it sits apart from the preliminary capacity estimate (its own block, R688).
+    expect(within(optionsSection()).queryByTestId("legal-unit-limit")).toBeNull();
+    // the preliminary capacity estimate IS shown here (kept separate from the legal limit, R688).
     expect(within(optionsSection()).getAllByTestId("capacity-estimate").length).toBeGreaterThanOrEqual(1);
   });
 

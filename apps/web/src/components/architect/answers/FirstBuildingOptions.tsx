@@ -4,7 +4,6 @@ import type {
   CoverageView,
   FirstBuildingOptionsView,
   FloorRowView,
-  LegalLimitView,
 } from "@/lib/architect/first-building-options";
 
 /**
@@ -45,7 +44,6 @@ export function FirstBuildingOptions({ view }: { view: FirstBuildingOptionsView 
           {view.alternatives.map((alternative, index) => (
             <AlternativeBlock key={`${alternative.building}-${index}`} view={alternative} />
           ))}
-          {view.legalLimit ? <LegalLimitBlock view={view.legalLimit} /> : null}
           {view.coverage ? <CoverageBlock view={view.coverage} /> : null}
         </>
       )}
@@ -68,6 +66,11 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
         {" · "}
         {view.unusedFloorArea} unused
       </p>
+      {view.fitNote !== null ? (
+        <p className="ta-option-fit-note" data-testid="building-alternative-fit-note">
+          {view.fitNote}
+        </p>
+      ) : null}
       {view.isConditional ? <ConditionList conditions={view.conditions} /> : null}
       {view.isWithheld && view.withheldReason !== null ? (
         <p className="ta-withheld-reason" data-testid="building-alternative-withheld">
@@ -143,7 +146,7 @@ function CapacityBlock({ view }: { view: CapacityView }) {
         of residential floor area.
       </p>
       <div className="ta-capacity-assumptions" data-testid="capacity-estimate-assumptions">
-        <p className="ta-capacity-assumptions-heading">Preliminary assumptions you can change:</p>
+        <p className="ta-capacity-assumptions-heading">Preliminary assumptions used (not editable here):</p>
         <ul className="ta-capacity-assumptions-list">
           <li data-testid="capacity-estimate-share">
             Residential share: {view.shareLow} to {view.shareHigh}
@@ -154,32 +157,6 @@ function CapacityBlock({ view }: { view: CapacityView }) {
         </ul>
       </div>
     </div>
-  );
-}
-
-function LegalLimitBlock({ view }: { view: LegalLimitView }) {
-  return (
-    <section className="ta-legal-limit" data-testid="legal-unit-limit">
-      <h4 className="ta-legal-limit-label" data-testid="legal-unit-limit-label">
-        {view.label}
-      </h4>
-      {view.kind === "value" ? (
-        <>
-          <p className="ta-legal-limit-value" data-testid="legal-unit-limit-value">
-            {view.valueText}
-          </p>
-          <RuleSections sections={view.zrSections} />
-        </>
-      ) : (
-        <p className="ta-withheld-reason" data-testid="legal-unit-limit-not-known">
-          {NOT_KNOWN} — {view.reason}
-        </p>
-      )}
-      <p className="ta-legal-limit-note">
-        The legal dwelling-unit limit is kept separate from the preliminary capacity estimate above;
-        it is not a substitute for it.
-      </p>
-    </section>
   );
 }
 

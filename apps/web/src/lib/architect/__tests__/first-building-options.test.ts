@@ -84,15 +84,20 @@ describe("firstBuildingOptionsView (contract 1.4.0)", () => {
     expect(coverage.resolvedBy.length).toBeGreaterThan(0);
   });
 
-  it("maps the legal dwelling-unit limit, withheld and separate, on a lot with alternatives", () => {
-    const doc = loadResultsFixture(BENCHMARK);
-    const unit = doc.unit_estimate;
-    if (unit.status !== "not_available") throw new Error("fixture changed");
-    const view = firstBuildingOptionsView(doc, true);
-    expect(view?.legalLimit).not.toBeNull();
-    expect(view?.legalLimit?.label).toBe("Legal dwelling-unit limit");
-    if (view?.legalLimit?.kind !== "not_known") throw new Error("limit should be not_known");
-    expect(view.legalLimit.reason).toBe(unit.reason);
+  it("maps fit_note when the document carries it (the regenerated benchmark), else null", () => {
+    // The regenerated committed document carries the optional fit_note on building B; the synthetic
+    // benchmark fixture (which predates the field) carries none — the view reads whichever the
+    // document holds, never a typed value.
+    const regenerated = loadResultsFixture("recorded_215_16_northern_journey");
+    const alternative = firstAlternative(regenerated);
+    const view = firstBuildingOptionsView(regenerated, true);
+    expect(view?.alternatives[0].fitNote).toBe(alternative.fit_note ?? null);
+    expect(view?.alternatives[0].fitNote).not.toBeNull();
+
+    const synthetic = loadResultsFixture(BENCHMARK);
+    expect(firstBuildingOptionsView(synthetic, true)?.alternatives[0].fitNote).toBe(
+      firstAlternative(synthetic).fit_note ?? null,
+    );
   });
 
   it("maps an available coverage with its ratios and footprint, from the document", () => {

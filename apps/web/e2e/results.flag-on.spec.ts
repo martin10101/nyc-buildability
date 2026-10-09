@@ -97,8 +97,20 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     // Coverage and the rear yard read "not known".
     await expect(envelope).toContainText("Not known");
 
-    // The building option reads "Not available".
+    // The single building option reads "Not available".
     await expect(dialog.getByTestId("answer-building_option")).toContainText("Not available");
+
+    // NOTE (M5-T147 part C, second half): the worked first-building-option section
+    // (building_alternatives / coverage_by_portion) is NOT asserted here. On this lot the LIVE
+    // results route (the real engine via e2e/harness/fixture_api.py, importing this worktree's app)
+    // returns a contract-1.3.0 document WITHOUT those blocks for every request variant tested
+    // (default, floor_to_floor_ft=14, with the special-density statement): the server-side
+    // _apply_first_option gate in services/api/app/scenario/three_answers/three_way_document.py does
+    // not emit them for the harness document, whereas the REGENERATED committed document is 1.4.0 and
+    // DOES carry them. That server/engine gap is outside this task's files (services/api is a
+    // forbidden path; the harness may not be changed). The new section's screen behaviour is proven
+    // by the vitest leg against the regenerated committed document
+    // (journey-215-16-northern.test.tsx and the first-building-options suites).
 
     // No line the website writes calls a value the maximum for the property (R269).
     expect(await dialog.innerText()).not.toContain("maximum for this property");

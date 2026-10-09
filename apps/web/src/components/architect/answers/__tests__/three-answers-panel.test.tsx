@@ -461,16 +461,28 @@ describe("the three-way value-states layer (results contract 1.3.0; S14, R556, R
     const gapLines = within(envelope)
       .getAllByTestId("answer-gap-kind")
       .map(element => element.textContent);
-    // On this lot the envelope has three withheld values: coverage and the setback are still work
-    // owed; the rear yard is now a missing property fact (M5-T144), so it shows the other line.
     const WORK_OWED_LINE = "Not built yet: this part of the program is still owed.";
     const MISSING_INFO_LINE = "Missing information about this property.";
-    expect(gapLines).toHaveLength(3);
-    expect(gapLines.filter(line => line === WORK_OWED_LINE)).toHaveLength(2); // coverage, setback
-    expect(gapLines.filter(line => line === MISSING_INFO_LINE)).toHaveLength(1); // the rear yard
-    // The building option is a whole not-available answer carrying the work-owed kind line.
+    // The split is read from the regenerated document, not hard-coded (on this 1.4.0 journey coverage
+    // and the rear yard are missing property facts; the setback above the base is still work owed).
+    const env = doc.answers.permitted_envelope;
+    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
+    const shownKeys = new Set(env.values.map(value => value.key));
+    const withheldKinds = Object.entries(env.value_states)
+      .filter(([key, state]) => state.way === "withheld" && !shownKeys.has(key))
+      .map(([, state]) => (state as { gap_kind?: string }).gap_kind);
+    expect(gapLines).toHaveLength(withheldKinds.length);
+    expect(gapLines.filter(line => line === MISSING_INFO_LINE)).toHaveLength(
+      withheldKinds.filter(kind => kind === "missing_information").length,
+    );
+    expect(gapLines.filter(line => line === WORK_OWED_LINE)).toHaveLength(
+      withheldKinds.filter(kind => kind === "work_owed").length,
+    );
+    // The single building option now points to the worked alternatives below, so it carries no
+    // gap-kind line; its card still reads "Not available".
     const option = card("building_option");
-    expect(within(option).getByTestId("answer-gap-kind").textContent).toBe(WORK_OWED_LINE);
+    expect(within(option).queryByTestId("answer-gap-kind")).toBeNull();
+    expect(option.textContent ?? "").toContain("Not available");
   });
 
   it("a withheld HEADLINE key shows its reason, never the first value (R556)", () => {
