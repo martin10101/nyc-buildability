@@ -39,3 +39,30 @@ See `GUIDE.md` for what each field means, how the register is kept current, and 
 | R6B district - maximum residential floor area ratio with qualifying affordable housing or qualifying senior housing (ZR 23-22 second column), computed as a separately labeled alternative (`r6b-qualifying-housing-far`) | [23-22](https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22), applies from 2024-12-05 | 1 (2026-10-06) | Passed (52e3d8a4) [log](evidence/r6b-qualifying-housing-far.txt) | Not reviewed | - | [open](rules/r6b-qualifying-housing-far.md) |
 | R6B district - no rear yard required within 100 feet of the point of intersection of two street lines intersecting at 135 degrees or less (ZR 23-344 paragraph (a)) (`r6b-rear-yard-corner-waiver`) | [23-344(a)](https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344), applies from 2024-12-05 (+1 more section(s), see details) | 2 (2026-10-08) | Passed (52e3d8a4) [log](evidence/r6b-rear-yard-corner-waiver.txt) | Not reviewed | - | [open](rules/r6b-rear-yard-corner-waiver.md) |
 
+## Calculations (combined-rule/arithmetic calculations with no rule file of their own)
+
+These entries trace the calculations that turn the rules into the reported floor area, footprint, building option, legal dwelling-unit limit and preliminary apartment estimate. Each is fingerprinted by the sha256 of its code module(s); its worked example sets an independent reference case (expected) beside the program's own answer (actual). See `GUIDE.md` for the calculation fields.
+
+| Calculation | Kind | Combines | Code identity | Tests | Human verdict | Details |
+|---|---|---|---|---|---|---|
+| Floor-area allowance: floor area ratio x lot area (benchmark lot BBL 4073340070) (`calc-floor-area-allowance`) | calculation | `r6-r12-residential-far` | `f20a1f2b0222...` | Passed (28026c5e) [log](evidence/calc-floor-area-allowance.txt) | Not reviewed | [open](calculations/calc-floor-area-allowance.md) |
+| Lot coverage by portion: corner-lot portion 100% plus interior strip 80% (benchmark lot) (`calc-lot-coverage-by-portion`) | calculation | `r6b-lot-coverage` | `10d71edb28fb...` | Passed (28026c5e) [log](evidence/calc-lot-coverage-by-portion.txt) | Not reviewed | [open](calculations/calc-lot-coverage-by-portion.md) |
+| Building-option floor stack: footprint, each floor's area and height, total floor area (benchmark lot) (`calc-building-option-floor-stack`) | calculation | `r6-r12-residential-far`, `r6b-height` | `16b8e100a9a3...` | Passed (28026c5e) [log](evidence/calc-building-option-floor-stack.txt) | Not reviewed | [open](calculations/calc-building-option-floor-stack.md) |
+| Legal dwelling-unit limit: maximum floor area / 680, rounding up at .75 (benchmark lot) (`calc-legal-dwelling-unit-limit`) | calculation | `r6b-dwelling-units` | `e353aa1181e2...` | Passed (28026c5e) [log](evidence/calc-legal-dwelling-unit-limit.txt) | Not reviewed | [open](calculations/calc-legal-dwelling-unit-limit.md) |
+| Preliminary apartment estimate: floor area x efficiency share / apartment size (benchmark lot) (`calc-preliminary-apartment-estimate`) | calculation | `r6-r12-residential-far` | `127416877575...` | Passed (28026c5e) [log](evidence/calc-preliminary-apartment-estimate.txt) | Not reviewed | [open](calculations/calc-preliminary-apartment-estimate.md) |
+| The first building option's complete calculation: the independent example beside the program, six steps (`calc-first-building-option-complete`) | calculation_comparison | `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units` | `7fc008514bf9...` | Passed (28026c5e) [log](evidence/calc-first-building-option-complete.txt) | Not reviewed | [open](calculations/calc-first-building-option-complete.md) |
+
+## Coverage gaps (what the register does not yet cover)
+
+Each gap is a plain sentence. Stating a gap is not covering it; turning a gap into follow-up work is an orchestrator decision.
+
+1. The scenario three-answers engine - the calculation that combines the rules into floor area, envelope, footprint, building option, dwelling-unit limit and geometry - still has no single register entry of its own; the calculation entries added here trace the first building option's path, not the whole engine.
+2. The building-option / floor-stack calculation is withheld and uncompared in the program; calc-building-option-floor-stack sets the engine's method beside the independent example, but the generator is not built.
+3. Lot coverage by portion (corner-lot portion at 100% plus interior strip at 80%) is not built in the program; r6b-lot-coverage covers only the flat 80% interior rule.
+4. The legal dwelling-unit-limit decision is withheld because the special density area is unknown; r6b-dwelling-units covers the formula only, not the withhold decision.
+5. The preliminary apartment estimate (700 sq ft, 0.60-0.75) is not built; the measurement-basis record describes the method and is now linked from calc-preliminary-apartment-estimate.
+6. The 23 rule entries still have no dedicated units / measurement-basis / formula / rounding fields (point 3 is prose only on their pages); the six R6B-path rule entries are r6-r12-residential-far, r6b-height, r6b-lot-coverage, r6b-dwelling-units, r6b-qualifying-housing-far and r6b-rear-yard-corner-waiver; each calculation page here carries those five fields for its own steps.
+7. Property-inputs mapping (integration.py) and wide-street determination affect reported results but have no register entry.
+8. Front/side yard and street-wall rules that shape the footprint are neither reported as values nor covered by a register entry.
+9. Task M5-T144 changed the scenario engine (the rear-yard reason and the geometry block) but moved no register entry, because none covered that code; the calculation entries added here now fingerprint result_ways.py, geometry.py and three_way_document.py, so a later change to those modules is caught (directive row R703).
+

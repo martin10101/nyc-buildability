@@ -329,7 +329,13 @@ def law_errors(entry: dict) -> list[str]:
 # --------------------------------------------------------------------------
 def structure_errors(register: dict) -> list[str]:
     errs: list[str] = []
-    top = {"schema", "schema_version", "generated_note", "field_guide", "entries", "history"}
+    # The rule-entry collection ('entries'/'history') plus the sibling calculation collection
+    # ('calculations'/'calculations_history') and the coverage-gap list (schema_version 1.1,
+    # additive - the 23 rule entries are unchanged; M4-T038).
+    top = {
+        "schema", "schema_version", "generated_note", "field_guide", "entries", "history",
+        "calculations", "calculations_history", "coverage_gaps",
+    }
     if set(register) != top:
         errs.append(f"top-level keys {sorted(register)} != {sorted(top)}")
         return errs
@@ -495,4 +501,9 @@ def validate(register: dict) -> list[str]:
         errs += automated_tests_errors(entry)
     errs += history_errors(register)
     errs += rendered_errors(register)
+    # The sibling calculation collection (combined-rule/arithmetic calculations with no rule file;
+    # M4-T038). Delegated to the focused module so this file stays inside its module boundary.
+    from . import review_register_calculations as calc
+
+    errs += calc.validate_calculations(register)
     return errs
