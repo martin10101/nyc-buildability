@@ -680,6 +680,8 @@ def test_every_text_the_transform_writes_is_plain_and_true(benchmark):
         SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
         BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
         ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
+        STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
+        STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
     ]
     # the one text the transform builds at run time: the shown unit-limit value object label
     with pytest.MonkeyPatch.context() as mp:
@@ -1187,10 +1189,12 @@ _NO_RESULT_NUMBER_BLOCKS = {
         "measurements, not results"
     ),
     "geometry": (
-        "the lot-and-envelope geometry: polygon coordinates and the dimensions that RENDER the "
-        "shown results in 3D; every figure it renders is a shown value in an answer's values[] "
-        "(walked), and a withheld result's geometry layer follows it to not_available, so no "
-        "result number hides here"
+        "not walked: polygon coordinates and the dimensions that draw the results. KNOWN DEFECT, "
+        "pinned by the xfail test below and NOT covered by this guard: a withheld height's figure "
+        "can remain here: for a corner lot in a recorded flood zone the withheld height limit (55) "
+        "stays at geometry.envelope.tiers[0].top_ft, because _apply_geometry clears the envelope "
+        "layer only when the coverage is withheld, never when a height is; the emitter's repair "
+        "(the geometry must follow every withheld result) removes the xfail mark"
     ),
 }
 
@@ -1273,6 +1277,74 @@ def test_db199a_completeness_guard_catches_a_new_numeric_block(benchmark):
     name = next(n for n, a in inside["answers"].items() if a.get("status") == "available")
     inside["answers"][name]["unreviewed_value"] = 100.0
     assert f"answers.{name}.unreviewed_value" in _unclassified_blocks(inside)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "KNOWN DEFECT (not this task's to repair): _apply_geometry clears geometry.envelope only "
+        "when the coverage is withheld, never when a height is, so a withheld height's figure can "
+        "remain in geometry.envelope.tiers[].top_ft. The emitter's repair - make the geometry "
+        "follow every withheld result - must remove this xfail mark."
+    ),
+)
+def test_db199a_withheld_height_figure_leaks_into_geometry_known_defect():
+    """DB-199 (a), KNOWN DEFECT pinned so it cannot be forgotten. A corner lot in a recorded flood
+    zone, through the real engine and decide_result_ways: every height limit is withheld, so no
+    height figure may remain anywhere in geometry. Today the withheld max_building_height (55) still
+    sits at geometry.envelope.tiers[0].top_ft (geometry.floor_plates and setback_lines_per_level are
+    not_available here, so only the envelope leaks). This asserts the CORRECT behaviour and is
+    expected to FAIL until the emitter is repaired (strict xfail: the repair makes it XPASS and
+    forces the mark's removal). This task changes no emitter behaviour."""
+    engine_doc = generate_results(
+        _benchmark_inputs(
+            lot_area_sq_ft=4800.0, lot_type="corner", overlay_present=False,
+            lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=None,
+        ), env=_ON,
+    ).document
+    base = dict(
+        lot_type=LotType.CORNER, reach=c2_reach(),
+        area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0),
+        large_lot_threshold_met=False, **k20(True),
+    )
+    shown = emit_three_way_document(
+        json.loads(json.dumps(engine_doc)), decide_result_ways(plain_inputs(**base)),
+    )
+    withheld = emit_three_way_document(
+        json.loads(json.dumps(engine_doc)),
+        decide_result_ways(plain_inputs(flood_zone=Recorded.PRESENT, **base)),
+    )
+    height_keys = {
+        "min_base_height", "max_base_height", "max_building_height",
+        "min_base_height_qualifying_affordable_or_senior",
+        "max_base_height_qualifying_affordable_or_senior",
+        "max_building_height_qualifying_affordable_or_senior",
+    }
+    states = _states(withheld["answers"]["permitted_envelope"])
+    assert all(states[k]["way"] == "withheld" for k in height_keys)  # every height withheld here
+
+    # the figures those heights WOULD have, from the shown emit of the same lot
+    would_have = {
+        v["key"]: float(v["value"])
+        for v in shown["answers"]["permitted_envelope"]["values"] if v["key"] in height_keys
+    }
+
+    def _numbers(node, out):
+        if isinstance(node, bool):
+            return
+        if isinstance(node, (int, float)):
+            out.append(float(node))
+        elif isinstance(node, dict):
+            for v in node.values():
+                _numbers(v, out)
+        elif isinstance(node, list):
+            for v in node:
+                _numbers(v, out)
+
+    geom_numbers: list[float] = []
+    _numbers(withheld["geometry"], geom_numbers)
+    leaked = sorted({f for f in would_have.values() if f in geom_numbers})
+    assert leaked == [], f"withheld height figures still in geometry: {leaked}"
 
 
 def _interior_shown_limit_engine_and_ways():

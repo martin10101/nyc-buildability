@@ -23,8 +23,9 @@ _HOUSING_PROGRAM_DISPLAY, _rewrite_scope_lines)`; the five public names stay in 
 `.engine_conditions` import narrowed to `Derived` (only the moved code used `Source`). The two
 DB-199 (b) fallback texts were hoisted BYTE-IDENTICAL to module constants
 `STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON` and `STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY`,
-referenced by the fallback and brought under the existing text guard through the test imports; the
-emitted strings are unchanged (ruling B5 b, verified: the constants equal the literals).
+referenced by the fallback and (after the second correction below) listed in the `authored` list of
+`test_every_text_the_transform_writes_is_plain_and_true`, so that guard reads them (ruling B5 b);
+both pass it. The emitted strings are unchanged (verified: the constants equal the literals).
 
 `test_three_answers_three_way_emit.py`: `_scope_statement` / `_user_choice_statement` now import
 from `three_way_scope_lines` (the facade list, packet + B2, does not keep them at the old path);
@@ -131,15 +132,15 @@ the test file, derived by READING `_all_result_numbers` (not guessed):
   `with_approvals_label` (prose), `depends_on_fact_ids`/`rule_versions` (identifiers),
   `existing_building` (an input fact), `remaining_floor_area` (a not_available block), `scope`
   (condition values / measurements / the floor-to-floor input), `geometry` (polygon coordinates and
-  the dimensions that RENDER shown results); inside each answer `{status, measurement, value_states,
-  reason, reason_kind, resolved_by, gap_kind}`. One test asserts every block of the real documents
-  (benchmark, evidence benchmark, made-up interior/corner, lane-off, no-profile) is in exactly one
-  set; another asserts a NEW numeric block (top level and inside an answer) is caught.
-- Classification I had to reason about: `geometry` carries the building height (e.g. 55.0), which IS
-  a shown result. It is classified NO-RESULT-NUMBER because geometry only RENDERS results that are
-  already shown in an answer's `values[]` (walked), and a withheld result's geometry layer follows
-  it to `not_available` (reading O29/O31) - so geometry never hides a withheld result's number. No
-  non-walked block carries a result figure that is not also a shown value; nothing to STOP on.
+  the dimensions that draw the results; see the second correction below for its corrected reason and
+  the known defect); inside each answer `{status, measurement, value_states, reason, reason_kind,
+  resolved_by, gap_kind}`. One test asserts every block of the real documents (benchmark, evidence
+  benchmark, made-up interior/corner, lane-off, no-profile) is in exactly one set; another asserts a
+  NEW numeric block (top level and inside an answer) is caught.
+- The `geometry` reason in THIS first-correction commit was WRONG (it claimed a withheld result's
+  geometry layer always follows it to `not_available`, so no result hides). The test review found a
+  counter-example; the geometry reason is corrected and the defect pinned in the second correction
+  below. (The two app files are unchanged; this is a test-and-report fix only.)
 
 Gap (a) red proof (before the guard): a copy of the committed journey document with a NEW top-level
 numeric block leaves `_all_result_numbers` unchanged and the injected 100.0 unseen
@@ -166,3 +167,44 @@ Correction checks (direct exit codes): ruff `check .` from `services/api` exit 0
 passed!"); `pytest tests/scenario/three_answers tests/journey tests/api/test_results_read_api.py`
 465 passed, 2 skipped, exit 0; `git diff --stat HEAD -- services/api/app` empty before the commit (no
 production change); `git status --porcelain` clean after the commit.
+
+## Second correction (2026-10-09; third commit on top of 2e7b1d23; test file + report only)
+
+The two independent reviews passed at bb49fcba; the test review raised two notes that made
+statements in my work untrue. Both are corrected here. No production file changes (the two app files
+are byte-identical to 2e7b1d23); no emitted or shown text changes.
+
+1. The text guard (test review F1). The two fallback texts were imported but were NOT in the
+`authored` list of `test_every_text_the_transform_writes_is_plain_and_true`, so that guard did not
+read them. Both constants are now in `authored`. The guard PASSES on both (no word refused), so no
+STOP. The stale report sentence is corrected above.
+
+2. The geometry reason was false (test review F2). Reproduced: a corner lot of 4,800 sq ft in a
+recorded flood zone (`flood_zone=Recorded.PRESENT`), through the real engine (`generate_results`)
+and `decide_result_ways`. Withheld in `permitted_envelope.value_states`: every height
+(`min_base_height`, `max_base_height`, `max_building_height`, and the three qualifying variants) and
+`setback_above_base`; `max_lot_coverage` is settled (shown). Yet `geometry.status` is available and
+`geometry.envelope.status` is available, holding `tiers[0].top_ft = 55.0` - the withheld
+`max_building_height`. Cause: `_apply_geometry` clears the envelope layer only when the COVERAGE is
+withheld, never when a height is. Of the withheld heights only `max_building_height` (55) remains in
+geometry (the base heights 30/45 and the qualifying 65 do not appear); `geometry.floor_plates` and
+`geometry.setback_lines_per_level` are `not_available` in this state, so only the envelope leaks. I
+tried the floor-plates and setback-lines layers in this state and found no additional leak. The
+leaked figure 55 appears ONLY in `geometry.envelope.tiers[].top_ft`; it is NOT in any block shown on
+the results screen (not in an answer's `values[]` - the height is withheld there - nor in `scope`,
+the `status_strip` or the `completeness_line`), so nothing to STOP on (point 2d).
+
+   a. The `geometry` entry of the completeness guard is rewritten to say only what is true (not
+   walked; coordinates and the dimensions that draw the results) and to name the KNOWN DEFECT, with
+   the state, pointing at the xfail test.
+   b. One test pins the defect: `test_db199a_withheld_height_figure_leaks_into_geometry_known_defect`
+   asserts the CORRECT behaviour (no withheld-height figure anywhere in geometry) for the state
+   above, marked `@pytest.mark.xfail(strict=True, reason=...)`. It is reported as `xfailed` (not
+   passed, not failed); the strict mark forces the emitter's repair task to remove it (XPASS fails).
+   This task is NOT the repair; no emitter behaviour changes here. The repair is the next task (make
+   the geometry follow every withheld result).
+
+Second-correction checks (direct exit codes): ruff `check .` from `services/api` exit 0 ("All checks
+passed!"); `pytest tests/scenario/three_answers tests/journey tests/api/test_results_read_api.py`
+465 passed, 2 skipped, 1 xfailed, exit 0; `git diff --stat HEAD -- services/api/app` empty before the
+commit (no production change); `git status --porcelain` clean after the commit.
