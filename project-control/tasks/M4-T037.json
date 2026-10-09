@@ -136,8 +136,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the case says agreement is not proof; every row quotes its capture; 'not sure' where the text does not settle it (S1, S12)",
     "The example's shape or the owner's starting values read as law, as validated or as a recommendation -> the summary and each building and estimate row say what they are (S3, S9); a guard refuses the words",
@@ -148,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T05:41:47.673752+00:00",
-  "updated_at": "2026-10-09T06:55:17.117401+00:00",
+  "updated_at": "2026-10-09T06:55:19.795477+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
