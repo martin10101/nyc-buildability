@@ -185,7 +185,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "Flipping the C2-2/R6B rear-yard support row changes behaviour for a C2-2/R6B corner lot WITHIN 100 ft (now shown settled, S2) -> the builder sweeps every existing decision-module and emit test by git grep for a C2-2/R6B rear-yard assertion and confirms each still asserts the correct new state; any out-of-scope test update is routed to the orchestrator, never left red.",
     "The corrected reason could over-claim the law -> the exact texts above claim no more than step-p5 rows zr-34-23-page and benchmark-rear-yard-23-342-23-344, step-p4 rear-yard and step-p3 real-lot-rear-yard-beyond-corner; no raw section number in the prose; never 'professional review' or 'qualified'; the data-contract-verifier and directive-compliance-verifier check the texts against those rows.",
@@ -201,7 +201,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T03:48:47.483601+00:00",
-  "updated_at": "2026-10-09T03:50:19.642716+00:00",
+  "updated_at": "2026-10-09T05:06:03.026318+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -241,6 +241,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted and claimed. The draft was read against the code and the reference case first (where the rear yard's reason comes from; what the no-overlay branch says today; every file that pins the texts to change; the website tests that assert the rear yard's kind-of-gap line; the update switches of the three regenerated files). At the claim base: ruff exit 0; the six server test folders and files 1459 passed, 2 skipped, 1 expected failure; the website's test files that read the committed document 199 passed. Not pushed: the seams ride with the push of the head under review. Next: one builder (rules-engineer) in an isolated worktree reset to the claim-seam head."
+    },
+    {
+      "at": "2026-10-09T05:06:03.026190+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "The builder's one commit integrated by cherry-pick (582dcccb, 16 files; blobs compared equal with its worktree commit c1e14271) and read by the orchestrator before review. CI on the pushed head 582dcccb: run 37884285350, 21 of 21 jobs success; secret-scan 37884285480 and context-budget 37884285511 success; read 04:39 UTC before the reviews and read again 05:10 UTC. Two independent read-only reviews at that head, both saved unchanged: G3 data-contract-verifier PASS (received 04:48 UTC), G4 qa-engineer PASS (received 05:00 UTC; twelve mutations, each caught). Later commits hold records only (the handoff file; the record of an owner message); the 19 allowed paths are byte-identical to 582dcccb. Review record, evidence map of ten rows written. Next: submit, gates G2 G3 G4, the rule check."
     }
   ]
 }

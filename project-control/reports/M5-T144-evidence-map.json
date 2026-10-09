@@ -1,0 +1,85 @@
+{
+ "task_id": "M5-T144",
+ "material_commits": [
+  "582dcccb (the builder's one commit, 16 files: the rear yard's reason, kind and resolver beyond the waiver area and the C2-2 overlay row; the status line's first item; the geometry block follows every withheld result it draws; one regeneration of the committed document and its two snapshots; the tests; the report) = material head"
+ ],
+ "claim_seam_head": "fcd22b9d763b6942f9167f3dc563ca44d8058e43",
+ "files_changed": [
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T144-producer-report.md",
+  "services/api/app/scenario/three_answers/explanations.py",
+  "services/api/app/scenario/three_answers/result_way_bridge_overlay.py",
+  "services/api/app/scenario/three_answers/result_ways.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/journey/test_215_16_northern_journey.py",
+  "services/api/tests/scenario/three_answers/test_result_way_bridge_overlay.py",
+  "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_c6_c11.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+ ],
+ "allowed_paths_not_touched": [
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "services/api/tests/scenario/three_answers/test_result_ways_benchmark.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_corner_interior.py"
+ ],
+ "what_did_not_change": "No rear-yard figure anywhere; no overlay code other than C2-2 and no district other than R6B; no other item of the status line; no schema, no website source file, no route, no switch; `geometry.py`, `result_way_conditions.py` and `result_way_inputs.py` read only.",
+ "known_limits": [
+  "The rear yard beyond the waiver area stays not known. The two facts the reason names (this lot's exact lot lines; the adjoining lots' lot lines where they meet this lot) are missing property facts; the code that would work the rear yard out from them is not built either, and the resolver names only the facts (the builder's ruling-C3 sentence; the code review's F2).",
+  "For a lot shaped as a plain corner square the clause about the adjoining lots names a fact that would not change that lot's outcome; the program cannot tell lot shapes apart from its inputs, so the sentence names what resolving could need and asserts no outcome (the code review's F1).",
+  "The old words 'Zoning maximum' still stand outside this task's paths: the description example of the results schema (two copies), a comment in `compare_rows.py`, hand-written fixtures, and the dashboard's own text 'Zoning maximum not available' on a different screen (the code review's check 7 and F3; ruling C4).",
+  "Scenario S5 (the overlay in another district) is proved by what such a lot really gets, the district-wide withholding, not by the generic overlay text the packet's prose named (the test review's F1).",
+  "The two rear-yard branches this task does not change (angle over the limit; both conditions fail) are pinned by their opening words, their resolver, their equality with and without the overlay and the state table, not by a full-text copy (the test review's F2).",
+  "Only the C2-2 overlay in R6B is affected; no other overlay code and no other district changed. No rear-yard figure anywhere; every switch stays off."
+ ],
+ "checks_at_material_head": [
+  "CI: on the push of `582dcccb`: CI run 37884285350, attempt 1, 21 of 21 jobs success (among them the server's whole suite, the snapshot suites, the website's unit and browser tests); secret-scan 37884285480 success; context-budget 37884285511 success; read at 04:39 UTC on 2026-10-09, before the reviews. Nothing was rerun.",
+  "orchestrator: at `582dcccb`: ruff exit 0; the packet's six server test folders and files with no update variable: 1474 passed, 2 skipped (1459 passed, 2 skipped and 1 expected failure at the claim head); the website's eight test files that read the committed document: 199 passed; the size check exit 0 (`result_ways.py` 662 lines, `three_way_document.py` 444). No whole-suite run and no browser test on the build machine: those are CI's."
+ ],
+ "requirements": {
+  "D-090-R258": [
+   "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py: test_s1_c2_2_r6b_corner_beyond_100_angle_within_corrected_reason and test_s3_no_overlay_r6b_corner_beyond_100_same_corrected_text (beyond the waiver area the rear yard's kind of gap is missing information); test_s6_c2_2_r6b_corner_angle_over_135_keeps_waiver_text and test_s16_angle_over_and_both_branches_identical_with_and_without_overlay (the two other branches stay work owed). services/api/tests/scenario/three_answers/test_result_ways_truth_table.py: test_the_way_and_kind_of_every_result_in_every_state_is_pinned.",
+   "project-control/reports/M5-T144-G3G4.md: the G4 return's check 4 (only the rear yard's position moved, work owed to missing information, in 28 states) and mutation m3; the G3 return's check 6 and its F2 (the code that would use the facts is still owed: known limit 1)."
+  ],
+  "D-090-R267": [
+   "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py: test_s2_c2_2_r6b_corner_within_100_angle_within_rear_yard_shown (the one state this task moves from withheld to shown) and test_s1_... (beyond the waiver area it stays withheld); services/api/tests/scenario/three_answers/test_result_way_bridge_overlay.py: test_the_rear_yard_rests_on_the_step_p5_row_that_resolves_the_overlay_caveat.",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's checks 3 and 4 (the shown state rests on the reference-case rows; nothing else became shown); the G4 return's check 2 (S2) and mutation m5."
+  ],
+  "D-090-R570": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_db199a_withheld_height_figure_leaks_into_geometry_known_defect (its expected-failure mark removed; it passes), test_s11_flood_zone_corner_height_withheld_envelope_cleared, test_s12_envelope_both_height_and_coverage_withheld_combined_reason, test_s12b_envelope_reason_kind_missing_input_when_no_contributor_is_work_owed, test_s13_envelope_height_shown_coverage_withheld_unchanged, test_s14_envelope_height_and_coverage_shown_available, test_db199a_every_block_of_the_emitted_document_is_classified.",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's check 8 (each geometry layer read in `geometry.py`: no other layer can keep a withheld figure); the G4 return's mutations m8 to m12 and its check 6 (the committed document and the snapshot are pinned byte for byte)."
+  ],
+  "D-090-R641": [
+   "services/api/tests/scenario/three_answers/test_three_answers_c6_c11.py: test_status_strip_first_item_is_preliminary_zoning_results; services/api/tests/journey/test_215_16_northern_journey.py: test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture (the committed document, compared byte for byte, carries the owner's words as the status line's first item).",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's check 7 (where the old words still stand and why none is the status line: known limit 3); the G4 return's mutation m7."
+  ],
+  "D-090-R642": [
+   "services/api/tests/journey/test_215_16_northern_journey.py: test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture; services/api/tests/scenario/three_answers/test_result_ways_truth_table.py: test_the_way_and_kind_of_every_result_in_every_state_is_pinned (every result's own state in every state of the table).",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's check 7 (the committed document's changes: the rear yard's state and the status line's first item; every other value keeps its way); the G4 return's check 4."
+  ],
+  "D-090-R646": [
+   "project-control/reports/M5-T144-G0.md: section 'Authority', the paragraph 'THE TWO CASE ROWS THE OWNER NAMED, READ AND QUOTED' (row `zr-34-23-page` of `docs/reference-cases/R6B/cases/step-p5-worked.json`, in its own words).",
+   "services/api/tests/scenario/three_answers/test_result_way_bridge_overlay.py: test_the_rear_yard_rests_on_the_step_p5_row_that_resolves_the_overlay_caveat; project-control/reports/M5-T144-G3G4.md: the G3 return's check 3 (the row read again by the reviewer, in its own words)."
+  ],
+  "D-090-R647": [
+   "project-control/reports/M5-T144-G0.md: the same paragraph (row `benchmark-rear-yard-23-342-23-344`, in its own words: what it names as missing).",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's check 2 (each clause of the new reason set against that row, the rows of steps P3 and P4 and the captured text) and its F1 (known limit 2)."
+  ],
+  "D-090-R648": [
+   "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py: test_s1_c2_2_r6b_corner_beyond_100_angle_within_corrected_reason (the whole reason and the resolver, compared exactly) and test_s3_no_overlay_r6b_corner_beyond_100_same_corrected_text (one text for one situation); services/api/tests/scenario/three_answers/test_result_ways_truth_table.py: test_s3_corner_distance_fails_angle_holds_names_the_distance_not_the_angle; apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: the two tests named S5 (the screen's card shows 'Missing information about this property.' for the rear yard).",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's check 2; the G4 return's checks 2 and 5 and mutations m1, m2 and m4."
+  ],
+  "D-090-R649": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_s4_rear_yard_withheld_not_not_required (the document's rear-yard state and the geometry block's yards say the same reason; no figure); services/api/tests/journey/test_215_16_northern_journey.py: test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture; apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx: the two tests named S5 (no figure on a withheld row).",
+   "project-control/reports/M5-T144-G3G4.md: the G3 return's check 6; the G4 return's mutation m12 (a figure put on the withheld rear yard fails the byte comparison and the guards)."
+  ],
+  "D-090-R661": [
+   "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py: test_db199a_withheld_height_figure_leaks_into_geometry_known_defect (ordinary test now; the mark is gone), test_s11_flood_zone_corner_height_withheld_envelope_cleared and the tests named S12 to S14 in the same file.",
+   "project-control/reports/M5-T144-producer-report.md: Table 2 (each geometry layer, what it draws, the states tried) and the red proof of the defect before the repair; project-control/reports/M5-T144-G3G4.md: the G3 return's check 8 and the G4 return's mutations m8 to m11."
+  ]
+ }
+}
