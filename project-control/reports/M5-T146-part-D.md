@@ -260,3 +260,45 @@ refreshed to commit `0c048485` per GUIDE step 2, matching the resynced `automate
 other four entries' logs are unchanged (their code/tests and recorded run are still valid).
 
 END-OF-REPORT
+
+## Fourth round (resync after the walkthrough correction: buildings_not_worked)
+
+Built on `1796eba6eaf23c87e8db587706b471fa1e6d8fbb`. The walkthrough failed at 16 ft (no building, no
+reason, a false older reason). PART B added an optional additive list `buildings_not_worked` to
+contract 1.4.0 (each building's reason, no number field) and reworded the older building_option block;
+`three_way_document.py` changed again (new sha `2deb3d3a...`), so the register check failed on two
+entries. No checker/renderer code; no human decision; no test-file edit (no six-step verdict moves).
+ACTUAL sides read from the program; the benchmark document changed only by gaining building A's
+`buildings_not_worked` entry (areas-disagree reason, no figure) and the two-list pointer wording.
+
+### Entries resynced (all revision 4 -> 5, history appended seq 21-23)
+- `calc-preliminary-apartment-estimate`: `three_way_document.py` resynced (new code identity
+  `30a94e81...`), evidence -> commit `1796eba6`, 53 passed; text now says building B's estimate is
+  reported wherever a building is worked and none where none can be worked.
+- `calc-first-building-option-complete`: `three_way_document.py` resynced (new code identity
+  `15415c7a...`), evidence resynced. Step 3's actual side now names building A in
+  `buildings_not_worked` (footprint withheld, areas disagree); building A's floor schedule is still
+  not worked, so the verdict stays `side_missing` - NO step verdict moves (the benchmark document's
+  building B blocks are unchanged). Stated in the history line.
+- `calc-building-option-floor-stack` (text only; code unchanged): the page now says that where a
+  building of the method cannot be worked the document lists no building and names each in
+  `buildings_not_worked` with its plain reason (building A on the benchmark; building A and building B
+  at 16 ft and 25 ft), and the single `building_option` block points to both lists and states no
+  false reason. Coverage gap reworded; register-wide coverage gap for the building option reworded.
+- `calc-lot-coverage-by-portion`, `calc-floor-area-allowance`, `calc-legal-dwelling-unit-limit`:
+  unchanged (the walkthrough fix did not touch their behaviour).
+
+### Did any verdict move? No. The regenerated benchmark kept building B listed; building A is named
+in `buildings_not_worked` (a reason, not a worked schedule), so step 3 stays `side_missing`.
+
+### Checks (direct exit codes)
+- `ruff check .` (services/api): 0. `pytest register + calc + reference_cases`: 0 - 196 passed (calc
+  file alone 53). `render_review_register.py --check`: 0. `modularity_check --check`: 0.
+  `check_lane_paths --coverage`: 0 (9753 files). `git diff 1796eba6 -- docs/zoning-rule-review/rules`:
+  empty (23 rule pages unchanged).
+
+### Scope note
+Two evidence logs refreshed to commit `1796eba6` per GUIDE step 2, matching the resynced
+`automated_tests` fields; the other four entries' logs are unchanged.
+
+END-OF-REPORT

@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 4 (last changed 2026-10-09)
+- Revision: 5 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `03b418ce69519e171dd8c5a931eb6a2253b2c8e74ee64f5cbd022f5a498acad9`
+- Combined code identity: `15415c7a75b0bd0385d54e37f8871ae69fb737c91f076188dd9ddb2525f773cb`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`57f7325ecd7cf259a72f44126e327909675e4260436872b9141aadbe2e7aa4aa`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`2deb3d3a61e1cb40530a777ddeb291008dab875bc9ad955a510ff90a8f5fa911`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
   - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
@@ -44,7 +44,7 @@ The whole first-building-option calculation for the benchmark lot, set step by s
 
 ## How the program reads it
 
-The independent example (step P6, two sealed-folder readers) is set beside the program's actual output step by step. The property inputs agree; building B's floor schedule (3 storeys of 6,716.67 sq ft at 30 ft), total floor area (20,150 sq ft) and preliminary capacity estimate (17.27 to 21.59) are now reported in building_alternatives and match the independent building B, conditional on the recorded lot area. The footprint square-foot figure is withheld because the recorded and tax-map outline lot areas disagree, so building A (which needs the footprint) is not listed - that side of the comparison is missing. The legal unit limit is still withheld (the engine computes 29 internally). The engine's own single-answer building method differs from building B's (DB-210). Nothing is called feasible; nothing is resolved here.
+The independent example (step P6, two sealed-folder readers) is set beside the program's actual output step by step. The property inputs agree; building B's floor schedule (3 storeys of 6,716.67 sq ft at 30 ft), total floor area (20,150 sq ft) and preliminary capacity estimate (17.27 to 21.59) are now reported in building_alternatives and match the independent building B, conditional on the recorded lot area. The footprint square-foot figure is withheld because the recorded and tax-map outline lot areas disagree, so building A (which needs the footprint) is not listed - that side of the comparison is missing. The legal unit limit is still withheld (the engine computes 29 internally). The engine's own single-answer building method differs from building B's (DB-210). The document also names, in buildings_not_worked, each building of the method not listed with its plain reason; on the benchmark that is building A (its footprint withheld because the two lot areas disagree). Nothing is called feasible; nothing is resolved here.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -57,7 +57,7 @@ The independent example (step P6, two sealed-folder readers) is set beside the p
 |---|---|---|---|---|
 | 1 | Property inputs | R6B; overlay C2-2; corner lot; recorded lot area 10,075 sq ft vs tax-map outline 10,387.99 sq ft (both shown, neither chosen); 10-ft floor-to-floor (a preliminary assumption) (real-lot#L9, real-lot#L10, step-p6-worked#real-lot-recorded-vs-measured-area) | R6B; overlay C2-2 present; corner; recorded 10,075 vs outline 10,387.99 (shown as a condition, neither chosen); 10-ft floor-to-floor default [settled] | agree |
 | 2 | Footprint / lot coverage by portion | no single whole-lot figure: corner portion about 9,997.5 sq ft at 100% plus interior strip about 390 sq ft at 80%, footprint about 10,310 sq ft (the two readings differ in the decimals) (step-p6-worked#real-lot-coverage-by-portion) | withheld - no footprint square-foot figure: the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree; the law is given by portion (corner 100% within 100 ft, interior 80%) [withheld] | a side is missing |
-| 3 | Each floor's area and height | real building A: 1 storey about 10,310 sq ft at 10 ft (below the 30 ft minimum base); real building B: 3 storeys of 6,716.67 sq ft at 30 ft (step-p6-worked#real-building-a, step-p6-worked#real-building-b) | building B: 3 storeys of 6,716.67 sq ft at 30 ft (conditional on the recorded lot area), matching the independent building B; building A is not listed because it needs the withheld footprint figure [available_conditional] | a side is missing |
+| 3 | Each floor's area and height | real building A: 1 storey about 10,310 sq ft at 10 ft (below the 30 ft minimum base); real building B: 3 storeys of 6,716.67 sq ft at 30 ft (step-p6-worked#real-building-a, step-p6-worked#real-building-b) | building B: 3 storeys of 6,716.67 sq ft at 30 ft (conditional on the recorded lot area), matching the independent building B; building A is named in buildings_not_worked (its footprint is withheld because the two lot areas disagree), not worked [available_conditional] | a side is missing |
 | 4 | Total floor area | real building B total 20,150 sq ft (the whole allowance used); made-up building B total 20,000 sq ft (step-p6-worked#real-building-b) | building B total 20,150 sq ft (the whole allowance used), conditional on the recorded lot area [available_conditional] | agree |
 | 5 | Applicable legal unit limit | 29 dwelling units (20,150 / 680 = 29.63 -> 29) (real-lot#L6, step-p6-worked#real-unit-limit) | withheld - the engine computes 29 internally, but the document withholds the limit pending special-density evidence and an independent check [withheld] | a side is missing |
 | 6 | Separate preliminary apartment estimate | real building B: 20,150 x 0.60 / 700 = 17.27 (17-18) and x 0.75 / 700 = 21.59 (21-22); the 0.60-0.75 share and 700 sq ft size are each a preliminary assumption (step-p6-worked#real-estimate-b) | building B: 20,150 x 0.60 / 700 = 17.27 and x 0.75 / 700 = 21.59, labelled 'Preliminary capacity estimate', conditional; the 0.60-0.75 share and 700 sq ft size are each a preliminary assumption, shown but not yet changeable (DB-213 a) [available_conditional] | agree |
@@ -82,9 +82,9 @@ The independent example (step P6, two sealed-folder readers) is set beside the p
 
 - Component: `calc-building-option-floor-stack`
 - Independent expected answer: real building A: 1 storey about 10,310 sq ft at 10 ft (below the 30 ft minimum base); real building B: 3 storeys of 6,716.67 sq ft at 30 ft
-- Program's actual answer and standing: building B: 3 storeys of 6,716.67 sq ft at 30 ft (conditional on the recorded lot area), matching the independent building B; building A is not listed because it needs the withheld footprint figure (available_conditional; source: fixture building_alternatives[0] (building B); building_option not shown)
+- Program's actual answer and standing: building B: 3 storeys of 6,716.67 sq ft at 30 ft (conditional on the recorded lot area), matching the independent building B; building A is named in buildings_not_worked (its footprint is withheld because the two lot areas disagree), not worked (available_conditional; source: fixture building_alternatives[0] (building B); building A in buildings_not_worked; building_option points to both lists)
 - Verdict: side_missing
-- The program now gives building B's floor schedule, which matches the independent building B; building A, which the independent example also works, is not listed because it needs the withheld footprint figure, so that side of the comparison is missing.
+- The program now gives building B's floor schedule, matching the independent building B; building A, which the independent example also works, is named in buildings_not_worked with its areas-disagree reason (no figure) but is not worked, so that side of the comparison is still missing. No verdict moves.
 
 ### Step 4: Total floor area
 
@@ -114,7 +114,7 @@ The independent example (step P6, two sealed-folder readers) is set beside the p
 
 Disagreements:
 - [a design assumption that differs] The engine's own single-answer building method (compute_building_option: one uniform widest plate to a partial top floor; on the made-up lot 3 floors of 8,000/8,000/4,000 = 20,000 sq ft at 30 ft) differs from building B's method (first_building_options: the fewest storeys reaching the 30 ft minimum base height, 3 storeys of 6,716.67 sq ft). Which building the first option shows is the owner's pending decision. Backlog row DB-210. Not resolved here. - would be settled by: The building-option generator's design and the owner's choice on which building to show (DB-210 point b).
-- [a missing fact about the property] (program result(s): max_lot_coverage) The recorded lot area 10,075 sq ft and the tax-map outline area 10,387.99 sq ft disagree (about 313 sq ft). The footprint is not shown as a square-foot figure because the outline's area is a drawing measure, never used in a zoning calculation in its place; the law is given by portion. Because the footprint is withheld, building A (the widest footprint) is not listed. (max_lot_coverage gap_kind missing_information.) - would be settled by: A survey or deed dimensions reconciling the recorded lot area with the tax-map outline; DB-210 point a.
+- [a missing fact about the property] (program result(s): max_lot_coverage) The recorded lot area 10,075 sq ft and the tax-map outline area 10,387.99 sq ft disagree (about 313 sq ft). The footprint is not shown as a square-foot figure because the outline's area is a drawing measure, never used in a zoning calculation in its place; the law is given by portion. Because the footprint is withheld, building A (the widest footprint) is not worked and is named in buildings_not_worked with the areas-disagree reason (no figure). (max_lot_coverage gap_kind missing_information.) - would be settled by: A survey or deed dimensions reconciling the recorded lot area with the tax-map outline; DB-210 point a.
 - [a missing fact about the property] The two independent readings differ in the decimals of the real lot's footprint (corner 9,997.60 vs 9,997.46; strip 390.39 vs 390.52; total 10,309.91 vs 10,309.88); both figures are held, no single figure. - would be settled by: A surveyed outline.
 
 Missing facts:
@@ -136,8 +136,8 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `03b418ce69519e171dd8c5a931eb6a2253b2c8e74ee64f5cbd022f5a498acad9`
-- Commit tested: `0c048485f1f69fc554543050542897695968e0b3`
+- Code identity tested: `15415c7a75b0bd0385d54e37f8871ae69fb737c91f076188dd9ddb2525f773cb`
+- Commit tested: `1796eba6eaf23c87e8db587706b471fa1e6d8fbb`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed

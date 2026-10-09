@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 4 (last changed 2026-10-09)
+- Revision: 5 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-height`
 
 ## Code identity
@@ -34,14 +34,15 @@ The building-option floor stack: a footprint stacked floor by floor to a total f
 
 ## Exceptions and limits
 
-- Building B is listed on every path where the floor-area allowance is shown (it rests on the recorded lot area and the lowest ratio, not the outline); it is conditional on the recorded lot area (W13 a).
-- Building A is listed where the two lot areas agree (the footprint figure is available then); on the benchmark the areas disagree, so building A is not listed.
-- The single building_option block is not shown; it points to the worked alternatives in building_alternatives.
-- The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from the independent example's two buildings (DB-210); building B is built by first_building_options.py (the fewest storeys reaching the minimum base height), which matches the independent building B.
+- Building B is listed where the floor-area allowance is shown and it can be worked (it rests on the recorded lot area and the lowest ratio, not the outline); conditional on the recorded lot area (W13 a).
+- Where a building of the method cannot be worked, the document names it in buildings_not_worked with a plain reason and no figure (W14): building A where its footprint is withheld (the two lot areas disagree); building B where a 2-storey plan would exceed the lowest coverage bound (16 ft), or the fewest storeys reaching the minimum base height would pass the maximum base height (25 ft).
+- Each building of the method is in exactly one list (building_alternatives or buildings_not_worked).
+- The single building_option block points to both lists and states no false reason, also when no building is listed.
+- The engine's own compute_building_option method differs from the independent example's two buildings (DB-210); building B is built by first_building_options.py (the fewest storeys reaching the minimum base height), which matches the independent building B.
 
 ## How the program reads it
 
-The document reports building B as a worked alternative wherever the floor-area allowance is shown: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft allowance on the benchmark, conditional on the recorded lot area. Building B rests on the recorded lot area and the lowest applicable ratio alone, not on the tax-map outline, so it is listed on every path - including where no outline is available (W13 a). Building B is built by first_building_options.py (the fewest storeys reaching the minimum base height; M5-T145), which matches the independent example's building B. Building A (the widest footprint in whole storeys) is listed where the two lot areas agree (then the footprint figure is available); on the benchmark the areas disagree, so building A is not listed. The single building_option block is not shown and points to the list. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210), set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.
+The document reports building B as a worked alternative wherever the floor-area allowance is shown AND it can be worked: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft allowance on the benchmark (at the owner's 10 ft starting storey height), conditional on the recorded lot area. Building B rests on the recorded lot area and the lowest applicable ratio alone, not on the tax-map outline, so it is listed on every path - including where no outline is available (W13 a). For each building of the step-P6 method that is NOT listed, the document names it in a separate list, buildings_not_worked, with a plain reason and no figure (W14): building A wherever its footprint is withheld because the two lot areas disagree (a missing fact about the property); building B where a 2-storey plan would exceed the lowest coverage bound (at 16 ft a plan of 10,075 sq ft each, above 8,060 sq ft = 80 percent of the recorded lot area), or where the fewest storeys reaching the minimum base height would stand above the maximum base height (at 25 ft). Each building is in exactly one list. The single building_option block points to both lists and states no false reason, also when no building is listed. Building A (the widest footprint) is listed only where the two lot areas agree; on the benchmark the areas disagree, so building A is named in buildings_not_worked. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210), set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -78,10 +79,10 @@ Implemented and tested:
 - The single building_option block is not shown in the document (test: test_document_actuals_match_the_recorded_fixture).
 
 In the program but no test checks it:
-- The document lists building B on every path where the allowance is shown, and building A where the two lot areas agree; no register test asserts the list's floor schedule (the server content tests do).
+- The document lists building B where it can be worked and names each not-worked building (building A on the benchmark; building A and building B at 16 ft and 25 ft) in buildings_not_worked with its reason; the server content tests assert these (test_w14_s25/s26/s27), no register-side test does.
 
 Planned, not built:
-- Building A is listed only where the two lot areas agree; where they disagree (the benchmark) or the outline is missing, the footprint figure is withheld and building A is not worked.
+- Building A is listed only where the two lot areas agree; where they disagree (the benchmark) or the outline is missing it is named in buildings_not_worked, its footprint withheld.
 - The engine's own single-answer building-option generator (compute_building_option) is not reported; it is set beside the independent example only in the worked example below.
 - One floor-to-floor height is worked for every storey (R542 10 ft), so a 15 ft shop ground floor is not worked.
 - Which building the first option shows is the owner's pending decision (DB-210).
@@ -126,10 +127,11 @@ Planned, not built:
 ## Gaps and unresolved questions
 
 - The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from building B's method (the fewest storeys reaching the minimum base height); recorded as a design assumption that differs (DB-210).
-- Building A is listed only where the two lot areas agree; on the benchmark they disagree, so the footprint figure and building A are withheld.
+- Building A is listed only where the two lot areas agree; on the benchmark they disagree, so its footprint and building A are withheld and building A is named in buildings_not_worked.
+- Where no building of the method can be worked (for example at 16 ft or 25 ft), no building is listed and each is named in buildings_not_worked with its reason.
 - The two step-P6 readings differ in the decimals of the real lot's footprint; both figures are held, no single figure.
 
-- Coverage gap: Building B is reported as a worked alternative on every path where the allowance is shown (conditional); building A is listed where the two lot areas agree; the single building_option block is not shown; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).
+- Coverage gap: Building B is reported as a worked alternative where the allowance is shown and it can be worked; where a building cannot be worked it is named in buildings_not_worked with a plain reason (building A on the benchmark; building A and building B at 16 ft and 25 ft); the single building_option block points to both lists and states no false reason; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).
 
 ## Human review
 
