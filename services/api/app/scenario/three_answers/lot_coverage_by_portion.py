@@ -3,8 +3,7 @@
 Pure arithmetic: no file or network access, no clock, no AI. From the two portion
 areas a corner-reach measurement produces - the corner-lot portion and the rest
 (the interior-lot portion) - it works the footprint the ZR 23-362 coverage ratios
-allow: the corner-lot portion at 100 percent plus the interior-lot portion at 80
-percent.
+allow: the corner-lot portion at its ratio plus the interior-lot portion at its ratio.
 
 The two ratios are the legal figures of ZR 23-362 (capture ``zr-23-362`` under
 docs/research/zr-snapshots/v1/: "the maximum #residential# #lot coverage# for
@@ -49,8 +48,10 @@ _MEASUREMENT_BASIS = (
 @dataclass(frozen=True)
 class CoverageByPortion:
     """The footprint the two portions allow by the ZR 23-362 ratios, or a not-known
-    state. ``status`` is 'available' or 'not_known'. Areas are square feet; no value
-    is rounded. For a not-known state ``gap_kind`` names which kind of gap it is."""
+    state. ``status`` is 'available' or 'not_known'. Areas are square feet; no value is
+    rounded. ``missing_inputs`` names the inputs not known for a missing-input state
+    (empty otherwise); ``gap_kind`` is None for a missing-input state (a module that
+    takes plain numbers cannot know why an input is missing)."""
 
     status: str
     corner_allowed: float | None
@@ -62,6 +63,7 @@ class CoverageByPortion:
     zr_sections: tuple[str, ...]
     measurement_basis: str
     reason: str
+    missing_inputs: tuple[str, ...]
     gap_kind: str | None
 
 
@@ -75,11 +77,18 @@ def permitted_footprint_by_portion(
 
     ``corner_portion_area`` and ``interior_portion_area`` are the corner-lot and
     interior-lot portion areas (square feet) a corner-reach measurement produces. A
-    missing area (``None``) gives a not-known result with a plain reason, never a zero
-    and never a default. A negative area is refused with ``ValueError``; no footprint
-    is ever worked from a negative area.
+    missing area (``None``) gives a not-known result that names the missing inputs,
+    never a zero and never a default, and names no kind of gap. A negative area, or a
+    ratio outside 0 to 1, is refused with ``ValueError``; no footprint is ever worked
+    from a negative area or an out-of-range ratio.
     """
-    if corner_portion_area is None or interior_portion_area is None:
+    if not 0 <= corner_ratio <= 1 or not 0 <= interior_ratio <= 1:
+        raise ValueError(
+            "a coverage ratio must be between 0 and 1: "
+            f"corner_ratio={corner_ratio}, interior_ratio={interior_ratio}"
+        )
+    missing = _missing_area_names(corner_portion_area, interior_portion_area)
+    if missing:
         return CoverageByPortion(
             status="not_known",
             corner_allowed=None,
@@ -91,11 +100,12 @@ def permitted_footprint_by_portion(
             zr_sections=_ZR_SECTIONS,
             measurement_basis=_MEASUREMENT_BASIS,
             reason=(
-                "The corner-lot and interior-lot portion areas are not known for this "
-                "lot. They need the lot outline measured against the two street lines "
-                "(the corner-reach measurement). No footprint is given."
+                "The corner-lot portion area and the interior-lot portion area are not "
+                "known for this lot; the corner-reach measurement supplies them. No "
+                "footprint is given."
             ),
-            gap_kind="a missing fact about the property",
+            missing_inputs=missing,
+            gap_kind=None,
         )
     if corner_portion_area < 0 or interior_portion_area < 0:
         raise ValueError(
@@ -116,10 +126,24 @@ def permitted_footprint_by_portion(
         zr_sections=_ZR_SECTIONS,
         measurement_basis=_MEASUREMENT_BASIS,
         reason=(
-            "The footprint the two portions allow is the corner-lot portion at its "
-            "full area (corner ratio) plus the interior-lot portion at 80 percent of "
-            "its area (ZR 23-362). The corner-lot portion is the part within 100 feet "
-            "of each intersecting street line (ZR 12-10)."
+            "The footprint the two portions allow is the corner-lot portion at "
+            f"{corner_ratio * 100:g} percent of its area plus the interior-lot portion "
+            f"at {interior_ratio * 100:g} percent of its area (ZR 23-362). The "
+            "corner-lot portion is the part within 100 feet of each intersecting street "
+            "line (ZR 12-10)."
         ),
+        missing_inputs=(),
         gap_kind=None,
     )
+
+
+def _missing_area_names(
+    corner_portion_area: float | None, interior_portion_area: float | None
+) -> tuple[str, ...]:
+    """The names of the portion-area inputs that are not known (``None``)."""
+    names: list[str] = []
+    if corner_portion_area is None:
+        names.append("corner_portion_area")
+    if interior_portion_area is None:
+        names.append("interior_portion_area")
+    return tuple(names)

@@ -1,4 +1,5 @@
-"""Acceptance scenarios S9-S14 for the by-portion lot-coverage arithmetic (PART B).
+"""Acceptance scenarios S9-S14 for the by-portion lot-coverage arithmetic (PART B),
+plus the orchestrator's corrections C12 and C16.
 
 One test per scenario of this part. Every expected figure is PARSED from the
 independent reference case docs/reference-cases/R6B/cases/step-p6-worked.json (rows
@@ -127,17 +128,55 @@ def test_s12_corner_rule_whole_lot_within_corner_portion() -> None:
 
 
 def test_s13_missing_portion_areas_not_known() -> None:
+    # Correction C12: a missing input names NO kind of gap; it names the missing inputs.
     result = permitted_footprint_by_portion(None, None)
 
     assert result.status == "not_known"
     assert result.footprint is None
     assert result.corner_allowed is None
     assert result.interior_allowed is None
-    assert result.gap_kind == "a missing fact about the property"
+    assert result.gap_kind is None
+    assert result.missing_inputs == ("corner_portion_area", "interior_portion_area")
     assert "not known" in result.reason.lower()
-    assert "corner-reach measurement" in result.reason
 
 
 def test_s14_negative_area_rejected() -> None:
     with pytest.raises(ValueError):
         permitted_footprint_by_portion(-1.0, 390.39)
+
+
+def test_c16a_available_text_follows_actual_ratios() -> None:
+    # Correction C16(a): the text of an available result is written from the ratios
+    # actually used, not a hardcoded 80 percent.
+    result = permitted_footprint_by_portion(
+        corner_portion_area=1_000.0,
+        interior_portion_area=1_000.0,
+        corner_ratio=1.00,
+        interior_ratio=0.50,
+    )
+    assert "50 percent" in result.reason
+    assert "80 percent" not in result.reason
+
+
+def test_c16b_ratio_out_of_range_rejected() -> None:
+    # Correction C16(b): a ratio outside 0 to 1 is refused.
+    with pytest.raises(ValueError):
+        permitted_footprint_by_portion(1_000.0, 1_000.0, corner_ratio=1.5)
+    with pytest.raises(ValueError):
+        permitted_footprint_by_portion(1_000.0, 1_000.0, interior_ratio=-0.1)
+
+
+def test_c16c_footprint_never_exceeds_sum_of_areas() -> None:
+    # Correction C16(c) / D-090 R147: with ratios in 0..1 the footprint can never exceed
+    # the sum of the two portion areas, over the scenarios' inputs.
+    reading13 = _coverage_reading(_rows()["real-lot-coverage-by-portion"], "13")
+    reading14 = _coverage_reading(_rows()["real-lot-coverage-by-portion"], "14")
+    cases = [
+        (0.0, 10_000.0),
+        (reading13["corner"], reading13["strip"]),
+        (reading14["corner"], reading14["strip"]),
+        (5_000.0, 0.0),
+    ]
+    for corner, interior in cases:
+        result = permitted_footprint_by_portion(corner, interior, 1.00, 0.80)
+        assert result.footprint <= corner + interior + 1e-9
