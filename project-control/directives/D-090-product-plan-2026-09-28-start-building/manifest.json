@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T08:32:33+00:00",
+ "updated_at": "2026-10-09T08:38:05+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -797,7 +797,7 @@
   "D-090-R773"
  ],
  "requirements_id_digest_sha256": "480b148d08550d57ea9e5d03b96888560fdb13a354f6be1fd60a801ea583d68c",
- "requirements_content_digest_sha256": "12feca8c0ace76231ede27e4be9dc4f385e5347344c25b9f762af028f204b0e2",
+ "requirements_content_digest_sha256": "36333b955c78ad987716e273a1e803db54d392c9b3e6f4eb480369217ec44f7e",
  "sources": [
   {
    "file": "source-001.md",
@@ -2247,6 +2247,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T145 (First building option, the calculation modules (one packet, four parts side by side): A measurement, B coverage, C two buildings, D estimate) to R147, R192, R239, R255, R256, R322, R509, R519, R540, R541, R543, R545, R650, R688, R700, R773 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T08:38:05+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Scope correction of task M5-T145 before any review: bound it also to R379, R691, R692, R703, R704, R705, R707 via applicability.task_ids; requirements content digest resynced in the same commit; the task's provisional verification row extended (pending, verifier unset); no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

@@ -4232,6 +4232,7 @@
     "D-090-R255",
     "D-090-R256",
     "D-090-R322",
+    "D-090-R379",
     "D-090-R509",
     "D-090-R519",
     "D-090-R540",
@@ -4240,7 +4241,13 @@
     "D-090-R545",
     "D-090-R650",
     "D-090-R688",
+    "D-090-R691",
+    "D-090-R692",
     "D-090-R700",
+    "D-090-R703",
+    "D-090-R704",
+    "D-090-R705",
+    "D-090-R707",
     "D-090-R773"
    ],
    "producer": "rules-engineer",
@@ -4281,6 +4288,12 @@
     },
     {
      "id": "D-090-R322",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R379",
      "state": "pending",
      "evidence": [],
      "reviewed_sha": null
@@ -4334,7 +4347,43 @@
      "reviewed_sha": null
     },
     {
+     "id": "D-090-R691",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R692",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
      "id": "D-090-R700",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R703",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R704",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R705",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R707",
      "state": "pending",
      "evidence": [],
      "reviewed_sha": null
