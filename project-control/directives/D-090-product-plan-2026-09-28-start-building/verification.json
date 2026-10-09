@@ -4512,6 +4512,277 @@
     }
    ],
    "verified_at": "2026-10-09T10:09:47+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T146",
+   "applicable_requirement_ids": [
+    "D-090-R147",
+    "D-090-R192",
+    "D-090-R239",
+    "D-090-R255",
+    "D-090-R256",
+    "D-090-R257",
+    "D-090-R267",
+    "D-090-R322",
+    "D-090-R374",
+    "D-090-R379",
+    "D-090-R509",
+    "D-090-R526",
+    "D-090-R540",
+    "D-090-R541",
+    "D-090-R543",
+    "D-090-R544",
+    "D-090-R556",
+    "D-090-R570",
+    "D-090-R650",
+    "D-090-R688",
+    "D-090-R700",
+    "D-090-R707",
+    "D-090-R773"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R147",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R192",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R239",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R255",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R256",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R257",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R267",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R322",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R374",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R379",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R509",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R526",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R540",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R541",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R543",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R544",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R556",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R570",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R650",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R688",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R700",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R707",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R773",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T147",
+   "applicable_requirement_ids": [
+    "D-090-R256",
+    "D-090-R509",
+    "D-090-R526",
+    "D-090-R540",
+    "D-090-R541",
+    "D-090-R543",
+    "D-090-R544",
+    "D-090-R556",
+    "D-090-R570",
+    "D-090-R641",
+    "D-090-R688",
+    "D-090-R700"
+   ],
+   "producer": "frontend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R256",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R509",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R526",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R540",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R541",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R543",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R544",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R556",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R570",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R641",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R688",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R700",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
