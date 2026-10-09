@@ -55,6 +55,7 @@ __all__ = [
     "FirstOptionBlocks",
     "FirstOptionInputs",
     "assemble_first_option",
+    "max_lot_coverage_value_state",
 ]
 
 COVERAGE_LABEL = "Maximum lot coverage"
@@ -91,6 +92,18 @@ _METHOD_RESOLVED = (
     "Working out the by-portion coverage for this lot's frontages and checking it against an "
     "independently worked example."
 )
+
+# The max_lot_coverage value state when the by-portion block IS available (the areas agree): the
+# single whole-lot figure is still not given, because the lot is partly a corner-lot portion and
+# partly an interior-lot portion; coverage is read by portion in coverage_by_portion. (Not reached
+# end to end today - the server only emits the block for the conflicting-area case - but kept
+# correct so the value state can never contradict an available block.)
+_SINGLE_FIGURE_NOT_GIVEN_REASON = (
+    "Coverage is given by portion in coverage_by_portion (the corner-lot portion at 100 percent "
+    "plus the interior-lot portion at 80 percent); a single whole-lot coverage figure is not given "
+    "for a lot that is partly a corner-lot portion and partly an interior-lot portion."
+)
+_SINGLE_FIGURE_NOT_GIVEN_RESOLVED = "Reading coverage by portion in coverage_by_portion."
 
 _NOT_CHECKED_BASE = (
     "Where the plan sits on the lot",
@@ -199,6 +212,33 @@ def _coverage_withheld(reason: str, gap_kind: str, resolved_by: str) -> dict:
     }
 
 
+def max_lot_coverage_value_state(block: dict) -> dict:
+    """The ``max_lot_coverage`` value state that AGREES with the ``coverage_by_portion`` block
+    (ruling W11 a): two results about one thing must never give different reasons, kinds or
+    resolvers. Where the block is WITHHELD (the areas disagree), the value state carries the SAME
+    reason, gap_kind and resolver as the block. Where the block is AVAILABLE (the areas agree),
+    coverage is given by portion in ``coverage_by_portion`` and no single whole-lot figure is given;
+    the kind is ``work_owed`` - the weaker of the two allowed kinds, claiming no missing property
+    fact, only that a single whole-lot figure is not offered for a split lot."""
+    if block.get("status") == "withheld":
+        return {
+            "way": "withheld",
+            "label": COVERAGE_LABEL,
+            "reason": block["reason"],
+            "gap_kind": block["gap_kind"],
+            "resolved_by": block["resolved_by"],
+            "zr_sections": list(block.get("zr_sections", _ZR_SECTIONS)),
+        }
+    return {
+        "way": "withheld",
+        "label": COVERAGE_LABEL,
+        "reason": _SINGLE_FIGURE_NOT_GIVEN_REASON,
+        "gap_kind": _METHOD_LIMIT,
+        "resolved_by": _SINGLE_FIGURE_NOT_GIVEN_RESOLVED,
+        "zr_sections": list(_ZR_SECTIONS),
+    }
+
+
 # --------------------------------------------------------------------------- building alternatives
 def _numbers_ok(inp: FirstOptionInputs) -> bool:
     values = (inp.allowance_sqft, inp.min_base_ft, inp.max_base_ft, inp.floor_to_floor_ft)
@@ -247,9 +287,9 @@ def _alternative(
     *,
     fit: tuple[float, float] | None,
 ) -> dict:
-    return {
+    entry = {
         "building": schedule.building,
-        "label": _label(schedule, inp, fit),
+        "label": _label(schedule),
         "fill_rule": schedule.fill_rule,
         "floor_schedule": [_floor_row(storey) for storey in schedule.storeys],
         "storey_count": schedule.storey_count,
@@ -265,6 +305,10 @@ def _alternative(
             preliminary_apartment_estimate(schedule.total_floor_area_sqft)
         ),
     }
+    note = _fit_note(inp, fit)
+    if note is not None:
+        entry["fit_note"] = note  # the OPTIONAL fit_note field (ruling W11 c); label stays a name
+    return entry
 
 
 def _floor_row(storey) -> dict:
@@ -278,22 +322,28 @@ def _floor_row(storey) -> dict:
     }
 
 
-def _label(schedule: FloorSchedule, inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str:
+def _label(schedule: FloorSchedule) -> str:
+    """A short NAME for the alternative (ruling W11 c): the reasoning that the plan fits goes in
+    the OPTIONAL fit_note field, not here."""
     if schedule.building == "A":
-        base = "Building A (the widest footprint; a plain stack, every storey the same plan)"
-    else:
-        base = (
-            "Building B (the fewest storeys reaching the minimum base height; a plain stack, "
-            "every storey the same plan)"
-        )
-    if fit is not None and inp.recorded_lot_area_sqft is not None:
-        bound, plan = fit
-        base += (
-            f". The plan of {plan:,.2f} sq ft fits the lot coverage even at the lowest applicable "
-            f"ratio: 80 percent of the recorded lot area ({inp.recorded_lot_area_sqft:,.0f} sq ft) "
-            f"is {bound:,.0f} sq ft, at least the plan."
-        )
-    return base
+        return "Building A: the widest footprint"
+    return "Building B: the fewest storeys reaching the minimum base height"
+
+
+def _fit_note(inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str | None:
+    """The plain sentence saying WHY the building fits the lot coverage even at the lowest
+    applicable ratio (ruling W11 c; ruling W2 for building B). The lowest-ratio bound appears ONLY
+    in this text, never as a footprint figure. None when there is no bound to state (building A's
+    footprint is itself the coverage footprint)."""
+    if fit is None or inp.recorded_lot_area_sqft is None:
+        return None
+    bound, plan = fit
+    return (
+        f"The plan of {plan:,.2f} sq ft fits the lot coverage even at the lowest applicable ratio: "
+        f"80 percent of the recorded lot area ({inp.recorded_lot_area_sqft:,.0f} sq ft) is "
+        f"{bound:,.0f} sq ft, at least the plan. This checks the plan against coverage only; where "
+        "the building sits on the lot and the other items listed as not checked are not worked."
+    )
 
 
 def _not_checked(inp: FirstOptionInputs) -> list[str]:

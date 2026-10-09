@@ -531,7 +531,8 @@
         "below_min_base": { "type": "boolean", "description": "Whether the building height is below the minimum base height (a plain fact about the height; no legal conclusion is drawn from it)." },
         "way": { "$ref": "#/$defs/value_state", "description": "Which way this alternative appears - 'settled', 'conditional' (with its conditions) or 'withheld' - reusing the 1.3.0 value_state vocabulary. A worked alternative is settled or conditional; on the benchmark building B is conditional (ruling W2, R267). No alternative is ever called feasible or confirmed." },
         "not_checked": { "type": "array", "minItems": 1, "description": "What was NOT checked for this alternative, as plain text (ruling W5, D-090-R526/R548): the rear yard beyond the corner, where the plan sits on the lot, the street wall, parking/loading/bicycle requirements. 'The plan fits the coverage' is not 'the building fits the lot'.", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } },
-        "capacity_estimate": { "$ref": "#/$defs/preliminary_capacity_estimate", "description": "This building's own preliminary capacity estimate, worked from its own floor area (ruling W4)." }
+        "capacity_estimate": { "$ref": "#/$defs/preliminary_capacity_estimate", "description": "This building's own preliminary capacity estimate, worked from its own floor area (ruling W4)." },
+        "fit_note": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "OPTIONAL plain-text note saying WHY the building fits the lot coverage even at the lowest applicable ratio (ruling W11 c): the lowest-ratio bound (the lowest ratio times the recorded lot area) appears ONLY here, in words, never as a footprint figure. The label stays a short name. Absent when there is no bound to state." }
       }
     },
     "coverage_by_portion": {

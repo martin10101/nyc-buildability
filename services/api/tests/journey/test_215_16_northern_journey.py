@@ -256,10 +256,11 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert density["value"] == "Not known" and density["unit"] is None
     angle = rows["street_line_intersection_angle_degrees"]
     assert angle["basis"] == "approximate_tax_map" and "89.7 degrees" in angle["statement"]
-    coverage_reason = document["answers"]["permitted_envelope"]["value_states"][
-        "max_lot_coverage"
-    ]["reason"]
-    assert "beyond the corner-lot portion" in coverage_reason  # no contradiction with the scope
+    # W11 (a): coverage is withheld and agrees with the by-portion block (the two lot areas
+    # disagree); it no longer repeats the reach wording, so it cannot contradict the scope line.
+    coverage_state = document["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]
+    assert coverage_state["way"] == "withheld"
+    assert coverage_state["reason"] == document["coverage_by_portion"]["reason"]
 
     # The golden allowance equals the benchmark pack's recorded value, not a new number, and now
     # carries its way-layer: the shown floor-area value is conditional (M5-T136).
@@ -289,24 +290,36 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     )
     assert "overlay" not in rear["reason"].lower()
     assert document["answers"]["building_option"]["status"] == "not_available"
-    # M5-T146 (S8): the single building option points to the worked first-building alternatives list;
-    # it carries no number and no substitute.
+    # M5-T146 (S8): the single building option points to the worked alternatives list.
     assert "building_alternatives" in document["answers"]["building_option"]["reason"]
+    # W11 (b): the older unit_estimate and floor_stack blocks say where the answer is given (the
+    # list) and claim nothing else; they no longer say "not built"/"not known" beside the list.
     assert document["unit_estimate"]["status"] == "not_available"
-    assert document["unit_estimate"]["reason"].startswith("Not known")
-    # M5-T146 (S21/S9/S10/S7): building_alternatives is building B alone (conditional, with its floor
-    # schedule and preliminary capacity estimate); building A is absent (it needs the withheld
-    # footprint); coverage_by_portion is withheld (the two lot areas disagree), carrying NO number.
+    assert "building_alternatives" in document["unit_estimate"]["reason"]
+    assert document["floor_stack"]["status"] == "not_available"
+    assert "building_alternatives" in document["floor_stack"]["reason"]
+    # M5-T146 (S21/S9/S10/S7): building_alternatives is building B alone (conditional), building A
+    # absent (it needs the withheld footprint); coverage_by_portion withheld, carrying NO number.
     alternatives = document["building_alternatives"]
     assert [a["building"] for a in alternatives] == ["B"]
     building_b = alternatives[0]
     assert building_b["way"]["way"] == "conditional"
     assert building_b["storey_count"] == 3
     assert building_b["capacity_estimate"]["label"] == "Preliminary capacity estimate"
+    # W11 (c): the label is a short name; the reasoning why the plan fits is in fit_note.
+    assert building_b["label"] == "Building B: the fewest storeys reaching the minimum base height"
+    assert "fits the lot coverage" in building_b["fit_note"]
     coverage_portion = document["coverage_by_portion"]
     assert coverage_portion["status"] == "withheld"
     assert coverage_portion["gap_kind"] == "missing_information"
     assert "footprint_sqft" not in coverage_portion  # no number on a withheld result (S24)
+    # W11 (a): the older max_lot_coverage value state AGREES with the block - same reason, kind,
+    # resolver. Two results about one thing never give different reasons.
+    max_cov = document["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]
+    assert max_cov["way"] == "withheld"
+    assert max_cov["reason"] == coverage_portion["reason"]
+    assert max_cov["gap_kind"] == coverage_portion["gap_kind"] == "missing_information"
+    assert max_cov["resolved_by"] == coverage_portion["resolved_by"]
     # No withheld result carries a number anywhere in the emitted document.
     assert document["geometry"]["yards"]["status"] == "not_available"
     assert document["geometry"]["yards"]["reason"] == rear["reason"]  # geometry follows the yard
@@ -314,11 +327,11 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert "not_required" not in json.dumps(document["geometry"]["yards"])
     # M5-T144 S10: the status line's first item reads the owner's words.
     assert document["status_strip"][0] == {"text": "Preliminary zoning results"}
-    # M5-T144 S15: piece 3 (envelope follows a withheld height) changed nothing on this lot - the
-    # recorded lot has no flood zone (heights shown) and coverage withheld, so geometry.envelope is
-    # already not_available via the coverage branch, carrying the coverage reason alone.
+    # W11 (a): the envelope geometry layer (it draws the footprint) now agrees with the coverage
+    # block - same reason - rather than the decision module's pre-by-portion wording.
     assert document["geometry"]["envelope"]["status"] == "not_available"
-    assert "beyond the corner-lot portion" in document["geometry"]["envelope"]["reason"]
+    assert document["geometry"]["envelope"]["reason"] == coverage_portion["reason"]
+    assert document["geometry"]["envelope"]["reason_kind"] == "missing_input"
 
     # 6. EXPORTS from the SAME document object. The scope label and the front-lot-line
     # assumption statement appear on the site-plan SVG and in the results DXF notes.

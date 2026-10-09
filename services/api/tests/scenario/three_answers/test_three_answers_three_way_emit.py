@@ -54,13 +54,16 @@ from app.scenario.three_answers.result_ways import decide_result_ways
 from app.scenario.three_answers.three_way_document import (
     ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
     BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    BUILDING_OPTION_POINTS_TO_ALTERNATIVES,
     FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    FLOOR_STACK_GIVEN_IN_ALTERNATIVES,
     FLOOR_TO_FLOOR_KEY,
     HOUSING_PROGRAM_KEY,
     RESERVED_UNIT_ESTIMATE_REASON,
     SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
     STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
     STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
+    UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES,
     emit_three_way_document,
 )
 from app.scenario.three_answers.three_way_scope_lines import (
@@ -270,16 +273,21 @@ def test_s2_five_results_placed_per_owner_decision(benchmark):
 
 
 # =========================================================================== S3
-def test_s3_coverage_withdrawn_with_its_reach_reason(benchmark):
-    """S3: max_lot_coverage is absent from permitted_envelope.values[] and present as a withheld
-    value_states entry whose reason carries the measured reach (103.93 ft from the 215 Place street
-    line, corner-reach.json real-lot-reach); no coverage percentage appears anywhere."""
-    env = benchmark.document["answers"]["permitted_envelope"]
+def test_s3_coverage_withdrawn_agrees_with_the_by_portion_block(benchmark):
+    """S3 / W11 (a): max_lot_coverage is absent from permitted_envelope.values[] and present as a
+    withheld value_states entry that AGREES with the coverage_by_portion block - same reason, kind
+    (a missing fact) and resolver, because the two lot areas disagree. No coverage percentage or
+    footprint appears as a result number."""
+    doc = benchmark.document
+    env = doc["answers"]["permitted_envelope"]
     assert _value(env, "max_lot_coverage") is None
     state = _states(env)["max_lot_coverage"]
+    block = doc["coverage_by_portion"]
     assert state["way"] == "withheld"
-    assert "103.93 ft" in state["reason"] and "215 Place" in state["reason"]
-    assert "103.93" in _ref_value("corner-reach", "real-lot-reach")
+    assert block["status"] == "withheld"
+    assert state["reason"] == block["reason"]
+    assert state["gap_kind"] == block["gap_kind"] == "missing_information"
+    assert state["resolved_by"] == block["resolved_by"]
     # the coverage percentage (100) never appears as a result number
     assert 100.0 not in _all_result_numbers(benchmark.document)
 
@@ -340,7 +348,10 @@ def test_s5_no_withheld_result_carries_a_number_anywhere(benchmark):
 
     assert doc["floor_by_floor"] == []
     assert doc["floor_stack"]["status"] == "not_available"
-    assert doc["floor_stack"]["reason"] == FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION
+    # W11 (b): on the benchmark the list carries each building's floor schedule, so floor_stack says
+    # where the schedule is given (building_alternatives); shortfall and best_combination are not
+    # carried by the list, so they keep their follows-withheld reasons.
+    assert doc["floor_stack"]["reason"] == FLOOR_STACK_GIVEN_IN_ALTERNATIVES
     assert doc["shortfall"]["status"] == "not_available"
     assert doc["shortfall"]["reason"] == SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION
     assert doc["best_combination"]["status"] == "not_available"
@@ -378,14 +389,16 @@ def test_s6_unit_estimate_holds_no_legal_figure(benchmark):
     formula, and passing it through unchanged fails this test."""
     doc = benchmark.document
     ue = doc["unit_estimate"]
+    # W11 (b): on the benchmark the list carries each building's estimate, so unit_estimate says
+    # where the estimate is given (building_alternatives) and claims nothing else - no 'not built
+    # yet' beside the list; still no legal figure, formula or factor.
     assert ue == {
         "status": "not_available",
-        "reason": RESERVED_UNIT_ESTIMATE_REASON,
+        "reason": UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES,
         "reason_kind": "rule_not_implemented",
     }
-    assert ue["reason"].startswith("Not known")
-    assert "Preliminary capacity estimate" in ue["reason"]
-    assert "not built yet" in ue["reason"]
+    assert "building_alternatives" in ue["reason"]
+    assert "not built yet" not in ue["reason"]
     assert "unsupported" not in ue["reason"].lower()
     assert "gap_kind" not in ue  # the shared not_available shape has no gap_kind here
     for banned in ("value", "formula", "factor"):
@@ -692,6 +705,10 @@ def test_every_text_the_transform_writes_is_plain_and_true(benchmark):
         ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
         STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
         STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
+        # M5-T146: the first-building-option texts the transform writes when the list is present.
+        BUILDING_OPTION_POINTS_TO_ALTERNATIVES,
+        UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES,
+        FLOOR_STACK_GIVEN_IN_ALTERNATIVES,
     ]
     # the one text the transform builds at run time: the shown unit-limit value object label
     with pytest.MonkeyPatch.context() as mp:
@@ -742,10 +759,12 @@ def test_s137_red_committed_within_100_scope_line_agrees_with_the_measured_reach
     (value True, basis assumed) - the contradiction this task removes; after it the line is the
     measured corner reach (144.60 ft, more than 100 feet)."""
     doc = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
-    coverage_reason = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"][
-        "reason"
-    ]
-    assert "beyond the corner-lot portion" in coverage_reason  # the document's own reach reason
+    # W11 (a): the coverage is withheld by portion (the two lot areas disagree); the single
+    # whole-lot figure carries no number. It no longer repeats the reach wording - that lives on
+    # the scope line below - so the two never contradict.
+    coverage_state = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]
+    assert coverage_state["way"] == "withheld"
+    assert coverage_state["reason"] == doc["coverage_by_portion"]["reason"]
     within = _scope_rows(doc)["within_100_ft_of_street_line_intersection"]
     assert within["value"] is False, within  # not (assumed) within 100 feet
     assert "assumed to lie within 100 feet" not in within["statement"]
@@ -893,11 +912,11 @@ def test_s137_scope_lines_say_where_each_condition_comes_from(evidence_benchmark
     # no scope line claims the program does not read something it reads
     for row in doc["scope"]["assumptions"]:
         assert "does not read" not in row["statement"]
-    # no contradiction: the within-100 line and the coverage reason agree the lot reaches beyond 100
-    coverage_reason = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"][
-        "reason"
-    ]
-    assert "beyond the corner-lot portion" in coverage_reason
+    # no contradiction (W11 a): the within-100 line is measured (the lot reaches beyond 100) and the
+    # coverage value state agrees with the by-portion block (withheld; the two lot areas disagree).
+    coverage_state = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]
+    assert coverage_state["way"] == "withheld"
+    assert coverage_state["reason"] == doc["coverage_by_portion"]["reason"]
     _assert_no_shown_result_rests_on_a_stand_in(doc)
 
 

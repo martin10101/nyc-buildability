@@ -30,7 +30,15 @@ TOL = 0.005 + 1e-9  # labels carry at most two decimals
 
 
 def fixture_paths() -> list[Path]:
-    return sorted(CONTRACT_FIXTURES.glob("*.json")) + sorted(KIT_FIXTURES.glob("*.json"))
+    """Every valid results fixture the drawing kit and CAD export can DRAW: those whose geometry is
+    available. A fixture whose geometry is not_available (the first-building-option synthetic
+    fixtures, contract 1.4.0, which carry worked alternatives but no placement, so nothing is drawn)
+    yields Unavailable from every renderer and the adapter, so it has no site plan, massing or DXF
+    to snapshot or assert on; it is excluded here (the M5-T146 generalisation of the test_massing
+    floor-plates filter). Such a fixture's validity is covered by the contract validator, not
+    here."""
+    everything = sorted(CONTRACT_FIXTURES.glob("*.json")) + sorted(KIT_FIXTURES.glob("*.json"))
+    return [p for p in everything if load(p).get("geometry", {}).get("status") == "available"]
 
 
 def load(path: Path) -> dict:

@@ -90,7 +90,8 @@
   "building_alternatives": [
     {
       "building": "B",
-      "label": "Building B (to the minimum base height; a plain stack, every storey the same plan)",
+      "label": "Building B: the fewest storeys reaching the minimum base height",
+      "fit_note": "The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan.",
       "fill_rule": "to_min_base",
       "floor_schedule": [
         {

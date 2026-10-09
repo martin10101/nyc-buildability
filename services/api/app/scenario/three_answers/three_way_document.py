@@ -45,7 +45,11 @@ import copy
 
 from .contract import validate_results_document
 from .engine_conditions import Derived
-from .first_option_results import FirstOptionInputs, assemble_first_option
+from .first_option_results import (
+    FirstOptionInputs,
+    assemble_first_option,
+    max_lot_coverage_value_state,
+)
 from .result_way_inputs import (
     COVERAGE_KEY,
     KIND_CONTRADICTED_RECORD,
@@ -79,10 +83,12 @@ __all__ = [
     "CONTRACT_VERSION_FIRST_OPTION",
     "CONTRACT_VERSION_THREE_WAY",
     "FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION",
+    "FLOOR_STACK_GIVEN_IN_ALTERNATIVES",
     "FLOOR_TO_FLOOR_KEY",
     "HOUSING_PROGRAM_KEY",
     "RESERVED_UNIT_ESTIMATE_REASON",
     "SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION",
+    "UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES",
     "USER_CHOICE_KEYS",
     "USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT",
     "USER_SELECTED_HOUSING_PROGRAM_STATEMENT",
@@ -99,6 +105,20 @@ CONTRACT_VERSION_FIRST_OPTION = "1.4.0"
 BUILDING_OPTION_POINTS_TO_ALTERNATIVES = (
     "The single building option is not shown; the worked first-building alternatives are listed in "
     "building_alternatives (none is preferred or a default)."
+)
+
+# When the list carries them, the older single-answer blocks say WHERE the answer is given and
+# claim nothing else (ruling W11 b), exactly as building_option already does; when the list is empty
+# they keep today's texts. The reason_kind stays rule_not_implemented - the weakest honest claim
+# among the shared not_available kinds: the SINGLE-answer aggregate block is itself not built (the
+# per-building floor schedule and estimate live in building_alternatives), and it blames no missing
+# property fact and no eligibility.
+UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES = (
+    "Not shown here. Each worked building's preliminary capacity estimate is given in "
+    "building_alternatives."
+)
+FLOOR_STACK_GIVEN_IN_ALTERNATIVES = (
+    "Not shown here. Each worked building's floor schedule is given in building_alternatives."
 )
 
 # The floor-area value whose way carries the lot's area conditions, and the two engine values the
@@ -466,13 +486,66 @@ def _apply_first_option(doc: dict, ways: ResultWays, document: dict) -> None:
     changed = False
     if blocks.coverage_by_portion is not None:
         doc["coverage_by_portion"] = blocks.coverage_by_portion
+        _reconcile_max_lot_coverage(doc, blocks.coverage_by_portion)
+        _reconcile_envelope_geometry(doc, ways, blocks.coverage_by_portion)
         changed = True
     if blocks.building_alternatives:
         doc["building_alternatives"] = list(blocks.building_alternatives)
         _point_building_option_to_alternatives(doc)
+        _reconcile_list_dependents(doc)
         changed = True
     if changed:
         doc["contract_version"] = CONTRACT_VERSION_FIRST_OPTION
+
+
+def _reconcile_max_lot_coverage(doc: dict, coverage_block: dict) -> None:
+    """The older ``max_lot_coverage`` value state must AGREE with the by-portion block (ruling
+    W11 a): same reason, kind and resolver where the block is withheld; 'given by portion' where it
+    is available. Nothing else in the envelope answer changes."""
+    envelope = doc["answers"].get("permitted_envelope")
+    if not isinstance(envelope, dict):
+        return
+    states = envelope.get("value_states")
+    if isinstance(states, dict) and COVERAGE_KEY in states:
+        states[COVERAGE_KEY] = max_lot_coverage_value_state(coverage_block)
+
+
+def _reconcile_envelope_geometry(doc: dict, ways: ResultWays, coverage_block: dict) -> None:
+    """The envelope geometry layer follows the lot coverage (it draws the footprint); its reason
+    must AGREE with the reconciled coverage (ruling W11 a) rather than keep the decision module's
+    pre-by-portion wording. Only when coverage is the SOLE withheld envelope input (the maximum
+    building height is shown, as on the benchmark) - else the combined reason names a withheld
+    height too and is left untouched. Only when the block is withheld (nothing is drawn anyway)."""
+    if coverage_block.get("status") != "withheld":
+        return
+    geometry = doc.get("geometry")
+    if not isinstance(geometry, dict):
+        return
+    envelope = geometry.get("envelope")
+    if not isinstance(envelope, dict) or envelope.get("status") != "not_available":
+        return
+    height_row = _row(ways.permitted_envelope.values, _MAX_BUILDING_HEIGHT_KEY)
+    if height_row is not None and isinstance(height_row.way, Withheld):
+        return
+    geometry["envelope"] = _not_available(
+        coverage_block["reason"], REASON_KIND_BY_GAP[coverage_block["gap_kind"]]
+    )
+
+
+def _reconcile_list_dependents(doc: dict) -> None:
+    """When building_alternatives carries each building's estimate and floor schedule, the older
+    single-answer unit_estimate and floor_stack blocks say where the answer is given and claim
+    nothing else (ruling W11 b). Both are already not_available here; only their reason changes."""
+    estimate = doc.get("unit_estimate")
+    if isinstance(estimate, dict) and estimate.get("status") == "not_available":
+        doc["unit_estimate"] = _not_available(
+            UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES, _WORK_OWED_REASON_KIND
+        )
+    floor_stack = doc.get("floor_stack")
+    if isinstance(floor_stack, dict) and floor_stack.get("status") == "not_available":
+        doc["floor_stack"] = _not_available(
+            FLOOR_STACK_GIVEN_IN_ALTERNATIVES, _WORK_OWED_REASON_KIND
+        )
 
 
 # ---------------------------------------------------------------------------

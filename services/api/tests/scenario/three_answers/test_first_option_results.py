@@ -21,6 +21,7 @@ import pathlib
 from app.scenario.three_answers.first_option_results import (
     FirstOptionInputs,
     assemble_first_option,
+    max_lot_coverage_value_state,
 )
 from app.spatial.corner_reach_area import (
     STATE_NO_CONFIRMED_STREET,
@@ -139,8 +140,11 @@ def test_s9_benchmark_building_b_conditional() -> None:
     assert b["way"]["way"] == "conditional"
     kinds = {c["kind"] for c in b["way"]["conditions"]}
     assert kinds == {"contradicted_record", "unchecked_condition"}  # ruling W2 (R267)
-    # the lowest-ratio bound (8,060) appears only in a text saying what it is, never as a footprint.
-    assert "8,060 sq ft" in b["label"]
+    # W11 (c): the label is a short name; the lowest-ratio bound (8,060) appears ONLY in fit_note,
+    # a text saying what it is, never as a footprint figure.
+    assert b["label"] == "Building B: the fewest storeys reaching the minimum base height"
+    assert "8,060 sq ft" in b["fit_note"]
+    assert "8,060" not in b["label"]
     assert math.isclose(b["footprint_area_sqft"], 8060.0, abs_tol=0.5) is False
     assert b["not_checked"][0] == "The rear yard beyond the corner"
     _no_feasibility_language(b)
@@ -170,6 +174,32 @@ def test_s11_benchmark_building_b_capacity_estimate() -> None:
     assert est["whole_above_high"] == int(exp["whole_above_high"]) == 22
     assert math.isclose(est["share_low"], 0.60, abs_tol=_TOL)
     assert math.isclose(est["share_high"], 0.75, abs_tol=_TOL)
+
+
+# ----------------------------------------------------------------- W11(a) value-state agreement
+def test_w11a_max_lot_coverage_value_state_agrees_with_the_block() -> None:
+    """W11 (a): the max_lot_coverage value state mirrors the WITHHELD block exactly (same reason,
+    kind, resolver); for an AVAILABLE block it says coverage is given by portion with no single
+    whole-lot figure (kind work_owed - claiming no missing property fact)."""
+    withheld = assemble_first_option(_benchmark_inputs()).coverage_by_portion
+    vs = max_lot_coverage_value_state(withheld)
+    assert vs["way"] == "withheld"
+    assert vs["reason"] == withheld["reason"]
+    assert vs["gap_kind"] == withheld["gap_kind"] == "missing_information"
+    assert vs["resolved_by"] == withheld["resolved_by"]
+    one_street = CornerPortionAreas(
+        unknown_value("sq ft", "one"), unknown_value("sq ft", "one"),
+        STATE_ONE_CONFIRMED_STREET, (),
+    )
+    available = assemble_first_option(FirstOptionInputs(
+        allowance_sqft=20000.0, recorded_lot_area_sqft=10000.0, min_base_ft=_MIN_BASE,
+        max_base_ft=_MAX_BASE, floor_to_floor_ft=_F2F, lot_type="interior", areas_agree=True,
+        corner_areas=one_street, outline_area_sqft=10000.0, way_conditions=(_UNCHECKED,),
+    )).coverage_by_portion
+    assert available["status"] == "available"
+    vs2 = max_lot_coverage_value_state(available)
+    assert vs2["way"] == "withheld" and "coverage_by_portion" in vs2["reason"]
+    assert vs2["gap_kind"] == "work_owed"
 
 
 # --------------------------------------------------------------------------- S13
@@ -209,6 +239,8 @@ def test_s13_interior_lot_areas_agree_shows_footprint_and_building_a() -> None:
     )
     assert a["below_min_base"] is True  # 20 ft < 30 ft
     assert "The rear yard beyond the corner" not in a["not_checked"]  # not a corner lot
+    assert "fit_note" not in a  # building A's footprint is the coverage footprint; no bound
+    assert a["label"] == "Building A: the widest footprint"
     _no_feasibility_language(blocks.building_alternatives[0])
 
 

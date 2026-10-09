@@ -74,6 +74,7 @@ export interface BuildingAlternative {
   way: ValueState;
   not_checked: NonEmptyString[];
   capacity_estimate: PreliminaryCapacityEstimate;
+  fit_note?: NonEmptyString;
 }
 export type CoverageByPortion = {
   status: "available";

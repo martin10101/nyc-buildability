@@ -145,4 +145,91 @@ fixtures are Part A's; the snapshots and parametrised tests are Lane C's). My ow
 orchestrator must have Part A add the snapshots or exclude the geometry-less synthetic fixtures from
 the drawing parametrisation before the branch can go green in CI.
 
+## Correction before review (ruling W11; second orchestrator round)
+
+The orchestrator read parts A/B/E, took the four flagged files into the task (W10), and found three
+things to correct before review (W11). All corrected; the full in-scope suite is green.
+
+1. **W11 (a) - the older coverage result agrees with the new block.** The emit now reconciles, for
+   the conflicting-area case, BOTH the `answers.permitted_envelope.value_states.max_lot_coverage`
+   value state AND the `geometry.envelope` layer to the `coverage_by_portion` block: the SAME
+   reason, kind (a missing fact, `missing_information`) and resolver, because the two lot areas
+   disagree. The decision module's pre-by-portion wording ("beyond the corner-lot portion ...
+   computing per portion", work owed) no longer sits beside the block. Single source of truth = the
+   block; `first_option_results.max_lot_coverage_value_state(block)` builds the value state, and
+   `three_way_document._reconcile_max_lot_coverage` / `_reconcile_envelope_geometry` apply it (the
+   envelope only when coverage is the sole withheld envelope input - the height is shown). Schema
+   rule read first: a withheld value state REQUIRES `way,label,reason,gap_kind,resolved_by`;
+   `gap_kind` is one of `{missing_information, work_owed}`. On the benchmark: `missing_information`
+   (matches the block). For an available block (areas agree; not reached end to end today) the value
+   state says coverage is given by portion in `coverage_by_portion`, no single whole-lot figure,
+   kind `work_owed` - the weaker claim (no missing property fact; a single figure is simply not
+   offered for a split lot).
+2. **W11 (b) - the older blocks do not contradict the list.** When `building_alternatives` carries
+   each building's estimate and floor schedule, `unit_estimate` and `floor_stack` now say where the
+   answer is given ("... is given in building_alternatives") and claim nothing else, like
+   `building_option` already does; when the list is empty they keep today's texts
+   (`_reconcile_list_dependents`). `reason_kind` stays `rule_not_implemented` - the weakest honest
+   claim among the shared not_available kinds: the SINGLE-answer aggregate block is itself not built
+   (the per-building data lives in the list), and it blames no missing property fact and no
+   eligibility. `shortfall` and `best_combination` are NOT carried by the list, so they keep their
+   follows-withheld reasons (no contradiction).
+3. **W11 (c) - the fit sentence has its own field.** The contract gains an OPTIONAL `fit_note`
+   (a plain string) on `building_alternative` (additive, still 1.4.0;
+   `packages/contracts/schemas/v1/results.schema.json`); `results.ts` regenerated with the contract
+   generator, the bundled copy synced (`--check` exits 0). The reasoning "the plan fits even at the
+   lowest applicable ratio (80 percent of 10,075 = 8,060 >= the plan)" now lives in `fit_note`; the
+   `label` is a short name ("Building B: the fewest storeys reaching the minimum base height").
+   Building A has no `fit_note` (its footprint is the coverage footprint; no bound to state).
+   `fit_note` added to Part A's synthetic fixture (no other schema change needed).
+
+### What each older block now says on the benchmark lot (all withheld/absent, no number)
+- `max_lot_coverage` value state: WITHHELD, missing fact, the law by portion, no figure - byte-equal
+  reason/kind/resolver to `coverage_by_portion`.
+- `geometry.envelope`: not_available with that same reason (missing_input).
+- `unit_estimate`: not_available, "... preliminary capacity estimate is given in building_alternatives".
+- `floor_stack`: not_available, "... floor schedule is given in building_alternatives".
+- `building_option`: not_available, points to the list.
+- `coverage_by_portion`: withheld (missing fact). `building_alternatives`: [building B] conditional.
+
+### Missing snapshots (W10 #5/#6) - the real fix
+"Generate the snapshots" was the orchestrator's diagnosis, but the two synthetic fixtures carry a
+`not_available` geometry: every renderer and the kit adapter return `Unavailable` (there is nothing
+to draw - no footprint, no floor plate, not even a lot outline), so they have NO site plan, massing
+or DXF to snapshot or assert on. The 36 red tests were the drawing/CAD parametrisations asserting
+`isinstance(Drawing/DrawingInput/ResultsDxf)` over EVERY valid fixture. The fix (the generalisation
+of the test_massing floor-plates filter W10 already accepted) is in `services/api/tests/drawings/kit/
+kit_support.py`: `fixture_paths()` returns only fixtures whose geometry is drawable (available) - it
+excludes exactly the two non-drawable synthetic fixtures (10 of 12 remain). The `recorded_215_16`
+DXF snapshot DID change (one text: the `geometry.envelope` reason reconciled per W11 a - no new
+geometry, no footprint, no plate); its SVG is byte-identical.
+
+### Mutation proofs (temporary copies outside the repository), this round
+- W11 (a): in `first_option_results.max_lot_coverage_value_state`, hardcode the withheld-branch
+  `gap_kind` to `work_owed` -> the value state's kind (`work_owed`) no longer equals the block's
+  (`missing_information`) (RED; the agreement guard catches it).
+- W11 (b): make `three_way_document._reconcile_list_dependents` a no-op (its status guard never
+  matches) -> `unit_estimate` keeps "Not known ... not built yet" and does NOT point to the list
+  (RED; it would contradict the list).
+
+### Out-of-scope file this round (routed to the orchestrator)
+`services/api/tests/drawings/kit/kit_support.py` - NOT among W10's six paths. The `fixture_paths()`
+drawable-only filter is the same class of change as test_massing's floor-plates filter (W10 #3) and
+is required to keep all drawing/CAD parametrisations green for a non-drawable fixture. Flagged for
+ratification. (The four round-1 files are already in the task per W10.)
+
+### Checks, this round, with direct exit codes
+- `cd services/api && python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q tests/scenario/three_answers tests/spatial tests/journey tests/api/test_results_read_api.py tests/drawings tests/cad tests/documents/test_pdf_content.py`
+  -> 2364 passed, 8 skipped (exit 0)
+- `python .github/scripts/validate_contracts.py` -> Checked 23 schema file(s); 0 failure(s) (exit 0)
+- `python services/api/scripts/sync_contract_schemas.py --check` -> byte-identical (exit 0)
+- `python packages/contracts/scripts/generate_ts_types.py --check` -> up to date (exit 0)
+- `python tools/modularity_check.py --check` -> exit 0 (no warning on a touched file)
+- `python scripts/lanes/check_lane_paths.py --coverage` -> LANE COVERAGE PASS: 9735 files (exit 0)
+- `.github/scripts/tests` could NOT be run locally: the worktree-safety heuristic refuses the
+  `.github` path and a copy breaks its repo-relative path resolution (same as round 1). The harness
+  (test_validate_contracts.py) is UNCHANGED, the `fit_note` schema addition uses only known keywords
+  ($ref, description), and validate_contracts.py passed with 0 failures; CI runs the harness.
+
 END-OF-REPORT

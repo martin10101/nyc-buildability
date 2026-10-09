@@ -64,4 +64,43 @@ passed.
 - The ~44 CAD/drawings failures on Part A's synthetic fixtures are PRE-EXISTING (base RED) and NOT
   caused by PART E; the full detail and the four out-of-scope seam files are in `M5-T146-part-B.md`.
 
+## Correction before review (ruling W11; second orchestrator round)
+
+The benchmark document was regenerated ONCE more (the journey test's `UPDATE_JOURNEY_FIXTURE=1`
+switch) after the W11 corrections. The recorded_215_16 DXF snapshot was regenerated once
+(`UPDATE_DXF_SNAPSHOTS=1`); its SVG is byte-identical. The W11 logic and the mutation proofs are in
+`M5-T146-part-B.md`.
+
+### Every key that changed in the regenerated document, and why
+- `answers.permitted_envelope.value_states.max_lot_coverage`: reason/gap_kind/resolved_by rewritten
+  to AGREE with `coverage_by_portion` (W11 a) - was "beyond the corner-lot portion ... computing per
+  portion" / `work_owed`; now the block's "the two lot areas disagree ... law by portion" /
+  `missing_information` / "A survey or deed ...". No figure either way.
+- `geometry.envelope.reason` + `reason_kind`: reconciled to that same coverage reason /
+  `missing_input` (W11 a) - the envelope layer draws the footprint, so its reason must agree. No new
+  geometry; still nothing drawn.
+- `unit_estimate.reason`: was "Not known ... not built yet"; now "Not shown here. Each worked
+  building's preliminary capacity estimate is given in building_alternatives." (W11 b). Status and
+  reason_kind unchanged.
+- `floor_stack.reason`: was "... worked out from the building option ... neither is known"; now
+  "Not shown here. Each worked building's floor schedule is given in building_alternatives." (W11 b).
+- `building_alternatives[0].label`: shortened to "Building B: the fewest storeys reaching the
+  minimum base height" (W11 c).
+- `building_alternatives[0].fit_note`: NEW key - the sentence that the plan fits at the lowest ratio
+  (8,060 >= plan), moved out of the label (W11 c).
+- Everything else byte-identical: floor_area_allowance, the other envelope value states, scope,
+  rule_versions, geometry's other layers, the rest of building B, coverage_by_portion, building_option.
+
+### The regenerated DXF snapshot (recorded_215_16)
+One text changed: `geometry.envelope`'s reason, reconciled to the coverage block (W11 a). No new
+entity, layer, footprint or floor plate; it still draws the lot outline only. The SVG snapshot is
+byte-identical (the coverage reason is not rendered in the SVG). S22/S24 hold: the drawing omits
+exactly the footprint/plates the document withholds.
+
+### The synthetic fixtures' snapshots (W10 #5/#6)
+They have `not_available` geometry: `Unavailable` from every renderer, so there is no snapshot to
+generate and nothing to draw. They are excluded from the drawing/CAD parametrisations by the
+`fixture_paths()` drawable-only filter (see `M5-T146-part-B.md`); tests/drawings and tests/cad are
+green (1359 passed).
+
 END-OF-REPORT

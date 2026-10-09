@@ -359,9 +359,9 @@
         "max_lot_coverage": {
           "way": "withheld",
           "label": "Maximum lot coverage",
-          "reason": "The lot reaches 103.93 ft from the 215 Place street line, beyond the corner-lot portion (the part within 100 ft of each intersecting street line), so there is no single whole-lot coverage figure: the near part is a corner-lot portion and the strip beyond is an interior-lot portion.",
-          "gap_kind": "work_owed",
-          "resolved_by": "Computing coverage per portion (the corner-lot portion and the remaining interior-lot portion).",
+          "reason": "Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).",
+          "gap_kind": "missing_information",
+          "resolved_by": "A survey or deed dimensions that reconcile the recorded lot area with the tax-map outline.",
           "zr_sections": [
             "ZR 23-362",
             "ZR 12-10"
@@ -529,7 +529,7 @@
   "floor_by_floor": [],
   "floor_stack": {
     "status": "not_available",
-    "reason": "The floor stack is not known: it is worked out from the building option and the lot coverage, and neither is known for this lot.",
+    "reason": "Not shown here. Each worked building's floor schedule is given in building_alternatives.",
     "reason_kind": "rule_not_implemented"
   },
   "existing_building": {
@@ -539,7 +539,7 @@
   },
   "unit_estimate": {
     "status": "not_available",
-    "reason": "Not known. The Preliminary capacity estimate (a practical estimate of how many apartments might fit) is not built yet.",
+    "reason": "Not shown here. Each worked building's preliminary capacity estimate is given in building_alternatives.",
     "reason_kind": "rule_not_implemented"
   },
   "geometry": {
@@ -587,8 +587,8 @@
     },
     "envelope": {
       "status": "not_available",
-      "reason": "The lot reaches 103.93 ft from the 215 Place street line, beyond the corner-lot portion (the part within 100 ft of each intersecting street line), so there is no single whole-lot coverage figure: the near part is a corner-lot portion and the strip beyond is an interior-lot portion.",
-      "reason_kind": "rule_not_implemented"
+      "reason": "Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).",
+      "reason_kind": "missing_input"
     },
     "floor_plates": {
       "status": "not_available",
@@ -740,7 +740,7 @@
   "building_alternatives": [
     {
       "building": "B",
-      "label": "Building B (the fewest storeys reaching the minimum base height; a plain stack, every storey the same plan). The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan.",
+      "label": "Building B: the fewest storeys reaching the minimum base height",
       "fill_rule": "to_min_base",
       "floor_schedule": [
         {
@@ -810,7 +810,8 @@
         "whole_above_low": 18,
         "whole_below_high": 21,
         "whole_above_high": 22
-      }
+      },
+      "fit_note": "The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan. This checks the plan against coverage only; where the building sits on the lot and the other items listed as not checked are not worked."
     }
   ]
 }
