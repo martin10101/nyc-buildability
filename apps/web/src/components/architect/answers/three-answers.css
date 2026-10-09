@@ -139,6 +139,42 @@
   font-weight: 400;
 }
 
+/* ---- Conditional figures (ruling L1/L3; R229/R267/R269) ----
+   The fixed 'Conditional' marker beside the figure, then one line per condition. Normal weight so
+   the figure is immediately qualified and never reads as confirmed; the state is told by the WORD,
+   never by colour alone. */
+.ta-conditional {
+  flex-basis: 100%;
+  margin: var(--space-1, 0.25rem) 0 0;
+}
+
+.ta-conditional-marker {
+  display: inline-block;
+  font-weight: 400;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-conditions {
+  margin: var(--space-1, 0.25rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-condition {
+  font-weight: 400;
+}
+
+/* ---- A withheld value (R258, R570, ruling R6) ----
+   The reason reads in normal weight (it is inside a bold dd), and the kind-of-gap line sits on its
+   OWN line below the reason — no longer inline-joined to it. */
+.ta-withheld-reason {
+  font-weight: 400;
+}
+
+.ta-gap-kind {
+  display: block;
+  margin-top: var(--space-1, 0.25rem);
+}
+
 .ta-exception {
   display: inline-block;
   padding: 0 0.4em;

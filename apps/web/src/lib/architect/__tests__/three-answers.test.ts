@@ -180,7 +180,7 @@ describe("answerView — the draft gate and the headline", () => {
     const view = answerView(probe, "floor_area_allowance", true);
     if (view.kind !== "available") throw new Error("expected an available view");
     if (view.headline.kind !== "value") throw new Error("expected a value headline");
-    expect(view.headline.shown.condition).toBe("If the recorded lot area is confirmed");
+    expect(view.headline.shown.conditions).toEqual(["If the recorded lot area is confirmed"]);
     expect(view.withheld).toEqual([
       {
         key: "legal_unit_limit_standard",
@@ -246,6 +246,68 @@ describe("answerView — the draft gate and the headline", () => {
     const view = answerView(probe, "building_option", true);
     expect(view.kind).toBe("not_available");
     if (view.kind === "not_available") expect(view.text.startsWith("Not available — ")).toBe(true);
+  });
+});
+
+describe("the conditions of a value as a per-line list (M5-T142, ruling L1)", () => {
+  // A 1.3.0 probe from the all-available fixture whose floor-area headline value is conditional
+  // with the given assumptions; every other value is settled (no value_states entry).
+  function conditionalHeadline(assumptions: readonly string[]): Results {
+    const doc = loadResultsFixture("synthetic_all_answers_available");
+    const answer = doc.answers.floor_area_allowance;
+    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
+    return {
+      ...doc,
+      contract_version: "1.3.0",
+      answers: {
+        ...doc.answers,
+        floor_area_allowance: {
+          ...answer,
+          value_states: {
+            max_residential_floor_area: {
+              way: "conditional",
+              conditions: assumptions.map(assumption => ({
+                kind: "unchecked_condition",
+                assumption,
+                settled_by: "A survey or deed dimensions",
+              })),
+            },
+          },
+        },
+      },
+    };
+  }
+
+  function headlineConditions(results: Results): readonly string[] {
+    const view = answerView(results, "floor_area_allowance", true);
+    if (view.kind !== "available") throw new Error("expected an available view");
+    if (view.headline.kind !== "value") throw new Error("expected a value headline");
+    return view.headline.shown.conditions;
+  }
+
+  it("a settled value carries an empty conditions list (no joined line to disagree with)", () => {
+    const doc = loadResultsFixture("synthetic_all_answers_available"); // 1.0.0, no value_states
+    const view = answerView(doc, "floor_area_allowance", true);
+    if (view.kind !== "available") throw new Error("expected an available view");
+    if (view.headline.kind !== "value") throw new Error("expected a value headline");
+    expect(view.headline.shown.conditions).toEqual([]);
+    for (const row of view.rows) expect(row.conditions).toEqual([]);
+  });
+
+  it("two conditions become two lines, each the assumption verbatim (none joined into one)", () => {
+    const first = "If the recorded lot area of 10,075 sq ft is confirmed";
+    const second = "If none of these conditions, which were not checked, applies to this lot";
+    expect(headlineConditions(conditionalHeadline([first, second]))).toEqual([first, second]);
+  });
+
+  it("S12: 'If ' is put in front per entry only when the entry does not already begin with it", () => {
+    const withIf = "If the recorded lot area is confirmed";
+    const withoutIf = "the special density area is not confirmed";
+    const lines = headlineConditions(conditionalHeadline([withIf, withoutIf]));
+    expect(lines).toEqual([withIf, "If the special density area is not confirmed"]);
+    // No line holds the text of the other (ruling L1: one representation, never a joined string).
+    expect(lines[0]).not.toContain(withoutIf);
+    expect(lines[1]).not.toContain(withIf);
   });
 });
 

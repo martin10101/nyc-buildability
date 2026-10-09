@@ -3501,6 +3501,92 @@
     }
    ],
    "verified_at": "2026-10-08T19:35:31+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T142",
+   "applicable_requirement_ids": [
+    "D-090-R229",
+    "D-090-R258",
+    "D-090-R267",
+    "D-090-R268",
+    "D-090-R269",
+    "D-090-R570"
+   ],
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4",
+   "reviewed_manifest_sha256": "107948b8f892a96511b7641ab3967b057dc5bcaff07dde389e6825862763021e",
+   "requirements": [
+    {
+     "id": "D-090-R229",
+     "state": "PASS",
+     "evidence": [
+      "Withheld values structurally carry no number: WithheldValueView has only key/label/reason/gapKindLine (three-answers.ts:205-206); the card renders \"Not known \u2014 <reason>\" (AnswerCard.tsx:136-148).",
+      "Test S5 (three-answers-panel.test.tsx) asserts each withheld envelope row's full textContent is exactly `${label}Not known \u2014 ${reason}${gapLine}` \u2014 no figure, no zero/default/guess; I ran it green.",
+      "Open for the rest: R229 also covers drawings and the PDF, which this website task does not touch; the row stays open in the registry for those.",
+      "Verifier's carry-forward condition met at 2622fb75: the task's allowed-path files are identical to those verified at 33beb8cc (content identity 107948b8), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T142-DCV.md."
+     ],
+     "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4"
+    },
+    {
+     "id": "D-090-R258",
+     "state": "PASS",
+     "evidence": [
+      "The kind-of-gap line is set apart from the reason: WithheldLine renders it as its own sibling span (the joining `{\" \"}` removed, AnswerCard.tsx:142-146); three-answers.ts GAP_KIND_LINES (76-77) maps missing_information vs work_owed to distinct plain-words lines.",
+      "Test S5 asserts `gap.previousSibling === reason` and the gap text \"Not built yet: this part of the program is still owed.\" as its own element; I ran it green.",
+      "Open for the rest: the work-order/section-map/district-checklist evidence the row names is not this task; the row stays open for that.",
+      "Verifier's carry-forward condition met at 2622fb75: the task's allowed-path files are identical to those verified at 33beb8cc (content identity 107948b8), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T142-DCV.md."
+     ],
+     "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4"
+    },
+    {
+     "id": "D-090-R267",
+     "state": "PASS",
+     "evidence": [
+      "Every conditional value and headline renders the plain-text marker \"Conditional\" adjacent to the figure (ConditionBlock, AnswerCard.tsx:154-170; CONDITIONAL_MARKER const:24); a settled value renders the figure alone (empty list \u2192 null).",
+      "Tests S2/S3/S4 assert the marker is present and S4 that headline-number and marker both render (count 1 each) so the number never shows alone; G4 mutation (c) \"drop marker on conditional headline\" turns S4 red. I ran S1-S12 green (140 tests in the 3 touched files).",
+      "Open for the rest: the engine classification (which results are conditional) is not this task; this task is the display, which honours the state. The row stays open for the engine gap-table tests.",
+      "Verifier's carry-forward condition met at 2622fb75: the task's allowed-path files are identical to those verified at 33beb8cc (content identity 107948b8), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T142-DCV.md."
+     ],
+     "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4"
+    },
+    {
+     "id": "D-090-R268",
+     "state": "PASS",
+     "evidence": [
+      "Settled shows the figure alone (S1), conditional shows the assumption verbatim as conditional (S2/S3/S12 assert each `<li>` equals the document's assumption, \"If \" applied per entry), withheld shows \"Not known\" (S5).",
+      "Test S6 asserts the three states are told apart on textContent/testids alone in one card; I ran it green. Distinction is by words, never by colour.",
+      "Open for the rest: deciding which answers stay visible/conditional/withheld is engine work, not this display task; the row stays open for that.",
+      "Verifier's carry-forward condition met at 2622fb75: the task's allowed-path files are identical to those verified at 33beb8cc (content identity 107948b8), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T142-DCV.md."
+     ],
+     "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4"
+    },
+    {
+     "id": "D-090-R269",
+     "state": "PASS",
+     "evidence": [
+      "The marker mechanism guarantees ANY conditional value \u2014 a height included \u2014 renders \"Conditional\" beside the figure and never reads as the settled maximum (S4 proves a conditional headline carries the marker; CSS weight 400, never colour-only).",
+      "I did NOT reproduce a height/R6B-specific unit test (the tests exercise floor_area_allowance); the walkthrough's picture claim that the recorded lot's heights render \"Conditional\" is a claim I did not reproduce in a browser.",
+      "Open for the rest: the R6B height-rule engine classification is not this task; the row stays open for the height-row tests named in its harness.",
+      "Verifier's carry-forward condition met at 2622fb75: the task's allowed-path files are identical to those verified at 33beb8cc (content identity 107948b8), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T142-DCV.md."
+     ],
+     "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4"
+    },
+    {
+     "id": "D-090-R570",
+     "state": "PASS",
+     "evidence": [
+      "A withheld value cannot render a number, an older value or a substitute: WithheldValueView has no numeric field and the card prints only reason + gap line (AnswerCard.tsx:126-148).",
+      "Test S5 asserts the withheld row text holds no figure; G4 check 6 confirms no existing no-number assertion was weakened (journey-215-16-northern.test.tsx unchanged and passing). I ran the folder green (485 tests, exit 0).",
+      "Open for the rest: R570 also binds the emitted document and exports; those are not this task and stay open.",
+      "Verifier's carry-forward condition met at 2622fb75: the task's allowed-path files are identical to those verified at 33beb8cc (content identity 107948b8), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer, a walkthrough by an independent human-journey-reviewer; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T142-DCV.md."
+     ],
+     "reviewed_sha": "2622fb75878d0f04b887b2db228abe4f004ddbc4"
+    }
+   ],
+   "verified_at": "2026-10-09T00:56:53+00:00"
   }
  ]
 }

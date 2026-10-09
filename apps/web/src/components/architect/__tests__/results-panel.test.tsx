@@ -399,3 +399,109 @@ describe("ResultsPanel — W-4 / W-6 / S19 / S22", () => {
     expect(screen.getByTestId("three-answers-completeness").textContent).not.toBe("First answer completeness.");
   });
 });
+
+describe("ResultsPanel — M5-T142: a new result and each failure are announced (walkthrough F2)", () => {
+  const READY = "Development results are ready.";
+
+  function announcer(): HTMLElement {
+    return screen.getByTestId("results-announcer");
+  }
+
+  it("S7: a successful result announces the fixed ready sentence to screen-reader users", async () => {
+    render(<ResultsPanel bbl={BBL} fetchImpl={successFetch(loadResultsFixture(JOURNEY))} />);
+    await pressShow();
+    await screen.findByTestId("results-document");
+    expect(announcer().textContent).toBe(READY);
+  });
+
+  it("S10: the live region is '' while a request runs; the result is announced only on arrival", async () => {
+    const gate = deferred<Response>();
+    const fetchImpl = (async () => gate.promise) as typeof fetch;
+    render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl} />);
+    // Before any request the region is empty, so nothing is announced on mount.
+    expect(announcer().textContent).toBe("");
+    await pressShow();
+    expect(screen.getByTestId("results-loading")).toBeInTheDocument();
+    expect(announcer().textContent).toBe("");
+    gate.resolve(jsonResponse(loadResultsFixture(JOURNEY), 200));
+    await screen.findByTestId("results-document");
+    expect(announcer().textContent).toBe(READY);
+  });
+
+  it("S9: a 404 announces the same title the not-connected card shows", async () => {
+    render(
+      <ResultsPanel
+        bbl={BBL}
+        fetchImpl={(async () => jsonResponse({ detail: "Not Found" }, 404)) as typeof fetch}
+      />,
+    );
+    await pressShow();
+    const unavailable = await screen.findByTestId("results-unavailable");
+    const title = within(unavailable).getByRole("heading").textContent;
+    expect(title).toBe("Results are not connected yet");
+    expect(announcer().textContent).toBe(title); // the two read the SAME extracted title
+  });
+
+  // S8: each documented failure outcome announces the SAME title its notice shows (no drift).
+  const failureCases: Array<[string, typeof fetch]> = [
+    ["503 inputs_unavailable", (async () => jsonResponse({ state: "inputs_unavailable", message: "x" }, 503)) as typeof fetch],
+    ["503 lot_conditions_unconfirmed", (async () => jsonResponse({ state: "lot_conditions_unconfirmed", message: "x" }, 503)) as typeof fetch],
+    ["422 validation_error", (async () => jsonResponse({ state: "validation_error", message: "x", detail: { code: "invalid_json" } }, 422)) as typeof fetch],
+    ["429 rate_limited", (async () => jsonResponse({ state: "rate_limited", message: "x" }, 429)) as typeof fetch],
+    ["500 internal_error", (async () => jsonResponse({ state: "internal_error", message: "x" }, 500)) as typeof fetch],
+    ["500 internal_contract_error", (async () => jsonResponse({ state: "internal_contract_error", message: "x" }, 500)) as typeof fetch],
+    ["200 validation_failure", (async () => jsonResponse({ contract_version: "1.0.0" }, 200)) as typeof fetch],
+    ["network_error", (async () => { throw new TypeError("Failed to fetch"); }) as typeof fetch],
+    ["418 unexpected_response", (async () => jsonResponse({ state: "teapot" }, 418)) as typeof fetch],
+  ];
+
+  for (const [name, fetchImpl] of failureCases) {
+    it(`S8: ${name} announces the notice's own title`, async () => {
+      render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl} />);
+      await pressShow();
+      const title = (await screen.findByTestId("results-failure-title")).textContent;
+      expect(title).toBeTruthy();
+      expect(announcer().textContent).toBe(title);
+    });
+  }
+
+  it("S8: client_timeout announces the 'took too long' title", async () => {
+    vi.useFakeTimers();
+    try {
+      const fetchImpl = ((_url: string, init: RequestInit) =>
+        new Promise((_resolve, reject) => {
+          (init.signal as AbortSignal).addEventListener("abort", () =>
+            reject(new DOMException("aborted", "AbortError")),
+          );
+        })) as unknown as typeof fetch;
+      render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl} />);
+      fireEvent.click(screen.getByTestId("results-show"));
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(12_000);
+      });
+      const title = screen.getByTestId("results-failure-title").textContent;
+      expect(title).toBe("The results took too long");
+      expect(announcer().textContent).toBe(title);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("S11: a retry that fails the same way clears to '' between, so the same title announces again", async () => {
+    const first = deferred<Response>();
+    const second = deferred<Response>();
+    const responses = [first.promise, second.promise];
+    const fetchImpl = (async () => responses.shift()) as unknown as typeof fetch;
+    render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl} />);
+    await pressShow(); // request 1 in flight
+    expect(announcer().textContent).toBe("");
+    first.resolve(jsonResponse({ state: "inputs_unavailable", message: "x" }, 503));
+    const title = (await screen.findByTestId("results-failure-title")).textContent;
+    expect(announcer().textContent).toBe(title);
+    // Retry: the region clears to '' while the retry runs, so the identical title announces again.
+    await pressShow();
+    await waitFor(() => expect(announcer().textContent).toBe(""));
+    second.resolve(jsonResponse({ state: "inputs_unavailable", message: "x" }, 503));
+    await waitFor(() => expect(announcer().textContent).toBe(title));
+  });
+});
