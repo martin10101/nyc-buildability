@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 3 (last changed 2026-10-09)
+- Revision: 4 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `f22b1f3f9e41f36dc5e6dad1187c64acd722f29f932a1714d6fe108adc82cc7a`
+- Combined code identity: `03b418ce69519e171dd8c5a931eb6a2253b2c8e74ee64f5cbd022f5a498acad9`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`0069bf1bd8b397d8d4b130d5b826496882a0eed0adfa0bc5fd0a047aa114cead`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`57f7325ecd7cf259a72f44126e327909675e4260436872b9141aadbe2e7aa4aa`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
   - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
@@ -136,8 +136,8 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `f22b1f3f9e41f36dc5e6dad1187c64acd722f29f932a1714d6fe108adc82cc7a`
-- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
+- Code identity tested: `03b418ce69519e171dd8c5a931eb6a2253b2c8e74ee64f5cbd022f5a498acad9`
+- Commit tested: `0c048485f1f69fc554543050542897695968e0b3`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed

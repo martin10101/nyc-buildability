@@ -1,12 +1,12 @@
 # Test-run evidence for the zoning-rule review register - calculation entries (M5-T146 PART D)
 # Committed log of one deterministic run of this calculation entry's linked test file,
-# executed in the task worktree on the integrated code head 455caec4. The preliminary capacity estimate is now reported for building B in building_alternatives (M5-T146). three_way_document.py changed, so the code module, the combined code identity, the test-file digest, commit and counts are resynced.
+# executed in the task worktree on the integrated code head 0c048485. three_way_document.py changed again (the live-route fix and the areas-agree wiring, M5-T146 W13), so the code module, the combined code identity, the commit and counts are resynced.
 # The automated-tests field records the result; the checker never re-runs tests, it only checks
 # that the recorded code-identity and test-file digests still match the files.
 entry: calc-preliminary-apartment-estimate
 command (from services/api): python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register_calculations.py
 run date: 2026-10-09
-commit tested: 455caec46895298a772505cdf34325d7fd758d96
+commit tested: 0c048485f1f69fc554543050542897695968e0b3
 exit code: 0
 ---
 53 passed

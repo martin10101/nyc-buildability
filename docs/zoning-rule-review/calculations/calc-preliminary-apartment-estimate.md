@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: apartment_estimate
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 3 (last changed 2026-10-09)
+- Revision: 4 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `6581c795305c325c3f1d2e3da7d619501eb061ec407975cb61914fbfae5673e8`
+- Combined code identity: `5b04627f11de8a0d68ede4df40caadf164bbbf0aa78ab5da78be6465b17388eb`
 - Modules:
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`0069bf1bd8b397d8d4b130d5b826496882a0eed0adfa0bc5fd0a047aa114cead`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`57f7325ecd7cf259a72f44126e327909675e4260436872b9141aadbe2e7aa4aa`)
   - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law
@@ -28,17 +28,17 @@ An entry with no rule file is fingerprinted by the LF-normalized sha256 of its c
 
 ## Where it applies
 
-A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is now reported for each worked building in building_alternatives; for building B (20,150 sq ft) it is 17.27 to 21.59, labelled 'Preliminary capacity estimate', conditional.
+A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B on every path where the allowance is shown (17.27 to 21.59 on the benchmark), building A where the two lot areas agree.
 
 ## Exceptions and limits
 
 - The apartment size and efficiency share are preliminary assumptions, editable; they are shown with the values used but are not yet changeable on the screen (backlog row DB-213 a).
 - The estimate is a practical capacity estimate, kept apart from the legal dwelling-unit limit.
-- The single unit_estimate block is not shown; each worked building's estimate is given in building_alternatives.
+- The single unit_estimate block is not shown; each worked building's estimate is given in building_alternatives - building B on every path, building A where the two lot areas agree.
 
 ## How the program reads it
 
-preliminary apartments = floor area x efficiency share / apartment size. For building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (two decimals), labelled 'Preliminary capacity estimate', conditional on the recorded lot area of 10,075 sq ft. The 0.60-0.75 share and the 700 sq ft size are each a preliminary assumption, shown with the values used but not yet changeable on the screen (DB-213 a). The arithmetic is built in preliminary_apartment_estimate.py (M5-T145) and reported per worked building through three_way_document.py; the single unit_estimate block is not shown and points to building_alternatives. Building A's estimate is not given because building A needs the withheld footprint figure.
+preliminary apartments = floor area x efficiency share / apartment size. For building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (two decimals), labelled 'Preliminary capacity estimate', conditional on the recorded lot area. Building B's estimate is reported on every path where the floor-area allowance is shown (building B rests on the recorded lot area, not the outline; W13 a). Building A's estimate is given where the two lot areas agree (building A is listed then); on the benchmark the areas disagree, so building A's estimate is not given. The 0.60-0.75 share and the 700 sq ft size are each a preliminary assumption, shown with the values used but not yet changeable on the screen (DB-213 a). The arithmetic is built in preliminary_apartment_estimate.py (M5-T145) and reported per worked building through three_way_document.py; the single unit_estimate block is not shown and points to building_alternatives.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -74,13 +74,13 @@ In the program but no test checks it:
 
 Planned, not built:
 - The share and size are shown with the values used but not yet changeable on the screen (DB-213 a).
-- Building A's estimate is not given because building A needs the withheld footprint figure.
+- Building A's estimate is given only where the two lot areas agree; on the benchmark they disagree, so it is not given.
 
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `6581c795305c325c3f1d2e3da7d619501eb061ec407975cb61914fbfae5673e8`
-- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
+- Code identity tested: `5b04627f11de8a0d68ede4df40caadf164bbbf0aa78ab5da78be6465b17388eb`
+- Commit tested: `0c048485f1f69fc554543050542897695968e0b3`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
@@ -111,10 +111,10 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
-- Building A's preliminary estimate is not given because building A needs the withheld footprint figure.
+- Building A's preliminary estimate is given only where the two lot areas agree; on the benchmark they disagree, so it is not given.
 - The share and apartment size are shown but not yet changeable on the screen (DB-213 a); the measurement-basis record describes the method and is linked here.
 
-- Coverage gap: The preliminary apartment estimate is reported for building B in building_alternatives (17.27 to 21.59, conditional); building A's estimate is not given (it needs the withheld footprint figure), and the share and size are shown but not yet changeable on the screen (DB-213 a).
+- Coverage gap: The preliminary apartment estimate is reported for building B on every path where the allowance is shown (17.27 to 21.59 on the benchmark, conditional); building A's estimate is given where the two lot areas agree; the share and size are shown but not yet changeable on the screen (DB-213 a).
 
 ## Human review
 

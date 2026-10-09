@@ -3104,23 +3104,25 @@
       "code_identity_sha256": "d13b7093ca2aeab414e54c073b060262f97a4be2749adc8ff47d931eec86214b",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
-      "applies_where": "The by-portion lot coverage a corner lot takes when part of it lies beyond 100 ft of a street line: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. This is now wired into the reported results; on the benchmark lot the document withholds the footprint as a square-foot figure because the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree, and gives the law by portion without a figure.",
+      "applies_where": "The by-portion lot coverage a corner lot takes: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. Reported through the emitter by how the recorded lot area and the tax-map outline area compare - available with its figures where they agree, withheld where they disagree (the benchmark lot), and withheld (the outline not available) where the lot's tax-map outline is missing.",
       "exceptions": [
-        "The footprint square-foot figure is shown only where the recorded lot area and the tax-map outline area agree; on the benchmark they disagree, so it is withheld and the law is given by portion (ruling W1).",
+        "The footprint square-foot figure is shown where the recorded lot area and the tax-map outline area agree; it is withheld where they disagree (the benchmark) and withheld, the outline not available, where the outline is missing (rulings W1, W13).",
         "The corner-lot portion is the part within 100 ft of each intersecting street line (ZR 12-10).",
         "The outline's area is a drawing measure and is never used in a zoning calculation in place of the recorded lot area."
       ],
-      "interpretation": "On the benchmark lot the document reports lot coverage by portion as the law - up to 100 percent on the corner-lot portion (the part within 100 ft of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10) - but withholds the footprint as a square-foot figure, because the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree and the outline's area is a drawing measure, never used in a zoning calculation in its place (ruling W1; gap_kind a missing fact about the property). The by-portion measurement (corner_reach_area.py measures the corner/interior area split, lot_coverage_by_portion.py applies the 100%/80% ratios; M5-T145) is wired through first_option_results.py and three_way_document.py; the footprint figure would be shown only where the two lot areas agree.",
+      "interpretation": "The program reports lot coverage by portion through the emitter, by how the recorded lot area and the tax-map outline area compare. Where they AGREE (the outline is threaded and the corner split is measured) coverage by portion is available with its figures - the corner and interior portion areas, the two ZR 23-362 ratios (corner 100%, interior 80%), the ZR 12-10 100 ft, and the footprint. Where they DISAGREE (the benchmark lot) the footprint is withheld as a square-foot figure, because the outline's area is a drawing measure, never used in a zoning calculation in its place (ruling W1; gap_kind a missing fact about the property), and the law is given by portion without a figure. Where the lot's tax-map outline is NOT available the coverage is withheld with the reason that the outline is not available (a missing fact about the property), never computed from the recorded area (W13). The by-portion measurement (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) is wired through first_option_results.py, three_way_document.py and result_way_engine_bridge.py.",
       "units": "feet and square feet",
       "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
       "behaviour": {
         "tested": [
-          "The document withholds max_lot_coverage as a square-foot figure and gives the law by portion, its gap_kind a missing fact about the property because the recorded and tax-map outline lot areas disagree (test: test_document_actuals_match_the_recorded_fixture)."
+          "On the benchmark lot the document withholds max_lot_coverage as a square-foot figure and gives the law by portion, its gap_kind a missing fact about the property because the recorded and tax-map outline lot areas disagree (test: test_document_actuals_match_the_recorded_fixture)."
         ],
-        "committed_untested": [],
+        "committed_untested": [
+          "The agree case (coverage by portion available with its figures) and the outline-not-available case (withheld) are realised through the emitter and proven by the server-side tests (test_three_answers_three_way_emit.py::test_w13_*, test_first_option_results.py::test_s13); no register-side test asserts them."
+        ],
         "planned": [
-          "The footprint square-foot figure is shown only where the recorded lot area and the tax-map outline area agree; where they disagree (the benchmark lot) it is withheld. A survey or deed reconciling the two areas would settle it.",
-          "No footprint is drawn because the figure is withheld."
+          "A live-route test with a lot whose recorded and outline areas agree was not added (no existing helper serves such a lot); the agree case is proven through the emitter.",
+          "No footprint is drawn on the benchmark because the figure is withheld."
         ]
       },
       "legal_vs_design": [
@@ -3161,7 +3163,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 3,
+      "revision": 4,
       "last_changed": "2026-10-09",
       "human_review": {
         "decision": null,
@@ -3177,10 +3179,10 @@
         "verdict": "Not reviewed"
       },
       "gaps": [
-        "The recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree by about 313 sq ft; the footprint square-foot figure is withheld until a survey or deed reconciles them.",
+        "On the benchmark lot the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree by about 313 sq ft; the footprint square-foot figure is withheld until a survey or deed reconciles them.",
         "The two step-P6 readings differ in the decimals of the measured areas, so the expected side holds both figures and no single figure is recorded."
       ],
-      "coverage_gap": "On the benchmark lot the footprint square-foot figure is withheld because the recorded lot area and the tax-map outline area disagree (a missing fact about the property); it is shown only where the two areas agree. r6b-lot-coverage covers only the flat 80% interior rule; the corner 100% by-portion split is measured by corner_reach_area.py and lot_coverage_by_portion.py (M5-T145), now wired through first_option_results.py.",
+      "coverage_gap": "Coverage by portion is wired through the emitter: available with its figures where the recorded and tax-map outline lot areas agree, withheld where they disagree (the benchmark), and withheld with the outline-not-available reason where the outline is missing. r6b-lot-coverage covers only the flat 80% interior rule.",
       "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
       "inputs": [
         "zoning_district = R6B",
@@ -3267,13 +3269,14 @@
       "code_identity_sha256": "157835f933103f36ca3ead00f99d3c77e98706f980ab87eb4840650051d3936f",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
-      "applies_where": "The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate (lot area x lot coverage) to the height limit and caps at the floor-area allowance, with a partial top floor. For the benchmark lot the single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional), and building A is not listed because it needs the withheld footprint figure.",
+      "applies_where": "The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate to the height limit and caps at the floor-area allowance, with a partial top floor. The single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional) on every path where the floor-area allowance is shown, and building A is listed where the two lot areas agree.",
       "exceptions": [
-        "Building B is reported in building_alternatives (conditional on the recorded lot area); building A is not listed because it needs the footprint square-foot figure, which is withheld where the two lot areas disagree.",
+        "Building B is listed on every path where the floor-area allowance is shown (it rests on the recorded lot area and the lowest ratio, not the outline); it is conditional on the recorded lot area (W13 a).",
+        "Building A is listed where the two lot areas agree (the footprint figure is available then); on the benchmark the areas disagree, so building A is not listed.",
         "The single building_option block is not shown; it points to the worked alternatives in building_alternatives.",
         "The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from the independent example's two buildings (DB-210); building B is built by first_building_options.py (the fewest storeys reaching the minimum base height), which matches the independent building B."
       ],
-      "interpretation": "The document reports building B as a worked alternative in building_alternatives: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft floor-area allowance, conditional on the recorded lot area of 10,075 sq ft. Building B is built by first_building_options.py (the fewest storeys reaching the minimum base height; M5-T145), which matches the independent example's building B. Building A (the widest footprint in whole storeys) is not listed because it needs the footprint square-foot figure, which is withheld where the recorded and tax-map outline lot areas disagree. The single building_option block is not shown and points to the list. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210) and is set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.",
+      "interpretation": "The document reports building B as a worked alternative wherever the floor-area allowance is shown: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft allowance on the benchmark, conditional on the recorded lot area. Building B rests on the recorded lot area and the lowest applicable ratio alone, not on the tax-map outline, so it is listed on every path - including where no outline is available (W13 a). Building B is built by first_building_options.py (the fewest storeys reaching the minimum base height; M5-T145), which matches the independent example's building B. Building A (the widest footprint in whole storeys) is listed where the two lot areas agree (then the footprint figure is available); on the benchmark the areas disagree, so building A is not listed. The single building_option block is not shown and points to the list. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210), set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.",
       "units": "feet and square feet",
       "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
       "behaviour": {
@@ -3282,10 +3285,10 @@
           "The single building_option block is not shown in the document (test: test_document_actuals_match_the_recorded_fixture)."
         ],
         "committed_untested": [
-          "The regenerated document lists building B in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional); no register test asserts the list's floor schedule (the server content tests do)."
+          "The document lists building B on every path where the allowance is shown, and building A where the two lot areas agree; no register test asserts the list's floor schedule (the server content tests do)."
         ],
         "planned": [
-          "Building A is not worked because the footprint square-foot figure is withheld where the two lot areas disagree.",
+          "Building A is listed only where the two lot areas agree; where they disagree (the benchmark) or the outline is missing, the footprint figure is withheld and building A is not worked.",
           "The engine's own single-answer building-option generator (compute_building_option) is not reported; it is set beside the independent example only in the worked example below.",
           "One floor-to-floor height is worked for every storey (R542 10 ft), so a 15 ft shop ground floor is not worked.",
           "Which building the first option shows is the owner's pending decision (DB-210)."
@@ -3350,7 +3353,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 3,
+      "revision": 4,
       "last_changed": "2026-10-09",
       "human_review": {
         "decision": null,
@@ -3367,10 +3370,10 @@
       },
       "gaps": [
         "The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from building B's method (the fewest storeys reaching the minimum base height); recorded as a design assumption that differs (DB-210).",
-        "Building A is not listed because the footprint square-foot figure is withheld (the recorded and tax-map outline lot areas disagree).",
+        "Building A is listed only where the two lot areas agree; on the benchmark they disagree, so the footprint figure and building A are withheld.",
         "The two step-P6 readings differ in the decimals of the real lot's footprint; both figures are held, no single figure."
       ],
-      "coverage_gap": "Building B is reported as a worked alternative (conditional); building A needs the withheld footprint figure and is not listed; the single building_option block is not shown; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).",
+      "coverage_gap": "Building B is reported as a worked alternative on every path where the allowance is shown (conditional); building A is listed where the two lot areas agree; the single building_option block is not shown; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).",
       "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
       "inputs": [
         "allowance_sf (maximum residential floor area)",
@@ -3636,23 +3639,23 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "0069bf1bd8b397d8d4b130d5b826496882a0eed0adfa0bc5fd0a047aa114cead"
+          "sha256": "57f7325ecd7cf259a72f44126e327909675e4260436872b9141aadbe2e7aa4aa"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "6581c795305c325c3f1d2e3da7d619501eb061ec407975cb61914fbfae5673e8",
+      "code_identity_sha256": "5b04627f11de8a0d68ede4df40caadf164bbbf0aa78ab5da78be6465b17388eb",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
-      "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is now reported for each worked building in building_alternatives; for building B (20,150 sq ft) it is 17.27 to 21.59, labelled 'Preliminary capacity estimate', conditional.",
+      "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B on every path where the allowance is shown (17.27 to 21.59 on the benchmark), building A where the two lot areas agree.",
       "exceptions": [
         "The apartment size and efficiency share are preliminary assumptions, editable; they are shown with the values used but are not yet changeable on the screen (backlog row DB-213 a).",
         "The estimate is a practical capacity estimate, kept apart from the legal dwelling-unit limit.",
-        "The single unit_estimate block is not shown; each worked building's estimate is given in building_alternatives."
+        "The single unit_estimate block is not shown; each worked building's estimate is given in building_alternatives - building B on every path, building A where the two lot areas agree."
       ],
-      "interpretation": "preliminary apartments = floor area x efficiency share / apartment size. For building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (two decimals), labelled 'Preliminary capacity estimate', conditional on the recorded lot area of 10,075 sq ft. The 0.60-0.75 share and the 700 sq ft size are each a preliminary assumption, shown with the values used but not yet changeable on the screen (DB-213 a). The arithmetic is built in preliminary_apartment_estimate.py (M5-T145) and reported per worked building through three_way_document.py; the single unit_estimate block is not shown and points to building_alternatives. Building A's estimate is not given because building A needs the withheld footprint figure.",
+      "interpretation": "preliminary apartments = floor area x efficiency share / apartment size. For building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (two decimals), labelled 'Preliminary capacity estimate', conditional on the recorded lot area. Building B's estimate is reported on every path where the floor-area allowance is shown (building B rests on the recorded lot area, not the outline; W13 a). Building A's estimate is given where the two lot areas agree (building A is listed then); on the benchmark the areas disagree, so building A's estimate is not given. The 0.60-0.75 share and the 700 sq ft size are each a preliminary assumption, shown with the values used but not yet changeable on the screen (DB-213 a). The arithmetic is built in preliminary_apartment_estimate.py (M5-T145) and reported per worked building through three_way_document.py; the single unit_estimate block is not shown and points to building_alternatives.",
       "units": "feet and square feet",
       "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
       "behaviour": {
@@ -3662,7 +3665,7 @@
         "committed_untested": [],
         "planned": [
           "The share and size are shown with the values used but not yet changeable on the screen (DB-213 a).",
-          "Building A's estimate is not given because building A needs the withheld footprint figure."
+          "Building A's estimate is given only where the two lot areas agree; on the benchmark they disagree, so it is not given."
         ]
       },
       "legal_vs_design": [
@@ -3698,18 +3701,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "455caec46895298a772505cdf34325d7fd758d96",
+        "tested_commit": "0c048485f1f69fc554543050542897695968e0b3",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
-        "tested_code_identity_sha256": "6581c795305c325c3f1d2e3da7d619501eb061ec407975cb61914fbfae5673e8",
+        "tested_code_identity_sha256": "5b04627f11de8a0d68ede4df40caadf164bbbf0aa78ab5da78be6465b17388eb",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 3,
+      "revision": 4,
       "last_changed": "2026-10-09",
       "human_review": {
         "decision": null,
@@ -3725,10 +3728,10 @@
         "verdict": "Not reviewed"
       },
       "gaps": [
-        "Building A's preliminary estimate is not given because building A needs the withheld footprint figure.",
+        "Building A's preliminary estimate is given only where the two lot areas agree; on the benchmark they disagree, so it is not given.",
         "The share and apartment size are shown but not yet changeable on the screen (DB-213 a); the measurement-basis record describes the method and is linked here."
       ],
-      "coverage_gap": "The preliminary apartment estimate is reported for building B in building_alternatives (17.27 to 21.59, conditional); building A's estimate is not given (it needs the withheld footprint figure), and the share and size are shown but not yet changeable on the screen (DB-213 a).",
+      "coverage_gap": "The preliminary apartment estimate is reported for building B on every path where the allowance is shown (17.27 to 21.59 on the benchmark, conditional); building A's estimate is given where the two lot areas agree; the share and size are shown but not yet changeable on the screen (DB-213 a).",
       "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
       "inputs": [
         "floor_area_sq_ft (from the building option)",
@@ -3836,7 +3839,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "0069bf1bd8b397d8d4b130d5b826496882a0eed0adfa0bc5fd0a047aa114cead"
+          "sha256": "57f7325ecd7cf259a72f44126e327909675e4260436872b9141aadbe2e7aa4aa"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3855,7 +3858,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "f22b1f3f9e41f36dc5e6dad1187c64acd722f29f932a1714d6fe108adc82cc7a",
+      "code_identity_sha256": "03b418ce69519e171dd8c5a931eb6a2253b2c8e74ee64f5cbd022f5a498acad9",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3947,18 +3950,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "455caec46895298a772505cdf34325d7fd758d96",
+        "tested_commit": "0c048485f1f69fc554543050542897695968e0b3",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
-        "tested_code_identity_sha256": "f22b1f3f9e41f36dc5e6dad1187c64acd722f29f932a1714d6fe108adc82cc7a",
+        "tested_code_identity_sha256": "03b418ce69519e171dd8c5a931eb6a2253b2c8e74ee64f5cbd022f5a498acad9",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 3,
+      "revision": 4,
       "last_changed": "2026-10-09",
       "human_review": {
         "decision": null,
@@ -4333,15 +4336,51 @@
       "event": "implementation_changed",
       "summary": "implementation_changed: the six-step comparison now reads each step's actual side from the regenerated document (building B's floor schedule, total floor area and preliminary estimate now given and matching the independent building B; the footprint figure withheld because the two lot areas disagree; building A not listed; the legal unit limit still withheld); the step verdicts follow the DB-211 guards; first_building_options.py and three_way_document.py changed, so the code modules and code identity, the test-file digest and evidence are resynced.",
       "by": "M5-T146 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 17,
+      "date": "2026-10-09",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 4,
+      "event": "interpretation_changed",
+      "summary": "interpretation_changed: the register text now follows the areas-agree wiring (W13 b) - coverage by portion is available with its figures where the two lot areas agree, withheld where they disagree (the benchmark), and withheld with the outline-not-available reason where the tax-map outline is missing. No code module of this entry changed; the benchmark document is unchanged.",
+      "by": "M5-T146 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 18,
+      "date": "2026-10-09",
+      "entry_id": "calc-building-option-floor-stack",
+      "revision": 4,
+      "event": "interpretation_changed",
+      "summary": "interpretation_changed: the register text now follows the live-route fix (W13 a) and the areas-agree wiring (W13 b) - building B is listed on every path where the floor-area allowance is shown (it rests on the recorded lot area and the lowest ratio, not the outline), and building A is listed where the two lot areas agree. No code module of this entry changed; the benchmark document is unchanged.",
+      "by": "M5-T146 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 19,
+      "date": "2026-10-09",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 4,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (the live-route fix and the areas-agree wiring, W13), so its code module, the combined code identity, the test commit and counts are resynced; the text now follows that building B's estimate is given on every path where the allowance is shown and building A's estimate where the two lot areas agree. The benchmark document and its estimate (17.27 to 21.59) are unchanged.",
+      "by": "M5-T146 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 20,
+      "date": "2026-10-09",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 4,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (the live-route fix and the areas-agree wiring, W13), so its code module, the combined code identity, the test commit and counts are resynced. The six-step actual sides come from the committed benchmark document, which did NOT change (the benchmark areas disagree), so no step verdict moves.",
+      "by": "M5-T146 (rules-engineer, an AI agent)"
     }
   ],
   "coverage_gaps": [
     "The scenario three-answers engine - the calculation that combines the rules into floor area, envelope, footprint, building option, dwelling-unit limit and geometry - still has no single register entry of its own; the calculation entries added here trace the first building option's path, not the whole engine.",
-    "Building B is now reported as a worked alternative (conditional); building A needs the withheld footprint figure and is not listed; the engine's own single-answer building-option generator is not built, and its method differs from building B's (DB-210).",
+    "Building B is reported as a worked alternative on every path where the floor-area allowance is shown (it rests on the recorded lot area and the lowest ratio, not the outline); building A is listed where the two lot areas agree; the engine's own single-answer building generator is not built and its method differs from building B's (DB-210).",
     "The first-building-option module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked (first_building_options.py; M5-T145).",
-    "Lot coverage by portion (corner-lot portion at 100% plus interior strip at 80%) is now wired into the reported results (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145, through first_option_results.py); the footprint square-foot figure is withheld where the recorded lot area and the tax-map outline area disagree (shown only where they agree), and r6b-lot-coverage covers only the flat 80% interior rule.",
+    "Lot coverage by portion is wired through the emitter: available with its figures (corner and interior portion areas, the two ratios, the 100 ft, the footprint) where the two lot areas agree; withheld where they disagree (the benchmark); and withheld, the outline not available, where the lot's tax-map outline is missing. r6b-lot-coverage covers only the flat 80% interior rule.",
     "The legal dwelling-unit-limit decision is withheld because the special density area is unknown; r6b-dwelling-units covers the formula only, not the withhold decision.",
-    "The preliminary apartment estimate is now reported for building B in building_alternatives (17.27 to 21.59, conditional); building A's estimate is not given (it needs the withheld footprint figure), and the measurement-basis record describes the method and is linked from calc-preliminary-apartment-estimate.",
+    "The preliminary apartment estimate is reported for building B on every path where the allowance is shown (17.27 to 21.59 on the benchmark, conditional); building A's estimate is given where the two lot areas agree; the measurement-basis record describes the method and is linked from calc-preliminary-apartment-estimate.",
     "The 23 rule entries still have no dedicated units / measurement-basis / formula / rounding fields (point 3 is prose only on their pages); the six R6B-path rule entries are r6-r12-residential-far, r6b-height, r6b-lot-coverage, r6b-dwelling-units, r6b-qualifying-housing-far and r6b-rear-yard-corner-waiver; each calculation page here carries those five fields for its own steps.",
     "Property-inputs mapping (integration.py) and wide-street determination affect reported results but have no register entry.",
     "Front/side yard and street-wall rules that shape the footprint are neither reported as values nor covered by a register entry.",

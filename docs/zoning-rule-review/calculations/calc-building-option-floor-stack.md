@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 3 (last changed 2026-10-09)
+- Revision: 4 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-height`
 
 ## Code identity
@@ -30,17 +30,18 @@ An entry with no rule file is fingerprinted by the LF-normalized sha256 of its c
 
 ## Where it applies
 
-The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate (lot area x lot coverage) to the height limit and caps at the floor-area allowance, with a partial top floor. For the benchmark lot the single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional), and building A is not listed because it needs the withheld footprint figure.
+The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate to the height limit and caps at the floor-area allowance, with a partial top floor. The single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional) on every path where the floor-area allowance is shown, and building A is listed where the two lot areas agree.
 
 ## Exceptions and limits
 
-- Building B is reported in building_alternatives (conditional on the recorded lot area); building A is not listed because it needs the footprint square-foot figure, which is withheld where the two lot areas disagree.
+- Building B is listed on every path where the floor-area allowance is shown (it rests on the recorded lot area and the lowest ratio, not the outline); it is conditional on the recorded lot area (W13 a).
+- Building A is listed where the two lot areas agree (the footprint figure is available then); on the benchmark the areas disagree, so building A is not listed.
 - The single building_option block is not shown; it points to the worked alternatives in building_alternatives.
 - The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from the independent example's two buildings (DB-210); building B is built by first_building_options.py (the fewest storeys reaching the minimum base height), which matches the independent building B.
 
 ## How the program reads it
 
-The document reports building B as a worked alternative in building_alternatives: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft floor-area allowance, conditional on the recorded lot area of 10,075 sq ft. Building B is built by first_building_options.py (the fewest storeys reaching the minimum base height; M5-T145), which matches the independent example's building B. Building A (the widest footprint in whole storeys) is not listed because it needs the footprint square-foot figure, which is withheld where the recorded and tax-map outline lot areas disagree. The single building_option block is not shown and points to the list. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210) and is set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.
+The document reports building B as a worked alternative wherever the floor-area allowance is shown: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft allowance on the benchmark, conditional on the recorded lot area. Building B rests on the recorded lot area and the lowest applicable ratio alone, not on the tax-map outline, so it is listed on every path - including where no outline is available (W13 a). Building B is built by first_building_options.py (the fewest storeys reaching the minimum base height; M5-T145), which matches the independent example's building B. Building A (the widest footprint in whole storeys) is listed where the two lot areas agree (then the footprint figure is available); on the benchmark the areas disagree, so building A is not listed. The single building_option block is not shown and points to the list. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210), set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -77,10 +78,10 @@ Implemented and tested:
 - The single building_option block is not shown in the document (test: test_document_actuals_match_the_recorded_fixture).
 
 In the program but no test checks it:
-- The regenerated document lists building B in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional); no register test asserts the list's floor schedule (the server content tests do).
+- The document lists building B on every path where the allowance is shown, and building A where the two lot areas agree; no register test asserts the list's floor schedule (the server content tests do).
 
 Planned, not built:
-- Building A is not worked because the footprint square-foot figure is withheld where the two lot areas disagree.
+- Building A is listed only where the two lot areas agree; where they disagree (the benchmark) or the outline is missing, the footprint figure is withheld and building A is not worked.
 - The engine's own single-answer building-option generator (compute_building_option) is not reported; it is set beside the independent example only in the worked example below.
 - One floor-to-floor height is worked for every storey (R542 10 ft), so a 15 ft shop ground floor is not worked.
 - Which building the first option shows is the owner's pending decision (DB-210).
@@ -125,10 +126,10 @@ Planned, not built:
 ## Gaps and unresolved questions
 
 - The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from building B's method (the fewest storeys reaching the minimum base height); recorded as a design assumption that differs (DB-210).
-- Building A is not listed because the footprint square-foot figure is withheld (the recorded and tax-map outline lot areas disagree).
+- Building A is listed only where the two lot areas agree; on the benchmark they disagree, so the footprint figure and building A are withheld.
 - The two step-P6 readings differ in the decimals of the real lot's footprint; both figures are held, no single figure.
 
-- Coverage gap: Building B is reported as a worked alternative (conditional); building A needs the withheld footprint figure and is not listed; the single building_option block is not shown; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).
+- Coverage gap: Building B is reported as a worked alternative on every path where the allowance is shown (conditional); building A is listed where the two lot areas agree; the single building_option block is not shown; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).
 
 ## Human review
 

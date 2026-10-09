@@ -218,3 +218,45 @@ three rule-field / integration / yard gaps, the M5-T144 fingerprint gap. 10 -> 1
   PART E's document regeneration and by this half's own verdict moves. Flagged here for the reviewer.
 
 END-OF-REPORT
+
+## Third round (resync: the live-route fix and the areas-agree wiring)
+
+Built on `0c048485f1f69fc554543050542897695968e0b3`. `three_way_document.py` changed again (PART B's
+live-route fix, W13 a, and areas-agree wiring, W13 b), so the register check failed on two entries.
+No checker/renderer code; no human decision; no test-file edit (the test file is unchanged and no
+six-step verdict moves, so no assertion was legitimately moved). ACTUAL sides read from the program's
+behaviour; the committed benchmark document did NOT change.
+
+### Entries changed
+- `calc-preliminary-apartment-estimate`: code module `three_way_document.py` resynced (new combined
+  code identity `5b04627f...`), automated-test evidence resynced (commit `0c048485`, 53 passed); text
+  now follows that building B's estimate is given on every path where the allowance is shown and
+  building A's estimate where the two lot areas agree. Revision 3 -> 4, history appended.
+- `calc-first-building-option-complete`: code module `three_way_document.py` resynced (new combined
+  code identity `03b418ce...`), evidence resynced. The six-step actual sides come from the committed
+  benchmark document, which did NOT change (the benchmark areas disagree), so NO step verdict moves -
+  stated in the history line. Revision 3 -> 4.
+- `calc-lot-coverage-by-portion` (text only; its code modules did not change): the text now follows
+  the three cases - coverage by portion available with its figures where the two lot areas agree,
+  withheld where they disagree (the benchmark), withheld with the outline-not-available reason where
+  the outline is missing (W1/W13). Revision 3 -> 4 (interpretation_changed), history appended.
+- `calc-building-option-floor-stack` (text only): the text now follows the live-route fix - building
+  B listed on every path where the allowance is shown (it rests on the recorded lot area, not the
+  outline), building A listed where the two lot areas agree. Revision 3 -> 4 (interpretation_changed).
+- Coverage gaps 2, 4, 6 (building-option / lot-coverage / estimate) reworded to the realised
+  areas-agree case; none dropped while true; 12 gaps kept.
+- `calc-floor-area-allowance` and `calc-legal-dwelling-unit-limit`: unchanged (their code and the
+  benchmark are unchanged).
+
+### Checks (direct exit codes)
+- `ruff check .` (from services/api): 0. `pytest register + calc + reference_cases + journey`: 0 -
+  198 passed (calc file alone 53). `render_review_register.py --check`: 0. `modularity_check --check`:
+  0. `check_lane_paths --coverage`: 0 (9738 files). `git diff --stat 0c048485 -- docs/zoning-rule-
+  review/rules`: empty (23 rule pages unchanged).
+
+### Scope note
+Two evidence logs (`calc-preliminary-apartment-estimate.txt`, `calc-first-building-option-complete.txt`)
+refreshed to commit `0c048485` per GUIDE step 2, matching the resynced `automated_tests` fields; the
+other four entries' logs are unchanged (their code/tests and recorded run are still valid).
+
+END-OF-REPORT
