@@ -201,7 +201,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T03:48:47.483601+00:00",
-  "updated_at": "2026-10-09T05:06:19.944116+00:00",
+  "updated_at": "2026-10-09T05:20:07.779319+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -248,6 +248,13 @@
       "percent": 90,
       "status": "claimed",
       "message": "The builder's one commit integrated by cherry-pick (582dcccb, 16 files; blobs compared equal with its worktree commit c1e14271) and read by the orchestrator before review. CI on the pushed head 582dcccb: run 37884285350, 21 of 21 jobs success; secret-scan 37884285480 and context-budget 37884285511 success; read 04:39 UTC before the reviews and read again 05:10 UTC. Two independent read-only reviews at that head, both saved unchanged: G3 data-contract-verifier PASS (received 04:48 UTC), G4 qa-engineer PASS (received 05:00 UTC; twelve mutations, each caught). Later commits hold records only (the handoff file; the record of an owner message); the 19 allowed paths are byte-identical to 582dcccb. Review record, evidence map of ten rows written. Next: submit, gates G2 G3 G4, the rule check."
+    },
+    {
+      "at": "2026-10-09T05:20:07.779169+00:00",
+      "agent": "orchestrator",
+      "percent": 95,
+      "status": "awaiting_gate",
+      "message": "CORRECTION of the note of 05:06:03 UTC above: it says CI on 582dcccb was 'read again 05:10 UTC'. That clock time was written from memory and is wrong (it lies after the note itself). The second read was made by the orchestrator between 05:04:38 UTC (the commit before it) and 05:06:03 UTC (the note); the first read, at 04:39 UTC before the reviews, is as the review record says. Nothing else in that note changes. The rule check (directive-compliance-verifier) returned PASS for the ten rows at 5e7be6c3, received 05:19 UTC, no correction required."
     }
   ]
 }
