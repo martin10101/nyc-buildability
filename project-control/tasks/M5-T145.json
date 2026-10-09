@@ -273,8 +273,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PART A tolerance for the benchmark lot: the two step-P6 readings differ by at most 0.14 sq ft on the corner portion and 0.13 sq ft on the interior strip, and agree exactly on the outline area (10,387.99). The chosen test tolerance is 1.0 sq ft per portion - about seven times the readings' own spread and ~0.01% of the ~10,388 sq ft lot - and the two parts must sum to the outline area within 0.01 sq ft. This pins no single figure (it requires the program's exact clip within one hand-reader's spread of BOTH readings). I could not run PART A, so the actual program-vs-reading gap is unconfirmed; the builder MUST report the measured gap in part-A.md and, if it exceeds 1.0 sq ft, STOP and surface it as a possible real discrepancy rather than loosen the tolerance silently.",
     "PART A geometry method: shapely==2.0.7 is an admitted, pinned dependency (requirements.txt:508; pyproject.toml:30), so no new package is needed. The RECOMMENDED method, mirroring lot_reach.py's pure-math no-dependency style, is a pure-Python half-plane polygon clip (Sutherland-Hodgman): the corner portion is the outline clipped by {perpendicular distance to street line 1 <= d} and then by {perpendicular distance to street line 2 <= d} (both half-planes are convex, so the clip is exact even for an L-shaped outline); the area is the shoelace of the clipped ring; the interior portion is the outline area minus the corner portion. shapely is an acceptable alternative if the builder prefers; either way no new package.",
@@ -284,7 +284,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T08:32:32.735259+00:00",
-  "updated_at": "2026-10-09T09:53:14.304667+00:00",
+  "updated_at": "2026-10-09T10:09:48.392508+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -376,5 +376,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-09, after the reviews and the rule check, before acceptance] the dependencies field held three sentences instead of task ids, so the ledger refused the acceptance. It now names the accepted tasks this work rests on: M4-T037 (the independent hand-worked example), M4-T038 (the register calculation entries that part E revises) and M5-T127 (the lot-reach measurement that part A stands beside). The three sentences are kept, unchanged, at the end of the path notes. No path, gate, reviewer, scenario or bound row changed; no file of the task changed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T10:09:48.392360+00:00"
 }
