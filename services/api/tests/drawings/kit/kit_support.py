@@ -29,16 +29,33 @@ NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
 TOL = 0.005 + 1e-9  # labels carry at most two decimals
 
 
+def all_result_fixture_paths() -> list[Path]:
+    """EVERY valid results fixture (contract + kit), drawable or not."""
+    return sorted(CONTRACT_FIXTURES.glob("*.json")) + sorted(KIT_FIXTURES.glob("*.json"))
+
+
+def _is_drawable(path: Path) -> bool:
+    """A fixture is drawable when its geometry is available (there is a lot outline to draw)."""
+    return load(path).get("geometry", {}).get("status") == "available"
+
+
 def fixture_paths() -> list[Path]:
     """Every valid results fixture the drawing kit and CAD export can DRAW: those whose geometry is
     available. A fixture whose geometry is not_available (the first-building-option synthetic
     fixtures, contract 1.4.0, which carry worked alternatives but no placement, so nothing is drawn)
     yields Unavailable from every renderer and the adapter, so it has no site plan, massing or DXF
     to snapshot or assert on; it is excluded here (the M5-T146 generalisation of the test_massing
-    floor-plates filter). Such a fixture's validity is covered by the contract validator, not
-    here."""
-    everything = sorted(CONTRACT_FIXTURES.glob("*.json")) + sorted(KIT_FIXTURES.glob("*.json"))
-    return [p for p in everything if load(p).get("geometry", {}).get("status") == "available"]
+    floor-plates filter). The excluded set is EXPOSED by :func:`excluded_fixture_paths` and pinned
+    by a test, so nothing drops out of the drawing tests unseen (ruling W12). Such a fixture's
+    validity is covered by the contract validator, not here."""
+    return [p for p in all_result_fixture_paths() if _is_drawable(p)]
+
+
+def excluded_fixture_paths() -> list[Path]:
+    """The valid results fixtures :func:`fixture_paths` LEAVES OUT: those whose geometry is not
+    available, so there is nothing to draw and every renderer and the adapter answer Unavailable.
+    Exposed so a test can pin exactly what drops out of the drawing tests (ruling W12)."""
+    return [p for p in all_result_fixture_paths() if not _is_drawable(p)]
 
 
 def load(path: Path) -> dict:

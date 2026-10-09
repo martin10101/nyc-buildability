@@ -6,16 +6,33 @@ import copy
 
 import pytest
 
+from app.cad.results_dxf import render_results_dxf
 from app.contracts.study_contracts import StudyContractError
-from app.drawings.kit import adapter
+from app.drawings.kit import adapter, render_massing, render_site_plan
 from app.drawings.kit.adapter import load_drawing_input
 from app.drawings.kit.errors import DrawingInputError
 from app.drawings.kit.model import DrawingInput, LayerUnavailable, Unavailable
 
-from .kit_support import CONTRACT_FIXTURES, KIT_FIXTURES, fixture_paths, load
+from .kit_support import (
+    CONTRACT_FIXTURES,
+    ENV_ON,
+    KIT_FIXTURES,
+    all_result_fixture_paths,
+    excluded_fixture_paths,
+    fixture_paths,
+    load,
+)
 
 BASE = load(CONTRACT_FIXTURES / "synthetic_all_answers_available.json")
 MIXED = load(KIT_FIXTURES / "synthetic_interior_lot_mixed_use.json")
+
+# W12: the valid results documents fixture_paths() LEAVES OUT - today EXACTLY the two contract-1.4.0
+# sample documents, whose geometry is not available (worked alternatives, no placement, nothing to
+# draw). Named here so a new non-drawable fixture cannot drop out of the drawing tests unseen.
+NOT_DRAWABLE_FIXTURES = {
+    "synthetic_building_alternatives_contract_1_4_0.json",
+    "synthetic_coverage_by_portion_available_contract_1_4_0.json",
+}
 
 
 def _mutated(doc: dict, mutate) -> dict:
@@ -29,6 +46,37 @@ def test_every_valid_fixture_loads(path):
     data = load_drawing_input(load(path))
     assert isinstance(data, DrawingInput)
     assert data.lot.source == "/geometry/lot_outline"
+
+
+def test_the_fixture_list_leaves_out_exactly_the_not_available_geometry_docs():
+    """W12: nothing drops out of the drawing tests unseen. fixture_paths() leaves out EXACTLY the
+    valid results documents whose geometry is not available, and today that is EXACTLY the two
+    contract-1.4.0 sample documents named in NOT_DRAWABLE_FIXTURES. The two lists together are every
+    valid results fixture, and they do not overlap - so a new fixture is covered by one or the
+    other, never silently dropped."""
+    drawn = fixture_paths()
+    left_out = excluded_fixture_paths()
+    assert {p.name for p in left_out} == NOT_DRAWABLE_FIXTURES
+    for path in left_out:
+        assert load(path).get("geometry", {}).get("status") != "available"
+    drawn_names = {p.name for p in drawn}
+    assert NOT_DRAWABLE_FIXTURES.isdisjoint(drawn_names)  # none of the left-out docs is also drawn
+    assert drawn_names.isdisjoint({p.name for p in left_out})
+    assert drawn_names | {p.name for p in left_out} == {
+        p.name for p in all_result_fixture_paths()
+    }  # the split is total: every valid fixture is drawn OR named left-out, none lost
+
+
+@pytest.mark.parametrize("path", excluded_fixture_paths(), ids=lambda p: p.stem)
+def test_left_out_fixtures_are_unavailable_from_every_entry_point_without_raising(path):
+    """W12: each left-out document answers UNAVAILABLE (never raises) from the drawing adapter and
+    from the site-plan, massing and DXF entry points - so dropping it from the drawing tests loses
+    no coverage: there is genuinely nothing to draw."""
+    doc = load(path)
+    assert isinstance(load_drawing_input(doc), Unavailable)
+    assert isinstance(render_site_plan(doc, env=ENV_ON), Unavailable)
+    assert isinstance(render_massing(doc, env=ENV_ON), Unavailable)
+    assert isinstance(render_results_dxf(doc, env=ENV_ON), Unavailable)
 
 
 def test_lot_outline_without_envelope_still_loads():

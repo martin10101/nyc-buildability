@@ -232,4 +232,38 @@ ratification. (The four round-1 files are already in the task per W10.)
   (test_validate_contracts.py) is UNCHANGED, the `fit_note` schema addition uses only known keywords
   ($ref, description), and validate_contracts.py passed with 0 failures; CI runs the harness.
 
+## Guard of the fixture list (ruling W12; third orchestrator round)
+
+The `fixture_paths()` narrowing (which drops non-drawable fixtures from the drawing/CAD tests) is
+now guarded so nothing drops out unseen:
+
+1. **The left-out list is exposed.** `kit_support.excluded_fixture_paths()` returns the valid
+   results documents `fixture_paths()` leaves out (geometry not available); `all_result_fixture_paths()`
+   returns every valid results fixture. By construction drawn + left-out = all, with no overlap.
+2. **A test pins it** (`test_adapter.py::test_the_fixture_list_leaves_out_exactly_the_not_available_geometry_docs`):
+   the left-out set equals EXACTLY the two contract-1.4.0 sample documents, named in the test
+   (`NOT_DRAWABLE_FIXTURES` = `synthetic_building_alternatives_contract_1_4_0.json`,
+   `synthetic_coverage_by_portion_available_contract_1_4_0.json`); each left-out doc has geometry
+   not available; the drawn and left-out sets are disjoint and their union is every valid fixture
+   (the split is total - none lost).
+3. **A test proves the exclusion loses no coverage**
+   (`test_left_out_fixtures_are_unavailable_from_every_entry_point_without_raising`, parametrised
+   over the left-out docs): each answers `Unavailable` - never raises - from the drawing adapter
+   (`load_drawing_input`) and from the site-plan, massing and DXF entry points (`render_site_plan`,
+   `render_massing`, `render_results_dxf`). There is genuinely nothing to draw.
+4. **Mutation proof** (scratch copy outside the repository,
+   `scratchpad/mutate_w12.py`): a DRAWABLE document (`synthetic_all_answers_available.json`) is made
+   geometry-not-available in a scratch fixture set; the left-out set becomes three documents, so the
+   pin `{excluded} == NOT_DRAWABLE_FIXTURES` FAILS (RED). A drawable fixture silently becoming
+   non-drawable cannot pass unseen.
+
+Files: `services/api/tests/drawings/kit/kit_support.py` (expose `all_result_fixture_paths` /
+`excluded_fixture_paths`), `services/api/tests/drawings/kit/test_adapter.py` (the two guard tests +
+the named list).
+
+### Checks, this round, with direct exit codes
+- `cd services/api && python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q -p no:cacheprovider tests/drawings tests/cad` -> 1362 passed, 6 skipped
+  (exit 0; +3 over the previous round - the pin test and the two Unavailable-entry-point cases)
+
 END-OF-REPORT
