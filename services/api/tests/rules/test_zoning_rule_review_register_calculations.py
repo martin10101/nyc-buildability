@@ -517,3 +517,157 @@ def test_a_calculation_id_colliding_with_a_rule_id_is_refused():
     reg = copy.deepcopy(REGISTER)
     reg["calculations"][0]["entry_id"] = "r6b-height"
     assert any("collide" in m for m in calc.validate_calculations(reg))
+
+
+COMPARISON_ID = "calc-first-building-option-complete"
+
+
+# --------------------------------------------------------------------------
+# S15 (M5-T146 part D) - the checker module is split behind a compatibility facade (DB-211 c): the
+# public names stay importable from the old path and resolve to the focused modules.
+# --------------------------------------------------------------------------
+def test_calculation_module_is_a_compatibility_facade():
+    from app.rules.review_register import calc_checks, calc_render, calc_vocab
+
+    # the three focused modules exist and the facade re-exports their public names (same objects).
+    assert calc.validate_calculations is calc_checks.validate_calculations
+    assert calc.step_verdict_errors is calc_checks.step_verdict_errors
+    assert calc.figure_rows_errors is calc_checks.figure_rows_errors
+    assert calc.render_calc_detail_md is calc_render.render_calc_detail_md
+    assert calc.ENTRY_KIND_VALUES is calc_vocab.ENTRY_KIND_VALUES
+    # the facade exposes the full prior public surface (every re-exported name resolves).
+    for name in ("code_identity", "current_law_digests", "comparison_errors",
+                 "legal_vs_design_errors", "write_calc_pages", "render_calculations_table_section"):
+        assert hasattr(calc, name), name
+
+
+# --------------------------------------------------------------------------
+# S17 (M5-T146 part D) - DB-211 (a) guard 1: a six-step verdict follows its actual side's state.
+# The register as committed passes; a verdict that no longer follows its side goes red even after a
+# fresh render (the G4 mutation f that the stale-page coupling alone could not catch).
+# --------------------------------------------------------------------------
+def test_six_step_verdicts_follow_their_actual_side_on_the_committed_register():
+    assert calc.step_verdict_errors(BY_ID[COMPARISON_ID]) == []
+
+
+def _render_again(reg: dict, tmp_path, monkeypatch) -> list[str]:
+    """Write the (mutated) calculation pages to a temp docs folder and return the stale-page
+    check result, so a test can prove a fresh render would NOT catch the mutation."""
+    monkeypatch.setattr(render, "DOCS_DIR", tmp_path)
+    calc.write_calc_pages(reg)
+    return calc.calc_rendered_errors(reg)
+
+
+def test_a_six_step_verdict_without_a_present_side_is_caught_after_render(tmp_path, monkeypatch):
+    # Change step 3's verdict from 'differ' to 'agree' while its program side stays 'not_available'
+    # (the G4 mutation f). After re-rendering the pages match the mutated data, so the stale-page
+    # check is clean - but the verdict guard still goes red.
+    reg = copy.deepcopy(REGISTER)
+    comp = next(c for c in reg["calculations"] if c["entry_id"] == COMPARISON_ID)
+    assert comp["steps"][2]["verdict"] == "differ" and comp["steps"][2]["actual"]["state"] == \
+        "not_available"
+    comp["steps"][2]["verdict"] = "agree"
+    assert _render_again(reg, tmp_path, monkeypatch) == []  # a fresh render hides it
+    errs = calc.step_verdict_errors(comp)
+    assert any("agree" in m and "present" in m for m in errs)  # the guard still catches it
+
+
+def test_a_step_whose_side_changes_without_its_verdict_is_caught():
+    # DB-211 (a): change a step's actual side to an absent state while the verdict stays 'agree'.
+    comp = copy.deepcopy(BY_ID[COMPARISON_ID])
+    assert comp["steps"][0]["verdict"] == "agree" and comp["steps"][0]["actual"]["state"] == \
+        "settled"
+    comp["steps"][0]["actual"]["state"] = "withheld"  # side now absent; verdict unchanged
+    errs = calc.step_verdict_errors(comp)
+    assert any("side_missing" in m for m in errs)  # withheld cannot keep 'agree'
+    assert any("'agree' needs both sides present" in m for m in errs)
+
+
+def test_a_withheld_step_cannot_read_differ():
+    comp = copy.deepcopy(BY_ID[COMPARISON_ID])
+    # step 5 is withheld/side_missing; forcing it to 'differ' is refused (nothing to compare).
+    assert comp["steps"][4]["actual"]["state"] == "withheld"
+    comp["steps"][4]["verdict"] = "differ"
+    assert any("side_missing" in m for m in calc.step_verdict_errors(comp))
+
+
+# --------------------------------------------------------------------------
+# S18 (M5-T146 part D) - DB-211 (a) guard 2: every figure the six steps rest on has its
+# legal-or-design row. A dropped row goes red even after a fresh render (the G4 mutation h2).
+# --------------------------------------------------------------------------
+def test_every_six_step_figure_has_its_legal_or_design_row_on_the_committed_register():
+    assert calc.figure_rows_errors(BY_ID[COMPARISON_ID]) == []
+
+
+def test_a_dropped_legal_row_is_caught_after_render(tmp_path, monkeypatch):
+    # Remove the heights (ZR 23-432) legal row the six steps rest on. After re-rendering the pages
+    # match the mutated data (stale-page check clean), but the figure-row guard still goes red.
+    reg = copy.deepcopy(REGISTER)
+    comp = next(c for c in reg["calculations"] if c["entry_id"] == COMPARISON_ID)
+    comp["legal_vs_design"] = [
+        r for r in comp["legal_vs_design"] if "23-432" not in r["figure"]
+    ]
+    assert _render_again(reg, tmp_path, monkeypatch) == []  # a fresh render hides it
+    assert any("23-432" in m for m in calc.figure_rows_errors(comp))  # the guard still catches it
+
+
+def test_a_dropped_design_assumption_row_is_caught():
+    # Remove the apartment-size (700) design row that a six step uses; the guard catches it.
+    comp = copy.deepcopy(BY_ID[COMPARISON_ID])
+    comp["legal_vs_design"] = [r for r in comp["legal_vs_design"] if "700" not in r["figure"]]
+    assert any("'700'" in m for m in calc.figure_rows_errors(comp))
+
+
+# --------------------------------------------------------------------------
+# S19 (M5-T146 part D) - DB-211 (b) scenario fixes.
+# S7: feed a lot with a special density area PRESENT to the engine - the dwelling-unit formula does
+# not apply there (ZR 23-52(a)(1)); the earlier test only checked the legal-requirement marking.
+# --------------------------------------------------------------------------
+def test_special_density_present_makes_the_unit_limit_not_applicable():
+    reg = _registry()
+    c = BY_ID["calc-legal-dwelling-unit-limit"]
+    base = dict(c["example"]["inputs"])
+    # the committed example feeds special_density_area=False; the engine then computes 29
+    assert base["special_density_area"] is False
+    present = reg.evaluate("r6b-dwelling-units", {**base, "special_density_area": True})
+    assert present.coverage_status == "not_applicable"
+    assert "max_dwelling_units" not in present.outputs  # no number; the formula does not apply
+    # and the marking the earlier scenario checked still holds (the applicability is a legal rule)
+    legal_special = [
+        r for r in c["legal_vs_design"]
+        if r["kind"] == "LEGAL_REQUIREMENT" and "special density" in r["figure"].lower()
+    ]
+    assert legal_special
+
+
+# S8: derive each calculation's effective date from the LAST-AMENDED dates of the rules it combines,
+# not from a hard-coded literal (the earlier test asserted a fixed 2024-12-05).
+def test_effective_date_is_derived_from_the_combined_rules():
+    rule_by_id = {e["rule_id"]: e for e in REGISTER["entries"]}
+    for c in CALCS:
+        combined_amended = [
+            law["last_amended"]
+            for rid in c["combines_rule_ids"]
+            for law in rule_by_id[rid]["law"]
+        ]
+        assert combined_amended, c["entry_id"]
+        # applies-from is the latest amendment among the combined rules' captured law
+        assert c["applicable_from"] == max(combined_amended), c["entry_id"]
+        # applies-to is open while every combined rule is still in force
+        combined_ends = [rule_by_id[rid]["applicable_to"] for rid in c["combines_rule_ids"]]
+        assert c["applicable_to"] is None and all(e is None for e in combined_ends), c["entry_id"]
+
+
+# --------------------------------------------------------------------------
+# S20 (M5-T146 part D) - the guards check code identity, captures and figures, never a human verdict
+# (R374): their output is independent of the human-review block.
+# --------------------------------------------------------------------------
+def test_the_guards_never_read_a_human_verdict():
+    comp = copy.deepcopy(BY_ID[COMPARISON_ID])
+    before = (calc.step_verdict_errors(comp), calc.figure_rows_errors(comp))
+    comp["human_review"].update(
+        decision="Correct", reviewer_name="Jane Roe RA", review_date="2026-10-10",
+        verdict="Correct", applies_to_current=True,
+    )
+    after = (calc.step_verdict_errors(comp), calc.figure_rows_errors(comp))
+    assert before == after == ([], [])  # the guards ignore the human verdict entirely
