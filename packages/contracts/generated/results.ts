@@ -33,6 +33,66 @@ export interface ValueCondition {
   settled_by: NonEmptyString;
 }
 export type GapKind = "missing_information" | "work_owed";
+export interface FloorScheduleRow {
+  storey: number;
+  floor_to_floor_ft: number;
+  top_ft: number;
+  plan_area_sqft: number;
+  floor_area_sqft: number;
+  running_total_sqft: number;
+}
+export type PreliminaryCapacityEstimate = {
+  label: "Preliminary capacity estimate";
+  floor_area_sqft: number;
+  share_low: number;
+  share_high: number;
+  apartment_size_sqft: number;
+  quotient_low: number;
+  quotient_high: number;
+  quotient_low_unrounded: number;
+  quotient_high_unrounded: number;
+  whole_below_low: number;
+  whole_above_low: number;
+  whole_below_high: number;
+  whole_above_high: number;
+} | {
+  label: "Not known";
+  reason: NonEmptyString;
+};
+export interface BuildingAlternative {
+  building: NonEmptyString;
+  label: NonEmptyString;
+  fill_rule: "widest" | "to_min_base";
+  floor_schedule: FloorScheduleRow[];
+  storey_count: number;
+  height_ft: number;
+  footprint_area_sqft: number;
+  floor_area_allowance_sqft: number;
+  total_floor_area_sqft: number;
+  unused_floor_area_sqft: number;
+  below_min_base: boolean;
+  way: ValueState;
+  not_checked: NonEmptyString[];
+  capacity_estimate: PreliminaryCapacityEstimate;
+}
+export type CoverageByPortion = {
+  status: "available";
+  corner_ratio: number;
+  interior_ratio: number;
+  corner_lot_distance_ft: number;
+  corner_portion_area_sqft: number;
+  interior_portion_area_sqft: number;
+  footprint_sqft: number;
+  zr_sections: ZrSection[];
+  way: ValueState;
+} | {
+  status: "withheld";
+  label: NonEmptyString;
+  reason: NonEmptyString;
+  gap_kind: GapKind;
+  resolved_by: NonEmptyString;
+  zr_sections: ZrSection[];
+};
 export interface AnswerNotAvailable {
   status: "not_available";
   reason: NonEmptyString;
@@ -334,7 +394,7 @@ export interface Goal {
   text: NonEmptyString | null;
 }
 export interface Results {
-  contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0";
+  contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" | "1.4.0";
   results_id: NonEmptyString;
   study_id: NonEmptyString;
   option_id: NonEmptyString;
@@ -371,5 +431,7 @@ export interface Results {
   draft: boolean;
   street_width_case: StreetWidthCase | null;
   scope?: Scope | null;
+  building_alternatives?: null | BuildingAlternative[];
+  coverage_by_portion?: null | CoverageByPortion;
   _expected_failure?: string;
 }

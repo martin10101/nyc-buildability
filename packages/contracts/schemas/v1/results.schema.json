@@ -37,8 +37,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0"],
-      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. 1.3.0 (M5-T128, work order docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 0 'How a result may appear', decision D5; D-090-R229/R255/R258/R268) lets ONE value inside an answer carry which of the three ways it appears in. It adds (a) the OPTIONAL 'value_states' object on each AVAILABLE answer (floor_area_allowance, permitted_envelope and the building option): a map keyed by the answer value's key, each entry declaring the value's way - 'settled' (no condition), 'conditional' (one or more named conditions, each with its kind, the assumption in words and what would settle it) or 'withheld' (no number; its label, reason, which of the two gap kinds it is, what would resolve it, and the law section where one applies); and (b) the OPTIONAL 'resolved_by' and 'gap_kind' fields on a whole-answer 'not available' object, so a withheld whole answer can also say what would resolve it and which gap kind it is. value_states and the not-available resolution fields are OPTIONAL and additive: a document carrying ANY of them declares 1.3.0 (the version-binding allOf below), and a document declaring 1.3.0 carries a value_states map on every available answer (the forward-binding allOf below), each entry present stating one way; this schema cannot require that map to be non-empty or that it hold an entry for every shown value, so stating the way of every shown value, so none is settled by silence, is the emitter's rule, refused by the validator of the engine that emits this version, not by this schema; a document carrying none of them may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 / 1.1.0 / 1.2.0 instance stays valid byte-for-byte. The remaining-floor-area line is UNCHANGED (it keeps the shared not_available shape). The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
+      "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"],
+      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. 1.3.0 (M5-T128, work order docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 0 'How a result may appear', decision D5; D-090-R229/R255/R258/R268) lets ONE value inside an answer carry which of the three ways it appears in. It adds (a) the OPTIONAL 'value_states' object on each AVAILABLE answer (floor_area_allowance, permitted_envelope and the building option): a map keyed by the answer value's key, each entry declaring the value's way - 'settled' (no condition), 'conditional' (one or more named conditions, each with its kind, the assumption in words and what would settle it) or 'withheld' (no number; its label, reason, which of the two gap kinds it is, what would resolve it, and the law section where one applies); and (b) the OPTIONAL 'resolved_by' and 'gap_kind' fields on a whole-answer 'not available' object, so a withheld whole answer can also say what would resolve it and which gap kind it is. value_states and the not-available resolution fields are OPTIONAL and additive: a document carrying ANY of them declares 1.3.0 (the version-binding allOf below), and a document declaring 1.3.0 carries a value_states map on every available answer (the forward-binding allOf below), each entry present stating one way; this schema cannot require that map to be non-empty or that it hold an entry for every shown value, so stating the way of every shown value, so none is settled by silence, is the emitter's rule, refused by the validator of the engine that emits this version, not by this schema; a document carrying none of them may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 / 1.1.0 / 1.2.0 instance stays valid byte-for-byte. The remaining-floor-area line is UNCHANGED (it keeps the shared not_available shape). 1.4.0 (M5-T146, task 1 of the first-building-option wiring; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R650; work order rulings W1-W5; DB-196/DB-210) adds, as OPTIONAL additive top-level blocks bound by a version allOf (the 1.1.0/1.2.0/1.3.0 precedent): (a) 'building_alternatives' - a LIST of worked first-building alternatives, none preferred or default (ruling W3, DB-210(b) still with the owner); each entry carries its fill rule, floor-schedule rows, storey count, height, totals, its way ('settled'/'conditional'/'withheld', reusing the 1.3.0 value_state vocabulary) with its conditions, what was NOT checked (ruling W5), and its own preliminary capacity estimate (label exactly 'Preliminary capacity estimate' or 'Not known', D-090-R543); and (b) 'coverage_by_portion' - the corner/interior coverage ratios of ZR 23-362, the 100 ft corner-lot distance of ZR 12-10, the two measured portion areas and the footprint figure, shown only where the recorded and outline lot areas AGREE and WITHHELD (no number) where they disagree (ruling W1, R257/R239). A withheld result carries NO number (R556/R570). building_option, unit_estimate, floor_stack, floor_by_floor, the max_lot_coverage value and geometry KEEP their shape and benchmark content. Both 1.4.0 blocks are OPTIONAL and additive: a document carrying EITHER declares contract_version 1.4.0 (the version-binding allOf below), and because 1.4.0 is a strict superset of 1.3.0 a 1.4.0 document still carries a value_states map on every available answer (the 1.3.0 forward-binding allOf); a document carrying neither may declare any earlier version, so every valid 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 instance stays valid byte-for-byte. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
     },
     "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
     "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
@@ -214,6 +214,23 @@
         { "type": "null" }
       ]
     },
+    "building_alternatives": {
+      "description": "OPTIONAL additive block (contract 1.4.0, M5-T146 task 1; rulings W3/W4/W5; D-090-R509/R526/R540/R541/R543/R544). A LIST of the worked first-building alternatives for the lot, each a labelled building; NONE is marked preferred or default (ruling W3 - which building a first option shows is the owner's open decision, backlog DB-210(b)). Each entry carries its fill rule, floor-schedule rows, storey count, height, totals, its way with conditions, what was NOT checked (ruling W5) and its own preliminary capacity estimate worked from that building's own floor area (ruling W4). Only buildings that can be worked are listed; a building that is not known (e.g. one needing a withheld footprint figure) is simply absent from the list, never a placeholder. OPTIONAL and additive: absent or null leaves the contract version unconstrained, so every 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 instance stays valid byte-for-byte; a non-null array (even an empty one) binds contract_version to 1.4.0 (the version-binding allOf below). The single building_option answer stays its own block and, on a lot with alternatives, is 'not_available' with a reason pointing to this list (the emitter's rule; this schema does not cross-check the two).",
+      "anyOf": [
+        { "type": "null" },
+        {
+          "type": "array",
+          "items": { "$ref": "#/$defs/building_alternative" }
+        }
+      ]
+    },
+    "coverage_by_portion": {
+      "description": "OPTIONAL additive block (contract 1.4.0, M5-T146 task 1; ruling W1; D-090-R239/R257/R556/R570). The maximum lot coverage read BY PORTION for a corner lot (ZR 23-362: 100 percent on the corner-lot portion within 100 ft of each intersecting street line per ZR 12-10, 80 percent on the rest), carried only when it can be worked. The footprint figure IN SQUARE FEET is shown ONLY where the recorded lot area and the tax-map outline area AGREE (the existing compare_lot_area reading, no invented tolerance); where they DISAGREE the result is WITHHELD and carries NO number (ruling W1 - the outline's area is a drawing measure, never used in a zoning calculation; R257/R239). A withheld result carries no number anywhere (R556/R570). OPTIONAL and additive: absent or null leaves the contract version unconstrained, so every earlier instance stays valid byte-for-byte; a non-null object binds contract_version to 1.4.0 (the version-binding allOf below).",
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/coverage_by_portion" }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
@@ -253,7 +270,7 @@
       "description": "Version binding (contract 1.1.0, D-090-R108; widened to the enum by D-090-R132/R137, DB-129): a document carrying a non-null scope object declares contract_version 1.1.0 OR 1.2.0, not const 1.1.0. 1.2.0 is a strict superset of 1.1.0 - the scope object is allowed AND the building-option notes array is allowed - so a single document may carry BOTH a non-null scope and a non-empty notes array and still declare a valid version (it resolves to 1.2.0). Before this widening the scope clause pinned const 1.1.0 while the notes clause (the allOf below) pins const 1.2.0, so a document carrying both was unsatisfiable: no single contract_version could satisfy both clauses (the scope emitter and the notes emitter each fire on the R6B 215-16 Northern path). An absent or null scope still leaves the version unconstrained, so every 1.0.0 instance stays valid. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is one of 1.1.0 / 1.2.0. The notes binding below is unchanged (a non-empty notes array still binds to const 1.2.0), so a document with both a scope and non-empty notes resolves to exactly 1.2.0, while a scope-only document stays valid at either 1.1.0 or 1.2.0.",
       "anyOf": [
         { "properties": { "scope": { "type": "null" } } },
-        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0", "1.3.0"] } } }
+        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0", "1.3.0", "1.4.0"] } } }
       ]
     },
     {
@@ -277,7 +294,7 @@
             }
           }
         },
-        { "properties": { "contract_version": { "enum": ["1.2.0", "1.3.0"] } } }
+        { "properties": { "contract_version": { "enum": ["1.2.0", "1.3.0", "1.4.0"] } } }
       ]
     },
     {
@@ -312,7 +329,7 @@
             }
           }
         },
-        { "properties": { "contract_version": { "const": "1.3.0" } } }
+        { "properties": { "contract_version": { "enum": ["1.3.0", "1.4.0"] } } }
       ]
     },
     {
@@ -345,6 +362,18 @@
             }
           }
         }
+      ]
+    },
+    {
+      "description": "Version binding (contract 1.4.0, M5-T146 task 1; rulings W3/W1): REVERSE direction. A document carrying ANY 1.4.0 field - the top-level 'building_alternatives' list or the top-level 'coverage_by_portion' block - declares contract_version 1.4.0. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either NEITHER 1.4.0 field is present (each is null or absent - 'properties' is vacuous for an absent key), or contract_version is 1.4.0. An absent/null building_alternatives and an absent/null coverage_by_portion leave the version unconstrained, so every 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 instance stays valid byte-for-byte. There is no forward 1.4.0 clause: the 1.4.0 blocks are optional even for a 1.4.0 document, while the 1.3.0 forward clause above already binds a 1.4.0 document to carry a value_states map on every available answer because 1.4.0 is a strict superset of 1.3.0.",
+      "anyOf": [
+        {
+          "properties": {
+            "building_alternatives": { "type": "null" },
+            "coverage_by_portion": { "type": "null" }
+          }
+        },
+        { "properties": { "contract_version": { "const": "1.4.0" } } }
       ]
     }
   ],
@@ -432,6 +461,114 @@
       "type": "string",
       "enum": ["missing_information", "work_owed"],
       "description": "Which of the two kinds a withheld value or a withheld whole answer is (owner rule 4, R258): 'missing_information' = something only this property's evidence can settle is not known; 'work_owed' = a promised feature the program has not built yet. The two are never conflated: calling unfinished work 'unsupported' does not finish it."
+    },
+    "floor_schedule_row": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["storey", "floor_to_floor_ft", "top_ft", "plan_area_sqft", "floor_area_sqft", "running_total_sqft"],
+      "description": "One storey of a worked building's floor schedule (contract 1.4.0, M5-T146 task 1; mirrors StoreyRow in services/api/app/scenario/three_answers/first_building_options.py). Areas are square feet; heights are feet above the base plane.",
+      "properties": {
+        "storey": { "type": "integer", "minimum": 1, "description": "The storey number, 1 = the lowest worked storey." },
+        "floor_to_floor_ft": { "type": "number", "exclusiveMinimum": 0, "description": "Floor-to-floor height of this storey (a design assumption chosen by the owner, not a rule of law)." },
+        "top_ft": { "type": "number", "exclusiveMinimum": 0, "description": "Height of the top of this storey above the base plane." },
+        "plan_area_sqft": { "type": "number", "minimum": 0, "description": "Plan area of this storey, square feet." },
+        "floor_area_sqft": { "type": "number", "minimum": 0, "description": "Zoning floor area of this storey, square feet." },
+        "running_total_sqft": { "type": "number", "minimum": 0, "description": "Running total of floor area through this storey, square feet." }
+      }
+    },
+    "preliminary_capacity_estimate": {
+      "description": "A worked building's own PRELIMINARY capacity estimate (contract 1.4.0, M5-T146 task 1; mirrors PreliminaryApartmentEstimate in services/api/app/scenario/three_answers/preliminary_apartment_estimate.py; D-090-R509/R540/R541/R543). Arithmetic on the owner's PRELIMINARY ASSUMPTIONS (an unvalidated share range the user can change and a chosen starting apartment size on the HPD measurement basis the user can change), kept SEPARATE from the legal dwelling-unit limit; the two quotients are shown to two decimals with the unrounded quotients beside them and the whole numbers just below and just above, never rounded to a count of apartments. Its label is EXACTLY one of the two owner labels (D-090-R543): 'Preliminary capacity estimate' when the building has floors and a shape, or 'Not known' otherwise; any other label matches no branch and is rejected.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "floor_area_sqft", "share_low", "share_high", "apartment_size_sqft", "quotient_low", "quotient_high", "quotient_low_unrounded", "quotient_high_unrounded", "whole_below_low", "whole_above_low", "whole_below_high", "whole_above_high"],
+          "description": "The estimate when the building has floors and a shape: the two quotients across the owner's share range. The label is byte-exact 'Preliminary capacity estimate'.",
+          "properties": {
+            "label": { "type": "string", "const": "Preliminary capacity estimate", "description": "The owner label, byte-exact (D-090-R543)." },
+            "floor_area_sqft": { "type": "number", "minimum": 0, "description": "The proposed building's residential floor area the estimate divides (D-090-R509)." },
+            "share_low": { "type": "number", "minimum": 0, "maximum": 1, "description": "Low end of the owner's preliminary share range (a preliminary assumption, editable)." },
+            "share_high": { "type": "number", "minimum": 0, "maximum": 1, "description": "High end of the owner's preliminary share range (a preliminary assumption, editable)." },
+            "apartment_size_sqft": { "type": "number", "exclusiveMinimum": 0, "description": "The owner's preliminary apartment size on the HPD measurement basis (a preliminary assumption, editable)." },
+            "quotient_low": { "type": "number", "minimum": 0, "description": "floor_area x share_low / apartment_size, shown to two decimals (round half up)." },
+            "quotient_high": { "type": "number", "minimum": 0, "description": "floor_area x share_high / apartment_size, shown to two decimals (round half up)." },
+            "quotient_low_unrounded": { "type": "number", "minimum": 0, "description": "The unrounded low quotient, kept beside the two-decimal figure." },
+            "quotient_high_unrounded": { "type": "number", "minimum": 0, "description": "The unrounded high quotient, kept beside the two-decimal figure." },
+            "whole_below_low": { "type": "integer", "minimum": 0, "description": "The whole number just below (floor of) the low quotient." },
+            "whole_above_low": { "type": "integer", "minimum": 0, "description": "The whole number just above (ceil of) the low quotient." },
+            "whole_below_high": { "type": "integer", "minimum": 0, "description": "The whole number just below (floor of) the high quotient." },
+            "whole_above_high": { "type": "integer", "minimum": 0, "description": "The whole number just above (ceil of) the high quotient." }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["label", "reason"],
+          "description": "The estimate when the building's floor area is not known: NO number. The label is byte-exact 'Not known'.",
+          "properties": {
+            "label": { "type": "string", "const": "Not known", "description": "The owner label, byte-exact (D-090-R543)." },
+            "reason": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "Why the estimate is not known, e.g. the proposed building's residential floor area is not known for this lot." }
+          }
+        }
+      ]
+    },
+    "building_alternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["building", "label", "fill_rule", "floor_schedule", "storey_count", "height_ft", "footprint_area_sqft", "floor_area_allowance_sqft", "total_floor_area_sqft", "unused_floor_area_sqft", "below_min_base", "way", "not_checked", "capacity_estimate"],
+      "description": "One worked first-building alternative (contract 1.4.0, M5-T146 task 1; mirrors FloorSchedule in services/api/app/scenario/three_answers/first_building_options.py plus rulings W4/W5). A plain stack (every storey the same plan) at an assumed floor-to-floor height - a design assumption, not a rule of law; it stays at or below the maximum base height, so no storey above the base is worked. NONE of the listed alternatives is preferred or default (ruling W3). Nothing here is called feasible, complies, confirmed, validated or legally correct, and no human verdict is entered.",
+      "properties": {
+        "building": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "Short building identity, e.g. 'A' or 'B'." },
+        "label": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "The human label of the alternative, e.g. 'Building B (to the minimum base height; a plain stack)'." },
+        "fill_rule": { "type": "string", "enum": ["widest", "to_min_base"], "description": "The method that shaped this building (mirrors FILL_WIDEST / FILL_TO_MIN_BASE): 'widest' = the widest footprint stacked to the floor-area maximum; 'to_min_base' = the fewest storeys that reach the minimum base height, the whole allowance spread evenly." },
+        "floor_schedule": { "type": "array", "minItems": 1, "description": "The building's floor schedule, storey by storey.", "items": { "$ref": "#/$defs/floor_schedule_row" } },
+        "storey_count": { "type": "integer", "minimum": 1, "description": "The number of worked storeys." },
+        "height_ft": { "type": "number", "exclusiveMinimum": 0, "description": "The building height in feet above the base plane." },
+        "footprint_area_sqft": { "type": "number", "exclusiveMinimum": 0, "description": "The footprint (plan) area the stack rests on, square feet." },
+        "floor_area_allowance_sqft": { "type": "number", "exclusiveMinimum": 0, "description": "The maximum residential floor area the stack works against, square feet." },
+        "total_floor_area_sqft": { "type": "number", "minimum": 0, "description": "The total worked floor area, square feet." },
+        "unused_floor_area_sqft": { "type": "number", "minimum": 0, "description": "The floor-area allowance left unused by this stack, square feet." },
+        "below_min_base": { "type": "boolean", "description": "Whether the building height is below the minimum base height (a plain fact about the height; no legal conclusion is drawn from it)." },
+        "way": { "$ref": "#/$defs/value_state", "description": "Which way this alternative appears - 'settled', 'conditional' (with its conditions) or 'withheld' - reusing the 1.3.0 value_state vocabulary. A worked alternative is settled or conditional; on the benchmark building B is conditional (ruling W2, R267). No alternative is ever called feasible or confirmed." },
+        "not_checked": { "type": "array", "minItems": 1, "description": "What was NOT checked for this alternative, as plain text (ruling W5, D-090-R526/R548): the rear yard beyond the corner, where the plan sits on the lot, the street wall, parking/loading/bicycle requirements. 'The plan fits the coverage' is not 'the building fits the lot'.", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } },
+        "capacity_estimate": { "$ref": "#/$defs/preliminary_capacity_estimate", "description": "This building's own preliminary capacity estimate, worked from its own floor area (ruling W4)." }
+      }
+    },
+    "coverage_by_portion": {
+      "description": "The maximum lot coverage read BY PORTION for a corner lot (contract 1.4.0, M5-T146 task 1; mirrors CoverageByPortion in services/api/app/scenario/three_answers/lot_coverage_by_portion.py and the corner-reach measurement; ruling W1). 'available' carries the two ZR 23-362 ratios, the ZR 12-10 100 ft distance, the two measured portion areas and the footprint figure (shown only where the recorded and outline lot areas AGREE); 'withheld' carries NO number (shown where they disagree). A withheld result carries no number anywhere (R556/R570).",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "corner_ratio", "interior_ratio", "corner_lot_distance_ft", "corner_portion_area_sqft", "interior_portion_area_sqft", "footprint_sqft", "zr_sections", "way"],
+          "description": "The by-portion coverage when it can be shown (the recorded and outline lot areas agree): the footprint figure in square feet is present.",
+          "properties": {
+            "status": { "type": "string", "const": "available" },
+            "corner_ratio": { "type": "number", "exclusiveMinimum": 0, "maximum": 1, "description": "The maximum coverage ratio of the corner-lot portion (ZR 23-362: 1.00 = 100 percent)." },
+            "interior_ratio": { "type": "number", "exclusiveMinimum": 0, "maximum": 1, "description": "The maximum coverage ratio of the interior-lot portion (ZR 23-362: 0.80 = 80 percent)." },
+            "corner_lot_distance_ft": { "type": "number", "exclusiveMinimum": 0, "description": "The corner-lot distance (ZR 12-10: 100 ft from each intersecting street line)." },
+            "corner_portion_area_sqft": { "type": "number", "minimum": 0, "description": "The measured area of the corner-lot portion, square feet." },
+            "interior_portion_area_sqft": { "type": "number", "minimum": 0, "description": "The measured area of the interior-lot portion (the rest), square feet." },
+            "footprint_sqft": { "type": "number", "minimum": 0, "description": "The footprint the two portions allow: corner portion x corner ratio + interior portion x interior ratio. Shown only where the recorded and outline lot areas agree (ruling W1)." },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } },
+            "way": { "$ref": "#/$defs/value_state", "description": "Which way the figure appears - 'settled' or 'conditional' with its conditions - reusing the 1.3.0 value_state vocabulary." }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "label", "reason", "gap_kind", "resolved_by", "zr_sections"],
+          "description": "The by-portion coverage WITHHELD (the recorded and outline lot areas disagree, ruling W1): NO number. It carries the law by portion in its reason, with no square-foot figure; the outline's area is never used in its place.",
+          "properties": {
+            "status": { "type": "string", "const": "withheld" },
+            "label": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "The human label of the withheld coverage, e.g. 'Maximum lot coverage'." },
+            "reason": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "Why it is not shown, giving the law by portion without a square-foot figure." },
+            "gap_kind": { "$ref": "#/$defs/gap_kind" },
+            "resolved_by": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "What would resolve the gap, e.g. a survey or deed dimensions." },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+          }
+        }
+      ]
     },
     "answer_not_available": {
       "type": "object",

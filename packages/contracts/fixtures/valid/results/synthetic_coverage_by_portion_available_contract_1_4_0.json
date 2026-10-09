@@ -1,0 +1,174 @@
+{
+  "contract_version": "1.4.0",
+  "results_id": "test-fixture-synthetic-results-146-b",
+  "study_id": "test-fixture-synthetic-study-146-interior",
+  "option_id": "opt-1",
+  "revision": 1,
+  "computed_at": "2026-10-09T10:05:00Z",
+  "out_of_date": false,
+  "out_of_date_reason": null,
+  "depends_on_fact_ids": [
+    "fact-lot-area",
+    "fact-zoning-district"
+  ],
+  "lot_selection_statement": "Based on the lots you selected — the app does not verify the zoning lot",
+  "with_approvals_label": null,
+  "answers": {
+    "floor_area_allowance": {
+      "status": "not_available",
+      "reason": "Floor-area allowance not available for this fixture.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "permitted_envelope": {
+      "status": "not_available",
+      "reason": "Envelope not available for this fixture.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "building_option": {
+      "status": "not_available",
+      "reason": "The single building option is not shown; the worked first-building alternatives are listed in building_alternatives.",
+      "reason_kind": "rule_not_implemented"
+    }
+  },
+  "remaining_floor_area": {
+    "status": "not_applicable",
+    "reason": "No existing building is kept on this lot."
+  },
+  "shortfall": {
+    "status": "not_available",
+    "reason": "No single building option to compare with the allowance.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "addon_gains": [],
+  "best_combination": {
+    "status": "not_available",
+    "reason": "Add-ons for this district are not built yet.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "completeness_line": {
+    "text": "Not yet covered: the single building option, add-ons",
+    "not_yet_covered": [
+      "The single building option",
+      "Add-ons"
+    ]
+  },
+  "status_strip": [
+    {
+      "text": "Preliminary zoning results"
+    }
+  ],
+  "notices_count": 0,
+  "floor_by_floor": [],
+  "floor_stack": {
+    "status": "not_available",
+    "reason": "Floor stack not available for this fixture.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "existing_building": {
+    "status": "no_existing_building"
+  },
+  "unit_estimate": {
+    "status": "not_available",
+    "reason": "The legal dwelling-unit limit is not shown; it is not a substitute for the preliminary capacity estimate.",
+    "reason_kind": "missing_input"
+  },
+  "geometry": {
+    "status": "not_available",
+    "reason": "No floor plates or footprint are drawn: no placement is worked for the listed alternatives.",
+    "reason_kind": "geometry_unsupported"
+  },
+  "rule_versions": [
+    {
+      "rule_id": "test-fixture-synthetic-r6b-coverage",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    }
+  ],
+  "draft": true,
+  "street_width_case": null,
+  "building_alternatives": [
+    {
+      "building": "A",
+      "label": "Building A (the widest footprint; a plain stack, every storey the same plan)",
+      "fill_rule": "widest",
+      "floor_schedule": [
+        {
+          "storey": 1,
+          "floor_to_floor_ft": 10,
+          "top_ft": 10,
+          "plan_area_sqft": 8000,
+          "floor_area_sqft": 8000,
+          "running_total_sqft": 8000
+        },
+        {
+          "storey": 2,
+          "floor_to_floor_ft": 10,
+          "top_ft": 20,
+          "plan_area_sqft": 8000,
+          "floor_area_sqft": 8000,
+          "running_total_sqft": 16000
+        }
+      ],
+      "storey_count": 2,
+      "height_ft": 20,
+      "footprint_area_sqft": 8000,
+      "floor_area_allowance_sqft": 20000,
+      "total_floor_area_sqft": 16000,
+      "unused_floor_area_sqft": 4000,
+      "below_min_base": true,
+      "way": {
+        "way": "conditional",
+        "conditions": [
+          {
+            "kind": "unchecked_condition",
+            "assumption": "If none of the unchecked conditions (waterfront, airport height, transit easement, near a district line) applies to this lot",
+            "settled_by": "Capturing and reading the governing law text, then confirming the condition is absent"
+          }
+        ]
+      },
+      "not_checked": [
+        "Where the plan sits on the lot",
+        "The street wall",
+        "Parking, loading and bicycle requirements"
+      ],
+      "capacity_estimate": {
+        "label": "Preliminary capacity estimate",
+        "floor_area_sqft": 16000,
+        "share_low": 0.6,
+        "share_high": 0.75,
+        "apartment_size_sqft": 700,
+        "quotient_low": 13.71,
+        "quotient_high": 17.14,
+        "quotient_low_unrounded": 13.714285714285714,
+        "quotient_high_unrounded": 17.142857142857142,
+        "whole_below_low": 13,
+        "whole_above_low": 14,
+        "whole_below_high": 17,
+        "whole_above_high": 18
+      }
+    }
+  ],
+  "coverage_by_portion": {
+    "status": "available",
+    "corner_ratio": 1.0,
+    "interior_ratio": 0.8,
+    "corner_lot_distance_ft": 100,
+    "corner_portion_area_sqft": 0,
+    "interior_portion_area_sqft": 10000,
+    "footprint_sqft": 8000,
+    "zr_sections": [
+      "ZR 23-362",
+      "ZR 12-10"
+    ],
+    "way": {
+      "way": "conditional",
+      "conditions": [
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If none of the unchecked conditions (waterfront, airport height, transit easement, near a district line) applies to this lot",
+          "settled_by": "Capturing and reading the governing law text, then confirming the condition is absent"
+        }
+      ]
+    }
+  }
+}
