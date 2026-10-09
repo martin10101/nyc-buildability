@@ -28,6 +28,15 @@ import pytest
 
 from app.spatial import corner_reach_area
 from app.spatial.corner_reach_area import (
+    CAUSE_NOT_CONFIRMED,
+    CAUSE_NOT_STRAIGHT,
+    STATE_MEASURED,
+    STATE_MORE_THAN_TWO_STREETS,
+    STATE_NO_CONFIRMED_STREET,
+    STATE_NOT_A_CORNER,
+    STATE_ONE_CONFIRMED_STREET,
+    STATE_OUTLINE_REFUSED,
+    _resolve_rest,
     area_within_distance_of_both,
     measure_corner_reach_area,
 )
@@ -158,6 +167,7 @@ def test_s2_lot_wholly_inside_the_distance_has_a_measured_zero_rest():
     street_b = _street_for_edge("Street B", (0.0, 60.0), (0.0, 0.0))
     geometry, result = _measure(points, street_a, street_b)
     assert geometry.lot_type.kind == "corner"
+    assert result.state == STATE_MEASURED
     assert result.corner_portion.value == pytest.approx(4800.0, abs=SUM_TOL_FT)
     assert result.interior_portion.known is True
     assert result.interior_portion.value == pytest.approx(0.0, abs=SUM_TOL_FT)
@@ -208,6 +218,7 @@ def test_s4_benchmark_lot_within_tolerance_of_both_readings():
     assert geometry.lot_type.kind == "corner"
     result = measure_corner_reach_area(prepared, geometry, DISTANCE_FT)
 
+    assert result.state == STATE_MEASURED
     assert result.corner_portion.label == LABEL_TAX_MAP
     assert result.interior_portion.label == LABEL_TAX_MAP
     got_corner = result.corner_portion.value
@@ -231,6 +242,7 @@ def test_s5_no_outline_both_areas_unknown_never_zero():
     prepared, reason = prepare_outline(lot)
     assert prepared is None and reason
     result = measure_corner_reach_area(prepared, geometry, DISTANCE_FT)
+    assert result.state == STATE_OUTLINE_REFUSED
     assert result.corner_portion.value is None
     assert result.corner_portion.label == LABEL_UNKNOWN
     assert result.interior_portion.value is None
@@ -248,9 +260,12 @@ def test_s6_one_confirmed_straight_frontage_split_unknown():
     main = _street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0))
     first = _street_for_edge("First Avenue", (0.0, 100.0), (0.0, 0.0), "80", extra_offset=16.0)
     _geometry, result = _measure(points, main, first)
+    assert result.state == STATE_ONE_CONFIRMED_STREET
     assert result.corner_portion.value is None and result.interior_portion.value is None
     assert result.corner_portion.label == LABEL_UNKNOWN
     assert "Only Main Street has a confirmed, straight frontage" in result.corner_portion.reason
+    # The cause of the other frontage is machine-readable, no text needed.
+    assert ("First Avenue", CAUSE_NOT_CONFIRMED) in result.frontage_causes
 
 
 # --------------------------------------------------------------------------- S7 not a corner
@@ -263,6 +278,7 @@ def test_s7_two_streets_not_meeting_at_a_corner_split_unknown():
     back = _street_for_edge("Back Street", (25.0, 100.0), (0.0, 100.0), "50")
     geometry, result = _measure(points, main, back)
     assert geometry.lot_type.kind == "through"
+    assert result.state == STATE_NOT_A_CORNER
     assert result.corner_portion.value is None and result.interior_portion.value is None
     assert "do not meet at a corner" in result.corner_portion.reason
 
@@ -281,8 +297,71 @@ def test_s8_bent_frontage_split_unknown():
                               "60", True)
     geometry, result = _measure(points, joined)
     assert geometry.frontage("Bend Street").status == FRONTAGE_CONFIRMED  # confirmed but bends
+    assert result.state == STATE_NO_CONFIRMED_STREET
     assert result.corner_portion.value is None and result.interior_portion.value is None
     assert "not straight" in result.corner_portion.reason
+    # The cause is machine-readable: the frontage is confirmed but bent, not unconfirmed.
+    assert ("Bend Street", CAUSE_NOT_STRAIGHT) in result.frontage_causes
+
+
+# --------------------------------------------------------------------------- more than two
+
+
+def test_more_than_two_confirmed_frontages_split_unknown():
+    # Three confirmed straight frontages (bottom, right and left): no single corner.
+    points = [(0.0, 0.0), (100.0, 0.0), (100.0, 50.0), (0.0, 50.0)]
+    main = _street_for_edge("Main Street", (0.0, 0.0), (100.0, 0.0))
+    east = _street_for_edge("East Street", (100.0, 0.0), (100.0, 50.0))
+    west = _street_for_edge("West Street", (0.0, 50.0), (0.0, 0.0))
+    _geometry, result = _measure(points, main, east, west)
+    assert result.state == STATE_MORE_THAN_TWO_STREETS
+    assert result.corner_portion.value is None and result.interior_portion.value is None
+    assert "More than two streets" in result.corner_portion.reason
+
+
+# ------------------------------------------------------------------- cause: confirmed vs straight
+
+
+def test_cause_tells_not_confirmed_from_not_straight():
+    # Not confirmed: First Avenue 16 ft off on an otherwise-corner lot.
+    points = [(0.0, 0.0), (25.0, 0.0), (25.0, 100.0), (0.0, 100.0)]
+    main = _street_for_edge("Main Street", (0.0, 0.0), (25.0, 0.0))
+    first = _street_for_edge("First Avenue", (0.0, 100.0), (0.0, 0.0), "80", extra_offset=16.0)
+    _g1, confirmed_case = _measure(points, main, first)
+    # Not straight: a single bent frontage.
+    bend = math.radians(30.0)
+    corner = (50.0 + 40.0 * math.cos(bend), 40.0 * math.sin(bend))
+    back = (corner[0] - 80.0 * math.sin(bend), corner[1] + 80.0 * math.cos(bend))
+    bent_points = [(0.0, 0.0), (50.0, 0.0), corner, back, (0.0, 80.0)]
+    first_piece = _street_for_edge("Bend Street", (0.0, 0.0), (50.0, 0.0), extend=0.0)
+    second_piece = _street_for_edge("Bend Street", (50.0, 0.0), corner, extend=0.0)
+    joined = StreetCenterline("Bend Street", "Bend Street", None,
+                              (_joined(first_piece, second_piece),), "60", True)
+    _g2, straight_case = _measure(bent_points, joined)
+    # The two causes are told apart by code alone, without reading any text.
+    assert ("First Avenue", CAUSE_NOT_CONFIRMED) in confirmed_case.frontage_causes
+    assert ("Bend Street", CAUSE_NOT_STRAIGHT) in straight_case.frontage_causes
+    assert CAUSE_NOT_CONFIRMED != CAUSE_NOT_STRAIGHT
+
+
+# --------------------------------------------------------------------------- guards
+
+
+def test_distance_zero_or_less_raises_value_error():
+    outline = [(0.0, 0.0), (80.0, 0.0), (80.0, 60.0), (0.0, 60.0)]
+    line1 = ((0.0, 0.0), (1.0, 0.0))
+    line2 = ((0.0, 0.0), (0.0, 1.0))
+    for bad in (0.0, -5.0):
+        with pytest.raises(ValueError):
+            area_within_distance_of_both(outline, line1, line2, bad)
+
+
+def test_resolve_rest_clamps_rounding_noise_but_raises_a_real_negative():
+    # A negative rest within a tiny share of the outline area is a measured zero.
+    assert _resolve_rest(10000.0, 10000.0 + 1e-6) == 0.0
+    # A larger negative rest is a defect and raises, never hidden behind a zero.
+    with pytest.raises(ValueError):
+        _resolve_rest(10000.0, 10050.0)
 
 
 # --------------------------------------------------------------------------- measurements only

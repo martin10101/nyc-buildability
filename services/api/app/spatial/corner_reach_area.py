@@ -13,13 +13,14 @@ corner it measures:
 
 MEASUREMENTS ONLY. The module holds no legal threshold and names no legal rule, section or
 consequence: the distance is passed in by the caller, and a later caller compares the areas
-with whatever the law requires -- that comparison is not this module's work. Every value is a
-site_geometry :class:`~app.spatial.site_geometry.labels.SourcedValue`: a tax-map area with its
-basis in plain words, or unknown (``value`` is None) with a plain reason that names the missing
-fact about the property's geometry -- never a zero and never a default. A genuinely measured
-rest of 0.0 (the whole lot lies within the distance of both lines) is a known value, distinct
-from unknown. It imports nothing from the rule or scenario engines, nothing from the sibling
-lot-reach module, and nothing calls it yet.
+with whatever the law requires -- that comparison is not this module's work. Like the sibling
+lot-reach module, it measures and names no kind of gap. Every value is a site_geometry
+:class:`~app.spatial.site_geometry.labels.SourcedValue`: a tax-map area with its basis in plain
+words, or unknown (``value`` is None) with a plain reason -- never a zero and never a default. A
+genuinely measured rest of 0.0 (the whole lot lies within the distance of both lines) is a known
+value, distinct from unknown. Each outcome also carries a fixed, machine-readable ``state`` code,
+so a caller need not read the text to branch. It imports nothing from the rule or scenario
+engines, nothing from the sibling lot-reach module, and nothing calls it yet.
 
 The corner portion is found by a pure-Python half-plane clip (Sutherland-Hodgman): the outline
 is clipped to the points within the caller's distance of street line one, and that result to the
@@ -31,7 +32,7 @@ portion.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from app.spatial.site_geometry.depth import frontage_bend_deg
 from app.spatial.site_geometry.inputs import Point2
@@ -49,6 +50,14 @@ from app.spatial.site_geometry.results import (
 )
 
 __all__ = [
+    "CAUSE_NOT_CONFIRMED",
+    "CAUSE_NOT_STRAIGHT",
+    "STATE_MEASURED",
+    "STATE_MORE_THAN_TWO_STREETS",
+    "STATE_NOT_A_CORNER",
+    "STATE_NO_CONFIRMED_STREET",
+    "STATE_ONE_CONFIRMED_STREET",
+    "STATE_OUTLINE_REFUSED",
     "CornerPortionAreas",
     "area_within_distance_of_both",
     "measure_corner_reach_area",
@@ -57,7 +66,20 @@ __all__ = [
 # A line is (a point on it, its unit direction) -- the same shape the sibling module measures from.
 Line = tuple[Point2, Point2]
 
-_GAP = "This gap is a missing fact about the property's geometry."
+# One fixed code for the measured outcome and one distinct code for each unknown state.
+STATE_MEASURED = "measured"
+STATE_OUTLINE_REFUSED = "outline_refused_or_missing"
+STATE_NO_CONFIRMED_STREET = "no_confirmed_straight_frontage"
+STATE_ONE_CONFIRMED_STREET = "one_confirmed_straight_frontage"
+STATE_MORE_THAN_TWO_STREETS = "more_than_two_confirmed_frontages"
+STATE_NOT_A_CORNER = "frontages_do_not_meet_at_a_corner"
+
+# Why a frontage could not seed a street line, so a caller can tell the two causes apart.
+CAUSE_NOT_CONFIRMED = "frontage_not_confirmed"
+CAUSE_NOT_STRAIGHT = "frontage_not_straight"
+
+# A rest area below zero by more than this share of the outline area is a defect, not rounding.
+_REST_NEGATIVE_TOLERANCE_SHARE = 1e-6
 
 
 @dataclass(frozen=True)
@@ -69,10 +91,17 @@ class CornerPortionAreas:
     :class:`~app.spatial.site_geometry.labels.SourcedValue`: a tax-map area, or unknown
     (``value`` is None) with a plain reason. A measured 0.0 (the whole lot lies within the
     distance of both lines) is a known value, distinct from unknown.
+
+    ``state`` is one of the module's ``STATE_*`` codes: the measured outcome, or a distinct code
+    for each unknown state. ``frontage_causes`` is a tuple of ``(street name, CAUSE_* code)``
+    pairs for every frontage that could not seed a street line, so a caller can tell a frontage
+    that is not confirmed from one that is not straight without reading any text.
     """
 
     corner_portion: SourcedValue
     interior_portion: SourcedValue
+    state: str
+    frontage_causes: tuple[tuple[str, str], ...] = field(default_factory=tuple)
 
 
 # --------------------------------------------------------------------------- pure geometry
@@ -143,20 +172,36 @@ def _crossing(start: Point2, end: Point2, d_start: float, d_end: float) -> Point
     return start[0] + t * (end[0] - start[0]), start[1] + t * (end[1] - start[1])
 
 
+def _resolve_rest(full: float, corner: float) -> float:
+    """The interior-portion area (``full - corner``). The corner is a clipped subset of the
+    outline, so the rest is mathematically non-negative: a negative within rounding noise (a tiny
+    share of the outline area) is a measured zero, and a larger negative is a defect that raises
+    rather than being hidden."""
+    rest = full - corner
+    if rest < 0.0:
+        if -rest <= _REST_NEGATIVE_TOLERANCE_SHARE * full:
+            return 0.0
+        raise ValueError(
+            "the interior portion is negative by more than rounding noise "
+            f"({rest:.6f} sq ft of a {full:.2f} sq ft outline): the corner portion cannot "
+            "exceed the outline")
+    return rest
+
+
 def area_within_distance_of_both(
     outline_vertices: list[Point2], line1: Line, line2: Line, distance_ft: float,
 ) -> tuple[float, float]:
     """Return ``(corner_area, rest_area)`` in square feet: the area of ``outline_vertices``
     within ``distance_ft`` of BOTH lines, and the area of the rest. Pure arithmetic on the
-    EPSG:2263 outline; no clock, no I/O."""
+    EPSG:2263 outline; no clock, no I/O. A distance of zero or less raises ``ValueError``."""
+    if distance_ft <= 0.0:
+        raise ValueError("the distance must be greater than zero")
     ring = list(outline_vertices)
     full = _polygon_area(ring)
     clipped = _clip_within_distance(ring, line1, distance_ft)
     clipped = _clip_within_distance(clipped, line2, distance_ft)
     corner = _polygon_area(clipped)
-    rest = full - corner
-    if rest < 0.0:  # a tiny negative from floating-point rounding is a measured zero
-        rest = 0.0
+    rest = _resolve_rest(full, corner)
     return corner, rest
 
 
@@ -191,19 +236,20 @@ def _street_line(edges: list[OutlineEdge]) -> Line | None:
 
 def _confirmed_straight_line(
     frontage: StreetFrontage, outline: PreparedOutline,
-) -> tuple[Line | None, str | None]:
-    """``(line, None)`` for a confirmed, straight frontage; else ``(None, reason)`` -- the same
-    states the sibling lot-reach module refuses a street line for."""
+) -> tuple[Line | None, str | None, str | None]:
+    """``(line, None, None)`` for a confirmed, straight frontage; else
+    ``(None, cause_code, reason)`` -- the same states the sibling lot-reach module refuses a
+    street line for, with the cause code so a caller can branch without reading the text."""
     name = frontage.street_name
     if frontage.status != FRONTAGE_CONFIRMED:
-        return None, f"the frontage on {name} is not confirmed"
+        return None, CAUSE_NOT_CONFIRMED, f"the frontage on {name} is not confirmed"
     edges = _frontage_edges(frontage, outline)
     bend = frontage_bend_deg(edges)
     line = _street_line(edges)
     if bend > SINGLE_STREET_MAX_BEND_DEG or line is None:
-        return None, (f"the frontage on {name} is not straight (its lot lines turn by "
-                      f"{bend:.0f} degrees)")
-    return line, None
+        return None, CAUSE_NOT_STRAIGHT, (
+            f"the frontage on {name} is not straight (its lot lines turn by {bend:.0f} degrees)")
+    return line, None, None
 
 
 def _corner_relation(
@@ -216,9 +262,11 @@ def _corner_relation(
     return None
 
 
-def _both_unknown(reason: str) -> CornerPortionAreas:
+def _both_unknown(
+    reason: str, state: str, causes: tuple[tuple[str, str], ...] = (),
+) -> CornerPortionAreas:
     missing = unknown_value("sq ft", reason)
-    return CornerPortionAreas(missing, missing)
+    return CornerPortionAreas(missing, missing, state, causes)
 
 
 def measure_corner_reach_area(
@@ -229,44 +277,51 @@ def measure_corner_reach_area(
     the rest.
 
     Both portions are unknown (never a zero) on every state the sibling lot-reach module finds no
-    corner for: the outline was refused, fewer than two streets have a confirmed straight
-    frontage, the two
-    streets do not meet at a corner, or a frontage is not straight. A genuinely measured rest of
-    0.0 (the whole lot lies within ``distance_ft`` of both lines) is a known value.
+    corner for: the outline was refused or missing, no street or only one street has a confirmed
+    straight frontage, more than two do, or the two streets do not meet at a corner. Each outcome
+    carries a distinct ``STATE_*`` code and, for every frontage that could not seed a street line,
+    a ``(street name, CAUSE_*)`` pair. A genuinely measured rest of 0.0 (the whole lot lies within
+    ``distance_ft`` of both lines) is a known value. A distance of zero or less raises
+    ``ValueError``.
     """
+    if distance_ft <= 0.0:
+        raise ValueError("the distance must be greater than zero")
     if outline is None or geometry.status == STATUS_REFUSED:
         reason = geometry.refusal_reason or "The lot outline could not be prepared."
-        return _both_unknown(f"{reason} {_GAP}")
+        return _both_unknown(reason, STATE_OUTLINE_REFUSED)
 
     straight: list[tuple[StreetFrontage, Line]] = []
-    not_straight: list[str] = []
+    causes: list[tuple[str, str]] = []
+    reasons: list[str] = []
     for frontage in geometry.frontages:
-        line, reason = _confirmed_straight_line(frontage, outline)
+        line, cause, reason = _confirmed_straight_line(frontage, outline)
         if line is not None:
             straight.append((frontage, line))
-        elif reason is not None:
-            not_straight.append(reason)
+        elif cause is not None and reason is not None:
+            causes.append((frontage.street_name, cause))
+            reasons.append(reason)
+    cause_pairs = tuple(causes)
 
     if len(straight) == 0:
-        if not_straight:
+        if reasons:
             reason = (f"There is no corner to measure within {distance_ft:.0f} ft of both "
-                      "street lines: " + "; ".join(not_straight) + ".")
+                      "street lines: " + "; ".join(reasons) + ".")
         else:
             reason = ("No street has a confirmed, straight frontage, so there is no corner to "
                       f"measure within {distance_ft:.0f} ft of both street lines.")
-        return _both_unknown(f"{reason} {_GAP}")
+        return _both_unknown(reason, STATE_NO_CONFIRMED_STREET, cause_pairs)
 
     if len(straight) == 1:
         reason = (f"Only {straight[0][0].street_name} has a confirmed, straight frontage, so "
                   f"there is no corner to measure within {distance_ft:.0f} ft of both street "
                   "lines; the outline area is a known number but the corner/interior split is "
                   "not.")
-        return _both_unknown(f"{reason} {_GAP}")
+        return _both_unknown(reason, STATE_ONE_CONFIRMED_STREET, cause_pairs)
 
     if len(straight) > 2:
         reason = ("More than two streets front the lot, so no single corner is measured within "
                   f"{distance_ft:.0f} ft of both street lines.")
-        return _both_unknown(f"{reason} {_GAP}")
+        return _both_unknown(reason, STATE_MORE_THAN_TWO_STREETS, cause_pairs)
 
     (frontage_one, line_one), (frontage_two, line_two) = straight
     relation = _corner_relation({frontage_one.street_key, frontage_two.street_key},
@@ -275,7 +330,7 @@ def measure_corner_reach_area(
         reason = (f"{frontage_one.street_name} and {frontage_two.street_name} front the lot but "
                   f"do not meet at a corner, so there is no corner to measure within "
                   f"{distance_ft:.0f} ft of both street lines.")
-        return _both_unknown(f"{reason} {_GAP}")
+        return _both_unknown(reason, STATE_NOT_A_CORNER, cause_pairs)
 
     corner_area, rest_area = area_within_distance_of_both(
         list(outline.vertices), line_one, line_two, distance_ft)
@@ -288,4 +343,6 @@ def measure_corner_reach_area(
     return CornerPortionAreas(
         tax_map_value(corner_area, "sq ft", corner_basis),
         tax_map_value(rest_area, "sq ft", interior_basis),
+        STATE_MEASURED,
+        cause_pairs,
     )
