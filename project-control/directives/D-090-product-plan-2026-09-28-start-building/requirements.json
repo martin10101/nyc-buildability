@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 891,
+ "requirement_count": 899,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T21:52:24+00:00",
+ "updated_at": "2026-10-09T23:56:46+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -29939,6 +29939,259 @@
    "dependencies": [],
    "required_harness": "The design-implementation task packets cite this row; their gates check it.",
    "required_evidence": "The task's gate reports, rendered screens and PDF pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R892",
+   "text": "'My recommendation is to keep the improved first-page approach and request another focused revision addressing these issues.': the first-page approach of test PDF version 5 is kept, and a further, focused revision addresses the six findings below. ORCHESTRATOR'S READING: the review is of version 5a (sent with its page-3 fault stated); version 5b had already removed the false sentence and the raw terms, moved the notes out of the drawing and removed the thin page; the next version answers every finding, including those 5b did not.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R802"
+   ],
+   "required_harness": "The next version of the test PDF, checked page by page by an independent reviewer.",
+   "required_evidence": "The test PDF, its page images and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R893",
+   "text": "'Page 3 is still the old information-overload problem.' 'Street names and surrounding context are absent from the drawing itself.' 'The fix is to redesign the drawing and relocate supporting notes.': the site-plan page is not overloaded: supporting notes are moved out of the drawing, raw terms never appear, the street names and the surrounding context needed to read it are in the drawing itself, and the page has the report's page size, printable at its stated size without shrinking text. ORCHESTRATOR'S READING: the street names and context are drawn by the program's drawing kit; until it draws them, the page says what is missing.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The test PDF's site-plan page, and a backlog row or task for the drawing kit.",
+   "required_evidence": "The PDF, and the backlog or task record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R894",
+   "text": "'Keep all eleven options, but use concise columns: option, available result, limitation or next requirement.' 'Detailed comparisons should expand when meaningful results exist.' 'That is several ways of communicating essentially the same situation.': the option comparison keeps all eleven options in three concise columns (the option, the result available, the limitation or next requirement), uses ONE wording for one situation, has no crowded headings, and gives detailed comparisons only where meaningful results exist. The same applies to the website's comparison.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The test PDF's option pages; the website slice's comparison scenarios.",
+   "required_evidence": "The PDF and the website task's tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R895",
+   "text": "'3. \u201cAchieved\u201d overstates what the report establishes.' 'Better wording would be \u201cScheduled area: 20,150 sq ft; site fit unverified.\u201d The distinction should be clear before the reader reaches the caveats.' 'Better wording would be \u201cScheduled area: 20,150 sq ft; site fit unverified.\u201d The distinction should be clear before the reader reaches the caveats.': a floor schedule whose placement and site fit are not established is never called 'achieved' and never said to leave no allowance unused as if it were built; it is called the scheduled area, with 'site fit unverified' beside it, before any caveat. This applies to the PDF and to the website.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A text search of the PDF and the website for 'achieved'.",
+   "required_evidence": "The PDF and the website task's tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R896",
+   "text": "'The drawing and measurement explanation still disagree.' 'That discrepancy needs an explanation or correction.': the drawing and the measurement explanation agree. ORCHESTRATOR'S READING (checked in the code on 2026-10-09): the program's geometry block draws an axis-aligned rectangle whose area equals the RECORDED lot area (10,075 sq ft, in the recorded frontage-to-depth proportion), not the tax-map outline (10,387.99 sq ft): `services/api/app/scenario/three_answers/geometry.py`, `_lot_dimensions`. The site plan labels it as the approximate tax-map outline. This is corrected in the program (the site plan draws the parcel's own outline, or no outline is drawn and the page says why); until then the test PDF does not present the rectangle as the lot.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R192",
+    "D-090-R846"
+   ],
+   "required_harness": "A program task with a test that the drawn outline's area equals the measured outline area (or that no outline is drawn), and the PDF's site page.",
+   "required_evidence": "The task's tests and gates; the PDF.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R897",
+   "text": "'There is apparently stale text inside the drawing.' 'Otherwise, the report contradicts itself.': no text in the report contradicts another. ORCHESTRATOR'S READING: the stale sentence was removed from the program on 2026-10-09 (commit 423aa189, merged in pull request 483) and from version 5b; the next version is checked for contradictions page against page.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A contradiction check in the PDF's check list.",
+   "required_evidence": "The check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R898",
+   "text": "'The document still mixes architect information with developer reporting.' 'Architects need readable source references and clear limitations.' 'Page 10 says context maps are available, but they are not included.': the report carries no developer reporting ('HTTP 200', 'today's wiring', internal register identifiers, the owner's open questions); sources are readable references; no page claims an output the report does not include; no page is left mostly empty while another is overloaded.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A text search of the PDF for developer words; the coverage page checked against the pages present.",
+   "required_evidence": "The PDF and its check list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R899",
+   "text": "'Missing program capabilities can remain honestly unavailable; the crowded presentation, inconsistent wording and mismatched drawing information can be corrected now.': missing program capabilities may stay honestly marked unavailable; the crowded presentation, the inconsistent wording and the mismatched drawing information are corrected in the next version now.",
+   "source_ref": "source-080-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The next version of the test PDF, checked page by page by an independent reviewer.",
+   "required_evidence": "The test PDF, its page images and the review record.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",

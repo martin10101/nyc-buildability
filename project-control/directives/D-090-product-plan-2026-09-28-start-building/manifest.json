@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T21:52:24+00:00",
+ "updated_at": "2026-10-09T23:56:46+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -912,10 +912,18 @@
   "D-090-R888",
   "D-090-R889",
   "D-090-R890",
-  "D-090-R891"
+  "D-090-R891",
+  "D-090-R892",
+  "D-090-R893",
+  "D-090-R894",
+  "D-090-R895",
+  "D-090-R896",
+  "D-090-R897",
+  "D-090-R898",
+  "D-090-R899"
  ],
- "requirements_id_digest_sha256": "b149158efccc5c390a07fa304ac458d99a67926a768b17ddf3252565d945b6ab",
- "requirements_content_digest_sha256": "55780617ad8e6a50611bb908ccab0b3677981745e17d93c39a666cc324d487b0",
+ "requirements_id_digest_sha256": "f31113ebdb803a0187e5092ed61d63be4ad3d089062ff1452d94c446a7405dcd",
+ "requirements_content_digest_sha256": "3ce74103d08450a4ac70b94b07cd634dffc7d0db203ba37c11a8191c8d5e5445",
  "sources": [
   {
    "file": "source-001.md",
@@ -1547,6 +1555,14 @@
    "recorded_at": "2026-10-09T21:44:51+00:00",
    "content_digest_sha256": "b0b761d1e4c54c98657a9ec7c16f71dcf46f93427d60862c8f5c7587c96869b1",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-080-amendment.md",
+   "kind": "amendment",
+   "sequence": 80,
+   "recorded_at": "2026-10-09T23:56:46+00:00",
+   "content_digest_sha256": "df30f980f58c5a63b79811033f89e7a3913069d2921040f254dd64391e642192",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1627,7 +1643,8 @@
   "source-076-amendment.md",
   "source-077-amendment.md",
   "source-078-amendment.md",
-  "source-079-amendment.md"
+  "source-079-amendment.md",
+  "source-080-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2452,6 +2469,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T189 (the owner's architect presentation contract persisted and routed) to R804, R807, R808, R859, R860, R861, R862, R863, R864, R865, R883, R890 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T23:56:46+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-080 (session 013RaGmC: the owner's forwarded review of test PDF version 5a, six findings) and requirements D-090-R892 to R899, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
