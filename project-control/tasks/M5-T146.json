@@ -245,8 +245,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "ONE PR WITH TASK 2 (consumer sweep): the regenerated benchmark document's CONTENT change breaks the web journey/lib tests too, and the panel must render the new blocks; so task 1 and task 2 are reviewed at ONE common head on one branch and merged as ONE pull request - the full CI is green there. Task 1 owns server+contract+register+document+server content tests; task 2 owns apps/web; they share no path.",
     "ADDITIVE, NOT REPLACE (strategy): append contract_version 1.4.0 with optional blocks; every existing block keeps its shape and benchmark content, so the drawings kit, CAD (read the geometry only), the PDF renderer and the web source that read existing blocks do not break. Verify by rerunning the suites; the only server breaks are the journey test and tests/api/test_results_read_api.py (full-document content).",
@@ -257,7 +257,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T10:47:16.741586+00:00",
-  "updated_at": "2026-10-09T23:15:31.550184+00:00",
+  "updated_at": "2026-10-09T23:29:42.937995+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -350,5 +350,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-09, after the walkthrough FAILED at 7cf94e09 (F1)] ruling W14 and scenarios S25 to S27: the document says why each building of the method was not worked (an optional additive list in contract 1.4.0, no number field), building B's bound is named truly, and the older building-option block never states a false reason. No path, gate, reviewer or bound row changed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T23:29:42.937848+00:00"
 }
