@@ -1,0 +1,140 @@
+{
+ "task_id": "M4-T038",
+ "material_commits": [
+  "828d7249 (the first build: calculation entries in the register's source data, six rendered pages, the support module and its tests; 21 files changed)",
+  "6d2d9401 (one correction before review: each listed gap's kind agrees with the program's own kind and the cases, with a test; 16 files = material head)"
+ ],
+ "claim_seam_head": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+ "files_changed": [
+  "docs/zoning-rule-review/GUIDE.md",
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+  "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+  "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+  "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+  "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+  "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+  "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
+  "project-control/reports/M4-T038-producer-report.md",
+  "services/api/app/rules/review_register/check_review_register.py",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/rules/review_register/render_review_register.py",
+  "services/api/app/rules/review_register/review_register_calculations.py",
+  "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+ ],
+ "what_did_not_change": "No rule file, no engine or scenario code, no capture, no fixture, no result, no reference case; the 23 rule entries and their pages byte-identical; every earlier history line unchanged; no human verdict.",
+ "known_limits": [
+  "THE PAGES COMPARE; THEY CHANGE NOTHING OF THE PROGRAM. Of the six steps one agrees (property inputs), one differs by method (each floor's area and height: backlog row DB-210, the owner's pending decision), and four have a side missing because the program withholds the result or has not built it.",
+  "Where the two independent readings of the step-P6 case differ in the decimals, both figures are shown and no single expected value stands.",
+  "The recorded lot area (10,075 sq ft) and the tax-map outline (10,387.99 sq ft) disagree; the program shows both and chooses neither.",
+  "The 23 rule entries have no dedicated fields for units, measurement basis, formula and rounding: a stated coverage gap, not closed here.",
+  "Combining code outside the first building option's path (among it the property-inputs mapping and the wide-street determination) has no entry: stated coverage gaps.",
+  "The new module review_register_calculations.py stands above the size check's warning line (the check passes).",
+  "Every calculation entry reads 'Not reviewed': the reviews of this task are by AI agents and establish no human verdict.",
+  "No test binds a step's verdict to the state of its actual side, or requires a legal-or-design row for every figure, beyond the check that a rendered page equals its source data (G4 note 2; backlog row DB-211, for the wiring step that first changes a calculation entry)."
+ ],
+ "checks_at_material_head": [
+  "CI: on the push of `fedef10b`: CI run 37902086129, attempt 1, 21 of 21 jobs success (among them the server's whole suite); secret-scan 37902086113 success; context-budget 37902086107 success; read by the orchestrator at 08:08 UTC on 2026-10-09 (the reviews ran beside it; no gate was recorded before it was green). Nothing was rerun.",
+  "orchestrator: at `fedef10b`: ruff exit 0; the register tests, the calculation tests, the reference-case tests and the journey tests: 187 passed; the renderer's check, the size check and the path-coverage check exit 0. No whole-suite run on the build machine: that is CI's."
+ ],
+ "requirements": {
+  "D-090-R379": [
+   "The register is updated inside this task's own commits by its existing process: source data services/api/app/rules/review_register/register.json, pages rendered under docs/zoning-rule-review/ (calculations/, REGISTER.md, HISTORY.md, GUIDE.md); no zoning-rule behaviour changed in this task and the 23 rule entries are untouched. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_committed_register_validates_clean, test_the_23_rule_entries_are_untouched",
+   "project-control/reports/M4-T038-G3G4.md: G3 checks 1 and 8 (for this task's share of the standing rule)."
+  ],
+  "D-090-R686": [
+   "project-control/tasks/M4-T038.json: the message's requirements are the packet's scope, its scenarios S1 to S14 and its 23 bound rows (rulings C1 to C9 in the path notes); project-control/reports/M4-T038-G0.md.",
+   "project-control/reports/M4-T038-G3G4.md: both reviewers worked to the packet."
+  ],
+  "D-090-R687": [
+   "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md: six steps (property inputs; footprint; each floor's area and height; total floor area; legal unit limit; preliminary apartment estimate), each with expected (a named case row), actual (the program at a named revision) and a verdict. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_six_step_page_has_six_steps_and_closing_names_db210, test_built_step_agrees_withheld_steps_side_missing, test_calc_floor_area_recomputed_matches_independent, test_document_actuals_match_the_recorded_fixture, test_engine_sample_stack_differs_from_independent_two_buildings",
+   "project-control/reports/M4-T038-G3G4.md: G3 checks 2, 3 and 4."
+  ],
+  "D-090-R688": [
+   "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md and docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md are separate entries and separate steps (5 and 6) of the comparison. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_calc_unit_limit_engine_computes_29_document_withholds, test_size_or_share_marked_legal_is_refused",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 4."
+  ],
+  "D-090-R689": [
+   "Every expected side cites rows of the existing reference cases (docs/reference-cases/R6B/cases/, among them step-p6-worked and real-lot); no new reading was ordered for this task. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_cited_rows_of_every_entry_exist, test_a_cited_row_that_does_not_exist_is_refused, test_a_superseded_cited_row_is_refused",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 2."
+  ],
+  "D-090-R690": [
+   "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md, closing list: every disagreement and missing fact with its kind and what would settle it; each kind agrees with the program's own kind for that result. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_every_listed_withheld_gap_kind_agrees_with_the_program, test_a_mismatched_gap_kind_is_caught, test_s14_method_difference_missing_db210_is_caught",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 4."
+  ],
+  "D-090-R691": [
+   "The register now holds calculation entries and reads a changed code module as needing its tests again; docs/zoning-rule-review/GUIDE.md says a calculation change moves its entry. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_code_module_drift_is_caught_and_names_the_module, test_changed_code_module_demands_automated_tests_not_run, test_the_23_rule_entries_are_untouched",
+   "project-control/reports/M4-T038-G3G4.md: G3 checks 1 and 7."
+  ],
+  "D-090-R692": [
+   "Authored only in services/api/app/rules/review_register/register.json; pages rendered by render_review_register.py and checked by its --check (exit 0 at the head under review). services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_each_calculation_page_is_byte_identical, test_no_orphan_calculation_page, test_register_md_carries_the_calculations_and_gaps_sections, test_history_md_carries_the_calculations_history_section",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 1."
+  ],
+  "D-090-R693": [
+   "For this task's share (the first building option's path): six calculation entries name each rule, formula, exception and design assumption behind the reported results; what cannot yet be traced is stated as nine coverage gaps. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_every_figure_is_marked_legal_or_design, test_coverage_gaps_are_data_and_hold_at_least_nine",
+   "project-control/reports/M4-T038-G3G4.md: G3 checks 5 and 7."
+  ],
+  "D-090-R694": [
+   "Each page under docs/zoning-rule-review/calculations/ has the source, section, version or date, applicability and exceptions; legal rows quote the capture. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_legal_rows_quote_a_verbatim_fragment_of_the_capture, test_every_calculation_entry_carries_an_effective_date, test_special_density_applicability_is_a_legal_requirement",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 5 (point 1)."
+  ],
+  "D-090-R695": [
+   "Each page states the program's interpretation and what is implemented against planned (built, withheld, not built). services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_committed_calculations_validate_clean, test_built_step_agrees_withheld_steps_side_missing",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 5 (point 2)."
+  ],
+  "D-090-R696": [
+   "Each page states inputs, units, measurement basis, formula and rounding (where no rounding rule exists, it says so). services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_committed_calculations_validate_clean",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 5 (point 3)."
+  ],
+  "D-090-R697": [
+   "Each page has a worked example with expected, actual and the tested revision. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_calc_floor_area_recomputed_matches_independent, test_document_actuals_match_the_recorded_fixture, test_a_withheld_actual_cannot_be_forced_to_agree, test_a_not_known_reading_cannot_be_a_forced_single_figure",
+   "project-control/reports/M4-T038-G3G4.md: G3 checks 2, 3 and 5 (point 4)."
+  ],
+  "D-090-R698": [
+   "Each page links its code modules (with identity) and tests and lists unresolved questions and limitations. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_code_identity_mismatch_is_caught, test_code_module_drift_is_caught_and_names_the_module",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 5 (point 5)."
+  ],
+  "D-090-R699": [
+   "services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_every_figure_is_marked_legal_or_design, test_an_unmarked_figure_is_refused, test_size_or_share_marked_legal_is_refused",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 6."
+  ],
+  "D-090-R700": [
+   "services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_preliminary_assumption_words_are_required_on_size_and_share, test_size_or_share_marked_legal_is_refused",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 6."
+  ],
+  "D-090-R701": [
+   "Six calculation entries that are not rule files (floor-area allowance; lot coverage by portion; building-option floor stack; legal dwelling-unit limit; preliminary apartment estimate; the complete first building option); combining code still without an entry is stated in the coverage gaps. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_the_six_calculation_entries_are_present, test_a_calculation_id_colliding_with_a_rule_id_is_refused",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 7."
+  ],
+  "D-090-R702": [
+   "The pages link the existing records: the reference-case rows, the measurement-basis record and the rule-coverage matrix. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_cited_rows_of_every_entry_exist",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 5."
+  ],
+  "D-090-R703": [
+   "coverage_gaps in the source data, rendered into docs/zoning-rule-review/REGISTER.md. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_coverage_gaps_are_data_and_hold_at_least_nine, test_too_few_coverage_gaps_is_caught, test_register_md_carries_the_calculations_and_gaps_sections",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 7."
+  ],
+  "D-090-R704": [
+   "No human decision is entered: every calculation entry reads 'Not reviewed'. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_every_calculation_reads_not_reviewed, test_a_decision_without_a_named_reviewer_is_refused, test_a_decision_typed_into_the_block_without_identity_is_refused",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 8."
+  ],
+  "D-090-R705": [
+   "services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_calculations_history_is_append_only_and_separate, test_the_23_rule_entries_are_untouched, test_history_md_carries_the_calculations_history_section",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 1 (every earlier history line unchanged)."
+  ],
+  "D-090-R706": [
+   "Whether a decision still applies is a derived field apart from the decision. services/api/tests/rules/test_zoning_rule_review_register_calculations.py: test_a_decision_whose_code_identity_changes_reads_needs_re_review",
+   "project-control/reports/M4-T038-G3G4.md: G3 check 8."
+  ],
+  "D-090-R707": [
+   "One ordinary ledger task of the building-option work with its ordinary gates (G0, G2, G3, G4) and the same reviewers checking the register update; no separate project: project-control/tasks/M4-T038.json.",
+   "project-control/reports/M4-T038-G3G4.md."
+  ]
+ }
+}
