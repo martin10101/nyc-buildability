@@ -1,0 +1,128 @@
+{
+  "task_id": "M5-T143",
+  "title": "Split services/api/app/scenario/three_answers/three_way_document.py (599 lines) by moving the scope-line code to a new module three_way_scope_lines.py behind a compatibility facade, and close the three test gaps of DB-199 (a), (b), (c); the emitted 1.3.0 document stays BYTE-IDENTICAL for every committed fixture and test input and NO shown text changes (backlog rows DB-205 a and DB-199 a to c; CLAUDE.md principle 16).",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "FACTS TODAY. three_way_document.py is 599 lines (modularity warning is 600; CLAUDE.md principle 16; docs/CODE_MODULARITY_POLICY.md; .claude/rules/code-architecture.md). Its scope-line code is a self-contained block: the maps _SCOPE_BASIS_BY_SOURCE (lines 131-137), _NOT_KNOWN_VALUE / _NOT_APPLICABLE_VALUE / _WORDS_VALUE_BY_SOURCE (145-150), the design-choice keys HOUSING_PROGRAM_KEY / FLOOR_TO_FLOOR_KEY / USER_CHOICE_KEYS (159-162), _HOUSING_PROGRAM_DISPLAY (166-170), the two statements USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT / USER_SELECTED_HOUSING_PROGRAM_STATEMENT (174-179), the helpers _fmt_feet (182-183), _fmt_degrees (186-188), _scope_statement (191-260), _user_choice_statement (263-269) and _rewrite_scope_lines (272-313). This block imports Source and Derived from .engine_conditions and is called once, from emit_three_way_document at line 584. The rest of the file (the answer/geometry/value-object logic and the public emit function) imports LABELS, Withheld, Source, Derived etc. from result_way_inputs/engine_conditions and stays. STEP 1 (the split). Create a NEW module services/api/app/scenario/three_answers/three_way_scope_lines.py. MOVE the scope-line block above into it verbatim (no character of any emitted string changes). The new module imports `from .engine_conditions import Derived, Source` and nothing from the decision module. In three_way_document.py add a compatibility facade: `from .three_way_scope_lines import (_rewrite_scope_lines, FLOOR_TO_FLOOR_KEY, HOUSING_PROGRAM_KEY, USER_CHOICE_KEYS, USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT, USER_SELECTED_HOUSING_PROGRAM_STATEMENT)` and keep all five public names in three_way_document.__all__, because result_way_engine_bridge.py (lines 47-50) imports FLOOR_TO_FLOOR_KEY / HOUSING_PROGRAM_KEY / USER_CHOICE_KEYS from .three_way_document and re-exports them, results_read.py (lines 62-65) imports two of them through that bridge, and test_three_answers_three_way_emit.py imports the two STATEMENT constants from three_way_document. three_way_document keeps `from .engine_conditions import Derived` for the emit signature's type hint (Source is used only by the moved code). (reading) the natural boundary named by DB-205 a is exactly this block; nothing else moves. STEP 2 (the three DB-199 test gaps, all in test_three_answers_three_way_emit.py; NO app wording changes). (a) The helper _all_result_numbers (lines 180-206) walks only NAMED blocks (each answer's values, floor_by_floor, floor_stack, shortfall, best_combination, addon_gains, unit_estimate), so a withheld number placed in any other block would pass unseen (DB-199 a). Add a test that enters that state: take the emitted document, inject a numeric field into a block the walker does not visit, and assert the no-withheld-number guard FAILS (red proof); then strengthen the guard to walk the WHOLE document and assert it passes on the real emit and fails on the injected one (mutation proof: remove the whole-document walk and the injected-number test goes green). (b) The fallback at three_way_document.py lines 436-446 (the module shows legal_unit_limit_standard but the engine inner unit_estimate block is not available) is reached by no test and its two strings ('The legal dwelling-unit limit is not known: the figure it would be read from is not available for this lot.' and 'A recorded lot area, or a survey or deed dimensions.') are outside the transform text guard (DB-199 b). Add a test that enters that state: emit with ways that SHOW the standard unit limit while the engine document's inner unit_estimate is not available, and assert legal_unit_limit_standard is a withheld value_state carrying those exact two strings and that NO number appears for it (red proof: revert the fallback to append a value object and the no-number assertion moves). Bring the two strings under the transform text guard WITHOUT changing them (reference the literals, or hoist them to module constants whose value is byte-identical; a byte-identical hoist is not a wording change). (c) _unit_limit_value_object (lines 346-378) drops the rule_table source silently when rule_versions is missing, because _rule_version returns None (DB-199 c; the engine always emits the list). Add a test that enters both states on the shown standard limit: with a rule_versions list present the value object's sources include {kind: rule_table}; with the list absent or empty that source is absent and only the zoning_resolution source remains. Pin both branches (mutation proof: force _rule_version to always return None and the present-list assertion fails). TESTS REQUIRED: one test per input state above, a table in the producer report (state -> input -> expected), a red proof per new test, one mutation proof per pinned branch. NOT IN THIS TASK: no change to any shown or emitted string anywhere (the wording questions of the inventory are a separate owner-gated task); no change to the decision module (result_ways.py, result_way_inputs.py, result_way_conditions.py, result_way_bridge*.py), the engine (engine.py, answers.py, geometry.py, explanations.py, scope.py, dwelling_units.py), engine_disclosures.py, the route results_read.py, any schema, any fixture, any drawing/CAD/PDF code or the website; no change to contract_version or the document's structure; the import-guard test in test_result_ways.py is NOT edited unless the new module is forced to contain the substring 'result_way' (see risks).\n\nRULINGS OF THE ORCHESTRATOR (after reading the draft against the code; not the builder's to change; a ruling that cannot be built as written is a STOP and a report).\n\nB1 A MOVE, NOT A REWRITE. The scope-line block is moved character for character. The report shows the proof: the block as it stands in `three_way_document.py` at the claim head (lines 131 to 313), compared with the body of the new module (after its docstring and imports): no difference. No emitted or shown string changes anywhere.\n\nB2 THE OLD PATH KEEPS EVERY NAME THAT ANYTHING NAMES THERE TODAY. `three_way_document.py` stays the import path for: `emit_three_way_document`, `HOUSING_PROGRAM_KEY`, `FLOOR_TO_FLOOR_KEY`, `USER_CHOICE_KEYS`, `USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT`, `USER_SELECTED_HOUSING_PROGRAM_STATEMENT` (all in `__all__` as today) and, importable though private, `_rewrite_scope_lines` and `_HOUSING_PROGRAM_DISPLAY` (a website comment names the latter at that path; no website file is in this task).\n\nB3 THE NEW MODULE NEVER CONTAINS THE LETTERS `result_way`, in code, comment or docstring (the guard test `test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module` in `test_result_ways.py` reads every app file for that substring and is NOT edited). It imports from `.engine_conditions` only. Its seeded placeholder is replaced, not appended to.\n\nB4 BYTE IDENTITY IS PROVEN BY EXISTING TESTS, UNCHANGED: the journey's byte-exact test (`tests/journey/test_215_16_northern_journey.py`, which compares the route's document with the committed file), the whole folder `tests/scenario/three_answers`, and `tests/api/test_results_read_api.py`. No committed fixture and no snapshot changes (`git status` shows none). Scenario S2 is met by these; add a new equality assertion only if you can show a state none of them covers.\n\nB5 THE THREE TEST GAPS, EACH ENTERING EXACTLY ITS STATE. (a) the whole-document scan: the helper that collects a result's numbers walks the WHOLE emitted document, and a test injects a number where the old walk did not look and shows the old helper missed it. (b) the fallback: a test that reaches the branch at lines 436 to 446 and asserts the withheld state, its two exact texts and that no number appears; the two texts come under the existing text guard (`test_every_text_the_transform_writes_is_plain_and_true`) through constants whose values are the same characters as today. (c) the rule-table source: the REQUIREMENT pinned is that a shown standard unit limit carries its rule-table source when the document has its rule-versions list. The branch with the list missing is pinned too, but named as TODAY'S BEHAVIOUR (the source is dropped without a word) and not as a requirement; the report says so, and whether such a limit should be withheld stays an open question in the backlog (row DB-199 c). No behaviour of the emitter changes in this task.\n\nB6 CHECKS ON THE BUILD MACHINE (the changed coding rules, owner rows D-090-R638 and R639): ruff, the touched folders named in the commands, and the size check. The whole server suite, the drawings, CAD and PDF snapshot suites and the browser tests are CI's: they run on the pushed head and are read there before any gate. Start no server.",
+  "business_reason": "The next change to this emitter is blocked until it is split (DB-205 a; CLAUDE.md principle 16 and docs/CODE_MODULARITY_POLICY.md forbid growing an already-oversized file). The three DB-199 test gaps leave a document-scan hole, an untested fallback and a silent source drop that could each let a wrong or unsourced figure through later. Doing both now, with the document provably byte-identical, keeps every owner-settled wording (R038, R567, R568, R569) and the fail-closed promise (R164) intact while unblocking the file.",
+  "inputs": [
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/app/scenario/three_answers/engine_conditions.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_benchmark.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "docs/CODE_MODULARITY_POLICY.md",
+    ".claude/rules/code-architecture.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "project-control/reports/M5-T143-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T136",
+    "M5-T138",
+    "M5-T139"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "project-control/reports/M5-T143-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Do not change any emitted or shown string anywhere; this task moves code and adds tests only.",
+    "Do not edit the decision module: result_ways.py, result_way_inputs.py, result_way_conditions.py, result_way_bridge.py, result_way_bridge_overlay.py, result_way_facts.py.",
+    "Do not edit the engine or its text: engine.py, answers.py, geometry.py, explanations.py, scope.py, dwelling_units.py, contracts/engine_disclosures.py.",
+    "Do not edit the route results_read.py, any file under packages/contracts, any _contract_schemas, any drawings/kit, cad or documents code, or anything under apps/web.",
+    "Do not edit the import-guard test in test_result_ways.py unless the new module is forced to contain the substring 'result_way' (see risks).",
+    "No committed fixture, snapshot, schema or website file changes; start no server (ruling B6).",
+    "The new module never contains the letters `result_way` (ruling B3)."
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "facade_imports_still_resolve",
+      "input": "import from app.scenario.three_answers.three_way_document: emit_three_way_document, FLOOR_TO_FLOOR_KEY, HOUSING_PROGRAM_KEY, USER_CHOICE_KEYS, USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT, USER_SELECTED_HOUSING_PROGRAM_STATEMENT; import result_way_engine_bridge and results_read",
+      "expected": "every import resolves to the same objects as before the split; the five moved names are in three_way_document.__all__"
+    },
+    {
+      "id": "S2",
+      "case": "emitted_document_byte_identical",
+      "input": "emit for the committed benchmark/journey input and for each made-up input already in test_three_answers_three_way_emit.py",
+      "expected": "the emitted dict deep-equals packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json (and the pre-split result for the made-up inputs); add this full-document equality assertion if it is not already present - it is the byte-identity proof named by DB-205 a"
+    },
+    {
+      "id": "S3",
+      "case": "modularity_check_passes",
+      "input": "python tools/modularity_check.py --check",
+      "expected": "passes; three_way_document.py drops to about 400 lines and three_way_scope_lines.py is about 200 lines, both under the 600 warning"
+    },
+    {
+      "id": "S4",
+      "case": "db199a_whole_document_number_scan",
+      "input": "emitted document with a numeric field injected into a block _all_result_numbers does not visit",
+      "expected": "the strengthened whole-document scan catches the injected number (fails on the injection, passes on the real emit); reverting to the named-block walk makes the injection test go green (mutation proof)"
+    },
+    {
+      "id": "S5",
+      "case": "db199b_standard_limit_fallback_withheld",
+      "input": "emit with ways that SHOW legal_unit_limit_standard while the engine document's inner unit_estimate is not available",
+      "expected": "legal_unit_limit_standard is a withheld value_state carrying exactly 'The legal dwelling-unit limit is not known: the figure it would be read from is not available for this lot.' and resolver 'A recorded lot area, or a survey or deed dimensions.'; no number appears for it; both strings are covered by the transform text guard"
+    },
+    {
+      "id": "S6",
+      "case": "db199c_missing_rule_versions_source",
+      "input": "emit the shown standard limit once with a rule_versions list present and once with it absent/empty",
+      "expected": "present -> the value object's sources include {kind: rule_table, ref: r6b-dwelling-units@<ver>}; absent -> that source is gone and only {kind: zoning_resolution} remains; forcing _rule_version to return None makes the present-list assertion fail (mutation proof)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "import-guard trip -> the new module must import only from .engine_conditions and must NOT contain the substring 'result_way'; if any needed import forces that substring into the file, add three_way_scope_lines.py to the permitted set in test_result_ways.py (lines 85-98) in this same task and say so in the report.",
+    "hidden wording drift -> S2's full-document deep-equality to the committed fixture, plus running the drawings/CAD/PDF snapshot tests that render the fixture, proves no string moved.",
+    "text-guard change becomes a wording change -> bring the two DB-199 (b) strings under the guard only by referencing the exact literals or hoisting to byte-identical constants; a diff of the emitted strings must be empty.",
+    "circular import -> three_way_scope_lines imports engine_conditions only (a leaf); three_way_document imports the new module; no cycle.",
+    "A test pins a silent loss of a source as if it were wanted -> ruling B5 (c): that branch is named as today's behaviour, and the question stays open in the backlog.",
+    "The local checks pass and CI's do not -> CI on the exact pushed head is read before any gate."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T01:25:49.508134+00:00",
+  "updated_at": "2026-10-09T01:25:49.814793+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R570"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T01:25:49.508308+00:00",
+  "path_notes": "Producer works in an isolated worktree reset to the claim head. Current sizes: three_way_document.py 599 lines (target about 400 after the move); three_way_scope_lines.py new (about 200 lines); test_three_answers_three_way_emit.py grows by the three new tests. Everything else in services/api/app/scenario/three_answers, the route, the schemas, the fixtures, the drawings/CAD/PDF code and apps/web is READ-ONLY. New test code goes into the existing test_three_answers_three_way_emit.py (tests/scenario/three_answers already holds tests, so the lane ownership check passes); do not create a new test folder. At the claim base, run by the orchestrator: at 702a294a: ruff exit 0; tests/scenario/three_answers, tests/journey and tests/api/test_results_read_api.py: 460 passed, 2 skipped; the size check exit 0 (three_way_document.py 599 lines).",
+  "documented_test_commands": [
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey tests/api/test_results_read_api.py",
+    "python3 tools/modularity_check.py --check   # from the repository root; failures 0; the emitter's size warning margin restored"
+  ],
+  "worktree": "/root/project/w-wave15"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T23:59:27+00:00",
+ "updated_at": "2026-10-09T01:25:49+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -664,7 +664,7 @@
   "D-090-R640"
  ],
  "requirements_id_digest_sha256": "ef998e36448ee46aa2ac117357e281d229c1902bcab5244f9122ca2b74b04226",
- "requirements_content_digest_sha256": "9ce7a7dc62d46936c55a36dff907f5f76244b6f352d8104e62c87217152b7f2d",
+ "requirements_content_digest_sha256": "a4f9e5c645b03b710ba2117f4fed28c7b4dbcb228b70c8fc3360fe697272941a",
  "sources": [
   {
    "file": "source-001.md",
@@ -1285,7 +1285,8 @@
   "M5-T139",
   "M5-T140",
   "M5-T141",
-  "M5-T142"
+  "M5-T142",
+  "M5-T143"
  ],
  "affected_prs": [
   262,
@@ -1914,6 +1915,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T142 (First results screen: condition layout + screen-reader announcements (DB-206 a,b)) to R229, R258, R267, R268, R269, R570 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T01:25:49+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T143 (Split three_way_document.py and close DB-199 (a)(b)(c)) to R229, R570 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

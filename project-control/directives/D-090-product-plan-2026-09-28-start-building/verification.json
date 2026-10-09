@@ -3587,6 +3587,33 @@
     }
    ],
    "verified_at": "2026-10-09T00:56:53+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T143",
+   "applicable_requirement_ids": [
+    "D-090-R229",
+    "D-090-R570"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R229",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R570",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
