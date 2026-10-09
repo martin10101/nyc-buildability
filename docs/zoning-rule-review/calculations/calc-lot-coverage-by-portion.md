@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: lot_coverage
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-09)
+- Revision: 3 (last changed 2026-10-09)
 - Combines rule entries: `r6b-lot-coverage`
 
 ## Code identity
@@ -30,16 +30,17 @@ An entry with no rule file is fingerprinted by the LF-normalized sha256 of its c
 
 ## Where it applies
 
-The by-portion lot coverage a corner lot takes when part of it lies beyond 100 ft of a street line: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. The benchmark lot reaches 103.93 ft from the 215 Place line, so no single whole-lot figure applies and the engine withholds max_lot_coverage.
+The by-portion lot coverage a corner lot takes when part of it lies beyond 100 ft of a street line: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. This is now wired into the reported results; on the benchmark lot the document withholds the footprint as a square-foot figure because the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree, and gives the law by portion without a figure.
 
 ## Exceptions and limits
 
-- r6b-lot-coverage covers only the flat 80% interior rule; the corner 100% by-portion split is now built as pure modules (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) but is connected to no reported result.
+- The footprint square-foot figure is shown only where the recorded lot area and the tax-map outline area agree; on the benchmark they disagree, so it is withheld and the law is given by portion (ruling W1).
 - The corner-lot portion is the part within 100 ft of each intersecting street line (ZR 12-10).
+- The outline's area is a drawing measure and is never used in a zoning calculation in place of the recorded lot area.
 
 ## How the program reads it
 
-The engine withholds max_lot_coverage for the benchmark lot because the lot reaches beyond the corner-lot portion, so there is no single whole-lot coverage figure. Coverage by portion (corner 100% + interior strip 80%) is now built as two pure modules - services/api/app/spatial/corner_reach_area.py measures the corner-lot and interior-lot area split and services/api/app/scenario/three_answers/lot_coverage_by_portion.py applies the corner 100% and interior 80% ratios (ZR 23-362), both added by M5-T145 - but they are connected to no reported result and nothing imports them, so the program's answer is unchanged (max_lot_coverage still withheld).
+On the benchmark lot the document reports lot coverage by portion as the law - up to 100 percent on the corner-lot portion (the part within 100 ft of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10) - but withholds the footprint as a square-foot figure, because the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree and the outline's area is a drawing measure, never used in a zoning calculation in its place (ruling W1; gap_kind a missing fact about the property). The by-portion measurement (corner_reach_area.py measures the corner/interior area split, lot_coverage_by_portion.py applies the 100%/80% ratios; M5-T145) is wired through first_option_results.py and three_way_document.py; the footprint figure would be shown only where the two lot areas agree.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -68,26 +69,26 @@ The benchmark corner lot, lot coverage by portion.
 ## What the program does today versus what is planned
 
 Implemented and tested:
-- The document withholds max_lot_coverage with the by-portion reason (test: test_document_actuals_match_the_recorded_fixture).
+- The document withholds max_lot_coverage as a square-foot figure and gives the law by portion, its gap_kind a missing fact about the property because the recorded and tax-map outline lot areas disagree (test: test_document_actuals_match_the_recorded_fixture).
 
 In the program but no test checks it:
 - (none recorded)
 
 Planned, not built:
-- The by-portion coverage modules exist (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) but are connected to no reported result; the wiring that would feed them a measured outline and the two street lines and report a footprint is not built.
-- No footprint is drawn because the coverage is withheld.
+- The footprint square-foot figure is shown only where the recorded lot area and the tax-map outline area agree; where they disagree (the benchmark lot) it is withheld. A survey or deed reconciling the two areas would settle it.
+- No footprint is drawn because the figure is withheld.
 
 ## Automated test result
 
 - Status: Passed
 - Code identity tested: `d13b7093ca2aeab414e54c073b060262f97a4be2749adc8ff47d931eec86214b`
-- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
+- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
-- Counts: 42 passed
+- Counts: 53 passed
 - Evidence: [run log](../evidence/calc-lot-coverage-by-portion.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -114,10 +115,10 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
+- The recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree by about 313 sq ft; the footprint square-foot figure is withheld until a survey or deed reconciles them.
 - The two step-P6 readings differ in the decimals of the measured areas, so the expected side holds both figures and no single figure is recorded.
-- The whole-lot coverage stays not known (real-lot#L5; corner-reach#real-lot-coverage).
 
-- Coverage gap: Lot coverage by portion for a corner lot (corner 100% + interior strip 80%) is built as pure modules (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) but is connected to no reported result; r6b-lot-coverage covers only the flat 80% rule and the engine still withholds the whole-lot figure.
+- Coverage gap: On the benchmark lot the footprint square-foot figure is withheld because the recorded lot area and the tax-map outline area disagree (a missing fact about the property); it is shown only where the two areas agree. r6b-lot-coverage covers only the flat 80% interior rule; the corner 100% by-portion split is measured by corner_reach_area.py and lot_coverage_by_portion.py (M5-T145), now wired through first_option_results.py.
 
 ## Human review
 

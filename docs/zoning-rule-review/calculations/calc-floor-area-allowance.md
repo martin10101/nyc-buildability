@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: floor_area
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-09)
+- Revision: 2 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
@@ -80,13 +80,13 @@ Planned, not built:
 
 - Status: Passed
 - Code identity tested: `f20a1f2b02229642e15aa76fbe5e6a18bc3513bb6590d29df0b45139e5d51e76`
-- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
+- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
-- Counts: 42 passed
+- Counts: 53 passed
 - Evidence: [run log](../evidence/calc-floor-area-allowance.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

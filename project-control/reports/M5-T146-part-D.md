@@ -154,3 +154,67 @@ mutated data and the OLD stale-page/byte-identity check is fooled), then show th
   rule), not literally inside `check_review_register.py`; they run via `check_review_register.validate()`.
 
 END-OF-REPORT
+
+## Second half (M5-T146 part D2 - the register's DATA follows the wired results)
+
+Built on the integrated head `455caec46895298a772505cdf34325d7fd758d96` (holds part D first half as
+`68ffb69bd`, the 1.4.0 contract, the server wiring, the regenerated benchmark document, and the web
+first half). Producer: an AI agent (rules-engineer). I read every ACTUAL answer FROM the committed
+regenerated document `recorded_215_16_northern_journey.json`, never from memory. No checker/renderer
+code changed. `register.json` edited, Markdown re-rendered via `--write`, GUIDE followed.
+
+### What I changed, file by file
+- `services/api/app/rules/review_register/register.json` (source data): resynced code identity and
+  automated-test evidence for all six calc entries (shared test file grew; `first_building_options.py`
+  and `three_way_document.py` changed in part B); updated the ACTUAL sides to the regenerated
+  document; bumped each entry's revision and appended six `calculations_history` events (seq 11-16);
+  reworded/added coverage gaps. No human verdict entered; expected (case-row) sides unchanged.
+- `docs/zoning-rule-review/` (renderer-written, via `--write` only): REGISTER.md, HISTORY.md and the
+  six `calculations/*.md` re-rendered. The 23 rule pages under `rules/` are byte-identical (diff empty).
+- `docs/zoning-rule-review/evidence/*.txt` (6 hand-written run logs): refreshed to the new run
+  (commit `455caec4`, 53 passed) per GUIDE step 2, matching the resynced `automated_tests` fields.
+- `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (my first-half test
+  file; NOT checker/renderer code): two assertion updates forced by the regenerated document -
+  `test_document_actuals_match_the_recorded_fixture` (the stale `"not built yet"` assertion PART E's
+  regeneration left behind; now checks the estimate is given in `building_alternatives`), and the
+  guard-mutation test (its hardcoded old step-3 verdict; now mutates a withheld step, which is stable).
+
+### Six-step verdicts, before -> after (read from the document)
+- Step 1 Property inputs: agree -> agree (inputs settled, match).
+- Step 2 Footprint / lot coverage by portion: side_missing -> side_missing (footprint figure now
+  withheld because the recorded and tax-map outline lot areas disagree, a missing fact; law by portion).
+- Step 3 Each floor's area and height: differ -> side_missing (building B now given and matches; building
+  A not listed, it needs the withheld footprint, so that side is missing).
+- Step 4 Total floor area: side_missing -> agree (building B total 20,150 sq ft now given, matches,
+  conditional).
+- Step 5 Applicable legal unit limit: side_missing -> side_missing (still withheld; engine computes 29).
+- Step 6 Separate preliminary apartment estimate: side_missing -> agree (building B estimate 17.27 to
+  21.59 now given, matches, conditional). All verdicts pass the DB-211 guards.
+
+### Gaps changed
+Reworded (no longer "connected to no reported result"): the building-option gap (building B reported,
+building A needs the withheld footprint), the lot-coverage gap (figure withheld where the two areas
+disagree), the preliminary-estimate gap (now reported for building B, DB-213 a). Added two: the older
+single blocks now point to `building_alternatives`; the share/size are shown but not yet changeable
+(DB-213 a). Kept (still true): three-answers engine, one floor height, legal unit limit withheld, the
+three rule-field / integration / yard gaps, the M5-T144 fingerprint gap. 10 -> 12 gaps.
+
+### Checks (direct exit codes)
+- `ruff check .` (from services/api): 0 (All checks passed).
+- `pytest register + calc + reference_cases + journey`: 0 - 198 passed (calc file alone: 53 passed).
+- `render_review_register.py --check`: 0 (register check PASSED).
+- `modularity_check.py --check`: 0.
+- `check_lane_paths.py --coverage`: 0 (9736 files).
+- `git diff --stat 455caec4 -- docs/zoning-rule-review/rules`: empty (23 rule pages unchanged).
+- Mutation (temp copy outside the repo): changed step 2's verdict side_missing -> agree, re-rendered
+  (stale-page check CLEAN `[]`), `step_verdict_errors` still RED ("step 2 program side is withheld, so
+  its verdict must be 'side_missing'"). Guard holds.
+
+### Scope notes / what I could not settle on my own
+- The two calc-test-file assertion updates and the six evidence-log refreshes sit just outside the
+  literal second-half file list (register.json + renderer docs + report), but are my own first-half
+  test file / the register's own GUIDE-mandated run logs - not checker/renderer code and not another
+  builder's files. Both were REQUIRED for a truthful, green suite: the test assertions were staled by
+  PART E's document regeneration and by this half's own verdict moves. Flagged here for the reviewer.
+
+END-OF-REPORT

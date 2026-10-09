@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: apartment_estimate
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-09)
+- Revision: 3 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `fad72467cbe61896c9677834b1dba5e6662f87d4f79e470b824d87d015bb1a94`
+- Combined code identity: `6581c795305c325c3f1d2e3da7d619501eb061ec407975cb61914fbfae5673e8`
 - Modules:
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`7f0ecfed2a410bbe2c1157a23a9791091eefa12e249c178acb00d9910d49fbaf`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`0069bf1bd8b397d8d4b130d5b826496882a0eed0adfa0bc5fd0a047aa114cead`)
   - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law
@@ -28,16 +28,17 @@ An entry with no rule file is fingerprinted by the LF-normalized sha256 of its c
 
 ## Where it applies
 
-A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The arithmetic is now built as a pure module (preliminary_apartment_estimate.py, M5-T145) connected to no reported result; the document still reports it not_available, 'not built yet'.
+A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is now reported for each worked building in building_alternatives; for building B (20,150 sq ft) it is 17.27 to 21.59, labelled 'Preliminary capacity estimate', conditional.
 
 ## Exceptions and limits
 
-- The apartment size and efficiency share are preliminary assumptions, editable, not legal requirements.
+- The apartment size and efficiency share are preliminary assumptions, editable; they are shown with the values used but are not yet changeable on the screen (backlog row DB-213 a).
 - The estimate is a practical capacity estimate, kept apart from the legal dwelling-unit limit.
+- The single unit_estimate block is not shown; each worked building's estimate is given in building_alternatives.
 
 ## How the program reads it
 
-preliminary apartments = floor area x efficiency share / apartment size. For real building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (both a preliminary assumption). This arithmetic is now built as a pure module (services/api/app/scenario/three_answers/preliminary_apartment_estimate.py, M5-T145), but it is connected to no reported result and nothing imports it, so the program's answer is unchanged (the document still reports the estimate not built).
+preliminary apartments = floor area x efficiency share / apartment size. For building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (two decimals), labelled 'Preliminary capacity estimate', conditional on the recorded lot area of 10,075 sq ft. The 0.60-0.75 share and the 700 sq ft size are each a preliminary assumption, shown with the values used but not yet changeable on the screen (DB-213 a). The arithmetic is built in preliminary_apartment_estimate.py (M5-T145) and reported per worked building through three_way_document.py; the single unit_estimate block is not shown and points to building_alternatives. Building A's estimate is not given because building A needs the withheld footprint figure.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -52,42 +53,40 @@ preliminary apartments = floor area x efficiency share / apartment size. For rea
 
 ## Worked example: independent expected versus the program's actual
 
-The preliminary apartment estimate for the benchmark lot (design-only; not built).
+The preliminary apartment estimate for the benchmark lot: reported for building B (17.27 to 21.59, conditional); building A's estimate is not given because building A needs the withheld footprint figure.
 
 - Inputs: floor_area_sq_ft = 20150; apartment_size_sq_ft = 700; efficiency_share = 0.60 to 0.75
 - Expected answer (independent): none
 - Basis of the expected answer (reference_case): step-p6-worked#real-estimate-b: real building B (20,150 sq ft) gives 20,150 x 0.60 / 700 = 17.27 (17-18) and 20,150 x 0.75 / 700 = 21.59 (21-22). real-estimate-a: real building A (about 10,310 sq ft) gives 8.84 (8-9) and 11.05 (11-12). The 0.60-0.75 share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner.
 - Independent record(s) cited: step-p6-worked#real-estimate-a, step-p6-worked#real-estimate-b, step-p6-worked#made-up-estimate-a, step-p6-worked#made-up-estimate-b
 - Who prepared the expected answer: worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional
-- Program's actual answer: none
-- Standing of the program's answer: not_built
-- What the engine computes (the document withholds it): none
-  - The preliminary capacity estimate is not built yet (fixture unit_estimate not_available, reason 'not built yet').
+- Program's actual answer: quotient_low = 17.27; quotient_high = 21.59
+- Standing of the program's answer: available_conditional
 - Do they agree? not determined - a side is withheld/not built, or the two readings differ
 
 ## What the program does today versus what is planned
 
 Implemented and tested:
-- The document reports the preliminary apartment estimate not_available, 'not built yet' (test: test_document_actuals_match_the_recorded_fixture).
+- The document gives building B's preliminary capacity estimate in building_alternatives (17.27 to 21.59, labelled 'Preliminary capacity estimate') and the single unit_estimate block points there (test: test_document_actuals_match_the_recorded_fixture).
 
 In the program but no test checks it:
 - (none recorded)
 
 Planned, not built:
-- The preliminary apartment estimate exists as a pure module (preliminary_apartment_estimate.py, M5-T145) but is connected to no reported result; the wiring that would feed it the proposed building's floor area and report an estimate is not built.
-- It needs a built building option / floor area to run from.
+- The share and size are shown with the values used but not yet changeable on the screen (DB-213 a).
+- Building A's estimate is not given because building A needs the withheld footprint figure.
 
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `fad72467cbe61896c9677834b1dba5e6662f87d4f79e470b824d87d015bb1a94`
-- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
+- Code identity tested: `6581c795305c325c3f1d2e3da7d619501eb061ec407975cb61914fbfae5673e8`
+- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
-- Counts: 42 passed
+- Counts: 53 passed
 - Evidence: [run log](../evidence/calc-preliminary-apartment-estimate.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -112,9 +111,10 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
-- The preliminary apartment estimate is built as a pure module (preliminary_apartment_estimate.py, M5-T145) but connected to no reported result; the measurement-basis record describes the method and is linked here.
+- Building A's preliminary estimate is not given because building A needs the withheld footprint figure.
+- The share and apartment size are shown but not yet changeable on the screen (DB-213 a); the measurement-basis record describes the method and is linked here.
 
-- Coverage gap: The preliminary apartment estimate (700 sq ft, 0.60-0.75) is built as a pure module (preliminary_apartment_estimate.py, M5-T145) but connected to no reported result; the document still reports it not built and the measurement-basis record describes the method and is linked from this entry.
+- Coverage gap: The preliminary apartment estimate is reported for building B in building_alternatives (17.27 to 21.59, conditional); building A's estimate is not given (it needs the withheld footprint figure), and the share and size are shown but not yet changeable on the screen (DB-213 a).
 
 ## Human review
 

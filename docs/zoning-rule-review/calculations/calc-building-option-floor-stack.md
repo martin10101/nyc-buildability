@@ -8,18 +8,18 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-09)
+- Revision: 3 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-height`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `b76885b3b64f02bb9994acfdaab2c73a704e83311f2af13e582e496f3ee039b2`
+- Combined code identity: `157835f933103f36ca3ead00f99d3c77e98706f980ab87eb4840650051d3936f`
 - Modules:
   - `services/api/app/scenario/three_answers/building_option.py` (`57ce8a88deede0edb505a63188082fd27dadc37b6eda5ac0de051619465789b1`)
   - `services/api/app/scenario/three_answers/result_ways.py` (`58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c`)
-  - `services/api/app/scenario/three_answers/first_building_options.py` (`26a92c402f816da31c90937e1850cd77f8dcf76afe9823812b40c59bc755330a`)
+  - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
 
 ## Law
 
@@ -30,17 +30,17 @@ An entry with no rule file is fingerprinted by the LF-normalized sha256 of its c
 
 ## Where it applies
 
-The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's method (compute_building_option) stacks one uniform widest plate (lot area x lot coverage) to the height limit and caps at the floor-area allowance, with a partial top floor. For the benchmark lot the document withholds the building option (coverage withheld, the sample building is below the minimum base height, and no reference case had been run).
+The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate (lot area x lot coverage) to the height limit and caps at the floor-area allowance, with a partial top floor. For the benchmark lot the single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional), and building A is not listed because it needs the withheld footprint figure.
 
 ## Exceptions and limits
 
-- The engine needs the lot coverage, which is withheld for the benchmark lot, so no footprint is produced.
-- The building option is withheld unconditionally this milestone (result_ways._building_option_withheld).
-- The method differs from the independent example's two buildings (DB-210); those two buildings are now built as a pure module (first_building_options.py, M5-T145) connected to no reported result.
+- Building B is reported in building_alternatives (conditional on the recorded lot area); building A is not listed because it needs the footprint square-foot figure, which is withheld where the two lot areas disagree.
+- The single building_option block is not shown; it points to the worked alternatives in building_alternatives.
+- The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from the independent example's two buildings (DB-210); building B is built by first_building_options.py (the fewest storeys reaching the minimum base height), which matches the independent building B.
 
 ## How the program reads it
 
-The engine stacks one uniform widest plate to the height limit, capping at the floor-area allowance with a partial top floor. The independent example instead works two buildings: the widest footprint in whole storeys to the floor-area maximum (building A) and the fewest storeys reaching the 30 ft minimum base height (building B); these two buildings are now built as a pure module (services/api/app/scenario/three_answers/first_building_options.py, M5-T145), but it is connected to no reported result and nothing imports it. This is a difference of method (DB-210); the engine's result on the benchmark lot is withheld because coverage is withheld, so the program's answer is unchanged. The module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.
+The document reports building B as a worked alternative in building_alternatives: 3 storeys of 6,716.67 sq ft to the 30 ft minimum base height, using the whole 20,150 sq ft floor-area allowance, conditional on the recorded lot area of 10,075 sq ft. Building B is built by first_building_options.py (the fewest storeys reaching the minimum base height; M5-T145), which matches the independent example's building B. Building A (the widest footprint in whole storeys) is not listed because it needs the footprint square-foot figure, which is withheld where the recorded and tax-map outline lot areas disagree. The single building_option block is not shown and points to the list. The engine's own compute_building_option method (one uniform widest plate to a partial top floor) is a different method (DB-210) and is set beside the independent two buildings in the worked example below; the module works one floor-to-floor height for every storey (the owner's 10 ft starting assumption, R542), so a 15 ft shop ground floor is not worked.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -74,27 +74,28 @@ The first building option's floor stack: the engine's method on the made-up inte
 
 Implemented and tested:
 - On the made-up interior lot (allowance 20,000; plate 8,000 = 10,000 x 80%; height limit 55 ft; 10 ft floor-to-floor) the engine's compute_building_option returns 3 floors (8,000 + 8,000 + 4,000) = 20,000 sq ft at 30 ft, which differs from the independent two buildings (test: test_engine_sample_stack_differs_from_independent_two_buildings).
-- The document withholds the building option (test: test_document_actuals_match_the_recorded_fixture).
+- The single building_option block is not shown in the document (test: test_document_actuals_match_the_recorded_fixture).
 
 In the program but no test checks it:
-- (none recorded)
+- The regenerated document lists building B in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional); no register test asserts the list's floor schedule (the server content tests do).
 
 Planned, not built:
-- The engine's own building-option generator and floor schedule are not built for the benchmark lot; the two step-P6 buildings exist as a pure module (first_building_options.py, M5-T145) but are connected to no reported result, and the wiring that would feed them a footprint and report a building is not built.
+- Building A is not worked because the footprint square-foot figure is withheld where the two lot areas disagree.
+- The engine's own single-answer building-option generator (compute_building_option) is not reported; it is set beside the independent example only in the worked example below.
 - One floor-to-floor height is worked for every storey (R542 10 ft), so a 15 ft shop ground floor is not worked.
 - Which building the first option shows is the owner's pending decision (DB-210).
 
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `b76885b3b64f02bb9994acfdaab2c73a704e83311f2af13e582e496f3ee039b2`
-- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
+- Code identity tested: `157835f933103f36ca3ead00f99d3c77e98706f980ab87eb4840650051d3936f`
+- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
-- Counts: 42 passed
+- Counts: 53 passed
 - Evidence: [run log](../evidence/calc-building-option-floor-stack.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -123,10 +124,11 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
-- The engine's method (one uniform widest plate to a partial top floor) differs from the independent example's two buildings; recorded as a design assumption that differs (DB-210).
+- The engine's own compute_building_option method (one uniform widest plate to a partial top floor) differs from building B's method (the fewest storeys reaching the minimum base height); recorded as a design assumption that differs (DB-210).
+- Building A is not listed because the footprint square-foot figure is withheld (the recorded and tax-map outline lot areas disagree).
 - The two step-P6 readings differ in the decimals of the real lot's footprint; both figures are held, no single figure.
 
-- Coverage gap: The building-option / floor-stack calculation is withheld in the program and uncompared; the two step-P6 buildings are built as a pure module (first_building_options.py, M5-T145) but connected to no reported result, and the engine's own generator is not built.
+- Coverage gap: Building B is reported as a worked alternative (conditional); building A needs the withheld footprint figure and is not listed; the single building_option block is not shown; the engine's own single-answer generator is not built, and its method differs from building B's (DB-210).
 
 ## Human review
 

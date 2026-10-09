@@ -185,7 +185,12 @@ def test_document_actuals_match_the_recorded_fixture():
     cov = doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]
     assert cov["way"] == "withheld"
     assert doc["unit_estimate"]["status"] == "not_available"
-    assert "not built yet" in doc["unit_estimate"]["reason"]
+    # the regenerated 1.4.0 document gives each worked building's estimate in building_alternatives,
+    # so the single unit_estimate block now points there (PART E / M5-T146)
+    assert "building_alternatives" in doc["unit_estimate"]["reason"]
+    est = doc["building_alternatives"][0]["capacity_estimate"]
+    assert est["label"] == "Preliminary capacity estimate"
+    assert (est["quotient_low"], est["quotient_high"]) == (17.27, 21.59)
 
 
 # --------------------------------------------------------------------------
@@ -559,17 +564,17 @@ def _render_again(reg: dict, tmp_path, monkeypatch) -> list[str]:
 
 
 def test_a_six_step_verdict_without_a_present_side_is_caught_after_render(tmp_path, monkeypatch):
-    # Change step 3's verdict from 'differ' to 'agree' while its program side stays 'not_available'
-    # (the G4 mutation f). After re-rendering the pages match the mutated data, so the stale-page
-    # check is clean - but the verdict guard still goes red.
+    # Force the withheld footprint step (its program side is withheld) to read 'agree'. After
+    # re-rendering, the pages match the mutated data so the stale-page check is clean - but the
+    # verdict guard still goes red (the G4 mutation f that a fresh render alone hid).
     reg = copy.deepcopy(REGISTER)
     comp = next(c for c in reg["calculations"] if c["entry_id"] == COMPARISON_ID)
-    assert comp["steps"][2]["verdict"] == "differ" and comp["steps"][2]["actual"]["state"] == \
-        "not_available"
-    comp["steps"][2]["verdict"] = "agree"
+    step = next(s for s in comp["steps"] if s["actual"]["state"] == "withheld")
+    assert step["verdict"] == "side_missing"
+    step["verdict"] = "agree"
     assert _render_again(reg, tmp_path, monkeypatch) == []  # a fresh render hides it
     errs = calc.step_verdict_errors(comp)
-    assert any("agree" in m and "present" in m for m in errs)  # the guard still catches it
+    assert any("side_missing" in m or "present" in m for m in errs)  # the guard still catches it
 
 
 def test_a_step_whose_side_changes_without_its_verdict_is_caught():

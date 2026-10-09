@@ -1,16 +1,12 @@
-# Test-run evidence for the zoning-rule review register - calculation entries (M5-T145 PART E)
+# Test-run evidence for the zoning-rule review register - calculation entries (M5-T146 PART D)
 # Committed log of one deterministic run of this calculation entry's linked test file,
-# executed in the task worktree on the code head 2e6dde3e. The four new M5-T145 calculation
-# modules (parts A-D: corner_reach_area.py, lot_coverage_by_portion.py,
-# first_building_options.py, preliminary_apartment_estimate.py) are now fingerprinted in this
-# six-step comparison's code_modules and are each connected to no reported result; every step
-# verdict is unchanged. The register source and one moved test assertion are PART E's
-# additions. The automated-tests field records the result; the checker never re-runs tests, it
-# only checks that the recorded code-identity and test-file digests still match the files.
+# executed in the task worktree on the integrated code head 455caec4. The six-step comparison now reads each step's actual side from the regenerated document (M5-T146). first_building_options.py and three_way_document.py changed, so the code modules, the combined code identity, the test-file digest, commit and counts are resynced.
+# The automated-tests field records the result; the checker never re-runs tests, it only checks
+# that the recorded code-identity and test-file digests still match the files.
 entry: calc-first-building-option-complete
 command (from services/api): python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register_calculations.py
 run date: 2026-10-09
-commit tested: 2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae
+commit tested: 455caec46895298a772505cdf34325d7fd758d96
 exit code: 0
 ---
-42 passed in 1.44s
+53 passed
