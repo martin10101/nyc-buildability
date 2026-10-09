@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T06:30:52+00:00",
+ "updated_at": "2026-10-09T06:44:55+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -794,7 +794,7 @@
   "D-090-R770"
  ],
  "requirements_id_digest_sha256": "94bf179d549815615b6875be74f43695d266526c39cc3cfd497fbb89f30f1e5a",
- "requirements_content_digest_sha256": "5da185cd51b48d079b6c948c4740a17f2b3a78f7b6efee5d12feaa3df2d5f035",
+ "requirements_content_digest_sha256": "39093a36a93e71c56decd7d190d0c7faf1307cbde326e3c85f8782352ca453e0",
  "sources": [
   {
    "file": "source-001.md",
@@ -1499,7 +1499,8 @@
   "M5-T142",
   "M5-T143",
   "M5-T144",
-  "M4-T037"
+  "M4-T037",
+  "M4-T038"
  ],
  "affected_prs": [
   262,
@@ -2200,6 +2201,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-073 (session 013RaGmC: the owner approves the minimal local checkpoint hook with corrections, 2026-10-09: only the compact-matched hook, no copy of the reminder, no setting overwritten; this session's notes selected explicitly; source path and timestamp in the output; nothing cut silently; the record corrected (background helpers survive a compaction by the current documentation); a setup-specific limitation named before any restriction; the output checked for the right session, a missing and an oversized checkpoint; the final script and a sample with the next normal update; bounded) and requirements D-090-R758 to R770, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:44:55+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T038 (G0 contract: calculation entries in the zoning-rule review register and the first building option's calculation comparison) to R379, R686, R687, R688, R689, R690, R691, R692, R693, R694, R695, R696, R697, R698, R699, R700, R701, R702, R703, R704, R705, R706, R707 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }
