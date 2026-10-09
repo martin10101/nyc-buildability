@@ -94,8 +94,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "import-guard trip -> the new module must import only from .engine_conditions and must NOT contain the substring 'result_way'; if any needed import forces that substring into the file, add three_way_scope_lines.py to the permitted set in test_result_ways.py (lines 85-98) in this same task and say so in the report.",
     "hidden wording drift -> S2's full-document deep-equality to the committed fixture, plus running the drawings/CAD/PDF snapshot tests that render the fixture, proves no string moved.",
@@ -106,7 +106,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T01:25:49.508134+00:00",
-  "updated_at": "2026-10-09T03:14:00.974580+00:00",
+  "updated_at": "2026-10-09T03:25:39.504648+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -140,5 +140,7 @@
       "status": "claimed",
       "message": "The builder's three commits integrated by cherry-pick (4e7b9663 the move and the first tests; bb49fcba the gap (a) test replaced by a completeness guard, sent back by the orchestrator before any review; 71334640 after the test review's two notes: the fallback texts really in the text guard's list, the guard's reason for the geometry block made true, a known defect of the emitter pinned by a strict expected-failure test and NOT repaired here). CI was read green on bb49fcba (run 37874041571, 02:26 UTC) BEFORE the two full reviews (G3 code-reviewer PASS, G4 qa-engineer PASS) and on 71334640 (run 37877222923, 03:09 UTC) BEFORE the two delta confirmations (both CONFIRMED) and before any gate. Returns kept unchanged in M5-T143-G3G4.md. Owner message 127 was recorded on this branch meanwhile (source-065, registry files only)."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T03:25:39.504494+00:00"
 }

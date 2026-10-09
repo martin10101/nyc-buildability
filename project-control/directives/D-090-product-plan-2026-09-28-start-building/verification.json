@@ -3596,24 +3596,35 @@
     "D-090-R570"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "a33c57fab12cc986ec0db28d2c2d3ce99a398628",
+   "reviewed_manifest_sha256": "2b4739a21960f1bc797fee05989a3973bb270bcb7cb4c24ce86c593e6a4a5604",
    "requirements": [
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text: a value the program does not have is shown as not known, never a zero, default or guess.",
+      "test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_number (test_three_answers_three_way_emit.py:1366) forces engine_doc[\"unit_estimate\"]=not_available, then asserts way==\"withheld\", reason==\"The legal dwelling-unit limit is not known: the figure it would be read from is not available for this lot.\", resolved_by==\"A recorded lot area, or a survey or deed dimensions.\", the value object is None, and the would-have figure 16 is absent from _all_result_numbers \u2014 no number/zero/default appears. Focused run: 465 passed, 2 skipped, 1 xfailed, exit 0.",
+      "This is this task's whole share (the emitted document only); apps/web, drawings and PDF are untouched (git diff --stat ... -- apps empty), so the website/drawings/PDF part of R229 stays open (pending) in the registry for its own tasks.",
+      "Verifier's carry-forward condition met at a33c57fa: the task's allowed-path files are identical to those verified at 4626ebad (content identity 2b4739a2), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer; producer backend-engineer is neither). DCV report: project-control/reports/M5-T143-DCV.md."
+     ],
+     "reviewed_sha": "a33c57fab12cc986ec0db28d2c2d3ce99a398628"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text: a withheld value stays withheld \u2014 no number, no older and no substitute value in its place.",
+      "test_db199a_every_block_of_the_emitted_document_is_classified (:1233) proves every top-level block and every in-answer key of six real documents is either walked by _all_result_numbers or named with a reason; test_db199a_completeness_guard_catches_a_new_numeric_block (:1266) proves a new numeric block (top-level and in-answer) fails the guard; the db199b test shows the withheld limit's would-have figure (16) is absent from the result numbers. All pass.",
+      "KNOWN DEFECT bearing on this share: for a corner lot in a recorded flood zone the withheld max_building_height (55) still sits at geometry.envelope.tiers[0].top_ft; the geometry guard reason (:1191-1198) names this truthfully and strict-xfail test_db199a_withheld_height_figure_leaks_into_geometry_known_defect (:1291) pins it. This task neither creates nor repairs it (no emitter behaviour changed), so the full R570 prohibition is NOT discharged here; the row stays open (pending) in the registry for the repair (backlog DB-209).",
+      "Verifier's carry-forward condition met at a33c57fa: the task's allowed-path files are identical to those verified at 4626ebad (content identity 2b4739a2), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent code-reviewer, G4 independent qa-engineer; producer backend-engineer is neither). DCV report: project-control/reports/M5-T143-DCV.md."
+     ],
+     "reviewed_sha": "a33c57fab12cc986ec0db28d2c2d3ce99a398628"
     }
-   ]
+   ],
+   "verified_at": "2026-10-09T03:25:38+00:00"
   }
  ]
 }
