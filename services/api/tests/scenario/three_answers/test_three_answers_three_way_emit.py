@@ -1894,7 +1894,8 @@ def test_w14c_allowance_not_shown_building_option_states_only_what_is_true():
     was never worked. The geometry floor-plates layer carries the same true text (the first option
     is not applied, so it is not reconciled)."""
     _engine, doc = _emit_made_up(
-        lot_area=10075, lot_type="corner", way_inputs=base_inputs(),  # overlay, no support -> blanket
+        # a recorded overlay with no supporting reading -> a blanket withhold
+        lot_area=10075, lot_type="corner", way_inputs=base_inputs(),
     )
     assert doc["answers"]["floor_area_allowance"]["status"] != "available"  # allowance not shown
     reason = doc["answers"]["building_option"]["reason"]
