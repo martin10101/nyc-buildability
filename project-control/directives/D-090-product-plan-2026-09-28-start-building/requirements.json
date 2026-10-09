@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 775,
+ "requirement_count": 778,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T18:25:38+00:00",
+ "updated_at": "2026-10-09T19:04:43+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -26319,6 +26319,101 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (one file for the questions waiting for the owner, kept current).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R776",
+   "text": "'Just to do a little test, I believe that you have already set up that you are able to write full PDFs.' 'And so is there a way that we can get, let's say, take one address in the R6 zone that we can like see what the program can produce right now? Like a full on PDF of everything the program can produce will be in that kind of like similar to my competitor the 88 page PDF I don't know if you have access to that if not let me know but the point is I want to be able to see what information we can already obtain and how it looks on the PDF': as a one-off test, produce for one address in an R6 district a PDF that shows everything the program can produce today, so that the owner sees what information is already obtained and how it looks. ORCHESTRATOR'S READING: the address is the recorded benchmark lot, 215-16 Northern Boulevard (R6B, an R6 contextual district), the only lot whose city data the program can read offline today; the PDF is assembled outside the repository from the program's own outputs (the results screen as it renders, the results document, the drawings and the one-page site-plan sheet the program writes); every page says it is a test, which parts are reviewed and merged and which are not yet, and that the program has no report PDF of its own yet; nothing in it is called feasible, and withheld results stay withheld.",
+   "source_ref": "source-077-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A PDF file sent to the owner, made only from the program's outputs at a named revision, with its test label.",
+   "required_evidence": "The PDF, the script that assembled it and the revision it was made from, kept in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (a one-off test PDF to see what the program produces today).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R777",
+   "text": "'And so is there a way that we can get, let's say, take one address in the R6 zone that we can like see what the program can produce right now? Like a full on PDF of everything the program can produce will be in that kind of like similar to my competitor the 88 page PDF I don't know if you have access to that if not let me know but the point is I want to be able to see what information we can already obtain and how it looks on the PDF': say whether the competitor's 88-page PDF is available to the session. ORCHESTRATOR'S READING: it is (the owner uploaded it on 2026-10-04; it is the study of the same benchmark lot); the reply says so.",
+   "source_ref": "source-077-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The reply says whether the 88-page PDF is available.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (a one-off test PDF to see what the program produces today).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R778",
+   "text": "'And so is there a way that we can get, let's say, take one address in the R6 zone that we can like see what the program can produce right now? Like a full on PDF of everything the program can produce will be in that kind of like similar to my competitor the 88 page PDF I don't know if you have access to that if not let me know but the point is I want to be able to see what information we can already obtain and how it looks on the PDF': the test shows what information the program can already obtain and how it looks on the PDF. ORCHESTRATOR'S READING: alongside the PDF, a plain comparison with the contents of the 88-page study: for each of its sections, whether the program has it, has part of it, or not yet, so the gap to the full report is visible.",
+   "source_ref": "source-077-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R776"
+   ],
+   "required_harness": "The PDF or the reply carries a section-by-section comparison with the 88-page study.",
+   "required_evidence": "The comparison.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (a one-off test PDF to see what the program produces today).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
