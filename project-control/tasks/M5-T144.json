@@ -184,8 +184,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Flipping the C2-2/R6B rear-yard support row changes behaviour for a C2-2/R6B corner lot WITHIN 100 ft (now shown settled, S2) -> the builder sweeps every existing decision-module and emit test by git grep for a C2-2/R6B rear-yard assertion and confirms each still asserts the correct new state; any out-of-scope test update is routed to the orchestrator, never left red.",
     "The corrected reason could over-claim the law -> the exact texts above claim no more than step-p5 rows zr-34-23-page and benchmark-rear-yard-23-342-23-344, step-p4 rear-yard and step-p3 real-lot-rear-yard-beyond-corner; no raw section number in the prose; never 'professional review' or 'qualified'; the data-contract-verifier and directive-compliance-verifier check the texts against those rows.",
@@ -201,7 +201,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T03:48:47.483601+00:00",
-  "updated_at": "2026-10-09T05:20:07.779319+00:00",
+  "updated_at": "2026-10-09T05:20:23.516276+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -256,5 +256,7 @@
       "status": "awaiting_gate",
       "message": "CORRECTION of the note of 05:06:03 UTC above: it says CI on 582dcccb was 'read again 05:10 UTC'. That clock time was written from memory and is wrong (it lies after the note itself). The second read was made by the orchestrator between 05:04:38 UTC (the commit before it) and 05:06:03 UTC (the note); the first read, at 04:39 UTC before the reviews, is as the review record says. Nothing else in that note changes. The rule check (directive-compliance-verifier) returned PASS for the ten rows at 5e7be6c3, received 05:19 UTC, no correction required."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T05:20:23.516104+00:00"
 }
