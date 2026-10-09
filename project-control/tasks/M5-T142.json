@@ -152,7 +152,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "Announcement text drifts from the visible title -> the announcement reads the SAME resultsFailureNotice(outcome).title and the SAME extracted NotConnected-title const the card shows; S8/S9 assert equality against the rendered title.",
     "A conditional figure still reads as confirmed -> the 'Conditional' marker renders adjacent to the number for every conditional value and headline; S2/S3/S4 assert the marker is present and S4 that the number never renders without it.",
@@ -166,7 +166,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T23:59:27.297763+00:00",
-  "updated_at": "2026-10-09T00:00:49.187060+00:00",
+  "updated_at": "2026-10-09T00:48:42.590077+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -198,6 +198,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted and claimed. The draft was read against the code first (how the conditions are joined; every reader of the joined line; the browser journey's checks; the announcer component). Not pushed: under the owner's simplification the contract and claim seams ride with the push of the head under review. Next: one builder (frontend-engineer) in an isolated worktree reset to the claim-seam head; it starts no server and runs no browser test."
+    },
+    {
+      "at": "2026-10-09T00:48:42.590000+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "The builder's one commit integrated by cherry-pick as 69b126f6 (blobs equal to the builder's). That head was pushed once and CI was read on it BEFORE any review or gate: CI run 37865020367, attempt 1, 21 of 21 jobs success; secret-scan 37865020380 and context-budget 37865020327 success (read 00:36 UTC, 2026-10-09). Then three independent reviews at 69b126f6: G3 code-reviewer PASS, G4 qa-engineer PASS, the walkthrough of the running screen PASS; no blocking finding; their returns are kept unchanged in M5-T142-G3G4.md. The builder ran no build and no browser test (the packet's ruling L2); those ran in CI."
     }
   ]
 }
