@@ -206,11 +206,13 @@ export interface WithheldValueView {
   gapKindLine: string | null;
 }
 
-/** A shown value and, when its way is conditional, the "If <assumption>" line to show with it. */
+/** A shown value and, when its way is conditional, each condition on its own line. */
 export interface ShownValueView {
   value: AnswerValue;
-  /** "If <assumption>" when the value's way is conditional (work order §0); null when settled. */
-  condition: string | null;
+  /** One "If <assumption>" line per condition when the value's way is conditional (work order
+   * §0; ruling L1). EMPTY for a settled value — the ONE representation of the conditions, so no
+   * joined line can disagree with the list. */
+  conditions: readonly string[];
 }
 
 /** The big headline of an available answer: a shown value, or - when the designated headline key is
@@ -246,13 +248,16 @@ function valueStates(
   return states ? (states as Record<string, ValueState>) : {};
 }
 
-/** The "If <assumption>" line for a value whose way is conditional, else null. More than one
- * assumption is joined so each reads on the card; nothing is retyped (read from the document). */
-function conditionLine(state: ValueState | undefined): string | null {
-  if (!state || state.way !== "conditional") return null;
-  const assumptions = state.conditions.map(condition => condition.assumption.trim());
-  const text = assumptions.join(" ");
-  return text.startsWith(IF_PREFIX) ? text : `${IF_PREFIX}${text}`;
+/** Each condition of a value whose way is conditional, one line per condition (ruling L1); an
+ * empty list for a settled value. Nothing is retyped (each line is the document's assumption,
+ * trimmed); the reader's rule is applied to EACH entry by itself — "If " is put in front only
+ * when that entry does not already begin with it, so the two assumptions never run together. */
+function conditionList(state: ValueState | undefined): readonly string[] {
+  if (!state || state.way !== "conditional") return [];
+  return state.conditions.map(condition => {
+    const text = condition.assumption.trim();
+    return text.startsWith(IF_PREFIX) ? text : `${IF_PREFIX}${text}`;
+  });
 }
 
 export function answerView(
@@ -284,7 +289,7 @@ export function answerView(
   const shownKeys = new Set(values.map(value => value.key));
   const shownView = (value: AnswerValue): ShownValueView => ({
     value,
-    condition: conditionLine(states[value.key]),
+    conditions: conditionList(states[value.key]),
   });
 
   // The withheld values: every value_states entry whose way is 'withheld' and that is NOT shown in

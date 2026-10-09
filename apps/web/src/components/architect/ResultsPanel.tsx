@@ -15,6 +15,7 @@
 
 import { useCallback, useRef, useState } from "react";
 import { fetchResults, type ResultsFetchOutcome, type ResultsRequestBody } from "@/lib/results-api";
+import { OutcomeAnnouncer } from "@/components/property/OutcomeAnnouncer";
 import { ThreeAnswersPanel } from "./answers/ThreeAnswersPanel";
 import {
   ResultsForm,
@@ -36,6 +37,15 @@ export const PARKING_LINE =
 /** R3: shown when an input changed since the shown result was asked for. */
 export const STALE_INPUTS_LINE =
   "You changed an input. These results are for the earlier inputs. Press Show results to update.";
+
+/** The ONE title of the 404 "not connected yet" card, reused by the card and by the
+ * screen-reader announcement so the two can never drift (walkthrough F2). */
+export const NOT_CONNECTED_TITLE = "Results are not connected yet";
+
+/** The screen-reader announcement when a result arrives (walkthrough F2; the only new AT-only text
+ * the website adds, besides the 'Conditional' marker). Set when an outcome arrives and cleared to
+ * '' while a request runs, so the SAME outcome on a retry is announced again (OutcomeAnnouncer). */
+export const RESULTS_READY_ANNOUNCEMENT = "Development results are ready.";
 
 const INITIAL_VALUES: ResultsFormValues = {
   program: "standard_residence",
@@ -191,10 +201,27 @@ function NotConnectedCard() {
   return (
     <section className="card architect-empty" data-testid="results-unavailable">
       <p className="architect-eyebrow">Development results</p>
-      <h2>Results are not connected yet</h2>
+      <h2>{NOT_CONNECTED_TITLE}</h2>
       <p>The results service is not available on this server. No results were shown.</p>
     </section>
   );
+}
+
+/**
+ * The screen-reader announcement for the current state (walkthrough F2). '' while a request runs
+ * or before any outcome, so a result is announced only on arrival and the SAME outcome on a retry
+ * re-announces (the region's text genuinely changes). A success reads the fixed ready sentence; a
+ * 404 reads the SAME title the not-connected card shows; every other failure reads the SAME title
+ * its failure notice shows — so the announcement can never drift from the visible title.
+ */
+export function resultsAnnouncement(
+  busy: boolean,
+  outcome: ResultsFetchOutcome | null,
+): string {
+  if (busy || outcome === null) return "";
+  if (outcome.kind === "success") return RESULTS_READY_ANNOUNCEMENT;
+  if (outcome.kind === "not_available") return NOT_CONNECTED_TITLE;
+  return resultsFailureNotice(outcome)?.title ?? "";
 }
 
 export interface ResultsPanelProps {
@@ -245,9 +272,13 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
   const showingDocument = !busy && outcome?.kind === "success";
   const stale = showingDocument && askedWith !== null && !sameInputs(values, askedWith);
   const failure = !busy && outcome !== null ? resultsFailureNotice(outcome) : null;
+  // The one polite live region (walkthrough F2): announce a result and each failure to a
+  // screen-reader user. Cleared to '' while busy so a repeated outcome re-announces.
+  const announcement = resultsAnnouncement(busy, outcome);
 
   return (
     <section className="results-panel" aria-label="Development results" data-testid="results-panel">
+      <OutcomeAnnouncer message={announcement} testId="results-announcer" />
       <ResultsForm
         values={values}
         onChange={onChange}

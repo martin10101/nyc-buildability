@@ -11,7 +11,6 @@ import {
   type BuildingOptionNoteView,
   type ExceptionLabel,
   type ShortfallView,
-  type ShownValueView,
   type SupplementView,
   type Unit,
   type WithheldValueView,
@@ -21,12 +20,17 @@ import {
  * reason, and NEVER a number falling back from another value (R556, R570). */
 const NOT_KNOWN = "Not known";
 
+/** The fixed marker word the website puts beside a conditional figure so the figure never reads as
+ * confirmed (ruling L3; R229/R267/R269). Plain text, normal weight, never a colour-only signal. */
+const CONDITIONAL_MARKER = "Conditional";
+
 /**
  * One of the three answers (queue D-05; plan §5). Available: the headline number, large, then
  * the answer's other values and any withheld value shown as its reason; rule sections and the
  * measurement label sit behind "Rule sections" (plan §5a items 4 and 5). A conditional value shows
- * its "If <assumption>" line. Not available: the one line "Not available — <reason>" and nothing
- * else — no number, no exception tag, no details (plan §5, §5a item 3).
+ * the 'Conditional' marker beside the figure and each condition on its own line. Not available: the
+ * one line "Not available — <reason>" and nothing else — no number, no exception tag, no details
+ * (plan §5, §5a item 3).
  */
 export function AnswerCard({
   answerKey,
@@ -61,15 +65,17 @@ export function AnswerCard({
     <section className="ta-answer" data-testid={`answer-${answerKey}`}>
       <h3 className="ta-answer-title">{ANSWER_TITLES[answerKey]}</h3>
       {view.headline.kind === "value" ? (
-        <p className="ta-headline" data-testid="answer-headline">
-          <span className="ta-headline-label">{view.headline.shown.value.label}</span>{" "}
-          <HeadlineValue
-            value={view.headline.shown.value.value}
-            unit={view.headline.shown.value.unit}
-          />
-          <ExceptionTag label={view.headline.shown.value.exception_label} />
-          <ConditionNote condition={view.headline.shown.condition} />
-        </p>
+        <>
+          <p className="ta-headline" data-testid="answer-headline">
+            <span className="ta-headline-label">{view.headline.shown.value.label}</span>{" "}
+            <HeadlineValue
+              value={view.headline.shown.value.value}
+              unit={view.headline.shown.value.unit}
+            />
+            <ExceptionTag label={view.headline.shown.value.exception_label} />
+          </p>
+          <ConditionBlock conditions={view.headline.shown.conditions} />
+        </>
       ) : (
         <WithheldLine entry={view.headline.withheld} testid="answer-headline-withheld" />
       )}
@@ -81,7 +87,7 @@ export function AnswerCard({
               <dd>
                 {quantityText(displayQuantity(row.value.value, row.value.unit))}
                 <ExceptionTag label={row.value.exception_label} />
-                <ConditionNote condition={row.condition} />
+                <ConditionBlock conditions={row.conditions} />
               </dd>
             </div>
           ))}
@@ -134,28 +140,32 @@ function WithheldLine({
         {NOT_KNOWN} — {entry.reason}
       </span>
       {entry.gapKindLine !== null ? (
-        <>
-          {" "}
-          <span className="ta-gap-kind" data-testid="answer-gap-kind">
-            {entry.gapKindLine}
-          </span>
-        </>
+        <span className="ta-gap-kind" data-testid="answer-gap-kind">
+          {entry.gapKindLine}
+        </span>
       ) : null}
     </>
   );
 }
 
-/** The "If <assumption>" line for a conditional value (results contract 1.3.0), set apart from the
- * settled results; nothing is drawn for a settled value. */
-function ConditionNote({ condition }: { condition: ShownValueView["condition"] }) {
-  if (!condition) return null;
+/** A conditional value: the fixed 'Conditional' marker beside the figure, then each condition on
+ * its own line (ruling L1/L3). Nothing is drawn for a settled value (empty list). The marker and
+ * the lines are plain text in normal weight — the state is told by the words, never by colour. */
+function ConditionBlock({ conditions }: { conditions: readonly string[] }) {
+  if (conditions.length === 0) return null;
   return (
-    <>
-      {" "}
-      <span className="ta-condition" data-testid="answer-condition">
-        {condition}
+    <div className="ta-conditional" data-testid="answer-conditional">
+      <span className="ta-conditional-marker" data-testid="answer-conditional-marker">
+        {CONDITIONAL_MARKER}
       </span>
-    </>
+      <ul className="ta-conditions">
+        {conditions.map((condition, index) => (
+          <li className="ta-condition" data-testid="answer-condition" key={`${index}-${condition}`}>
+            {condition}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

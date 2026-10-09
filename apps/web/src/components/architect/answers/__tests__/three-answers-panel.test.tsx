@@ -488,3 +488,133 @@ describe("the three-way value-states layer (results contract 1.3.0; S14, R556, R
     expect(headlineWithheld.textContent).toContain("Not known");
   });
 });
+
+describe("M5-T142: the conditions as a per-line list under the 'Conditional' marker, withheld layout", () => {
+  const CONDITIONAL_MARKER = "Conditional";
+  const GAP_LINE = "Not built yet: this part of the program is still owed.";
+
+  type FloorAreaAvailable = Extract<
+    Results["answers"]["floor_area_allowance"],
+    { status: "available" }
+  >;
+
+  // A 1.3.0 probe from the all-available fixture (a draft) whose floor-area answer carries the
+  // given value_states; every value with no entry stays settled. Rendered with showDraftValues.
+  function floorAreaProbe(valueStates: NonNullable<FloorAreaAvailable["value_states"]>): Results {
+    const doc = loadResultsFixture(ALL_AVAILABLE);
+    const answer = doc.answers.floor_area_allowance;
+    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
+    return {
+      ...doc,
+      contract_version: "1.3.0",
+      answers: {
+        ...doc.answers,
+        floor_area_allowance: { ...answer, value_states: valueStates },
+      },
+    };
+  }
+
+  function conditional(assumptions: readonly string[]): NonNullable<FloorAreaAvailable["value_states"]> {
+    return {
+      max_residential_floor_area: {
+        way: "conditional",
+        conditions: assumptions.map(assumption => ({
+          kind: "unchecked_condition",
+          assumption,
+          settled_by: "A survey or deed dimensions",
+        })),
+      },
+    };
+  }
+
+  it("S1: a settled value shows the figure alone — no marker, no condition line, no 'Not known'", () => {
+    render(<ThreeAnswersPanel results={floorAreaProbe({ max_residential_floor_area: { way: "settled" } })} showDraftValues />);
+    const cardEl = card("floor_area_allowance");
+    expect(within(cardEl).getByTestId("answer-headline-number")).toBeInTheDocument();
+    expect(within(cardEl).queryAllByTestId("answer-conditional-marker")).toHaveLength(0);
+    expect(within(cardEl).queryAllByTestId("answer-condition")).toHaveLength(0);
+    expect(cardEl.textContent ?? "").not.toContain(CONDITIONAL_MARKER);
+    expect(cardEl.textContent ?? "").not.toContain("Not known");
+  });
+
+  it("S2: a conditional value shows exactly its conditions, each verbatim, under the marker", () => {
+    const first = "If the recorded lot area of 10,075 sq ft is confirmed";
+    const second = "If none of these conditions, which were not checked, applies to this lot";
+    render(<ThreeAnswersPanel results={floorAreaProbe(conditional([first, second]))} showDraftValues />);
+    const cardEl = card("floor_area_allowance");
+    const items = within(cardEl).getAllByTestId<HTMLElement>("answer-condition");
+    expect(items).toHaveLength(2);
+    expect(items.map(item => item.textContent)).toEqual([first, second]);
+    for (const item of items) expect(item.tagName).toBe("LI"); // one line each, not a joined span
+    expect(within(cardEl).getByTestId("answer-conditional-marker").textContent).toBe(CONDITIONAL_MARKER);
+  });
+
+  it("S3: a single-condition value shows one line equal to the assumption, with the marker", () => {
+    const only = "If the recorded lot area is confirmed";
+    render(<ThreeAnswersPanel results={floorAreaProbe(conditional([only]))} showDraftValues />);
+    const cardEl = card("floor_area_allowance");
+    const items = within(cardEl).getAllByTestId("answer-condition");
+    expect(items).toHaveLength(1);
+    expect(items[0].textContent).toBe(only);
+    expect(within(cardEl).getByTestId("answer-conditional-marker")).toBeInTheDocument();
+  });
+
+  it("S4: a conditional headline figure renders with the marker; the number never renders alone", () => {
+    render(<ThreeAnswersPanel results={floorAreaProbe(conditional(["If the recorded lot area is confirmed"]))} showDraftValues />);
+    const cardEl = card("floor_area_allowance");
+    // the designated headline key is conditional: the large number and the marker both render
+    expect(within(cardEl).getAllByTestId("answer-headline-number")).toHaveLength(1);
+    expect(within(cardEl).getAllByTestId("answer-conditional-marker")).toHaveLength(1);
+    expect(within(cardEl).getByTestId("answer-conditional-marker").textContent).toBe(CONDITIONAL_MARKER);
+    expect(within(cardEl).getByTestId("answer-conditional")).toBeInTheDocument(); // the list below it
+  });
+
+  it("S5: each withheld envelope value shows 'Not known' + reason + its own kind-of-gap line, not inline-joined, no figure", () => {
+    const doc = loadResultsFixture("recorded_215_16_northern_journey");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const envelope = card("permitted_envelope");
+    const env = doc.answers.permitted_envelope;
+    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
+    const rows = within(envelope).getAllByTestId<HTMLElement>("answer-withheld-value");
+    let seen = 0;
+    for (const [key, state] of Object.entries(env.value_states)) {
+      if (state.way !== "withheld") continue;
+      seen += 1;
+      const row = rows.find(candidate => (candidate.querySelector("dt")?.textContent ?? "") === state.label);
+      if (!row) throw new Error(`withheld row missing for ${key}`);
+      const reason = within(row).getByTestId("answer-withheld-reason");
+      const gap = within(row).getByTestId("answer-gap-kind");
+      expect(reason.textContent).toBe(`Not known — ${state.reason}`); // reason, no number falls back
+      expect(gap.textContent).toBe(GAP_LINE);
+      expect(reason.textContent ?? "").not.toContain("Not built yet"); // the gap line is set apart
+      expect(gap.previousSibling).toBe(reason); // its OWN element, no whitespace joining it inline
+      // the whole row is exactly the label, the reason and the gap line — no figure of its own
+      expect(row.textContent).toBe(`${state.label}Not known — ${state.reason}${GAP_LINE}`);
+    }
+    expect(seen).toBeGreaterThanOrEqual(3); // coverage, rear yard, setback above base
+  });
+
+  it("S6: settled, conditional and withheld in one card are told apart by the text, not by colour", () => {
+    const doc = floorAreaProbe({
+      max_residential_floor_area: { way: "settled" }, // the headline figure
+      max_residential_far: conditional(["If the recorded lot area is confirmed"]).max_residential_floor_area,
+      legal_unit_limit_standard: {
+        way: "withheld",
+        label: "Legal dwelling-unit limit",
+        reason: "There is no evidence of a special density area, so it is not known.",
+        gap_kind: "work_owed",
+        resolved_by: "Sourced evidence of the special density area",
+      },
+    });
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const cardEl = card("floor_area_allowance");
+    const text = cardEl.textContent ?? "";
+    expect(text).toContain(CONDITIONAL_MARKER); // the conditional value is named by a word
+    expect(text).toContain("Not known"); // the withheld value is named by a word
+    // exactly one conditional value and one withheld value: the settled headline adds neither
+    expect(within(cardEl).getAllByTestId("answer-conditional-marker")).toHaveLength(1);
+    expect(within(cardEl).getAllByTestId("answer-withheld-value")).toHaveLength(1);
+    // the settled headline figure itself carries no marker
+    expect(within(cardEl).getByTestId("answer-headline").textContent ?? "").not.toContain(CONDITIONAL_MARKER);
+  });
+});
