@@ -388,6 +388,26 @@ function checkCoverageByPortion(problems: Problems, value: unknown): void {
   }
 }
 
+/** The buildings_not_worked list (schema, contract 1.4.0; ruling W14/W15, the walkthrough F1).
+ * Absent or null is accepted (additive); when present each entry carries building, label, reason,
+ * gap_kind and resolved_by — all plain strings, NO number field (the schema's additionalProperties
+ * rejects one; the panel reads only these). */
+function checkBuildingsNotWorked(problems: Problems, value: unknown): void {
+  if (value === null || value === undefined) return;
+  const list = checkBoundedArray(problems, "buildings_not_worked", value);
+  if (!list) return;
+  list.forEach((item, index) => {
+    const path = `buildings_not_worked[${index}]`;
+    const entry = checkObject(problems, path, item);
+    if (!entry) return;
+    checkNonEmptyString(problems, `${path}.building`, entry.building);
+    checkNonEmptyString(problems, `${path}.label`, entry.label);
+    checkNonEmptyString(problems, `${path}.reason`, entry.reason);
+    checkEnum(problems, `${path}.gap_kind`, entry.gap_kind, GAP_KINDS);
+    checkNonEmptyString(problems, `${path}.resolved_by`, entry.resolved_by);
+  });
+}
+
 /**
  * Validate a results document against the shape the panel reads. On success returns the typed
  * document (the reader's Pick); otherwise a bounded list of problems. SHAPE only — no legal
@@ -435,6 +455,7 @@ export function validateResultsDocument(body: unknown): ResultsValidation {
   // The additive contract-1.4.0 blocks (first building options; absent/null on a 1.3.0 document).
   checkBuildingAlternatives(problems, doc.building_alternatives);
   checkCoverageByPortion(problems, doc.coverage_by_portion);
+  checkBuildingsNotWorked(problems, doc.buildings_not_worked);
 
   if (problems.list.length > 0) return { ok: false, problems: problems.list };
   return { ok: true, document: doc as unknown as ThreeAnswersResults };

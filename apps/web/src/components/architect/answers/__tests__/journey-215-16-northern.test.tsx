@@ -205,4 +205,33 @@ describe("M5-T147 PART C: the first building option on the regenerated screen (c
     expect(card.textContent ?? "").toContain("Not available");
     expect(card.textContent ?? "").not.toMatch(SNAKE_CASE);
   });
+
+  it("S10: building A (not worked) is named after the listed building, with its reason and resolver, and no footprint figure", () => {
+    const doc = loadResultsFixture(JOURNEY_FIXTURE);
+    const notWorked = doc.buildings_not_worked ?? [];
+    const buildingA = notWorked.find(entry => entry.building === "A");
+    if (!buildingA) throw new Error("fixture changed: the regenerated journey must list building A as not worked");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const section = screen.getByTestId("first-building-options");
+    // the listed building comes first, the not-worked building after it.
+    const worked = within(section).getAllByTestId("building-alternative");
+    const notWorkedBlocks = within(section).getAllByTestId("building-not-worked");
+    expect(worked.length).toBeGreaterThan(0);
+    expect(notWorkedBlocks.length).toBe(notWorked.length);
+    const aBlock = notWorkedBlocks.find(
+      block => (within(block).getByTestId("building-not-worked-label").textContent ?? "") === buildingA.label,
+    );
+    if (!aBlock) throw new Error("building A's not-worked block is missing");
+    expect(within(aBlock).getByTestId("building-not-worked-reason").textContent).toBe(
+      `Not known — ${buildingA.reason}`,
+    );
+    expect(within(aBlock).getByTestId("building-not-worked-resolved").textContent).toContain(
+      buildingA.resolved_by,
+    );
+    // nothing in building A reads as a footprint FIGURE: its block carries no square-foot number (the
+    // label's words "the widest footprint" are fine; a withheld footprint never shows a figure).
+    expect(aBlock.textContent ?? "").not.toContain(" sq ft");
+    // the whole section still carries no machine code.
+    expect(section.textContent ?? "").not.toMatch(SNAKE_CASE);
+  });
 });

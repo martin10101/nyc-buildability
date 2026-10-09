@@ -18,6 +18,9 @@ import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-
 
 const BENCHMARK = "synthetic_building_alternatives_contract_1_4_0";
 const COVERAGE_AVAILABLE = "synthetic_coverage_by_portion_available_contract_1_4_0";
+/** The regenerated committed benchmark carries buildings_not_worked (building A); the synthetic
+ * fixtures above (part A, before ruling W14) do not. */
+const JOURNEY = "recorded_215_16_northern_journey";
 
 type Alternative = NonNullable<Results["building_alternatives"]>[number];
 
@@ -28,14 +31,53 @@ function firstAlternative(doc: Results): Alternative {
 }
 
 describe("firstBuildingOptionsView (contract 1.4.0)", () => {
-  it("returns null for every document with none of the new blocks, and a view when either is present", () => {
+  it("returns null for every document with none of the new blocks, and a view when any is present", () => {
     for (const { name, doc } of loadResultsFixtures()) {
       const hasBlocks =
-        (doc.building_alternatives?.length ?? 0) > 0 || doc.coverage_by_portion != null;
+        (doc.building_alternatives?.length ?? 0) > 0 ||
+        doc.coverage_by_portion != null ||
+        (doc.buildings_not_worked?.length ?? 0) > 0;
       const view = firstBuildingOptionsView(doc, true);
       if (hasBlocks) expect(view, name).not.toBeNull();
       else expect(view, name).toBeNull();
     }
+  });
+
+  it("maps buildings_not_worked from the document (building A on the benchmark), no number a result", () => {
+    const doc = loadResultsFixture(JOURNEY);
+    const notWorked = doc.buildings_not_worked ?? [];
+    expect(notWorked.length).toBeGreaterThan(0); // building A on the regenerated benchmark
+    const view = firstBuildingOptionsView(doc, true);
+    if (!view) throw new Error("view missing");
+    expect(view.notWorked).toHaveLength(notWorked.length);
+    view.notWorked.forEach((mapped, index) => {
+      expect(mapped.building).toBe(notWorked[index].building);
+      expect(mapped.label).toBe(notWorked[index].label);
+      expect(mapped.reason).toBe(notWorked[index].reason);
+      expect(mapped.resolvedBy).toBe(notWorked[index].resolved_by);
+    });
+    // the mapped entries carry no numeric field of their own (reason/resolver are text).
+    expect(Object.keys(view.notWorked[0])).toEqual([
+      "building",
+      "label",
+      "reason",
+      "resolvedBy",
+      "gapKindLine",
+    ]);
+  });
+
+  it("returns a view when only buildings_not_worked is present (no alternative, no coverage)", () => {
+    const base = loadResultsFixture(JOURNEY);
+    expect((base.buildings_not_worked?.length ?? 0)).toBeGreaterThan(0);
+    const probe = {
+      ...base,
+      building_alternatives: [],
+      coverage_by_portion: null,
+    } as unknown as typeof base;
+    const view = firstBuildingOptionsView(probe, true);
+    expect(view).not.toBeNull();
+    expect(view?.alternatives).toHaveLength(0);
+    expect((view?.notWorked.length ?? 0)).toBeGreaterThan(0);
   });
 
   it("maps building B's floor schedule, totals and estimate, read from the document", () => {

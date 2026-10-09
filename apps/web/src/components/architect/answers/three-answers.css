@@ -421,9 +421,23 @@
   color: var(--text-secondary, #4b4b47);
 }
 
-.ta-floor-schedule {
+/* N4: the floor table scrolls INSIDE this box on narrow screens, so the page never scrolls sideways.
+   The box is a keyboard-reachable, named region (role + aria-label + tabindex in the component). */
+.ta-floor-schedule-scroll {
   margin: var(--space-3, 0.75rem) 0 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ta-floor-schedule-scroll:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+}
+
+.ta-floor-schedule {
   width: 100%;
+  /* Keep all six columns legible; below this the box (not the page) scrolls sideways. */
+  min-width: 32rem;
   border-collapse: collapse;
   font-variant-numeric: tabular-nums;
 }
@@ -517,5 +531,17 @@
 
 .ta-option-sections {
   margin: var(--space-2, 0.5rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+/* A building of the method that was NOT worked (ruling W14/W15): its reason and what would resolve
+   it, plain text from the document; no figure is a result here. The border only sets it apart. */
+.ta-option-not-worked .ta-withheld-reason {
+  display: block;
+  margin: var(--space-1, 0.25rem) 0 0;
+}
+
+.ta-option-resolved {
+  margin: var(--space-1, 0.25rem) 0 0;
   color: var(--text-secondary, #4b4b47);
 }

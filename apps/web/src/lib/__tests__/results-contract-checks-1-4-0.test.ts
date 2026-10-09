@@ -17,6 +17,9 @@ import type { Results } from "@/lib/architect/three-answers";
 
 const BENCHMARK = "synthetic_building_alternatives_contract_1_4_0";
 const COVERAGE_AVAILABLE = "synthetic_coverage_by_portion_available_contract_1_4_0";
+/** The regenerated committed benchmark carries buildings_not_worked (building A); the synthetic
+ * fixtures above (part A, before ruling W14) do not. */
+const JOURNEY = "recorded_215_16_northern_journey";
 
 /** A deliberate wrong-shape probe, written `as unknown as Results` (CODING_RULES), never a direct
  * cast — these bodies exist only to be refused. */
@@ -97,5 +100,31 @@ describe("validateResultsDocument — the additive 1.4.0 blocks [WIRING]", () =>
     if (!result.ok) {
       expect(result.problems.some(p => p.includes("not_checked"))).toBe(true);
     }
+  });
+
+  it("W14/W15: accepts the benchmark's buildings_not_worked list (building A carries no number)", () => {
+    const doc = loadResultsFixture(JOURNEY);
+    expect((doc.buildings_not_worked?.length ?? 0)).toBeGreaterThan(0);
+    expect(validateResultsDocument(doc).ok).toBe(true);
+  });
+
+  it("W14/W15: refuses a not-worked entry missing its reason, and one missing its gap_kind", () => {
+    const missingReason = probe(JOURNEY, doc => {
+      const entry = doc.buildings_not_worked?.[0];
+      if (!entry) throw new Error("fixture changed");
+      delete (entry as { reason?: unknown }).reason;
+    });
+    const r1 = validateResultsDocument(missingReason);
+    expect(r1.ok).toBe(false);
+    if (!r1.ok) expect(r1.problems.some(p => p.includes("buildings_not_worked[0].reason"))).toBe(true);
+
+    const badKind = probe(JOURNEY, doc => {
+      const entry = doc.buildings_not_worked?.[0];
+      if (!entry) throw new Error("fixture changed");
+      (entry as { gap_kind: string }).gap_kind = "not_a_kind";
+    });
+    const r2 = validateResultsDocument(badKind);
+    expect(r2.ok).toBe(false);
+    if (!r2.ok) expect(r2.problems.some(p => p.includes("buildings_not_worked[0].gap_kind"))).toBe(true);
   });
 });

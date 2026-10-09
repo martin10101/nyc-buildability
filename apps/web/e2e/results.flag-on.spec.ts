@@ -209,4 +209,47 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(dialog).toBeHidden();
     await expect(opener).toBeFocused();
   });
+
+  // M5-T147 walkthrough correction (F1/S9): at 16 ft the step-P6 method works NO building (the
+  // fewest-storeys plan exceeds the lowest-coverage bound; the areas disagree keeps building A out),
+  // so the live route gives the empty-list state. The Building options section must then NAME each
+  // not-worked building with its reason and resolver, show NO lead about worked shapes, and never an
+  // empty heading; the single Building option card adds no false reason. Run by the orchestrator.
+  test("at 16 ft the Building options section says why each building was not worked, with no worked-shapes lead", async ({
+    page,
+  }) => {
+    await routeApi(page);
+    await page.goto(`/property/workspace?ruleeval=on&bbl=${BBL}`);
+    await expect(page.getByTestId("connected-dashboard")).toBeVisible({ timeout: 15_000 });
+    const opener = page.getByRole("button", { name: WINDOW_NAME, exact: true });
+    await opener.click();
+    const dialog = page.getByRole("dialog", { name: WINDOW_NAME });
+    await expect(dialog).toBeVisible();
+
+    await dialog.getByTestId("results-floor-to-floor").fill("16");
+    const response = waitResults(page);
+    await dialog.getByTestId("results-show").click();
+    await response;
+    await expect(dialog.getByTestId("three-answers-panel")).toBeVisible({ timeout: 15_000 });
+
+    const options = dialog.getByTestId("first-building-options");
+    await expect(options).toBeVisible();
+    // no building is worked, so no alternative block and no worked-shapes lead.
+    await expect(options.getByTestId("building-alternative")).toHaveCount(0);
+    await expect(options.getByTestId("first-building-options-lead")).not.toContainText(
+      "worked from the floor-area allowance",
+    );
+    // each not-worked building names its reason and what would resolve it; the heading is not empty.
+    const notWorked = options.getByTestId("building-not-worked");
+    await expect(notWorked.first()).toBeVisible();
+    await expect(notWorked.first().getByTestId("building-not-worked-reason")).toContainText("Not known");
+    await expect(notWorked.first().getByTestId("building-not-worked-resolved")).toContainText(
+      "What would let it be worked:",
+    );
+    // the single Building option card adds no false reason and names no machine field.
+    const optionCard = dialog.getByTestId("answer-building_option");
+    await expect(optionCard).toContainText("Not available");
+    await expect(optionCard).not.toContainText("below the minimum base height");
+    await expect(optionCard).not.toContainText("buildings_not_worked");
+  });
 });

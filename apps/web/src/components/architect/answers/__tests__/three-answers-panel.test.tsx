@@ -9,7 +9,7 @@ import {
   STRIP_MAX_ITEMS,
   displayQuantity,
   gapKindLine,
-  hasBuildingAlternatives,
+  hasFirstBuildingOptions,
   notAvailableText,
   quantityText,
   type AnswerKey,
@@ -61,11 +61,12 @@ function card(key: AnswerKey): HTMLElement {
   return screen.getByTestId(`answer-${key}`);
 }
 
-/** On a lot with worked alternatives (contract 1.4.0) the single building-option card points to the
- * list below in plain words, never the document's machine reason (which names the building_alternatives
- * field). These mirror answerView so the loop's not-available checks stay exact for those fixtures. */
+/** On a lot with the first-building-options section (contract 1.4.0) the single building-option card
+ * points to that section below in plain words, never the document's machine reason (which names the
+ * building_alternatives / buildings_not_worked fields). These mirror answerView so the loop's
+ * not-available checks stay exact for those fixtures. */
 function notAvailableFor(doc: Results, key: AnswerKey, reason: string): string {
-  return key === "building_option" && hasBuildingAlternatives(doc)
+  return key === "building_option" && hasFirstBuildingOptions(doc)
     ? notAvailableText(BUILDING_OPTIONS_BELOW_REASON, key)
     : notAvailableText(reason, key);
 }
@@ -74,7 +75,7 @@ function gapKindFor(
   key: AnswerKey,
   gapKind: Parameters<typeof gapKindLine>[0],
 ): string | null {
-  return key === "building_option" && hasBuildingAlternatives(doc) ? null : gapKindLine(gapKind);
+  return key === "building_option" && hasFirstBuildingOptions(doc) ? null : gapKindLine(gapKind);
 }
 
 function panelText(): string {

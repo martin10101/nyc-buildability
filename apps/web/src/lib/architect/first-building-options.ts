@@ -15,6 +15,7 @@
 
 import type {
   BuildingAlternative,
+  BuildingNotWorked,
   CoverageByPortion,
   FloorScheduleRow,
   PreliminaryCapacityEstimate,
@@ -138,12 +139,27 @@ export interface BuildingAlternativeView {
   capacity: CapacityView;
 }
 
+/** One building of the step-P6 method that was NOT worked, read from `buildings_not_worked` (ruling
+ * W14/W15, the walkthrough F1): its label, why it was not worked and what would let it be worked, all
+ * plain text from the document, plus the gap kind in plain words. NO number is a result here. */
+export interface BuildingNotWorkedView {
+  building: string;
+  label: string;
+  reason: string;
+  resolvedBy: string;
+  gapKindLine: string | null;
+}
+
 export interface FirstBuildingOptionsView {
   /** The document is a draft and this is an architect surface: the numbers are hidden and the
    * section shows only the one not-reviewed line (the same gate the three answer cards use). */
   draftHidden: boolean;
   draftHiddenText: string;
   alternatives: readonly BuildingAlternativeView[];
+  /** The buildings of the method that were NOT worked, each with its reason (ruling W14/W15). When
+   * `alternatives` is empty this is how the section says why nothing is shown (never an empty
+   * heading, never a lead about worked shapes — the F1 fix). */
+  notWorked: readonly BuildingNotWorkedView[];
   coverage: CoverageView | null;
 }
 
@@ -221,11 +237,23 @@ function coverageView(coverage: CoverageByPortion): CoverageView {
   };
 }
 
+function notWorkedView(entry: BuildingNotWorked): BuildingNotWorkedView {
+  return {
+    building: entry.building,
+    label: entry.label,
+    reason: entry.reason,
+    resolvedBy: entry.resolved_by,
+    gapKindLine: gapKindLine(entry.gap_kind),
+  };
+}
+
 /**
  * The first-building-options section of a results document (results contract 1.4.0), or null when
- * the document carries neither a `building_alternatives` list nor a `coverage_by_portion` block — so
- * every 1.0.0–1.3.0 document renders exactly as before (the panel adds nothing). Every value is read
- * from the document; a withheld result carries no number and no substitute.
+ * the document carries no `building_alternatives` list, no `coverage_by_portion` block AND no
+ * `buildings_not_worked` list — so every 1.0.0–1.3.0 document renders exactly as before (the panel
+ * adds nothing). Every value is read from the document; a withheld result carries no number and no
+ * substitute. When `alternatives` is empty but `notWorked` is not, the section still renders (it says
+ * why each building was not worked — the F1 fix), never an empty heading.
  */
 export function firstBuildingOptionsView(
   results: ThreeAnswersResults,
@@ -234,13 +262,17 @@ export function firstBuildingOptionsView(
   const alternatives = Array.isArray(results.building_alternatives)
     ? results.building_alternatives
     : [];
+  const notWorked = Array.isArray(results.buildings_not_worked)
+    ? results.buildings_not_worked
+    : [];
   const coverage = results.coverage_by_portion ?? null;
-  if (alternatives.length === 0 && coverage === null) return null;
+  if (alternatives.length === 0 && coverage === null && notWorked.length === 0) return null;
 
   return {
     draftHidden: results.draft && !showDraftValues,
     draftHiddenText: `${NOT_AVAILABLE} — ${RULES_NOT_REVIEWED_REASON}`,
     alternatives: alternatives.map(alternativeView),
+    notWorked: notWorked.map(notWorkedView),
     coverage: coverage ? coverageView(coverage) : null,
   };
 }

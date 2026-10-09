@@ -207,3 +207,75 @@ describe("PART C: the first-building-options section on the results screen (cont
     expect(within(section).queryByTestId("capacity-estimate")).toBeNull();
   });
 });
+
+describe("PART C walkthrough correction: no building listed (F1/S9) and the narrow table (N4/S11)", () => {
+  type NotWorked = NonNullable<Results["buildings_not_worked"]>[number];
+
+  /** A 16 ft document, BUILT FROM THE REGENERATED COMMITTED BENCHMARK the way the server does at
+   * 16 ft (M5-T146 part B "Walkthrough correction", state S25): building_alternatives emptied, and
+   * buildings_not_worked = the benchmark's real building A entry plus a constructed building B entry.
+   * The screen assertions read every shown string from this document object, never a typed value. */
+  function noBuildingListed(): { doc: Results; notWorked: NotWorked[] } {
+    const base = loadResultsFixture("recorded_215_16_northern_journey");
+    const benchmarkA = (base.buildings_not_worked ?? [])[0];
+    const buildingB: NotWorked = {
+      building: "B",
+      label: "Building B: the fewest storeys reaching the minimum base height",
+      reason:
+        "2 storeys, each needing a plan of 10,075.00 sq ft; more than the bound of 8,060 sq ft - 80 percent of the recorded lot area of 10,075 sq ft, the lowest coverage ratio that can apply.",
+      gap_kind: "work_owed",
+      resolved_by: "A fuller massing (more storeys with a smaller plan) the program has not built yet.",
+    };
+    const notWorked: NotWorked[] = benchmarkA ? [benchmarkA, buildingB] : [buildingB];
+    const doc: Results = { ...base, building_alternatives: [], buildings_not_worked: notWorked };
+    return { doc, notWorked };
+  }
+
+  it("S9: with no building listed, the section names each not-worked building, its reason and resolver, and no worked-shapes lead", () => {
+    const { doc, notWorked } = noBuildingListed();
+    expect(notWorked.length).toBeGreaterThanOrEqual(2); // A and B
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const section = optionsSection();
+    // no building is shown as a worked alternative, and no lead speaks of worked shapes.
+    expect(within(section).queryAllByTestId("building-alternative")).toHaveLength(0);
+    expect(within(section).getByTestId("first-building-options-lead").textContent ?? "").not.toContain(
+      "worked from the floor-area allowance",
+    );
+    // the heading is never empty: each not-worked building shows its label, reason and resolver.
+    const blocks = within(section).getAllByTestId("building-not-worked");
+    expect(blocks).toHaveLength(notWorked.length);
+    notWorked.forEach((entry, index) => {
+      const block = blocks[index];
+      expect(within(block).getByTestId("building-not-worked-label").textContent).toBe(entry.label);
+      expect(within(block).getByTestId("building-not-worked-reason").textContent).toBe(
+        `Not known — ${entry.reason}`,
+      );
+      expect(within(block).getByTestId("building-not-worked-resolved").textContent).toContain(
+        entry.resolved_by,
+      );
+    });
+    // the single Building option card points to the section, never the document's machine reason.
+    const optionCard = screen.getByTestId("answer-building_option");
+    expect(optionCard.textContent ?? "").toContain("Not available");
+    expect(optionCard.textContent ?? "").not.toContain("building_alternatives");
+    expect(optionCard.textContent ?? "").not.toContain("buildings_not_worked");
+    // no machine code or false reason anywhere in the section.
+    expect(section.textContent ?? "").not.toMatch(/\b[a-z0-9]+(?:_[a-z0-9]+)+\b/);
+    expect(section.textContent ?? "").not.toContain("below the minimum base height");
+  });
+
+  it("S11: the floor table sits in a keyboard-reachable, named scroll box with the Running total column", () => {
+    const doc = loadResultsFixture(BENCHMARK); // building B is worked, so a floor table renders
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const scroll = within(optionsSection()).getByTestId("floor-schedule-scroll");
+    // the box is a named region, reachable by keyboard (jsdom cannot measure, so assert structure).
+    expect(scroll.getAttribute("role")).toBe("region");
+    expect(scroll.getAttribute("aria-label")).toBe("Floor schedule");
+    expect(scroll.getAttribute("tabindex")).toBe("0");
+    expect(scroll.className).toContain("ta-floor-schedule-scroll");
+    // the table is inside the box, and the Running total column header is reachable within it.
+    const table = within(scroll).getByTestId("floor-schedule");
+    expect(scroll.contains(table)).toBe(true);
+    expect(within(table).getByText("Running total")).toBeInTheDocument();
+  });
+});

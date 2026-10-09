@@ -51,9 +51,11 @@ export type ThreeAnswersResults = Pick<
   // Results contract 1.4.0 additive blocks (M5-T146/M5-T147). All OPTIONAL/absent on an earlier
   // document, so the panel renders unchanged for every 1.0.0–1.3.0 instance (FirstBuildingOptions
   // reads these). unit_estimate is the legal dwelling-unit limit, shown withheld beside — never as —
-  // the preliminary capacity estimate (D-090-R688).
+  // the preliminary capacity estimate (D-090-R688). buildings_not_worked (ruling W14/W15, the
+  // walkthrough F1) names each building of the method that was NOT listed, with its reason.
   | "building_alternatives"
   | "coverage_by_portion"
+  | "buildings_not_worked"
   | "unit_estimate"
 >;
 
@@ -269,18 +271,32 @@ export function conditionList(state: ValueState | undefined): readonly string[] 
   });
 }
 
-/** True when the document carries at least one worked first-building alternative (contract 1.4.0).
- * On such a lot the single `building_option` answer is superseded by the LIST shown below. */
+/** True when the document carries at least one worked first-building alternative (contract 1.4.0). */
 export function hasBuildingAlternatives(results: ThreeAnswersResults): boolean {
   const alternatives = results.building_alternatives;
   return Array.isArray(alternatives) && alternatives.length > 0;
 }
 
-/** The plain-words reason the single building-option card shows when worked alternatives are listed
- * below it (contract 1.4.0). It points the reader to the list instead of repeating the document's
- * machine reason, which names the `building_alternatives` contract field (never put on the screen —
- * plan §5a item 5). "Not available —" is prepended by notAvailableText. */
-export const BUILDING_OPTIONS_BELOW_REASON = "the worked building options are shown below";
+/** True when the document carries the first-building-options section at all (contract 1.4.0): a
+ * worked alternative, a coverage-by-portion block, or a not-worked building (ruling W14/W15). On
+ * such a lot the single `building_option` answer is superseded by that section shown below — also
+ * when NO building is listed (the F1 fix), so its card never repeats the document's machine reason. */
+export function hasFirstBuildingOptions(results: ThreeAnswersResults): boolean {
+  const notWorked = results.buildings_not_worked;
+  return (
+    hasBuildingAlternatives(results) ||
+    results.coverage_by_portion != null ||
+    (Array.isArray(notWorked) && notWorked.length > 0)
+  );
+}
+
+/** The plain-words reason the single building-option card shows when the first-building-options
+ * section is shown below it (contract 1.4.0). It points the reader to that section instead of
+ * repeating the document's machine reason, which names the `building_alternatives` /
+ * `buildings_not_worked` contract fields (never put on the screen — plan §5a item 5). It says
+ * "building options", not "worked", because on some inputs no building is worked. "Not available —"
+ * is prepended by notAvailableText. */
+export const BUILDING_OPTIONS_BELOW_REASON = "the building options are shown below";
 
 export function answerView(
   results: ThreeAnswersResults,
@@ -289,10 +305,11 @@ export function answerView(
 ): AnswerView {
   const answer = results.answers[key];
   if (answer.status !== "available") {
-    // On a lot with worked alternatives (contract 1.4.0) the single building option points to the
-    // list below, in plain words, never the document's machine reason (R556/§5a item 5). The list
-    // itself renders in FirstBuildingOptions.
-    const pointsToAlternatives = key === "building_option" && hasBuildingAlternatives(results);
+    // On a lot with the first-building-options section (contract 1.4.0) the single building option
+    // points to that section below, in plain words, never the document's machine reason (R556/§5a
+    // item 5) — also when no building is worked (the F1 fix). The section renders in
+    // FirstBuildingOptions.
+    const pointsToAlternatives = key === "building_option" && hasFirstBuildingOptions(results);
     if (pointsToAlternatives) {
       return {
         kind: "not_available",

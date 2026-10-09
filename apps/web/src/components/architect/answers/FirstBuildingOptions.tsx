@@ -1,5 +1,6 @@
 import type {
   BuildingAlternativeView,
+  BuildingNotWorkedView,
   CapacityView,
   CoverageView,
   FirstBuildingOptionsView,
@@ -27,26 +28,60 @@ const CONDITIONAL_MARKER = "Conditional";
 /** Leading words for a withheld value: it is not known, with the reason, NEVER a number (R556/R570). */
 const NOT_KNOWN = "Not known";
 
+/** The lead under the heading, chosen to FIT the state and saying nothing the document does not
+ * (ruling W15): a lead about worked shapes ONLY when at least one building is worked; otherwise a
+ * plain statement that no shape was worked, so the not-worked reasons below carry the explanation. */
+const LEAD_WORKED =
+  "Draft building shapes worked from the floor-area allowance. None is preferred, and none is checked against where it would sit on the lot.";
+const LEAD_NONE_WORKED =
+  "No building shape could be worked for this lot at these inputs. For each building of the method, why:";
+
 export function FirstBuildingOptions({ view }: { view: FirstBuildingOptionsView }) {
+  const hasWorked = view.alternatives.length > 0;
   return (
     <section className="ta-options" data-testid="first-building-options" aria-label="Building options">
       <h3 className="ta-options-title">Building options</h3>
-      <p className="ta-options-lead">
-        Draft building shapes worked from the floor-area allowance. None is preferred, and none is
-        checked against where it would sit on the lot.
-      </p>
       {view.draftHidden ? (
         <p className="ta-not-available" data-testid="first-building-options-draft-hidden">
           {view.draftHiddenText}
         </p>
       ) : (
         <>
+          <p className="ta-options-lead" data-testid="first-building-options-lead">
+            {hasWorked ? LEAD_WORKED : LEAD_NONE_WORKED}
+          </p>
           {view.alternatives.map((alternative, index) => (
             <AlternativeBlock key={`${alternative.building}-${index}`} view={alternative} />
+          ))}
+          {view.notWorked.map((entry, index) => (
+            <NotWorkedBlock key={`${entry.building}-${index}`} view={entry} />
           ))}
           {view.coverage ? <CoverageBlock view={view.coverage} /> : null}
         </>
       )}
+    </section>
+  );
+}
+
+/** One building of the method that was NOT worked (ruling W14/W15): its label, its reason and what
+ * would let it be worked, all read from the document; no figure is a result here. */
+function NotWorkedBlock({ view }: { view: BuildingNotWorkedView }) {
+  return (
+    <section className="ta-option ta-option-not-worked" data-testid="building-not-worked">
+      <h4 className="ta-option-label" data-testid="building-not-worked-label">
+        {view.label}
+      </h4>
+      <p className="ta-withheld-reason" data-testid="building-not-worked-reason">
+        {NOT_KNOWN} — {view.reason}
+      </p>
+      {view.gapKindLine !== null ? (
+        <p className="ta-gap-kind" data-testid="building-not-worked-gap-kind">
+          {view.gapKindLine}
+        </p>
+      ) : null}
+      <p className="ta-option-resolved" data-testid="building-not-worked-resolved">
+        What would let it be worked: {view.resolvedBy}
+      </p>
     </section>
   );
 }
@@ -95,9 +130,20 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
 
 function FloorScheduleTable({ rows }: { rows: readonly FloorRowView[] }) {
   return (
-    <table className="ta-floor-schedule" data-testid="floor-schedule">
-      <caption className="ta-floor-schedule-caption">Floor schedule</caption>
-      <thead>
+    // N4 (ruling W15 b): on a narrow screen the six-column table scrolls INSIDE this box, not the
+    // page. The box is a keyboard-reachable, named region (tabIndex 0 + role + aria-label), so a
+    // keyboard or touch user can reach every column, including "Running total"; the page itself never
+    // scrolls sideways (CSS overflow-x on .ta-floor-schedule-scroll).
+    <div
+      className="ta-floor-schedule-scroll"
+      data-testid="floor-schedule-scroll"
+      role="region"
+      aria-label="Floor schedule"
+      tabIndex={0}
+    >
+      <table className="ta-floor-schedule" data-testid="floor-schedule">
+        <caption className="ta-floor-schedule-caption">Floor schedule</caption>
+        <thead>
         <tr>
           <th scope="col">Storey</th>
           <th scope="col">Floor-to-floor</th>
@@ -118,8 +164,9 @@ function FloorScheduleTable({ rows }: { rows: readonly FloorRowView[] }) {
             <td>{row.runningTotal}</td>
           </tr>
         ))}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   );
 }
 
