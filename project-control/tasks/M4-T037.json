@@ -136,8 +136,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the case says agreement is not proof; every row quotes its capture; 'not sure' where the text does not settle it (S1, S12)",
     "The example's shape or the owner's starting values read as law, as validated or as a recommendation -> the summary and each building and estimate row say what they are (S3, S9); a guard refuses the words",
@@ -148,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T05:41:47.673752+00:00",
-  "updated_at": "2026-10-09T06:55:19.795477+00:00",
+  "updated_at": "2026-10-09T07:07:45.010631+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -202,5 +202,7 @@
       "status": "claimed",
       "message": "CI on the pushed head 22262650: run 37894474011, attempt 1, 21 of 21 jobs success; secret-scan 37894473947 and context-budget 37894473941 success; read 06:44 UTC before the review started. One independent read-only review at that head for G3 and G4 (a fresh data-contract-verifier, neither reader): G3 PASS, G4 PASS, received 06:53 UTC, saved unchanged; three notes, none blocking; ten mutations of its own, each caught. Later commits hold ledger records and the seeded placeholders of task M4-T038 only; this task's files are byte-identical to 22262650. Review record and evidence map of thirteen rows written. Next: submit, gates G2 G3 G4, the rule check."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T07:07:45.010469+00:00"
 }
