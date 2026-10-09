@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T05:04:03+00:00",
+ "updated_at": "2026-10-09T05:38:58+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -705,10 +705,35 @@
   "D-090-R681",
   "D-090-R682",
   "D-090-R683",
-  "D-090-R684"
+  "D-090-R684",
+  "D-090-R685",
+  "D-090-R686",
+  "D-090-R687",
+  "D-090-R688",
+  "D-090-R689",
+  "D-090-R690",
+  "D-090-R691",
+  "D-090-R692",
+  "D-090-R693",
+  "D-090-R694",
+  "D-090-R695",
+  "D-090-R696",
+  "D-090-R697",
+  "D-090-R698",
+  "D-090-R699",
+  "D-090-R700",
+  "D-090-R701",
+  "D-090-R702",
+  "D-090-R703",
+  "D-090-R704",
+  "D-090-R705",
+  "D-090-R706",
+  "D-090-R707",
+  "D-090-R708",
+  "D-090-R709"
  ],
- "requirements_id_digest_sha256": "7d291eb03381148c81297174c84f2619ec09cc178c4c44d295349be2f1c5269d",
- "requirements_content_digest_sha256": "b66c96714566136e204f830384dd03e0f1273f035278e6d84f8de0da3721fdef",
+ "requirements_id_digest_sha256": "a87afeb8082ae3e362c52007c231320e24411521053fdb27af2b1b9151bfffdb",
+ "requirements_content_digest_sha256": "ec3929a751dc35a369f337541f959e4f2bfdeaff86a09980620e04afc7946dd5",
  "sources": [
   {
    "file": "source-001.md",
@@ -1244,6 +1269,14 @@
    "recorded_at": "2026-10-09T05:04:03+00:00",
    "content_digest_sha256": "1a89ea390692327b2d92a80a9a99535a6008bc11952a684f9e3c88cc36191aa3",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-068-amendment.md",
+   "kind": "amendment",
+   "sequence": 68,
+   "recorded_at": "2026-10-09T05:38:58+00:00",
+   "content_digest_sha256": "65b655060848a968ad442e11651a26c7d1e3e3360728683f5827284476974c2d",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1312,7 +1345,8 @@
   "source-064-amendment.md",
   "source-065-amendment.md",
   "source-066-amendment.md",
-  "source-067-amendment.md"
+  "source-067-amendment.md",
+  "source-068-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2017,6 +2051,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-067 (session 013RaGmC: the owner's opening message of the session after handoff seq 152, 2026-10-09: resume; finish M5-T144 with the restrictions and checks kept; completed reviews and research reused; a replacement reviewer only when necessary; then the handoff's remaining-work order; the audit not continued; go on without asking; updates in four bullets) and requirements D-090-R669 to R684, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T05:38:58+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-068 (session 013RaGmC: the owner's second message of the session after handoff seq 152, 2026-10-09: the first building option compared step by step with an independently worked example; the zoning-rule review register kept current for every rule and calculation by the existing process, with what each detail page shows; legal requirements told apart from design assumptions; combined calculations included and gaps stated; a human verdict only from a named human reviewer; the audit stays finished) and requirements D-090-R685 to R709, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

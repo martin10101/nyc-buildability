@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 684,
+ "requirement_count": 709,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T05:04:03+00:00",
+ "updated_at": "2026-10-09T05:38:58+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -23279,6 +23279,836 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R685",
+   "text": "'Continue the current work, with these requirements included in the relevant tasks.': the current work goes on.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R682"
+   ],
+   "required_harness": "The work in hand is continued without a pause for this message.",
+   "required_evidence": "The ledger and the session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R686",
+   "text": "'Continue the current work, with these requirements included in the relevant tasks.': the requirements of this message are put into the tasks they concern. ORCHESTRATOR'S READING: into each such task's packet, as scope, as scenarios and as bound rows, so that its builder and its reviewers work to them; not as a separate project (row R707).",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Every task contracted after this message whose work a row of this message concerns cites that row and carries it in its scope and scenarios.",
+   "required_evidence": "The packets of those tasks.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R687",
+   "text": "'For the first building option, compare an independently worked example with the actual program output through the complete calculation: property inputs, footprint, each floor\u2019s area and height, total floor area, applicable legal unit limit, and separate preliminary apartment estimate.': for the first building option an independently worked example is compared with the program's actual output through the complete calculation, step by step: the property inputs; the footprint; each floor's area and height; the total floor area; the applicable legal unit limit; the preliminary apartment estimate. ORCHESTRATOR'S READING: the independent example is the hand-worked case of step P6 (two readers working alone from the captured law texts); the program's output is what the program really gives at a named revision, including 'not built' or 'withheld' where that is its answer; the expected side is never taken from a program run.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R291",
+    "D-090-R663"
+   ],
+   "required_harness": "A record sets, for each of the six steps, the independent example's answer beside the program's actual answer at a named revision and says for each: they agree, they differ (by how much and why), or one side is missing; a test recomputes the program's side.",
+   "required_evidence": "That record, linked from the register; the test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R688",
+   "text": "'For the first building option, compare an independently worked example with the actual program output through the complete calculation: property inputs, footprint, each floor\u2019s area and height, total floor area, applicable legal unit limit, and separate preliminary apartment estimate.': in that comparison the preliminary apartment estimate is separate from the applicable legal unit limit. It confirms row R544.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R544"
+   ],
+   "required_harness": "The comparison holds the legal unit limit and the preliminary estimate as two steps with two sources; neither is derived from the other or shown as the other.",
+   "required_evidence": "That record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R689",
+   "text": "'Reuse completed research and identify any remaining disagreement or missing fact.': completed research is reused for it. It confirms rows R645 and R680.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R645",
+    "D-090-R680"
+   ],
+   "required_harness": "No completed reading or study is commissioned again for the comparison.",
+   "required_evidence": "The ledger and the session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R690",
+   "text": "'Reuse completed research and identify any remaining disagreement or missing fact.': every remaining disagreement and every missing fact is identified. ORCHESTRATOR'S READING: each is named with its kind (a missing fact about the property, unresolved law, or code not built: row R650) and with what would settle it.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R650"
+   ],
+   "required_harness": "The comparison ends in a list of every step that differs or lacks a side, each with its kind and what would settle it; nothing that differs is left unlisted.",
+   "required_evidence": "That record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R691",
+   "text": "'Keep \"docs/zoning-rule-review/REGISTER.md\" and its linked detail pages current whenever a rule or calculation changes.': the register `docs/zoning-rule-review/REGISTER.md` and its linked detail pages are kept current whenever a rule or a calculation changes. ORCHESTRATOR'S READING: it confirms the standing rule (row R379: the register is updated in the same change) and widens it from rule files to calculations.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R379"
+   ],
+   "required_harness": "Every change of a rule or of a calculation that affects a reported result moves the register in the same change: the entry's content, its revision and a history event.",
+   "required_evidence": "The register's source data and history at the head of each such change.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R692",
+   "text": "'Update the register\u2019s source data and regenerate the table through the existing process.': the register is changed in its source data and the table is regenerated by the existing process. ORCHESTRATOR'S READING: the authored source is `services/api/app/rules/review_register/register.json`; the pages are rendered by `render_review_register.py --write` and checked by `--check`; no page is edited by hand.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R691"
+   ],
+   "required_harness": "The rendered pages equal what the existing renderer writes from the source data (its check mode passes); no commit edits a rendered page alone.",
+   "required_evidence": "The renderer's check at the head; the diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R693",
+   "text": "'Every rule, formula, exception and design assumption affecting a reported result must be traceable from that register.': every rule, formula, exception and design assumption that affects a reported result can be traced from the register.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R691"
+   ],
+   "required_harness": "For each result the program reports, the register leads to the rules, formulas, exceptions and design assumptions behind it; a result with no path from the register is listed as a coverage gap (row R703).",
+   "required_evidence": "The register and its coverage list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R694",
+   "text": "'Each relevant detail page should show:' 'Official source, section and version/date, including applicability and exceptions.': each relevant detail page shows the official source, the section and its version or date, with where it applies and its exceptions.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693"
+   ],
+   "required_harness": "Each relevant detail page carries these, or says plainly which of them does not exist for it and why.",
+   "required_evidence": "The detail pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R695",
+   "text": "'Each relevant detail page should show:' 'The program\u2019s interpretation and what is implemented versus planned.': each relevant detail page shows the program's interpretation and what is implemented against what is only planned.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693"
+   ],
+   "required_harness": "Each relevant detail page carries both, told apart.",
+   "required_evidence": "The detail pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R696",
+   "text": "'Each relevant detail page should show:' 'Inputs, units, measurement basis, formula and rounding.': each relevant detail page shows the inputs, the units, the measurement basis, the formula and the rounding.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693"
+   ],
+   "required_harness": "Each relevant detail page carries the five, or says plainly that one does not apply (for example no rounding rule has been chosen).",
+   "required_evidence": "The detail pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R697",
+   "text": "'Each relevant detail page should show:' 'A worked example, expected answer, actual program answer and tested revision.': each relevant detail page shows a worked example, the expected answer, the program's actual answer and the revision that was tested.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693",
+    "D-090-R687"
+   ],
+   "required_harness": "Each relevant detail page carries the four; the expected answer is never taken from a program run; where the program gives no answer yet the page says so.",
+   "required_evidence": "The detail pages; the test that recomputes the actual answer.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R698",
+   "text": "'Each relevant detail page should show:' 'Code and test links, unresolved questions and limitations.': each relevant detail page shows the links to the code and the tests, the unresolved questions and the limitations.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693"
+   ],
+   "required_harness": "Each relevant detail page carries them.",
+   "required_evidence": "The detail pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R699",
+   "text": "'Clearly distinguish legal requirements from chosen design assumptions.': legal requirements are clearly told apart from chosen design assumptions.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693"
+   ],
+   "required_harness": "Every item traceable from the register is marked as a legal requirement or as a chosen design assumption; none is marked as both or left unmarked.",
+   "required_evidence": "The register's source data and pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R700",
+   "text": "'For example, the apartment-size and efficiency assumptions must remain labelled as preliminary assumptions.': the apartment-size assumption and the efficiency assumption stay labelled as preliminary assumptions. ORCHESTRATOR'S READING: the starting apartment size of 700 sq ft and the share range 0.60 to 0.75 (rows R540, R541); nothing presents them as law, as measured, as typical or as validated (row R545).",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R540",
+    "D-090-R541",
+    "D-090-R545"
+   ],
+   "required_harness": "Wherever the two values appear (register, records, results, screen) they carry the label of a preliminary assumption; a test or a search finds no place that calls them a requirement, a measurement or validated.",
+   "required_evidence": "The register pages, the records and the tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R701",
+   "text": "'Include calculations that combine several rules, even when they are not separate rule files.': the register includes the calculations that combine several rules, even when they are not separate rule files. ORCHESTRATOR'S READING: the register's own guide lists such code as not yet in it (the wide-street determination, the named-street table, the scenario engine that turns rule outputs into floor area, envelope, unit and building-option figures, the proposal checks, the rule inputs' mapping).",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693"
+   ],
+   "required_harness": "Each combined calculation that affects a reported result has an entry and a detail page, or is listed as a coverage gap with what it lacks (row R703).",
+   "required_evidence": "The register and its coverage list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R702",
+   "text": "'Link their existing calculation or measurement records from the relevant review pages.': the existing calculation and measurement records of those calculations are linked from the relevant review pages. ORCHESTRATOR'S READING: among them the measurement-basis record, the reference cases and the rule-coverage matrix; they are linked, not copied.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R701"
+   ],
+   "required_harness": "Each relevant page links the records that exist for its calculation; no record is copied into a page.",
+   "required_evidence": "The detail pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R703",
+   "text": "'Make any remaining coverage gap explicit.': every remaining gap in the register's coverage is stated plainly.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R693",
+    "D-090-R701"
+   ],
+   "required_harness": "The register holds a list of what affects a reported result and is not yet traceable from it; the list is kept current with each change.",
+   "required_evidence": "The register's coverage list.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R704",
+   "text": "'Only a named human reviewer\u2019s actual decision can establish a human verdict.': a human verdict is established only by the actual decision of a named human reviewer. It confirms the standing rule: no session, no agent review, no passing test and no agreement of readings enters one.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R379"
+   ],
+   "required_harness": "No verdict field is filled except from a named human reviewer's own decision; the checker refuses any other.",
+   "required_evidence": "The register's source data; its checker.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R705",
+   "text": "'Preserve previous decisions and separately identify whether they apply after a change.': previous decisions are preserved: none is overwritten or removed.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R704"
+   ],
+   "required_harness": "A recorded decision keeps its original wording, reviewer, date and what was reviewed through every later change.",
+   "required_evidence": "The register's source data and history.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R706",
+   "text": "'Preserve previous decisions and separately identify whether they apply after a change.': whether a previous decision still applies after a change is identified separately from the decision itself.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R705"
+   ],
+   "required_harness": "After a change the register shows the earlier decision and, apart from it, whether it applies to the current version; the two are never merged into one field.",
+   "required_evidence": "The register's source data, pages and checker.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R707",
+   "text": "'Make these updates part of the existing implementation and review work.': these updates are part of the existing implementation and review work. ORCHESTRATOR'S READING: each task that changes a rule or a calculation updates the register within its own scope and its reviewers check the update; no separate project stands beside the work toward the building option.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R686"
+   ],
+   "required_harness": "The register updates arrive in the tasks that change the rule or calculation, reviewed with them.",
+   "required_evidence": "The packets, the diffs and the review records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R708",
+   "text": "'Keep the one-time workflow audit finished and continue toward the building option.': the one-time workflow audit stays finished. It confirms row R681.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R681"
+   ],
+   "required_harness": "No audit note is written and the audit is not reopened.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R709",
+   "text": "'Keep the one-time workflow audit finished and continue toward the building option.': the work continues toward the building option. It confirms rows R663 and R679.",
+   "source_ref": "source-068-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R663",
+    "D-090-R679"
+   ],
+   "required_harness": "The tasks contracted after this message are the building option's own pieces or what this message asks of them.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
