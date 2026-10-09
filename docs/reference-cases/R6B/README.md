@@ -34,12 +34,13 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/step-p3-worked.json` + `step-p3-worked.md` | The readings worked from the law text captured by task M4-T029 and read independently in step P3 (task M4-T030): the ZR 12-10 lot-line, lot-width and lot-depth definitions for the real lot and a made-up interior lot; the rear yard beyond the corner (the real lot and a made-up 150-by-100 corner lot), the interior lot (ZR 23-342) and the through lot (the rear-yard equivalent of ZR 23-343); ZR 23-436 and ZR 35-633 for the real lot; ZR 34-21 and ZR 34-111 versus ZR 34-112; the Manhattan Core and the Special Downtown Brooklyn District; from what level heights are measured and the base plane; ZR 23-434 and the different maximum of ZR 23-362(b); the definition of "residence, or residential"; and the base of the floor-area shares in ZR 23-231 and ZR 23-232 (section 8; backlog row DB-170 item (a)). |
 | `cases/step-p4-worked.json` + `step-p4-worked.md` | The readings worked from the law text captured by task M4-T031 and read independently in step P4 (task M4-T032): ZR 34-22 and its sections 34-221 to 34-224, and ZR 34-23 and its sections 34-231 to 34-233, for a residential building in a C2-2 district mapped within R6B; with those read, whether the floor area ratio, the lot coverage and the rear yard are the same as plain R6B, and whether any captured overlay text speaks of lot coverage; ZR 35-22 and ZR 35-62, 35-63, 35-641, 35-642 and 35-643; the definitions of a mixed building, lot coverage, the five yards and the street wall, curb level and prevailing street wall frontage; what may stand in a required rear yard; large sites and qualifying residential sites; whether ZR 34-111's exceptions reach C2-2 within R6B; dwelling units and qualifying housing and the ZR 23-52 factors, with a worked unit count for a made-up 100-by-100 lot; and ZR 23-441, 23-442 and 23-443 (section 8; backlog row DB-170 item (a)). |
 | `cases/step-p5-worked.json` + `step-p5-worked.md` | The readings worked from the 46 texts captured by tasks M4-T033 and M4-T034 and read independently in step P5 (task M4-T035): the mixed-building floor-area sections ZR 35-30 to 35-33 (with ZR 35-31's shared-floor-area rule) and the floor-area-ratio definition, worked for a made-up mixed building of shops below standard residences; ZR 23-24 and the ZR 34-23 page (ZR 34-231 to 34-233); the ZR 12-10 definitions of a fully electrified building, an ultra-low-energy building, a building and a story; the fourteen parking, loading-berth and bicycle-parking sections and what each of seven development options' parking, loading and bicycle line may say; and the benchmark lot's rear yard read from ZR 23-342 and ZR 23-344 (backlog rows DB-184 first piece and DB-185 (b)). |
+| `cases/step-p6-worked.json` + `step-p6-worked.md` | One independent hand-worked example of a first building option in R6B, read independently in step P6 (task M4-T037): whether a building may be lower than the minimum base height (ZR 23-431, 23-432, 23-436 and ZR 35-631 to 35-633); a footprint and floors worked by hand for a made-up interior lot of 100 by 100 ft and for the recorded corner lot (the lot coverage by portion; the rear-yard, street-wall and ground-elevation variants where a property fact is missing); what a floor schedule must list; and the arithmetic of the preliminary apartment estimate on the owner's starting values, kept apart from the legal dwelling-unit ceiling. Both worked buildings are a plain stack, every storey the same plan - the method of the example, an assumption, not a rule of law and not a recommendation. |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
 a page rendered from it that a person can read. The helper returns are kept unchanged under
 `provenance/`: the two first-round returns, the two step-P1 readings, the two step-P2
-commercial-overlay readings, the two step-P3 readings, the two step-P4 readings and the two step-P5
-readings.
+commercial-overlay readings, the two step-P3 readings, the two step-P4 readings, the two step-P5
+readings and the two step-P6 readings.
 
 ## Law text: what steps P1 and P2 captured, and what the readers did not have
 
@@ -186,6 +187,38 @@ the benchmark lot's rear yard beyond the corner stays not known) and the block's
 Each reading also lists, separately, the folder texts it chose not to read: reading 11 did not read the
 ZR 12-10 lot-coverage capture (not needed for the rear-yard question), and reading 12 read every capture
 each question named. A text the readers did not have may be captured later; `docs/research/zr-snapshots/v1/`
+shows what is captured now.
+
+**Step P6** (task M4-T037) is one independent hand-worked example of a first building option, read
+independently by two AI helpers (readings 13 and 14) working alone from a sealed folder of all 185 pinned
+law captures without their notes, the benchmark lot's recorded facts and outline, one made-up interior
+lot of 100 by 100 ft in plain R6B, and three starting values chosen by the owner (the 10-ft
+floor-to-floor height, the 0.60-to-0.75 share range and the 700-square-foot apartment size, marked as
+assumptions). The step-P6 readers were **given 34 earlier answers as settled** - copied word for word
+from the reference cases (the floor-area-ratio definition and the made-up floor area, the interior and
+corner coverage, the R6B heights measured from the base plane, the dwelling-unit factor, the real lot's
+floor area, heights, lot type, frontages, street widths, setback and reach, and the standing not-known
+rows) - so completed readings are reused and not worked again. With that, the step-P6 rows settle, from
+captured text, that a building wholly below the 30-ft minimum base height is permitted in plain R6B and
+under a C2-2 overlay (ZR 23-436(e); the "whichever is less" of ZR 23-431(b) and 35-631(b)); they work
+the yards, the widest footprint, the floor stack and the floor schedule for the made-up lot and the real
+lot; and they keep the preliminary apartment estimate (arithmetic on the owner's starting values) apart
+from the legal dwelling-unit ceiling. Both worked buildings are a plain stack, every storey the same plan
+- the method of the example, an assumption, not a rule of law, not the owner's decision and not a
+recommendation of what to build. The step-P6 example of a building option for the real lot supersedes
+`cases/real-lot.json` row L15.
+
+From both step-P6 readings' own summary of what they still did not have, the step-P6 readers lacked (an
+item is on this list only where BOTH readings name it): the ZR 12-10 term **street wall line level** and
+the adjoining final-grade / ground elevations the base-plane definition needs (so the real lot's
+base-plane datum stays not known); **ZR 23-434** (eligible sites) and **ZR 23-435** (towers), neither
+relied on; and the ZR 12-10 term **outer court** (affects only recess geometry, not the simple walls
+worked). As facts, not law, both readers also lacked the adjoining zoning lots' lot-line types (so the
+real lot's rear yard beyond the corner stays not known), the neighbouring buildings' street walls (so a
+prevailing street wall frontage cannot be confirmed) and the ground elevations. The two readers measured
+the recorded outline themselves and reached slightly different corner-portion and interior-strip areas,
+so the real lot's whole-lot coverage, footprint and building A's one-storey floor area are held as both
+figures, not smoothed. A text the readers did not have may be captured later; `docs/research/zr-snapshots/v1/`
 shows what is captured now.
 
 ## The rule for changing an expected value

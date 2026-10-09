@@ -41,6 +41,7 @@ import r6b_reference_cases_lib as lib  # noqa: E402
 import r6b_reference_cases_step_p3 as step_p3  # noqa: E402
 import r6b_reference_cases_step_p4 as step_p4  # noqa: E402
 import r6b_reference_cases_step_p5 as step_p5  # noqa: E402
+import r6b_reference_cases_step_p6 as step_p6  # noqa: E402
 
 # A field name (key) that would smuggle a program result into a case file.
 FORBIDDEN_KEY_SUBSTRINGS = ("program", "actual", "first_screen", "firstscreen")
@@ -76,12 +77,13 @@ CASE_READINGS = {
     step_p3.STEP_P3_CASE_ID: step_p3.STEP_P3_READING_STEMS,
     step_p4.STEP_P4_CASE_ID: step_p4.STEP_P4_READING_STEMS,
     step_p5.STEP_P5_CASE_ID: step_p5.STEP_P5_READING_STEMS,
+    step_p6.STEP_P6_CASE_ID: step_p6.STEP_P6_READING_STEMS,
 }
 # The human label for each such case, used in the "name both readings" message.
 _READINGS_LABEL = {
     STEP_P1_CASE_ID: "step-P1", OVERLAY_CASE_ID: "overlay",
     step_p3.STEP_P3_CASE_ID: "step-P3", step_p4.STEP_P4_CASE_ID: "step-P4",
-    step_p5.STEP_P5_CASE_ID: "step-P5",
+    step_p5.STEP_P5_CASE_ID: "step-P5", step_p6.STEP_P6_CASE_ID: "step-P6",
 }
 # Per case, the rows whose two readings disagree (or where one says not known),
 # which must therefore stay "not known".
@@ -430,6 +432,7 @@ def provenance_errors() -> list[str]:
     errs += step_p3_reading_errors()
     errs += step_p4_reading_errors()
     errs += step_p5_reading_errors()
+    errs += step_p6_reading_errors()
     return errs
 
 
@@ -478,6 +481,10 @@ def step_p4_reading_errors() -> list[str]:
 
 def step_p5_reading_errors() -> list[str]:
     return _reading_digest_errors(step_p5.STEP_P5_READINGS, "step-P5")
+
+
+def step_p6_reading_errors() -> list[str]:
+    return _reading_digest_errors(step_p6.STEP_P6_READINGS, "step-P6")
 
 
 # --------------------------------------------------------------------------
@@ -530,6 +537,8 @@ def validate_case(case_id: str, data: dict) -> list[str]:
     errs += step_p3.must_stay_not_known_errors(case_id, data)
     errs += step_p4.must_stay_not_known_errors(case_id, data)
     errs += step_p5.must_stay_not_known_errors(case_id, data)
+    errs += step_p6.must_stay_not_known_errors(case_id, data)
+    errs += step_p6.block_and_word_errors(case_id, data)
     for row in data["rows"]:
         missing = lib.ROW_KEYS - set(row)
         extra = set(row) - lib.ROW_KEYS - lib.OPTIONAL_ROW_KEYS

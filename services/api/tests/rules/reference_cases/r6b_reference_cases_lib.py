@@ -45,6 +45,7 @@ SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
     "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
+    "step-p6-worked",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -98,6 +99,20 @@ REQUIRED_BASE_IDS = {
         "option-rooming-units", "parking-loading-bicycle-line-per-option",
         "sections-and-facts-not-had",
     ],
+    "step-p6-worked": [
+        "min-base-height-plain-r6b", "min-base-height-overlay", "min-base-height-street-wall",
+        "min-base-height-wide-narrow", "min-base-height-least-height-or-storeys",
+        "made-up-front-yard", "made-up-side-yard", "made-up-rear-yard", "made-up-street-wall",
+        "made-up-footprint-a", "made-up-building-a", "made-up-building-b",
+        "floor-schedule-contents",
+        "real-lot-coverage-by-portion", "real-lot-recorded-vs-measured-area",
+        "real-lot-rear-yard-variants", "real-lot-street-wall", "real-lot-ground-elevations",
+        "real-building-a", "real-building-b",
+        "made-up-estimate-a", "made-up-estimate-b", "real-estimate-a", "real-estimate-b",
+        "made-up-unit-limit", "real-unit-limit",
+        "both-readers-did-not-have", "real-lot-missing-facts", "settled-answer-contradicted",
+        "six-steps-closing",
+    ],
 }
 
 EXPECTED_KINDS = ("value", "not_known")
@@ -119,7 +134,11 @@ ROW_KEYS = {
 # Optional row keys: a row kept as the historical record of what an earlier pair of
 # readers could settle carries ``superseded_by`` (a list of "<case_id>#<row_id>"
 # naming the row(s) that hold the current answer). A row without it is current.
-OPTIONAL_ROW_KEYS = {"superseded_by"}
+# A step-P6 building row or estimate row also carries ``numbers_block``: the six
+# steps of that building or estimate as numbers in one structured block, which the
+# renderer shows and the step-P6 tests recompute (every derived number from the
+# block's own inputs). A row without it holds no such block.
+OPTIONAL_ROW_KEYS = {"superseded_by", "numbers_block"}
 EXPECTED_KEYS = {"kind", "value", "unit", "reason"}
 CITATION_KEYS = {
     "kind", "section", "title", "quote", "snapshot_id", "snapshot_file",

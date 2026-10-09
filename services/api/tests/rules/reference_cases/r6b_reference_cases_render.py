@@ -205,6 +205,9 @@ def _render_row(row: dict) -> list[str]:
     lines.append("")
     lines.append(f"What this row does not establish: {row['does_not_establish']}")
     lines.append("")
+    block = row.get("numbers_block")
+    if block:
+        lines.extend(_render_numbers_block(block))
     superseded = row.get("superseded_by")
     if superseded:
         targets = ", ".join(superseded)
@@ -214,6 +217,61 @@ def _render_row(row: dict) -> list[str]:
         )
         lines.append("")
     return lines
+
+
+def _block_value(value) -> str:
+    """A block figure: a differ figure {reading1, reading2} shows both, named; a
+    plain figure shows as written."""
+    if isinstance(value, dict) and set(value) == {"reading1", "reading2"}:
+        return f"{value['reading1']} (reading 13) / {value['reading2']} (reading 14)"
+    return str(value)
+
+
+def _render_numbers_block(block: dict) -> list[str]:
+    lines: list[str] = []
+    lines.append(f"Six steps as numbers ({block['label']}):")
+    lines.append("")
+    if block["block_kind"] == "building":
+        max_fa = _block_value(block["maximum_floor_area_sqft"])
+        lines.append(f"- Property inputs: maximum floor area {max_fa} sq ft; floor-to-floor height "
+                     f"{block['floor_to_floor_ft']} ft; minimum base height "
+                     f"{block['min_base_height_ft']} ft.")
+        lines.append(f"- Footprint: {block['footprint_sides']}; area "
+                     f"{_block_value(block['footprint_area_sqft'])} sq ft.")
+        lines.append("- Storeys:")
+        for storey in block["storeys"]:
+            lines.append(
+                f"  - Storey {storey['storey']}: floor-to-floor {storey['floor_to_floor_ft']} ft; "
+                f"top {storey['top_ft']} ft above the base plane; plan area "
+                f"{_block_value(storey['plan_area_sqft'])} sq ft; floor area "
+                f"{_block_value(storey['floor_area_sqft'])} sq ft; running total "
+                f"{_block_value(storey['running_total_sqft'])} sq ft."
+            )
+        total = _block_value(block["total_floor_area_sqft"])
+        unused = _block_value(block["unused_floor_area_sqft"])
+        lines.append(f"- Total floor area {total} sq ft; floor area left unused {unused} sq ft; "
+                     f"building height {block['height_ft']} ft; {block['storey_count']} storeys.")
+    else:  # estimate
+        lines.append(f"- Residential floor area the building holds: "
+                     f"{_block_value(block['floor_area_sqft'])} sq ft.")
+        lines.append(f"- Share range {block['share_low']} to {block['share_high']} (a preliminary "
+                     f"assumption); apartment size {block['apartment_size_sqft']} sq ft "
+                     "(a preliminary assumption).")
+        lines.append(f"- At the {block['share_low']} share: quotient {block['quotient_low']} "
+                     f"(whole numbers {block['whole_below_low']} below, "
+                     f"{block['whole_above_low']} above).")
+        lines.append(f"- At the {block['share_high']} share: quotient {block['quotient_high']} "
+                     f"(whole numbers {block['whole_below_high']} below, "
+                     f"{block['whole_above_high']} above).")
+    lines.append("- Each figure above is marked a legal requirement or a chosen design assumption:")
+    for mark in block["marks"]:
+        lines.append(f"  - {mark['figure']}: {_mark_label(mark['mark'])} ({mark['basis']}).")
+    lines.append("")
+    return lines
+
+
+def _mark_label(mark: str) -> str:
+    return "a legal requirement" if mark == "legal_requirement" else "a chosen design assumption"
 
 
 def _render_citation(cite: dict) -> list[str]:
