@@ -152,7 +152,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "A calculation entry read as a reviewed or legal determination -> every page carries the standing draft_note and ADR-007 label; no human verdict is entered; legal_vs_design marks each figure",
     "An expected value taken from a program run rather than an independent record -> expected is sourced only from the reference cases (step-P5, real-lot, step-P6) and the checker/tests keep expected and actual apart",
@@ -164,7 +164,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T06:44:55.210953+00:00",
-  "updated_at": "2026-10-09T06:45:26.900284+00:00",
+  "updated_at": "2026-10-09T07:57:55.072439+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -213,6 +213,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted and claimed on the branch of wave 17, on top of the head under review of M4-T037 (22262650); the two tasks share no file. The packet is a read-only helper's draft read against the code by the orchestrator, with nine rulings (C1 to C9). At the claim base: ruff exit 0; the register test 44 passed and with the seeded test file 45; the register renderer's check, the size check and the path-coverage check exit 0. Not pushed. Next: one builder (rules-engineer) in an isolated worktree reset to the claim-seam head, started when the review of M4-T037 has returned."
+    },
+    {
+      "at": "2026-10-09T07:57:55.072341+00:00",
+      "agent": "rules-engineer",
+      "percent": 70,
+      "status": "claimed",
+      "message": "Builder's two commits integrated (828d7249d and 6d2d94014: the second corrects the kind of the legal unit limit's gap to the program's own kind, work owed, and adds a test that every listed withheld gap agrees with the program). Focused checks at 07:57 UTC on the integrated head: ruff exit 0; register, calculation, reference-case and journey tests 187 passed; register render check, modularity and lane coverage exit 0; the 23 rule entries and the history prefix unchanged; six calculation entries; nine coverage gaps; no human decision entered. Next: push, CI on that head, reviews G3 and G4."
     }
   ]
 }
