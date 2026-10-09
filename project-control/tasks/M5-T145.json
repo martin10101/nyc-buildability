@@ -274,7 +274,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 70,
+  "progress_percent": 90,
   "risks": [
     "PART A tolerance for the benchmark lot: the two step-P6 readings differ by at most 0.14 sq ft on the corner portion and 0.13 sq ft on the interior strip, and agree exactly on the outline area (10,387.99). The chosen test tolerance is 1.0 sq ft per portion - about seven times the readings' own spread and ~0.01% of the ~10,388 sq ft lot - and the two parts must sum to the outline area within 0.01 sq ft. This pins no single figure (it requires the program's exact clip within one hand-reader's spread of BOTH readings). I could not run PART A, so the actual program-vs-reading gap is unconfirmed; the builder MUST report the measured gap in part-A.md and, if it exceeds 1.0 sq ft, STOP and surface it as a possible real discrepancy rather than loosen the tolerance silently.",
     "PART A geometry method: shapely==2.0.7 is an admitted, pinned dependency (requirements.txt:508; pyproject.toml:30), so no new package is needed. The RECOMMENDED method, mirroring lot_reach.py's pure-math no-dependency style, is a pure-Python half-plane polygon clip (Sutherland-Hodgman): the corner portion is the outline clipped by {perpendicular distance to street line 1 <= d} and then by {perpendicular distance to street line 2 <= d} (both half-planes are convex, so the clip is exact even for an L-shaped outline); the area is the shoelace of the clipped ring; the interior portion is the outline area minus the corner portion. shapely is an acceptable alternative if the builder prefers; either way no new package.",
@@ -284,7 +284,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T08:32:32.735259+00:00",
-  "updated_at": "2026-10-09T09:38:09.016208+00:00",
+  "updated_at": "2026-10-09T09:53:10.263850+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -341,6 +341,13 @@
       "percent": 70,
       "status": "claimed",
       "message": "All five parts integrated (A: 48fa796d5 + ae848f24e; B and D: 342962533 + 2e6dde3ee; C: ca3c3ad3a + ea2580bd4; E: 87d69ec2f); each first commit was read by the orchestrator and sent back once before any review (rulings C12 to C18). Focused checks at 09:38 UTC on the integrated head: ruff exit 0; tests/spatial, tests/scenario/three_answers, the register tests, the reference-case tests and the journey tests: 1016 passed, 2 skipped; modularity, lane coverage and the register's check exit 0; the 23 rule entries, the rule history and the results document unchanged; no human decision entered. Producer report assembled from the five part reports. Next: push, CI, reviews G3 and G4."
+    },
+    {
+      "at": "2026-10-09T09:53:10.263682+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "Reviews G3 (data-contract-verifier) and G4 (qa-engineer) PASS at 9d9764f3, none blocking; record project-control/reports/M5-T145-G3G4.md (both returns unchanged; the builders' run times; what was sent back before review); evidence map of 23 rows with the known limits; the open notes kept as backlog row DB-212. CI on 9d9764f3 read green by the orchestrator at 09:51 UTC (run 37912550886, 21 of 21 jobs). Written at 09:53 UTC."
     }
   ],
   "scope_corrections": [
