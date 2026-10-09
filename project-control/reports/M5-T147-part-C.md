@@ -229,3 +229,50 @@ document. The orchestrator should confirm whether the live read route is expecte
 blocks for this lot (a part B / part E consistency question) before relying on the browser leg.
 
 END-OF-SECOND-HALF
+
+## Third round — the browser test asserts the first building option through the live route
+
+Base (reset HEAD): `7f8d1ce923611e6d6949412c3c524da046e5beef`. The server-side defect found in the second
+half is fixed (part B commit `426d53e98` "the live results route gives the same document as the
+journey path"). I verified the live route directly through the harness (lanes venv on PATH,
+`PYTHONPATH=<worktree>/services/api`, POST BBL 4073340070): it now returns **contract 1.4.0 with
+`building_alternatives` holding building B on BOTH paths** — default (3 storeys at 10 ft, height 30 ft,
+"Preliminary capacity estimate" 17.27–21.59, way conditional, `not_checked` present, `fit_note`
+present, `legal_unit_limit_standard` withheld) and `floor_to_floor_ft=14` (3 storeys at 14 ft, height
+42 ft, same capacity). `coverage_by_portion` is present here but is deliberately NOT asserted in the
+browser test (per instruction: whether the harness carries the lot outline varies and the
+missing-outline behaviour is another builder's server change; the vitest leg covers coverage).
+
+### What I changed (ONLY `apps/web/e2e/results.flag-on.spec.ts` + this report)
+Replaced the second-half NOTE with real assertions on the LIVE-route render, after "Show results":
+building B as a labelled alternative (label read from the committed document), its floor schedule as
+three storey rows, its `Conditional` marker, what was not checked, the `Preliminary capacity estimate`
+with its range (quotients read from the committed document), `fit_note` beside the building, nothing
+called feasible, and the legal dwelling-unit limit shown with NO number ("29 units" absent until the
+special-density statement). Second run: after entering 14 ft, building B's floor schedule shows
+"14 ft" and NOT "10 ft". Expected strings come from the committed regenerated document or the entered
+input, never from a run.
+
+### Checks (direct exit codes, this Linux machine, in apps/web)
+- `npm run lint` → 0 (0 errors; 2 pre-existing warnings in files I did not touch).
+- `npm run typecheck` → 0.
+- `npm run build` → 0 (prerequisite for `next start`).
+- e2e (lanes venv first on PATH, `PYTHONPATH=<worktree>/services/api`):
+  `npx playwright test e2e/results.flag-on.spec.ts` → 0, **1 passed** (authoritative clean run with
+  fresh servers after stopping lingering ones).
+
+### Mutation proof (the building section is load-bearing)
+In a THROWAWAY mutation (reverted with `git checkout`, NOT committed) I renamed the section testid
+(`first-building-options` → `first-building-options-MUT`) and rebuilt. Run against FRESH servers
+(playwright's `reuseExistingServer` had first masked it by reusing a stale server — I stopped the
+lingering :3001/:8000 processes and re-ran), the e2e went RED:
+`expect(getByTestId('first-building-options')).toBeVisible()` failed, "element(s) not found" at
+spec line 119. Reverted; the authoritative run above is green.
+
+### STOP / doubt
+None. All work stayed inside `apps/web/e2e/results.flag-on.spec.ts` and this report. The throwaway
+mutation of the component was reverted byte-identical and is not in the commit. Note for future e2e
+runs from a worktree: `reuseExistingServer: !process.env.CI` reuses lingering :3000/:3001/:8000
+servers, which can serve a stale build — stop them before trusting a local result.
+
+END-OF-THIRD-ROUND

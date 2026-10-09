@@ -1,6 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
 import realLot from "../../../docs/reference-cases/R6B/cases/real-lot.json";
+// The regenerated committed results document (M5-T146 part E): the engine's recorded 1.4.0 output.
+// The live route serves the same engine, so building B's expected strings for the default run are
+// read from this document, never typed from a run.
+import journeyDoc from "../../../packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json";
 
 /**
  * W-5 / S16 [LAW] flag-ON human journey (task M5-T140), run by the `chromium-flag-on` project
@@ -97,20 +101,51 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     // Coverage and the rear yard read "not known".
     await expect(envelope).toContainText("Not known");
 
-    // The single building option reads "Not available".
+    // The single building option reads "Not available" and points to the worked list below.
     await expect(dialog.getByTestId("answer-building_option")).toContainText("Not available");
 
-    // NOTE (M5-T147 part C, second half): the worked first-building-option section
-    // (building_alternatives / coverage_by_portion) is NOT asserted here. On this lot the LIVE
-    // results route (the real engine via e2e/harness/fixture_api.py, importing this worktree's app)
-    // returns a contract-1.3.0 document WITHOUT those blocks for every request variant tested
-    // (default, floor_to_floor_ft=14, with the special-density statement): the server-side
-    // _apply_first_option gate in services/api/app/scenario/three_answers/three_way_document.py does
-    // not emit them for the harness document, whereas the REGENERATED committed document is 1.4.0 and
-    // DOES carry them. That server/engine gap is outside this task's files (services/api is a
-    // forbidden path; the harness may not be changed). The new section's screen behaviour is proven
-    // by the vitest leg against the regenerated committed document
-    // (journey-215-16-northern.test.tsx and the first-building-options suites).
+    // The worked first-building option appears through the LIVE route (contract 1.4.0) as a labelled
+    // alternative with its floor schedule, its conditions, what was not checked, and its preliminary
+    // capacity estimate. Building B's expected strings are read from the committed regenerated
+    // document (the engine's recorded output), never typed from a run. The coverage-by-portion block
+    // is NOT asserted here: whether the harness carries the lot outline varies and the missing-outline
+    // behaviour is a server change; the vitest leg covers coverage against the document.
+    const buildingB = journeyDoc.building_alternatives?.[0];
+    if (!buildingB) throw new Error("fixture changed: the journey must carry building_alternatives");
+    if (buildingB.capacity_estimate.label !== "Preliminary capacity estimate") {
+      throw new Error("fixture changed: building B's estimate must be the preliminary capacity estimate");
+    }
+    const options = dialog.getByTestId("first-building-options");
+    await expect(options).toBeVisible();
+    const buildingBlock = options.getByTestId("building-alternative").first();
+    await expect(buildingBlock.getByTestId("building-alternative-label")).toHaveText(buildingB.label);
+    // its floor schedule: one body row per worked storey (three storeys).
+    await expect(buildingBlock.getByTestId("floor-schedule").getByTestId("floor-schedule-row")).toHaveCount(
+      buildingB.storey_count,
+    );
+    // it is conditional (the marker is a word) and lists what was not checked.
+    await expect(buildingBlock.getByTestId("option-conditional-marker")).toHaveText("Conditional");
+    await expect(buildingBlock.getByTestId("building-alternative-not-checked")).toContainText(
+      buildingB.not_checked[0],
+    );
+    // the preliminary capacity estimate with its range, read from the document.
+    await expect(buildingBlock.getByTestId("capacity-estimate-label")).toHaveText(
+      "Preliminary capacity estimate",
+    );
+    await expect(buildingBlock.getByTestId("capacity-estimate-range")).toContainText(
+      buildingB.capacity_estimate.quotient_low.toFixed(2),
+    );
+    await expect(buildingBlock.getByTestId("capacity-estimate-range")).toContainText(
+      buildingB.capacity_estimate.quotient_high.toFixed(2),
+    );
+    // fit_note beside the building, as plain text.
+    await expect(buildingBlock.getByTestId("building-alternative-fit-note")).toHaveText(buildingB.fit_note);
+    // nothing is called feasible.
+    expect(await options.innerText()).not.toMatch(/feasible|complies|legally correct/i);
+    // the legal dwelling-unit limit shows withheld with NO number (it becomes "29 units" only after
+    // the special-density statement, asserted later).
+    await expect(allowance).toContainText("Legal dwelling-unit limit");
+    expect(await dialog.innerText()).not.toContain(`${UNIT_LIMIT_STANDARD} units`);
 
     // No line the website writes calls a value the maximum for the property (R269).
     expect(await dialog.innerText()).not.toContain("maximum for this property");
@@ -131,6 +166,14 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(dialog.getByTestId("three-answers-scope")).toContainText(
       "Standard residence was selected for this run as the housing program.",
     );
+    // Building B's floor schedule now shows the entered 14-foot floor-to-floor height, never 10.
+    const schedule14 = dialog
+      .getByTestId("first-building-options")
+      .getByTestId("building-alternative")
+      .first()
+      .getByTestId("floor-schedule");
+    await expect(schedule14).toContainText("14 ft");
+    await expect(schedule14).not.toContainText("10 ft");
 
     // Make the special-density statement and press again: the standard legal unit limit appears as
     // a conditional result naming that statement (reference L6), never as a settled number.
