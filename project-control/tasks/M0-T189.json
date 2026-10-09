@@ -1,0 +1,128 @@
+{
+  "task_id": "M0-T189",
+  "title": "The owner's architect presentation contract persisted: the adopted brief at docs/design, routing from the design-system document and the web rule, a short CLAUDE.md pointer, a path-scoped rule for the drawing and CAD paths, and a design entry in the handoff (D-090 source-079, the brief's first step)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Persist the owner's design brief of 2026-10-09 as the repository's architect presentation contract and route every later session and path to it, so the website and PDF work that follows reads one contract. Instruction files only; no product file changes.",
+  "business_reason": "The owner's brief asks for this first (its sections 9 and 10), so that the presentation rules survive across sessions and the next sessions build the website and PDF to them.",
+  "inputs": [
+    "project-control/directives/D-090-product-plan-2026-09-28-start-building/source-079-amendment.md (the brief quoted whole; rows R800 to R891)",
+    "the owner's package file CLAUDE_DESIGN_IMPLEMENTATION_BRIEF.md (SHA-256 3faa7d1f9e1ea50d27421001b6dd4fb3c19a0c55f4b2955270333fbfb81949f1)"
+  ],
+  "outputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    ".claude/rules/drawings-report-presentation.md",
+    "routing lines in docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md, .claude/rules/frontend-web.md and CLAUDE.md",
+    "a compact design entry in docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T189-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md",
+    ".claude/rules/frontend-web.md",
+    ".claude/rules/drawings-report-presentation.md",
+    "CLAUDE.md",
+    ".claude/rules/PROGRAM_KNOWLEDGE.md",
+    "docs/WORKING_KNOWLEDGE.md",
+    "docs/SESSION_HANDOFF.md",
+    "project-control/reports/M0-T189-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "services/**",
+    "packages/**",
+    "tools/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "The contract file",
+      "input": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+      "expected": "a short header gives its origin (the owner's package, its file name and SHA-256), the adoption date 2026-10-09, the directive rows and that later approved changes go into this one file; below it the brief's text is byte-identical to the owner's file (the digest of the body equals 3faa7d1f...)."
+    },
+    {
+      "id": "S2",
+      "case": "The design-system document routes to the contract",
+      "input": "docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md",
+      "expected": "its supersession note names the contract and the sections it overrides on conflict (page composition, tokens, typography, status presentation, responsive behavior, visual acceptance) by number; no section or requirement is deleted; the earlier set-aside note stays."
+    },
+    {
+      "id": "S3",
+      "case": "The web rule routes to the contract",
+      "input": ".claude/rules/frontend-web.md",
+      "expected": "one short line: read the contract before architect-facing website, report or drawing work; its paths frontmatter is unchanged."
+    },
+    {
+      "id": "S4",
+      "case": "A path-scoped rule for the server drawing and CAD paths",
+      "input": ".claude/rules/drawings-report-presentation.md",
+      "expected": "frontmatter paths for services/api/app/drawings/** and services/api/app/cad/**; a short body: read the contract; use the canonical results and geometry; keep the current status meaning; render and inspect the affected screen or PDF output; record the evidence through the existing gate. No skill, hook or watcher."
+    },
+    {
+      "id": "S5",
+      "case": "The CLAUDE.md pointer within the context budget",
+      "input": "CLAUDE.md; python3 tools/context_budget_check.py",
+      "expected": "CLAUDE.md gains one short pointer to the contract (the brief's suggested wording, shortened); the eager total stays under 10000 tokens because one PROGRAM_KNOWLEDGE bullet moves unchanged to docs/WORKING_KNOWLEDGE.md (Tier 2) with a one-line pointer left; the budget check passes."
+    },
+    {
+      "id": "S6",
+      "case": "The handoff's design entry",
+      "input": "docs/SESSION_HANDOFF.md",
+      "expected": "a compact entry: the contract path and its commit; the last surface or export checked (none yet in the product; the one-off test PDF in the session folder); remaining checks not run; the questions file and the open question ids; the next visible action and the hold that applies (screen files wait for wave 19)."
+    },
+    {
+      "id": "S7",
+      "case": "Nothing else changes",
+      "input": "git diff of the task's commit",
+      "expected": "only the allowed paths change; no product, contract, tool or test file; the validator and the lane-path coverage pass."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The always-loaded budget has about 21 tokens left: the pointer needs room made first (S5).",
+    "Writes under .claude/ can be refused by the session's safety check; the owner's words are recorded first (source-079)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T21:52:23.949995+00:00",
+  "updated_at": "2026-10-09T21:52:24.400108+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R804",
+        "D-090-R807",
+        "D-090-R808",
+        "D-090-R859",
+        "D-090-R860",
+        "D-090-R861",
+        "D-090-R862",
+        "D-090-R863",
+        "D-090-R864",
+        "D-090-R865",
+        "D-090-R883",
+        "D-090-R890"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T21:52:23.950214+00:00",
+  "path_notes": "Producer: the orchestrator (a governance task, as M0-T097). Copy the brief byte for byte from the package file; never retype it. The contract adopts the WHOLE brief; its sample figures stay attributed to the test assembly, as the brief says. Keep every pointer short (CLAUDE.md principle 19 and the brief's section 10). Built on the wave-19 branch beside tasks M5-T146 and M5-T147 (disjoint paths) and merged in the same pull request.",
+  "documented_test_commands": [
+    "python3 tools/context_budget_check.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage",
+    "python3 tools/validate_directive_compliance.py --check"
+  ],
+  "worktree": "/root/project/w-wave19"
+}

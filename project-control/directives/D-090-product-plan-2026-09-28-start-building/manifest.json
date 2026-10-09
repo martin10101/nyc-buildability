@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T21:44:51+00:00",
+ "updated_at": "2026-10-09T21:52:24+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -915,7 +915,7 @@
   "D-090-R891"
  ],
  "requirements_id_digest_sha256": "b149158efccc5c390a07fa304ac458d99a67926a768b17ddf3252565d945b6ab",
- "requirements_content_digest_sha256": "00e723fc58959a443ef086e5ec120cafba9b94bb5db32dc83c9db45d35d9f2a0",
+ "requirements_content_digest_sha256": "55780617ad8e6a50611bb908ccab0b3677981745e17d93c39a666cc324d487b0",
  "sources": [
   {
    "file": "source-001.md",
@@ -1678,7 +1678,8 @@
   "M4-T038",
   "M5-T145",
   "M5-T146",
-  "M5-T147"
+  "M5-T147",
+  "M0-T189"
  ],
  "affected_prs": [
   262,
@@ -2445,6 +2446,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-079 (session 013RaGmC: the owner's design handoff for the architect-facing website and PDF, with the brief attached) and requirements D-090-R800 to R891, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T21:52:24+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T189 (the owner's architect presentation contract persisted and routed) to R804, R807, R808, R859, R860, R861, R862, R863, R864, R865, R883, R890 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }
