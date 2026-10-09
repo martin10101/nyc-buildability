@@ -71,8 +71,12 @@ def test_step_p4_settled_and_not_known_rows():
     assert lib.load_row("step-p4-worked", "large-site")["kind"] == "value"
     assert lib.load_row("step-p4-worked", "qualifying-residential-site")["kind"] == "value"
     # the made-up 100x100 unit count is a conditional value (29, held by both readings
-    # subject to the floor-area-ratio definition the readers did not have)
-    units = lib.load_row("step-p4-worked", "made-up-100x100-units")
+    # subject to the floor-area-ratio definition the readers did not have); it is now
+    # superseded by step-p6-worked#made-up-unit-limit, so read the historical row on purpose
+    with pytest.raises(lib.RowSuperseded) as exc:
+        lib.load_row("step-p4-worked", "made-up-100x100-units")
+    assert "step-p6-worked#made-up-unit-limit" in str(exc.value)
+    units = lib.load_row("step-p4-worked", "made-up-100x100-units", allow_superseded=True)
     assert units["kind"] == "value"
     assert "29" in units["value"] and "floor area ratio" in units["value"]
     # the rear-yard row records reading 9's completeness caveat (one reading holds a

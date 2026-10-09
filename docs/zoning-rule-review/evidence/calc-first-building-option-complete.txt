@@ -1,0 +1,14 @@
+# Test-run evidence for the zoning-rule review register - calculation entries (M4-T038)
+# Committed log of one deterministic run of this calculation entry's linked test file,
+# executed in the task worktree on the claim-base code head 28026c5e (the scenario-engine
+# modules are unchanged by this task; the register source and the test file are this
+# task's additions). The automated-tests field records the result; the checker never
+# re-runs tests, it only checks that the recorded code-identity and test-file digests
+# still match the files.
+entry: calc-first-building-option-complete
+command (from services/api): python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register_calculations.py
+run date: 2026-10-09
+commit tested: 28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f
+exit code: 0
+---
+42 passed in 1.37s

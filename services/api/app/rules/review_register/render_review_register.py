@@ -175,6 +175,12 @@ def render_register_md(register: dict) -> str:
             f"| [open]({detail_rel_path(entry['rule_id'])}) |"
         )
     lines.append("")
+    # The sibling calculation collection and the coverage-gap list (M4-T038); rendered by the
+    # focused module so this file stays inside its module boundary.
+    from . import review_register_calculations as calc
+
+    lines += calc.render_calculations_table_section(register)
+    lines += calc.render_coverage_gaps_section(register)
     return "\n".join(lines) + "\n"
 
 
@@ -359,6 +365,11 @@ def render_history_md(register: dict) -> str:
             f"| {_esc(ev['event'])} | {_esc(ev['summary'])} | {_esc(ev['by'])} |"
         )
     lines.append("")
+    # The sibling calculation history (append-only, a separate list from the rule-entry history so
+    # the 23 rule entries' history stays byte-identical; M4-T038).
+    from . import review_register_calculations as calc
+
+    lines += calc.render_calculations_history_section(register)
     return "\n".join(lines) + "\n"
 
 
@@ -384,6 +395,11 @@ def write_all(register: dict | None = None) -> list[pathlib.Path]:
     for existing in RULES_MD_DIR.glob("*.md"):
         if existing.name not in wanted:
             existing.unlink()
+    # The sibling calculation detail pages (under calculations/, a new folder so they do not trip
+    # the rules/*.md orphan sweep; M4-T038).
+    from . import review_register_calculations as calc
+
+    written += calc.write_calc_pages(register)
     return written
 
 

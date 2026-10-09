@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T05:04:03+00:00",
+ "updated_at": "2026-10-09T07:43:29+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -705,10 +705,99 @@
   "D-090-R681",
   "D-090-R682",
   "D-090-R683",
-  "D-090-R684"
+  "D-090-R684",
+  "D-090-R685",
+  "D-090-R686",
+  "D-090-R687",
+  "D-090-R688",
+  "D-090-R689",
+  "D-090-R690",
+  "D-090-R691",
+  "D-090-R692",
+  "D-090-R693",
+  "D-090-R694",
+  "D-090-R695",
+  "D-090-R696",
+  "D-090-R697",
+  "D-090-R698",
+  "D-090-R699",
+  "D-090-R700",
+  "D-090-R701",
+  "D-090-R702",
+  "D-090-R703",
+  "D-090-R704",
+  "D-090-R705",
+  "D-090-R706",
+  "D-090-R707",
+  "D-090-R708",
+  "D-090-R709",
+  "D-090-R710",
+  "D-090-R711",
+  "D-090-R712",
+  "D-090-R713",
+  "D-090-R714",
+  "D-090-R715",
+  "D-090-R716",
+  "D-090-R717",
+  "D-090-R718",
+  "D-090-R719",
+  "D-090-R720",
+  "D-090-R721",
+  "D-090-R722",
+  "D-090-R723",
+  "D-090-R724",
+  "D-090-R725",
+  "D-090-R726",
+  "D-090-R727",
+  "D-090-R728",
+  "D-090-R729",
+  "D-090-R730",
+  "D-090-R731",
+  "D-090-R732",
+  "D-090-R733",
+  "D-090-R734",
+  "D-090-R735",
+  "D-090-R736",
+  "D-090-R737",
+  "D-090-R738",
+  "D-090-R739",
+  "D-090-R740",
+  "D-090-R741",
+  "D-090-R742",
+  "D-090-R743",
+  "D-090-R744",
+  "D-090-R745",
+  "D-090-R746",
+  "D-090-R747",
+  "D-090-R748",
+  "D-090-R749",
+  "D-090-R750",
+  "D-090-R751",
+  "D-090-R752",
+  "D-090-R753",
+  "D-090-R754",
+  "D-090-R755",
+  "D-090-R756",
+  "D-090-R757",
+  "D-090-R758",
+  "D-090-R759",
+  "D-090-R760",
+  "D-090-R761",
+  "D-090-R762",
+  "D-090-R763",
+  "D-090-R764",
+  "D-090-R765",
+  "D-090-R766",
+  "D-090-R767",
+  "D-090-R768",
+  "D-090-R769",
+  "D-090-R770",
+  "D-090-R771",
+  "D-090-R772",
+  "D-090-R773"
  ],
- "requirements_id_digest_sha256": "7d291eb03381148c81297174c84f2619ec09cc178c4c44d295349be2f1c5269d",
- "requirements_content_digest_sha256": "b66c96714566136e204f830384dd03e0f1273f035278e6d84f8de0da3721fdef",
+ "requirements_id_digest_sha256": "480b148d08550d57ea9e5d03b96888560fdb13a354f6be1fd60a801ea583d68c",
+ "requirements_content_digest_sha256": "8ca84d4a58f268a09486c28ff0645d11ed59cbe806db3c7ebfeea23c5f1b91f9",
  "sources": [
   {
    "file": "source-001.md",
@@ -1244,6 +1333,70 @@
    "recorded_at": "2026-10-09T05:04:03+00:00",
    "content_digest_sha256": "1a89ea390692327b2d92a80a9a99535a6008bc11952a684f9e3c88cc36191aa3",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-068-amendment.md",
+   "kind": "amendment",
+   "sequence": 68,
+   "recorded_at": "2026-10-09T05:38:58+00:00",
+   "content_digest_sha256": "65b655060848a968ad442e11651a26c7d1e3e3360728683f5827284476974c2d",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-069-amendment.md",
+   "kind": "amendment",
+   "sequence": 69,
+   "recorded_at": "2026-10-09T06:00:46+00:00",
+   "content_digest_sha256": "b9e0a15140c7c04b57584eabc334f030752997e017f124d6490fd946f03264dc",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-070-amendment.md",
+   "kind": "amendment",
+   "sequence": 70,
+   "recorded_at": "2026-10-09T06:09:53+00:00",
+   "content_digest_sha256": "f9c38012b73b84206a862944f11aa43586ab9269bab7a474ff8ad881a11ce6c6",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-071-amendment.md",
+   "kind": "amendment",
+   "sequence": 71,
+   "recorded_at": "2026-10-09T06:15:04+00:00",
+   "content_digest_sha256": "92aeac34085286369701aa7a0ade086d19f0808723dd0b63c993188e0df73e98",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-072-amendment.md",
+   "kind": "amendment",
+   "sequence": 72,
+   "recorded_at": "2026-10-09T06:21:04+00:00",
+   "content_digest_sha256": "439529449fc0a18faa9870a95426c71f544dbf102cbfbcd9f6270cc10d073c1c",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-073-amendment.md",
+   "kind": "amendment",
+   "sequence": 73,
+   "recorded_at": "2026-10-09T06:30:52+00:00",
+   "content_digest_sha256": "e549e06021b256a28f47575c37c5749c3dec294717ef708ef98c21e48ee7faae",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-074-amendment.md",
+   "kind": "amendment",
+   "sequence": 74,
+   "recorded_at": "2026-10-09T07:15:00+00:00",
+   "content_digest_sha256": "52f19aaa1bed54f7606d2d3fd01f040c6ad671af50ed806a87644acb2a1bf85a",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-075-amendment.md",
+   "kind": "amendment",
+   "sequence": 75,
+   "recorded_at": "2026-10-09T07:43:29+00:00",
+   "content_digest_sha256": "ee1be4afdcc99fc65cc9bc264deb9a9753c6a7ef48028085e31b10494b14a7b3",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1312,7 +1465,15 @@
   "source-064-amendment.md",
   "source-065-amendment.md",
   "source-066-amendment.md",
-  "source-067-amendment.md"
+  "source-067-amendment.md",
+  "source-068-amendment.md",
+  "source-069-amendment.md",
+  "source-070-amendment.md",
+  "source-071-amendment.md",
+  "source-072-amendment.md",
+  "source-073-amendment.md",
+  "source-074-amendment.md",
+  "source-075-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1358,7 +1519,9 @@
   "M5-T141",
   "M5-T142",
   "M5-T143",
-  "M5-T144"
+  "M5-T144",
+  "M4-T037",
+  "M4-T038"
  ],
  "affected_prs": [
   262,
@@ -2017,6 +2180,66 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-067 (session 013RaGmC: the owner's opening message of the session after handoff seq 152, 2026-10-09: resume; finish M5-T144 with the restrictions and checks kept; completed reviews and research reused; a replacement reviewer only when necessary; then the handoff's remaining-work order; the audit not continued; go on without asking; updates in four bullets) and requirements D-090-R669 to R684, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T05:38:58+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-068 (session 013RaGmC: the owner's second message of the session after handoff seq 152, 2026-10-09: the first building option compared step by step with an independently worked example; the zoning-rule review register kept current for every rule and calculation by the existing process, with what each detail page shows; legal requirements told apart from design assumptions; combined calculations included and gaps stated; a human verdict only from a named human reviewer; the audit stays finished) and requirements D-090-R685 to R709, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T05:41:55+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T037 (step P6: one independent hand-worked example of a first building option, written into the R6B reference cases) to R291, R519, R545, R650, R651, R664, R686, R687, R688, R689, R690, R699, R700 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T06:00:46+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-069 (session 013RaGmC: the owner's message on keeping the session small, 2026-10-09: bounded reads, concise output, paperwork scripts reused with parameters, the validation and review requirements kept; helpers' full evidence in their existing permitted records and a concise return; no wider permission for a read-only helper; the conversation kept to current matters, briefs point to records; compaction not mandatory at a merge, only when completed material takes substantial context, after a checkpoint, never while helpers are active; one small diagnostic with the next normal update; no audit, no new framework; the product work goes on) and requirements D-090-R710 to R729, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:09:53+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-070 (session 013RaGmC: the owner forwards a reviewer's assessment of the compaction plan, 2026-10-09: proceed, no further audit; resuming made precise (the actual helper ids, the current revision, the pending results, the next action and the owner's decisions in the summary itself; only the latest checkpoint and the last two state entries read on resuming); a shorter review still holds its evidence (expected against actual, significant findings, worked calculations stay in the review record; only repeated background is shortened); the context breakdown taken before and after the compaction; no instruction-file reorganisation, commit or push for that step) and requirements D-090-R730 to R744, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:15:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-071 (session 013RaGmC: the owner on when to compact, 2026-10-09: the third concern is bulk rereading; compact at the next quiet point with an accurate checkpoint, reuse a current checkpoint, never during an acceptance or a merge, no need to wait for reviewers; afterwards read only the checkpoint and what the next action needs; review evidence stays in the records; the diagnostic with the next normal update; 'growth is slower' an expectation until measured; no further audit or process discussion; the building-option work goes on) and requirements D-090-R745 to R755, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:21:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-072 (session 013RaGmC: the owner asks for the compaction hook, 2026-10-09: a hook so that the session gets the information it needs after a compaction; the documentation checked first and the exact lines brought to the owner; CLAUDE.md not touched) and requirements D-090-R756 to R757, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:30:52+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-073 (session 013RaGmC: the owner approves the minimal local checkpoint hook with corrections, 2026-10-09: only the compact-matched hook, no copy of the reminder, no setting overwritten; this session's notes selected explicitly; source path and timestamp in the output; nothing cut silently; the record corrected (background helpers survive a compaction by the current documentation); a setup-specific limitation named before any restriction; the output checked for the right session, a missing and an oversized checkpoint; the final script and a sample with the next normal update; bounded) and requirements D-090-R758 to R770, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:44:55+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M4-T038 (G0 contract: calculation entries in the zoning-rule review register and the first building option's calculation comparison) to R379, R686, R687, R688, R689, R690, R691, R692, R693, R694, R695, R696, R697, R698, R699, R700, R701, R702, R703, R704, R705, R706, R707 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T07:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-074 (session 013RaGmC: the owner sends two screenshots and asks to do what they show, 2026-10-09: a table of contents within the first 100 lines of every reference file of the owner's own skills; no skill is created; vendor-synced skills are not edited; no repository file changes) and requirements D-090-R771 to R772, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T07:43:29+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-075 (session 013RaGmC: the owner asks that long tasks be broken up or built by several agents side by side, 2026-10-09; read within the recorded limits on helpers and the no-shared-file rule) and requirements D-090-R773 to R773, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

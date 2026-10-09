@@ -116,6 +116,11 @@
       "date": "2026-10-07",
       "summary": "Round 2 (review finding F2): row L12 (rear yard) is marked superseded_by step-p3-worked#real-lot-rear-yard-beyond-corner, the step-P3 row that holds the current reading of the real lot's rear yard beyond the corner; kept as the historical record, and the loader no longer hands it out as current. Rows L5 and L14 are left: no step-P3 row gives their current answer (L5's per-portion coverage is unchanged and the Q7c '100 percent' remark is a passing remark; L14's ordinary rear-yard depth only gains the finding that the real lot's lot width itself is not known). No expected value or kind changed. Reason: a corrected reading - one current expected answer per question.",
       "by": "rules-engineer (M4-T030)"
+    },
+    {
+      "date": "2026-10-09",
+      "summary": "Step P6 (task M4-T037): row L15 (building option, floor plates, floors) is marked superseded_by cases/step-p6-worked.json rows real-building-a and real-building-b, which hold the current independent hand-worked example of a first building option for the real lot. Row L15's not-known rested on there being no independent worked example; one now exists (a clearly conditional example: building A's exact footprint differs between the two readings and the rear yard beyond the corner stays not known). L15 is kept as the historical record, its expected value and kind unchanged (still not known), and the loader no longer hands it out as current. Row L5 (maximum lot coverage) is left not known: the two step-P6 readings read the coverage per portion but their measured corner-portion and interior-strip areas differ (9,997.60 and 390.39 against 9,997.46 and 390.52), so they do not work the two portions to the same areas, and the whole-lot coverage stays not known. Reason: a corrected reading - one current expected answer per question.",
+      "by": "rules-engineer (M4-T037)"
     }
   ],
   "rows": [
@@ -883,7 +888,8 @@
         "reason": "There is no independent worked example for a building option, and it would need a settled footprint, which depends on coverage (row L5), the rear yard (row L12) and the setback (row L13), none of them settled here."
       },
       "source_reference": "Work order table A, row L15: 'Building option, floor plates, floors -> no independent example -> none'.",
-      "does_not_establish": "It gives no floor-plate area, floor count or building massing."
+      "does_not_establish": "It gives no floor-plate area, floor count or building massing.",
+      "superseded_by": ["step-p6-worked#real-building-a", "step-p6-worked#real-building-b"]
     }
   ]
 }

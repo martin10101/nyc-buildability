@@ -193,6 +193,59 @@ Turning this list into follow-up rule work is an orchestrator decision.
 - **Rules / property integration** (`services/api/app/rules/integration.py`) - maps property facts
   into rule inputs; it maps, it does not decide law.
 
+## Calculation entries (combined-rule and arithmetic calculations)
+
+Some reported numbers are not a single rule lookup but a **calculation** that combines several rules
+or does arithmetic on their outputs - the floor area (floor area ratio times lot area), lot coverage
+by portion, the building-option floor stack, the legal dwelling-unit limit, and the preliminary
+apartment estimate. These calculations live in the scenario engine and have **no rule file of their
+own**, so they are recorded in a second collection, `calculations`, beside the 23 rule `entries`
+(schema_version 1.1; the 23 rule entries are unchanged). They render to `calculations/<id>.md`, are
+listed in a Calculations table and a Coverage-gaps section in `REGISTER.md`, and keep their own
+append-only `calculations_history`. The detail pages are generated the same way - edit
+`register.json` and re-render; never edit the Markdown by hand.
+
+A calculation entry carries, besides the fields a rule entry has:
+
+- **entry_kind** - `calculation` (a single calculation) or `calculation_comparison` (a page that
+  sets the whole first building option beside an independently worked example, step by step).
+- **combines_rule_ids** - the register rule-entry ids whose rules this calculation combines, so
+  every rule behind it is traceable.
+- **code_modules** and **code_identity_sha256** - a calculation has no rule file, so it is
+  fingerprinted by the LF-normalized sha256 of each implementing scenario-engine module and a single
+  combined identity (the sha256 over the sorted `path:sha256` lines). **If a module changes and the
+  entry is not revised, the build fails** - exactly as a changed rule file is caught for a rule
+  entry, and the automated-test result flips to `Not run`.
+- **inputs, units, measurement_basis, formula, rounding** - dedicated fields (where no rounding rule
+  exists the field reads "none - no rounding rule").
+- **legal_vs_design** - one row per figure or step, each marked a `LEGAL_REQUIREMENT` (with the
+  quoted captured text and its capture id/digest, verified verbatim against the snapshot) or a
+  `DESIGN_ASSUMPTION`. The apartment size (700 sq ft) and the efficiency share (0.60 to 0.75) carry
+  the literal words "preliminary assumption" wherever they appear.
+- **example** - the worked example. Its **expected** side is always an independent reference case,
+  named by `case#row` in `cited_rows`; the checker refuses a cited row that does not exist or is
+  superseded. Its **actual** side is the program's own answer - read from the committed results
+  document, or (for a figure the engine computes but the document withholds, such as the dwelling-
+  unit count or the sample floor stack) recomputed through the engine's own functions by the test,
+  which then records both what the engine computes and that the document withholds it. **The expected
+  side is never taken from a program run.** `agrees` is `true`, `false`, or `null`; a withheld or
+  not-built program side, or two readings that differ, record `null` with a plain note - never a
+  forced match.
+- A `calculation_comparison` entry carries **steps** (the six steps of the complete calculation,
+  each with its independent expected answer, the program's actual answer and standing, and a verdict
+  of agree / differ / a side is missing) and a **closing** list of every disagreement and missing
+  fact, each with its kind and what would settle it.
+- **linked_records** - the measurement-basis record, the reference cases and the coverage matrix are
+  **linked, not copied**.
+- **coverage_gap** - one plain sentence naming what the register still does not cover for this
+  calculation; the register-wide `coverage_gaps` list collects every gap.
+
+The append-only duty and the human-verdict rules are the same as for a rule entry: every change adds
+a revision and a `calculations_history` event, the history is only ever appended (a reviewer confirms
+this on each change), and a human verdict is recorded only from a named human reviewer - never from a
+passing test or an agent review. A calculation entry's recorded review identity is its **code
+identity**, its law digests and its revision, so a decision never survives a code change.
+
 ## Moving the register into a database later
 
 The register is already structured so it can move into a Supabase (Postgres) table later with no

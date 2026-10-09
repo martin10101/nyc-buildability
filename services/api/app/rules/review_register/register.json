@@ -1,6 +1,6 @@
 {
   "schema": "zoning_rule_review_register",
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "generated_note": "Authored source of the zoning-rule review register. The Markdown under docs/zoning-rule-review/ is rendered from this file; do not edit the Markdown by hand. See docs/zoning-rule-review/GUIDE.md.",
   "field_guide": {
     "verdict_values": [
@@ -42,6 +42,10 @@
       "true",
       "false",
       "null"
+    ],
+    "entry_kind_values": [
+      "calculation",
+      "calculation_comparison"
     ]
   },
   "entries": [
@@ -2900,5 +2904,1310 @@
       "summary": "The results document's three-way form carries the rear yard as a withheld value-state on the benchmark lot and makes the drawing note follow it (M5-T136); the rule's reading of the law is unchanged.",
       "by": "rules-engineer (M5-T136)"
     }
+  ],
+  "calculations": [
+    {
+      "entry_id": "calc-floor-area-allowance",
+      "entry_kind": "calculation",
+      "title": "Floor-area allowance: floor area ratio x lot area (benchmark lot BBL 4073340070)",
+      "family": "floor_area",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6-r12-residential-far"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/answers.py",
+          "sha256": "1ebb4595a74df168c1318bc02216781234daf8b181309271bf4ef33644150ab7"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/result_ways.py",
+          "sha256": "58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c"
+        }
+      ],
+      "code_identity_sha256": "f20a1f2b02229642e15aa76fbe5e6a18bc3513bb6590d29df0b45139e5d51e76",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The scenario step that multiplies the R6B standard floor area ratio (2.00, ZR 23-22) by the lot area to report the maximum residential floor area for the benchmark lot, and marks it available-conditional on the recorded-versus-outline lot-area conflict.",
+      "exceptions": [
+        "The qualifying affordable/senior housing floor area is a labelled alternative, not decided.",
+        "A special district or overlay change to the floor area is not applied.",
+        "The recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree; neither is chosen automatically, and every floor-area figure carries that condition."
+      ],
+      "interpretation": "Floor area = floor area ratio x lot area. For the benchmark R6B lot the engine uses the recorded lot area 10,075 sq ft: 2.00 x 10,075 = 20,150 sq ft, reported as available-conditional (the recorded area conflicts with the outline area; neither is chosen).",
+      "units": "feet and square feet",
+      "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "The floor area 20,150 sq ft (2.00 x 10,075) is recomputed through the r6-r12-residential-far rule and equals the independent real-lot#L1 (test: test_calc_floor_area_recomputed_matches_independent).",
+          "The document reports the same floor area with the recorded-versus-outline condition (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The conflict between the recorded lot area and the outline area is shown, not resolved."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "Floor area ratio 2.00 for R6B standard residences (ZR 23-22 table)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #floor area ratio# shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-22",
+          "capture_digest": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "figure": "Floor area = floor area ratio x lot area (ZR 12-10 floor area ratio definition)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "\"Floor area ratio\" is the total #floor area# on a #zoning lot#, divided by the #lot area# of that #zoning lot#.",
+          "capture_snapshot_id": "zr-12-10-floor-area-ratio",
+          "capture_digest": "11e7a3dc9f57ba1718ec5edfebb7aeb0fa6e61698228f70a170c1649d354c8d4"
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
+        "docs/reference-cases/R6B/cases/real-lot.json (real-lot#L1, independent)",
+        "docs/reference-cases/R6B/cases/step-p5-worked.json (floor-area-ratio rows, independent)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+        "tested_on": "2026-10-09",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "42 passed",
+        "evidence": "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+        "tested_code_identity_sha256": "f20a1f2b02229642e15aa76fbe5e6a18bc3513bb6590d29df0b45139e5d51e76",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
+        },
+        "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-09",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The recorded-versus-outline lot-area conflict is shown as a condition on every floor-area figure, not resolved; a survey or deed would settle it."
+      ],
+      "coverage_gap": "Before this entry, the scenario step that turns the rule's floor area ratio into the reported floor area had no register page, though it combines ZR 23-22 with the recorded lot area.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "zoning_district = R6B",
+        "lot_area_sq_ft = 10,075 (recorded city record)",
+        "housing_program = standard_residence"
+      ],
+      "formula": "max residential floor area = floor area ratio (2.00) x lot area (10,075) = 20,150 sq ft",
+      "rounding": "none - no rounding rule (an exact product)",
+      "example": {
+        "description": "The benchmark lot 215-16 Northern Boulevard, Queens (BBL 4073340070), R6B, standard residences.",
+        "inputs": {
+          "zoning_district": "R6B",
+          "lot_area_sq_ft": 10075,
+          "housing_program": "standard_residence"
+        },
+        "expected": {
+          "values": {
+            "max_residential_far": 2.0,
+            "max_residential_floor_area_sq_ft": 20150
+          },
+          "basis_kind": "reference_case",
+          "basis": "real-lot#L1 = 20,150 sq ft (2.00 x 10,075, rounding none); step-p5-worked#floor-area-ratio-made-up-100x100 settles floor area = ratio x lot area (2.00 x 10,000 = 20,000 on the made-up lot); step-p5-worked#floor-area-ratio-definition quotes the ZR 12-10 definition and its 10,000 sq ft / 2.0 example.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/real-lot.json",
+              "row_id": "L1"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p5-worked.json",
+              "row_id": "floor-area-ratio-made-up-100x100"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p5-worked.json",
+              "row_id": "floor-area-ratio-definition"
+            }
+          ],
+          "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "max_residential_far": 2.0,
+            "max_residential_floor_area_sq_ft": 20150.0
+          },
+          "state": "available_conditional",
+          "engine_values": {},
+          "engine_note": ""
+        },
+        "agrees": true
+      }
+    },
+    {
+      "entry_id": "calc-lot-coverage-by-portion",
+      "entry_kind": "calculation",
+      "title": "Lot coverage by portion: corner-lot portion 100% plus interior strip 80% (benchmark lot)",
+      "family": "lot_coverage",
+      "law": [
+        {
+          "section": "23-362",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362",
+          "snapshot_id": "zr-23-362",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-362.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:06Z",
+          "content_digest_sha256": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6b-lot-coverage"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/result_ways.py",
+          "sha256": "58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/geometry.py",
+          "sha256": "c44b2490469b4b1f9760d540bf0a13d2c847767672379d4a1275b1755d778589"
+        }
+      ],
+      "code_identity_sha256": "10d71edb28fb4c4186425c053b368f04bce81ca1e258ea78ddb4fbf426d52908",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The by-portion lot coverage a corner lot takes when part of it lies beyond 100 ft of a street line: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. The benchmark lot reaches 103.93 ft from the 215 Place line, so no single whole-lot figure applies and the engine withholds max_lot_coverage.",
+      "exceptions": [
+        "r6b-lot-coverage covers only the flat 80% interior rule; the corner 100% split is not built.",
+        "The corner-lot portion is the part within 100 ft of each intersecting street line (ZR 12-10)."
+      ],
+      "interpretation": "The engine withholds max_lot_coverage for the benchmark lot because the lot reaches beyond the corner-lot portion, so there is no single whole-lot coverage figure; coverage by portion (corner 100% + interior strip 80%) is not built.",
+      "units": "feet and square feet",
+      "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "The document withholds max_lot_coverage with the by-portion reason (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "Coverage by portion (corner-lot portion at 100% plus interior strip at 80%) is not built.",
+          "No footprint is drawn because the coverage is withheld."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "Interior/through lots 80%, corner lots 100% (ZR 23-362)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #lot coverage# for #interior lots# or #through lots# shall be 80 percent and the maximum #residential# #lot coverage# for #corner lots# shall be 100 percent.",
+          "capture_snapshot_id": "zr-23-362",
+          "capture_digest": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        },
+        {
+          "figure": "The corner-lot portion is within 100 ft of each intersecting street line (ZR 12-10)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "A \"corner lot\" is either a #zoning lot# bounded entirely by #streets#",
+          "capture_snapshot_id": "zr-12-10-lot-corner",
+          "capture_digest": "86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58"
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
+        "docs/reference-cases/R6B/cases/step-p6-worked.json (coverage by portion, independent)",
+        "docs/reference-cases/R6B/cases/real-lot.json (real-lot#L5, independent)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+        "tested_on": "2026-10-09",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "42 passed",
+        "evidence": "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+        "tested_code_identity_sha256": "10d71edb28fb4c4186425c053b368f04bce81ca1e258ea78ddb4fbf426d52908",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
+        },
+        "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-09",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The two step-P6 readings differ in the decimals of the measured areas, so the expected side holds both figures and no single figure is recorded.",
+        "The whole-lot coverage stays not known (real-lot#L5; corner-reach#real-lot-coverage)."
+      ],
+      "coverage_gap": "Lot coverage by portion for a corner lot (corner 100% + interior strip 80%) is not built; r6b-lot-coverage covers only the flat 80% rule.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "zoning_district = R6B",
+        "lot_type = corner",
+        "within_100_ft_of_street_line_intersection = false (reaches 103.93 ft from 215 Place)"
+      ],
+      "formula": "footprint allowed = corner-lot portion x 100% + interior strip x 80% (by portion; not built in the program)",
+      "rounding": "none - no rounding rule",
+      "example": {
+        "description": "The benchmark corner lot, lot coverage by portion.",
+        "inputs": {
+          "zoning_district": "R6B",
+          "lot_type": "corner",
+          "within_100_ft_of_street_line_intersection": false
+        },
+        "expected": {
+          "values": {},
+          "basis_kind": "reference_case",
+          "basis": "step-p6-worked#real-lot-coverage-by-portion: not known as a single whole-lot figure. Corner-lot portion (100%): reading 13 = 9,997.60 sq ft, reading 14 = 9,997.46 sq ft. Interior strip (80%): reading 13 = 390.39 sq ft (allowing 312.31), reading 14 = 390.52 sq ft (allowing 312.42). Footprint allowed about 10,310 sq ft (reading 13 10,309.91, reading 14 10,309.88). The readings differ in the decimals, so both are held; real-lot#L5 keeps the whole-lot figure not known.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "real-lot-coverage-by-portion"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/real-lot.json",
+              "row_id": "L5"
+            }
+          ],
+          "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+        },
+        "actual": {
+          "values": {},
+          "state": "withheld",
+          "engine_values": {},
+          "engine_note": ""
+        },
+        "agrees": null
+      }
+    },
+    {
+      "entry_id": "calc-building-option-floor-stack",
+      "entry_kind": "calculation",
+      "title": "Building-option floor stack: footprint, each floor's area and height, total floor area (benchmark lot)",
+      "family": "building_option",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "section": "23-432",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+          "snapshot_id": "zr-23-432",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T06:49:08Z",
+          "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6-r12-residential-far",
+        "r6b-height"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/building_option.py",
+          "sha256": "57ce8a88deede0edb505a63188082fd27dadc37b6eda5ac0de051619465789b1"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/result_ways.py",
+          "sha256": "58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c"
+        }
+      ],
+      "code_identity_sha256": "16b8e100a9a37e748976de50233bcda66782c874c52f58c77b853f0bbdf377f3",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's method (compute_building_option) stacks one uniform widest plate (lot area x lot coverage) to the height limit and caps at the floor-area allowance, with a partial top floor. For the benchmark lot the document withholds the building option (coverage withheld, the sample building is below the minimum base height, and no reference case had been run).",
+      "exceptions": [
+        "The engine needs the lot coverage, which is withheld for the benchmark lot, so no footprint is produced.",
+        "The building option is withheld unconditionally this milestone (result_ways._building_option_withheld).",
+        "The method differs from the independent example's two buildings (DB-210)."
+      ],
+      "interpretation": "The engine stacks one uniform widest plate to the height limit, capping at the floor-area allowance with a partial top floor. The independent example instead works two buildings: the widest footprint in whole storeys to the floor-area maximum (building A) and the fewest storeys reaching the 30 ft minimum base height (building B). This is a difference of method (DB-210); the engine's result on the benchmark lot is withheld because coverage is withheld.",
+      "units": "feet and square feet",
+      "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "On the made-up interior lot (allowance 20,000; plate 8,000 = 10,000 x 80%; height limit 55 ft; 10 ft floor-to-floor) the engine's compute_building_option returns 3 floors (8,000 + 8,000 + 4,000) = 20,000 sq ft at 30 ft, which differs from the independent two buildings (test: test_engine_sample_stack_differs_from_independent_two_buildings).",
+          "The document withholds the building option (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The building-option generator and floor schedule are not built for the benchmark lot.",
+          "Which building the first option shows is the owner's pending decision (DB-210)."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "R6B heights: minimum base 30 ft, maximum base 45 ft, maximum building 55 ft (ZR 23-432)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the minimum base height, maximum base height, and maximum #building# height shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-432",
+          "capture_digest": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        },
+        {
+          "figure": "Setback above the maximum base height (ZR 23-432)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "For portions of a #building# #street wall# that exceed the maximum base height, a setback shall be provided",
+          "capture_snapshot_id": "zr-23-432",
+          "capture_digest": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        },
+        {
+          "figure": "Floor area ratio 2.00 / maximum floor area as the stack's cap (ZR 23-22)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #floor area ratio# shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-22",
+          "capture_digest": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "figure": "10-ft floor-to-floor height (a chosen design assumption, the owner's starting value)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "Same-plan uniform-plate stack, and which building the first option shows: a chosen design assumption, not law (DB-210; the owner's pending decision)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
+        "docs/reference-cases/R6B/cases/step-p6-worked.json (building A/B, independent)",
+        "docs/DISCOVERY_BACKLOG.md (DB-210, the method difference and the owner's pending decision)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+        "tested_on": "2026-10-09",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "42 passed",
+        "evidence": "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+        "tested_code_identity_sha256": "16b8e100a9a37e748976de50233bcda66782c874c52f58c77b853f0bbdf377f3",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
+        },
+        "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-09",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The engine's method (one uniform widest plate to a partial top floor) differs from the independent example's two buildings; recorded as a design assumption that differs (DB-210).",
+        "The two step-P6 readings differ in the decimals of the real lot's footprint; both figures are held, no single figure."
+      ],
+      "coverage_gap": "The building-option / floor-stack calculation is withheld in the program and uncompared; this entry sets the engine's method beside the independent example but the generator is not built.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "allowance_sf (maximum residential floor area)",
+        "plate_sf (lot area x lot coverage)",
+        "max_building_height_ft (R6B 55 ft)",
+        "floor_to_floor_ft = 10 (a chosen design assumption)",
+        "made-up demonstration: allowance 20,000; plate 8,000 (10,000 x 80%); height 55; f2f 10"
+      ],
+      "formula": "floors that fit = floor(height limit / floor-to-floor); floors built = ceil(allowance / plate) capped at the floors that fit; building height = floors built x floor-to-floor (engine method; a uniform widest plate, partial top floor)",
+      "rounding": "floor division for the floors that fit and ceiling for the floors to reach the allowance; the top floor may be partial (engine's exact-fraction arithmetic)",
+      "example": {
+        "description": "The first building option's floor stack: the engine's method on the made-up interior lot beside the independent example; the benchmark program side is withheld.",
+        "inputs": {
+          "allowance_sf": 20000,
+          "plate_sf": 8000,
+          "max_building_height_ft": 55,
+          "floor_to_floor_ft": 10
+        },
+        "expected": {
+          "values": {},
+          "basis_kind": "reference_case",
+          "basis": "step-p6-worked: made-up building A = 2 storeys of 8,000 = 16,000 sq ft, 20 ft, 4,000 sq ft unused; made-up building B = 3 storeys of 6,666.67 = 20,000 sq ft, 30 ft. Real building A = 1 storey about 10,310 sq ft, 10 ft (below the 30 ft minimum base); real building B = 3 storeys of 6,716.67 = 20,150 sq ft, 30 ft. The independent method offers two buildings; the engine does not.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "made-up-footprint-a"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "made-up-building-a"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "made-up-building-b"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "real-building-a"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "real-building-b"
+            }
+          ],
+          "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+        },
+        "actual": {
+          "values": {},
+          "state": "not_available",
+          "engine_values": {
+            "engine_floors_built": 3,
+            "engine_achieved_sf": 20000,
+            "engine_building_height_ft": 30,
+            "engine_top_floor_sf": 4000
+          },
+          "engine_note": "On the made-up interior lot (allowance 20,000; plate 8,000; height 55 ft; f2f 10) the engine's compute_building_option returns 3 floors (8,000 + 8,000 + 4,000) = 20,000 sq ft at 30 ft - one uniform widest plate with a partial top floor. For the benchmark lot the document withholds the building option (coverage withheld). The independent example instead offers two buildings; this is a difference of method (DB-210)."
+        },
+        "agrees": null
+      }
+    },
+    {
+      "entry_id": "calc-legal-dwelling-unit-limit",
+      "entry_kind": "calculation",
+      "title": "Legal dwelling-unit limit: maximum floor area / 680, rounding up at .75 (benchmark lot)",
+      "family": "dwelling_units",
+      "law": [
+        {
+          "section": "23-52",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+          "snapshot_id": "zr-23-52",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:29Z",
+          "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "section": "23-52(b)",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+          "snapshot_id": "zr-23-52",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:29Z",
+          "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6b-dwelling-units"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/dwelling_units.py",
+          "sha256": "57abec65ce2e2ad961fefcc995c5c41d62e760dc46111ab6df1f0050e16d2c8a"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/result_ways.py",
+          "sha256": "58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c"
+        }
+      ],
+      "code_identity_sha256": "e353aa1181e2ce0ac8a513233cacc24e26781b67e2ac45e4a9c16f6119cef008",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The legal ceiling on dwelling units: the maximum residential floor area divided by the ZR 23-52(b) factor 680, with the fraction counted as one unit only at three-quarters or more. The engine computes 29 for the benchmark lot (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit because there is no evidence of whether the lot is in a special density area (ZR 23-52(a)(1)) and the shown form was not checked against an independent example.",
+      "exceptions": [
+        "In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)). The law is read and the cases read this Queens lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district); the program has not connected that evidence or built the checked conditional display (gap_kind work_owed = code not built), so it withholds the limit.",
+        "Qualifying senior housing has no factor (ZR 23-52(a)(2)); qualifying affordable housing is a separate labelled limit."
+      ],
+      "interpretation": "max dwelling units = maximum residential floor area / 680; a fraction of .75 or more counts as one unit, otherwise it is dropped. The engine computes 20,150 / 680 = 29.63 -> 29 through the r6b-dwelling-units rule, but the document withholds the limit pending special-density evidence and an independent check.",
+      "units": "feet and square feet",
+      "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "The limit 29 (20,150 / 680 = 29.63 -> 29) is recomputed through the r6b-dwelling-units rule and equals the independent real-lot#L6 and step-p6-worked#real-unit-limit (test: test_calc_unit_limit_engine_computes_29_document_withholds).",
+          "The document withholds legal_unit_limit_standard with the special-density reason (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "How the legal dwelling-unit limit is shown once the special-density area is known is not built; a user's statement would show it as a conditional result."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "max dwelling units = maximum residential floor area / dwelling-unit factor (ZR 23-52)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum number of #dwelling units# permitted shall be determined by dividing the maximum #residential# #floor area# permitted on the #zoning lot# by the applicable #dwelling unit# factor",
+          "capture_snapshot_id": "zr-23-52",
+          "capture_digest": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "figure": "Special density areas have no dwelling-unit factor, so the formula does not apply there (ZR 23-52(a)(1))",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "#developments# or #enlargements# of #residences# in #special density areas#",
+          "capture_snapshot_id": "zr-23-52",
+          "capture_digest": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "figure": "The engine's factor 680 and the .75 rounding come from the r6b-dwelling-units rule parameters, which quote ZR 23-52(b); the factor and rounding are a legal requirement carried by that rule entry, not a design choice",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
+        "docs/reference-cases/R6B/cases/real-lot.json (real-lot#L6, independent)",
+        "docs/reference-cases/R6B/cases/step-p6-worked.json (real-unit-limit, independent)",
+        "docs/reference-cases/R6B/cases/step-p3-worked.json (special-density status, independent)",
+        "docs/reference-cases/R6B/cases/step-p1-worked.json (special-density-areas-list, independent)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+        "tested_on": "2026-10-09",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "42 passed",
+        "evidence": "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+        "tested_code_identity_sha256": "e353aa1181e2ce0ac8a513233cacc24e26781b67e2ac45e4a9c16f6119cef008",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
+        },
+        "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-09",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The withhold is code not built (the program's own gap_kind is work_owed): the connected special-density evidence and the checked conditional display are not built; r6b-dwelling-units covers the formula only. It is not unresolved law - the law is read and the cases settle the lot's status."
+      ],
+      "coverage_gap": "The legal dwelling-unit-limit decision is withheld as code not built (work_owed): the program has not connected the special-density evidence (the cases read the lot outside both areas) or built the checked conditional display; r6b-dwelling-units covers the formula only.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "zoning_district = R6B",
+        "max_residential_floor_area_sq_ft = 20,150",
+        "housing_program = standard_residence",
+        "special_density_area = not known",
+        "special_district_present = false"
+      ],
+      "formula": "max dwelling units = 20,150 / 680 = 29.63 -> 29 (fraction below .75 dropped)",
+      "rounding": "a fraction of three-quarters (.75) or more counts as one dwelling unit; otherwise dropped (ZR 23-52(b))",
+      "example": {
+        "description": "The benchmark lot's legal dwelling-unit ceiling.",
+        "inputs": {
+          "zoning_district": "R6B",
+          "max_residential_floor_area_sq_ft": 20150,
+          "housing_program": "standard_residence",
+          "special_density_area": false,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "max_dwelling_units": 29
+          },
+          "basis_kind": "reference_case",
+          "basis": "real-lot#L6 = 29 (20,150 / 680 = 29.63; the fraction below .75 is dropped); step-p6-worked#real-unit-limit restates 29 as the current answer for step 5 of the six-step comparison.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/real-lot.json",
+              "row_id": "L6"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "real-unit-limit"
+            }
+          ],
+          "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+        },
+        "actual": {
+          "values": {},
+          "state": "withheld",
+          "engine_values": {
+            "dwelling_units_before_rounding": 29.63235294117647,
+            "max_dwelling_units": 29
+          },
+          "engine_note": "The engine computes 29 internally through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit (fixture legal_unit_limit_standard way=withheld, gap_kind work_owed): the program has not connected the special-density evidence or built the checked conditional display. The law is read and the cases read this lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district), so the withhold is code not built, not unresolved law."
+        },
+        "agrees": null
+      }
+    },
+    {
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "entry_kind": "calculation",
+      "title": "Preliminary apartment estimate: floor area x efficiency share / apartment size (benchmark lot)",
+      "family": "apartment_estimate",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6-r12-residential-far"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/three_way_document.py",
+          "sha256": "7f0ecfed2a410bbe2c1157a23a9791091eefa12e249c178acb00d9910d49fbaf"
+        }
+      ],
+      "code_identity_sha256": "1274168775754628a8e2d2f19c0033a383beb0bff43c449db02f22be79b561c2",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The program does not build this estimate yet (the document reports it not_available, 'not built yet').",
+      "exceptions": [
+        "The apartment size and efficiency share are preliminary assumptions, editable, not legal requirements.",
+        "The estimate is a practical capacity estimate, kept apart from the legal dwelling-unit limit."
+      ],
+      "interpretation": "preliminary apartments = floor area x efficiency share / apartment size. For real building B (20,150 sq ft): at the 0.60 share, 20,150 x 0.60 / 700 = 17.27; at the 0.75 share, 20,150 x 0.75 / 700 = 21.59 (both a preliminary assumption). The program does not build this estimate yet.",
+      "units": "feet and square feet",
+      "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "The document reports the preliminary apartment estimate not_available, 'not built yet' (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The preliminary apartment estimate is not built in the program.",
+          "It needs a built building option / floor area to run from."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "Maximum residential floor area (the dividend) - ZR 23-22",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #floor area ratio# shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-22",
+          "capture_digest": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "figure": "Apartment size 700 sq ft (a preliminary assumption chosen by the owner)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "Efficiency share 0.60 to 0.75 (a preliminary assumption chosen by the owner)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
+        "docs/reference-cases/R6B/cases/step-p6-worked.json (estimate rows, independent)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+        "tested_on": "2026-10-09",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "42 passed",
+        "evidence": "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
+        "tested_code_identity_sha256": "1274168775754628a8e2d2f19c0033a383beb0bff43c449db02f22be79b561c2",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
+        },
+        "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-09",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The preliminary apartment estimate is not built; the measurement-basis record describes the method and is linked here."
+      ],
+      "coverage_gap": "The preliminary apartment estimate (700 sq ft, 0.60-0.75) is not built; the measurement-basis record describes the method and is now linked from this entry.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "floor_area_sq_ft (from the building option)",
+        "apartment_size_sq_ft = 700 (a preliminary assumption)",
+        "efficiency_share = 0.60 to 0.75 (a preliminary assumption)"
+      ],
+      "formula": "preliminary apartments = floor area x efficiency share / 700 (a preliminary assumption; not built)",
+      "rounding": "none to a count in the estimate - the range is shown to two decimals (no rounding rule)",
+      "example": {
+        "description": "The preliminary apartment estimate for the benchmark lot (design-only; not built).",
+        "inputs": {
+          "floor_area_sq_ft": 20150,
+          "apartment_size_sq_ft": 700,
+          "efficiency_share": "0.60 to 0.75"
+        },
+        "expected": {
+          "values": {},
+          "basis_kind": "reference_case",
+          "basis": "step-p6-worked#real-estimate-b: real building B (20,150 sq ft) gives 20,150 x 0.60 / 700 = 17.27 (17-18) and 20,150 x 0.75 / 700 = 21.59 (21-22). real-estimate-a: real building A (about 10,310 sq ft) gives 8.84 (8-9) and 11.05 (11-12). The 0.60-0.75 share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "real-estimate-a"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "real-estimate-b"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "made-up-estimate-a"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+              "row_id": "made-up-estimate-b"
+            }
+          ],
+          "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+        },
+        "actual": {
+          "values": {},
+          "state": "not_built",
+          "engine_values": {},
+          "engine_note": "The preliminary capacity estimate is not built yet (fixture unit_estimate not_available, reason 'not built yet')."
+        },
+        "agrees": null
+      }
+    },
+    {
+      "entry_id": "calc-first-building-option-complete",
+      "entry_kind": "calculation_comparison",
+      "title": "The first building option's complete calculation: the independent example beside the program, six steps",
+      "family": "building_option",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "section": "23-362",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362",
+          "snapshot_id": "zr-23-362",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-362.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:06Z",
+          "content_digest_sha256": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        },
+        {
+          "section": "23-432",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+          "snapshot_id": "zr-23-432",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T06:49:08Z",
+          "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        },
+        {
+          "section": "23-52",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+          "snapshot_id": "zr-23-52",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:29Z",
+          "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6-r12-residential-far",
+        "r6b-lot-coverage",
+        "r6b-height",
+        "r6b-dwelling-units"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/result_ways.py",
+          "sha256": "58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/three_way_document.py",
+          "sha256": "7f0ecfed2a410bbe2c1157a23a9791091eefa12e249c178acb00d9910d49fbaf"
+        }
+      ],
+      "code_identity_sha256": "7fc008514bf9285d47e97c7371cf047cb1baf4713f4de2fb3ca1a78f91a718f3",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
+      "exceptions": [
+        "Almost the whole building-option path is withheld or not built in the program; only the property inputs and the floor area are reported.",
+        "The engine's building method differs from the independent example's two buildings (DB-210)."
+      ],
+      "interpretation": "The independent example (step P6, two sealed-folder readers) is set beside the program's actual output step by step. The floor area agrees (20,150 sq ft); the footprint, floor stack, total floor area, legal unit limit and estimate are withheld or not built in the program; the legal unit limit's engine arithmetic (29) matches but the document withholds it; the engine's building method differs from the two independent buildings. Nothing is resolved here.",
+      "units": "feet and square feet",
+      "measurement_basis": "EPSG:2263 US survey feet for areas measured from the outline; the recorded lot area is the city record (approximate tax map). See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "The page shows six steps in order and ends with the disagreements and missing facts, naming DB-210 (test: test_six_step_page_has_six_steps_and_closing_names_db210)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The withheld and not-built steps wait on the building-option generator, the coverage split and the estimate; the owner's choice on which building to show is pending (DB-210)."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "Floor area ratio 2.00 / maximum floor area (ZR 23-22)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #floor area ratio# shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-22",
+          "capture_digest": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "figure": "Interior/through 80%, corner 100% lot coverage (ZR 23-362)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #lot coverage# for #interior lots# or #through lots# shall be 80 percent and the maximum #residential# #lot coverage# for #corner lots# shall be 100 percent.",
+          "capture_snapshot_id": "zr-23-362",
+          "capture_digest": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        },
+        {
+          "figure": "R6B heights 30/45/55 ft (ZR 23-432)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the minimum base height, maximum base height, and maximum #building# height shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-432",
+          "capture_digest": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        },
+        {
+          "figure": "max dwelling units = maximum floor area / factor (ZR 23-52)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum number of #dwelling units# permitted shall be determined by dividing the maximum #residential# #floor area# permitted on the #zoning lot# by the applicable #dwelling unit# factor",
+          "capture_snapshot_id": "zr-23-52",
+          "capture_digest": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+        },
+        {
+          "figure": "10-ft floor-to-floor height (a chosen design assumption)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "Same-plan uniform-plate stack, and which building the first option shows (DB-210; a chosen design assumption, the owner's pending decision)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "Apartment size 700 sq ft (a preliminary assumption)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "Efficiency share 0.60 to 0.75 (a preliminary assumption)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "services/api/app/rules/coverage/COVERAGE_MATRIX.md (the rule-coverage matrix; linked)",
+        "docs/reference-cases/R6B/cases/step-p6-worked.json (the six-step independent example)",
+        "docs/DISCOVERY_BACKLOG.md (DB-210)",
+        "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md (the component entries)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Passed",
+        "tested_commit": "28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f",
+        "tested_on": "2026-10-09",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "42 passed",
+        "evidence": "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+        "tested_code_identity_sha256": "7fc008514bf9285d47e97c7371cf047cb1baf4713f4de2fb3ca1a78f91a718f3",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0"
+        },
+        "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-09",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "Almost the whole building-option path is withheld or not built; this page compares it to the independent example and names what is owed.",
+        "The method difference (DB-210) and the recorded-versus-outline lot-area conflict are shown, not resolved."
+      ],
+      "coverage_gap": "No single register page compared the first building option to an independent worked example before this entry; it does so across the six steps and states what each step still owes.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "steps": [
+        {
+          "step": 1,
+          "name": "Property inputs",
+          "component_ref": "calc-floor-area-allowance",
+          "expected": {
+            "value": "R6B; overlay C2-2; corner lot; recorded lot area 10,075 sq ft vs tax-map outline 10,387.99 sq ft (both shown, neither chosen); 10-ft floor-to-floor (a preliminary assumption)",
+            "basis_kind": "reference_case",
+            "cited_rows": [
+              {
+                "case_file": "docs/reference-cases/R6B/cases/real-lot.json",
+                "row_id": "L9"
+              },
+              {
+                "case_file": "docs/reference-cases/R6B/cases/real-lot.json",
+                "row_id": "L10"
+              },
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-lot-recorded-vs-measured-area"
+              }
+            ],
+            "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+          },
+          "actual": {
+            "value": "R6B; overlay C2-2 present; corner; recorded 10,075 vs outline 10,387.99 (shown as a condition, neither chosen); 10-ft floor-to-floor default",
+            "state": "settled",
+            "source": "fixture scope/answers (recorded results document)"
+          },
+          "verdict": "agree",
+          "note": "Both readings use the recorded 10,075 for the floor area and measure the outline at 10,387.99 - the same inputs the program uses."
+        },
+        {
+          "step": 2,
+          "name": "Footprint / lot coverage by portion",
+          "component_ref": "calc-lot-coverage-by-portion",
+          "expected": {
+            "value": "no single whole-lot figure: corner portion about 9,997.5 sq ft at 100% plus interior strip about 390 sq ft at 80%, footprint about 10,310 sq ft (the two readings differ in the decimals)",
+            "basis_kind": "reference_case",
+            "cited_rows": [
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-lot-coverage-by-portion"
+              }
+            ],
+            "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+          },
+          "actual": {
+            "value": "withheld - no single whole-lot coverage figure (the lot reaches beyond the corner-lot portion)",
+            "state": "withheld",
+            "source": "fixture permitted_envelope.max_lot_coverage"
+          },
+          "verdict": "side_missing",
+          "note": "The program withholds coverage; the expected side exists in step P6 as two readings, not one figure."
+        },
+        {
+          "step": 3,
+          "name": "Each floor's area and height",
+          "component_ref": "calc-building-option-floor-stack",
+          "expected": {
+            "value": "real building A: 1 storey about 10,310 sq ft at 10 ft (below the 30 ft minimum base); real building B: 3 storeys of 6,716.67 sq ft at 30 ft",
+            "basis_kind": "reference_case",
+            "cited_rows": [
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-building-a"
+              },
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-building-b"
+              }
+            ],
+            "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+          },
+          "actual": {
+            "value": "not_available - the building option is withheld; the engine's method (one uniform widest plate to a partial top floor) differs from the two buildings",
+            "state": "not_available",
+            "source": "fixture answers.building_option; engine compute_building_option"
+          },
+          "verdict": "differ",
+          "note": "The program withholds the building option, and the engine's method differs from the independent example's two buildings - a difference of method (DB-210)."
+        },
+        {
+          "step": 4,
+          "name": "Total floor area",
+          "component_ref": "calc-building-option-floor-stack",
+          "expected": {
+            "value": "real building B total 20,150 sq ft (the whole allowance used); made-up building B total 20,000 sq ft",
+            "basis_kind": "reference_case",
+            "cited_rows": [
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-building-b"
+              }
+            ],
+            "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+          },
+          "actual": {
+            "value": "not_available - the floor stack is withheld (needs the building option and the lot coverage)",
+            "state": "not_available",
+            "source": "fixture floor_stack"
+          },
+          "verdict": "side_missing",
+          "note": "The program withholds the total; the independent building B uses the whole 20,150 sq ft floor-area maximum."
+        },
+        {
+          "step": 5,
+          "name": "Applicable legal unit limit",
+          "component_ref": "calc-legal-dwelling-unit-limit",
+          "expected": {
+            "value": "29 dwelling units (20,150 / 680 = 29.63 -> 29)",
+            "basis_kind": "reference_case",
+            "cited_rows": [
+              {
+                "case_file": "docs/reference-cases/R6B/cases/real-lot.json",
+                "row_id": "L6"
+              },
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-unit-limit"
+              }
+            ],
+            "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+          },
+          "actual": {
+            "value": "withheld - the engine computes 29 internally, but the document withholds the limit pending special-density evidence and an independent check",
+            "state": "withheld",
+            "source": "fixture legal_unit_limit_standard; engine r6b-dwelling-units rule"
+          },
+          "verdict": "side_missing",
+          "note": "The engine's arithmetic matches the independent 29, but the published document withholds the limit (ZR 23-52(a)(1) special-density area unknown)."
+        },
+        {
+          "step": 6,
+          "name": "Separate preliminary apartment estimate",
+          "component_ref": "calc-preliminary-apartment-estimate",
+          "expected": {
+            "value": "real building B: 20,150 x 0.60 / 700 = 17.27 (17-18) and x 0.75 / 700 = 21.59 (21-22); the 0.60-0.75 share and 700 sq ft size are each a preliminary assumption",
+            "basis_kind": "reference_case",
+            "cited_rows": [
+              {
+                "case_file": "docs/reference-cases/R6B/cases/step-p6-worked.json",
+                "row_id": "real-estimate-b"
+              }
+            ],
+            "prepared_by": "worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional"
+          },
+          "actual": {
+            "value": "not_built - the preliminary capacity estimate is not built yet",
+            "state": "not_built",
+            "source": "fixture unit_estimate"
+          },
+          "verdict": "side_missing",
+          "note": "The program does not build the estimate; it is kept separate from the legal unit limit, and its share and size are preliminary assumptions."
+        }
+      ],
+      "closing": {
+        "disagreements": [
+          {
+            "kind": "a design assumption that differs",
+            "program_results": [],
+            "what": "The engine stacks one uniform widest plate to a partial top floor (on the made-up lot: 3 floors of 8,000/8,000/4,000 = 20,000 sq ft at 30 ft), while the independent example offers two buildings - the widest footprint in whole storeys to the floor-area maximum (building A) and the fewest storeys reaching the 30 ft minimum base height (building B). Backlog row DB-210; which building the first option shows is the owner's pending decision. (This row is the method difference only; the building_option withhold itself is listed below as code not built, its program gap_kind work_owed.) Not resolved here.",
+            "would_settle": "The building-option generator's design and the owner's choice on which building to show (DB-210 point b)."
+          },
+          {
+            "kind": "a missing fact about the property",
+            "program_results": [],
+            "what": "The recorded lot area 10,075 sq ft and the tax-map outline area 10,387.99 sq ft disagree (about 313 sq ft); the program shows both and chooses neither (the floor area is available-conditional, not withheld). The maximum floor area rests on the recorded area (20,150 sq ft); the footprint rests on the outline, so the widest same-plan building is one storey (DB-210 point a).",
+            "would_settle": "A survey or deed dimensions naming the document; DB-210 point a."
+          },
+          {
+            "kind": "a missing fact about the property",
+            "program_results": [],
+            "what": "The two independent readings differ in the decimals of the real lot's footprint (corner 9,997.60 vs 9,997.46; strip 390.39 vs 390.52; total 10,309.91 vs 10,309.88); both figures are held, no single figure.",
+            "would_settle": "A surveyed outline."
+          }
+        ],
+        "missing_facts": [
+          {
+            "kind": "code not built",
+            "program_results": [
+              "max_lot_coverage",
+              "building_option",
+              "floor_stack",
+              "unit_estimate"
+            ],
+            "what": "Lot coverage by portion, the building-option generator and floor schedule, and the preliminary apartment estimate are not built; the document withholds them. This matches the program's own kinds: max_lot_coverage and building_option carry gap_kind work_owed, floor_stack and unit_estimate reason_kind rule_not_implemented.",
+            "would_settle": "Building the generators and checking each against the independent example."
+          },
+          {
+            "kind": "code not built",
+            "program_results": [
+              "legal_unit_limit_standard"
+            ],
+            "what": "The legal dwelling-unit limit is withheld: the program's own gap_kind is work_owed and its reason is that how the limit is shown 'has not been worked out and checked against an independently worked example'. The law is read (ZR 23-52(a)(1); the special density areas are the Manhattan Core and the Special Downtown Brooklyn District, step-p1#special-density-areas-list) and the cases read this Queens lot as outside both (step-p3#manhattan-core: 'not in the Manhattan Core'; step-p3#special-downtown-brooklyn-district: 'outside ... on the recorded facts'), while the program lacks the connected evidence and the checked conditional display - so the kind is code not built, not unresolved law. The engine computes 29 internally.",
+            "would_settle": "Connecting the sourced special-density evidence (the cases) and building the checked conditional display in the decision layer (result_ways.py / three_way_document.py)."
+          },
+          {
+            "kind": "a missing fact about the property",
+            "program_results": [
+              "rear_yard"
+            ],
+            "what": "The rear yard beyond the corner, the adjoining lot-line types, the neighbouring street walls and the ground elevations are not known (step-p6#real-lot-missing-facts); the program's rear_yard gap_kind is missing_information.",
+            "would_settle": "A survey, a deed, or a record of the neighbouring lots and buildings."
+          }
+        ]
+      }
+    }
+  ],
+  "calculations_history": [
+    {
+      "seq": 1,
+      "date": "2026-10-09",
+      "entry_id": "calc-floor-area-allowance",
+      "revision": 1,
+      "event": "created",
+      "summary": "created: Floor-area allowance: floor area ratio x lot area (benchmark lot BBL 4073340070)",
+      "by": "M4-T038 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 2,
+      "date": "2026-10-09",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 1,
+      "event": "created",
+      "summary": "created: Lot coverage by portion: corner-lot portion 100% plus interior strip 80% (benchmark lot)",
+      "by": "M4-T038 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 3,
+      "date": "2026-10-09",
+      "entry_id": "calc-building-option-floor-stack",
+      "revision": 1,
+      "event": "created",
+      "summary": "created: Building-option floor stack: footprint, each floor's area and height, total floor area (benchmark lot)",
+      "by": "M4-T038 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 4,
+      "date": "2026-10-09",
+      "entry_id": "calc-legal-dwelling-unit-limit",
+      "revision": 1,
+      "event": "created",
+      "summary": "created: Legal dwelling-unit limit: maximum floor area / 680, rounding up at .75 (benchmark lot)",
+      "by": "M4-T038 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 5,
+      "date": "2026-10-09",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 1,
+      "event": "created",
+      "summary": "created: Preliminary apartment estimate: floor area x efficiency share / apartment size (benchmark lot)",
+      "by": "M4-T038 (rules-engineer, an AI agent)"
+    },
+    {
+      "seq": 6,
+      "date": "2026-10-09",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 1,
+      "event": "created",
+      "summary": "created: The first building option's complete calculation: the independent example beside the program, six steps",
+      "by": "M4-T038 (rules-engineer, an AI agent)"
+    }
+  ],
+  "coverage_gaps": [
+    "The scenario three-answers engine - the calculation that combines the rules into floor area, envelope, footprint, building option, dwelling-unit limit and geometry - still has no single register entry of its own; the calculation entries added here trace the first building option's path, not the whole engine.",
+    "The building-option / floor-stack calculation is withheld and uncompared in the program; calc-building-option-floor-stack sets the engine's method beside the independent example, but the generator is not built.",
+    "Lot coverage by portion (corner-lot portion at 100% plus interior strip at 80%) is not built in the program; r6b-lot-coverage covers only the flat 80% interior rule.",
+    "The legal dwelling-unit-limit decision is withheld because the special density area is unknown; r6b-dwelling-units covers the formula only, not the withhold decision.",
+    "The preliminary apartment estimate (700 sq ft, 0.60-0.75) is not built; the measurement-basis record describes the method and is now linked from calc-preliminary-apartment-estimate.",
+    "The 23 rule entries still have no dedicated units / measurement-basis / formula / rounding fields (point 3 is prose only on their pages); the six R6B-path rule entries are r6-r12-residential-far, r6b-height, r6b-lot-coverage, r6b-dwelling-units, r6b-qualifying-housing-far and r6b-rear-yard-corner-waiver; each calculation page here carries those five fields for its own steps.",
+    "Property-inputs mapping (integration.py) and wide-street determination affect reported results but have no register entry.",
+    "Front/side yard and street-wall rules that shape the footprint are neither reported as values nor covered by a register entry.",
+    "Task M5-T144 changed the scenario engine (the rear-yard reason and the geometry block) but moved no register entry, because none covered that code; the calculation entries added here now fingerprint result_ways.py, geometry.py and three_way_document.py, so a later change to those modules is caught (directive row R703)."
   ]
 }

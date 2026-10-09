@@ -33,3 +33,14 @@ Events are only ever added, oldest first. A change to a rule's interpretation, a
 | 25 | 2026-10-08 | `r6b-lot-coverage` | 2 | implementation_changed | The results document's three-way form withholds coverage where a corner lot reaches beyond the 100-foot corner portion (M5-T136); the rule's reading of the law is unchanged. | rules-engineer (M5-T136) |
 | 26 | 2026-10-08 | `r6b-rear-yard-corner-waiver` | 2 | implementation_changed | The results document's three-way form carries the rear yard as a withheld value-state on the benchmark lot and makes the drawing note follow it (M5-T136); the rule's reading of the law is unchanged. | rules-engineer (M5-T136) |
 
+## Calculations history (append-only, oldest first)
+
+| Seq | Date | Calculation | Revision | Event | Summary | By |
+|---|---|---|---|---|---|---|
+| 1 | 2026-10-09 | `calc-floor-area-allowance` | 1 | created | created: Floor-area allowance: floor area ratio x lot area (benchmark lot BBL 4073340070) | M4-T038 (rules-engineer, an AI agent) |
+| 2 | 2026-10-09 | `calc-lot-coverage-by-portion` | 1 | created | created: Lot coverage by portion: corner-lot portion 100% plus interior strip 80% (benchmark lot) | M4-T038 (rules-engineer, an AI agent) |
+| 3 | 2026-10-09 | `calc-building-option-floor-stack` | 1 | created | created: Building-option floor stack: footprint, each floor's area and height, total floor area (benchmark lot) | M4-T038 (rules-engineer, an AI agent) |
+| 4 | 2026-10-09 | `calc-legal-dwelling-unit-limit` | 1 | created | created: Legal dwelling-unit limit: maximum floor area / 680, rounding up at .75 (benchmark lot) | M4-T038 (rules-engineer, an AI agent) |
+| 5 | 2026-10-09 | `calc-preliminary-apartment-estimate` | 1 | created | created: Preliminary apartment estimate: floor area x efficiency share / apartment size (benchmark lot) | M4-T038 (rules-engineer, an AI agent) |
+| 6 | 2026-10-09 | `calc-first-building-option-complete` | 1 | created | created: The first building option's complete calculation: the independent example beside the program, six steps | M4-T038 (rules-engineer, an AI agent) |
+
