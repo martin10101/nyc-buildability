@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 757,
+ "requirement_count": 770,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T06:21:04+00:00",
+ "updated_at": "2026-10-09T06:30:52+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -25661,6 +25661,419 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the compaction hook).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R758",
+   "text": "'Approve the minimal local checkpoint hook once these corrections are made:': the owner approves the minimal local checkpoint hook, on condition that the corrections of this message are made first.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R756"
+   ],
+   "required_harness": "The hook is switched on only after each correction is made and checked.",
+   "required_evidence": "The settings file and the hook script.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R759",
+   "text": "'Add only the compact-matched hook.': only the hook matched to a compaction is added.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The local settings file holds that one hook and nothing else.",
+   "required_evidence": "The settings file and the hook script.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R760",
+   "text": "'Existing hooks merge across settings levels; do not copy the reminder or overwrite existing settings.': the owner states that existing hooks merge across the settings levels. ORCHESTRATOR'S READING: so the project's own hooks keep running beside the local one; the session's helper had found this undocumented and the session had proposed a safety copy; that copy is dropped.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The first session start after the hook is on still shows the project's reminder.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R761",
+   "text": "'Existing hooks merge across settings levels; do not copy the reminder or overwrite existing settings.': the reminder hook is not copied into the local file and no existing setting is overwritten.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No existing settings file is changed; the local file is new and holds only the one hook.",
+   "required_evidence": "The settings file and the hook script.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R762",
+   "text": "'Select this session\u2019s notes explicitly, rather than whichever notes file was modified most recently.': the hook selects this session's notes explicitly, not whichever notes file was changed most recently.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The script finds the notes by the session's own identity; with no notes registered for a session it says so and picks no other file.",
+   "required_evidence": "The settings file and the hook script.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R763",
+   "text": "'Include the checkpoint\u2019s source path and timestamp.': the hook's output gives the checkpoint's source path and its timestamp.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The output names the file, the line and the time.",
+   "required_evidence": "The settings file and the hook script.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R764",
+   "text": "'Do not silently cut off essential information; clearly identify missing or shortened content and its source.': nothing essential is cut off silently: missing or shortened content is identified plainly, with its source.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "When the checkpoint is missing or longer than can be shown, the output says so and says where the whole is.",
+   "required_evidence": "The settings file and the hook script.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R765",
+   "text": "'Correct the record: current Claude documentation says native background helpers survive compaction.': the record is corrected: the current documentation says that native background helpers survive a compaction.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The session's notes and its statements no longer say that this is undocumented; the correction is dated.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R766",
+   "text": "'Identify any limitation specific to our setup before imposing a restriction.': a limitation specific to this setup is identified before any restriction is imposed. ORCHESTRATOR'S READING: the session's own rule of naming compaction moments only when no helper runs is dropped unless such a limitation is found and named.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R749"
+   ],
+   "required_harness": "No restriction on compaction stands without a named limitation of this setup behind it.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R767",
+   "text": "'Check the script\u2019s actual output for the correct session and its handling of missing or oversized checkpoints.': the script's actual output is checked for the correct session and for a missing and an oversized checkpoint.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Three trials are run and their outputs kept: the right session's checkpoint; no checkpoint or no notes; a checkpoint too long to show whole.",
+   "required_evidence": "The trial outputs in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R768",
+   "text": "'Include the final script and one sample output with the next normal update.': the final script and one sample output come with the next normal update.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R725"
+   ],
+   "required_harness": "That update carries both.",
+   "required_evidence": "That update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R769",
+   "text": "'Keep this bounded, then continue the building-option work.' 'No additional audit or workflow framework.': this stays bounded; no further audit and no workflow framework.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R754"
+   ],
+   "required_harness": "The hook is one small script and one settings entry; nothing else is built around it.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R770",
+   "text": "'Keep this bounded, then continue the building-option work.': then the building-option work goes on.",
+   "source_ref": "source-073-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R755"
+   ],
+   "required_harness": "The next work after the hook is the building option's next step.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T06:21:04+00:00",
+ "updated_at": "2026-10-09T06:30:52+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -778,10 +778,23 @@
   "D-090-R754",
   "D-090-R755",
   "D-090-R756",
-  "D-090-R757"
+  "D-090-R757",
+  "D-090-R758",
+  "D-090-R759",
+  "D-090-R760",
+  "D-090-R761",
+  "D-090-R762",
+  "D-090-R763",
+  "D-090-R764",
+  "D-090-R765",
+  "D-090-R766",
+  "D-090-R767",
+  "D-090-R768",
+  "D-090-R769",
+  "D-090-R770"
  ],
- "requirements_id_digest_sha256": "adc6a3adcfcefecc245fe2688fad50016bf3cd87bc7e0a993fe0083e81427b78",
- "requirements_content_digest_sha256": "9b54074b1fd8d5b92c98017fa0c4789b7447c03dd305bd475cee534192a35a5f",
+ "requirements_id_digest_sha256": "94bf179d549815615b6875be74f43695d266526c39cc3cfd497fbb89f30f1e5a",
+ "requirements_content_digest_sha256": "5da185cd51b48d079b6c948c4740a17f2b3a78f7b6efee5d12feaa3df2d5f035",
  "sources": [
   {
    "file": "source-001.md",
@@ -1357,6 +1370,14 @@
    "recorded_at": "2026-10-09T06:21:04+00:00",
    "content_digest_sha256": "439529449fc0a18faa9870a95426c71f544dbf102cbfbcd9f6270cc10d073c1c",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-073-amendment.md",
+   "kind": "amendment",
+   "sequence": 73,
+   "recorded_at": "2026-10-09T06:30:52+00:00",
+   "content_digest_sha256": "e549e06021b256a28f47575c37c5749c3dec294717ef708ef98c21e48ee7faae",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1430,7 +1451,8 @@
   "source-069-amendment.md",
   "source-070-amendment.md",
   "source-071-amendment.md",
-  "source-072-amendment.md"
+  "source-072-amendment.md",
+  "source-073-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2172,6 +2194,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-072 (session 013RaGmC: the owner asks for the compaction hook, 2026-10-09: a hook so that the session gets the information it needs after a compaction; the documentation checked first and the exact lines brought to the owner; CLAUDE.md not touched) and requirements D-090-R756 to R757, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:30:52+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-073 (session 013RaGmC: the owner approves the minimal local checkpoint hook with corrections, 2026-10-09: only the compact-matched hook, no copy of the reminder, no setting overwritten; this session's notes selected explicitly; source path and timestamp in the output; nothing cut silently; the record corrected (background helpers survive a compaction by the current documentation); a setup-specific limitation named before any restriction; the output checked for the right session, a missing and an oversized checkpoint; the final script and a sample with the next normal update; bounded) and requirements D-090-R758 to R770, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
