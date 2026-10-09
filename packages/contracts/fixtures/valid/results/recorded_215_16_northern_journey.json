@@ -370,12 +370,12 @@
         "rear_yard": {
           "way": "withheld",
           "label": "Rear yard",
-          "reason": "This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.",
-          "gap_kind": "work_owed",
-          "resolved_by": "An independent reading of the Article III sections that govern a residential building in a commercial overlay, checked against an independently worked example.",
+          "reason": "The corner rear-yard waiver does not cover the whole lot: the far corner is 144.60 ft from the point where the two street lines meet, beyond the rear-yard waiver area (the waiver covers the area within 100 ft of that point); the two street lines meet at 89.7 degrees, within the waiver's limit of 135 degrees. For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.",
+          "gap_kind": "missing_information",
+          "resolved_by": "A survey or deed that shows this lot's lot lines, and the adjoining lots' lot lines where they meet this lot.",
           "zr_sections": [
-            "ZR 34-23",
-            "ZR 23-344"
+            "ZR 23-344",
+            "ZR 23-342"
           ]
         },
         "setback_above_base": {
@@ -518,7 +518,7 @@
   },
   "status_strip": [
     {
-      "text": "Zoning maximum"
+      "text": "Preliminary zoning results"
     },
     {
       "text": "Approximate measurements"
@@ -579,8 +579,8 @@
     "streets": [],
     "yards": {
       "status": "not_available",
-      "reason": "This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.",
-      "reason_kind": "rule_not_implemented"
+      "reason": "The corner rear-yard waiver does not cover the whole lot: the far corner is 144.60 ft from the point where the two street lines meet, beyond the rear-yard waiver area (the waiver covers the area within 100 ft of that point); the two street lines meet at 89.7 degrees, within the waiver's limit of 135 degrees. For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.",
+      "reason_kind": "missing_input"
     },
     "setback_lines_per_level": {
       "status": "not_available",

@@ -114,6 +114,20 @@ def test_approximate_measurements_chip_flips_with_the_site_measurement_rank() ->
     assert build_status_strip("survey_entered")[1] == {"text": SURVEY_MEASUREMENTS_CHIP}
 
 
+def test_status_strip_first_item_is_preliminary_zoning_results() -> None:
+    """S9 / M5-T144 (owner row D-090-R641): the status line's first item reads the owner's words
+    'Preliminary zoning results'. The measurement chip and 'Lots you selected' are unchanged
+    (R642: each result keeps its own state; this label changes no result's state). Reverting the
+    label to the old 'Zoning maximum' would turn this red."""
+    for rank in ("city_records", "survey_entered"):
+        strip = build_status_strip(rank)
+        assert strip[0] == {"text": "Preliminary zoning results"}
+        assert strip[1] == site_measurement_status_chip(rank)  # the measurement chip, unchanged
+        assert strip[2] == {"text": "Lots you selected"}  # unchanged
+    # it is emitted into the on-path document too
+    assert _generate().document["status_strip"][0] == {"text": "Preliminary zoning results"}
+
+
 def test_rear_yard_waiver_sentence_only_when_the_waiver_is_computed() -> None:
     # Computed true on the benchmark corner lot: the "no rear yard required" sentence appears.
     waived = _generate().document["geometry"]["yards"]

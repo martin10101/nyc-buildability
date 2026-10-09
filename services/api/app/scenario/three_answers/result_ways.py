@@ -324,7 +324,16 @@ def _rear_yard_outside_waiver(
     waiver's two conditions fails. Each of the three states names the condition(s) that really
     fail, with the measured value, and never the condition that holds: the distance alone (the
     far corner is beyond the waiver area; the angle is within the limit), the angle alone (the
-    measured angle exceeds the limit; the far corner is within the area), or both."""
+    measured angle exceeds the limit; the far corner is within the area), or both.
+
+    The distance-alone state (the far corner is beyond the waiver area while the angle is within
+    its limit) names what is really missing for the part the waiver does not cover - this lot's
+    exact lot lines and which of the adjoining lots' lot lines meet them - and holds the rear yard
+    as missing information, not owed work (M5-T144, ruling C1/C2; cases/step-p5-worked.json rows
+    zr-34-23-page and benchmark-rear-yard-23-342-23-344, cases/step-p4-worked.json row rear-yard,
+    cases/step-p3-worked.json row real-lot-rear-yard-beyond-corner, snapshot zr-23-344). The angle
+    state and the both state keep the older owed-work wording (the cases do not work an angle over
+    the limit)."""
     # The FAILING value is shown so it is visibly beyond / over the limit (G3 F2); the HOLDING
     # value is shown normally (a value at the limit is within, so an apparent equality is true).
     far_over = format_ft_exceeding(corner.reach.value, REAR_YARD_WAIVER_WITHIN_100_FT.value)
@@ -350,10 +359,28 @@ def _rear_yard_outside_waiver(
     within_ang = (
         f"the two street lines meet at {angle_within}, within the waiver's limit of {limit}"
     )
+    if not within_point and within_angle:
+        # The far corner is beyond the waiver area, the angle is within the limit: the part beyond
+        # needs this lot's exact lot lines and the adjoining lots' lot lines - facts the program
+        # does not have (missing information, not owed work).
+        return Withheld(
+            label=label,
+            reason=(
+                "The corner rear-yard waiver does not cover the whole lot: "
+                f"{beyond}; {within_ang}. For the part beyond the waiver area, whether a rear "
+                "yard is required depends on this lot's exact lot lines and on which lot lines of "
+                "the adjoining lots meet them. The program does not have those facts, so the rear "
+                "yard is not known."
+            ),
+            gap_kind=MISSING_INFORMATION,
+            resolved_by=(
+                "A survey or deed that shows this lot's lot lines, and the adjoining lots' lot "
+                "lines where they meet this lot."
+            ),
+            zr_sections=zr,
+        )
     if not within_point and not within_angle:
         clause = f"{beyond}, and {over}"
-    elif not within_point:
-        clause = f"{beyond}; {within_ang}"
     else:
         clause = f"{over}; {within_dist}"
     return Withheld(

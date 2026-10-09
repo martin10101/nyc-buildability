@@ -442,16 +442,16 @@ describe("the three-way value-states layer (results contract 1.3.0; S14, R556, R
     const gapLines = within(envelope)
       .getAllByTestId("answer-gap-kind")
       .map(element => element.textContent);
-    // Coverage, rear yard and the setback are withheld as work still owed on this lot.
-    expect(gapLines.length).toBeGreaterThanOrEqual(3);
-    for (const line of gapLines) {
-      expect(line).toBe("Not built yet: this part of the program is still owed.");
-    }
-    // The building option is a whole not-available answer carrying the same kind line.
+    // On this lot the envelope has three withheld values: coverage and the setback are still work
+    // owed; the rear yard is now a missing property fact (M5-T144), so it shows the other line.
+    const WORK_OWED_LINE = "Not built yet: this part of the program is still owed.";
+    const MISSING_INFO_LINE = "Missing information about this property.";
+    expect(gapLines).toHaveLength(3);
+    expect(gapLines.filter(line => line === WORK_OWED_LINE)).toHaveLength(2); // coverage, setback
+    expect(gapLines.filter(line => line === MISSING_INFO_LINE)).toHaveLength(1); // the rear yard
+    // The building option is a whole not-available answer carrying the work-owed kind line.
     const option = card("building_option");
-    expect(within(option).getByTestId("answer-gap-kind").textContent).toBe(
-      "Not built yet: this part of the program is still owed.",
-    );
+    expect(within(option).getByTestId("answer-gap-kind").textContent).toBe(WORK_OWED_LINE);
   });
 
   it("a withheld HEADLINE key shows its reason, never the first value (R556)", () => {
@@ -584,12 +584,18 @@ describe("M5-T142: the conditions as a per-line list under the 'Conditional' mar
       if (!row) throw new Error(`withheld row missing for ${key}`);
       const reason = within(row).getByTestId("answer-withheld-reason");
       const gap = within(row).getByTestId("answer-gap-kind");
+      // M5-T144: the rear yard now carries gap_kind missing_information, so its kind line is the
+      // missing-information line; coverage and the setback stay work owed.
+      const expectedGap =
+        state.gap_kind === "missing_information"
+          ? "Missing information about this property."
+          : GAP_LINE;
       expect(reason.textContent).toBe(`Not known — ${state.reason}`); // reason, no number falls back
-      expect(gap.textContent).toBe(GAP_LINE);
+      expect(gap.textContent).toBe(expectedGap);
       expect(reason.textContent ?? "").not.toContain("Not built yet"); // the gap line is set apart
       expect(gap.previousSibling).toBe(reason); // its OWN element, no whitespace joining it inline
       // the whole row is exactly the label, the reason and the gap line — no figure of its own
-      expect(row.textContent).toBe(`${state.label}Not known — ${state.reason}${GAP_LINE}`);
+      expect(row.textContent).toBe(`${state.label}Not known — ${state.reason}${expectedGap}`);
     }
     expect(seen).toBeGreaterThanOrEqual(3); // coverage, rear yard, setback above base
   });

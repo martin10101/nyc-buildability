@@ -296,18 +296,21 @@ def test_s7_overlay_present_with_supporting_reference_row():
     assert isinstance(_way(res.gathered.ways, "max_residential_far"), Conditional)
 
 
-# ----------------------------------------------------------------------- S8 overlay not supported
-def test_s8_overlay_present_family_not_supported():
-    """S8 / O25 (b): the rear-yard family carries a standing condition in the merged rows (not
-    supported), so under a recorded C2-2 overlay the rear yard is withheld as work owed, naming the
-    owed reading. Tied to the rear-yard row."""
+# ------------------------------------------------- S8 overlay no longer blocks the rear yard
+def test_s8_overlay_present_rear_yard_no_longer_blocked_by_the_overlay():
+    """S8 / O25 (b), M5-T144 ruling C1: the rear-yard family is now SUPPORTED by the merged rows
+    (the step-P5 row zr-34-23-page resolves the step-P4 completeness caveat), so a recorded C2-2
+    overlay no longer blocks the rear yard. It is then withheld by the plain R6B rules instead:
+    here, with no outline or site geometry, it is withheld for a missing property fact (missing
+    information), and the reason does NOT name the overlay. Tied to the rear-yard row."""
     row = _overlay_support_row(ResultFamily.REAR_YARD)
-    assert row.supported is False and row.zr_sections  # tied to the merged rear-yard row
+    assert row.supported is True  # tied to the merged rear-yard row (now supported)
     inputs = _inputs(profile=_pluto_profile({"overlay1": "C2-2"}), outline=None, geometry=None)
     res = run_engine_and_result_ways(inputs, evaluator_inputs=_eval_doc(), env=_LANE_OFF)
     rear = _way(res.gathered.ways, "rear_yard")
     assert isinstance(rear, Withheld)
-    assert rear.gap_kind == "work_owed"
+    assert rear.gap_kind == "missing_information"
+    assert "overlay" not in rear.reason.lower()
 
 
 # --------------------------------------------------------------------------- S9 density statement
