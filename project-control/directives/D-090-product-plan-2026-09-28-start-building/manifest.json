@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T05:41:55+00:00",
+ "updated_at": "2026-10-09T06:00:46+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -730,10 +730,30 @@
   "D-090-R706",
   "D-090-R707",
   "D-090-R708",
-  "D-090-R709"
+  "D-090-R709",
+  "D-090-R710",
+  "D-090-R711",
+  "D-090-R712",
+  "D-090-R713",
+  "D-090-R714",
+  "D-090-R715",
+  "D-090-R716",
+  "D-090-R717",
+  "D-090-R718",
+  "D-090-R719",
+  "D-090-R720",
+  "D-090-R721",
+  "D-090-R722",
+  "D-090-R723",
+  "D-090-R724",
+  "D-090-R725",
+  "D-090-R726",
+  "D-090-R727",
+  "D-090-R728",
+  "D-090-R729"
  ],
- "requirements_id_digest_sha256": "a87afeb8082ae3e362c52007c231320e24411521053fdb27af2b1b9151bfffdb",
- "requirements_content_digest_sha256": "743b5663335be25a391bd8d8f89ea9e7d0c2beacb8d3466e7f66a99916d84cbc",
+ "requirements_id_digest_sha256": "5f827126f11c2573837f118d6b3aacff06056c6554056bfc5877bb8d108c58cb",
+ "requirements_content_digest_sha256": "1dd6323a60f25661a37581f0ce958d6f3729263164b01ffa72051c096bf37c69",
  "sources": [
   {
    "file": "source-001.md",
@@ -1277,6 +1297,14 @@
    "recorded_at": "2026-10-09T05:38:58+00:00",
    "content_digest_sha256": "65b655060848a968ad442e11651a26c7d1e3e3360728683f5827284476974c2d",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-069-amendment.md",
+   "kind": "amendment",
+   "sequence": 69,
+   "recorded_at": "2026-10-09T06:00:46+00:00",
+   "content_digest_sha256": "b9e0a15140c7c04b57584eabc334f030752997e017f124d6490fd946f03264dc",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1346,7 +1374,8 @@
   "source-065-amendment.md",
   "source-066-amendment.md",
   "source-067-amendment.md",
-  "source-068-amendment.md"
+  "source-068-amendment.md",
+  "source-069-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2064,6 +2093,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M4-T037 (step P6: one independent hand-worked example of a first building option, written into the R6B reference cases) to R291, R519, R545, R650, R651, R664, R686, R687, R688, R689, R690, R699, R700 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T06:00:46+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-069 (session 013RaGmC: the owner's message on keeping the session small, 2026-10-09: bounded reads, concise output, paperwork scripts reused with parameters, the validation and review requirements kept; helpers' full evidence in their existing permitted records and a concise return; no wider permission for a read-only helper; the conversation kept to current matters, briefs point to records; compaction not mandatory at a merge, only when completed material takes substantial context, after a checkpoint, never while helpers are active; one small diagnostic with the next normal update; no audit, no new framework; the product work goes on) and requirements D-090-R710 to R729, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

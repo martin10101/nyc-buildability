@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 709,
+ "requirement_count": 729,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T05:41:55+00:00",
+ "updated_at": "2026-10-09T06:00:46+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -24122,6 +24122,637 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the second message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R710",
+   "text": "'So can u copy the session handoff instructions in to compact for me ? And also implementing the below Proceed with bounded reads, concise command output, and reuse of existing paperwork scripts with parameters.': the owner asks for the session-handoff instructions as a text to give to the compact command.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The owner is given one ready text for the compact command that holds the handoff's five things (where; done and unfinished; helpers, commands and checks; the exact next action; blockers and decisions).",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R711",
+   "text": "'So can u copy the session handoff instructions in to compact for me ? And also implementing the below Proceed with bounded reads, concise command output, and reuse of existing paperwork scripts with parameters.': reads are bounded: only the part of a file or record that is needed is read.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R633"
+   ],
+   "required_harness": "A read names the lines or fields it needs; a whole large file is read only where the whole is needed.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R712",
+   "text": "'So can u copy the session handoff instructions in to compact for me ? And also implementing the below Proceed with bounded reads, concise command output, and reuse of existing paperwork scripts with parameters.': command output is kept concise.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Commands print the facts needed (counts, exit codes, the lines asked for), not whole files or logs.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R713",
+   "text": "'So can u copy the session handoff instructions in to compact for me ? And also implementing the below Proceed with bounded reads, concise command output, and reuse of existing paperwork scripts with parameters.': the existing paperwork scripts are reused with parameters, not copied and rewritten for each task.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R635"
+   ],
+   "required_harness": "A task's paperwork is produced by an existing script with parameters or a small spec file; no script is rewritten in full for one task.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R714",
+   "text": "'Keep existing validation and review requirements.': no existing validation or review requirement is dropped or weakened by any of this.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R634",
+    "D-090-R674"
+   ],
+   "required_harness": "Every gate, independent review, rule check, CI requirement and pre-merge check that applied before applies unchanged.",
+   "required_evidence": "The gate records and the CI runs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R715",
+   "text": "'For helpers, keep full evidence in their existing permitted records and return a concise summary containing the reviewed revision, verdict, every blocking finding and evidence paths.': a helper's full evidence stays in the records it is already permitted to keep. ORCHESTRATOR'S READING: a builder's report file in its allowed path; a reader's own scratch folder; for a read-only reviewer, whose only record is what it returns, the return itself is that record and is kept unchanged in the review record as before.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No helper's evidence is lost or moved to a new kind of record; a gate's record still holds the reviewer's own words.",
+   "required_evidence": "The review records and the helpers' report files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R716",
+   "text": "'For helpers, keep full evidence in their existing permitted records and return a concise summary containing the reviewed revision, verdict, every blocking finding and evidence paths.': a helper returns a concise summary that holds the reviewed revision, the verdict, every blocking finding and the paths of its evidence.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each helper's return names the revision reviewed, gives the verdict, lists every blocking finding and points to its evidence by path; no blocking finding is left out for brevity.",
+   "required_evidence": "The helpers' returns.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R717",
+   "text": "'Do not broaden a read-only helper\u2019s permissions just to make it write a report.': a read-only helper's permissions are not widened to make it write a report.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No read-only helper is given a write permission, and none is asked to write a file by another route, for the sake of a report.",
+   "required_evidence": "The helpers' briefs and tool logs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R718",
+   "text": "'Keep the main conversation focused on current decisions, changes, failures and next actions.': the main conversation holds current decisions, changes, failures and next actions.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "What is brought into the main conversation serves a current decision, change, failure or next action.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R719",
+   "text": "'Reference existing authoritative records instead of copying their full contents into each brief.': a brief points to the authoritative records and does not copy their full contents.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Briefs name the packet, the rows and the files by path; they do not paste them.",
+   "required_evidence": "The briefs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R720",
+   "text": "'Read additional detail when it is necessary to resolve a question.': more detail is read when a question needs it.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Where a question cannot be settled from the summary, the record itself is read.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R721",
+   "text": "'Do not make compaction mandatory at every merge.': compaction is not made a fixed step of every merge.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No procedure requires a compaction at each merge.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R722",
+   "text": "'Compact when completed material is consuming substantial context, after saving a short current-state checkpoint including active helper IDs and pending results.': compaction is for when completed material takes up substantial context.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "A compaction is recommended only then.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R723",
+   "text": "'Compact when completed material is consuming substantial context, after saving a short current-state checkpoint including active helper IDs and pending results.': before a compaction a short current-state checkpoint is saved, with the active helper ids and the pending results.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes hold such a checkpoint, written before the compaction is recommended.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R724",
+   "text": "'Preserve the same session while helpers are active.': the session is kept while helpers are active: no clearing and no handover to a new session then.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No clear or session change is recommended or made while a helper runs.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R725",
+   "text": "'With the next normal update, provide one small diagnostic: installed Claude Code version, current-session \"/context\" breakdown, and \"/usage\" cache statistics if available.': with the next normal update one small diagnostic is given: the installed Claude Code version, the current session's context breakdown, and the usage cache statistics if available. ORCHESTRATOR'S READING: the two slash commands can be typed only by the owner; what the session can read itself (the version; the sizes its own record holds) is given, and the rest is said to be unavailable to it.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The next normal update carries the three items, or says plainly which one could not be had and why.",
+   "required_evidence": "That update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R726",
+   "text": "'Distinguish current context size from cumulative token usage, and characters from tokens.': the diagnostic tells apart the current context size from cumulative token usage, and characters from tokens.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each figure in it is named as one or the other.",
+   "required_evidence": "That update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R727",
+   "text": "'Include cache writes as well as reads when assessing caching.': cache writes are counted with cache reads when caching is assessed.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The diagnostic gives both.",
+   "required_evidence": "That update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R728",
+   "text": "'This does not request another audit or a new context-management framework.': no further audit and no new context-management framework is asked for.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R708"
+   ],
+   "required_harness": "None is started.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R729",
+   "text": "'Continue the product work.': the product work goes on.",
+   "source_ref": "source-069-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R709"
+   ],
+   "required_harness": "The work toward the building option continues.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the message on keeping the session small).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
