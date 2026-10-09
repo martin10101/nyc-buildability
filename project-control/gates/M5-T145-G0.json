@@ -1,0 +1,42 @@
+{
+  "task_id": "M5-T145",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T145-G0.md",
+  "reviewed_at": "2026-10-09T08:56:01.939633+00:00",
+  "content_manifest_sha256": "166bbf51b55dc3ff943a7c306c8736a1223c9a14677cc6e4d135a87204b539b7",
+  "reviewed_sha": "0f5e980608c9329521f240a298d7f3caeb828d71",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T145-G0.md",
+      "reviewed_at": "2026-10-09T08:32:53.707592+00:00"
+    },
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T145-G0.md",
+      "reviewed_at": "2026-10-09T08:38:18.351212+00:00"
+    },
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T145-G0.md",
+      "reviewed_at": "2026-10-09T08:52:37.510729+00:00"
+    },
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T145-G0.md",
+      "reviewed_at": "2026-10-09T08:54:20.557989+00:00"
+    }
+  ],
+  "updated_at": "2026-10-09T08:56:02.678705+00:00"
+}

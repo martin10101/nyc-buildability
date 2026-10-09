@@ -8,17 +8,21 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-09)
+- Revision: 2 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `7fc008514bf9285d47e97c7371cf047cb1baf4713f4de2fb3ca1a78f91a718f3`
+- Combined code identity: `dc2b095064b2c713bc402f715dfc0980ed98b23ea2d0129ac7aaadef8dfef81f`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c`)
   - `services/api/app/scenario/three_answers/three_way_document.py` (`7f0ecfed2a410bbe2c1157a23a9791091eefa12e249c178acb00d9910d49fbaf`)
+  - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
+  - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
+  - `services/api/app/scenario/three_answers/first_building_options.py` (`26a92c402f816da31c90937e1850cd77f8dcf76afe9823812b40c59bc755330a`)
+  - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law
 
@@ -35,12 +39,12 @@ The whole first-building-option calculation for the benchmark lot, set step by s
 
 ## Exceptions and limits
 
-- Almost the whole building-option path is withheld or not built in the program; only the property inputs and the floor area are reported.
+- Almost the whole building-option path is withheld or not built in the program; only the property inputs and the floor area are reported. The component calculation modules (corner_reach_area.py, lot_coverage_by_portion.py, first_building_options.py, preliminary_apartment_estimate.py; M5-T145) exist but are connected to no reported result.
 - The engine's building method differs from the independent example's two buildings (DB-210).
 
 ## How the program reads it
 
-The independent example (step P6, two sealed-folder readers) is set beside the program's actual output step by step. The floor area agrees (20,150 sq ft); the footprint, floor stack, total floor area, legal unit limit and estimate are withheld or not built in the program; the legal unit limit's engine arithmetic (29) matches but the document withholds it; the engine's building method differs from the two independent buildings. Nothing is resolved here.
+The independent example (step P6, two sealed-folder readers) is set beside the program's actual output step by step. The floor area agrees (20,150 sq ft); the footprint, floor stack, total floor area, legal unit limit and estimate are withheld or not built in the program; the legal unit limit's engine arithmetic (29) matches but the document withholds it; the engine's building method differs from the two independent buildings. The component calculation modules for this path - corner_reach_area.py, lot_coverage_by_portion.py, first_building_options.py and preliminary_apartment_estimate.py (M5-T145) - now exist but are connected to no reported result, so the program's reported output is unchanged. Nothing is resolved here.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -114,7 +118,7 @@ Disagreements:
 - [a missing fact about the property] The two independent readings differ in the decimals of the real lot's footprint (corner 9,997.60 vs 9,997.46; strip 390.39 vs 390.52; total 10,309.91 vs 10,309.88); both figures are held, no single figure. - would be settled by: A surveyed outline.
 
 Missing facts:
-- [code not built] (program result(s): max_lot_coverage, building_option, floor_stack, unit_estimate) Lot coverage by portion, the building-option generator and floor schedule, and the preliminary apartment estimate are not built; the document withholds them. This matches the program's own kinds: max_lot_coverage and building_option carry gap_kind work_owed, floor_stack and unit_estimate reason_kind rule_not_implemented. - would be settled by: Building the generators and checking each against the independent example.
+- [code not built] (program result(s): max_lot_coverage, building_option, floor_stack, unit_estimate) Lot coverage by portion, the two step-P6 buildings and floor schedule, and the preliminary apartment estimate are now built as pure modules (corner_reach_area.py, lot_coverage_by_portion.py, first_building_options.py, preliminary_apartment_estimate.py; M5-T145) but are connected to no reported result; the document still withholds or does not build these results, so the program's reported output is unchanged. This matches the program's own kinds: max_lot_coverage and building_option carry gap_kind work_owed, floor_stack and unit_estimate reason_kind rule_not_implemented. - would be settled by: Building the generators and checking each against the independent example.
 - [code not built] (program result(s): legal_unit_limit_standard) The legal dwelling-unit limit is withheld: the program's own gap_kind is work_owed and its reason is that how the limit is shown 'has not been worked out and checked against an independently worked example'. The law is read (ZR 23-52(a)(1); the special density areas are the Manhattan Core and the Special Downtown Brooklyn District, step-p1#special-density-areas-list) and the cases read this Queens lot as outside both (step-p3#manhattan-core: 'not in the Manhattan Core'; step-p3#special-downtown-brooklyn-district: 'outside ... on the recorded facts'), while the program lacks the connected evidence and the checked conditional display - so the kind is code not built, not unresolved law. The engine computes 29 internally. - would be settled by: Connecting the sourced special-density evidence (the cases) and building the checked conditional display in the decision layer (result_ways.py / three_way_document.py).
 - [a missing fact about the property] (program result(s): rear_yard) The rear yard beyond the corner, the adjoining lot-line types, the neighbouring street walls and the ground elevations are not known (step-p6#real-lot-missing-facts); the program's rear_yard gap_kind is missing_information. - would be settled by: A survey, a deed, or a record of the neighbouring lots and buildings.
 
@@ -127,19 +131,19 @@ In the program but no test checks it:
 - (none recorded)
 
 Planned, not built:
-- The withheld and not-built steps wait on the building-option generator, the coverage split and the estimate; the owner's choice on which building to show is pending (DB-210).
+- The withheld and not-built steps wait on the wiring that would connect the component calculation modules (corner_reach_area.py, lot_coverage_by_portion.py, first_building_options.py, preliminary_apartment_estimate.py; M5-T145, built but connected to no reported result) to a reported result; the owner's choice on which building to show is pending (DB-210).
 
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `7fc008514bf9285d47e97c7371cf047cb1baf4713f4de2fb3ca1a78f91a718f3`
-- Commit tested: `28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f`
+- Code identity tested: `dc2b095064b2c713bc402f715dfc0980ed98b23ea2d0129ac7aaadef8dfef81f`
+- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 42 passed
 - Evidence: [run log](../evidence/calc-first-building-option-complete.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -154,6 +158,10 @@ Planned, not built:
 
 - `services/api/app/scenario/three_answers/result_ways.py`
 - `services/api/app/scenario/three_answers/three_way_document.py`
+- `services/api/app/spatial/corner_reach_area.py`
+- `services/api/app/scenario/three_answers/lot_coverage_by_portion.py`
+- `services/api/app/scenario/three_answers/first_building_options.py`
+- `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py`
 - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py`
 
 ## Legal requirements and chosen design assumptions
@@ -171,7 +179,7 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
-- Almost the whole building-option path is withheld or not built; this page compares it to the independent example and names what is owed.
+- Almost the whole building-option path is withheld or not built in the program; the component calculation modules exist (M5-T145) but are connected to no reported result; this page compares the program to the independent example and names what is owed.
 - The method difference (DB-210) and the recorded-versus-outline lot-area conflict are shown, not resolved.
 
 - Coverage gap: No single register page compared the first building option to an independent worked example before this entry; it does so across the six steps and states what each step still owes.

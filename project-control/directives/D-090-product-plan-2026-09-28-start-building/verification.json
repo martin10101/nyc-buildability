@@ -4221,6 +4221,297 @@
     }
    ],
    "verified_at": "2026-10-09T08:27:57+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T145",
+   "applicable_requirement_ids": [
+    "D-090-R147",
+    "D-090-R192",
+    "D-090-R239",
+    "D-090-R255",
+    "D-090-R256",
+    "D-090-R322",
+    "D-090-R379",
+    "D-090-R509",
+    "D-090-R519",
+    "D-090-R540",
+    "D-090-R541",
+    "D-090-R543",
+    "D-090-R545",
+    "D-090-R650",
+    "D-090-R688",
+    "D-090-R691",
+    "D-090-R692",
+    "D-090-R700",
+    "D-090-R703",
+    "D-090-R704",
+    "D-090-R705",
+    "D-090-R707",
+    "D-090-R773"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3",
+   "reviewed_manifest_sha256": "eed1e73995e125095f98fb8590362e5bbdaa48edc6245830d48b62ff209d3cb1",
+   "requirements": [
+    {
+     "id": "D-090-R147",
+     "state": "PASS",
+     "evidence": [
+      "Only mistake E10 (\"Footprint never larger than the lot\", source-025-amendment.md line 65) is in this task's reach; the row names E1\u2013E20 and the rest are other tasks'.",
+      "Part A guarantees corner + interior == the outline's own area (interior = full - corner, corner_reach_area.py:175-188; a corner exceeding the outline raises ValueError); test_resolve_rest_clamps_rounding_noise_but_raises_a_real_negative, test_s1, test_s4 assert the sum equals the outline area.",
+      "Part B caps footprint = corner*ratio + interior*ratio with both ratios bounded to [0,1] (lot_coverage_by_portion.py:85-89,115-117); test_c16c_footprint_never_exceeds_sum_of_areas asserts it over the scenario inputs and test_c16b rejects a ratio above 1.",
+      "Open: the guard on a REPORTED footprint against the lot and mistakes E1-E9,E11-E20 are owed by the wiring step and other tasks; R147 stays open in the registry for them.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R192",
+     "state": "PASS",
+     "evidence": [
+      "Part A measures the parcel's own prepared tax-map outline in EPSG:2263 feet (measure_corner_reach_area uses outline.vertices from prepare_outline; _outline_source reads geometry.provenance lot_outline), not a rectangle or typical lot.",
+      "test_s4_benchmark_lot_within_tolerance_of_both_readings feeds the real replayed MapPLUTO outline (_northern_replay) and lands within 1.0 sq ft of both independent step-P6 readings; test_s3 confirms distance is perpendicular to the actual outline.",
+      "Open: no parcel conclusion is reported or drawn yet (nothing wired); R192 stays open for the wiring step that reports/draws parcel-specific conclusions.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R239",
+     "state": "PASS",
+     "evidence": [
+      "The modules keep the recorded lot area and the measured outline apart and decide nothing: part A reads only the measured outline, part B takes the two measured portion areas, part C takes footprint and floor-area allowance as two separate plain inputs.",
+      "Which lot area a building rests on is NOT decided here (evidence-map known_limits; backlog DB-210 point a).",
+      "Open: R239 is also bound to M5-T130 (the resolve task) and the wiring step; how the two area figures are used is decided there, and the row stays open for it.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R255",
+     "state": "PASS",
+     "evidence": [
+      "A missing input or unmeasurable lot stays unknown/not_known with a plain reason, never a zero or default: part A unknown_value (corner_reach_area.py:265-269; tests S5/S6), parts B/C/D not_known with named missing_inputs (tests S13/S20/S21/S26).",
+      "A genuinely measured zero (whole lot within the distance) is a KNOWN value distinct from unknown (test_s2 asserts LABEL_TAX_MAP, value 0.0).",
+      "Open: labelling a user assumption as a conditional scenario on screen is the wiring/screen work; R255 (also bound to M5-T128/129/130/134/136/137/138/140) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R256",
+     "state": "PASS",
+     "evidence": [
+      "Design choices are explicit visible inputs with no hidden default: part C floor_to_floor_ft is a required parameter (building_a/building_b signatures, no default); part D share_low/share_high/apartment_size are parameters whose values are returned in the result and named in its texts (preliminary_apartment_estimate.py:92-96,133-135,146).",
+      "test_s28 confirms the share and size appear in the returned formula and reason texts.",
+      "Open: showing and editing these starting values on the screen is the wiring/screen work; R256 (also M5-T137-T140) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R322",
+     "state": "PASS",
+     "evidence": [
+      "Missing facts stay unknown and unbuilt work is called code not built: the R255 tests, plus part C's own-limit states return gap_kind \"code not built\" (test_s29, test_s30); part E records the modules are connected to no reported result.",
+      "This restates R255 rule 4 and is followed as written.",
+      "Open: naming the kind of gap for a missing input and for wired results is owed by the wiring step; R322 stays open for the full report.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R379",
+     "state": "PASS",
+     "evidence": [
+      "The standing rule is followed: the register is updated inside this task's own commits (register.json + rendered docs in commit 87d69ec2, PART E) as part of the same change that adds the calculation code.",
+      "The CLAUDE.md standing instruction (item 20, citing D-090-R379) already exists from the earlier task; this task demonstrates compliance with it.",
+      "Open: R379 is a standing instruction for every future session; it stays open as a permanent rule.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R509",
+     "state": "PASS",
+     "evidence": [
+      "Part D's dividend is the proposed building's residential floor area (floor_area_sq_ft, the first required parameter; preliminary_apartment_estimate.py:92-96,101,144-145), never the maximum; the legal maximum is kept separate (dwelling_units.py not imported). Owner source: source-055-amendment.md lines 49-56.",
+      "Tests S22/S25 feed each building's own floor area; part C returns a building's total apart from the allowance and the unused remainder (test_s17).",
+      "Open: feeding part D from the shown building's floor area is the wiring step's; R509 (also M5-T133) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R519",
+     "state": "PASS",
+     "evidence": [
+      "Part C states its assumptions in every available text (same-plan stack and floor-to-floor height as design assumptions, \"not rules of law\"; first_building_options.py:230-239,322-331) and returns no storey above the maximum base height (test_s30: code-not-built, height None, no storey row).",
+      "The one-floor-to-floor-height limit (a 15 ft shop ground floor not worked, R542) is stated in the module docstring and a new register coverage gap.",
+      "Open: storeys above the base with their setbacks are not worked (code not built); R519 (also M5-T133/T135, M4-T037) stays open for the shape engine.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R540",
+     "state": "PASS",
+     "evidence": [
+      "The share range 0.60 to 0.75 is the module default and is called a preliminary assumption, an unvalidated sensitivity range the user can change (preliminary_apartment_estimate.py:94-95,80-89); owner's exact wording source-057-amendment.md line 21.",
+      "test_s28 asserts \"sensitivity range\" and \"the user can change\"; test_c15d rejects a share outside 0-1 and a low share above the high.",
+      "Open: showing/editing the range on screen is the wiring/screen work; R540 (also M5-T135) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R541",
+     "state": "PASS",
+     "evidence": [
+      "700 sq ft is the module default apartment size, called a preliminary assumption, a chosen starting size on the HPD measurement basis the user can change (preliminary_apartment_estimate.py:96,80-89); owner's exact wording source-057-amendment.md line 22.",
+      "test_s28 asserts \"hpd measurement basis\" and \"the user can change\"; test_s27 rejects a zero apartment size.",
+      "Open: showing/editing the size on screen is the wiring/screen work; R541 (also M5-T135) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R543",
+     "state": "PASS",
+     "evidence": [
+      "Part D's label is exactly the owner's words: \"Preliminary capacity estimate\" when available, \"Not known\" when not (preliminary_apartment_estimate.py:31-32,137,162); owner's exact wording source-057-amendment.md line 24.",
+      "test_s28 asserts label == \"Preliminary capacity estimate\" and that \"preliminary assumption\" is NOT in the label; test_s26 asserts label == \"Not known\"; the first commit's wrong label was sent back before any review (ruling C15).",
+      "Open: the label on the screen is the wiring/screen work; R543 (also M5-T135/T136) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R545",
+     "state": "PASS",
+     "evidence": [
+      "No returned text says the owner's choice validates a value: parts C and D call the values design/preliminary assumptions, not law, measured or validated (first_building_options.py reasons; preliminary_apartment_estimate.py note). Owner source: source-057-amendment.md line 25.",
+      "test_s28 forbids the words validated/measured/typical and the term \"approval\"; the register entries carry no human verdict (see R704).",
+      "Open: R545 (also M5-T135, M4-T037) is a standing prohibition across every screen and record; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R650",
+     "state": "PASS",
+     "evidence": [
+      "A module names the kind of gap only for its OWN limit: part C returns gap_kind \"code not built\" for its method limits (test_s29, test_s30).",
+      "For a missing input the modules name the input and no kind (missing_inputs, gap_kind None; test_s13, test_c12, test_s26); part A gives each unknown outcome a distinct STATE_* code and no kind (test_cause_tells_not_confirmed_from_not_straight, test_more_than_two_confirmed_frontages_split_unknown).",
+      "Open BY DESIGN (rulings C12/C18): naming which of the three kinds (missing property fact / unresolved law / code not built) a missing input or a measurement state is belongs to the wiring step where the result is decided; R650 (also M4-T037) stays open for that.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R688",
+     "state": "PASS",
+     "evidence": [
+      "Part D is apart from the legal unit limit: it imports nothing from the dwelling-unit code (imports only dataclasses/decimal/math) and no text calls its result a legal limit, a ceiling or a count.",
+      "test_s28 forbids \"legal limit\", \"ceiling\", \"dwelling-unit limit\" and count-style wording.",
+      "Open: the side-by-side comparison of the estimate with the legal unit limit in the full first-option report is other work; R688 (also M4-T037/T038) stays open there.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R691",
+     "state": "PASS",
+     "evidence": [
+      "Part E moved the four on-path calculation entries to revision 2; each now says a module exists and is connected to no reported result, listing the new module(s) in code_modules (register.json: calc-lot-coverage-by-portion, calc-building-option-floor-stack, calc-preliminary-apartment-estimate, calc-first-building-option-complete).",
+      "The recorded module shas (corner_reach_area bf6435ae, lot_coverage_by_portion 8b603fbe, first_building_options 26a92c40, preliminary_apartment_estimate a0ea51bd) match G3's carry-forward digests; render --check exits 0 and test_code_module_drift_is_caught_and_names_the_module passed.",
+      "Open: R691 (also M4-T038) is a standing rule for every future rule/calculation change; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R692",
+     "state": "PASS",
+     "evidence": [
+      "Part E changed only the source data register.json (and one calc-test assertion); I reproduced render_review_register.py --check exit 0; the pages and evidence logs are the renderer's output.",
+      "No renderer/checker .py changed (git diff of services/api/app/rules/review_register/*.py empty); test_each_calculation_page_is_byte_identical and test_no_orphan_calculation_page passed.",
+      "Open: R692 (also M4-T038) is a standing process rule; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R700",
+     "state": "PASS",
+     "evidence": [
+      "Every part D text that names the apartment size or the share carries \"preliminary assumption\" (_assumption_note, preliminary_apartment_estimate.py:80-89, appended to both formula and reason).",
+      "test_s28 asserts \"preliminary assumption\" in formula and reason; the register's calc test test_preliminary_assumption_words_are_required_on_size_and_share passed.",
+      "Open: R700 (also M4-T037/T038) is a standing labelling rule; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R703",
+     "state": "PASS",
+     "evidence": [
+      "Every remaining coverage gap is stated plainly: three reworded truthfully (floor-stack, lot-coverage-by-portion, preliminary-estimate now say the module exists but is connected to no reported result), one added (one floor-to-floor height, so a 15 ft shop ground floor is not worked), none dropped.",
+      "I verified the gap count 9 -> 10 and that every base gap survives (reworded or verbatim) in the head register.json; test_coverage_gaps_are_data_and_hold_at_least_nine passed.",
+      "Open: R703 (also M4-T038) is a standing rule; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R704",
+     "state": "PASS",
+     "evidence": [
+      "No human decision is entered: every one of the six calculation entries has human_review.decision null and verdict \"Not reviewed\" (register.json); both gate reviewers are AI agents.",
+      "test_every_calculation_reads_not_reviewed passed; the G3/G4 review record states no human verdict.",
+      "Open: a human verdict can be entered only later by a named human reviewer's actual decision; R704 (also M4-T038) stays open as a standing rule.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R705",
+     "state": "PASS",
+     "evidence": [
+      "Previous decisions are preserved: the calculations_history is append-only (the 6 base entries are a byte-prefix of the 10 head entries) and the 23 rule entries and rule history are byte-identical (register.json entries and history unchanged).",
+      "test_calculations_history_is_append_only_and_separate and test_the_23_rule_entries_are_untouched passed.",
+      "Open: R705 (also M4-T038) is a standing rule; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R707",
+     "state": "PASS",
+     "evidence": [
+      "The register update is PART E of this same task, under the same gates (G0/G2/G3/G4) and reviewers; a scope correction before any review put it into the task rather than a separate project (packet scope_corrections; scenarios S31-S33).",
+      "No separate register project stands beside the building-option work.",
+      "Open: R707 (also M4-T038) is a standing rule that each rule/calculation task updates the register within its own scope; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    },
+    {
+     "id": "D-090-R773",
+     "state": "PASS",
+     "evidence": [
+      "This is ONE task of five parts on separate files: parts A, C and B+D built by three rules-engineer builders side by side (concurrency record WAVE18-2026-10-09; run times 18.9/16.5/17.5 min, one correction each, part E 29.5 min afterwards), within the owner's recorded limits (<=3 builders, no shared file). Owner's exact wording source-075-amendment.md line 16.",
+      "The parts share no file and none imports another (forbidden-path diff empty; no engine file touched); part E ran only after parts A-D were integrated (a dependency kept in order and recorded).",
+      "Open: R773 is a standing way of working for future tasks; it stays open.",
+      "Verifier's carry-forward condition met at f0b08987: the task's allowed-path files are identical to those verified at 75dba198 (content identity eed1e739), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T145-DCV.md."
+     ],
+     "reviewed_sha": "f0b089871b8bec318b734a06580d4a54081cf8e3"
+    }
+   ],
+   "verified_at": "2026-10-09T10:09:47+00:00"
   }
  ]
 }

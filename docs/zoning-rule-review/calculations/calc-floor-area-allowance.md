@@ -80,13 +80,13 @@ Planned, not built:
 
 - Status: Passed
 - Code identity tested: `f20a1f2b02229642e15aa76fbe5e6a18bc3513bb6590d29df0b45139e5d51e76`
-- Commit tested: `28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f`
+- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 42 passed
 - Evidence: [run log](../evidence/calc-floor-area-allowance.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

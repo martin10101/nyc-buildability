@@ -1,0 +1,382 @@
+{
+  "task_id": "M5-T145",
+  "title": "First building option, the calculation modules (one packet, four parts built side by side): A the corner-reach AREA measurement (new, pure, beside lot_reach); B the by-portion coverage arithmetic (ZR 23-362/12-10, from A's two areas); C the two step-P6 buildings as pure functions with their floor schedules; D the preliminary apartment estimate arithmetic. Each part = one new module + one new test; no existing file changes; no part imports another; nothing reachable from a reported result yet [D-090 R147,R192,R239,R255,R256,R322,R509,R519,R540,R541,R543,R545,R650,R688,R700]",
+  "task_type": "rule_engineering",
+  "milestone_id": "M5",
+  "objective": "Build, as ONE packet with four parts that can be built side by side on different files, the calculation modules the first building option rests on. PART A (the real measurement, new): a pure module beside services/api/app/spatial/lot_reach.py that, from the prepared tax-map outline and the two confirmed straight street lines that meet at the lot's corner, measures the AREA of the part of the outline within a caller-given distance of BOTH street lines (the corner-lot portion) and the area of the rest (the interior-lot portion); measurements only, no legal threshold and no rule named inside, every value a site_geometry SourcedValue or unknown with a plain reason, never a zero or a default. PART B: the by-portion coverage arithmetic - corner portion at 100% plus interior portion at 80% (ZR 23-362; the corner portion is within 100 ft of each street line, ZR 12-10) - taking A's two areas as plain numbers. PART C: both step-P6 buildings as pure functions from plain numbers, each returning its floor schedule and totals; which building an option shows is NOT decided here. PART D: the preliminary apartment estimate arithmetic. No existing file changes; no part imports another part (each takes plain numbers or the existing site-geometry types); nothing any part adds is reachable from a reported result yet; a later wiring step connects them.",
+  "business_reason": "These are the calculations the first building option needs, in the owner's order after the hand-worked example (D-090 R723). source-075 lets several builders work different parts of the SAME task; one packet means one set of gates and one review over all parts. Building each part as its own small module, checked against the independent step-P6 readings, lets up to three builders work in parallel on different files and lets the arithmetic and the measurement be verified before any result shows a footprint, a building or an estimate.",
+  "inputs": [
+    "The independent reference case docs/reference-cases/R6B/cases/step-p6-worked.json: rows real-lot-coverage-by-portion (corner 9,997.60/9,997.46 at 100%; interior strip 390.39/390.52 at 80%; footprint 10,309.91/10,309.88; outline area 10,387.99 both), made-up-footprint-a (interior lot 10,000 at 80% = 8,000), made-up-building-a/b and real-building-a/b (the storey tables and totals), made-up-estimate-a/b and real-estimate-a/b (the quotients).",
+    "The existing model for PART A: services/api/app/spatial/lot_reach.py (M5-T127) and its tests services/api/tests/spatial/test_lot_reach.py (conventions: SourcedValue via site_geometry.labels tax_map_value/unknown_value; PreparedOutline from site_geometry.outline.prepare_outline; SiteGeometry from derive_site_geometry; the benchmark replayed through services/api/tests/spatial/_northern_replay.py replay_lot_geometry + lot_outline_from_mappluto; tolerances quoted to the readings' precision; unknown with a plain reason, never a zero). Read lot_reach.py:1-20 (measurements only, no legal threshold), :51-93 (the dataclasses), :95-174 (street-line + reach helpers), :230-246 (the entry and the all-unknown refusal path).",
+    "The law captures docs/research/zr-snapshots/v1/zr-23-362.snapshot.json (interior/through 80%, corner 100%; digest f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9) and zr-12-10-lot-corner.snapshot.json (the corner-lot portion is within 100 ft of each intersecting street line; digest 86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58) - the ratios and the 100-ft distance for PART B.",
+    "The owner's decided starting assumptions for PARTS C and D: R540 (share 0.60-0.75), R541 (700 sq ft), R542 (10 ft floors), R543 (label), R545 (approval validates nothing), R509 (dividend is the proposed building's floor area, the maximum kept separate), R700 (stay labelled preliminary); the measurement-basis record docs/measurement-basis/MEASUREMENT_BASIS.md (linked, not copied).",
+    "Read-only engine context (not changed, not imported): three_way_document.py:97-100,219-223 (the reserved 'not built yet' unit_estimate block); dwelling_units.py:27-58 (the separate legal dwelling-unit limit); building_option.py:1-35 (the existing stacker, neither changed nor imported); result_ways.py:116-119,238-254 (the current building-option and by-portion withholds)."
+  ],
+  "outputs": [
+    "PART A: services/api/app/spatial/corner_reach_area.py + services/api/tests/spatial/test_corner_reach_area.py.",
+    "PART B: services/api/app/scenario/three_answers/lot_coverage_by_portion.py + services/api/tests/scenario/three_answers/test_lot_coverage_by_portion.py.",
+    "PART C: services/api/app/scenario/three_answers/first_building_options.py + services/api/tests/scenario/three_answers/test_first_building_options.py.",
+    "PART D: services/api/app/scenario/three_answers/preliminary_apartment_estimate.py + services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py.",
+    "Per-part reports project-control/reports/M5-T145-part-A.md ... -part-D.md (each builder writes its own); the packet report project-control/reports/M5-T145-producer-report.md is assembled by the orchestrator."
+  ],
+  "dependencies": [
+    "M4-T037",
+    "M4-T038",
+    "M5-T127"
+  ],
+  "allowed_paths": [
+    "services/api/app/spatial/corner_reach_area.py",
+    "services/api/tests/spatial/test_corner_reach_area.py",
+    "services/api/app/scenario/three_answers/lot_coverage_by_portion.py",
+    "services/api/tests/scenario/three_answers/test_lot_coverage_by_portion.py",
+    "services/api/app/scenario/three_answers/first_building_options.py",
+    "services/api/tests/scenario/three_answers/test_first_building_options.py",
+    "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
+    "services/api/tests/scenario/three_answers/test_preliminary_apartment_estimate.py",
+    "project-control/reports/M5-T145-part-A.md",
+    "project-control/reports/M5-T145-part-B.md",
+    "project-control/reports/M5-T145-part-C.md",
+    "project-control/reports/M5-T145-part-D.md",
+    "project-control/reports/M5-T145-producer-report.md",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/calculations",
+    "docs/zoning-rule-review/evidence",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "project-control/reports/M5-T145-part-E.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/spatial/lot_reach.py",
+    "services/api/app/spatial/geometry.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/building_option.py",
+    "services/api/app/scenario/three_answers/dwelling_units.py",
+    "services/api/app/scenario/three_answers/engine.py",
+    "packages/contracts (any results schema or fixture)",
+    "services/api/app/rules/review_register (register.json or any page)",
+    "docs/zoning-rule-review (any register page)",
+    "apps/web (any web file)",
+    "docs/reference-cases (any case or provenance file)"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "PART A: made-up right-angle corner, lot wider than the distance on one street",
+      "input": "outline = rectangle with corners (0,0),(130,0),(130,80),(0,80); street line 1 = y=0 (the 130-ft frontage); street line 2 = x=0 (the 80-ft frontage); meet at (0,0) at 90 degrees; distance = 100 ft",
+      "expected": "corner portion (within 100 ft of BOTH lines) = x<=100 AND y<=100 = [0,100]x[0,80] = 100 x 80 = 8,000.00 sq ft; rest = 130 x 80 - 8,000 = 2,400.00 sq ft (the strip x in (100,130] x 80 = 30 x 80); the two sum to 10,400 = the outline area. Plain hand arithmetic; both SourcedValues known."
+    },
+    {
+      "id": "S2",
+      "case": "PART A: made-up lot wholly inside the distance",
+      "input": "outline = rectangle (0,0),(80,0),(80,60),(0,60); street line 1 = y=0; street line 2 = x=0; 90 degrees; distance = 100 ft",
+      "expected": "corner portion = whole lot = 80 x 60 = 4,800.00 sq ft; rest = 0.00 sq ft as a MEASURED value (the whole lot is within 100 ft of both lines), not unknown; they sum to 4,800 = the outline area. A true measured zero is distinct from unknown."
+    },
+    {
+      "id": "S3",
+      "case": "PART A: made-up corner that is NOT a right angle, longer than the distance on one street",
+      "input": "outline = parallelogram (0,0),(130,0),(170,69.2820),(40,69.2820): one side of 130 ft along street line 1 (y=0) and one side of 80 ft along street line 2, which leaves (0,0) at 60 degrees; the two street lines meet at (0,0); distance = 100 ft",
+      "expected": "every point of the lot lies within 100 ft of street line 1 (the lot is only 69.28 ft deep from it). Within 100 ft of street line 2, measured PERPENDICULAR to it, lies a parallelogram with one side of 80 ft on that line and a width of 100 ft: corner portion = 80 x 100 = 8,000.00 sq ft. Whole lot = 130 x 80 x sin 60 = 9006.66 sq ft; rest = 1006.66 sq ft; the two sum to the outline's area. Plain hand arithmetic; it shows the distance is measured at right angles to a street line, not along the other street."
+    },
+    {
+      "id": "S4",
+      "case": "PART A: benchmark lot vs BOTH step-P6 readings (tolerance, no single figure pinned)",
+      "input": "the prepared outline from services/api/tests/spatial/_northern_replay.py replay_lot_geometry via lot_outline_from_mappluto + prepare_outline (name the fixture file:line in the test, as test_lot_reach.py does); the two confirmed straight frontages (Northern Boulevard, 215 Place) from derive_site_geometry; distance = 100 ft",
+      "expected": "corner portion within 1.0 sq ft of BOTH readings (9,997.60 and 9,997.46, from step-p6-worked#real-lot-coverage-by-portion) AND interior portion within 1.0 sq ft of BOTH (390.39 and 390.52); corner + interior == the outline's own area (10,387.99, both readings) within 0.01 sq ft. The test pins no single figure; it states its difference to each reading. Tolerance justified below."
+    },
+    {
+      "id": "S5",
+      "case": "PART A: no outline (refused)",
+      "input": "outline = None (or a two-point outline that prepare_outline refuses) and a refused SiteGeometry; distance = 100 ft",
+      "expected": "both areas unknown (value None) with the refusal reason, never a zero; mirrors lot_reach.py:238-240."
+    },
+    {
+      "id": "S6",
+      "case": "PART A: fewer than two confirmed straight street frontages (interior lot, one street)",
+      "input": "a confirmed straight frontage on one street only (the other not confirmed); distance = 100 ft",
+      "expected": "both areas unknown with a plain reason: only one street has a confirmed straight frontage, so there is no corner to measure within 100 ft of both lines; the outline area is still a known number but the split is unknown."
+    },
+    {
+      "id": "S7",
+      "case": "PART A: two confirmed straight streets that do not meet at a lot corner",
+      "input": "two confirmed straight frontages whose site-geometry relation is not a corner (on opposite sides, or more than two streets); distance = 100 ft",
+      "expected": "both areas unknown with a plain reason that the two streets front the lot but do not meet at a corner; mirrors lot_reach.py:205-207."
+    },
+    {
+      "id": "S8",
+      "case": "PART A: a bent frontage (a street line that is not straight)",
+      "input": "a confirmed frontage whose lot lines turn by more than SINGLE_STREET_MAX_BEND_DEG; distance = 100 ft",
+      "expected": "the bent street has no single street line, so both areas are unknown with a plain reason (the frontage is not straight); mirrors lot_reach.py:168-171."
+    },
+    {
+      "id": "S9",
+      "case": "PART B: step-p6-worked#made-up-footprint-a (interior lot: all 80%)",
+      "input": "corner_portion_area = 0; interior_portion_area = 10,000; corner_ratio = 1.00; interior_ratio = 0.80",
+      "expected": "footprint = 0 x 1.00 + 10,000 x 0.80 = 8,000.00 sq ft; status available. Basis: step-p6-worked#made-up-footprint-a."
+    },
+    {
+      "id": "S10",
+      "case": "PART B: step-p6-worked#real-lot-coverage-by-portion (reading 13)",
+      "input": "corner_portion_area = 9,997.60; interior_portion_area = 390.39; corner_ratio = 1.00; interior_ratio = 0.80",
+      "expected": "corner allowed 9,997.60; interior allowed 312.31; footprint = 10,309.91 sq ft. Basis: reading 13 (never a program run)."
+    },
+    {
+      "id": "S11",
+      "case": "PART B: step-p6-worked#real-lot-coverage-by-portion (reading 14)",
+      "input": "corner_portion_area = 9,997.46; interior_portion_area = 390.52; corner_ratio = 1.00; interior_ratio = 0.80",
+      "expected": "corner allowed 9,997.46; interior allowed 312.42; footprint = 10,309.88 sq ft. S10+S11 feed each reading's own areas and assert that reading's own footprint, so the decimal difference is honoured, not pinned."
+    },
+    {
+      "id": "S12",
+      "case": "PART B: ZR 23-362 corner rule (law capture zr-23-362)",
+      "input": "corner_portion_area = 5,000; interior_portion_area = 0; corner_ratio = 1.00; interior_ratio = 0.80",
+      "expected": "footprint = 5,000 x 1.00 = 5,000.00 sq ft; a lot wholly within the corner-lot portion takes 100%. The expected is the legal rule applied, not a measured figure."
+    },
+    {
+      "id": "S13",
+      "case": "PART B: a missing portion area (from PART A unknown)",
+      "input": "corner_portion_area = None; interior_portion_area = None",
+      "expected": "status not_known; no footprint; plain text that the two portions are not known for this lot (they need the measured outline and street lines, PART A); gap kind = a missing fact about the property. No default. Basis: D-090 R255/R322/R650. [ORCH-CORRECTED 2026-10-09, ruling C12: for a MISSING INPUT the module names the missing input and NO kind of gap; any kind named above for this state is replaced by that.]"
+    },
+    {
+      "id": "S14",
+      "case": "PART B: an impossible area (exception)",
+      "input": "corner_portion_area = -1; interior_portion_area = 390.39",
+      "expected": "the module rejects a negative area with a clear error (ValueError) or a not_known with a plain reason; it never computes a footprint from a negative area."
+    },
+    {
+      "id": "S15",
+      "case": "PART C: step-p6-worked#made-up-building-a (widest footprint stacked to the floor-area maximum)",
+      "input": "footprint_area = 8,000; floor_area_allowance = 20,000; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building A: 2 storeys of 8,000, total 16,000, height 20 ft, unused 4,000; below the 30 ft minimum base height (so the method calls for building B); no setback worked. Floor schedule rows (storey, top_ft 10/20, plan_area 8,000, floor_area 8,000, running_total 8,000/16,000). Basis: made-up-building-a numbers_block."
+    },
+    {
+      "id": "S16",
+      "case": "PART C: step-p6-worked#made-up-building-b (fewest storeys reaching the minimum base height)",
+      "input": "footprint_area = 8,000; floor_area_allowance = 20,000; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building B: 3 storeys of 6,666.67 (plan = 20,000/3), total 20,000, height 30 ft = the minimum base height, unused 0; no setback worked. Basis: made-up-building-b numbers_block. The plan of 6,666.67 sq ft fits within the footprint of 8,000 sq ft (step-p6-worked#made-up-footprint-a)."
+    },
+    {
+      "id": "S17",
+      "case": "PART C: step-p6-worked#real-building-a (reading 13 footprint)",
+      "input": "footprint_area = 10,309.91; floor_area_allowance = 20,150; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building A: 1 storey (a second would pass 20,150), total 10,309.91, height 10 ft, unused 9,840.09; below the minimum base height. Basis: real-building-a numbers_block reading 13."
+    },
+    {
+      "id": "S18",
+      "case": "PART C: step-p6-worked#real-building-a (reading 14 footprint)",
+      "input": "footprint_area = 10,309.88; floor_area_allowance = 20,150; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building A: 1 storey, total 10,309.88, height 10 ft, unused 9,840.12. S17+S18 feed each reading's own footprint (the readings differ on it); the storey count and height agree. Basis: real-building-a reading 14."
+    },
+    {
+      "id": "S19",
+      "case": "PART C: step-p6-worked#real-building-b (uses the allowance; same under every variant)",
+      "input": "footprint_area = 10,309.91 and, separately, 10,309.88 (each reading's own); floor_area_allowance = 20,150; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building B: 3 storeys of 6,716.67 (plan = 20,150/3), total 20,150, height 30 ft, unused 0; no setback worked. Basis: real-building-b numbers_block (both readings agree). The plan of 6,716.67 sq ft fits within the footprint under both readings, so the building is the same under both."
+    },
+    {
+      "id": "S20",
+      "case": "PART C: a missing footprint",
+      "input": "footprint_area = None; floor_area_allowance = 20,150; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "BOTH buildings not_known, each with a plain reason: building A needs the footprint it stacks; building B's plan (the allowance divided by its storeys) cannot be shown to fit a footprint that is not known. No figure is returned for either. Nothing says complies or feasible. [ORCH-CORRECTED 2026-10-09, ruling C12: for a MISSING INPUT the module names the missing input and NO kind of gap; any kind named above for this state is replaced by that.]"
+    },
+    {
+      "id": "S21",
+      "case": "PART C: a missing floor-area allowance",
+      "input": "footprint_area = 8,000; floor_area_allowance = None; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "both buildings not_known with a plain reason (they need the floor-area allowance); no default; gap kind = code/input not available for this lot. [ORCH-CORRECTED 2026-10-09, ruling C12: for a MISSING INPUT the module names the missing input and NO kind of gap; any kind named above for this state is replaced by that.]"
+    },
+    {
+      "id": "S22",
+      "case": "PART D: step-p6-worked#real-estimate-b",
+      "input": "floor_area_sq_ft = 20,150; share_low = 0.60; share_high = 0.75; apartment_size_sq_ft = 700",
+      "expected": "quotient_low = 17.27, quotient_high = 21.59 (two decimals); whole below/above 17 and 18, 21 and 22; never rounded to a count. Basis: real-estimate-b."
+    },
+    {
+      "id": "S23",
+      "case": "PART D: step-p6-worked#made-up-estimate-a",
+      "input": "floor_area_sq_ft = 16,000; share_low = 0.60; share_high = 0.75; apartment_size_sq_ft = 700",
+      "expected": "quotient_low = 13.71, quotient_high = 17.14; whole below/above 13 and 14, 17 and 18. Basis: made-up-estimate-a."
+    },
+    {
+      "id": "S24",
+      "case": "PART D: step-p6-worked#made-up-estimate-b",
+      "input": "floor_area_sq_ft = 20,000; share_low = 0.60; share_high = 0.75; apartment_size_sq_ft = 700",
+      "expected": "quotient_low = 17.14, quotient_high = 21.43; whole below/above 17 and 18, 21 and 22. Basis: made-up-estimate-b."
+    },
+    {
+      "id": "S25",
+      "case": "PART D: step-p6-worked#real-estimate-a (two readings, same two decimals)",
+      "input": "floor_area_sq_ft = 10,309.91 and, separately, 10,309.88; share_low = 0.60; share_high = 0.75; apartment_size_sq_ft = 700",
+      "expected": "both floor areas give quotient_low = 8.84 and quotient_high = 11.05; whole below/above 8 and 9, 11 and 12. The readings' decimal difference is honoured, not pinned. Basis: real-estimate-a."
+    },
+    {
+      "id": "S26",
+      "case": "PART D: a missing building floor area",
+      "input": "floor_area_sq_ft = None; share_low = 0.60; share_high = 0.75; apartment_size_sq_ft = 700",
+      "expected": "status not_known; no quotient; plain text that the estimate needs the building's residential floor area (from PART C), which is not known for this lot; it is a preliminary assumption-based estimate, not a legal limit. No default. [ORCH-CORRECTED 2026-10-09, ruling C12: for a MISSING INPUT the module names the missing input and NO kind of gap; any kind named above for this state is replaced by that.]"
+    },
+    {
+      "id": "S27",
+      "case": "PART D: an impossible apartment size (exception)",
+      "input": "floor_area_sq_ft = 20,150; apartment_size_sq_ft = 0",
+      "expected": "the module rejects a zero or negative apartment size with a clear error (ValueError) or a not_known with a plain reason; it never divides by zero."
+    },
+    {
+      "id": "S28",
+      "case": "PART D: the labels and the separation from the legal limit (R700, R545, R688)",
+      "input": "floor_area_sq_ft = 20,150; share 0.60-0.75; apartment_size_sq_ft = 700",
+      "expected": "every returned text contains 'preliminary assumption'; no text calls the share or size law, measured, typical or validated, or says approval validates them; no text calls the result a legal limit, a ceiling or a dwelling-unit limit. Basis: real-estimate-b does_not_establish; D-090 R545, R688, R700. [ORCH-CORRECTED 2026-10-09, ruling C15: the LABEL is the owner's own words (row R543), exactly 'Preliminary capacity estimate' when the estimate is available and 'Not known' when it is not; the words 'preliminary assumption' are required in every text that names the apartment size or the share, not in the label.]"
+    },
+    {
+      "id": "S29",
+      "case": "PART C: building B's plan would not fit the footprint",
+      "input": "footprint_area = 5,000; floor_area_allowance = 20,000; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building B not_known: three storeys would need a plan of 6,666.67 sq ft, more than the footprint of 5,000 sq ft; the worked method covers only a plan that fits the footprint and works no taller building; kind of gap: code not built. No figure for building B. Building A is still worked from its own inputs (S30 covers its limit)."
+    },
+    {
+      "id": "S30",
+      "case": "PART C: building A's stack would pass the maximum base height",
+      "input": "footprint_area = 2,000; floor_area_allowance = 20,000; floor_to_floor_ft = 10; min_base_ft = 30; max_base_ft = 45; max_building_ft = 55",
+      "expected": "building A not_known: ten storeys of 2,000 sq ft would stand 100 ft high, above the maximum base height of 45 ft; storeys above the base and their setback are not worked by the method (step-p6-worked: both worked buildings stay at or below the maximum base height); kind of gap: code not built. No figure and no storey above the base."
+    },
+    {
+      "id": "S31",
+      "case": "PART E: the register follows the new modules",
+      "input": "parts A to D integrated on the branch; the register's calculation entries `calc-lot-coverage-by-portion`, `calc-building-option-floor-stack`, `calc-preliminary-apartment-estimate` and `calc-first-building-option-complete`, and the coverage gaps that call these calculations uncovered or not built",
+      "expected": "each of those entries says, in its source data, that a calculation module now exists (named with its path, built by M5-T145), that it is connected to NO reported result, and lists it among the entry's code modules so that its identity is fingerprinted; the program's actual side stays exactly what the committed results document says (withheld or not built) and every step's verdict on the six-step page is unchanged; a coverage gap whose wording is no longer true is reworded truthfully, none is dropped; each changed entry's revision moves and one line per changed entry is appended to the calculations history; the pages and evidence logs are produced by the register's own process (`render_review_register.py --write`, as `docs/zoning-rule-review/GUIDE.md` says) and its `--check` exits 0."
+    },
+    {
+      "id": "S32",
+      "case": "PART E: nothing else moves",
+      "input": "the same change",
+      "expected": "the 23 rule entries and their pages are byte-identical; every earlier history line is unchanged; no human decision is entered and every calculation entry still reads 'Not reviewed'; no renderer or checker code changes; `test_zoning_rule_review_register.py` is unchanged; in `test_zoning_rule_review_register_calculations.py` only an assertion that pins something this change legitimately moves is changed, each one named in the part report with its reason (if more would have to change: STOP and report)."
+    },
+    {
+      "id": "S33",
+      "case": "PART E: a later change of a new module is caught",
+      "input": "in a temporary copy outside the repository, one byte changed in one of the four new modules after the register was updated",
+      "expected": "the register's check reports that entry's automated tests as not run for the current code and names the changed module; the committed register passes."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "PART A tolerance for the benchmark lot: the two step-P6 readings differ by at most 0.14 sq ft on the corner portion and 0.13 sq ft on the interior strip, and agree exactly on the outline area (10,387.99). The chosen test tolerance is 1.0 sq ft per portion - about seven times the readings' own spread and ~0.01% of the ~10,388 sq ft lot - and the two parts must sum to the outline area within 0.01 sq ft. This pins no single figure (it requires the program's exact clip within one hand-reader's spread of BOTH readings). I could not run PART A, so the actual program-vs-reading gap is unconfirmed; the builder MUST report the measured gap in part-A.md and, if it exceeds 1.0 sq ft, STOP and surface it as a possible real discrepancy rather than loosen the tolerance silently.",
+    "PART A geometry method: shapely==2.0.7 is an admitted, pinned dependency (requirements.txt:508; pyproject.toml:30), so no new package is needed. The RECOMMENDED method, mirroring lot_reach.py's pure-math no-dependency style, is a pure-Python half-plane polygon clip (Sutherland-Hodgman): the corner portion is the outline clipped by {perpendicular distance to street line 1 <= d} and then by {perpendicular distance to street line 2 <= d} (both half-planes are convex, so the clip is exact even for an L-shaped outline); the area is the shoelace of the clipped ring; the interior portion is the outline area minus the corner portion. shapely is an acceptable alternative if the builder prefers; either way no new package.",
+    "PART C building A fill rule: storeys = the most full-footprint floors whose running total does not exceed the allowance (made-up A: floor(20,000/8,000)=2; real A: floor(20,150/10,309.91)=1). PART C building B fill rule: the fewest storeys whose top reaches at least the minimum base height (ceil(30/10)=3), spreading the whole allowance over them. Neither building may exceed the maximum base height here (both reach 20 or 30 ft, <= 45), so no setback is worked; the module must not invent a storey above the base.",
+    "No part imports another part, and no part changes or imports an existing engine file: PART A imports only site_geometry (not lot_reach); PARTS B/C/D import nothing from each other, from building_option.py, dwelling_units.py, result_ways.py or three_way_document.py. Nothing any part adds is reachable from a reported result in this task.",
+    "PART D R387 (no estimator before the measurement basis is resolved) is cleared (see g0_authority): the measurement-basis record (M5-T126) and its decided choices (M5-T135) are accepted, and the owner decided R540/R541."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T08:32:32.735259+00:00",
+  "updated_at": "2026-10-09T10:09:48.392508+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R147",
+        "D-090-R192",
+        "D-090-R239",
+        "D-090-R255",
+        "D-090-R256",
+        "D-090-R322",
+        "D-090-R379",
+        "D-090-R509",
+        "D-090-R519",
+        "D-090-R540",
+        "D-090-R541",
+        "D-090-R543",
+        "D-090-R545",
+        "D-090-R650",
+        "D-090-R688",
+        "D-090-R691",
+        "D-090-R692",
+        "D-090-R700",
+        "D-090-R703",
+        "D-090-R704",
+        "D-090-R705",
+        "D-090-R707",
+        "D-090-R773"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T08:32:32.735450+00:00",
+  "path_notes": "ONE packet, four independent parts; up to THREE builders. BUILDER SPLIT: Builder 1 takes PART A (the new measurement, the largest and the only geometry); Builder 2 takes PART C (the two buildings); Builder 3 takes PARTS B and D (the two smallest, both pure arithmetic, in two distinct new files). No two builders touch one path: A is in services/api/app/spatial/ + tests/spatial/; B, C and D are four DISTINCT new files under services/api/app/scenario/three_answers/ + tests/scenario/three_answers/ (Builder 2 touches only first_building_options.py + its test; Builder 3 touches lot_coverage_by_portion.py + preliminary_apartment_estimate.py + their tests); each builder writes only its own M5-T145-part-<X>.md. The producer-report.md is assembled by the orchestrator, not a builder.\n\nPART A corner_reach_area.py (pure, measurements only; mirrors lot_reach.py; no legal threshold, no rule named inside). Two layers: (1) a pure geometry function area_within_distance_of_both(outline_vertices: list[tuple[float,float]], line1: tuple[Point2,Point2], line2: tuple[Point2,Point2], distance_ft: float) -> tuple[float,float] returning (corner_area, rest_area) by the half-plane clip above; (2) measure_corner_reach_area(outline: PreparedOutline | None, geometry: SiteGeometry, distance_ft: float) -> CornerPortionAreas, a frozen dataclass of two SourcedValue fields (corner_portion, interior_portion) built with tax_map_value (known) or unknown_value (a plain reason), finding the two confirmed straight frontages and their street lines the way lot_reach does (via site_geometry.outline edges; reuse the _street_line pattern) and returning both-unknown on every state lot_reach returns no corner for (no outline/refused; fewer than two confirmed straight frontages; not a corner; bent frontage). Units sq ft; measured from the EPSG:2263 outline; distance is caller-passed (the 100-ft ZR 12-10 value lives in PART B/the wiring, never here). Never a zero for an unknown (a genuinely measured rest of 0.0 when the lot is wholly inside the distance is allowed and distinct). Test folder services/api/tests/spatial/ (where test_lot_reach.py lives; made-up shapes built as LotOutline->prepare_outline->derive_site_geometry, the benchmark via _northern_replay, expected benchmark figures PARSED from step-p6-worked, never retyped).\n\nPART B lot_coverage_by_portion.py (the legal layer): permitted_footprint_by_portion(corner_portion_area, interior_portion_area, corner_ratio=1.00, interior_ratio=0.80) -> a typed result with corner_allowed, interior_allowed, footprint, formula, zr_sections ('ZR 23-362','ZR 12-10'), measurement_basis, status, reason. The ratios are ZR 23-362 (cite capture zr-23-362; source the 0.80 from the r6b-lot-coverage rule in the wiring, as dwelling_units.py:45 sources its factor); the 100-ft corner distance (ZR 12-10, capture zr-12-10-lot-corner) is documented here as the value the wiring passes to PART A. not_known when a portion area is None; ValueError on a negative area. No rounding.\n\nPART C first_building_options.py (does NOT decide which building shows; does NOT import or change building_option.py): building_a(footprint_area, floor_area_allowance, floor_to_floor_ft, min_base_ft, max_base_ft, max_building_ft) and building_b(floor_area_allowance, floor_to_floor_ft, min_base_ft, max_base_ft, max_building_ft) each return a FloorSchedule (storeys list of {storey, floor_to_floor_ft, top_ft, plan_area_sqft, floor_area_sqft, running_total_sqft}, storey_count, height_ft, total_floor_area_sqft, unused_floor_area_sqft, below_min_base: bool, status, reason). Building A = the widest footprint stacked to the floor-area maximum; building B = the fewest storeys reaching the minimum base height, the allowance spread evenly. not_known on a missing input; no storey above the maximum base; no text says complies or feasible; the same-plan stack and the floor-to-floor height are named design assumptions.\n\nPART D preliminary_apartment_estimate.py: preliminary_apartment_estimate(floor_area_sq_ft, share_low=0.60, share_high=0.75, apartment_size_sq_ft=700.0) -> quotient_low/high (two decimals, round half up, never a count), whole_below/above each, formula, label, status, reason. Dividend is the PROPOSED building's floor area (R509), the maximum kept separate. Every text carries 'preliminary assumption'; none says law/measured/validated/legal limit/ceiling; not_known on a missing floor area; ValueError on apartment_size <= 0. All four modules stay well under the modularity WARN threshold (600 SLOC). Seed each new test with a trivial passing placeholder.\n\nTHE ORCHESTRATOR'S RULINGS (they govern wherever they differ from the text above). C1 (part C): the footprint is a REQUIRED input of BOTH buildings: building_b takes footprint_area too; its plan is the allowance divided by its storeys and must fit within the footprint (S16, S19); a missing footprint makes both buildings not_known (S20); a plan that would not fit makes building B not_known, code not built (S29). C2 (part C): no storey above the maximum base height is ever returned: a stack of building A that would pass it is not_known, code not built (S30). C3 (part C): `below_min_base` is a plain fact about the building's height. No text draws a conclusion from it (permitted, not permitted, required): what the law says about a building below the minimum base height is in the case rows of step-p6-worked and is not this module's to state. C4 (part A): scenario S3 is the 60-degree parallelogram as written in the scenario list; the distance is always the perpendicular distance to a street line. C5 (part A): if the program's two areas for the benchmark lot are not within 1.0 sq ft of BOTH readings, the builder STOPS and reports the measured gap; the tolerance is not widened and no figure of a reading is changed. C6 (part D): rounding to two decimals is for display of the two quotients and is a design assumption; the module also keeps the unrounded quotients; nothing is rounded to a count. C7 (all parts): every returned text is a plain user text; none says captured, complies, feasible, validated, verified or legally correct; a not_known state names which kind its gap is (a missing fact about the property, unresolved law, or code not built). C8 (all parts): no part changes an existing file or is imported by one; the zoning-rule review register is NOT changed by this task because no reported result changes (the register's calculation entries move in the wiring step, which also adds the guards of backlog row DB-211); each part report says so. C9: each builder writes only its own part's module, test and part report; the producer report is assembled by the orchestrator from the part reports, unchanged.\n\nSCOPE CORRECTION BY THE ORCHESTRATOR BEFORE ANY REVIEW (it replaces ruling C8). C8 was wrong to leave the register for the wiring step: this task adds zoning calculation code, and the standing rule (D-090 rows R379, R691, R707) is that a task which changes a calculation updates the register within its own scope. PART E is added: after parts A to D are integrated, ONE builder updates the register's SOURCE DATA so that the four calculation entries on this path say truthfully that a module exists and is connected to no reported result, and renders the pages by the register's own process (scenarios S31 to S33). C10: PART E changes data and rendered files only: no renderer or checker code, no rule entry, no verdict of any step, no human-review field. C11: the guards of backlog row DB-211 (a) and (b) stay with the wiring step, where a verdict first moves; `review_register_calculations.py` is not touched here.\n\nSECOND CORRECTION BY THE ORCHESTRATOR BEFORE ANY REVIEW (after reading part C's first commit). C12 (parts B, C and D; it refines C7): a state caused by a MISSING INPUT names the missing input or inputs, in a field `missing_inputs` and in its plain text, and names NO kind of gap (`gap_kind` is None): the kind belongs to the result that failed to supply the input and is carried by the wiring step. A footprint, a portion area or a floor area can be missing because a fact about the property is missing or because code is not built; a module that takes plain numbers cannot know which, and must not guess. A state caused by the module's OWN limit (scenarios S29 and S30; a first storey that already passes the allowance) keeps the kind 'code not built'. An impossible input (a negative area, an apartment size of zero) stays an error, not a state. C13 (part C): `max_building_ft` is not an input of part C: no storey above the base is worked, so the maximum building height decides nothing here, and an input that decides nothing must not be able to make a building not known. The scenarios' inputs that list it are read without it. C14 (part C): the floor-to-floor height is called an assumed starting value that the user can change (a design assumption), not a value 'chosen by the owner', unless a recorded row says so and is named.\n\nTHIRD CORRECTION BY THE ORCHESTRATOR BEFORE ANY REVIEW (after reading parts B and D). C15 (part D): the label is the owner's own (row R543): exactly 'Preliminary capacity estimate' when the estimate is available, 'Not known' when it is not. Every text that names the apartment size or the share carries the words 'preliminary assumption' and the owner's descriptions: the share range is an unvalidated sensitivity range the user can change (row R540); the size is a chosen starting value on the HPD measurement basis that the user can change (row R541). The whole number above a quotient is its ceiling (an exact whole quotient has the same number below and above). A negative floor area, a share outside 0 to 1 or a low share above the high share is an error, not a state. C16 (part B): the text of an available result is written from the ratios actually used, never from fixed figures; a ratio outside 0 to 1 is an error; a test shows the footprint never exceeds the sum of the two areas (row R147). C17 (part C; it completes C14): the 10 ft floor-to-floor height is the owner's starting assumption (row R542: 10 ft residential floors, 15 ft shop ground floors) and may be named so with that row; part C works ONE floor-to-floor height for every storey, so a 15 ft shop ground floor is not worked here, and the module says so as a limit.\n\nFOURTH CORRECTION BY THE ORCHESTRATOR BEFORE ANY REVIEW (after reading part A). C18 (part A): the measurement names NO kind of gap. Its first commit ended every unknown reason with 'This gap is a missing fact about the property's geometry', which is wrong for several states (a lot with one street has no corner at all; a bent frontage and a lot with more than two streets are limits of the method). Each unknown state keeps its plain reason and gains a distinct machine-readable state code in a field `state` (measured, and one code per unknown state), so that the wiring step can tell the states apart without reading texts and name the kind where the result is decided. A distance of zero or less is an error. A negative rest is set to zero only when it is rounding noise; anything larger is an error. WHAT THIS MEANS FOR ROW R650 IN THIS TASK: a module names the kind of gap only for its OWN limit (part C: code not built). For a missing input (parts B, C, D: `missing_inputs`) and for the measurement's states (part A: `state`) the kind is deliberately not named here; naming it is owed by the wiring step, and the row stays open for that.\n\nWHAT THIS TASK RESTS ON, IN WORDS (moved here from the dependencies field, which holds task ids only): No part imports another part. PART B takes PART A's two areas as plain numbers; PART D takes PART C's floor area as a plain number; the links are made by the later wiring step, not inside these modules. PART A imports only the existing site_geometry package (labels, outline, results) - the same imports lot_reach.py uses; it does NOT import lot_reach itself, the rule engine or the scenario engine. A later wiring step (outlined in next-pieces-plan.md (c)) hands the site-geometry outline, the two street lines and the 100-ft distance (ZR 12-10) to PART A, feeds A's areas to B, B's footprint to C, and C's floor area to D, then regenerates the committed results document once. Out of scope here.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check app/spatial/corner_reach_area.py tests/spatial/test_corner_reach_area.py app/scenario/three_answers/lot_coverage_by_portion.py app/scenario/three_answers/first_building_options.py app/scenario/three_answers/preliminary_apartment_estimate.py tests/scenario/three_answers/test_lot_coverage_by_portion.py tests/scenario/three_answers/test_first_building_options.py tests/scenario/three_answers/test_preliminary_apartment_estimate.py",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider tests/spatial/test_corner_reach_area.py",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider tests/scenario/three_answers/test_lot_coverage_by_portion.py tests/scenario/three_answers/test_first_building_options.py tests/scenario/three_answers/test_preliminary_apartment_estimate.py",
+    "python tools/modularity_check.py --check",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register.py tests/rules/test_zoning_rule_review_register_calculations.py",
+    "PYTHONDONTWRITEBYTECODE=1 python services/api/app/rules/review_register/render_review_register.py --check"
+  ],
+  "worktree": "/root/project/w-wave18",
+  "progress_log": [
+    {
+      "at": "2026-10-09T08:32:54.989983+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed; three builders start from the claim head, one part or pair of parts each (concurrency record WAVE18-2026-10-09-concurrency-record.md)."
+    },
+    {
+      "at": "2026-10-09T09:38:09.016073+00:00",
+      "agent": "rules-engineer",
+      "percent": 70,
+      "status": "claimed",
+      "message": "All five parts integrated (A: 48fa796d5 + ae848f24e; B and D: 342962533 + 2e6dde3ee; C: ca3c3ad3a + ea2580bd4; E: 87d69ec2f); each first commit was read by the orchestrator and sent back once before any review (rulings C12 to C18). Focused checks at 09:38 UTC on the integrated head: ruff exit 0; tests/spatial, tests/scenario/three_answers, the register tests, the reference-case tests and the journey tests: 1016 passed, 2 skipped; modularity, lane coverage and the register's check exit 0; the 23 rule entries, the rule history and the results document unchanged; no human decision entered. Producer report assembled from the five part reports. Next: push, CI, reviews G3 and G4."
+    },
+    {
+      "at": "2026-10-09T09:53:10.263682+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "Reviews G3 (data-contract-verifier) and G4 (qa-engineer) PASS at 9d9764f3, none blocking; record project-control/reports/M5-T145-G3G4.md (both returns unchanged; the builders' run times; what was sent back before review); evidence map of 23 rows with the known limits; the open notes kept as backlog row DB-212. CI on 9d9764f3 read green by the orchestrator at 09:51 UTC (run 37912550886, 21 of 21 jobs). Written at 09:53 UTC."
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-09T08:38:05+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before any builder returned and before any review] PART E added: the zoning-rule review register follows the four new modules inside this task (seven more allowed paths: the register's source data, its rendered index, history, calculation pages and evidence logs, its calculation test file, and a part report; scenarios S31 to S33; rows R379, R691, R692, R703, R704, R705, R707 bound). Reason: ruling C8 left the register to the wiring step, against the standing rule that a task which changes a calculation updates the register within its own scope. Parts A to D, their paths, their scenarios and the three running builders are unchanged. G0 is recorded again at the corrected head."
+    },
+    {
+      "at": "2026-10-09T08:52:37+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before any review, after reading part C's first commit] rulings C12, C13 and C14 added and the expected text of scenarios S13, S20, S21 and S26 annotated: a module that takes plain numbers names a missing input and no kind of gap (the first commit of part C called a missing footprint 'a missing fact about the property', which is wrong whenever the footprint is missing because code is not built); the maximum building height is not an input of part C; the floor-to-floor height is an assumed starting value. No path, gate, reviewer or bound row changed."
+    },
+    {
+      "at": "2026-10-09T08:54:20+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before any review, after reading the first commits of parts B and D] rulings C15, C16 and C17 added and scenario S28 annotated: part D's label is the owner's own words (R543), not a label that carries 'preliminary assumption' (the packet's S28 asked for the words in every text and so pushed the builder away from the owner's label); guards and the ceiling in part D; part B's text follows its ratios and a ratio is bounded; part C may name row R542 for the 10 ft and states its one-height limit. No path, gate, reviewer or bound row changed."
+    },
+    {
+      "at": "2026-10-09T08:56:01+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, before any review, after reading the first commit of part A] ruling C18 added: the measurement names no kind of gap and gives each unknown state a machine-readable state code; a distance of zero or less is an error; the zero-clamp of the rest is bounded. The packet says what this means for row R650 in this task. No path, gate, reviewer or bound row changed."
+    },
+    {
+      "at": "2026-10-09T10:09:35+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-09, after the reviews and the rule check, before acceptance] the dependencies field held three sentences instead of task ids, so the ledger refused the acceptance. It now names the accepted tasks this work rests on: M4-T037 (the independent hand-worked example), M4-T038 (the register calculation entries that part E revises) and M5-T127 (the lot-reach measurement that part A stands beside). The three sentences are kept, unchanged, at the end of the path notes. No path, gate, reviewer, scenario or bound row changed; no file of the task changed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T10:09:48.392360+00:00"
+}
