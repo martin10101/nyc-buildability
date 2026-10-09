@@ -162,7 +162,17 @@ def test_t4_recorded_lot_three_ways(monkeypatch) -> None:
     response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
     assert response.status_code == 200
     doc = response.json()
-    assert doc["contract_version"] == "1.3.0"
+    # M5-T146: the benchmark route carries the first-building-option blocks (contract 1.4.0): the
+    # two lot areas disagree, so coverage_by_portion is withheld and building_alternatives lists
+    # building B (conditional, with its preliminary capacity estimate); building A is absent.
+    assert doc["contract_version"] == "1.4.0"
+    assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
+    assert doc["building_alternatives"][0]["way"]["way"] == "conditional"
+    assert (
+        doc["building_alternatives"][0]["capacity_estimate"]["label"]
+        == "Preliminary capacity estimate"
+    )
+    assert doc["coverage_by_portion"]["status"] == "withheld"
     fa = doc["answers"]["floor_area_allowance"]
     env = doc["answers"]["permitted_envelope"]
 

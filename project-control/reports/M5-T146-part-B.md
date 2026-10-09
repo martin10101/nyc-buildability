@@ -266,4 +266,73 @@ the named list).
 - `python -m pytest -q -p no:cacheprovider tests/drawings tests/cad` -> 1362 passed, 6 skipped
   (exit 0; +3 over the previous round - the pin test and the two Unavailable-entry-point cases)
 
+## Live route (fourth orchestrator round: the same document by every path)
+
+CAUSE (one sentence): the live results route carries the lot geometry but NOT the prepared tax-map
+outline in production/e2e (the outline provider is bound behind `LIVE_SPATIAL_PROVIDER_ENABLED`,
+OFF by default - `app/api/v1/study_inputs.py:_live_study_inputs_provider`), so the recorded and
+outline areas COULD NOT be compared, the floor-area way carried no contradicted-record condition,
+and `_apply_first_option` hit its early return - no first-building-option blocks (contract 1.3.0),
+while the journey/committed path threads the outline (areas DISAGREE) and emits them (1.4.0).
+
+FIX (`three_way_document.py`, in scope): building B is worked from the recorded lot area and the
+allowance - it does NOT depend on the outline - so `_apply_first_option` now lists it WHENEVER the
+floor-area allowance is shown (the early return now fires only when there is no shown allowance,
+e.g. the engine lane is off), on every path. The by-portion `coverage_by_portion` block and the
+coverage reconciliation apply only to the conflicting-area case this transform can resolve (the
+outline is threaded and the areas DISAGREE - a contradicted-record condition); without that the
+transform must not overwrite a shown max_lot_coverage (a corner reaching WITHIN its portion, e.g.
+law-example C2) and cannot do the by-portion footprint, so it emits building B alone. The committed
+journey document is UNCHANGED (the benchmark threads the outline -> DISAGREE -> the same blocks, in
+the same key order); verified by the journey and wiring byte-equality tests. No contract-schema,
+register or website file was changed by me.
+
+WHAT THE LIVE ROUTE NOW RETURNS (benchmark 4073340070, `enabled`/Lane A on):
+- default inputs, outline threaded: 1.4.0, coverage_by_portion WITHHELD (missing fact, no figure),
+  building_alternatives = [building B], conditional, with its preliminary capacity estimate;
+  building A absent. Byte-equal to the committed document's two blocks.
+- floor-to-floor 14 ft entered: building B worked at 14-ft storeys (3 storeys, 42 ft, reaching the
+  30 ft minimum base), never silently 10 ft.
+- outline NOT threaded (the production/e2e default that caused the defect): 1.4.0 with building B
+  (no longer 1.3.0/empty); coverage_by_portion is not emitted (the by-portion footprint still needs
+  the outline - see STOP).
+
+THE AGREE CASE AND THE NO-OUTLINE COVERAGE FOOTPRINT (STOP; docstring corrected): where the areas
+AGREE (the outline is threaded and the areas match) the footprint and building A should show, and
+where the outline is absent the coverage should still be a withheld-by-portion block; both need the
+measured corner-reach areas (`GatheredResult.corner_areas`, gathered in `result_way_bridge`) and the
+area agreement carried from the caller (`result_way_engine_bridge.run_engine_and_result_ways*`) to
+`emit_three_way_document`. That caller is OUTSIDE this task's allowed paths, so it is NOT wired here;
+`first_option_results` does the agree case and is proven by its own test
+(`test_first_option_results::test_s13`). The old `_apply_first_option` docstring wrongly cited
+"work owed, DB-213" for this; corrected to state the real missing thread. STOP: to wire the agree
+footprint / building A / no-outline coverage end to end, the orchestrator must bring
+`result_way_engine_bridge.py` (and `run_engine_and_result_ways`) into scope to pass
+`gathered.corner_areas` and `gathered.inputs.area` to the emitter, and add the matching emit param.
+
+CONSUMER SWEEP (out of scope, flagged): `services/api/tests/api/test_results_read_law_examples.py`
+`test_t4` asserted the pre-1.4.0 `contract_version == "1.3.0"` for the benchmark ROUTE - a stale
+assertion left from rounds 1-2 (I ran only test_results_read_api.py then). Updated to 1.4.0 + the
+block assertions. This file is not among this task's allowed paths; flagged for ratification.
+
+MUTATION PROOF (live-route test): reverting `_apply_first_option` to the old too-narrow gate (it
+requires a contradicted-record condition) makes the no-outline route return 1.3.0 with no
+building_alternatives, so `test_m5t146_live_route_lists_building_b_without_the_tax_map_outline` goes
+RED; the broadened gate is load-bearing.
+
+### Checks (fourth round), direct exit codes
+- `cd services/api && python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/spatial tests/journey
+  tests/api tests/drawings tests/cad tests/documents/test_pdf_content.py` -> 3465 passed, 8 skipped
+  (exit 0)
+- `python services/api/app/rules/review_register/render_review_register.py --check` -> FAILED, 2
+  issues: the register's calc entries record a sha256 of three_way_document.py, which changed; the
+  register data is resynced by its own builder after me (the orchestrator's note). I did not touch
+  any register file.
+- `python services/api/scripts/sync_contract_schemas.py --check` -> byte-identical (exit 0)
+- `python tools/modularity_check.py --check` -> exit 0
+- `python scripts/lanes/check_lane_paths.py --coverage` -> LANE COVERAGE PASS (exit 0)
+- committed document regenerated? NO - it is byte-identical (the benchmark threads the outline, so
+  DISAGREE -> the same blocks; the journey/wiring byte-equality tests pass without regeneration).
+
 END-OF-REPORT

@@ -449,18 +449,32 @@ def _point_building_option_to_alternatives(doc: dict) -> None:
 
 
 def _apply_first_option(doc: dict, ways: ResultWays, document: dict) -> None:
-    """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks for the
-    CONFLICTING-AREA case (ruling W1/W2): where the recorded lot area and the tax-map outline area
-    DISAGREE (the floor-area way then carries a contradicted-record condition), the by-portion
-    footprint is WITHHELD and building B (the fewest storeys reaching the minimum base height, whose
-    plan fits the lowest applicable ratio times the recorded area) is listed CONDITIONAL; building A
-    is absent because it needs the withheld footprint. The engine numbers come from the engine
-    document; the way conditions are reused from the floor-area answer so nothing is invented. Where
-    the areas agree the footprint and building A need the measured corner-reach areas threaded to
-    this transform - that is not wired here (work owed, DB-213) - so no block is emitted then."""
+    """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks WHENEVER the
+    floor-area allowance is shown (the engine ran and the recorded lot area is known). Building B
+    (the fewest storeys reaching the minimum base height, whose plan fits the lowest applicable
+    ratio times the RECORDED area) is worked from the recorded area and the allowance alone - it
+    does NOT depend on the tax-map outline - so it is listed CONDITIONAL on every path that has an
+    allowance, whether or not the outline was threaded (the defect this fixes: the live results
+    route carries geometry but not the prepared outline in production/e2e, so the two areas COULD
+    NOT be compared and the floor-area way carried no contradicted-record condition; the old gate
+    then emitted nothing, while the journey path, which threads the outline, found the areas
+    DISAGREE and emitted the blocks). The by-portion footprint needs the outline, so
+    coverage_by_portion is WITHHELD here - a missing fact, worded for the DISAGREE case (the outline
+    is threaded and the areas differ) or the COULD-NOT-COMPARE case (no outline) - and building A,
+    which needs that footprint, is absent. The AGREE case (the outline is threaded and the areas
+    match) would show the footprint and building A, but needs the measured corner-reach areas
+    (``corner_areas``,
+    already gathered on ``GatheredResult`` in ``result_way_bridge``) carried from the caller
+    (``result_way_engine_bridge.run_engine_and_result_ways*``) to this transform; that caller is
+    outside this task's allowed paths, so it is NOT wired end to end here (``first_option_results``
+    does it, proven by its own test); the emit path cannot distinguish agree from could-not-compare
+    without that thread, so it withholds the footprint in both. The engine numbers come from the
+    engine document; the way conditions are reused from the floor-area answer so nothing is
+    invented."""
     conditions = _floor_area_conditions(ways)
-    if conditions is None or not any(c.kind == KIND_CONTRADICTED_RECORD for c in conditions):
-        return
+    if conditions is None:
+        return  # no shown floor-area allowance (e.g. the engine lane is off): no building is worked
+    areas_disagree = any(c.kind == KIND_CONTRADICTED_RECORD for c in conditions)
     allowance = _engine_value(document, "floor_area_allowance", _FLOOR_AREA_VALUE_KEY)
     far = _engine_value(document, "floor_area_allowance", _FAR_VALUE_KEY)
     min_base = _engine_value(document, "permitted_envelope", _MIN_BASE_VALUE_KEY)
@@ -478,18 +492,32 @@ def _apply_first_option(doc: dict, ways: ResultWays, document: dict) -> None:
         max_base_ft=max_base,
         floor_to_floor_ft=floor_to_floor,
         lot_type=lot_type if isinstance(lot_type, str) else None,
-        areas_agree=False,
+        # DISAGREE (outline threaded, areas differ) -> the missing-fact "areas disagree" reason;
+        # otherwise (no outline threaded to this transform) -> the missing-fact "could not compare"
+        # reason. The footprint is withheld either way; building B does not depend on it.
+        areas_agree=False if areas_disagree else None,
         corner_areas=None,
         outline_area_sqft=None,
         way_conditions=tuple(c.to_dict() for c in conditions),
     ))
     changed = False
-    if blocks.coverage_by_portion is not None:
+    # The by-portion coverage block (and the coverage reconciliation) applies only to the
+    # conflicting-area case the transform can resolve here: the outline is threaded and the two
+    # areas DISAGREE (a contradicted-record condition), so the existing max_lot_coverage value is
+    # withheld and the by-portion footprint is a missing fact. Without a contradicted-record the
+    # transform does not know whether the lot's coverage is a single shown figure (a corner reaching
+    # within the portion, which it must NOT overwrite) or by-portion; the by-portion analysis for
+    # those lots needs the measured corner-reach areas threaded here (STOP - see the docstring), so
+    # no coverage_by_portion is emitted then. (Set before building_alternatives for a stable key
+    # order in the committed document.)
+    if areas_disagree and blocks.coverage_by_portion is not None:
         doc["coverage_by_portion"] = blocks.coverage_by_portion
         _reconcile_max_lot_coverage(doc, blocks.coverage_by_portion)
         _reconcile_envelope_geometry(doc, ways, blocks.coverage_by_portion)
         changed = True
     if blocks.building_alternatives:
+        # Building B is worked from the recorded area + the allowance - not the outline - so it is
+        # listed whenever the allowance is shown, on every path (with or without the outline).
         doc["building_alternatives"] = list(blocks.building_alternatives)
         _point_building_option_to_alternatives(doc)
         _reconcile_list_dependents(doc)

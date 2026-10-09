@@ -291,6 +291,90 @@ def test_t3_route_files_name_neither_older_entry_nor_the_inputs_builder() -> Non
         assert "run_engine_and_result_ways(" not in src, name
 
 
+# =========================================================================== M5-T146 live route
+_JOURNEY_FIXTURE = (
+    _REPO_ROOT / "packages" / "contracts" / "fixtures" / "valid" / "results"
+    / "recorded_215_16_northern_journey.json"
+)
+
+
+def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
+    enabled, monkeypatch,
+) -> None:
+    """M5-T146 (the defect): the SAME benchmark lot and inputs must give the SAME document by the
+    live route and by the journey path. The committed journey document is built with the engine
+    lane on and the recorded carriers threaded (property profile, prepared tax-map OUTLINE and site
+    geometry), housing program 'standard_residence', no entered floor-to-floor height, no density
+    statement. With those same inputs (benchmark_provider threads the outline; the `enabled` fixture
+    turns the lane on) the live route returns contract 1.4.0 with coverage_by_portion WITHHELD (no
+    figure - the two lot areas disagree) and building_alternatives holding building B, conditional,
+    with its preliminary capacity estimate (building A absent). The route's first-building-option
+    blocks are byte-equal to the committed document's."""
+    _no_network(monkeypatch)
+    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    assert response.status_code == 200
+    doc = response.json()
+    committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
+    assert committed["contract_version"] == doc["contract_version"] == "1.4.0"
+    assert doc["building_alternatives"] == committed["building_alternatives"]
+    assert doc["coverage_by_portion"] == committed["coverage_by_portion"]
+    assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
+    building_b = doc["building_alternatives"][0]
+    assert building_b["way"]["way"] == "conditional"
+    assert building_b["capacity_estimate"]["label"] == "Preliminary capacity estimate"
+    assert doc["coverage_by_portion"]["status"] == "withheld"
+    assert "footprint_sqft" not in doc["coverage_by_portion"]  # no number on a withheld result
+    # the single building option points to the list; the older coverage value agrees with the block
+    assert "building_alternatives" in doc["answers"]["building_option"]["reason"]
+    assert doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]["reason"] == (
+        doc["coverage_by_portion"]["reason"]
+    )
+
+
+def test_m5t146_live_route_entered_floor_to_floor_works_building_b_at_that_height(
+    enabled, monkeypatch,
+) -> None:
+    """M5-T146 (2): when the user ENTERS a floor-to-floor height (14 ft) the route works building B
+    with 14-ft storeys - never silently at 10 ft. Building B reaches the 30 ft minimum base in three
+    14-ft storeys (42 ft, at or below the 45 ft maximum base)."""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(benchmark_provider()),
+        {"housing_program": "standard_residence", "floor_to_floor_ft": 14},
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    assert doc["contract_version"] == "1.4.0"
+    building_b = next(a for a in doc["building_alternatives"] if a["building"] == "B")
+    assert all(row["floor_to_floor_ft"] == 14 for row in building_b["floor_schedule"])  # not 10
+    assert building_b["storey_count"] == 3
+    assert building_b["height_ft"] == 42  # 3 x 14 ft, reaching the 30 ft minimum base
+
+
+def test_m5t146_live_route_lists_building_b_without_the_tax_map_outline(
+    enabled, monkeypatch,
+) -> None:
+    """M5-T146 (the defect's root cause): building B is worked from the recorded lot area and the
+    allowance, NOT from the tax-map outline, so the route lists it even when the outline is not
+    threaded - the production/e2e default (geometry present, the prepared outline absent, so the two
+    areas could not be compared and the floor-area way carries no contradicted-record condition).
+    Before the fix the route returned 1.3.0 with no blocks here; now building B appears on both
+    paths. (The by-portion coverage footprint still needs the outline/corner-reach areas; see the
+    part-B report's STOP.)"""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(benchmark_provider(outline_on=False)),
+        {"housing_program": "standard_residence"},
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    assert doc["contract_version"] == "1.4.0"
+    assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
+    assert doc["building_alternatives"][0]["capacity_estimate"]["label"] == (
+        "Preliminary capacity estimate"
+    )
+
+
 # =========================================================================== T9
 def test_t9_rate_limit_before_any_other_work(enabled, monkeypatch) -> None:
     """T9: more calls than the per-caller limit -> a typed 429 BEFORE any other work. The limiter
