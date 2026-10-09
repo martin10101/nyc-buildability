@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T03:24:19+00:00",
+ "updated_at": "2026-10-09T03:48:48+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -692,7 +692,7 @@
   "D-090-R668"
  ],
  "requirements_id_digest_sha256": "b222a91f4bd88abdbaaebbd481be79f600694a95821f7bd8040cbfe09684697d",
- "requirements_content_digest_sha256": "c002ccb753fc9b4195849214e898de42b554babc738bb0b169a6a94e037e573a",
+ "requirements_content_digest_sha256": "7b7d33d48adcf0a607986c9426e045180f83124a8f07ea54dfee39f0a62f04de",
  "sources": [
   {
    "file": "source-001.md",
@@ -1332,7 +1332,8 @@
   "M5-T140",
   "M5-T141",
   "M5-T142",
-  "M5-T143"
+  "M5-T143",
+  "M5-T144"
  ],
  "affected_prs": [
   262,
@@ -1979,6 +1980,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-066 (session 013RaGmC: owner message 128, 2026-10-09: go on as described; the height-data defect repaired and tested before drawings or estimates use those values; then the first building shape, the floor schedule and the apartment estimate by the smallest remaining work; the waiting list replaced at the next normal handoff; updates in four bullets that tell maintenance from new capability; no report now) and requirements D-090-R660 to R668, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T03:48:48+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T144 (three corrections of the server before the first building shape: the withheld rear yard's reason, the owner's overall label, the geometry block follows every withheld result) to R258, R267, R570, R641, R642, R646, R647, R648, R649, R661 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

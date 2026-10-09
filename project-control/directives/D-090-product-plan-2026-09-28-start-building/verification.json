@@ -3625,6 +3625,89 @@
     }
    ],
    "verified_at": "2026-10-09T03:25:38+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T144",
+   "applicable_requirement_ids": [
+    "D-090-R258",
+    "D-090-R267",
+    "D-090-R570",
+    "D-090-R641",
+    "D-090-R642",
+    "D-090-R646",
+    "D-090-R647",
+    "D-090-R648",
+    "D-090-R649",
+    "D-090-R661"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R258",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R267",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R570",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R641",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R642",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R646",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R647",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R648",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R649",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R661",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

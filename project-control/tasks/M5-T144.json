@@ -1,0 +1,237 @@
+{
+  "task_id": "M5-T144",
+  "title": "Three corrections of the server before the first building shape: (1) the reason of the withheld rear yard of an R6B corner lot beyond the waiver area says what is really missing (this lot's exact lot lines and the adjoining lots' lot lines) with the kind 'missing information', the commercial overlay C2-2 no longer blocks the rear yard, and the answer stays withheld with no figure; (2) the status line's first item reads the owner's words 'Preliminary zoning results'; (3) the geometry block of the results document follows every withheld result it draws, so a withheld height's figure no longer remains in it (owner rows D-090-R641, R642, R646 to R649, R661)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Three small, independent corrections to the server that emits the results document, all touching what the document says, sharing ONE regeneration of the committed journey fixture and its drawing/CAD snapshots. Build in an isolated worktree reset to the claim head. Every statement below marked '(reading)' is the orchestrator's read of the code at head 71334640484aceb4c0705efe78bbeba1cd09e295; verify each in the source before relying on it, and never state what a law text says beyond what a captured case row says.\n\n=== FACTS TODAY (file:line) ===\nPIECE 1 (rear yard). (reading) In services/api/app/scenario/three_answers/result_ways.py, _rear_yard_way (line 277) calls overlay_block(inp, ResultFamily.REAR_YARD) at line 282 and RETURNS its result before the corner-reach logic (lines 302-316) is ever reached. overlay_block (services/api/app/scenario/three_answers/result_way_conditions.py:294) reads the per-family support table from result_way_bridge_overlay.py; OVERLAY_SUPPORT_ROWS (result_way_bridge_overlay.py:68) has the REAR_YARD row at supported=False with reading_owed text (lines 74-81), so for the recorded lot (R6B, recorded C2-2 overlay) the rear yard is withheld with reason 'This lot has a recorded commercial overlay (C2-2); an independent reading of the commercial-overlay rear-yard rule for an all-residential building is owed before this result may be shown.' and gap_kind work_owed (fixture lines 370-380; the same reason repeats at geometry.yards, fixture lines 580-584). overlay_support_for (result_way_bridge_overlay.py:85) returns the table ONLY when overlay_code == 'C2-2' AND district == 'R6B' (lines 95-96); for any other code or district it returns None, so overlay_block returns the generic 'no independent reading of the overlay text is yet stated ... withheld' for every residential family. (reading) IF ONLY the C2-2/R6B rear-yard support row were flipped to supported=True, overlay_block would return None and _rear_yard_way would fall through to the corner logic; for the recorded lot (corner; farthest point about 144.60 ft from the corner, more than 100 ft; two street lines meeting at about 89.7 degrees, within 135) within_point is False and within_angle is True, so _rear_yard_outside_waiver (result_ways.py:319) fires and returns the 'beyond'/'within_ang' clause: '... beyond the rear-yard waiver area ...; the two street lines meet at 89.7 degrees, within the waiver's limit of 135 degrees. What the ordinary rear yard requires where the waiver does not apply is not settled.' with gap_kind work_owed. That text does NOT name the adjoining zoning lots' lot-line types and does NOT name the approximate-outline reach disagreement, so it MUST be rewritten, and its kind of gap is wrong (it is a missing property fact, not owed work).\nPIECE 2 (label). (reading) build_status_strip (services/api/app/scenario/three_answers/explanations.py:104) returns a fixed first item {'text': 'Zoning maximum'} (line 108). The status_strip item text is schema free-form (a non_empty_string; services/api/app/_contract_schemas/v1/results.schema.json line 151), NOT a const or an enum, so changing the emitted words needs NO contract-version change. 'Zoning maximum' as the results strip's first item is drawn into NO drawing/CAD/PDF snapshot (confirmed by git grep: the only snapshot/code hits are explanations.py, the schema description example at line 145, the committed fixture at line 521, two drawings INPUT fixtures, and a DIFFERENT dashboard string 'Zoning maximum not available' in apps/web, which is out of scope). compare_rows.py:208 joins the strip at run time but packages/contracts/fixtures/valid/compare_rows/two_options_with_duplicate.json is a hand-authored contract example (free-form) that stays valid and is NOT regenerated here.\nPIECE 3 (geometry follows a withheld height). (reading) In three_way_document.py, _apply_geometry (line 307) clears geometry.yards when the rear yard is withheld (line 318) and geometry.envelope when the lot-coverage row is withheld (line 322) and geometry.floor_plates when the building option is withheld (line 324), but it NEVER clears geometry.envelope when a HEIGHT is withheld. In services/api/app/scenario/three_answers/geometry.py the envelope tier draws BOTH the maximum building height (top_ft = envelope.max_building_height_ft, line 68) AND the lot coverage (the coverage-scaled footprint, lines 54-57,69). So for a corner lot with a recorded flood zone (every height withheld by _height_way's flood branch, result_ways.py:173) while coverage is shown, geometry.envelope.tiers[0].top_ft still holds the withheld maximum building height (55). This is pinned by the strict-xfail test test_db199a_withheld_height_figure_leaks_into_geometry_known_defect in services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py (lines 1282-1347); it currently xfails (confirmed: 1 xfailed). geometry.py itself already emits an envelope not_available in other states (line 74), so downstream readers already handle a not_available envelope.\n\n=== WHICH GEOMETRY LAYER DRAWS WHICH RESULT (read geometry.py) === (reading)\nlot_outline/streets: the lot rectangle and an empty streets list; draw NO zoning-result figure. yards: the rear yard (envelope.rear_yard_required); a withheld rear yard already clears it. setback_lines_per_level: the setback; always not_available from the engine (the setback is always withheld this milestone) - no leak. envelope: the MAXIMUM BUILDING HEIGHT (top_ft) AND the LOT COVERAGE (footprint) - must be cleared when EITHER is withheld; today only coverage clears it (THE DEFECT). floor_plates: the building option (and the coverage-scaled footprint); the building option is always withheld this milestone so floor_plates is always not_available - no leak reachable today. The ONLY decision-module state that leaks today is: max building height withheld while coverage shown -> envelope keeps top_ft (the flood-zone corner lot).\n\n=== STEP 1 - PIECE 1 (the rear yard's reason; RULED BY THE ORCHESTRATOR, see C1 and C2 below) ===\n(a) THE OVERLAY NO LONGER BLOCKS THE REAR YARD. In `result_way_bridge_overlay.py` the REAR_YARD row of `OVERLAY_SUPPORT_ROWS` becomes supported, resting on the case row that settles it (`step-p5-worked`, `zr-34-23-page`); its `reading_owed` text goes; the module's doc says the reading exists. Nothing else of the table changes: another overlay code or another district still gets no table (`overlay_support_for` returns None) and every residential result stays withheld there, as today.\n(b) ONE TEXT FOR ONE SITUATION. In `result_ways.py`, `_rear_yard_outside_waiver`: the branch where the far corner is beyond the waiver area and the angle is within its limit (`not within_point and within_angle`) changes for EVERY R6B corner lot that reaches it, with the supported C2-2 overlay or with no overlay. The first sentence keeps its existing clause (the measured distance beyond the area; the angle within the limit) and begins 'The corner rear-yard waiver does not cover the whole lot: '. Then, exactly: 'For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.' The kind of gap becomes missing information. The resolver reads, exactly: 'A survey or deed that shows this lot's lot lines, and the adjoining lots' lot lines where they meet this lot.' The two other branches (the angle over the limit; both) keep their texts, their kind and their resolver, character for character: the case rows do not work an angle over 135 degrees. The interior and through-lot text, the unmeasured-corner text and the no-outline text are unchanged.\n(c) THE ANSWER STAYS WITHHELD: no figure for the rear yard in the value states, in `geometry.yards` (it takes the same reason through `_withheld_not_available`) or anywhere else.\n(d) A CONSEQUENCE TO PROVE, NOT TO HIDE: a C2-2 corner lot within R6B that lies WITHIN the waiver area with the angle within its limit is no longer blocked by the overlay and gets what a no-overlay lot gets there today (the rear yard not required, conditional on the unchecked conditions). Say in the report which existing tests moved because of it.\nCASE ROWS a reviewer checks the texts against (open each): `docs/reference-cases/R6B/cases/step-p5-worked.json` rows `zr-34-23-page` and `benchmark-rear-yard-23-342-23-344` and the case's `what_it_does_not_establish`; `step-p4-worked.json` row `rear-yard`; `step-p3-worked.json` row `real-lot-rear-yard-beyond-corner`; the captured text `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.\n\n=== STEP 2 - PIECE 2 (the label) ===\nIn explanations.py change the first strip item to {'text': 'Preliminary zoning results'} and update the module docstring/comment (lines 23, 105) so they no longer say 'Zoning maximum' / 'the surfaced figures ARE the zoning maxima'. Change nothing else in build_status_strip: the measurement chip and 'Lots you selected' are untouched (R642). No schema, const, enum or contract version changes (the strip text is free-form). The schema's 'e.g. Zoning maximum ...' description example (both schema copies, line 145) is an illustrative example, not behaviour; it is NOT in this task's paths (left as a harmless doc-example lag; the orchestrator may fix it in a trivial follow-up).\n\n=== STEP 3 - PIECE 3 (geometry follows a withheld height) ===\nIn three_way_document.py _apply_geometry, also clear geometry.envelope when the MAXIMUM BUILDING HEIGHT result is withheld (read the max_building_height row from ways.permitted_envelope.values). DETERMINISTIC REASON RULE when more than one result the envelope draws is withheld: name each withheld contributing result's reason in a FIXED order - the maximum building height first (it sets the tier top), then the lot coverage (it sets the footprint) - joined with a single space; set reason_kind to rule_not_implemented when any contributing result is work_owed else missing_input (the same work_owed-wins precedence the whole-answer fold uses at result_ways.py _answer, line 531). When exactly one is withheld it carries that one's reason (today's behaviour for coverage is preserved). Remove the strict-xfail mark on test_db199a_withheld_height_figure_leaks_into_geometry_known_defect (it must XPASS after the repair). geometry.py stays READ-ONLY (the emitter rewrites the geometry block). (reading) The recorded lot has no flood zone, so its heights are shown (conditional) and its coverage is already withheld (reach beyond 100), so its geometry.envelope is ALREADY not_available via the coverage branch - piece 3 does NOT change the committed fixture; its proof is the un-xfailed emit test on a made-up flood-zone corner lot. Downstream readers of the geometry block (drawings services/api/app/drawings, CAD services/api/app/cad, PDF, and apps/web) already handle a not_available envelope (geometry.py line 74 emits one; the recorded fixture already carries one), so none breaks when envelope is not_available while the coverage VALUE is shown - the drawings read geometry.envelope, not the coverage value. CI confirms (tests/drawings, tests/cad, tests/documents on the pushed head).\n\n=== THE ONE REGENERATION (exact order; nothing hand-edited) ===\n(reading) The committed fixture packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json is produced BYTE-EXACT by services/api/tests/journey/test_215_16_northern_journey.py::test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture (lines 303-310; regenerate with UPDATE_JOURNEY_FIXTURE=1, byte-compared when off). Its site-plan SVG snapshot services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg draws the rear-yard reason at /geometry/yards/reason (snapshot line 52; regenerate with UPDATE_DRAWING_SNAPSHOTS=1 from tests/drawings/kit). Its DXF snapshot services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf carries the rear-yard reason text (regenerate with UPDATE_DXF_SNAPSHOTS=1 from tests/cad). ORDER: (1) make the code changes (pieces 1, 2) and the test changes (piece 3 remove xfail; new scenarios); (2) run the touched test folders to prove the logic (the journey byte-compare will fail - that is the signal to regenerate, not to hand-edit); (3) UPDATE_JOURNEY_FIXTURE=1 to regenerate the fixture and review the diff like code (ONLY value_states.rear_yard reason+gap_kind+zr_sections, geometry.yards reason+reason_kind, and status_strip[0].text should change); (4) UPDATE_DRAWING_SNAPSHOTS=1 to regenerate the site-plan SVG (the rear-yard note changes); (5) UPDATE_DXF_SNAPSHOTS=1 to regenerate the DXF; (6) re-run every touched suite with NO update env var to prove byte-stable and green; (7) ruff and the modularity check. No PDF golden or website test pins the changed texts (the panel shows the strip as the document has it; no apps/web literal is 'Zoning maximum' for the results strip), so no apps/web or PDF file is in this task; CI is the authority for the full suites and the browser tests on the exact pushed head.\n\nNOT IN THIS TASK: no rear-yard figure (it stays withheld, no number in value_states or geometry.yards or any export); no other overlay code and no district other than R6B (other codes/districts keep the generic overlay-withheld text; a no-overlay R6B corner lot in the same position gets the SAME corrected text (ruling C1)); no change to any other status-strip item or any other label; no screen or layout change (apps/web is untouched; it reads the regenerated fixture); no switch turned on; no change to the route notice bodies in results_read.py and no change to the frontage scope line 'is a qualified-review question' in engine_disclosures.py (both recommended OUT - see risks); no schema const/enum change and no contract-version change; no engine change (geometry.py read-only); no file under .github/, tools/, .claude/, and no dependency file.\n\nRULINGS OF THE ORCHESTRATOR (after reading the draft against the code and the reference case; not the builder's to change; a ruling that cannot be built as written is a STOP and a report). Where a ruling differs from the text above it, THE RULING GOVERNS.\n\nC1 ONE TEXT FOR ONE SITUATION OF LAW. The draft gave the corrected reason only to a lot with the C2-2 overlay and left a no-overlay R6B corner lot in the same position with the old words ('is not settled', work owed). The case row `benchmark-rear-yard-23-342-23-344` reads the district's own rear-yard sections; the overlay question is settled separately by row `zr-34-23-page`. Two reasons for one situation would contradict each other, so the branch changes for every lot that reaches it (STEP 1 b).\n\nC2 THE TEXT SAYS WHAT IS MISSING AND NO MORE. It does not restate how the law builds a rear lot line (that differs with a lot's shape and the decision module does not know the lot's lot-line types); it does not say that two readings disagree (true of the recorded lot only); it does not say how the distance was measured unless the decision inputs carry that fact; it names no section number; it never says 'professional review' or 'qualified'. If you find a word of the ruled texts that claims more than the case rows or the captured text support for some R6B corner lot the code can reach, STOP and report the word and the lot.\n\nC3 THE KIND OF GAP IS MISSING INFORMATION, AND THE REPORT SAYS WHAT ELSE IS OWED. Even with those facts given, the program has no code yet that takes them and works out the rear yard. The document's field holds one kind; the missing facts come first. Say this limit plainly in the report (the orchestrator records it in the backlog).\n\nC4 THE LABEL (STEP 2): the status line's first item reads exactly `Preliminary zoning results` (the owner's words, row D-090-R641). Nothing else of the strip changes; every result keeps its own state (row R642). No schema file changes: the old words stand in a schema DESCRIPTION as an example and in a code comment; leave both and name them in the report. The website's own text 'Zoning maximum not available' (another screen) is NOT in this task.\n\nC5 THE GEOMETRY FOLLOWS EVERY WITHHELD RESULT IT DRAWS (STEP 3; the owner's row D-090-R661: 'a valid correctness fix: repair and test it'). Beyond the draft's rule for `envelope` (the maximum building height and the coverage): show by tests, for EACH geometry layer, that no state the decision module can produce leaves a withheld result's figure in it (a table in the report: layer, the results it draws, the states tried). If a layer other than `envelope` can leak, repair it in the same way and say so. The strict expected-failure mark is removed; the test stays as an ordinary test.\n\nC6 THE COMMITTED DOCUMENT AND ITS DRAWINGS ARE REGENERATED, NEVER HAND-EDITED, in the order given above. Before and after: show the diff of the committed document and say for each changed line which piece changed it. A regenerated file that is NOT among the allowed paths (another snapshot, a golden file) is a STOP and a report, not a silent change.\n\nC7 THE WEBSITE'S TESTS THAT READ THE COMMITTED DOCUMENT. The rear yard's kind of gap changes, so the website shows 'Missing information about this property.' for it where it showed 'Not built yet ...'. `apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx` asserts the old line for the rear yard (lines 445 to 453 and its S5 test) and may need its expected values changed; `journey-215-16-northern.test.tsx` may too. In those two files change ONLY an expectation that follows from the regenerated document (name each in the report; weaken nothing). No website source file changes. Run the six website test files that read the committed document (commands).\n\nC8 CHECKS ON THE BUILD MACHINE (the changed coding rules): ruff; the touched server test folders; the drawing and CAD snapshot suites because a shared fixture changes (`tests/drawings/kit`, `tests/cad`) and `tests/documents/test_pdf_content.py`; the six website test files; the size check. The whole server suite and the browser tests are CI's, read on the exact pushed head before any gate. Start no server.\n\nC9 NOT IN THIS TASK: the frontage line's words 'is a qualified-review question' and the two route messages (they stay for a later wording task); any other overlay code or district; any figure for the rear yard; any change of the screen.",
+  "business_reason": "The owner's rows R646-R649 require the withheld rear yard to tell the truth (the overlay reading is now done; what is missing is the adjoining lots' lot-line types and the disputed reach), keeping the answer withheld (R649) and keeping a missing property fact apart from unbuilt work (R258). R641/R642 replace a label that reads as a confirmed maximum over conditional figures with the owner's words, each result keeping its state (R267). The geometry fix keeps a withheld value withheld everywhere, including the drawings (R570, R229). All three are the server dependencies the first building shape rests on.",
+  "inputs": [
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_conditions.py",
+    "services/api/app/scenario/three_answers/result_way_bridge_overlay.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/explanations.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/reference-cases/R6B/cases/step-p4-worked.json",
+    "docs/reference-cases/R6B/cases/step-p3-worked.json",
+    "docs/reference-cases/R6B/cases/corner-reach.json",
+    "docs/reference-cases/R6B/cases/real-lot.json"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_bridge_overlay.py",
+    "services/api/app/scenario/three_answers/explanations.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf"
+  ],
+  "dependencies": [
+    "M5-T142",
+    "M5-T143"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_bridge_overlay.py",
+    "services/api/app/scenario/three_answers/explanations.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_corner_interior.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge_overlay.py",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_benchmark.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_c6_c11.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "project-control/reports/M5-T144-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "Do not add any rear-yard figure anywhere; the rear yard stays withheld with no number in value_states.rear_yard, geometry.yards, or any export.",
+    "Do not change any status-strip item other than the first, and do not change any other label.",
+    "Do not turn on any switch (INTERNAL_RESULTS_ENABLED or the website switch stay off).",
+    "Do not touch services/api/app/scenario/three_answers/geometry.py (engine geometry stays read-only; the emitter rewrites the geometry block).",
+    "Do not change the route notice bodies in services/api/app/api/v1/results_read.py or the frontage line 'is a qualified-review question' in services/api/app/contracts/engine_disclosures.py.",
+    "Do not change the contract schema (no const/enum change, no version change) or any dependency file, and nothing under .github/, tools/ or .claude/.",
+    "Do not hand-edit the committed fixture or any snapshot; regenerate them with the named update env vars and review the diff.",
+    "Do not change the rear-yard handling for any overlay code other than C2-2 or any district other than R6B.",
+    "No website SOURCE file; in the two website test files only an expectation that follows from the regenerated document (ruling C7).",
+    "A regenerated file outside the allowed paths is a STOP and a report (ruling C6). Start no server."
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "c2_2_r6b_corner_beyond_100_angle_within_rear_yard_corrected_reason",
+      "input": "decide_result_ways for a recorded C2-2 overlay in R6B, corner lot, corner reach beyond 100 ft (about 144.6), angle within 135 (about 89.7)",
+      "expected": "the rear yard is withheld; its reason begins 'The corner rear-yard waiver does not cover the whole lot: ' with the measured clause and ends exactly 'For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.'; the kind of gap is missing information; the resolver is exactly 'A survey or deed that shows this lot's lot lines, and the adjoining lots' lot lines where they meet this lot.'; no figure"
+    },
+    {
+      "id": "S2",
+      "case": "c2_2_r6b_corner_within_100_angle_within_rear_yard_shown_none_required",
+      "input": "same overlay/district, corner lot, reach within 100 ft, angle within 135",
+      "expected": "rear yard is SHOWN (not withheld): the corner waiver applies, no rear yard required (a case-supported consequence of flipping the support row)"
+    },
+    {
+      "id": "S3",
+      "case": "no_overlay_r6b_corner_beyond_100_same_corrected_text",
+      "input": "no recorded overlay (absent), R6B corner lot, reach beyond 100 ft, angle within 135",
+      "expected": "the SAME reason, kind of gap and resolver as S1 (ruling C1: one text for one situation of law); no figure"
+    },
+    {
+      "id": "S4",
+      "case": "other_overlay_code_r6b_unchanged",
+      "input": "a recorded overlay whose code is not C2-2, in R6B, corner lot",
+      "expected": "overlay_support_for returns None; rear yard withheld with the GENERIC 'no independent reading of the overlay text is yet stated ... withheld' text, unchanged"
+    },
+    {
+      "id": "S5",
+      "case": "c2_2_other_district_unchanged",
+      "input": "a recorded C2-2 overlay but district is not R6B",
+      "expected": "overlay_support_for returns None; the generic overlay-withheld text, unchanged (scope: other districts untouched)"
+    },
+    {
+      "id": "S6",
+      "case": "c2_2_r6b_corner_angle_over_135_keeps_waiver_text",
+      "input": "C2-2 in R6B, corner lot, two street lines meeting at more than 135 degrees",
+      "expected": "rear yard keeps the existing 'angle over the waiver limit' waiver text (work_owed), NOT the corrected missing-information text (the within-100-none premise needs the angle at or under 135; the cases do not work angle over 135)"
+    },
+    {
+      "id": "S7",
+      "case": "c2_2_r6b_corner_unmeasured_keeps_unmeasured_text",
+      "input": "C2-2 in R6B, corner present but the reach or angle not measured",
+      "expected": "rear yard keeps rear_yard_unmeasured naming the missing measurement, unchanged (a missing measurement is not the adjoining-lot fact)"
+    },
+    {
+      "id": "S8",
+      "case": "emit_recorded_state_value_state_and_geometry_yards_agree",
+      "input": "emit_three_way_document for the recorded-lot state (S1)",
+      "expected": "value_states.rear_yard.reason == geometry.yards.reason (both the corrected text); value_states.rear_yard.gap_kind == missing_information and geometry.yards.reason_kind == missing_input; no figure anywhere (check d: the two places cannot disagree because both derive from one Withheld)"
+    },
+    {
+      "id": "S9",
+      "case": "status_strip_first_item_is_preliminary_zoning_results",
+      "input": "build_status_strip(any site_measurement_rank)",
+      "expected": "first item == {'text': 'Preliminary zoning results'}; the measurement chip and {'text': 'Lots you selected'} unchanged"
+    },
+    {
+      "id": "S10",
+      "case": "regenerated_fixture_strip_changed_states_unchanged",
+      "input": "the regenerated committed fixture",
+      "expected": "status_strip[0].text == 'Preliminary zoning results'; every value_states way (settled/conditional/withheld) is unchanged except the rear yard changed by piece 1 (R642: piece 2 changes no result's state)"
+    },
+    {
+      "id": "S11",
+      "case": "flood_zone_corner_height_withheld_envelope_cleared_xpass",
+      "input": "emit for a made-up corner lot with a recorded flood zone (every height withheld, coverage shown), through the real engine and decide_result_ways",
+      "expected": "geometry.envelope becomes not_available; NO withheld height figure (e.g. 55) appears anywhere in geometry; the strict-xfail test now XPASSes and its mark is removed"
+    },
+    {
+      "id": "S12",
+      "case": "envelope_both_height_and_coverage_withheld_combined_reason",
+      "input": "a state where both the maximum building height and the lot coverage are withheld while the engine envelope layer was available",
+      "expected": "geometry.envelope not_available with a reason naming the maximum building height's reason first then the lot coverage's reason (fixed order), reason_kind = rule_not_implemented if any contributing result is work_owed else missing_input (deterministic)"
+    },
+    {
+      "id": "S13",
+      "case": "envelope_height_shown_coverage_withheld_unchanged",
+      "input": "height shown, coverage withheld (the recorded-lot shape)",
+      "expected": "geometry.envelope not_available with the coverage reason only, unchanged from today"
+    },
+    {
+      "id": "S14",
+      "case": "envelope_height_and_coverage_shown_available",
+      "input": "height shown and coverage shown",
+      "expected": "geometry.envelope available, unchanged"
+    },
+    {
+      "id": "S15",
+      "case": "recorded_fixture_envelope_unchanged_by_piece_3",
+      "input": "the regenerated committed fixture (recorded lot, no flood zone)",
+      "expected": "geometry.envelope still not_available with the coverage reason; piece 3 changed nothing in the committed fixture (its proof is S11 on a made-up lot)"
+    },
+    {
+      "id": "S16",
+      "case": "angle_over_and_both_branches_unchanged",
+      "input": "An R6B corner lot (with the C2-2 overlay and without) whose street lines meet at more than 135 degrees: once with the far corner within the waiver area, once beyond.",
+      "expected": "the two existing texts, their kind (work owed) and their resolver, character for character as at the claim head"
+    },
+    {
+      "id": "S17",
+      "case": "website_shows_the_missing_information_line_for_the_rear_yard",
+      "input": "The regenerated committed document rendered by the website's card test.",
+      "expected": "the rear yard's row shows 'Missing information about this property.' as its kind-of-gap line; the coverage and the setback rows still show the not-built line; no figure on any of the three"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Flipping the C2-2/R6B rear-yard support row changes behaviour for a C2-2/R6B corner lot WITHIN 100 ft (now shown settled, S2) -> the builder sweeps every existing decision-module and emit test by git grep for a C2-2/R6B rear-yard assertion and confirms each still asserts the correct new state; any out-of-scope test update is routed to the orchestrator, never left red.",
+    "The corrected reason could over-claim the law -> the exact texts above claim no more than step-p5 rows zr-34-23-page and benchmark-rear-yard-23-342-23-344, step-p4 rear-yard and step-p3 real-lot-rear-yard-beyond-corner; no raw section number in the prose; never 'professional review' or 'qualified'; the data-contract-verifier and directive-compliance-verifier check the texts against those rows.",
+    "The value state's reason and geometry.yards' reason could disagree -> they both derive from the one Withheld object via _withheld_not_available, proven by S8; a red proof reverts the branch and shows the reason revert in both places.",
+    "The determinism of the envelope reason when two results are withheld is undefined today -> S12 pins the fixed order and reason_kind precedence; a mutation proof flips one contributor and shows the reason change.",
+    "A regeneration could hand-edit the fixture or a snapshot -> the order above regenerates all three with the named update env vars and re-runs byte-stable; the qa-engineer confirms the diff is only the three expected places.",
+    "A changed shared fixture could redden the drawing/CAD snapshot suites or the PDF/website -> the SVG and DXF are regenerated here; 'Zoning maximum' is drawn into no snapshot; no PDF golden or apps/web literal pins the changed texts; the full suites and browser tests are CI's on the exact pushed head.",
+    "Scope creep from the two inventory 'plain corrections' -> RECOMMEND BOTH OUT (see the dedicated field); the orchestrator rules.",
+    "result_ways.py is already large (636 lines) -> run tools/modularity_check.py --check before growing it; keep piece 1's addition a small branch plus the two text constants; extract to result_way_conditions.py behind the facade if the check flags it.",
+    "Two reasons for one situation of law -> ruling C1: one text for every lot that reaches the branch; S1 and S3 assert the same text.",
+    "The ruled text claims more than the research for some lot shape -> ruling C2: it names what is missing and restates no mechanics; the G3 reviewer checks it against the case rows and the captured text.",
+    "The website's tests go red on the regenerated document -> ruling C7: the two test files are in the paths and the six website test files are run."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-09T03:48:47.483601+00:00",
+  "updated_at": "2026-10-09T03:48:47.914123+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R258",
+        "D-090-R267",
+        "D-090-R570",
+        "D-090-R641",
+        "D-090-R642",
+        "D-090-R646",
+        "D-090-R647",
+        "D-090-R648",
+        "D-090-R649",
+        "D-090-R661"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-09T03:48:47.483842+00:00",
+  "path_notes": "Build in an isolated worktree reset to the claim head (git reset --hard <contract-head>); the primary checkout is read-only to the producer. Files to grow and their current size: result_ways.py 636 lines (piece 1 adds a small scoped branch plus text constants - run the modularity check before growing); three_way_document.py 416 lines (piece 3 adds a height branch in _apply_geometry); explanations.py small (piece 2 changes one item and the docstring). result_way_bridge_overlay.py: flip the one REAR_YARD support row and update the module doc. geometry.py, result_way_conditions.py and result_way_inputs.py are READ-ONLY inputs. The decision-module scenarios go in the existing test files that already hold the rear-yard/overlay/corner deciders (test_result_ways_facts_area_overlay.py, test_result_ways_corner_interior.py - confirm placement by git grep before writing); the emit/geometry scenarios and the xfail removal go in test_three_answers_three_way_emit.py; the strip test goes in test_three_answers_c6_c11.py (it already asserts build_status_strip); the journey test gets updated assertions for the new rear-yard reason and strip text. The committed fixture and the two snapshots are regenerated, never hand-edited. At the claim base, run by the orchestrator: at 7f0e131f: ruff exit 0; tests/scenario/three_answers, tests/journey, tests/api/test_results_read_api.py, tests/drawings/kit, tests/cad and tests/documents/test_pdf_content.py: 1459 passed, 2 skipped, 1 expected failure (the pinned geometry defect); the website's test files that read the committed document: 8 files, 199 tests passed; the size check exit 0 (result_ways.py 635 lines).",
+  "documented_test_commands": [
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m ruff check .",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey tests/api/test_results_read_api.py",
+    "cd services/api && UPDATE_JOURNEY_FIXTURE=1 PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/journey/test_215_16_northern_journey.py   # regenerate; then review the diff",
+    "cd services/api && UPDATE_DRAWING_SNAPSHOTS=1 PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/drawings/kit   # regenerate the drawing snapshot",
+    "cd services/api && UPDATE_DXF_SNAPSHOTS=1 PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/cad   # regenerate the CAD snapshot",
+    "cd services/api && PYTHONDONTWRITEBYTECODE=1 /root/project/lanes-runtime/venv/bin/python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey tests/api/test_results_read_api.py tests/drawings/kit tests/cad tests/documents/test_pdf_content.py   # with NO update variable: all green",
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund   # once per worktree; lockfile packages only",
+    "cd apps/web && npx vitest run src/components/architect/__tests__/results-panel.test.tsx src/components/architect/answers/__tests__ src/lib/__tests__/results-api.test.ts src/lib/__tests__/results-contract-checks.test.ts src/lib/architect/__tests__/three-answers.test.ts",
+    "python3 tools/modularity_check.py --check   # from the repository root; failures 0; no new warning"
+  ],
+  "worktree": "/root/project/w-wave16"
+}

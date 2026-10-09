@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 668,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T03:24:19+00:00",
+ "updated_at": "2026-10-09T03:48:48+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -8782,7 +8782,8 @@
      "M5-T136",
      "M5-T138",
      "M5-T140",
-     "M5-T142"
+     "M5-T142",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -9101,7 +9102,8 @@
      "M5-T136",
      "M5-T138",
      "M5-T140",
-     "M5-T142"
+     "M5-T142",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -19450,7 +19452,8 @@
      "M5-T138",
      "M5-T140",
      "M5-T142",
-     "M5-T143"
+     "M5-T143",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -21828,7 +21831,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -21862,7 +21866,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -21997,7 +22002,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -22030,7 +22036,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -22063,7 +22070,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -22098,7 +22106,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
@@ -22498,7 +22507,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T144"
     ],
     "task_types": [],
     "milestones": [],
