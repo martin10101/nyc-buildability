@@ -145,14 +145,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "A calculation entry read as a reviewed or legal determination -> every page carries the standing draft_note and ADR-007 label; no human verdict is entered; legal_vs_design marks each figure",
     "An expected value taken from a program run rather than an independent record -> expected is sourced only from the reference cases (step-P5, real-lot, step-P6) and the checker/tests keep expected and actual apart",
@@ -164,7 +164,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T06:44:55.210953+00:00",
-  "updated_at": "2026-10-09T06:44:55.653307+00:00",
+  "updated_at": "2026-10-09T06:45:26.900284+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -205,5 +205,14 @@
     "python3 tools/modularity_check.py --check",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave17"
+  "worktree": "/root/project/w-wave17",
+  "progress_log": [
+    {
+      "at": "2026-10-09T06:45:26.900146+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed on the branch of wave 17, on top of the head under review of M4-T037 (22262650); the two tasks share no file. The packet is a read-only helper's draft read against the code by the orchestrator, with nine rulings (C1 to C9). At the claim base: ruff exit 0; the register test 44 passed and with the seeded test file 45; the register renderer's check, the size check and the path-coverage check exit 0. Not pushed. Next: one builder (rules-engineer) in an isolated worktree reset to the claim-seam head, started when the review of M4-T037 has returned."
+    }
+  ]
 }
