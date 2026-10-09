@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T03:48:48+00:00",
+ "updated_at": "2026-10-09T05:04:03+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -689,10 +689,26 @@
   "D-090-R665",
   "D-090-R666",
   "D-090-R667",
-  "D-090-R668"
+  "D-090-R668",
+  "D-090-R669",
+  "D-090-R670",
+  "D-090-R671",
+  "D-090-R672",
+  "D-090-R673",
+  "D-090-R674",
+  "D-090-R675",
+  "D-090-R676",
+  "D-090-R677",
+  "D-090-R678",
+  "D-090-R679",
+  "D-090-R680",
+  "D-090-R681",
+  "D-090-R682",
+  "D-090-R683",
+  "D-090-R684"
  ],
- "requirements_id_digest_sha256": "b222a91f4bd88abdbaaebbd481be79f600694a95821f7bd8040cbfe09684697d",
- "requirements_content_digest_sha256": "7b7d33d48adcf0a607986c9426e045180f83124a8f07ea54dfee39f0a62f04de",
+ "requirements_id_digest_sha256": "7d291eb03381148c81297174c84f2619ec09cc178c4c44d295349be2f1c5269d",
+ "requirements_content_digest_sha256": "b66c96714566136e204f830384dd03e0f1273f035278e6d84f8de0da3721fdef",
  "sources": [
   {
    "file": "source-001.md",
@@ -1220,6 +1236,14 @@
    "recorded_at": "2026-10-09T03:24:19+00:00",
    "content_digest_sha256": "ecee4d292f9c69a7f18e60e0734d9cfd589341c8c5bacf0478a6b89764df84d3",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-067-amendment.md",
+   "kind": "amendment",
+   "sequence": 67,
+   "recorded_at": "2026-10-09T05:04:03+00:00",
+   "content_digest_sha256": "1a89ea390692327b2d92a80a9a99535a6008bc11952a684f9e3c88cc36191aa3",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1287,7 +1311,8 @@
   "source-063-amendment.md",
   "source-064-amendment.md",
   "source-065-amendment.md",
-  "source-066-amendment.md"
+  "source-066-amendment.md",
+  "source-067-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1986,6 +2011,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T144 (three corrections of the server before the first building shape: the withheld rear yard's reason, the owner's overall label, the geometry block follows every withheld result) to R258, R267, R570, R641, R642, R646, R647, R648, R649, R661 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T05:04:03+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-067 (session 013RaGmC: the owner's opening message of the session after handoff seq 152, 2026-10-09: resume; finish M5-T144 with the restrictions and checks kept; completed reviews and research reused; a replacement reviewer only when necessary; then the handoff's remaining-work order; the audit not continued; go on without asking; updates in four bullets) and requirements D-090-R669 to R684, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

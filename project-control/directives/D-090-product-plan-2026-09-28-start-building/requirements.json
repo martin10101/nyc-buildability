@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 668,
+ "requirement_count": 684,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T03:48:48+00:00",
+ "updated_at": "2026-10-09T05:04:03+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -22760,6 +22760,525 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R669",
+   "text": "'Resume the NYC Buildability work.': the work is resumed in a new session.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The session's first commands are the read-only checks of the handoff; no file changes before them.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R670",
+   "text": "'Read \"/root/project/w-wave16/docs/SESSION_HANDOFF.md\" and the last two STATE entries in \"/root/project/lanes-runtime/owner-docs/session-2026-10-08c/SESSION_NOTES.md\".': the handoff file on the work branch and the last two state entries of the earlier session's notes are read before anything else.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R665"
+   ],
+   "required_harness": "Both are read before any change is made.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R671",
+   "text": "'The main folder\u2019s handoff is older.': the handoff copy in the main folder is the older one. ORCHESTRATOR'S READING: it is not acted on; the copy on the work branch `task/wave16-server-corrections` is the current one until that branch merges.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R665"
+   ],
+   "required_harness": "Nothing is taken from the main folder's copy while the work branch is unmerged.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R672",
+   "text": "'Check the active worktree, task status and existing reviewers.': the active worktree, the task's status and the reviewers that exist are checked first.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The worktree's state, the ledger's status of M5-T144 and the list of running helpers are read before any change.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R673",
+   "text": "'Continue M5-T144 in \"/root/project/w-wave16\", preserving the current restrictions and required checks.': task M5-T144 is continued in the worktree `/root/project/w-wave16`.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R660"
+   ],
+   "required_harness": "M5-T144 goes on from its recorded state in that worktree, on its branch.",
+   "required_evidence": "The ledger and the branch.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R674",
+   "text": "'Continue M5-T144 in \"/root/project/w-wave16\", preserving the current restrictions and required checks.': the current restrictions and the required checks are kept: none is dropped, weakened or worked around.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R634",
+    "D-090-R639"
+   ],
+   "required_harness": "Every gate the task requires is recorded on independent review; every required full suite and security check is green in CI on the exact head accepted and merged; no standing restriction is changed.",
+   "required_evidence": "The gate records, the CI runs on the accepted and merged heads, the pre-merge check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R675",
+   "text": "'Reuse completed reviews that cover the relevant code.': a completed review that covers the code under acceptance is used and not repeated. ORCHESTRATOR'S READING: a review covers the code when the files it names are the same, byte for byte, at the head being accepted (each review states that condition itself).",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R634"
+   ],
+   "required_harness": "No review is commissioned again for code whose completed review still covers it; where a review is reused, the record shows that the files it names are unchanged.",
+   "required_evidence": "The review record and the gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R676",
+   "text": "'The owner\u2019s latest update says the code review passed and was saved; the test review was pending.': the state the owner knew: the code review passed and was saved; the test review was pending. ORCHESTRATOR'S READING: checked against the files, never assumed: at the session's start both returns were saved (the code review received 04:48 UTC, the test review received 05:00 UTC, each ending in a passing verdict).",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The two return files are opened and their verdicts read before they are used.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R677",
+   "text": "'If a return file is missing, first check whether that reviewer is still running or its completed response can be recovered.': when a return file is missing, the first step is to check whether that reviewer still runs or whether its completed response can be recovered.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No replacement reviewer starts before that check.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R678",
+   "text": "'Start a replacement only when necessary.': a replacement reviewer is started only when it is necessary.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R677"
+   ],
+   "required_harness": "A replacement starts only when the reviewer no longer runs and its response cannot be recovered, or when its review no longer covers the code.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R679",
+   "text": "'Then follow the handoff\u2019s remaining-work order.': after M5-T144 the work follows the order of the handoff's remaining-work list. ORCHESTRATOR'S READING: section 6 of the handoff of seq 152: the independent hand-worked example of a first building option; lot coverage by portion of a corner lot; the building option's generator and the floor schedule; the preliminary apartment estimate; the screen change that shows them.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R663",
+    "D-090-R665"
+   ],
+   "required_harness": "The tasks contracted after M5-T144 follow that order, or the record says why one could not.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R680",
+   "text": "'Reuse completed research.': completed research is reused. It confirms row R645.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R645"
+   ],
+   "required_harness": "No completed reading or study is commissioned again.",
+   "required_evidence": "The ledger and the session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R681",
+   "text": "'The one-time audit is finished; do not continue it or load its full action appendix.': the one-time audit is finished: it is not continued, and its full action appendix is not loaded.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R658"
+   ],
+   "required_harness": "No audit note is written and the audit report's action appendix is not read into the session.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R682",
+   "text": "'Continue automatically after the initial checks.': after the initial checks the work goes on without waiting for a go-ahead.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "No go-ahead is asked for after the initial checks pass.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R683",
+   "text": "'Stop only for an actual blocker requiring my decision.': the session stops only for an actual blocker that needs the owner's decision. ORCHESTRATOR'S READING: the standing hard stops (payment, secrets, production approval, the active holds) are such blockers and are unchanged; a question that the record already answers is not one.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each stop names the blocker and the decision it needs; no stop is made for anything else.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R684",
+   "text": "'Keep updates to the agreed four short bullets.': updates stay in the agreed four short bullets. It confirms rows R655 and R666.",
+   "source_ref": "source-067-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R655",
+    "D-090-R666"
+   ],
+   "required_harness": "Each ordinary update has the four bullets.",
+   "required_evidence": "The updates in the session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the opening message of the session after handoff seq 152).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
