@@ -17,6 +17,13 @@ part B live-route fix (same builder, resumed): 2,161,228 ms (36.0 min), 63 tool 
 part C third round (same builder, resumed): 875,926 ms (14.6 min), 37 tool uses; cherry-picked as 8df25d788. It stopped the owner's preview (servers on 3001 and 8000) for its browser run; the orchestrator restarted the preview at 20:02 UTC.
 areas-agree builder a94f029e39217c129 (fresh): 1,695,463 ms (28.3 min), 97 tool uses; cherry-picked as 0c048485f.
 part D third round (same builder, resumed): 446,478 ms (7.4 min), 23 tool uses; cherry-picked as b219f8fd3.
+CORRECTION ROUND AFTER THE WALKTHROUGH (F1, N4), 2026-10-09 (times from the task notifications' duration_ms):
+- server round 1 (rules-engineer, resumed): 27.3 min (1,639,979 ms) -> 6b8560c9 (integrated 1796eba6)
+- register resync round 4 (rules-engineer, resumed): 5.4 min (326,158 ms) -> 5469a812 (integrated 4fe56698)
+- web correction (frontend-engineer, resumed): 21.1 min (1,265,823 ms) -> 5d352bdb (integrated c47fa18b)
+- server round 2, after the orchestrator found the older text still in the drawing layers (rules-engineer, resumed): 20.1 min (1,206,954 ms) -> 4068929a (integrated 423aa189)
+- register resync round 5 (rules-engineer, resumed): 4.2 min (253,140 ms) -> 86c3e77c (integrated 5dba465c)
+- orchestrator: one over-long test line wrapped (ruff) -> f237d0d7
 ```
 
 
@@ -302,3 +309,82 @@ runs from a worktree: `reuseExistingServer: !process.env.CI` reuses lingering :3
 servers, which can serve a stale build — stop them before trusting a local result.
 
 END-OF-THIRD-ROUND
+
+## Walkthrough correction (F1, N4) — the Building options section says why each building was not worked
+
+Base (reset HEAD): `1796eba6eaf23c87e8db587706b471fa1e6d8fbb` (the server F1 fix is in:
+`buildings_not_worked`, contract 1.4.0, ruling W14). I touched only files under
+`apps/web/src/components/architect/answers/`, `apps/web/src/lib/architect/`,
+`apps/web/src/lib/results-contract-checks.ts`, `apps/web/src/lib/__tests__/`,
+`apps/web/e2e/results.flag-on.spec.ts` and this report. I did NOT run the browser tests and did not
+touch ports 3000/3001/8000 (the owner's preview) or the review register.
+
+### F1 — no building listed (ruling W15 a, S9)
+- The view model (`first-building-options.ts`) now reads the new list `buildings_not_worked` and the
+  section renders when it is present even with NO worked alternative (`firstBuildingOptionsView`
+  triggers on building_alternatives OR coverage OR buildings_not_worked). New view
+  `BuildingNotWorkedView` carries label, reason, resolvedBy and the gap-kind line, all from the
+  document.
+- The component (`FirstBuildingOptions.tsx`) chooses the lead to fit the state: the
+  "Draft building shapes worked from the floor-area allowance…" lead ONLY when at least one building
+  is worked; otherwise "No building shape could be worked for this lot at these inputs. For each
+  building of the method, why:". It then renders each not-worked building (label, "Not known —
+  reason", the gap-kind line, "What would let it be worked: …"), never an empty heading.
+- The single Building option card: `answerView`'s override now fires whenever the first-options
+  section is shown (`hasFirstBuildingOptions`, not only when a building is listed), so at 16 ft the
+  card shows the plain pointer "Not available — the building options are shown below" and never the
+  document's machine reason (which names `building_alternatives` / `buildings_not_worked`). The
+  pointer reason was reworded from "the worked building options …" to "the building options …"
+  because on some inputs no building is worked. The screen adds no reason of its own and no false one.
+
+### N4 — narrow screen (ruling W15 b, S11)
+The floor table is wrapped in a scroll box (`FloorScheduleTable`): a `role="region"`,
+`aria-label="Floor schedule"`, `tabIndex 0` div with CSS `overflow-x: auto` and the table at
+`min-width: 32rem`. On a narrow screen the box (not the page) scrolls sideways, the box is reachable
+by keyboard and named, and its Running total column is reachable. jsdom cannot measure layout, so the
+test asserts the structure (role, aria-label, tabindex, class, the table inside it, the Running total
+header reachable).
+
+### Contract checks (ruling W15, WHAT-MUST-BE-TRUE 1)
+`results-contract-checks.ts` gains `checkBuildingsNotWorked`: each entry must carry building, label,
+reason (non-empty), gap_kind (the enum vocabulary) and resolved_by (non-empty); additive, absent/null
+accepted.
+
+### What the section shows
+- At 16 ft (no building worked): heading "Building options", the none-worked lead, then building A
+  (missing information: the areas disagree, no footprint figure, "a survey/deed would reconcile…")
+  and building B (work owed: 2 storeys needing 10,075 sq ft > the 8,060 sq ft bound = 80% of the
+  recorded lot area). The Building option card points to the section; no false base-height reason.
+- At 10 ft (building B worked): building B as a labelled alternative with its floor schedule and
+  estimate (unchanged), then building A named as not worked (missing information, no footprint
+  figure), then coverage by portion withheld.
+
+### Tests (which document)
+- S9 empty-list: a 16 ft document BUILT FROM the regenerated committed benchmark
+  (`recorded_215_16_northern_journey`): building_alternatives emptied, buildings_not_worked = the
+  benchmark's real building A entry plus a constructed building B entry per the server report's 16 ft
+  state. (`first-building-options.test.tsx`.)
+- S10 building-not-worked beside a listed one: the regenerated committed benchmark (building B listed,
+  building A not worked); building A appears after building B with its reason/resolver and no
+  square-foot figure. (`journey-215-16-northern.test.tsx`.)
+- S11 narrow table: structure asserted (jsdom cannot measure). (`first-building-options.test.tsx`.)
+- Content tests reading the benchmark updated only for the new entry (no weakened assertion):
+  the view-model maps buildings_not_worked; the contract check accepts it and refuses a missing
+  reason / bad gap_kind. (`first-building-options.test.ts`, `results-contract-checks-1-4-0.test.ts`.)
+- Browser test (`results.flag-on.spec.ts`): a NEW 16 ft test that enters 16 ft, presses, and asserts
+  no worked-shapes lead, each not-worked building's reason and resolver, and the card's plain pointer.
+  WRITTEN, NOT RUN (the orchestrator runs it; the live route gives the 16 ft state per M5-T146 part B).
+
+### Checks (direct exit codes, in apps/web; browser tests NOT run)
+- `npm run lint` → 0 (0 errors; 2 pre-existing warnings in files I did not touch).
+- `npm run typecheck` → 0.
+- `npx vitest run src/components/architect src/lib` → 0; **Test Files 103 passed (103); Tests 2213
+  passed (2213)** (frozen baseline before my test edits was 6 failed across 4 files, all my new tests;
+  closed by pointing the buildings_not_worked tests at the committed journey and asserting no
+  footprint figure rather than the word "footprint").
+
+### STOP / doubt
+None. All work stayed inside the allowed files; no other file needed changing. `ThreeAnswersPanel.tsx`
+did not need a change (it already renders the section when the view is non-null).
+
+END-OF-WALKTHROUGH-CORRECTION
