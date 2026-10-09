@@ -137,7 +137,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 70,
   "risks": [
     "A legal reading presented as settled because two AI readings agree -> the case says agreement is not proof; every row quotes its capture; 'not sure' where the text does not settle it (S1, S12)",
     "The example's shape or the owner's starting values read as law, as validated or as a recommendation -> the summary and each building and estimate row say what they are (S3, S9); a guard refuses the words",
@@ -148,7 +148,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T05:41:47.673752+00:00",
-  "updated_at": "2026-10-09T05:42:22.063679+00:00",
+  "updated_at": "2026-10-09T06:37:05.777832+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -187,6 +187,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "Contracted and claimed. Both independent readings are in hand (received 05:29 and 05:30 UTC on 2026-10-09, saved unchanged; each reader's tool log audited: no path under the repository, no site, nothing of the other reader). The packet carries the owner's requirements of 05:36 UTC that concern this task (the independent side of the comparison through the six steps; legal requirements told apart from design assumptions; the two estimate values labelled 'preliminary assumption'). At the claim base: ruff exit 0; the reference-case tests with the two tests of other tasks that read reference rows 91 passed; the renderer's check, the size check and the path-coverage check exit 0. Not pushed: the seams ride with the push of the head under review. Next: one builder (rules-engineer) in an isolated worktree reset to the claim-seam head."
+    },
+    {
+      "at": "2026-10-09T06:37:05.777679+00:00",
+      "agent": "rules-engineer",
+      "percent": 70,
+      "status": "claimed",
+      "message": "The builder's two commits integrated by cherry-pick (blobs equal with its worktree commits 50e48d85 and 1f7130c5): the step-P6 case of 30 rows with its page, the two readings saved unchanged as provenance 13 and 14, the support module and tests; then one correcting commit sent back by the orchestrator BEFORE any review: one current answer for the unit limits (the made-up lot's older conditional row step-p4-worked#made-up-100x100-units superseded by the new row, which carries the older row's standing condition; the real lot's row pinned by a test to real-lot#L6). On the build machine at this head: ruff exit 0; the reference-case tests with the two tests of other tasks that read reference rows 118 passed; the renderer's check, the size check and the path-coverage check exit 0. Next: push this head once, read CI on it, then one independent review (data-contract-verifier) for G3 and G4."
     }
   ]
 }
