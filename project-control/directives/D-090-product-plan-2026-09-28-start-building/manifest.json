@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T01:25:49+00:00",
+ "updated_at": "2026-10-09T02:49:16+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -661,10 +661,29 @@
   "D-090-R637",
   "D-090-R638",
   "D-090-R639",
-  "D-090-R640"
+  "D-090-R640",
+  "D-090-R641",
+  "D-090-R642",
+  "D-090-R643",
+  "D-090-R644",
+  "D-090-R645",
+  "D-090-R646",
+  "D-090-R647",
+  "D-090-R648",
+  "D-090-R649",
+  "D-090-R650",
+  "D-090-R651",
+  "D-090-R652",
+  "D-090-R653",
+  "D-090-R654",
+  "D-090-R655",
+  "D-090-R656",
+  "D-090-R657",
+  "D-090-R658",
+  "D-090-R659"
  ],
- "requirements_id_digest_sha256": "ef998e36448ee46aa2ac117357e281d229c1902bcab5244f9122ca2b74b04226",
- "requirements_content_digest_sha256": "a4f9e5c645b03b710ba2117f4fed28c7b4dbcb228b70c8fc3360fe697272941a",
+ "requirements_id_digest_sha256": "b0d6e390f49f13533c2e6940a9b09157f31746752f069da24a6b1f0d735839b4",
+ "requirements_content_digest_sha256": "7c6e7aec1ca63aa35920e9db16f79aa266233633c9690a5b3fe8cbf1c3f18dff",
  "sources": [
   {
    "file": "source-001.md",
@@ -1176,6 +1195,14 @@
    "recorded_at": "2026-10-08T23:23:07+00:00",
    "content_digest_sha256": "2d34fb08e190e1f229da6d02d2f65dcde901a7d84c835aa50c17872024250d8f",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-065-amendment.md",
+   "kind": "amendment",
+   "sequence": 65,
+   "recorded_at": "2026-10-09T02:49:16+00:00",
+   "content_digest_sha256": "8023450ce17c0177a992e4351ab1921d66129c68aaac388574baff15f9c39b03",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1241,7 +1268,8 @@
   "source-061-amendment.md",
   "source-062-amendment.md",
   "source-063-amendment.md",
-  "source-064-amendment.md"
+  "source-064-amendment.md",
+  "source-065-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1921,6 +1949,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T143 (Split three_way_document.py and close DB-199 (a)(b)(c)) to R229, R570 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T02:49:16+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-065 (session 013RaGmC: owner message 127, 2026-10-09: the overall label of the zoning results; M5-T143 first, then the first building shape, the floor schedule and the preliminary apartment estimate with their corrections and checks; completed research reused; the rear yard's reason corrected with the answer withheld; blockers told apart in three kinds; the next screen change; updates in four bullets; no audit, handoff, process redesign or activation) and requirements D-090-R641 to R659, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
