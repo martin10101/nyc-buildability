@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T10:47:19+00:00",
+ "updated_at": "2026-10-09T18:25:38+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -794,10 +794,12 @@
   "D-090-R770",
   "D-090-R771",
   "D-090-R772",
-  "D-090-R773"
+  "D-090-R773",
+  "D-090-R774",
+  "D-090-R775"
  ],
- "requirements_id_digest_sha256": "480b148d08550d57ea9e5d03b96888560fdb13a354f6be1fd60a801ea583d68c",
- "requirements_content_digest_sha256": "c97ad340c527f29ad9075663ebc649070a3cf99c21aa08c6f1b94f1695f35408",
+ "requirements_id_digest_sha256": "6f876785ba3dde104ee3d22efef123df91c8e4b57ba6450c9854de05600d1ee6",
+ "requirements_content_digest_sha256": "02a1b04406af8486d93e1507a8a0418d7d2ce769b915f20b1815fd0349bbdda3",
  "sources": [
   {
    "file": "source-001.md",
@@ -1397,6 +1399,14 @@
    "recorded_at": "2026-10-09T07:43:29+00:00",
    "content_digest_sha256": "ee1be4afdcc99fc65cc9bc264deb9a9753c6a7ef48028085e31b10494b14a7b3",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-076-amendment.md",
+   "kind": "amendment",
+   "sequence": 76,
+   "recorded_at": "2026-10-09T18:25:38+00:00",
+   "content_digest_sha256": "a836583020b8ee2694970bba7ad65e06a3e46c6cd6012b7d11f733d019e4e3ab",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1473,7 +1483,8 @@
   "source-072-amendment.md",
   "source-073-amendment.md",
   "source-074-amendment.md",
-  "source-075-amendment.md"
+  "source-075-amendment.md",
+  "source-076-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2267,6 +2278,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T147 (Show the first building option on the results screen (task 2 of 2: the web panel, one PR with task 1)) to R256, R509, R526, R540, R541, R543, R544, R556, R570, R641, R688, R700 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T18:25:38+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-076 (session 013RaGmC: the owner sets how the file of questions waiting for the owner works, 2026-10-09) and requirements D-090-R774 to R775, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

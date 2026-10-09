@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 773,
+ "requirement_count": 775,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T10:47:19+00:00",
+ "updated_at": "2026-10-09T18:25:38+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -26255,6 +26255,70 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (smaller tasks, parts built side by side).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R774",
+   "text": "'The new MD that you created needs to work like this.' 'Every time you have a question for me, you can mention the question over here, plus you enter it in the MD.': every time the orchestrator has a question for the owner, it asks it in the conversation AND enters it in the questions file (/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md) in the same step. ORCHESTRATOR'S READING: each entry gives the question, the choices, the orchestrator's recommendation where it has one, and what the work does meanwhile; the date and time come from the clock.",
+   "source_ref": "source-076-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "Each question put to the owner in an update appears in the questions file with the same content, written in the same step.",
+   "required_evidence": "The questions file and the updates that asked the questions.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (one file for the questions waiting for the owner, kept current).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R775",
+   "text": "'Now, whenever the question gets answered, no matter if it's right away or if it's later down the road after you continued on and I've come back with the with the answer, you update the MD to take out either you include the answer that was answered or if you feel like it's not important to keep writing in all the answers then because it's already written in the code then you delete that question and you enter the next question': whenever a question is answered, at once or later after the work has gone on, the orchestrator updates the questions file: it either writes the answer in, or, where the answer is already recorded elsewhere (in the code or the records) and need not be repeated, it removes the question; the file keeps the questions that are still open, and a new question is entered when it arises. ORCHESTRATOR'S READING: an answer is first recorded as the owner's directive as usual; the file then points to that record or drops the question; nothing is removed while it is still open.",
+   "source_ref": "source-076-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R774"
+   ],
+   "required_harness": "After each answer from the owner, the questions file no longer lists that question as open.",
+   "required_evidence": "The questions file before and after each answer, and the directive record of the answer.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (one file for the questions waiting for the owner, kept current).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
