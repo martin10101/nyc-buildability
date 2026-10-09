@@ -13,20 +13,28 @@ real-building-a /-b), written as pure arithmetic over plain numbers:
 
 Both are a PLAIN STACK (every storey the same plan) at an assumed floor-to-floor height:
 this shape and that height are design assumptions (the method of the step-P6 example and a
-starting value chosen by the owner), not rules of law. Both worked buildings stay at or
-below the maximum base height, so no storey above the base is counted and no setback is
-worked.
+starting value chosen by the owner, D-090 row R542: "10 ft residential floors and 15 ft shop
+ground floors as starting assumptions", editable), not rules of law. Both worked buildings
+stay at or below the maximum base height, so no storey above the base is counted and no
+setback is worked.
+
+ONE-HEIGHT LIMIT (D-090 R542): this module works ONE floor-to-floor height for every storey,
+so a 15 ft shop ground floor (R542) is not worked here. The maximum building height is NOT an
+input: it decides nothing because no storey above the maximum base height is worked, so it
+could not make a building not known.
 
 This module decides NOTHING about which building a first option should show (that is the
 owner's open decision, backlog row DB-210 (b)). It takes plain numbers, imports no other
-part of the packet and no engine file (it does not import or change
-``building_option.py``, the engine's own stacker, which is a different method), and nothing
-reads it: no reported result is reachable from it. A later wiring step connects the parts.
+part of the packet and no engine file (it does not import or change ``building_option.py``,
+the engine's own stacker, which is a different method), and nothing reads it: no reported
+result is reachable from it. A later wiring step connects the parts.
 
-No file, network or clock access. A missing input gives a plain not-known state naming its
-kind of gap, never a zero and never a guessed value. No returned text says a building
-complies or is feasible; ``below_min_base`` is a plain fact about the building's height, and
-no text draws a legal conclusion from it (orchestrator ruling C3).
+No file, network or clock access. A missing input gives a plain not-known state that names
+which inputs are not known (``missing_inputs``) with ``gap_kind`` None - it states no reason
+why an input is missing. A state caused by the method's own limit names its gap kind "code
+not built". No returned text says a building complies or is feasible; ``below_min_base`` is a
+plain fact about the building's height, and no text draws a legal conclusion from it
+(orchestrator ruling C3).
 """
 
 from __future__ import annotations
@@ -38,14 +46,24 @@ from dataclasses import dataclass, field
 STATUS_AVAILABLE = "available"
 STATUS_NOT_KNOWN = "not_known"
 
-# The three kinds of gap a not-known state may name (orchestrator ruling C7).
-GAP_MISSING_PROPERTY_FACT = "a missing fact about the property"
+# The kinds of gap a not-known state may name when the gap is the method's OWN limit
+# (orchestrator ruling C7). A not-known state caused by a MISSING INPUT names no kind
+# (``gap_kind`` None) and lists the missing inputs instead (ruling C12).
 GAP_UNRESOLVED_LAW = "unresolved law"
 GAP_CODE_NOT_BUILT = "code not built"
 
 # Fill rules (the two methods of the step-P6 example).
 FILL_WIDEST = "widest"
 FILL_TO_MIN_BASE = "to_min_base"
+
+# Plain names of the inputs, for the text of a missing-input not-known state.
+_INPUT_LABELS = {
+    "footprint_area": "the footprint",
+    "floor_area_allowance": "the floor-area allowance (the maximum residential floor area)",
+    "floor_to_floor_ft": "the floor-to-floor height",
+    "min_base_ft": "the minimum base height",
+    "max_base_ft": "the maximum base height",
+}
 
 
 @dataclass(frozen=True)
@@ -64,8 +82,10 @@ class StoreyRow:
 @dataclass(frozen=True)
 class FloorSchedule:
     """The result of :func:`building_a` or :func:`building_b`: a floor schedule and its
-    totals, or a plain not-known state. For a not-known state every figure is ``None``, the
-    ``storeys`` tuple is empty, and ``gap_kind`` names which kind the gap is."""
+    totals, or a plain not-known state. For a not-known state every figure is ``None`` and
+    the ``storeys`` tuple is empty. A not-known state caused by a missing input lists the
+    missing input names in ``missing_inputs`` and leaves ``gap_kind`` None; a not-known state
+    caused by the method's own limit names its ``gap_kind`` ("code not built")."""
 
     building: str  # "A" or "B"
     fill_rule: str  # FILL_WIDEST or FILL_TO_MIN_BASE
@@ -79,12 +99,13 @@ class FloorSchedule:
     total_floor_area_sqft: float | None = None
     unused_floor_area_sqft: float | None = None
     below_min_base: bool | None = None
+    missing_inputs: tuple[str, ...] = field(default_factory=tuple)
     gap_kind: str | None = None
 
 
 def _require_positive(name: str, value: float) -> None:
     """Reject an impossible (zero or negative) numeric input with a clear error. A ``None``
-    input is a missing fact, handled before this is reached, not an impossible value."""
+    input is a missing input, handled before this is reached, not an impossible value."""
     if value <= 0:
         raise ValueError(
             f"{name} must be a positive number; a floor schedule cannot be worked from "
@@ -92,13 +113,53 @@ def _require_positive(name: str, value: float) -> None:
         )
 
 
-def _not_known(building: str, fill_rule: str, reason: str, gap_kind: str) -> FloorSchedule:
+def _missing_inputs(
+    footprint_area: float | None,
+    floor_area_allowance: float | None,
+    floor_to_floor_ft: float | None,
+    min_base_ft: float | None,
+    max_base_ft: float | None,
+) -> tuple[str, ...]:
+    """The names of every input that is not known, in a stable order (ruling C12)."""
+    pairs = (
+        ("footprint_area", footprint_area),
+        ("floor_area_allowance", floor_area_allowance),
+        ("floor_to_floor_ft", floor_to_floor_ft),
+        ("min_base_ft", min_base_ft),
+        ("max_base_ft", max_base_ft),
+    )
+    return tuple(name for name, value in pairs if value is None)
+
+
+def _missing_input_schedule(
+    building: str, fill_rule: str, missing: tuple[str, ...]
+) -> FloorSchedule:
+    """A not-known state caused by a missing input: it names which inputs are not known and
+    says nothing about why (ruling C12). ``gap_kind`` is None."""
+    labels = [_INPUT_LABELS[name] for name in missing]
+    if len(labels) == 1:
+        phrase = f"{labels[0]} is"
+    else:
+        phrase = f"{', '.join(labels[:-1])} and {labels[-1]} are"
+    reason = f"Building {building} is not known: {phrase} not known for this lot."
     return FloorSchedule(
         building=building,
         fill_rule=fill_rule,
         status=STATUS_NOT_KNOWN,
         reason=reason,
-        gap_kind=gap_kind,
+        missing_inputs=missing,
+        gap_kind=None,
+    )
+
+
+def _code_not_built(building: str, fill_rule: str, reason: str) -> FloorSchedule:
+    """A not-known state caused by the method's own limit (gap kind "code not built")."""
+    return FloorSchedule(
+        building=building,
+        fill_rule=fill_rule,
+        status=STATUS_NOT_KNOWN,
+        reason=reason,
+        gap_kind=GAP_CODE_NOT_BUILT,
     )
 
 
@@ -108,75 +169,47 @@ def building_a(
     floor_to_floor_ft: float | None,
     min_base_ft: float | None,
     max_base_ft: float | None,
-    max_building_ft: float | None,
 ) -> FloorSchedule:
     """Building A - the widest footprint stacked to the floor-area maximum.
 
     As many full-footprint storeys as the floor-area allowance holds
     (``floor(allowance / footprint)``), every storey the same footprint plan. A stack whose
     height would pass the maximum base height is not worked (ruling C2): storeys above the
-    base and their setback are outside this method.
+    base and their setback are outside this method. The maximum building height is not an
+    input (ruling C13): no storey above the maximum base height is worked.
     """
-    if footprint_area is None:
-        return _not_known(
-            "A",
-            FILL_WIDEST,
-            "Building A is not known: it needs the footprint it stacks on every storey, "
-            "which comes from the measured lot outline and the two street lines. That "
-            "footprint is not known for this lot.",
-            GAP_MISSING_PROPERTY_FACT,
-        )
-    if floor_area_allowance is None:
-        return _not_known(
-            "A",
-            FILL_WIDEST,
-            "Building A is not known: it needs the building's floor-area allowance (its "
-            "maximum residential floor area), which is not available for this lot.",
-            GAP_MISSING_PROPERTY_FACT,
-        )
-    if (
-        floor_to_floor_ft is None
-        or min_base_ft is None
-        or max_base_ft is None
-        or max_building_ft is None
-    ):
-        return _not_known(
-            "A",
-            FILL_WIDEST,
-            "Building A is not known: it needs the floor-to-floor height and the base and "
-            "building heights, at least one of which is not available for this lot.",
-            GAP_MISSING_PROPERTY_FACT,
-        )
+    missing = _missing_inputs(
+        footprint_area, floor_area_allowance, floor_to_floor_ft, min_base_ft, max_base_ft
+    )
+    if missing:
+        return _missing_input_schedule("A", FILL_WIDEST, missing)
 
     _require_positive("footprint_area", footprint_area)
     _require_positive("floor_area_allowance", floor_area_allowance)
     _require_positive("floor_to_floor_ft", floor_to_floor_ft)
     _require_positive("min_base_ft", min_base_ft)
     _require_positive("max_base_ft", max_base_ft)
-    _require_positive("max_building_ft", max_building_ft)
 
     storey_count = math.floor(floor_area_allowance / footprint_area)
     if storey_count < 1:
-        return _not_known(
+        return _code_not_built(
             "A",
             FILL_WIDEST,
             f"Building A is not known: one full-footprint storey of "
             f"{footprint_area:,.2f} sq ft already passes the floor-area allowance of "
             f"{floor_area_allowance:,.2f} sq ft, so no full-footprint storey is worked by "
             f"this method.",
-            GAP_CODE_NOT_BUILT,
         )
 
     height_ft = storey_count * floor_to_floor_ft
     if height_ft > max_base_ft:
-        return _not_known(
+        return _code_not_built(
             "A",
             FILL_WIDEST,
             f"Building A is not known: stacking the footprint to the floor-area maximum "
             f"would stand {storey_count} storeys and {height_ft:g} ft high, above the "
             f"maximum base height of {max_base_ft:g} ft; storeys above the base and their "
             f"setback are not worked by this method.",
-            GAP_CODE_NOT_BUILT,
         )
 
     storeys = tuple(
@@ -226,7 +259,6 @@ def building_b(
     floor_to_floor_ft: float | None,
     min_base_ft: float | None,
     max_base_ft: float | None,
-    max_building_ft: float | None,
 ) -> FloorSchedule:
     """Building B - the fewest storeys that reach the minimum base height.
 
@@ -234,70 +266,42 @@ def building_b(
     (``ceil(min_base / floor_to_floor)``), with the whole floor-area allowance spread evenly
     over them, every storey the same plan (``allowance / storeys``). The plan must fit within
     the footprint (ruling C1); a plan that would not fit is not worked (code not built). The
-    footprint is a required input of building B too (ruling C1).
+    footprint is a required input of building B too (ruling C1). The maximum building height
+    is not an input (ruling C13): no storey above the maximum base height is worked.
     """
-    if floor_area_allowance is None:
-        return _not_known(
-            "B",
-            FILL_TO_MIN_BASE,
-            "Building B is not known: it needs the building's floor-area allowance (its "
-            "maximum residential floor area) to spread over its storeys, which is not "
-            "available for this lot.",
-            GAP_MISSING_PROPERTY_FACT,
-        )
-    if footprint_area is None:
-        return _not_known(
-            "B",
-            FILL_TO_MIN_BASE,
-            "Building B is not known: its plan is the floor-area allowance divided by its "
-            "storeys, and that plan cannot be shown to fit within a footprint that is not "
-            "known for this lot.",
-            GAP_MISSING_PROPERTY_FACT,
-        )
-    if (
-        floor_to_floor_ft is None
-        or min_base_ft is None
-        or max_base_ft is None
-        or max_building_ft is None
-    ):
-        return _not_known(
-            "B",
-            FILL_TO_MIN_BASE,
-            "Building B is not known: it needs the floor-to-floor height and the base and "
-            "building heights, at least one of which is not available for this lot.",
-            GAP_MISSING_PROPERTY_FACT,
-        )
+    missing = _missing_inputs(
+        footprint_area, floor_area_allowance, floor_to_floor_ft, min_base_ft, max_base_ft
+    )
+    if missing:
+        return _missing_input_schedule("B", FILL_TO_MIN_BASE, missing)
 
     _require_positive("footprint_area", footprint_area)
     _require_positive("floor_area_allowance", floor_area_allowance)
     _require_positive("floor_to_floor_ft", floor_to_floor_ft)
     _require_positive("min_base_ft", min_base_ft)
     _require_positive("max_base_ft", max_base_ft)
-    _require_positive("max_building_ft", max_building_ft)
 
     storey_count = math.ceil(min_base_ft / floor_to_floor_ft)
     height_ft = storey_count * floor_to_floor_ft
     if height_ft > max_base_ft:
-        return _not_known(
+        return _code_not_built(
             "B",
             FILL_TO_MIN_BASE,
             f"Building B is not known: reaching the minimum base height of "
             f"{min_base_ft:g} ft would need {storey_count} storeys standing "
             f"{height_ft:g} ft, above the maximum base height of {max_base_ft:g} ft; "
             f"storeys above the base and their setback are not worked by this method.",
-            GAP_CODE_NOT_BUILT,
         )
 
     plan_area = floor_area_allowance / storey_count
     if plan_area > footprint_area:
-        return _not_known(
+        return _code_not_built(
             "B",
             FILL_TO_MIN_BASE,
             f"Building B is not known: {storey_count} storeys would need a plan of "
             f"{plan_area:,.2f} sq ft, which is more than the footprint of "
             f"{footprint_area:,.2f} sq ft; the worked method covers only a plan that fits "
             f"the footprint and works no taller building.",
-            GAP_CODE_NOT_BUILT,
         )
 
     storeys = tuple(
