@@ -48,10 +48,12 @@ from .engine_conditions import Derived
 from .result_way_inputs import (
     COVERAGE_KEY,
     LABELS,
+    MISSING_INFORMATION,
     REASON_KIND_BY_GAP,
     UNIT_QUALIFYING_AFFORDABLE_KEY,
     UNIT_QUALIFYING_SENIOR_KEY,
     UNIT_STANDARD_KEY,
+    WORK_OWED,
     AnswerWays,
     ResultWay,
     ResultWays,
@@ -130,6 +132,12 @@ STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY = (
 # option are calculations the program has not built yet (work owed), not a missing fact.
 _WORK_OWED_REASON_KIND = "rule_not_implemented"
 
+# The two results the engine's envelope geometry draws (geometry.py): the maximum building height
+# sets the tier's top, the lot coverage sets the footprint. The envelope follows EITHER when it is
+# withheld (reading O29; M5-T144 ruling C5 / DB-199 a). The height is named FIRST in a combined
+# reason because it sets the tier top.
+_MAX_BUILDING_HEIGHT_KEY = "max_building_height"
+
 
 # ---------------------------------------------------------------------------
 # small helpers
@@ -144,6 +152,17 @@ def _withheld_not_available(way: Withheld) -> dict:
     """A geometry layer (or other shared not-available block) that FOLLOWS a withheld result,
     carrying that result's own reason and the matching reason_kind (reading O29/O31)."""
     return _not_available(way.reason, REASON_KIND_BY_GAP[way.gap_kind])
+
+
+def _combined_not_available(withheld: list[Withheld]) -> dict:
+    """A geometry layer that FOLLOWS more than one withheld result it draws (M5-T144 ruling C5):
+    name each withheld result's reason in the given (fixed) order, joined by a single space, and
+    set reason_kind by the same work_owed-wins precedence the whole-answer fold uses (any
+    contributing result work_owed -> rule_not_implemented, else missing_input). With exactly one
+    withheld result this returns that one's reason and reason_kind unchanged (today's behaviour)."""
+    reason = " ".join(way.reason for way in withheld)
+    gap = WORK_OWED if any(way.gap_kind == WORK_OWED for way in withheld) else MISSING_INFORMATION
+    return _not_available(reason, REASON_KIND_BY_GAP[gap])
 
 
 def _row(rows: tuple[ResultWay, ...], key: str) -> ResultWay | None:
@@ -305,10 +324,12 @@ def _apply_building_option_dependents(doc: dict) -> None:
 
 
 def _apply_geometry(doc: dict, ways: ResultWays, *, building_option_withheld: bool) -> None:
-    """The geometry layers follow the ways (reading O29): the rear yard, the envelope tier (it needs
-    the coverage) and the floor plates (they need the building option) become not available with the
-    withheld result's own reason; the lot outline stays. The engine's geometry is rewritten here;
-    geometry.py stays read-only."""
+    """The geometry layers follow the ways (reading O29): the rear yard, the envelope tier (it draws
+    the maximum building height AND the lot coverage) and the floor plates (they need the building
+    option) become not available with the withheld result's own reason; the lot outline stays. The
+    envelope follows EITHER the maximum building height or the lot coverage when withheld (M5-T144
+    ruling C5 / DB-199 a); when both are withheld the reason names the maximum building height first
+    then the lot coverage. The engine's geometry is rewritten here; geometry.py stays read-only."""
     geometry = doc.get("geometry")
     if not isinstance(geometry, dict) or geometry.get("status") != "available":
         return  # not even the lot outline is available (e.g. the lane is off): nothing to follow
@@ -317,9 +338,17 @@ def _apply_geometry(doc: dict, ways: ResultWays, *, building_option_withheld: bo
     if isinstance(rear, Withheld):
         geometry["yards"] = _withheld_not_available(rear)
 
+    # The envelope tier draws the maximum building height (its top) and the lot coverage (its
+    # footprint); it follows either when withheld, in that fixed order (the height sets the top).
+    height_row = _row(ways.permitted_envelope.values, _MAX_BUILDING_HEIGHT_KEY)
     coverage_row = _row(ways.permitted_envelope.values, COVERAGE_KEY)
-    if coverage_row is not None and isinstance(coverage_row.way, Withheld):
-        geometry["envelope"] = _withheld_not_available(coverage_row.way)
+    envelope_withheld = [
+        row.way
+        for row in (height_row, coverage_row)
+        if row is not None and isinstance(row.way, Withheld)
+    ]
+    if envelope_withheld:
+        geometry["envelope"] = _combined_not_available(envelope_withheld)
 
     if building_option_withheld:
         bo_reason = ways.building_option.values[0].way

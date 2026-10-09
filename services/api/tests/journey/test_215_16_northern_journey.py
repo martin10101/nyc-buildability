@@ -274,13 +274,33 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     envelope = document["answers"]["permitted_envelope"]
     assert all(v["key"] != "max_lot_coverage" for v in envelope["values"])
     assert envelope["value_states"]["max_lot_coverage"]["way"] == "withheld"
-    assert envelope["value_states"]["rear_yard"]["way"] == "withheld"
+    rear = envelope["value_states"]["rear_yard"]
+    assert rear["way"] == "withheld"
+    # M5-T144 S1/S10: the overlay no longer blocks the rear yard; it is withheld by the corner/reach
+    # logic for a missing property fact, its reason naming what is really missing (no overlay text).
+    assert rear["gap_kind"] == "missing_information"
+    assert rear["reason"].startswith("The corner rear-yard waiver does not cover the whole lot: ")
+    assert "144.60 ft" in rear["reason"]
+    assert (
+        "whether a rear yard is required depends on this lot's exact lot lines and on which lot "
+        "lines of the adjoining lots meet them" in rear["reason"]
+    )
+    assert "overlay" not in rear["reason"].lower()
     assert document["answers"]["building_option"]["status"] == "not_available"
     assert document["unit_estimate"]["status"] == "not_available"
     assert document["unit_estimate"]["reason"].startswith("Not known")
     # No withheld result carries a number anywhere in the emitted document.
     assert document["geometry"]["yards"]["status"] == "not_available"
+    assert document["geometry"]["yards"]["reason"] == rear["reason"]  # geometry follows the yard
+    assert document["geometry"]["yards"]["reason_kind"] == "missing_input"
     assert "not_required" not in json.dumps(document["geometry"]["yards"])
+    # M5-T144 S10: the status line's first item reads the owner's words.
+    assert document["status_strip"][0] == {"text": "Preliminary zoning results"}
+    # M5-T144 S15: piece 3 (envelope follows a withheld height) changed nothing on this lot - the
+    # recorded lot has no flood zone (heights shown) and coverage withheld, so geometry.envelope is
+    # already not_available via the coverage branch, carrying the coverage reason alone.
+    assert document["geometry"]["envelope"]["status"] == "not_available"
+    assert "beyond the corner-lot portion" in document["geometry"]["envelope"]["reason"]
 
     # 6. EXPORTS from the SAME document object. The scope label and the front-lot-line
     # assumption statement appear on the site-plan SVG and in the results DXF notes.

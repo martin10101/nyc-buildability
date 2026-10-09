@@ -13,12 +13,16 @@ loader (which refuses a superseded row) and fails if a row is superseded, is not
 or does not say "same as plain R6B". A family is SUPPORTED only where its current row gives the
 answer with no standing condition from either reading.
 
-By the merged rows (``cases/step-p4-worked.json`` and ``cases/overlay-reading.json``): the floor
-area ratio and the lot-coverage rule are supported; the base and building heights, the setback
-and the dwelling-unit rule rest on the overlay rows that say "same as plain R6B" with no standing
-condition, so they are supported; the REAR YARD is not supported yet - its row says "same as
-plain R6B" but carries one reading's standing caveat, and a legal reading is never the subject of
-a conditional result, so the rear yard stays withheld as work owed until that caveat is closed.
+By the merged rows (``cases/step-p4-worked.json``, ``cases/overlay-reading.json`` and
+``cases/step-p5-worked.json``): the floor area ratio and the lot-coverage rule are supported; the
+base and building heights, the setback and the dwelling-unit rule rest on the overlay rows that
+say "same as plain R6B" with no standing condition, so they are supported; the REAR YARD is now
+supported too - the step-P5 row ``zr-34-23-page`` reads the ZR 34-23 page as the complete
+three-subsection list, none of which speaks of the rear yard, which resolves the step-P4
+completeness caveat the rear yard was held on, so the overlay adds no rear-yard rule and the rear
+yard follows the plain R6B rules (M5-T144, owner D-090 R646/R647). Being supported means the
+overlay no longer blocks the rear yard; the plain R6B corner/reach rules then decide it (and still
+withhold it beyond the corner-lot portion, for a missing property fact, in the decision module).
 Any other overlay code, or an overlay within another district, supports nothing (the caller
 supplies this table only for a C2-2 overlay within R6B). The street-wall-location rule, which the
 readings say the overlay changes, is not a result of this module.
@@ -62,23 +66,17 @@ class OverlaySupportRow:
 
 
 # The orchestrator's reading O16 as a table. Each row names the current merged reference row it
-# rests on (the step-P4 case supersedes the step-P2 overlay-reading rows for floor area ratio,
-# lot coverage and the rear yard; the base/building height, setback and dwelling-unit rows stay
-# in the overlay-reading case).
+# rests on (the step-P4 case supersedes the step-P2 overlay-reading rows for floor area ratio and
+# lot coverage; the base/building height, setback and dwelling-unit rows stay in the
+# overlay-reading case; the rear yard now rests on the step-P5 row zr-34-23-page, which resolves
+# the completeness caveat the step-P4 rear-yard row was held on - M5-T144).
 OVERLAY_SUPPORT_ROWS: tuple[OverlaySupportRow, ...] = (
     OverlaySupportRow(ResultFamily.FLOOR_AREA, True, "step-p4-worked", "floor-area-ratio"),
     OverlaySupportRow(ResultFamily.COVERAGE, True, "step-p4-worked", "lot-coverage"),
     OverlaySupportRow(ResultFamily.HEIGHTS, True, "overlay-reading", "base-and-building-height"),
     OverlaySupportRow(ResultFamily.SETBACK, True, "overlay-reading", "setback-above-base"),
     OverlaySupportRow(ResultFamily.UNIT_LIMIT, True, "overlay-reading", "dwelling-units"),
-    OverlaySupportRow(
-        ResultFamily.REAR_YARD, False, "step-p4-worked", "rear-yard",
-        reading_owed=(
-            "an independent reading of the commercial-overlay rear-yard rule for an "
-            "all-residential building"
-        ),
-        zr_sections=("ZR 34-23", "ZR 23-344"),
-    ),
+    OverlaySupportRow(ResultFamily.REAR_YARD, True, "step-p5-worked", "zr-34-23-page"),
 )
 
 

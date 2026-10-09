@@ -285,21 +285,25 @@ def test_s3_coverage_withdrawn_with_its_reach_reason(benchmark):
 
 # =========================================================================== S4
 def test_s4_rear_yard_withheld_not_not_required(benchmark):
-    """S4 / DB-189: the rear yard is a withheld value_states entry; geometry.yards is not_available
-    with that same withheld reason, NEVER the older whole-lot 'not required'. On the benchmark the
-    merged decision module blocks the rear yard on the recorded C2-2 overlay first, so the reason is
-    the overlay reading owed (the module is read-only; see the producer report, question of law)."""
+    """S4 / DB-189, M5-T144: the rear yard is a withheld value_states entry; geometry.yards is
+    not_available with that same withheld reason, NEVER the older whole-lot 'not required'. On the
+    benchmark the C2-2 overlay no longer blocks the rear yard (M5-T144): it is withheld by the
+    corner/reach logic (the far corner 144.60 ft is beyond the waiver area), for a missing property
+    fact, and the reason no longer mentions the overlay."""
     doc = benchmark.document
     env = doc["answers"]["permitted_envelope"]
     rear = _states(env)["rear_yard"]
     assert rear["way"] == "withheld"
+    assert rear["gap_kind"] == "missing_information"
+    assert rear["reason"].startswith("The corner rear-yard waiver does not cover the whole lot: ")
+    assert "144.60 ft" in rear["reason"]
+    assert "overlay" not in rear["reason"].lower()
     yards = doc["geometry"]["yards"]
     assert yards["status"] == "not_available"
     assert yards["reason"] == rear["reason"]  # geometry follows the withheld result's reason
+    assert yards["reason_kind"] == "missing_input"
     assert "not_required" not in json.dumps(yards)
     assert "not required" not in yards["reason"].lower()
-    # the module's benchmark reason is the overlay reading owed (the read-only module blocks first):
-    assert "overlay" in rear["reason"].lower()
 
 
 def test_s4_rear_yard_reach_reason_carried_on_a_non_overlay_corner_lot():
@@ -646,10 +650,13 @@ def test_s20_engine_switched_off_emits_no_number():
 
 # =========================================================================== S21
 def test_s21_overlay_support_tied_to_the_reference_rows_at_the_adapter(benchmark):
-    """S21 / DB-190(c): the benchmark lot has a recorded C2-2 overlay; the rear yard is NOT
-    supported by the overlay reading (overlay-reading.json / step-p4-worked), so it is withheld,
-    while the floor area, heights and coverage families are not blocked by the overlay. The test
-    reads the reference rows and runs the ADAPTER, not only the overlay table."""
+    """S21 / DB-190(c), M5-T144: the benchmark lot has a recorded C2-2 overlay. The floor area,
+    heights and coverage families read 'same as plain R6B' and are not blocked by the overlay; the
+    rear yard is NO LONGER blocked by the overlay either (the step-P5 row zr-34-23-page resolved
+    the step-P4 caveat), so it is decided by the corner/reach logic - here still withheld, now for
+    a missing property fact (the far corner is beyond the waiver area), its reason no longer naming
+    the overlay. The test reads the reference rows and runs the ADAPTER, not only the overlay
+    table."""
     doc = benchmark.document
     # the overlay-reading reference rows: these families read 'same as plain R6B'
     overlay = _ref_rows("overlay-reading")
@@ -657,11 +664,13 @@ def test_s21_overlay_support_tied_to_the_reference_rows_at_the_adapter(benchmark
         "floor-area-ratio", "lot-coverage", "base-and-building-height", "dwelling-units",
     ):
         assert "same as plain R6B" in overlay[row_id]["expected"]["value"]
-    # the merged reading (step-p4-worked) leaves the rear yard owed, so the adapter withholds it;
     # the overlay is recorded present on this lot.
     assert benchmark.gathered.recorded.commercial_overlay.code == "C2-2"
     env = doc["answers"]["permitted_envelope"]
-    assert _states(env)["rear_yard"]["way"] == "withheld"
+    rear = _states(env)["rear_yard"]
+    assert rear["way"] == "withheld"
+    assert rear["gap_kind"] == "missing_information"  # the plain corner/reach rule, not the overlay
+    assert "overlay" not in rear["reason"].lower()
     # the floor-area and height families are shown (the overlay reading supports them)
     fa = doc["answers"]["floor_area_allowance"]
     assert _states(fa)["max_residential_floor_area"]["way"] == "conditional"
@@ -1279,23 +1288,13 @@ def test_db199a_completeness_guard_catches_a_new_numeric_block(benchmark):
     assert f"answers.{name}.unreviewed_value" in _unclassified_blocks(inside)
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "KNOWN DEFECT (not this task's to repair): _apply_geometry clears geometry.envelope only "
-        "when the coverage is withheld, never when a height is, so a withheld height's figure can "
-        "remain in geometry.envelope.tiers[].top_ft. The emitter's repair - make the geometry "
-        "follow every withheld result - must remove this xfail mark."
-    ),
-)
 def test_db199a_withheld_height_figure_leaks_into_geometry_known_defect():
-    """DB-199 (a), KNOWN DEFECT pinned so it cannot be forgotten. A corner lot in a recorded flood
-    zone, through the real engine and decide_result_ways: every height limit is withheld, so no
-    height figure may remain anywhere in geometry. Today the withheld max_building_height (55) still
-    sits at geometry.envelope.tiers[0].top_ft (geometry.floor_plates and setback_lines_per_level are
-    not_available here, so only the envelope leaks). This asserts the CORRECT behaviour and is
-    expected to FAIL until the emitter is repaired (strict xfail: the repair makes it XPASS and
-    forces the mark's removal). This task changes no emitter behaviour."""
+    """S11 / DB-199 (a), REPAIRED in M5-T144 (owner row D-090-R661). A corner lot in a recorded
+    flood zone, through the real engine and decide_result_ways: every height limit is withheld, so
+    no height figure may remain anywhere in geometry. Before the repair the withheld
+    max_building_height (55) sat at geometry.envelope.tiers[0].top_ft; now _apply_geometry clears
+    geometry.envelope when the maximum building height is withheld (ruling C5), so no height figure
+    remains. The strict-xfail mark was removed here: this is now an ordinary test that passes."""
     engine_doc = generate_results(
         _benchmark_inputs(
             lot_area_sq_ft=4800.0, lot_type="corner", overlay_present=False,
@@ -1345,6 +1344,123 @@ def test_db199a_withheld_height_figure_leaks_into_geometry_known_defect():
     _numbers(withheld["geometry"], geom_numbers)
     leaked = sorted({f for f in would_have.values() if f in geom_numbers})
     assert leaked == [], f"withheld height figures still in geometry: {leaked}"
+
+
+# ---------------------------------------------------------- S11-S14 the envelope follows the ways
+def _corner_envelope_engine_doc():
+    """A made-up R6B corner lot whose engine envelope geometry is AVAILABLE (top_ft set and a
+    coverage footprint), so a withheld way has something to clear - the same engine doc the S11
+    leak test uses."""
+    return generate_results(
+        _benchmark_inputs(
+            lot_area_sq_ft=4800.0, lot_type="corner", overlay_present=False,
+            lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=None,
+        ), env=_ON,
+    ).document
+
+
+def _emit_corner(**decide_overrides):
+    engine_doc = _corner_envelope_engine_doc()
+    base = dict(
+        lot_type=LotType.CORNER, reach=c2_reach(),
+        area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0), **k20(True),
+    )
+    base.update(decide_overrides)
+    return emit_three_way_document(
+        json.loads(json.dumps(engine_doc)), decide_result_ways(plain_inputs(**base)),
+    )
+
+
+def test_s11_flood_zone_corner_height_withheld_envelope_cleared():
+    """S11 / ruling C5: a flood-zone corner lot (every height withheld, coverage shown). The engine
+    envelope is available (top_ft 55), but geometry.envelope becomes not_available carrying the
+    withheld maximum-building-height reason; coverage is shown so it is the height reason alone."""
+    withheld = _emit_corner(flood_zone=Recorded.PRESENT, large_lot_threshold_met=False)
+    env = withheld["geometry"]["envelope"]
+    assert env["status"] == "not_available"
+    states = _states(withheld["answers"]["permitted_envelope"])
+    assert states["max_building_height"]["way"] == "withheld"
+    assert states["max_lot_coverage"]["way"] != "withheld"  # coverage shown here
+    assert env["reason"] == states["max_building_height"]["reason"]  # the height reason alone
+    assert env["reason_kind"] == "rule_not_implemented"  # flood height is work owed
+    assert "55" not in env["reason"]  # no figure in the reason
+
+
+def _envelope_way_reason(ways, key):
+    """The reason of one permitted_envelope value's withheld way (read from the ways, because when
+    every envelope value is withheld the emitted answer is a whole not-available with no
+    value_states)."""
+    return next(r for r in ways.permitted_envelope.values if r.key == key).way.reason
+
+
+def test_s12_envelope_both_height_and_coverage_withheld_combined_reason():
+    """S12 / ruling C5: a state where BOTH the maximum building height (flood) and the lot coverage
+    (large lot) are withheld while the engine envelope was available. geometry.envelope is
+    not_available with a reason naming the maximum building height FIRST then the lot coverage
+    (fixed order), joined by one space; reason_kind is rule_not_implemented (both are work owed)."""
+    base = dict(
+        lot_type=LotType.CORNER, reach=c2_reach(),
+        area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0), **k20(True),
+    )
+    ways = decide_result_ways(plain_inputs(
+        flood_zone=Recorded.PRESENT, large_lot_threshold_met=True, **base))
+    emitted = emit_three_way_document(
+        json.loads(json.dumps(_corner_envelope_engine_doc())), ways)
+    env = emitted["geometry"]["envelope"]
+    height_reason = _envelope_way_reason(ways, "max_building_height")
+    coverage_reason = _envelope_way_reason(ways, "max_lot_coverage")
+    assert env["status"] == "not_available"
+    assert env["reason"] == f"{height_reason} {coverage_reason}"  # height first, then coverage
+    assert env["reason"].index(height_reason) < env["reason"].index(coverage_reason)
+    assert env["reason_kind"] == "rule_not_implemented"  # both contributors are work owed
+
+
+def test_s12b_envelope_reason_kind_missing_input_when_no_contributor_is_work_owed():
+    """S12 (precedence): when both withheld contributors are MISSING information (flood column not
+    read; the large-lot question not stated) the envelope reason_kind is missing_input, not
+    rule_not_implemented - the work_owed-wins precedence only lifts it when some contributor is
+    work owed. The reason still names the height first then the coverage."""
+    base = dict(
+        lot_type=LotType.CORNER, reach=c2_reach(),
+        area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0), **k20(True),
+    )
+    ways = decide_result_ways(plain_inputs(
+        flood_zone=Recorded.NOT_READ, large_lot_threshold_met=None, **base))
+    emitted = emit_three_way_document(
+        json.loads(json.dumps(_corner_envelope_engine_doc())), ways)
+    env = emitted["geometry"]["envelope"]
+    height_reason = _envelope_way_reason(ways, "max_building_height")
+    coverage_reason = _envelope_way_reason(ways, "max_lot_coverage")
+    assert env["status"] == "not_available"
+    assert env["reason"] == f"{height_reason} {coverage_reason}"
+    assert env["reason_kind"] == "missing_input"
+
+
+def test_s13_envelope_height_shown_coverage_withheld_unchanged():
+    """S13: height shown, coverage withheld (large lot). geometry.envelope is not_available with the
+    coverage reason ALONE and its reason_kind - today's behaviour, preserved (exactly one withheld
+    contributor)."""
+    withheld = _emit_corner(large_lot_threshold_met=True)
+    env = withheld["geometry"]["envelope"]
+    states = _states(withheld["answers"]["permitted_envelope"])
+    assert all(states[k]["way"] != "withheld" for k in (
+        "min_base_height", "max_base_height", "max_building_height"))
+    assert states["max_lot_coverage"]["way"] == "withheld"
+    assert env["status"] == "not_available"
+    assert env["reason"] == states["max_lot_coverage"]["reason"]  # coverage reason alone
+    assert env["reason_kind"] == "rule_not_implemented"
+
+
+def test_s14_envelope_height_and_coverage_shown_available():
+    """S14: height shown and coverage shown. geometry.envelope stays AVAILABLE, exactly as the
+    engine made it (a tier with a top_ft) - neither contributor is withheld, so nothing follows."""
+    shown = _emit_corner(large_lot_threshold_met=False)
+    env = shown["geometry"]["envelope"]
+    states = _states(shown["answers"]["permitted_envelope"])
+    assert states["max_building_height"]["way"] != "withheld"
+    assert states["max_lot_coverage"]["way"] != "withheld"
+    assert env["status"] == "available"
+    assert env["tiers"][0]["top_ft"] is not None
 
 
 def _interior_shown_limit_engine_and_ways():

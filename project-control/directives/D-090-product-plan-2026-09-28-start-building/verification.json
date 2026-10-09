@@ -3625,6 +3625,140 @@
     }
    ],
    "verified_at": "2026-10-09T03:25:38+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T144",
+   "applicable_requirement_ids": [
+    "D-090-R258",
+    "D-090-R267",
+    "D-090-R570",
+    "D-090-R641",
+    "D-090-R642",
+    "D-090-R646",
+    "D-090-R647",
+    "D-090-R648",
+    "D-090-R649",
+    "D-090-R661"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242",
+   "reviewed_manifest_sha256": "d0ca0ca725a8e4c139d73bc1dc6d6c0642a8694a7a54d9a0eb3b8fd49b19aed2",
+   "requirements": [
+    {
+     "id": "D-090-R258",
+     "state": "PASS",
+     "evidence": [
+      "result_ways.py new `not within_point and within_angle` branch sets gap_kind=MISSING_INFORMATION; the committed fixture (recorded_215_16_northern_journey.json) shows value_states.rear_yard.gap_kind \"missing_information\" and geometry.yards.reason_kind \"missing_input\".",
+      "test_result_ways_truth_table.py pins position-16 rear yard as missing_information with required substrings; S4/S6/S16 keep the other branches work_owed, so unbuilt work stays labelled work_owed, not missing-info.",
+      "Stays open: the rule code that would compute the rear yard from those facts is still owed work, recorded in the backlog (ruling C3), not relabelled finished and not in this task.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R267",
+     "state": "PASS",
+     "evidence": [
+      "build_status_strip (explanations.py) emits {\"text\":\"Preliminary zoning results\"} as item 0 (was \"Zoning maximum\"); committed document status_strip[0] = {\"text\":\"Preliminary zoning results\"}; every value-state keeps its own way.",
+      "All residual \"Zoning maximum\" strings are out of scope: the different dashboard string \"Zoning maximum not available\", two schema DESCRIPTION examples, a compare_rows.py comment, and hand-authored synthetic/invalid contract fixtures \u2014 none is the results strip shown to a user for this document.",
+      "Stays open: the out-of-scope schema-description/synthetic-fixture lag still carries the old word (a harmless doc lag for a trivial follow-up); not bound to this task.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R570",
+     "state": "PASS",
+     "evidence": [
+      "three_way_document.py _apply_geometry now clears geometry.envelope when max_building_height OR coverage is withheld (_combined_not_available); the former strict-xfail test (test_db199a_..._known_defect) passes as an ordinary test asserting no withheld height figure (e.g. 55) remains anywhere in geometry; S11\u2013S14 pin the envelope behaviour.",
+      "test_db199a_every_block_of_the_emitted_document_is_classified classifies every block of several real emitted documents and the guard catches any new numeric block; geometry.py (read-only) confirms the envelope was the only reachable leak surface today.",
+      "Stays open: floor_plates (building option) and setback are always not_available this milestone, so their coverage-footprint leak is not reachable yet; the same follow-logic must cover floor_plates once the building option is built \u2014 R570 stays a standing invariant open in the registry.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R641",
+     "state": "PASS",
+     "evidence": [
+      "explanations.py item 0 == {\"text\":\"Preliminary zoning results\"}; test_status_strip_first_item_is_preliminary_zoning_results asserts it in code and in the generated document; the committed document carries it (byte-compared by test_215_16_northern_journey.py line 330).",
+      "I confirmed status_strip[0] in the committed fixture reads exactly the owner's words.",
+      "Stays open: nothing for this task.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R642",
+     "state": "PASS",
+     "evidence": [
+      "Comparing every value_states.way in the committed document at 7f0e131f vs the frozen head: NONE of the 16 ways changed; only rear-yard reason/gap_kind/resolver/zr_sections and status_strip[0] changed.",
+      "test_result_ways_truth_table.py pins the way and kind of every result in every state.",
+      "Stays open: nothing for this task.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R646",
+     "state": "PASS",
+     "evidence": [
+      "I read docs/reference-cases/R6B/cases/step-p5-worked.json row zr-34-23-page: its expected value states the three subsections are the complete set, none speaks of the rear yard, \"resolving the completeness caveat reading 9 raised in step P4\" \u2014 the owner's statement is true by the row's own words; the G0 report quotes it truly.",
+      "The code acts on it: OVERLAY_SUPPORT_ROWS REAR_YARD is now supported=True resting on step-p5-worked/zr-34-23-page; test_result_way_bridge_overlay asserts this; S2 is the proved consequence (within-waiver now shown).",
+      "Stays open: nothing for this task (external-fact row verified by reading and recorded).",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R647",
+     "state": "PASS",
+     "evidence": [
+      "I read row benchmark-rear-yard-23-342-23-344: it states the beyond-100-ft result \"turns on the adjoining zoning lot's lot-line type ... which the readers did not have\" and \"The readers differ on the geometry\" \u2014 the owner's statement is true; the G0 report quotes it truly.",
+      "The corrected reason's clauses (\"depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them ... the program does not have those facts\") are sourced to this row; no section number in prose, no \"two readings disagree\", no \"professional review\" (ruling C2 holds).",
+      "Stays open: nothing for this task; the pure-corner-square note (F1) is non-blocking.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R648",
+     "state": "PASS",
+     "evidence": [
+      "result_ways.py returns the corrected reason/kind/resolver; the fixture carries the exact text at value_states.rear_yard and geometry.yards. test_s1 and test_s3 assert the whole reason == _BEYOND_REASON and resolver == _BEYOND_RESOLVER via one shared constant, matching the fixture; the website panel test shows \"Missing information about this property.\" for the rear yard (S17).",
+      "One text for one situation (ruling C1): S3 (no-overlay R6B) asserts the same text as S1 (C2-2).",
+      "Stays open: nothing for this task.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R649",
+     "state": "PASS",
+     "evidence": [
+      "The fixture value_states.rear_yard has way=withheld and NO `value` key; geometry.yards is not_available with no entries/figure; the journey test asserts no withheld result carries a number anywhere; G4 mutation m12 (figure 20 on the rear yard) fails the byte-compare and DB-199 guards.",
+      "I confirmed there is no rear-yard figure in value states, geometry.yards or elsewhere in the document.",
+      "Stays open: nothing for this task.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    },
+    {
+     "id": "D-090-R661",
+     "state": "PASS",
+     "evidence": [
+      "three_way_document.py clears geometry.envelope on a withheld height; the former strict-xfail test carries no @pytest.mark.xfail and passes as an ordinary test (focused run: 0 xfailed/xpassed); S11 proves the flood-zone corner lot clears the envelope and leaks no height figure; S12\u2013S14 pin the reason and precedence.",
+      "The repair covers the envelope/height leak (the only reachable leak today) before drawings/CAD/PDF read the geometry block.",
+      "Stays open: the floor_plates coverage-footprint leak is latent (building option always withheld now, so unreachable); the broader \"geometry follows every withheld result\" invariant continues for future layers.",
+      "Verifier's carry-forward condition met at 91833a67: the task's allowed-path files are identical to those verified at 5e7be6c3 (content identity d0ca0ca7), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 independent data-contract-verifier, G4 independent qa-engineer; producer rules-engineer is neither). DCV report: project-control/reports/M5-T144-DCV.md."
+     ],
+     "reviewed_sha": "91833a672aee2f9d56f4ee3455b5bf09e1148242"
+    }
+   ],
+   "verified_at": "2026-10-09T05:20:22+00:00"
   }
  ]
 }

@@ -20,7 +20,8 @@ Status strip (engine):
   1  measurement chip "Approximate measurements" / "Survey measurements" -- computed_true:
      ``site_measurement_status_chip`` reads the site rank; a survey is never flagged
      approximate (THIS WAS THE DEFECT: the chip was fixed text before A-05).
-  2  "Zoning maximum" -- fixed_scope: the surfaced figures ARE the zoning maxima.
+  2  "Preliminary zoning results" -- fixed_scope: the owner's overall label for the preliminary
+     results (D-090-R641); each result keeps its own settled/conditional/not-known state.
   3  "Lots you selected" -- fixed_scope: results always rest on the caller-selected lots.
   4  "Zoning engine not enabled" (lane-off strip) -- computed_true: only when the flag is off.
   5  lane-off gap reasons ("...Lane A... is not enabled...") -- computed_true: flag off only.
@@ -102,10 +103,11 @@ def site_measurement_status_chip(site_measurement_rank: str) -> dict:
 
 
 def build_status_strip(site_measurement_rank: str) -> list[dict]:
-    """The on-path status strip: a fixed "Zoning maximum" label, the rank-computed measurement
-    chip (C-11), and a fixed "Lots you selected" label."""
+    """The on-path status strip: a fixed "Preliminary zoning results" label (the owner's overall
+    label, D-090-R641; each result keeps its own state), the rank-computed measurement chip
+    (C-11), and a fixed "Lots you selected" label."""
     return [
-        {"text": "Zoning maximum"},
+        {"text": "Preliminary zoning results"},
         site_measurement_status_chip(site_measurement_rank),
         {"text": "Lots you selected"},
     ]

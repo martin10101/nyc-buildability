@@ -205,9 +205,11 @@ _TABLE = [
      ["far corner's reach", "angle", "not measured"], []),
     ("RY7_distance_fails", lambda: plain_inputs(
         reach=make_reach((("a", 40.0), ("b", 50.0)), 90.0, 107.70), **k20(True)),
-     "rear_yard", WAY_W, "work_owed",
-     ["107.70 ft", "beyond the rear-yard waiver area", "90 degrees", "within the waiver's limit"],
-     ["more than the rear-yard waiver's limit"]),
+     "rear_yard", WAY_W, "missing_information",
+     ["corner rear-yard waiver does not cover the whole lot", "107.70 ft",
+      "beyond the rear-yard waiver area", "90 degrees", "within the waiver's limit",
+      "this lot's exact lot lines", "the rear yard is not known"],
+     ["more than the rear-yard waiver's limit", "is not settled"]),
     ("RY8_angle_fails", lambda: plain_inputs(
         reach=make_reach((("a", 40.0), ("b", 50.0)), 140.0, 90.0), **k20(True)),
      "rear_yard", WAY_W, "work_owed",
@@ -340,19 +342,33 @@ def test_us4_not_given_resolved_by_names_owed_work_not_a_bare_fact():
 
 
 def test_s3_corner_distance_fails_angle_holds_names_the_distance_not_the_angle():
-    """S3 / reading O20. The far corner is 144.60 ft (beyond the 100-foot area) and the angle is
-    90 degrees (within the limit). The reason names the distance beyond the area and says the
-    angle is within the limit; it never blames the angle."""
+    """S3 / reading O20, M5-T144 ruling C1/C2. The far corner is 144.60 ft (beyond the 100-foot
+    area) and the angle is 90 degrees (within the limit). The reason says the waiver does not cover
+    the whole lot, names the distance beyond the area and the angle within the limit, and names
+    what is really missing for the part beyond - this lot's exact lot lines and the adjoining lots'
+    lot lines - with the kind MISSING information (a missing property fact, not owed work). It
+    never blames the angle and never says 'is not settled'."""
     way = _focal(
         decide_result_ways(plain_inputs(
             reach=make_reach((("street A", 40.0), ("street B", 50.0)), 90.0, 144.60), **k20(True))),
         "rear_yard",
     )
-    assert isinstance(way, Withheld) and way.gap_kind == "work_owed"
+    assert isinstance(way, Withheld) and way.gap_kind == "missing_information"
+    assert way.reason.startswith("The corner rear-yard waiver does not cover the whole lot: ")
     assert "144.60 ft" in way.reason
     assert "beyond the rear-yard waiver area" in way.reason
     assert "within the waiver's limit" in way.reason
     assert "more than the rear-yard waiver's limit" not in way.reason
+    assert (
+        "whether a rear yard is required depends on this lot's exact lot lines and on which lot "
+        "lines of the adjoining lots meet them" in way.reason
+    )
+    assert "The program does not have those facts, so the rear yard is not known." in way.reason
+    assert "is not settled" not in way.reason
+    assert way.resolved_by == (
+        "A survey or deed that shows this lot's lot lines, and the adjoining lots' lot lines "
+        "where they meet this lot."
+    )
 
 
 def test_s4_corner_both_fail_names_both_conditions():
@@ -472,20 +488,23 @@ def test_rear_yard_angle_just_over_the_limit_prints_visibly_greater():
 
 def test_rear_yard_reach_just_over_the_limit_prints_visibly_beyond():
     """G3 F2. A reach just over 100 ft (100.004) is shown so 'beyond' is visibly true; it is never
-    printed as '100.00 ft' so that it reads equal to the 100 ft limit."""
+    printed as '100.00 ft' so that it reads equal to the 100 ft limit. (The distance-beyond,
+    angle-within state is now missing information - M5-T144 - so the kind is checked here.)"""
     way = _focal(decide_result_ways(plain_inputs(
         reach=make_reach((("street A", 40.0), ("street B", 50.0)), 90.0, 100.004), **k20(True))),
         "rear_yard")
-    assert isinstance(way, Withheld) and way.gap_kind == "work_owed"
+    assert isinstance(way, Withheld) and way.gap_kind == "missing_information"
     assert "100.004 ft" in way.reason
     assert "100.00 ft" not in way.reason
 
 
 # ===== F6: the way (and kind) of EVERY result in EVERY state, pinned as data =====
 # Codes: S settled, C conditional, Wo withheld/work_owed, Wm withheld/missing_information; the 20
-# results are in `result_ways()` order. This is the claim-head signature (proven byte-identical to
-# the untouched module by an external diff), committed so "no way and no kind changed" is a
-# regression test and not a one-time script.
+# results are in `result_ways()` order. The rear yard is position 16. M5-T144 flipped position 16
+# from Wo to Wm for every state that reaches the rear-yard "corner beyond the waiver area, angle
+# within the limit" branch (now a missing property fact, not owed work); no other position moved
+# (proven: only pos16 Wo->Wm across the 28 affected rows). Committed so "no way and no kind changed
+# unnoticed" stays a regression test.
 _EXPECTED_WAY_SIGNATURE = {
     "B1_district_none": "Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wm Wm Wm Wm Wm",
     "B2_district_not_r6b": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
@@ -496,29 +515,29 @@ _EXPECTED_WAY_SIGNATURE = {
     "B7_k20_present": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
     "OB1_overlay_not_read": "Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wm Wo Wm Wo Wo",
     "OB2_overlay_present_no_map": "Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "OB3_overlay_family_missing": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "OB5_overlay_not_supported_named": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "OB6_overlay_not_supported_fallback": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "OB4_overlay_supported": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA1_no_area": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wo Wo Wm Wo Wo",
-    "FA2_inclusionary_present": "Wo Wo Wo Wo S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA3_inclusionary_not_read": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA4_settled": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA5_conditional_k20": "C C C C C C C C C C Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA6_area_disagrees": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA7_area_could_not_compare": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "FA8_area_agreement_none": "C C C C S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "H1_flood_present": "S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "H2_flood_not_read": "S S S S Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "H3_settled": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "H4_conditional": "C C C C C C C C C C Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "C1_large_lot": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "OB3_overlay_family_missing": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "OB5_overlay_not_supported_named": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "OB6_overlay_not_supported_fallback": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "OB4_overlay_supported": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA1_no_area": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wm Wo Wm Wo Wo",
+    "FA2_inclusionary_present": "Wo Wo Wo Wo S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA3_inclusionary_not_read": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA4_settled": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA5_conditional_k20": "C C C C C C C C C C Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA6_area_disagrees": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA7_area_could_not_compare": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "FA8_area_agreement_none": "C C C C S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "H1_flood_present": "S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "H2_flood_not_read": "S S S S Wm Wm Wm Wm Wm Wm Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "H3_settled": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "H4_conditional": "C C C C C C C C C C Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "C1_large_lot": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "C2_lot_type_none": "S S S S S S S S S S Wm Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "C3_interior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
     "C3b_through": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
     "C4_no_outline": "S S S S S S S S S S Wm Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "C4b_street_reach_unknown": "S S S S S S S S S S Wm Wo Wo Wo Wo S Wo Wo Wo Wo",
-    "C5_reaches_beyond": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "C5_reaches_beyond": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "C6_large_lot_none": "S S S S S S S S S S Wm Wo Wo Wo Wo S Wo Wo Wo Wo",
     "C7_settled": "S S S S S S S S S S S Wo Wo Wo Wo S Wo Wo Wo Wo",
     "C8_conditional": "C C C C C C C C C C C Wo Wo Wo Wo C Wo Wo Wo Wo",
@@ -528,20 +547,20 @@ _EXPECTED_WAY_SIGNATURE = {
     "RY4_reach_unknown": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "RY5_angle_unknown": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "RY6_both_unknown": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
-    "RY7_distance_fails": "S S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "RY7_distance_fails": "S S S S S S S S S S S Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "RY8_angle_fails": "S S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo",
     "RY9_both_fail": "S S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo",
     "RY10_settled": "S S S S S S S S S S S Wo Wo Wo Wo S Wo Wo Wo Wo",
     "RY11_conditional": "C C C C C C C C C C C Wo Wo Wo Wo C Wo Wo Wo Wo",
-    "SB1_setback": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "US1_no_area": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wo Wo Wm Wo Wo",
-    "US2_user_statement": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo C Wo Wo",
-    "US3_evidence_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "US4_not_given": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "US5_evidence_not_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "UA1_affordable": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "USR1_senior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
-    "BO1_option": "S S S S S S S S S S Wo Wo Wo Wo Wo Wo Wo Wo Wo Wo",
+    "SB1_setback": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "US1_no_area": "Wm Wm Wm Wm S S S S S S Wo Wo Wo Wo Wo Wm Wo Wm Wo Wo",
+    "US2_user_statement": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo C Wo Wo",
+    "US3_evidence_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "US4_not_given": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "US5_evidence_not_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "UA1_affordable": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "USR1_senior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "BO1_option": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
 }
 
 
