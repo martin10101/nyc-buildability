@@ -59,9 +59,13 @@ from app.scenario.three_answers.three_way_document import (
     HOUSING_PROGRAM_KEY,
     RESERVED_UNIT_ESTIMATE_REASON,
     SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
+    STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
+    emit_three_way_document,
+)
+from app.scenario.three_answers.three_way_scope_lines import (
     _scope_statement,
     _user_choice_statement,
-    emit_three_way_document,
 )
 from app.spatial.site_geometry import (
     derive_site_geometry,
@@ -676,6 +680,8 @@ def test_every_text_the_transform_writes_is_plain_and_true(benchmark):
         SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
         BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
         ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
+        STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
+        STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
     ]
     # the one text the transform builds at run time: the shown unit-limit value object label
     with pytest.MonkeyPatch.context() as mp:
@@ -1133,3 +1139,297 @@ def test_t139_only_the_two_choice_lines_differ_with_user_choices(evidence_benchm
         return copy
 
     assert _blanked(d1) == _blanked(d0)  # nothing else moved
+
+
+# =========================================================================== DB-199 gaps (M5-T143)
+# Three states the three-way emitter lacked a test for (backlog DB-199 a, b, c). No app wording
+# changes: the scope-line code moved behind the old import path and the two fallback texts were
+# hoisted BYTE-IDENTICAL so the text guard above already covers them. NO behaviour of the emitter
+# changes in this task.
+# --- DB-199 (a): a completeness guard over the blocks of the emitted document (corrected) ---
+# _all_result_numbers stays exactly as it is. The gap DB-199 (a) names is that a NEW block carrying
+# a withheld result's number could pass every existing guard unseen, because _all_result_numbers
+# walks only some blocks (a plain whole-document walk is not the answer: the document rightly
+# carries numbers - coordinates, measurements, inputs, counts - outside the result blocks). This
+# guard closes the hole by forcing EVERY block to be classified. The two result sets were read FROM
+# _all_result_numbers above (not guessed): at the TOP LEVEL it walks each of these blocks whole, so
+# every number inside them is a result number -
+_RESULT_NUMBER_BLOCKS = frozenset({
+    "addon_gains", "best_combination", "floor_by_floor", "floor_stack", "shortfall",
+    "unit_estimate",
+})
+# - and INSIDE each answer it walks ONLY values[] (the shown value objects); it enters no other key.
+_ANSWER_RESULT_KEYS = frozenset({"values"})
+
+# Every OTHER top-level block carries no result number (one line each, saying what its numbers are):
+_NO_RESULT_NUMBER_BLOCKS = {
+    "answers": "entered in part: result numbers live inside each answer's values[]; keys below",
+    "contract_version": "a contract-version identifier string",
+    "results_id": "an identifier string",
+    "study_id": "an identifier string",
+    "option_id": "an identifier string",
+    "revision": "a document revision counter (metadata), not a zoning result",
+    "computed_at": "a timestamp string",
+    "draft": "a draft flag (boolean)",
+    "out_of_date": "an out-of-date flag (boolean)",
+    "out_of_date_reason": "prose or null",
+    "notices_count": "a count of notices (document metadata), not a zoning result",
+    "depends_on_fact_ids": "fact identifier strings",
+    "rule_versions": "rule id and version identifier strings",
+    "completeness_line": "a prose status line",
+    "status_strip": "a prose status strip",
+    "lot_selection_statement": "a prose statement",
+    "with_approvals_label": "a prose label",
+    "street_width_case": "a street-width case label or identifier",
+    "existing_building": "a fact block about the existing building (an input, not a result)",
+    "remaining_floor_area": "a not_available status/reason block (carries no number)",
+    "scope": (
+        "scope assumptions: each condition's recorded/measured/entered value, a measurement (the "
+        "corner reach, the angle) or a design-choice input (floor-to-floor) - inputs and "
+        "measurements, not results"
+    ),
+    "geometry": (
+        "not walked: polygon coordinates and the dimensions that draw the results. KNOWN DEFECT, "
+        "pinned by the xfail test below and NOT covered by this guard: a withheld height's figure "
+        "can remain here: for a corner lot in a recorded flood zone the withheld height limit (55) "
+        "stays at geometry.envelope.tiers[0].top_ft, because _apply_geometry clears the envelope "
+        "layer only when the coverage is withheld, never when a height is; the emitter's repair "
+        "(the geometry must follow every withheld result) removes the xfail mark"
+    ),
+}
+
+# Every key INSIDE an answer other than values[] carries no result number:
+_ANSWER_NO_RESULT_KEYS = {
+    "status": "an availability flag string",
+    "measurement": "the answer's measurement label and figure - a measurement, not a result",
+    "value_states": "per-value way/reason/condition prose; a withheld entry carries no number",
+    "reason": "prose (a not_available answer)",
+    "reason_kind": "a reason-kind identifier string",
+    "resolved_by": "prose (what would resolve the gap)",
+    "gap_kind": "a gap-kind identifier string",
+}
+
+
+def _unclassified_blocks(doc: dict) -> list[str]:
+    """Every top-level block, and every key inside each answer, must be classified above as a
+    result-number block (walked by _all_result_numbers) or a no-result-number block (named, with a
+    reason). Return the keys classified as NEITHER - the DB-199 (a) hole, where a new block could
+    hide a withheld result's number unseen."""
+    bad: list[str] = []
+    classified_top = _RESULT_NUMBER_BLOCKS | set(_NO_RESULT_NUMBER_BLOCKS)
+    for key in doc:
+        if key not in classified_top:
+            bad.append(key)
+    classified_answer = _ANSWER_RESULT_KEYS | set(_ANSWER_NO_RESULT_KEYS)
+    for name, ans in doc.get("answers", {}).items():
+        if not isinstance(ans, dict):
+            continue
+        for key in ans:
+            if key not in classified_answer:
+                bad.append(f"answers.{name}.{key}")
+    return bad
+
+
+def test_db199a_every_block_of_the_emitted_document_is_classified(benchmark, evidence_benchmark):
+    """DB-199 (a): over the REAL emitted documents the existing guards use - the benchmark, the
+    evidence benchmark, the made-up interior and corner lots, the lane-off and the no-profile
+    documents - every top-level block and every key inside each answer is classified as a
+    result-number block (walked by _all_result_numbers) or a no-result-number block (named, with a
+    reason). A block in NEITHER set fails here, naming it. This is the guard the first version of
+    this gap test lacked (it only showed a second helper could see an injected number; no guard of
+    the real document used it)."""
+    docs = [benchmark.document, evidence_benchmark.document]
+    _e1, interior = _emit_made_up(
+        lot_area=5355, lot_type="interior",
+        way_inputs=plain_inputs(
+            lot_type=LotType.INTERIOR, area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0),
+            **k20(True),
+        ),
+    )
+    _e2, corner = _emit_made_up(
+        lot_area=4800, lot_type="corner",
+        way_inputs=plain_inputs(
+            lot_type=LotType.CORNER, reach=c2_reach(),
+            area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0),
+            large_lot_threshold_met=False, **k20(True),
+        ),
+    )
+    docs += [interior, corner]
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_benchmark_adapter(mp, env={}).document)  # lane A off (S20)
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_benchmark_adapter(mp, profile_on=False).document)  # no property profile (S11)
+    for doc in docs:
+        assert _unclassified_blocks(doc) == [], _unclassified_blocks(doc)
+
+
+def test_db199a_completeness_guard_catches_a_new_numeric_block(benchmark):
+    """DB-199 (a) state: a NEW block carrying a number - at the top level, and inside an answer - is
+    caught by the completeness guard (it is in neither set), so a withheld result's number can never
+    be added in a new block unseen. MUTATION PROOFS (producer report): removing a name from either
+    set makes the guard fail on the real document; skipping the inside-an-answer keys leaves the
+    inside-an-answer case below unseen."""
+    top_injected = json.loads(json.dumps(benchmark.document))
+    top_injected["unreviewed_block"] = {"value": 100.0}
+    assert "unreviewed_block" in _unclassified_blocks(top_injected)
+
+    inside = json.loads(json.dumps(benchmark.document))
+    name = next(n for n, a in inside["answers"].items() if a.get("status") == "available")
+    inside["answers"][name]["unreviewed_value"] = 100.0
+    assert f"answers.{name}.unreviewed_value" in _unclassified_blocks(inside)
+
+
+@pytest.mark.xfail(
+    strict=True,
+    reason=(
+        "KNOWN DEFECT (not this task's to repair): _apply_geometry clears geometry.envelope only "
+        "when the coverage is withheld, never when a height is, so a withheld height's figure can "
+        "remain in geometry.envelope.tiers[].top_ft. The emitter's repair - make the geometry "
+        "follow every withheld result - must remove this xfail mark."
+    ),
+)
+def test_db199a_withheld_height_figure_leaks_into_geometry_known_defect():
+    """DB-199 (a), KNOWN DEFECT pinned so it cannot be forgotten. A corner lot in a recorded flood
+    zone, through the real engine and decide_result_ways: every height limit is withheld, so no
+    height figure may remain anywhere in geometry. Today the withheld max_building_height (55) still
+    sits at geometry.envelope.tiers[0].top_ft (geometry.floor_plates and setback_lines_per_level are
+    not_available here, so only the envelope leaks). This asserts the CORRECT behaviour and is
+    expected to FAIL until the emitter is repaired (strict xfail: the repair makes it XPASS and
+    forces the mark's removal). This task changes no emitter behaviour."""
+    engine_doc = generate_results(
+        _benchmark_inputs(
+            lot_area_sq_ft=4800.0, lot_type="corner", overlay_present=False,
+            lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=None,
+        ), env=_ON,
+    ).document
+    base = dict(
+        lot_type=LotType.CORNER, reach=c2_reach(),
+        area=LotAreaFigures(4800.0, AreaAgreement.AGREES, 4800.0),
+        large_lot_threshold_met=False, **k20(True),
+    )
+    shown = emit_three_way_document(
+        json.loads(json.dumps(engine_doc)), decide_result_ways(plain_inputs(**base)),
+    )
+    withheld = emit_three_way_document(
+        json.loads(json.dumps(engine_doc)),
+        decide_result_ways(plain_inputs(flood_zone=Recorded.PRESENT, **base)),
+    )
+    height_keys = {
+        "min_base_height", "max_base_height", "max_building_height",
+        "min_base_height_qualifying_affordable_or_senior",
+        "max_base_height_qualifying_affordable_or_senior",
+        "max_building_height_qualifying_affordable_or_senior",
+    }
+    states = _states(withheld["answers"]["permitted_envelope"])
+    assert all(states[k]["way"] == "withheld" for k in height_keys)  # every height withheld here
+
+    # the figures those heights WOULD have, from the shown emit of the same lot
+    would_have = {
+        v["key"]: float(v["value"])
+        for v in shown["answers"]["permitted_envelope"]["values"] if v["key"] in height_keys
+    }
+
+    def _numbers(node, out):
+        if isinstance(node, bool):
+            return
+        if isinstance(node, (int, float)):
+            out.append(float(node))
+        elif isinstance(node, dict):
+            for v in node.values():
+                _numbers(v, out)
+        elif isinstance(node, list):
+            for v in node:
+                _numbers(v, out)
+
+    geom_numbers: list[float] = []
+    _numbers(withheld["geometry"], geom_numbers)
+    leaked = sorted({f for f in would_have.values() if f in geom_numbers})
+    assert leaked == [], f"withheld height figures still in geometry: {leaked}"
+
+
+def _interior_shown_limit_engine_and_ways():
+    """A made-up interior R6B lot whose ways SHOW the standard unit limit (the user states the lot
+    is not in a special density area, as in S19): the engine document and the ways."""
+    engine_doc = generate_results(
+        _benchmark_inputs(
+            lot_area_sq_ft=5355.0, lot_type="interior", overlay_present=False,
+            lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=None,
+        ), env=_ON,
+    ).document
+    ways = decide_result_ways(plain_inputs(
+        lot_type=LotType.INTERIOR, area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0),
+        special_density=DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, **k20(True),
+    ))
+    return engine_doc, ways
+
+
+def test_db199b_shown_standard_limit_with_no_inner_block_is_withheld_with_no_number():
+    """DB-199 (b): when the module SHOWS the standard unit limit but the engine's inner
+    unit_estimate block is not available, the transform carries the limit as a WITHHELD value_state
+    with its two exact texts and NO number - it never invents a figure (ruling B5 b; the fallback
+    in _apply_answer reached by no test before this one). State: the interior lot whose ways show
+    the limit, with the engine document's inner unit_estimate forced not-available before the
+    transform runs. MUTATION PROOFS (producer report): changing the fallback's gap_kind, and
+    reverting the fallback to append a value object with the figure, each turn this test red."""
+    engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    # the figure this limit WOULD have for this lot, read from the UNFORCED engine document (16 for
+    # this made-up lot); the forced document's result numbers are 2, 2.4, 30, 45, 55, 65, 10710,
+    # 12852 - 16 is not among them, so the 'no number' assertion below genuinely bites.
+    unforced = emit_three_way_document(json.loads(json.dumps(engine_doc)), ways)
+    would_have = _value(unforced["answers"]["floor_area_allowance"], "legal_unit_limit_standard")
+    would_have_value = float(would_have["value"])
+    # now the engine's inner unit_estimate is not available for this lot
+    engine_doc["unit_estimate"] = {
+        "status": "not_available", "reason": "x", "reason_kind": "missing_input",
+    }
+    emitted = emit_three_way_document(engine_doc, ways)
+    fa = emitted["answers"]["floor_area_allowance"]
+    state = _states(fa)["legal_unit_limit_standard"]
+    assert state["way"] == "withheld"
+    assert state["reason"] == STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON
+    assert state["reason"] == (
+        "The legal dwelling-unit limit is not known: the figure it would be read "
+        "from is not available for this lot."
+    )
+    assert state["resolved_by"] == STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY
+    assert state["resolved_by"] == "A recorded lot area, or a survey or deed dimensions."
+    assert state["gap_kind"] == "missing_information"  # the kind of gap the fallback writes
+    # no value object for the limit, and the figure it would have (16) is not a result number
+    assert _value(fa, "legal_unit_limit_standard") is None
+    assert would_have_value not in _all_result_numbers(emitted)
+    assert emitted["unit_estimate"]["status"] == "not_available"  # still the reserved block
+
+
+def test_db199c_shown_standard_limit_carries_rule_table_source_with_the_list():
+    """DB-199 (c), the REQUIREMENT: a shown standard unit limit carries its rule-table source when
+    the engine document holds the rule-versions list. State: the interior lot whose ways show the
+    limit, emitted with rule_versions present. MUTATION PROOF (producer report): forcing
+    _rule_version to return None drops the rule-table source and this assertion fails."""
+    engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    assert any(
+        isinstance(r, dict) and r.get("rule_id") == "r6b-dwelling-units"
+        for r in engine_doc["rule_versions"]
+    )
+    emitted = emit_three_way_document(json.loads(json.dumps(engine_doc)), ways)
+    obj = _value(emitted["answers"]["floor_area_allowance"], "legal_unit_limit_standard")
+    assert obj is not None
+    kinds = {s["kind"] for s in obj["sources"]}
+    assert "rule_table" in kinds and "zoning_resolution" in kinds
+    assert any(
+        s["kind"] == "rule_table" and "r6b-dwelling-units" in s["ref"] for s in obj["sources"]
+    )
+
+
+def test_db199c_missing_list_drops_rule_table_source_todays_behaviour_not_required():
+    """DB-199 (c), TODAY'S BEHAVIOUR (NOT a requirement of this task): with the engine document's
+    rule-versions list absent/empty the rule-table source of a shown standard unit limit is dropped
+    silently and only the zoning-resolution source remains. Whether such a limit should instead be
+    withheld is an OPEN question (backlog DB-199 c); this test pins only what the emitter does today
+    and no behaviour of the emitter changes in this task."""
+    engine_doc, ways = _interior_shown_limit_engine_and_ways()
+    engine_doc["rule_versions"] = []
+    emitted = emit_three_way_document(engine_doc, ways)
+    obj = _value(emitted["answers"]["floor_area_allowance"], "legal_unit_limit_standard")
+    assert obj is not None
+    kinds = {s["kind"] for s in obj["sources"]}
+    assert kinds == {"zoning_resolution"}  # the rule_table source is dropped; only ZR remains

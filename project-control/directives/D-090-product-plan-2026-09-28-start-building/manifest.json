@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-08T23:59:27+00:00",
+ "updated_at": "2026-10-09T03:24:19+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -661,10 +661,38 @@
   "D-090-R637",
   "D-090-R638",
   "D-090-R639",
-  "D-090-R640"
+  "D-090-R640",
+  "D-090-R641",
+  "D-090-R642",
+  "D-090-R643",
+  "D-090-R644",
+  "D-090-R645",
+  "D-090-R646",
+  "D-090-R647",
+  "D-090-R648",
+  "D-090-R649",
+  "D-090-R650",
+  "D-090-R651",
+  "D-090-R652",
+  "D-090-R653",
+  "D-090-R654",
+  "D-090-R655",
+  "D-090-R656",
+  "D-090-R657",
+  "D-090-R658",
+  "D-090-R659",
+  "D-090-R660",
+  "D-090-R661",
+  "D-090-R662",
+  "D-090-R663",
+  "D-090-R664",
+  "D-090-R665",
+  "D-090-R666",
+  "D-090-R667",
+  "D-090-R668"
  ],
- "requirements_id_digest_sha256": "ef998e36448ee46aa2ac117357e281d229c1902bcab5244f9122ca2b74b04226",
- "requirements_content_digest_sha256": "9ce7a7dc62d46936c55a36dff907f5f76244b6f352d8104e62c87217152b7f2d",
+ "requirements_id_digest_sha256": "b222a91f4bd88abdbaaebbd481be79f600694a95821f7bd8040cbfe09684697d",
+ "requirements_content_digest_sha256": "c002ccb753fc9b4195849214e898de42b554babc738bb0b169a6a94e037e573a",
  "sources": [
   {
    "file": "source-001.md",
@@ -1176,6 +1204,22 @@
    "recorded_at": "2026-10-08T23:23:07+00:00",
    "content_digest_sha256": "2d34fb08e190e1f229da6d02d2f65dcde901a7d84c835aa50c17872024250d8f",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-065-amendment.md",
+   "kind": "amendment",
+   "sequence": 65,
+   "recorded_at": "2026-10-09T02:49:16+00:00",
+   "content_digest_sha256": "8023450ce17c0177a992e4351ab1921d66129c68aaac388574baff15f9c39b03",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-066-amendment.md",
+   "kind": "amendment",
+   "sequence": 66,
+   "recorded_at": "2026-10-09T03:24:19+00:00",
+   "content_digest_sha256": "ecee4d292f9c69a7f18e60e0734d9cfd589341c8c5bacf0478a6b89764df84d3",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1241,7 +1285,9 @@
   "source-061-amendment.md",
   "source-062-amendment.md",
   "source-063-amendment.md",
-  "source-064-amendment.md"
+  "source-064-amendment.md",
+  "source-065-amendment.md",
+  "source-066-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1285,7 +1331,8 @@
   "M5-T139",
   "M5-T140",
   "M5-T141",
-  "M5-T142"
+  "M5-T142",
+  "M5-T143"
  ],
  "affected_prs": [
   262,
@@ -1914,6 +1961,24 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T142 (First results screen: condition layout + screen-reader announcements (DB-206 a,b)) to R229, R258, R267, R268, R269, R570 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T01:25:49+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T143 (Split three_way_document.py and close DB-199 (a)(b)(c)) to R229, R570 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T02:49:16+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-065 (session 013RaGmC: owner message 127, 2026-10-09: the overall label of the zoning results; M5-T143 first, then the first building shape, the floor schedule and the preliminary apartment estimate with their corrections and checks; completed research reused; the rear yard's reason corrected with the answer withheld; blockers told apart in three kinds; the next screen change; updates in four bullets; no audit, handoff, process redesign or activation) and requirements D-090-R641 to R659, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T03:24:19+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-066 (session 013RaGmC: owner message 128, 2026-10-09: go on as described; the height-data defect repaired and tested before drawings or estimates use those values; then the first building shape, the floor schedule and the apartment estimate by the smallest remaining work; the waiting list replaced at the next normal handoff; updates in four bullets that tell maintenance from new capability; no report now) and requirements D-090-R660 to R668, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
