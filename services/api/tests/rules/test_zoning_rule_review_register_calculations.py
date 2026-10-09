@@ -505,7 +505,12 @@ def test_calculations_history_is_append_only_and_separate():
     assert all(ev["entry_id"] in rule_ids for ev in REGISTER["history"])
     calc_ids = {c["entry_id"] for c in CALCS}
     assert all(ev["entry_id"] in calc_ids for ev in REGISTER["calculations_history"])
-    assert [ev["seq"] for ev in REGISTER["calculations_history"]] == list(range(1, len(CALCS) + 1))
+    # The history is append-only, so it grows past one 'created' event per calculation as entries
+    # are revised (M5-T145 appended a revision-2 event for each entry that followed a new module);
+    # the invariant the checker holds is that the seq is contiguous from 1, not that it equals the
+    # number of calculations.
+    hist = REGISTER["calculations_history"]
+    assert [ev["seq"] for ev in hist] == list(range(1, len(hist) + 1))
 
 
 def test_a_calculation_id_colliding_with_a_rule_id_is_refused():

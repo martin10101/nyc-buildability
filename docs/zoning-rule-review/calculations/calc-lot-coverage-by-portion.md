@@ -8,17 +8,19 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: lot_coverage
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-09)
+- Revision: 2 (last changed 2026-10-09)
 - Combines rule entries: `r6b-lot-coverage`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `10d71edb28fb4c4186425c053b368f04bce81ca1e258ea78ddb4fbf426d52908`
+- Combined code identity: `d13b7093ca2aeab414e54c073b060262f97a4be2749adc8ff47d931eec86214b`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c`)
   - `services/api/app/scenario/three_answers/geometry.py` (`c44b2490469b4b1f9760d540bf0a13d2c847767672379d4a1275b1755d778589`)
+  - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
+  - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
 
 ## Law
 
@@ -32,12 +34,12 @@ The by-portion lot coverage a corner lot takes when part of it lies beyond 100 f
 
 ## Exceptions and limits
 
-- r6b-lot-coverage covers only the flat 80% interior rule; the corner 100% split is not built.
+- r6b-lot-coverage covers only the flat 80% interior rule; the corner 100% by-portion split is now built as pure modules (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) but is connected to no reported result.
 - The corner-lot portion is the part within 100 ft of each intersecting street line (ZR 12-10).
 
 ## How the program reads it
 
-The engine withholds max_lot_coverage for the benchmark lot because the lot reaches beyond the corner-lot portion, so there is no single whole-lot coverage figure; coverage by portion (corner 100% + interior strip 80%) is not built.
+The engine withholds max_lot_coverage for the benchmark lot because the lot reaches beyond the corner-lot portion, so there is no single whole-lot coverage figure. Coverage by portion (corner 100% + interior strip 80%) is now built as two pure modules - services/api/app/spatial/corner_reach_area.py measures the corner-lot and interior-lot area split and services/api/app/scenario/three_answers/lot_coverage_by_portion.py applies the corner 100% and interior 80% ratios (ZR 23-362), both added by M5-T145 - but they are connected to no reported result and nothing imports them, so the program's answer is unchanged (max_lot_coverage still withheld).
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -72,20 +74,20 @@ In the program but no test checks it:
 - (none recorded)
 
 Planned, not built:
-- Coverage by portion (corner-lot portion at 100% plus interior strip at 80%) is not built.
+- The by-portion coverage modules exist (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) but are connected to no reported result; the wiring that would feed them a measured outline and the two street lines and report a footprint is not built.
 - No footprint is drawn because the coverage is withheld.
 
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `10d71edb28fb4c4186425c053b368f04bce81ca1e258ea78ddb4fbf426d52908`
-- Commit tested: `28026c5efbf1ad879b7cb4fbe3f8b36bbd1d153f`
+- Code identity tested: `d13b7093ca2aeab414e54c073b060262f97a4be2749adc8ff47d931eec86214b`
+- Commit tested: `2e6dde3ee15a1d3ff742701c5637bc2f3e1ff0ae`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 42 passed
 - Evidence: [run log](../evidence/calc-lot-coverage-by-portion.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`d29fdf0cc8877fb29d85761e2ac445eef049e70d4439b82fc1a48fc3a92159a0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`eb029a9a077f4eabcb9a795153603cdea55c749a6e0906707eb61253c5a9d5e2`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -99,6 +101,8 @@ Planned, not built:
 
 - `services/api/app/scenario/three_answers/result_ways.py`
 - `services/api/app/scenario/three_answers/geometry.py`
+- `services/api/app/spatial/corner_reach_area.py`
+- `services/api/app/scenario/three_answers/lot_coverage_by_portion.py`
 - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py`
 
 ## Legal requirements and chosen design assumptions
@@ -113,7 +117,7 @@ Planned, not built:
 - The two step-P6 readings differ in the decimals of the measured areas, so the expected side holds both figures and no single figure is recorded.
 - The whole-lot coverage stays not known (real-lot#L5; corner-reach#real-lot-coverage).
 
-- Coverage gap: Lot coverage by portion for a corner lot (corner 100% + interior strip 80%) is not built; r6b-lot-coverage covers only the flat 80% rule.
+- Coverage gap: Lot coverage by portion for a corner lot (corner 100% + interior strip 80%) is built as pure modules (corner_reach_area.py, lot_coverage_by_portion.py; M5-T145) but is connected to no reported result; r6b-lot-coverage covers only the flat 80% rule and the engine still withholds the whole-lot figure.
 
 ## Human review
 
