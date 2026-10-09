@@ -246,7 +246,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 70,
+  "progress_percent": 90,
   "risks": [
     "ONE PR WITH TASK 2 (consumer sweep): the regenerated benchmark document's CONTENT change breaks the web journey/lib tests too, and the panel must render the new blocks; so task 1 and task 2 are reviewed at ONE common head on one branch and merged as ONE pull request - the full CI is green there. Task 1 owns server+contract+register+document+server content tests; task 2 owns apps/web; they share no path.",
     "ADDITIVE, NOT REPLACE (strategy): append contract_version 1.4.0 with optional blocks; every existing block keeps its shape and benchmark content, so the drawings kit, CAD (read the geometry only), the PDF renderer and the web source that read existing blocks do not break. Verify by rerunning the suites; the only server breaks are the journey test and tests/api/test_results_read_api.py (full-document content).",
@@ -257,7 +257,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T10:47:16.741586+00:00",
-  "updated_at": "2026-10-09T21:36:49.720513+00:00",
+  "updated_at": "2026-10-09T23:15:25.751524+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -315,6 +315,13 @@
       "percent": 70,
       "status": "claimed",
       "message": "All parts integrated and checked at 20:32 UTC on the integrated head: server ruff 0; server folders (three_answers, spatial, journey, api, drawings, cad, pdf content, register, reference cases) 3664 passed 8 skipped; register check 0; contract validation 0; .github/scripts/tests 24 passed; bundle check 0; modularity 0; lane coverage 0; website lint 0, typecheck 0, vitest 103 files 2206 tests. The browser test ran green in its builder's worktree; CI runs it on the pushed head. Producers' report assembled from the part reports. Next: push, CI, reviews."
+    },
+    {
+      "at": "2026-10-09T23:15:25.751410+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; corrected after the walkthrough (rulings W14); four delta reviews PASS at f237d0d7; review record and evidence map written"
     }
   ],
   "scope_corrections": [
