@@ -29,6 +29,7 @@ from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_a
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
 from app.scenario.three_answers import (
+    BuildingDefaults,
     ResultsContractError,
     generate_results,
     validate_results_document,
@@ -72,6 +73,7 @@ from app.scenario.three_answers.three_way_scope_lines import (
     _user_choice_statement,
 )
 from app.spatial.corner_reach_area import (
+    STATE_MEASURED,
     STATE_ONE_CONFIRMED_STREET,
     STATE_OUTLINE_REFUSED,
     CornerPortionAreas,
@@ -81,7 +83,7 @@ from app.spatial.site_geometry import (
     lot_outline_from_mappluto,
     street_data_from_pages,
 )
-from app.spatial.site_geometry.labels import unknown_value
+from app.spatial.site_geometry.labels import tax_map_value, unknown_value
 from app.spatial.site_geometry.outline import prepare_outline
 from tests.api.test_study_read_api import _TEST_ONLY_OPTION
 from tests.contracts.test_evaluator_inputs import _benchmark_identity_address
@@ -94,11 +96,13 @@ from tests.spatial._northern_replay import (
 )
 
 from .test_result_ways_lib import (
+    base_inputs,
     benchmark_reach,
     c2_reach,
     c3_reach,
     k20,
     plain_inputs,
+    support_all,
 )
 from .test_three_answers_benchmark import _ON, _benchmark_inputs
 
@@ -1243,6 +1247,7 @@ _NO_RESULT_NUMBER_BLOCKS = {
 _FIRST_OPTION_BLOCKS = {
     "building_alternatives": "worked (shown) alternatives; an unworkable building is absent, no 0",
     "coverage_by_portion": "available carries the footprint (shown); withheld carries NO number",
+    "buildings_not_worked": "not-worked buildings; each entry is reason prose only, NO number",
 }
 
 # Every key INSIDE an answer other than values[] carries no result number:
@@ -1714,3 +1719,115 @@ def test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emit
     assert doc["building_alternatives"] == committed["building_alternatives"]
     assert doc["coverage_by_portion"]["status"] == "withheld"
     assert "footprint_sqft" not in doc["coverage_by_portion"]  # no number on a withheld result
+
+
+# ====================================================================== W14 (walkthrough F1)
+# The document says WHY each building of the step-P6 method was not worked (buildings_not_worked),
+# and the single building_option never states a false reason. Driven THROUGH the emitter here on
+# the benchmark lot (areas disagree, overlay supported) at several floor-to-floor heights; the live
+# route is driven in tests/api/test_results_read_api.py the way the 14 ft test drives it.
+_BANNED_W14 = ("feasible", "complies", "preferred", "optimal")
+_BENCH_RECORDED = 10075.0
+_BENCH_ALLOWANCE = 20150.0
+_LOWEST_RATIO = 0.80  # the lowest coverage ratio that can apply to the benchmark lot (W2)
+
+
+def _benchmark_emit_at(f2f: float) -> dict:
+    """The benchmark lot emitted through the transform at a given floor-to-floor height: the engine
+    doc built with that height (so the scope carries it) and the benchmark decision ways (corner,
+    areas DISAGREE, overlay supported so the floor area is shown). The measured corner-reach areas
+    and the comparison are threaded exactly as result_way_engine_bridge threads them."""
+    engine_doc = generate_results(
+        _benchmark_inputs(building_defaults=BuildingDefaults(floor_to_floor_ft=float(f2f))),
+        env=_ON,
+    ).document
+    ways = decide_result_ways(base_inputs(overlay_support=support_all(True)))
+    corner = CornerPortionAreas(
+        tax_map_value(100.0, "sq ft", "corner"), tax_map_value(9975.0, "sq ft", "interior"),
+        STATE_MEASURED, (),
+    )
+    return emit_three_way_document(
+        engine_doc, ways, corner_areas=corner,
+        lot_area=LotAreaFigures(_BENCH_RECORDED, AreaAgreement.DISAGREES, 10388.0),
+    )
+
+
+def _not_worked(doc: dict, building: str) -> dict:
+    return next(e for e in doc.get("buildings_not_worked", []) if e["building"] == building)
+
+
+def test_w14_s25_sixteen_ft_no_building_worked_both_reasons_given():
+    """S25 (the walkthrough's F1): at a floor-to-floor height of 16 ft NO building is listed.
+    buildings_not_worked names building A (footprint withheld, the two areas disagree, missing
+    information) and building B (ceil(30/16)=2 storeys, each a plan of allowance/2, above the bound
+    = 80 percent of the recorded lot area, work owed). The single building_option points to both
+    lists and no longer says the building is below the minimum base height."""
+    doc = _benchmark_emit_at(16)
+    assert doc["contract_version"] == "1.4.0"
+    assert doc.get("building_alternatives") in (None, [])
+    assert {e["building"] for e in doc["buildings_not_worked"]} == {"A", "B"}
+    a = _not_worked(doc, "A")
+    assert a["gap_kind"] == "missing_information" and a["reason"] == doc["coverage_by_portion"][
+        "reason"
+    ]
+    b = _not_worked(doc, "B")
+    assert b["gap_kind"] == "work_owed"
+    storeys = math.ceil(30.0 / 16.0)  # 2
+    plan = _BENCH_ALLOWANCE / storeys  # 10,075.00
+    bound = _LOWEST_RATIO * _BENCH_RECORDED  # 8,060
+    assert f"{storeys} storeys" in b["reason"]
+    assert f"{plan:,.2f} sq ft" in b["reason"]  # 10,075.00
+    assert f"{bound:,.0f} sq ft" in b["reason"]  # 8,060
+    assert "80 percent of the recorded lot area" in b["reason"]
+    assert "footprint" not in b["reason"]  # the bound is named truly, never "the footprint"
+    bo = doc["answers"]["building_option"]
+    assert bo["status"] == "not_available"
+    assert "buildings_not_worked" in bo["reason"] and "building_alternatives" in bo["reason"]
+    assert "below the minimum base height" not in bo["reason"]  # the false reason is gone
+
+
+def test_w14_s26_twenty_five_ft_building_b_base_passes_maximum():
+    """S26: at a floor-to-floor height of 25 ft building B is not worked because the fewest storeys
+    reaching the minimum base height (ceil(30/25)=2 storeys, 50 ft) stand above the 45 ft maximum
+    base height; building A is not worked (footprint withheld). Nothing feasible."""
+    doc = _benchmark_emit_at(25)
+    assert doc["contract_version"] == "1.4.0"
+    assert doc.get("building_alternatives") in (None, [])
+    b = _not_worked(doc, "B")
+    assert b["gap_kind"] == "work_owed"
+    storeys = math.ceil(30.0 / 25.0)  # 2
+    height = storeys * 25.0  # 50
+    assert f"{storeys} storeys standing {height:g} ft" in b["reason"]
+    assert "maximum base height" in b["reason"]
+    assert _not_worked(doc, "A")["gap_kind"] == "missing_information"
+
+
+def test_w14_s27_building_b_listed_building_a_not_worked_at_10_and_14_ft():
+    """S27: at 10 ft (the committed height) and 14 ft building B is LISTED and building A is in
+    buildings_not_worked only (its footprint is the withheld coverage); each building is in exactly
+    one list, and the regenerated benchmark changes only by building A's not-worked entry."""
+    for f2f in (10, 14):
+        doc = _benchmark_emit_at(f2f)
+        assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
+        assert [e["building"] for e in doc["buildings_not_worked"]] == ["A"]
+        worked = {a["building"] for a in doc["building_alternatives"]}
+        not_worked = {e["building"] for e in doc["buildings_not_worked"]}
+        assert not (worked & not_worked)  # exactly one list
+        a = _not_worked(doc, "A")
+        assert a["gap_kind"] == "missing_information"
+        assert "disagree" in a["reason"] and "footprint" not in a["reason"].split(".")[0]
+    committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))  # 10 ft is the committed height
+    assert [e["building"] for e in committed["buildings_not_worked"]] == ["A"]
+
+
+def test_w14_no_not_worked_reason_claims_feasible_or_preferred():
+    """W14 / requirement 4: no reason in either building list claims the result is feasible,
+    complies, preferred or optimal, at any of the walkthrough heights."""
+    for f2f in (10, 14, 16, 25):
+        doc = _benchmark_emit_at(f2f)
+        for entry in (doc.get("building_alternatives") or []) + (
+            doc.get("buildings_not_worked") or []
+        ):
+            blob = json.dumps(entry).lower()
+            for banned in _BANNED_W14:
+                assert banned not in blob, (f2f, banned, entry["building"])

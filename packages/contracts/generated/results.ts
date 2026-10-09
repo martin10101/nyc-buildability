@@ -76,6 +76,13 @@ export interface BuildingAlternative {
   capacity_estimate: PreliminaryCapacityEstimate;
   fit_note?: NonEmptyString;
 }
+export interface BuildingNotWorked {
+  building: NonEmptyString;
+  label: NonEmptyString;
+  reason: NonEmptyString;
+  gap_kind: GapKind;
+  resolved_by: NonEmptyString;
+}
 export type CoverageByPortion = {
   status: "available";
   corner_ratio: number;
@@ -434,5 +441,6 @@ export interface Results {
   scope?: Scope | null;
   building_alternatives?: null | BuildingAlternative[];
   coverage_by_portion?: null | CoverageByPortion;
+  buildings_not_worked?: null | BuildingNotWorked[];
   _expected_failure?: string;
 }

@@ -30,6 +30,7 @@ and no human verdict is entered (ruling W5, D-090 R544/R556/R570).
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from app.spatial.corner_reach_area import (
@@ -119,6 +120,22 @@ _NOT_CHECKED_BASE = (
 )
 _NOT_CHECKED_REAR_YARD = "The rear yard beyond the corner"
 
+# The two buildings of the step-P6 method, named the same in both lists (ruling W14): a building is
+# in exactly one of building_alternatives and buildings_not_worked.
+_LABEL_A = "Building A: the widest footprint"
+_LABEL_B = "Building B: the fewest storeys reaching the minimum base height"
+
+# What would let a not-worked building be worked (ruling W14). Building B's two method limits are
+# work owed - no property fact is missing; the program simply has not built the fuller massing.
+_B_BOUND_RESOLVED = (
+    "Working a taller building (more storeys, a smaller plan on each) or another building shape "
+    "the step-P6 method does not yet cover."
+)
+_B_MAXBASE_RESOLVED = (
+    "Working the storeys above the base height and their setback, a method the program has not "
+    "built yet."
+)
+
 
 @dataclass(frozen=True)
 class FirstOptionInputs:
@@ -145,19 +162,23 @@ class FirstOptionInputs:
 
 @dataclass(frozen=True)
 class FirstOptionBlocks:
-    """The two assembled blocks. Either may be None (the key is then omitted from the document):
+    """The three assembled blocks. Any may be None (the key is then omitted from the document):
     ``coverage_by_portion`` is None only when the lot has no coverage context at all;
-    ``building_alternatives`` is None when no building can be worked."""
+    ``building_alternatives`` is None when no building can be worked; ``buildings_not_worked`` is
+    None when every building of the method was worked. EACH building of the method is in exactly one
+    of the two building lists (ruling W14): a worked building in ``building_alternatives``, a
+    not-worked building in ``buildings_not_worked`` with the reason it was not worked."""
 
     coverage_by_portion: dict | None
     building_alternatives: tuple[dict, ...] | None
+    buildings_not_worked: tuple[dict, ...] | None = None
 
 
 def assemble_first_option(inp: FirstOptionInputs) -> FirstOptionBlocks:
-    """Assemble ``coverage_by_portion`` and ``building_alternatives`` from the inputs."""
+    """Assemble ``coverage_by_portion``, ``building_alternatives`` and ``buildings_not_worked``."""
     coverage, footprint = _coverage(inp)
-    alternatives = _alternatives(inp, footprint)
-    return FirstOptionBlocks(coverage, alternatives or None)
+    worked, not_worked = _buildings(inp, coverage, footprint)
+    return FirstOptionBlocks(coverage, tuple(worked) or None, tuple(not_worked) or None)
 
 
 # --------------------------------------------------------------------------- coverage by portion
@@ -282,25 +303,130 @@ def _geometry_understood(inp: FirstOptionInputs) -> bool:
     return corner.state == STATE_ONE_CONFIRMED_STREET and inp.lot_type in _INTERIOR_LOT_TYPES
 
 
-def _alternatives(inp: FirstOptionInputs, footprint: float | None) -> tuple[dict, ...]:
-    if not _geometry_understood(inp) or not _numbers_ok(inp):
-        return ()
-    alts: list[dict] = []
-    if footprint is not None:
-        widest = building_a(
-            footprint, inp.allowance_sqft, inp.floor_to_floor_ft, inp.min_base_ft, inp.max_base_ft
+def _buildings(
+    inp: FirstOptionInputs, coverage_block: dict, footprint: float | None,
+) -> tuple[list[dict], list[dict]]:
+    """Each building of the step-P6 method is EITHER worked (a building_alternatives entry) OR not
+    worked (a buildings_not_worked entry with the reason): building A needs the by-portion footprint
+    figure, building B rests on the recorded lot area and the allowance alone (ruling W14). A
+    building is in exactly one list. The assembly authors every not-worked reason (never the
+    calculation module's text): building A's is the withheld coverage it depends on; building B's
+    names the storeys, the plan per storey and the bound truly as 80 percent of the recorded lot
+    area, never 'the footprint'."""
+    worked: list[dict] = []
+    not_worked: list[dict] = []
+    if not _numbers_ok(inp):
+        return worked, not_worked  # the emitter never calls with a missing engine number
+    geometry_ok = _geometry_understood(inp)
+
+    # Building A - the widest footprint (needs the by-portion footprint figure).
+    widest = (
+        building_a(footprint, inp.allowance_sqft, inp.floor_to_floor_ft,
+                   inp.min_base_ft, inp.max_base_ft)
+        if geometry_ok and footprint is not None else None
+    )
+    if widest is not None and widest.status == STATUS_AVAILABLE:
+        worked.append(_alternative(widest, inp, footprint, fit=None))
+    else:
+        not_worked.append(_building_a_not_worked(inp, coverage_block, footprint, geometry_ok))
+
+    # Building B - the fewest storeys reaching the minimum base height (needs only the recorded
+    # area and the allowance, never the outline).
+    bound = (
+        permitted_footprint_by_portion(0.0, inp.recorded_lot_area_sqft).footprint
+        if geometry_ok and inp.recorded_lot_area_sqft is not None else None
+    )
+    fewest = (
+        building_b(bound, inp.allowance_sqft, inp.floor_to_floor_ft,
+                   inp.min_base_ft, inp.max_base_ft)
+        if bound is not None else None
+    )
+    if fewest is not None and fewest.status == STATUS_AVAILABLE and fewest.storeys:
+        plan = fewest.storeys[0].plan_area_sqft
+        worked.append(_alternative(fewest, inp, plan, fit=(bound, plan)))
+    else:
+        not_worked.append(_building_b_not_worked(inp, bound, geometry_ok))
+    return worked, not_worked
+
+
+def _not_worked(building: str, label: str, reason: str, gap_kind: str, resolved_by: str) -> dict:
+    """One buildings_not_worked entry (ruling W14): no number field."""
+    return {
+        "building": building,
+        "label": label,
+        "reason": reason,
+        "gap_kind": gap_kind,
+        "resolved_by": resolved_by,
+    }
+
+
+def _building_a_not_worked(
+    inp: FirstOptionInputs, coverage_block: dict, footprint: float | None, geometry_ok: bool,
+) -> dict:
+    """Building A was not worked. Where its footprint (the lot coverage) is withheld (the areas
+    disagree, the outline is not available, or the split could not be measured) it carries the SAME
+    reason, kind and resolver as the withheld coverage_by_portion it depends on, and no footprint
+    figure (ruling W14 b). Where the footprint is available but the widest stack is not worked by
+    this method (an edge case), it is a limit of the method."""
+    if footprint is None or not geometry_ok:
+        return _not_worked(
+            "A", _LABEL_A, coverage_block["reason"], coverage_block["gap_kind"],
+            coverage_block["resolved_by"],
         )
-        if widest.status == STATUS_AVAILABLE:
-            alts.append(_alternative(widest, inp, footprint, fit=None))
-    if inp.recorded_lot_area_sqft is not None:
-        bound = permitted_footprint_by_portion(0.0, inp.recorded_lot_area_sqft).footprint
-        fewest = building_b(
-            bound, inp.allowance_sqft, inp.floor_to_floor_ft, inp.min_base_ft, inp.max_base_ft
+    storeys = math.floor(inp.allowance_sqft / footprint + 1e-9)
+    if storeys < 1:
+        reason = (
+            f"Not worked: one full-footprint storey of {footprint:,.2f} sq ft already passes the "
+            f"floor-area allowance of {inp.allowance_sqft:,.2f} sq ft, so the widest-footprint "
+            "method works no storey here."
         )
-        if fewest.status == STATUS_AVAILABLE and fewest.storeys:
-            plan = fewest.storeys[0].plan_area_sqft
-            alts.append(_alternative(fewest, inp, plan, fit=(bound, plan)))
-    return tuple(alts)
+    else:
+        height = storeys * inp.floor_to_floor_ft
+        reason = (
+            f"Not worked: the widest footprint stacked to the floor-area allowance would stand "
+            f"{storeys} storeys and {height:g} ft, above the {inp.max_base_ft:g} ft maximum base "
+            "height; storeys above the base height and their setback are not worked by this method."
+        )
+    return _not_worked("A", _LABEL_A, reason, _METHOD_LIMIT, _B_MAXBASE_RESOLVED)
+
+
+def _building_b_not_worked(
+    inp: FirstOptionInputs, bound: float | None, geometry_ok: bool,
+) -> dict:
+    """Building B was not worked. The reason is authored here (never the calculation module's text)
+    and names the storeys, the plan per storey and the bound truly as 80 percent of the recorded lot
+    area, never 'the footprint' (ruling W14 b). Two method limits (work owed): the fewest storeys
+    reaching the minimum base height stand above the maximum base height, or their plan passes the
+    bound."""
+    if not geometry_ok:
+        return _not_worked("B", _LABEL_B, _METHOD_LIMIT_REASON, _METHOD_LIMIT, _METHOD_RESOLVED)
+    if bound is None or inp.recorded_lot_area_sqft is None:
+        return _not_worked(
+            "B", _LABEL_B,
+            "Not worked: the recorded lot area, which bounds this building's plan, is not known "
+            "for this lot.",
+            _MISSING_FACT, _SURVEY_RESOLVED,
+        )
+    storey_count = math.ceil(inp.min_base_ft / inp.floor_to_floor_ft)
+    height = storey_count * inp.floor_to_floor_ft
+    if height > inp.max_base_ft:
+        reason = (
+            f"Not worked: at a floor-to-floor height of {inp.floor_to_floor_ft:g} ft the fewest "
+            f"storeys reaching the {inp.min_base_ft:g} ft minimum base height are {storey_count} "
+            f"storeys standing {height:g} ft, above the {inp.max_base_ft:g} ft maximum base "
+            "height. Storeys above the base height, and their setback, are not worked by this "
+            "method."
+        )
+        return _not_worked("B", _LABEL_B, reason, _METHOD_LIMIT, _B_MAXBASE_RESOLVED)
+    plan = inp.allowance_sqft / storey_count
+    reason = (
+        f"Not worked: at a floor-to-floor height of {inp.floor_to_floor_ft:g} ft the fewest "
+        f"storeys reaching the {inp.min_base_ft:g} ft minimum base height are {storey_count} "
+        f"storeys, each needing a plan of {plan:,.2f} sq ft. That is more than the bound of "
+        f"{bound:,.0f} sq ft - 80 percent of the recorded lot area of "
+        f"{inp.recorded_lot_area_sqft:,.0f} sq ft, the lowest coverage ratio that can apply."
+    )
+    return _not_worked("B", _LABEL_B, reason, _METHOD_LIMIT, _B_BOUND_RESOLVED)
 
 
 def _alternative(
@@ -348,9 +474,7 @@ def _floor_row(storey) -> dict:
 def _label(schedule: FloorSchedule) -> str:
     """A short NAME for the alternative (ruling W11 c): the reasoning that the plan fits goes in
     the OPTIONAL fit_note field, not here."""
-    if schedule.building == "A":
-        return "Building A: the widest footprint"
-    return "Building B: the fewest storeys reaching the minimum base height"
+    return _LABEL_A if schedule.building == "A" else _LABEL_B
 
 
 def _fit_note(inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str | None:

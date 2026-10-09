@@ -392,7 +392,7 @@
     },
     "building_option": {
       "status": "not_available",
-      "reason": "The single building option is not shown; the worked first-building alternatives are listed in building_alternatives (none is preferred or a default).",
+      "reason": "The single building option is not shown. The first-building alternatives worked for this lot are listed in building_alternatives (none is preferred or a default), and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.",
       "reason_kind": "rule_not_implemented"
     }
   },
@@ -812,6 +812,15 @@
         "whole_above_high": 22
       },
       "fit_note": "The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan. This checks the plan against coverage only; where the building sits on the lot and the other items listed as not checked are not worked."
+    }
+  ],
+  "buildings_not_worked": [
+    {
+      "building": "A",
+      "label": "Building A: the widest footprint",
+      "reason": "Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).",
+      "gap_kind": "missing_information",
+      "resolved_by": "A survey or deed dimensions that reconcile the recorded lot area with the tax-map outline."
     }
   ]
 }

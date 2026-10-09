@@ -107,11 +107,15 @@ CONTRACT_VERSION_THREE_WAY = "1.3.0"
 # (building_alternatives and/or coverage_by_portion), M5-T146 task 1.
 CONTRACT_VERSION_FIRST_OPTION = "1.4.0"
 
-# The single building_option answer, on a lot with worked alternatives, stays not_available and
-# points to the list (ruling W3; no number and no substitute, R556/R570).
+# The single building_option answer, wherever the first option is applied, stays not_available and
+# points to BOTH lists (ruling W3/W14; no number and no substitute, R556/R570). It says this ALSO
+# when no building is listed, so it never falls back to the decision module's older reason (which
+# could be false - the walkthrough found "below the minimum base height" shown where the fewest-
+# storeys building actually stands above it).
 BUILDING_OPTION_POINTS_TO_ALTERNATIVES = (
-    "The single building option is not shown; the worked first-building alternatives are listed in "
-    "building_alternatives (none is preferred or a default)."
+    "The single building option is not shown. The first-building alternatives worked for this lot "
+    "are listed in building_alternatives (none is preferred or a default), and any building of the "
+    "method that was not worked is listed, with the reason, in buildings_not_worked."
 )
 
 # When the list carries them, the older single-answer blocks say WHERE the answer is given and
@@ -445,7 +449,8 @@ def _floor_area_conditions(ways: ResultWays) -> tuple | None:
 
 
 def _point_building_option_to_alternatives(doc: dict) -> None:
-    """The single building_option answer stays not_available and points to the list (ruling W3)."""
+    """The single building_option answer stays not_available and points to BOTH lists (ruling
+    W3/W14)."""
     answer = doc["answers"].get("building_option")
     if isinstance(answer, dict) and answer.get("status") == "not_available":
         doc["answers"]["building_option"] = {
@@ -453,6 +458,15 @@ def _point_building_option_to_alternatives(doc: dict) -> None:
             "reason": BUILDING_OPTION_POINTS_TO_ALTERNATIVES,
             "reason_kind": answer.get("reason_kind", "rule_not_implemented"),
         }
+
+
+def _assert_building_lists_disjoint(doc: dict) -> None:
+    """A building of the method is in EXACTLY one of building_alternatives and buildings_not_worked
+    (ruling W14): no building identity appears in both lists."""
+    worked = [a.get("building") for a in doc.get("building_alternatives", []) or []]
+    not_worked = [b.get("building") for b in doc.get("buildings_not_worked", []) or []]
+    both = set(worked) & set(not_worked)
+    assert not both, f"a building is listed as both worked and not worked: {sorted(both)}"
 
 
 def _apply_first_option(
@@ -486,7 +500,14 @@ def _apply_first_option(
     from the floor-area way's conditions exactly as before: a contradicted-record condition means
     the areas disagree; otherwise the footprint stays withheld and the block is not emitted, and
     only building B is listed. Every earlier path, and the committed benchmark document, stays
-    byte-for-byte unchanged. The engine numbers come from the engine document; the way conditions
+    byte-for-byte unchanged apart from the buildings_not_worked list and the building_option pointer
+    (ruling W14).
+
+    buildings_not_worked (ruling W14, the walkthrough correction F1): every building of the method
+    that is NOT in building_alternatives is listed with the reason it was not worked; a building is
+    in exactly one of the two lists. The single building_option points to BOTH lists and claims
+    nothing else, ALSO when no building is listed, so it never shows the decision module's older
+    (possibly false) reason. The engine numbers come from the engine document; the way conditions
     are reused from the floor-area answer so nothing is invented."""
     conditions = _floor_area_conditions(ways)
     if conditions is None:
@@ -563,10 +584,21 @@ def _apply_first_option(
         # Building B is worked from the recorded area + the allowance - not the outline - so it is
         # listed whenever the allowance is shown, on every path (with or without the outline).
         doc["building_alternatives"] = list(blocks.building_alternatives)
-        _point_building_option_to_alternatives(doc)
         _reconcile_list_dependents(doc)
         changed = True
+    if blocks.buildings_not_worked:
+        # Every building of the method that was NOT worked, with the reason (ruling W14): so the
+        # document always says why a building is not shown - the walkthrough's F1 state (no building
+        # at all) now carries both buildings' reasons instead of a silent gap.
+        doc["buildings_not_worked"] = list(blocks.buildings_not_worked)
+        changed = True
+    # A building is in EXACTLY one of the two lists (ruling W14): assert disjoint identities.
+    _assert_building_lists_disjoint(doc)
     if changed:
+        # Wherever the first option is applied the single building_option points to BOTH lists and
+        # claims nothing else - ALSO when no building is listed - so its reason is never the
+        # decision module's older (possibly false) one (ruling W14 c).
+        _point_building_option_to_alternatives(doc)
         doc["contract_version"] = CONTRACT_VERSION_FIRST_OPTION
 
 

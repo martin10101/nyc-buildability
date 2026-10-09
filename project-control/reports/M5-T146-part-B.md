@@ -419,4 +419,109 @@ Checks (fifth round, from `services/api` unless noted; the lanes venv), each wit
 - `.github/scripts/tests` NOT run (the sandbox refuses the `.github` path); the contract schemas and
   fixtures are unchanged this round and validate_contracts is CI's job.
 
+## Walkthrough correction (sixth round: W14, F1 - the document says why each building was not worked)
+
+Producer: rules-engineer (an AI agent). Base (reset HEAD): `b6c28874084251febe8bf6d87a7fbdc0eb918d47`.
+
+WHY: the screen walkthrough failed (F1) at a floor-to-floor height of 16 ft. No building was listed,
+the document said nothing about why, and the older `building_option` block still said the building
+"is below the minimum base height" - false there (the fewest-storeys building stands 32 ft, above
+the 30 ft minimum). The fix: the document now says, for EACH building of the step-P6 method that is
+not listed in `building_alternatives`, why it was not worked, and the single `building_option` never
+states a false reason.
+
+CONTRACT (ruling W14-1): a new OPTIONAL additive top-level list `buildings_not_worked` extends
+contract 1.4.0 (not a bump), bound to 1.4.0 the way `building_alternatives` is (the reverse
+version-binding allOf, with the new field added to its null-check branch). Each entry is
+`{building, label, reason, gap_kind, resolved_by}`, `additionalProperties false`, no number field;
+`gap_kind` reuses the existing `#/$defs/gap_kind` vocabulary. `results.ts` regenerated with the
+contract generator; the bundled server copy synced (`--check` exits 0). Invalid fixtures added
+(all three correctly rejected): an entry with a number field (`buildings_not_worked_entry_with_number`),
+an entry without a reason (`..._entry_without_reason`), and the list in a 1.3.0 document
+(`..._contract_1_3_0`).
+
+SERVER (ruling W14-2/3): the assembly (`first_option_results.py`) now returns BOTH lists; each
+building of the method is in exactly ONE list (asserted in the emitter by
+`_assert_building_lists_disjoint`). The assembly authors every not-worked reason (never the
+calculation module's text):
+- building A, footprint withheld or outline missing -> the SAME reason, kind and resolver as the
+  withheld `coverage_by_portion` it depends on; no footprint figure. Kind `missing_information`: the
+  footprint is the lot coverage, and only this property's evidence (a survey/deed reconciling the
+  recorded area with the outline) can settle it.
+- building B, plan above the bound -> "N storeys, each needing a plan of X sq ft; more than the bound
+  of Y sq ft - 80 percent of the recorded lot area of Z sq ft, the lowest coverage ratio that can
+  apply." Never "the footprint". Kind `work_owed`: no property fact is missing; the fuller massing
+  (more storeys / a smaller plan) is not built.
+- building B, the fewest storeys reaching the minimum base height stand above the maximum base
+  height -> "N storeys standing H ft, above the M ft maximum base height." Kind `work_owed`: storeys
+  above the base and their setback are not built yet.
+
+The single `building_option` now points to BOTH lists wherever the first option is applied, ALSO when
+no building is listed (`_point_building_option_to_alternatives` moved into the `if changed` tail), so
+the decision module's older text never reaches a document where it is false. The decision module's
+`option_withheld` text in `result_ways.py` was LEFT unchanged (not edited): it reaches a document
+ONLY where the first option is not applied (no shown floor-area allowance, e.g. the engine lane off),
+where the building option genuinely is not worked and the text makes no false base-height claim about
+a worked building; wherever the first option is applied the pointer replaces it. `unit_estimate` and
+`floor_stack` follow ruling W11 (b): "given in building_alternatives" when the list carries them,
+their honest "not known / follows the withheld building option" texts when no building is listed
+(`_reconcile_list_dependents` runs only with a non-empty list).
+
+WHAT THE DOCUMENT GIVES, by height (benchmark lot, areas disagree):
+- 16 ft (S25): no building listed; `buildings_not_worked` = [A (missing_information), B (work_owed:
+  2 storeys, plan 10,075.00 sq ft > bound 8,060 sq ft = 80% of 10,075)].
+- 25 ft (S26): no building listed; B (work_owed: 2 storeys 50 ft > 45 ft max base), A
+  (missing_information). The route imposes no upper limit on the entered height, so 25 ft is driven
+  directly.
+- 10 ft and 14 ft (S27): B listed; `buildings_not_worked` = [A (missing_information)] only.
+
+TESTS through the emitter (`test_three_answers_three_way_emit.py`: `test_w14_s25/s26/s27` and a
+no-banned-word test) AND through the live route (`test_results_read_api.py`:
+`test_w14_s25/s26/s27_live_route_*`, driven the way the 14 ft test drives the entered height). Every
+expected figure is parsed from `step-p6-worked.json` or worked in the test from the allowance and the
+recorded area (e.g. `math.ceil(30/16)`), never copied from a program run.
+
+BENCHMARK DIFF (regenerated once): only two things - `building_option.reason` changed to the two-list
+pointer wording, and a `buildings_not_worked` list with building A's entry
+(missing_information, the areas-disagree reason, survey resolver) was added. The geometry block is
+unchanged, so the drawing (`.svg`) and CAD (`.dxf`) snapshots are byte-identical (no snapshot file
+changed; the drawings/CAD suites pass).
+
+WEBSITE readers of the regenerated document (NOT touched; another builder owns `apps/`):
+`apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx`,
+`apps/web/src/components/architect/__tests__/results-panel.test.tsx`,
+`apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx`,
+`apps/web/src/lib/architect/__tests__/three-answers.test.ts`,
+`apps/web/src/lib/architect/__tests__/first-building-options.test.ts`,
+`apps/web/src/lib/__tests__/results-api.test.ts`,
+`apps/web/e2e/results.flag-on.spec.ts`,
+`apps/web/src/lib/__tests__/results-contract-checks.test.ts`.
+
+MUTATION PROOFS (scratch script OUTSIDE the repository, `scratchpad/mutate_w14.py`, one at a time):
+- the older false reason restored at 16 ft (drop the building_option pointer in the `if changed`
+  tail) -> building_option again says "below the minimum base height"; caught by
+  `test_w14_s25_sixteen_ft_no_building_worked_both_reasons_given`.
+- building A's not-worked entry dropped -> `buildings_not_worked` no longer names A; caught by
+  `test_w14_s27_building_b_listed_building_a_not_worked_at_10_and_14_ft`.
+- a building put in both lists -> the server guard `_assert_building_lists_disjoint` raises; exercised
+  by every W14 emit test.
+
+CHECKS (sixth round), each with its DIRECT exit code. From `services/api` (the lanes venv):
+- `python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/spatial tests/journey
+  tests/api tests/drawings tests/cad tests/documents/test_pdf_content.py` -> 3475 passed, 8 skipped
+  (exit 0; +7 over the previous round - 4 emit W14 tests and 3 live-route W14 tests).
+From the root:
+- `python3 services/api/scripts/sync_contract_schemas.py --check` -> byte-identical (exit 0)
+- `python .github/scripts/validate_contracts.py` -> Checked 23 schema file(s); 0 failure(s); the
+  three new invalid fixtures correctly rejected (exit 0)
+- `python -m pytest -q -p no:cacheprovider .github/scripts/tests` -> 24 passed (exit 0)
+- `python3 tools/modularity_check.py --check` -> exit 0 (no warning on a file I touched;
+  first_option_results.py 525, three_way_document.py 754 raw lines, both below the SLOC warn
+  threshold; results.schema.json is data, not handwritten source)
+- `python3 scripts/lanes/check_lane_paths.py --coverage` -> LANE COVERAGE PASS: 9738 files (exit 0)
+- `render_review_register.py --check` -> FAILED, 2 issues (the register records a sha256 of
+  three_way_document.py, which changed): EXPECTED; the register is resynced by its own builder after
+  me. I touched no register file.
+
 END-OF-REPORT

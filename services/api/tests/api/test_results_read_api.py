@@ -387,6 +387,70 @@ def test_m5t146_live_route_lists_building_b_without_the_tax_map_outline(
     )
 
 
+# ======================================================= W14 (walkthrough F1) live route
+def test_w14_s25_live_route_sixteen_ft_no_building_both_reasons(enabled, monkeypatch) -> None:
+    """S25 through the LIVE ROUTE (the way the 14 ft test drives the entered height): at 16 ft no
+    building is listed, and buildings_not_worked names building A (footprint withheld, missing
+    information) and building B (two storeys above the lowest-coverage bound, work owed). The single
+    building_option points to both lists and never says 'below the minimum base height'."""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(benchmark_provider()),
+        {"housing_program": "standard_residence", "floor_to_floor_ft": 16},
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    assert doc["contract_version"] == "1.4.0"
+    assert doc.get("building_alternatives") in (None, [])
+    not_worked = {e["building"]: e for e in doc["buildings_not_worked"]}
+    assert set(not_worked) == {"A", "B"}
+    assert not_worked["A"]["gap_kind"] == "missing_information"
+    assert not_worked["B"]["gap_kind"] == "work_owed"
+    assert "80 percent of the recorded lot area" in not_worked["B"]["reason"]
+    assert "footprint" not in not_worked["B"]["reason"]
+    bo = doc["answers"]["building_option"]
+    assert "buildings_not_worked" in bo["reason"] and "building_alternatives" in bo["reason"]
+    assert "below the minimum base height" not in bo["reason"]
+
+
+def test_w14_s26_live_route_twenty_five_ft_building_b_base_passes_max(enabled, monkeypatch) -> None:
+    """S26 through the LIVE ROUTE: at 25 ft building B is not worked because the fewest storeys
+    reaching the minimum base height stand above the maximum base height. (The route imposes no
+    upper limit on the entered floor-to-floor height, so 25 ft is accepted directly.)"""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(benchmark_provider()),
+        {"housing_program": "standard_residence", "floor_to_floor_ft": 25},
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    assert doc.get("building_alternatives") in (None, [])
+    b = next(e for e in doc["buildings_not_worked"] if e["building"] == "B")
+    assert b["gap_kind"] == "work_owed"
+    assert "maximum base height" in b["reason"]
+    assert "feasible" not in json.dumps(doc["buildings_not_worked"]).lower()
+
+
+def test_w14_s27_live_route_fourteen_ft_building_b_listed_building_a_not_worked(
+    enabled, monkeypatch,
+) -> None:
+    """S27 through the LIVE ROUTE: at 14 ft building B is listed and building A is in
+    buildings_not_worked only; each building is in exactly one list."""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(benchmark_provider()),
+        {"housing_program": "standard_residence", "floor_to_floor_ft": 14},
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
+    assert [e["building"] for e in doc["buildings_not_worked"]] == ["A"]
+    worked = {a["building"] for a in doc["building_alternatives"]}
+    not_worked = {e["building"] for e in doc["buildings_not_worked"]}
+    assert not (worked & not_worked)  # a building is in exactly one list
+    assert doc["buildings_not_worked"][0]["gap_kind"] == "missing_information"
+
+
 # =========================================================================== T9
 def test_t9_rate_limit_before_any_other_work(enabled, monkeypatch) -> None:
     """T9: more calls than the per-caller limit -> a typed 429 BEFORE any other work. The limiter

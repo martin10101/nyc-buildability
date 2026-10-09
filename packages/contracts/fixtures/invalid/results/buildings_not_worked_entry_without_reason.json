@@ -1,0 +1,100 @@
+{
+  "_expected_failure": "A buildings_not_worked entry has no 'reason': every not-worked building must say why it was not worked (ruling W14). The building_not_worked def requires 'reason', so this is rejected.",
+  "contract_version": "1.4.0",
+  "results_id": "test-fixture-invalid-results-146-w14-noreason",
+  "study_id": "test-fixture-synthetic-study-146",
+  "option_id": "opt-1",
+  "revision": 1,
+  "computed_at": "2026-10-09T10:31:00Z",
+  "out_of_date": false,
+  "out_of_date_reason": null,
+  "depends_on_fact_ids": [
+    "fact-lot-area"
+  ],
+  "lot_selection_statement": "Based on the lots you selected — the app does not verify the zoning lot",
+  "with_approvals_label": null,
+  "answers": {
+    "floor_area_allowance": {
+      "status": "not_available",
+      "reason": "Floor-area allowance not available for this fixture.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "permitted_envelope": {
+      "status": "not_available",
+      "reason": "Envelope not available for this fixture.",
+      "reason_kind": "rule_not_implemented"
+    },
+    "building_option": {
+      "status": "not_available",
+      "reason": "The single building option is not shown; the worked first-building alternatives are listed in building_alternatives, and any building not worked is listed in buildings_not_worked.",
+      "reason_kind": "rule_not_implemented"
+    }
+  },
+  "remaining_floor_area": {
+    "status": "not_available",
+    "reason": "Needs verified zoning-lot boundaries and existing zoning floor area.",
+    "reason_kind": "missing_input"
+  },
+  "shortfall": {
+    "status": "not_available",
+    "reason": "No single building option to compare with the allowance.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "addon_gains": [],
+  "best_combination": {
+    "status": "not_available",
+    "reason": "Add-ons for this district are not built yet.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "completeness_line": {
+    "text": "Not yet covered: the single building option, add-ons",
+    "not_yet_covered": [
+      "The single building option",
+      "Add-ons"
+    ]
+  },
+  "status_strip": [
+    {
+      "text": "Preliminary zoning results"
+    }
+  ],
+  "notices_count": 0,
+  "floor_by_floor": [],
+  "floor_stack": {
+    "status": "not_available",
+    "reason": "Floor stack not available for this fixture.",
+    "reason_kind": "rule_not_implemented"
+  },
+  "existing_building": {
+    "status": "no_existing_building"
+  },
+  "unit_estimate": {
+    "status": "not_available",
+    "reason": "The legal dwelling-unit limit is not shown; it is not a substitute for the preliminary capacity estimate.",
+    "reason_kind": "missing_input"
+  },
+  "geometry": {
+    "status": "not_available",
+    "reason": "No floor plates or footprint are drawn: no placement is worked for the listed alternatives.",
+    "reason_kind": "geometry_unsupported"
+  },
+  "rule_versions": [
+    {
+      "rule_id": "test-fixture-synthetic-r6b-coverage",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
+    }
+  ],
+  "draft": true,
+  "street_width_case": null,
+  "building_alternatives": null,
+  "coverage_by_portion": null,
+  "buildings_not_worked": [
+    {
+      "building": "B",
+      "label": "Building B: the fewest storeys reaching the minimum base height",
+      "gap_kind": "work_owed",
+      "resolved_by": "Working the storeys above the base height and their setback, a method the program has not built yet."
+    }
+  ]
+}
