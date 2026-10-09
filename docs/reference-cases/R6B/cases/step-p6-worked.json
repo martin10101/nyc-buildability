@@ -2156,7 +2156,7 @@
     },
     {
       "row_id": "made-up-unit-limit",
-      "quantity": "The made-up lot: the legal ceiling on dwelling units (kept apart from the estimate)",
+      "quantity": "The made-up lot: the legal ceiling on dwelling units (the current answer, superseding the step-P4 conditional unit count, kept apart from the estimate)",
       "facts_used": [
         {
           "name": "Maximum floor area",
@@ -2167,6 +2167,11 @@
           "name": "Dwelling-unit factor",
           "value": "680 (settled)",
           "source": "cases/step-p4-worked.json row dwelling-unit-factors (settled sheet)"
+        },
+        {
+          "name": "Earlier conditional count",
+          "value": "29 dwelling units, but only conditionally",
+          "source": "cases/step-p4-worked.json row made-up-100x100-units (now superseded by this row)"
         }
       ],
       "citations": [
@@ -2201,7 +2206,7 @@
           "table_assertion": null
         }
       ],
-      "why_applies": "ZR 23-52 divides the maximum residential floor area by the dwelling-unit factor (680 for standard residences), and a fraction of three-quarters or more counts as one dwelling unit. For the made-up lot, 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29. This is a legal ceiling, separate from the preliminary estimate.",
+      "why_applies": "ZR 23-52 divides the maximum residential floor area by the dwelling-unit factor (680 for standard residences), and a fraction of three-quarters or more counts as one dwelling unit. For the made-up lot, 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29. This is the current answer to the made-up lot's dwelling-unit ceiling and supersedes the step-P4 row made-up-100x100-units; it is a legal ceiling, separate from the preliminary estimate.",
       "arithmetic": [
         {
           "label": "legal dwelling-unit ceiling (maximum floor area / factor)",
@@ -2222,16 +2227,16 @@
       ],
       "expected": {
         "kind": "value",
-        "value": 29,
-        "unit": "dwelling units",
+        "value": "29 dwelling units (ZR 23-52: 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29), subject to one remaining condition. The step-P4 row made-up-100x100-units held 29 'but only conditionally' and attached two conditions, which this row updates: (first) the condition both step-P4 readings attached - that the definition of floor area ratio (floor area = ratio x lot area) was outside their folder - has since been settled by step-p5-worked#floor-area-ratio-made-up-100x100 (2.00 x 10,000 = 20,000 sq ft), which both step-P6 readers were given as settled, so the 20,000 sq ft floor area no longer rests on an assumption; (second) the condition reading 10 attached - 'that the building is one containing multiple dwelling residences, a term the readers did not have' (as the step-P4 row words it) - was not read by reading 13 or reading 14 (the multiple-dwelling-residence definition was in the step-P6 folder but neither reading read it), so it was not examined and still stands as a condition of the 29. The 29 therefore holds subject to the building being a multiple dwelling residence.",
+        "unit": "",
         "reason": ""
       },
-      "source_reference": "return-independent-hand-calculation-13.md Q6b (made-up 20,000 / 680 = 29.41 -> 29) and return-independent-hand-calculation-14.md Q6b (same). Both readings reach this on the same basis (both readings: return-independent-hand-calculation-13.md and return-independent-hand-calculation-14.md).",
-      "does_not_establish": "The legal ceiling on dwelling units for the made-up lot is 29 (ZR 23-52: 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29); both readings worked it from the settled factor and the settled made-up floor area. It is the legal ceiling, kept apart from the preliminary apartment estimate; it says nothing complies. The made-up lot describes no real property; the example checks a method."
+      "source_reference": "return-independent-hand-calculation-13.md Q6b (made-up 20,000 / 680 = 29.41 -> 29) and return-independent-hand-calculation-14.md Q6b (same); the step-P4 row made-up-100x100-units and its reading-10 second condition; the settled step-p5-worked#floor-area-ratio-made-up-100x100. Both readings reach this on the same basis (both readings: return-independent-hand-calculation-13.md and return-independent-hand-calculation-14.md).",
+      "does_not_establish": "It gives the current legal dwelling-unit ceiling for the made-up lot (29, subject to the remaining multiple-dwelling-residence condition), superseding the step-P4 row made-up-100x100-units; it is kept apart from the preliminary estimate and says nothing complies. The made-up lot describes no real property; the example checks a method."
     },
     {
       "row_id": "real-unit-limit",
-      "quantity": "The real lot: the legal ceiling on dwelling units (the settled answer, kept apart from the estimate)",
+      "quantity": "The real lot: the legal dwelling-unit ceiling, which RESTATES cases/real-lot.json row L6 (the current answer, kept unchanged) for step 5 of the six-step comparison",
       "facts_used": [
         {
           "name": "Maximum residential floor area",
@@ -2240,8 +2245,8 @@
         },
         {
           "name": "Dwelling-unit ceiling",
-          "value": "29 (settled, given to the readers as settled)",
-          "source": "cases/real-lot.json row L6 (settled sheet)"
+          "value": "29 (the current answer, restated from row L6)",
+          "source": "cases/real-lot.json row L6 (the current answer, kept unchanged)"
         },
         {
           "name": "Dwelling-unit factor",
@@ -2281,7 +2286,7 @@
           "table_assertion": null
         }
       ],
-      "why_applies": "ZR 23-52 divides the maximum residential floor area by the factor 680; for the real lot 20,150 / 680 = 29.63, the fraction 0.63 below three-quarters, so 29. The readers took this as the settled answer held by cases/real-lot.json row L6 and checked the arithmetic; this row restates the settled ceiling for the six-step comparison and does not supersede or compete with row L6.",
+      "why_applies": "This row restates the real lot's legal dwelling-unit ceiling for step 5 of the six-step comparison; it does not read it afresh. The current answer stays at cases/real-lot.json row L6, which other tasks read; its figure (29) is restated here mechanically, and a test pins this figure to the live value of row L6 so the two can never disagree. ZR 23-52 divides the maximum residential floor area by the factor 680 (20,150 / 680 = 29.63; the fraction 0.63 is below three-quarters, so 29).",
       "arithmetic": [
         {
           "label": "legal dwelling-unit ceiling (maximum floor area / factor)",
@@ -2307,7 +2312,7 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-13.md Q6b (real lot = 29; 20,150 / 680 = 29.63 -> 29; settled at real-lot#L6) and return-independent-hand-calculation-14.md Q6b (same; settled at real-lot#L6). Both readings reach this on the same basis (both readings: return-independent-hand-calculation-13.md and return-independent-hand-calculation-14.md).",
-      "does_not_establish": "The legal ceiling on dwelling units for the real lot is 29 - the settled answer held by cases/real-lot.json row L6, which the readers were given as settled and checked (ZR 23-52: 20,150 / 680 = 29.63; the fraction 0.63 is below three-quarters, so 29). This row restates that settled ceiling, separate from the preliminary estimate, for the six-step comparison, and does not supersede or compete with row L6, where the current answer to the real lot's dwelling-unit ceiling stays. It says nothing complies."
+      "does_not_establish": "It restates the current answer held by cases/real-lot.json row L6 (which remains the current answer and is kept unchanged, because other tasks read it) for step 5 of the comparison; its figure is pinned by a test to the live value of row L6 so the two can never disagree. It is kept apart from the estimate and says nothing complies."
     },
     {
       "row_id": "both-readers-did-not-have",

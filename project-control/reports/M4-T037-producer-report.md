@@ -19,6 +19,7 @@ New:
 
 Changed:
 - `docs/reference-cases/R6B/cases/real-lot.json` (row L15 superseded + a dated change-log entry) and its rendered `real-lot.md`
+- (correction commit) `docs/reference-cases/R6B/cases/step-p4-worked.json` (row made-up-100x100-units superseded + a dated change-log entry) and its rendered `step-p4-worked.md`; `test_r6b_reference_cases_step_p4.py` (reads the now-superseded row with allow_superseded=True)
 - `docs/reference-cases/R6B/README.md` (the case list, the provenance list, a step-P6 "had / did not have" section)
 - `services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py` (CASE_IDS, REQUIRED_BASE_IDS, OPTIONAL_ROW_KEYS += `numbers_block`)
 - `services/api/tests/rules/reference_cases/r6b_reference_cases_check.py` (wired in step-P6 reading, not-known, block-and-word guards; 569 lines, under 600)
@@ -39,7 +40,8 @@ Group 4, real lot (7): `real-lot-coverage-by-portion` (NOT KNOWN), `real-lot-rec
 (v), `real-building-a` (v, building block, footprint held as both figures), `real-building-b` (v,
 building block).
 Group 5, estimate + legal ceiling (6): `made-up-estimate-a`, `made-up-estimate-b`, `real-estimate-a`,
-`real-estimate-b` (each v, estimate block), `made-up-unit-limit` (v 29), `real-unit-limit` (v 29).
+`real-estimate-b` (each v, estimate block), `made-up-unit-limit` (v, conditional 29, supersedes the
+step-P4 count), `real-unit-limit` (v 29, pinned to real-lot#L6).
 Group 6, what is missing / closing (4, all value): `both-readers-did-not-have`, `real-lot-missing-facts`,
 `settled-answer-contradicted` (both readings: NONE), `six-steps-closing`.
 
@@ -49,15 +51,37 @@ Group 6, what is missing / closing (4, all value): `both-readers-did-not-have`, 
   `superseded_by = [step-p6-worked#real-building-a, step-p6-worked#real-building-b]` + a dated change-log
   entry. Reason: a corrected reading - one current answer per question; the step-P6 case now holds the
   independent worked example L15's not-known rested on being absent.
-- No other existing row's expected value or kind changed in any case file. `real-lot#L5`,
-  `corner-reach#real-lot-coverage`, the four `corner-reach` reach rows, and every step-P1..P5 row are
-  byte-unchanged (reach rows verified by a pinned content digest `e708d886...`).
+- `step-p4-worked#made-up-100x100-units` (correction commit): kind/value UNCHANGED (value "29 ...
+  conditionally"). ADDED `superseded_by = [step-p6-worked#made-up-unit-limit]` + a dated change-log
+  entry. Reason: a corrected reading - one current answer per question; the new made-up-unit-limit row
+  gives the current answer for the same made-up 100x100 lot. No guard forbids moving it (it is not in
+  step_p4.MUST_STAY_NOT_KNOWN or any pinned set).
+- `step-p6-worked#made-up-unit-limit` (correction commit): changed from an unconditional value `29` to a
+  conditional value that (a) states 29 with its arithmetic (20,000/680 -> 29), (b) says the step-P4
+  row's first condition (the floor-area-ratio definition) is now settled by
+  step-p5-worked#floor-area-ratio-made-up-100x100 (both step-P6 readers were given it as settled), and
+  (c) says the step-P4 row's second condition - reading 10's "multiple dwelling residences" term - was
+  "not read by reading 13 / 14" (the definition was in the step-P6 folder but neither reading read it)
+  and still stands, so the 29 holds subject to the building being a multiple dwelling residence.
+- `step-p6-worked#real-unit-limit` (correction commit): value stays `29`; its quantity and
+  does-not-establish now say plainly it RESTATES `real-lot#L6` (which stays current, NOT superseded, for
+  other tasks) for step 5 of the six-step comparison, and a test pins its figure to the live value of L6.
+- No other existing row's expected value or kind changed. `real-lot#L5`, `corner-reach#real-lot-coverage`,
+  the four `corner-reach` reach rows, and every other step-P1..P5 row are byte-unchanged (reach rows
+  verified by a pinned content digest `e708d886...`).
 
 ## Point-6 candidates (one current answer per question) - decisions
 
 - `real-lot#L15` (building option, floor plates, floors): SUPERSEDED by step-p6-worked#real-building-a
   and #real-building-b. The step-P6 case gives the current (clearly conditional) worked example; L15
   stays not_known as the historical record.
+- `step-p4-worked#made-up-100x100-units` (made-up lot dwelling-unit count): SUPERSEDED by
+  step-p6-worked#made-up-unit-limit (correction commit). The two rows gave 29 for the same made-up lot,
+  one conditional and one unconditional; the new row carries the current, still-conditional 29 (second
+  condition unresolved) and the older row is kept as the historical record.
+- `step-p6-worked#real-unit-limit` vs `real-lot#L6` (real lot dwelling-unit ceiling): L6 KEPT current,
+  NOT superseded (other tasks read it). real-unit-limit is made a mechanical restatement of L6 (value =
+  L6's live value, pinned by a test), so the two can never disagree.
 - `real-lot#L5` (maximum lot coverage): KEPT not_known, NOT superseded. The two readings read the
   coverage by portion but measured different corner-portion and interior-strip areas (9,997.60 / 390.39
   vs 9,997.46 / 390.52), so they do not work the two portions to the same areas; the whole-lot figure
@@ -177,7 +201,9 @@ Settled answer a reader found a text to contradict: NONE (both readings). Record
 | Estimate four figures | follow from the floor area (recomputed) | test_estimate_four_figures_follow_from_the_floor_area |
 | Real estimate A (floor area differs) | both floor areas give the same two-decimal quotients | test_real_estimate_a_both_floor_areas_give_the_same_two_decimal_quotients |
 | A changed estimate figure | its test fails | test_a_changed_estimate_figure_makes_its_test_fail |
-| Legal unit ceilings | 29 each; recompute; real restates settled L6 | test_the_legal_unit_ceiling_rows_are_29_and_recompute |
+| Made-up legal ceiling | current conditional 29; supersedes the step-P4 count | test_made_up_unit_ceiling_is_the_current_conditional_29_superseding_step_p4 |
+| Real legal ceiling | 29, pinned to the live value of real-lot#L6; L6 stays current | test_real_unit_ceiling_is_pinned_to_the_live_value_of_real_lot_L6 |
+| Real ceiling figure that differs from L6 | fails the pin | test_a_real_unit_figure_that_differs_from_L6_fails_the_pin |
 | Building row without point-5 words | refused | test_a_building_row_without_the_point5_words_is_refused |
 | Estimate row calling figures validated | refused | test_an_estimate_row_calling_its_figures_validated_is_refused |
 | Estimate row share lacks 'preliminary assumption' | refused | test_an_estimate_row_whose_share_lacks_preliminary_assumption_is_refused |
@@ -186,13 +212,13 @@ Settled answer a reader found a text to contradict: NONE (both readings). Record
 | L15 | superseded; targets current | test_l15_is_superseded_by_the_step_p6_building_rows_and_targets_are_current |
 | Reach rows | byte-stable (pinned digest) | test_the_reach_rows_are_byte_stable |
 
-## Checks (each run one at a time; direct exit code captured with echo $?)
+## Checks (each run one at a time; direct exit code captured with echo $?; re-run after the correction commit)
 
 - a. `python -m ruff check .` (from services/api): **exit 0** ("All checks passed!").
-- b. `python -m pytest -q -p no:cacheprovider tests/rules/reference_cases tests/spatial/test_lot_reach.py tests/scenario/three_answers/test_result_way_bridge_overlay.py`: **exit 0** - 116 passed.
+- b. `python -m pytest -q -p no:cacheprovider tests/rules/reference_cases tests/spatial/test_lot_reach.py tests/scenario/three_answers/test_result_way_bridge_overlay.py`: **exit 0** - 118 passed.
 - c. `python tests/rules/reference_cases/r6b_reference_cases_render.py --check`: **exit 0** ("reference-case check PASSED (no issues)").
-- d. `python3 tools/modularity_check.py --check` (repo root): **exit 0** (735 files; failures 0; 30 pre-existing warnings, none on the new files). `python3 scripts/lanes/check_lane_paths.py --coverage`: **exit 0** ("LANE COVERAGE PASS: 9634 file(s)").
-- e. Mutation proofs in a temporary copy OUTSIDE the repository (`/tmp/m4t037-mut-*/`), one per pinned branch: **exit 0** - all 5 PASS and the committed file still validates clean: (1) a changed quoted law phrase makes the citation check fail and names the row; (2) a row given a value where the two readings differ is refused; (3) a changed storey floor area makes the arithmetic fail; (4) a changed estimate figure makes its test fail; (5) the point-5 words removed from a building row make the test fail.
+- d. `python3 tools/modularity_check.py --check` (repo root): **exit 0** (735 files; failures 0; 30 pre-existing warnings, none on the new files). `python3 scripts/lanes/check_lane_paths.py --coverage`: **exit 0** ("LANE COVERAGE PASS").
+- e. Mutation proofs in a temporary copy OUTSIDE the repository (`/tmp/m4t037-mut*/`): **exit 0** - all PASS and the committed file still validates clean: (1) a changed quoted law phrase makes the citation check fail and names the row; (2) a row given a value where the two readings differ is refused; (3) a changed storey floor area makes the arithmetic fail; (4) a changed estimate figure makes its test fail; (5) the point-5 words removed from a building row make the test fail; (6, correction commit) a real-unit-limit figure (30) that differs from the live value of real-lot#L6 (29) fails the pin, and the committed figure equals L6.
 
 Not run (per the brief and CLAUDE rules): the full api suite (CI runs it on the pushed head); any
 `services/api/app/scenario/**` or `services/api/app/rules/**` code.
@@ -201,10 +227,11 @@ Not run (per the brief and CLAUDE rules): the full api suite (CI runs it on the 
 
 - The whole case is a draft reading of the law by two AI helpers, not professionally reviewed; nothing
   reads as "complies", "feasible" or "legally correct"; no human verdict is entered.
-- `real-unit-limit` restates the settled real-lot#L6 ceiling (29) for the six-step comparison and does
-  NOT supersede or compete with L6; the current answer to the real lot's dwelling-unit ceiling stays at
-  L6. Judgement call, documented here; a reviewer may prefer that the real-lot ceiling be referenced
-  only, not restated.
+- `real-unit-limit` restates `real-lot#L6` (29) for step 5 of the six-step comparison and does NOT
+  supersede L6 (other tasks read it). Per the orchestrator's correction, the restatement is now
+  mechanical: its figure is pinned by a test to the live value of L6, with a mutation proof that a
+  differing figure fails, so the two can never disagree. The made-up lot's ceiling, by contrast, is a
+  genuinely new current answer, so the older step-P4 conditional count is superseded (correction commit).
 - The `numbers_block` row shape is a new optional row key (added to OPTIONAL_ROW_KEYS), carrying the six
   steps as numbers for the later program-vs-independent comparison (owner rows R687/R688/R690). Where the
   two readings differ on a figure it holds both, each named by its reading.

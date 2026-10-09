@@ -75,6 +75,11 @@
       "date": "2026-10-08",
       "summary": "Step P5 (task M4-T035): row zr-34-23-sections is marked superseded_by cases/step-p5-worked.json row zr-34-23-page, which holds the current reading of the ZR 34-23 page. The step-P5 readers both had the ZR 34-23 contents capture (which the step-P4 reading 9 did not) and read it as the complete three-subsection list (ZR 34-231, 34-232, 34-233), resolving reading 9's completeness caveat; the conclusion is unchanged (front yard, side yard, change of use; none speaks of the rear yard). Kept as the historical record, and the loader no longer hands it out as current. No expected value or kind changed. Reason: a corrected reading - one current expected answer per question.",
       "by": "rules-engineer (M4-T035)"
+    },
+    {
+      "date": "2026-10-09",
+      "summary": "Step P6 (task M4-T037): row made-up-100x100-units is marked superseded_by cases/step-p6-worked.json row made-up-unit-limit, which holds the current answer to the made-up interior 100-by-100 lot's dwelling-unit ceiling (29). The step-P6 case updates the two conditions this row attached: the first condition (the floor-area-ratio definition was outside the step-P4 folder) has since been settled by cases/step-p5-worked.json row floor-area-ratio-made-up-100x100, which the step-P6 readers were given as settled, so the 20,000-square-foot floor area no longer rests on that assumption; the second condition (reading 10's 'multiple dwelling residences', the term the step-P4 readers did not have) was not read by step-P6 reading 13 or reading 14 (the multiple-dwelling-residence definition was in the step-P6 folder but neither reading read it), so it was not examined and still stands as a condition of the 29. Kept as the historical record, and the loader no longer hands it out as current. No expected value or kind changed in this row. Reason: a corrected reading - one current expected answer per question.",
+      "by": "rules-engineer (M4-T037)"
     }
   ],
   "rows": [
@@ -1666,7 +1671,8 @@
         "reason": ""
       },
       "source_reference": "return-independent-hand-calculation-9.md Q8 (29 units conditionally: FAR 2.00 x 10,000 = 20,000; 20,000 / 680 = 29.41 -> 29; conditional on the floor-area-ratio definition the readers did not have) and return-independent-hand-calculation-10.md Q8 (same 29, conditional on the floor-area-ratio meaning and on 'multiple dwelling residence'); both reach 29 on the same basis and both attach the floor-area-ratio-definition condition (return-independent-hand-calculation-9.md and return-independent-hand-calculation-10.md).",
-      "does_not_establish": "The count is conditional on the definition of floor area ratio, which the readers did not have; on the strict captured text the count is not known. It is a made-up lot, not a real property. The real lot's count is not worked here: its lot area is recorded two ways (about 10,075 and about 10,388 square feet) and the same floor-area-ratio-definition gap applies. It says nothing complies."
+      "does_not_establish": "The count is conditional on the definition of floor area ratio, which the readers did not have; on the strict captured text the count is not known. It is a made-up lot, not a real property. The real lot's count is not worked here: its lot area is recorded two ways (about 10,075 and about 10,388 square feet) and the same floor-area-ratio-definition gap applies. It says nothing complies.",
+      "superseded_by": ["step-p6-worked#made-up-unit-limit"]
     },
     {
       "row_id": "zr-23-441-reach",

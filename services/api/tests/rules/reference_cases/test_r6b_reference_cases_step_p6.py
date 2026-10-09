@@ -237,16 +237,45 @@ def test_a_changed_estimate_figure_makes_its_test_fail():
 # --------------------------------------------------------------------------
 # the legal dwelling-unit ceiling, apart from the estimate
 # --------------------------------------------------------------------------
-def test_the_legal_unit_ceiling_rows_are_29_and_recompute():
-    for rid in ("made-up-unit-limit", "real-unit-limit"):
-        row = next(r for r in CASES[CID]["rows"] if r["row_id"] == rid)
-        assert row["expected"]["value"] == 29
-        assert row["expected"]["unit"] == "dwelling units"
-        assert lib.recompute_row_errors(CID, row) == [], rid
-    # the real-lot ceiling restates the settled real-lot#L6 and does not supersede it
-    real = next(r for r in CASES[CID]["rows"] if r["row_id"] == "real-unit-limit")
-    assert "real-lot#L6" in real["source_reference"]
-    assert "L6" in real["does_not_establish"]
+def _row(rid):
+    return next(r for r in CASES[CID]["rows"] if r["row_id"] == rid)
+
+
+def test_made_up_unit_ceiling_is_the_current_conditional_29_superseding_step_p4():
+    row = _row("made-up-unit-limit")
+    assert row["expected"]["kind"] == "value"
+    assert "29" in row["expected"]["value"]
+    assert lib.recompute_row_errors(CID, row) == []  # 20,000 / 680 -> 29 recomputes
+    val = row["expected"]["value"]
+    # the first condition is now settled by the step-P5 FAR-definition row
+    assert "step-p5-worked#floor-area-ratio-made-up-100x100" in val
+    # the second condition (multiple dwelling residences) was not read by 13/14 and still stands
+    assert "not read by reading 13" in val and "multiple dwelling residence" in val
+    # it supersedes the step-P4 conditional count: the loader no longer hands that out as current
+    with pytest.raises(lib.RowSuperseded) as exc:
+        lib.load_row("step-p4-worked", "made-up-100x100-units")
+    assert "step-p6-worked#made-up-unit-limit" in str(exc.value)
+
+
+def test_real_unit_ceiling_is_pinned_to_the_live_value_of_real_lot_L6():
+    row = _row("real-unit-limit")
+    assert row["expected"]["value"] == 29
+    assert row["expected"]["unit"] == "dwelling units"
+    assert lib.recompute_row_errors(CID, row) == []
+    # the figure is mechanically pinned to the current value of real-lot#L6
+    assert row["expected"]["value"] == lib.load_row("real-lot", "L6")["value"]
+    # L6 stays current (NOT superseded) because other tasks read it
+    assert lib.load_row("real-lot", "L6")["superseded_by"] == []
+    # the row says plainly it restates L6
+    assert "real-lot#L6" in row["source_reference"]
+    assert "L6" in row["quantity"] and "L6" in row["does_not_establish"]
+
+
+def test_a_real_unit_figure_that_differs_from_L6_fails_the_pin():
+    data = copy.deepcopy(CASES[CID])
+    row = next(r for r in data["rows"] if r["row_id"] == "real-unit-limit")
+    row["expected"]["value"] = 30  # a figure that disagrees with real-lot#L6 (29)
+    assert row["expected"]["value"] != lib.load_row("real-lot", "L6")["value"]
 
 
 # --------------------------------------------------------------------------

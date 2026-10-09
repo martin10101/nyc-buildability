@@ -46,6 +46,7 @@ SUPERSEDED = [
     ("overlay-reading", "lot-coverage", ["step-p4-worked#lot-coverage"]),
     ("overlay-reading", "rear-yard", ["step-p4-worked#rear-yard"]),
     ("real-lot", "L15", ["step-p6-worked#real-building-a", "step-p6-worked#real-building-b"]),
+    ("step-p4-worked", "made-up-100x100-units", ["step-p6-worked#made-up-unit-limit"]),
 ]
 
 FORBIDDEN_PRESENT_TENSE = (

@@ -887,12 +887,13 @@ Six steps as numbers (real lot, building B):
   - share range 0.60 to 0.75: a chosen design assumption (a preliminary assumption chosen by the owner, an unvalidated sensitivity range, not law).
   - apartment size 700 sq ft: a chosen design assumption (a preliminary assumption chosen by the owner, not measured and not law).
 
-### made-up-unit-limit - The made-up lot: the legal ceiling on dwelling units (kept apart from the estimate)
+### made-up-unit-limit - The made-up lot: the legal ceiling on dwelling units (the current answer, superseding the step-P4 conditional unit count, kept apart from the estimate)
 
 Facts used:
 
 - Maximum floor area = 20,000 sq ft (settled) (source: cases/step-p5-worked.json row floor-area-ratio-made-up-100x100 (settled sheet))
 - Dwelling-unit factor = 680 (settled) (source: cases/step-p4-worked.json row dwelling-unit-factors (settled sheet))
+- Earlier conditional count = 29 dwelling units, but only conditionally (source: cases/step-p4-worked.json row made-up-100x100-units (now superseded by this row))
 
 Law relied on:
 
@@ -907,24 +908,24 @@ Law relied on:
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52.
   - Quoted: "the applicable #dwelling unit# factor shall be 680. Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one #dwelling unit#."
 
-Why the rule applies: ZR 23-52 divides the maximum residential floor area by the dwelling-unit factor (680 for standard residences), and a fraction of three-quarters or more counts as one dwelling unit. For the made-up lot, 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29. This is a legal ceiling, separate from the preliminary estimate.
+Why the rule applies: ZR 23-52 divides the maximum residential floor area by the dwelling-unit factor (680 for standard residences), and a fraction of three-quarters or more counts as one dwelling unit. For the made-up lot, 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29. This is the current answer to the made-up lot's dwelling-unit ceiling and supersedes the step-P4 row made-up-100x100-units; it is a legal ceiling, separate from the preliminary estimate.
 
 Working, step by step:
 
 - legal dwelling-unit ceiling (maximum floor area / factor): 20,000 (maximum residential floor area (square feet)) / 680 (dwelling-unit factor (ZR 23-52)) = 29.41...; a fraction below three-quarters is dropped -> 29
 
-Expected value: 29 dwelling units
+Expected value: 29 dwelling units (ZR 23-52: 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29), subject to one remaining condition. The step-P4 row made-up-100x100-units held 29 'but only conditionally' and attached two conditions, which this row updates: (first) the condition both step-P4 readings attached - that the definition of floor area ratio (floor area = ratio x lot area) was outside their folder - has since been settled by step-p5-worked#floor-area-ratio-made-up-100x100 (2.00 x 10,000 = 20,000 sq ft), which both step-P6 readers were given as settled, so the 20,000 sq ft floor area no longer rests on an assumption; (second) the condition reading 10 attached - 'that the building is one containing multiple dwelling residences, a term the readers did not have' (as the step-P4 row words it) - was not read by reading 13 or reading 14 (the multiple-dwelling-residence definition was in the step-P6 folder but neither reading read it), so it was not examined and still stands as a condition of the 29. The 29 therefore holds subject to the building being a multiple dwelling residence.
 
-Where this stands in the independent reading: return-independent-hand-calculation-13.md Q6b (made-up 20,000 / 680 = 29.41 -> 29) and return-independent-hand-calculation-14.md Q6b (same). Both readings reach this on the same basis (both readings: return-independent-hand-calculation-13.md and return-independent-hand-calculation-14.md).
+Where this stands in the independent reading: return-independent-hand-calculation-13.md Q6b (made-up 20,000 / 680 = 29.41 -> 29) and return-independent-hand-calculation-14.md Q6b (same); the step-P4 row made-up-100x100-units and its reading-10 second condition; the settled step-p5-worked#floor-area-ratio-made-up-100x100. Both readings reach this on the same basis (both readings: return-independent-hand-calculation-13.md and return-independent-hand-calculation-14.md).
 
-What this row does not establish: The legal ceiling on dwelling units for the made-up lot is 29 (ZR 23-52: 20,000 / 680 = 29.41; the fraction 0.41 is below three-quarters, so 29); both readings worked it from the settled factor and the settled made-up floor area. It is the legal ceiling, kept apart from the preliminary apartment estimate; it says nothing complies. The made-up lot describes no real property; the example checks a method.
+What this row does not establish: It gives the current legal dwelling-unit ceiling for the made-up lot (29, subject to the remaining multiple-dwelling-residence condition), superseding the step-P4 row made-up-100x100-units; it is kept apart from the preliminary estimate and says nothing complies. The made-up lot describes no real property; the example checks a method.
 
-### real-unit-limit - The real lot: the legal ceiling on dwelling units (the settled answer, kept apart from the estimate)
+### real-unit-limit - The real lot: the legal dwelling-unit ceiling, which RESTATES cases/real-lot.json row L6 (the current answer, kept unchanged) for step 5 of the six-step comparison
 
 Facts used:
 
 - Maximum residential floor area = 20,150 sq ft (settled) (source: cases/real-lot.json row L1 (settled sheet))
-- Dwelling-unit ceiling = 29 (settled, given to the readers as settled) (source: cases/real-lot.json row L6 (settled sheet))
+- Dwelling-unit ceiling = 29 (the current answer, restated from row L6) (source: cases/real-lot.json row L6 (the current answer, kept unchanged))
 - Dwelling-unit factor = 680 (settled) (source: cases/step-p4-worked.json row dwelling-unit-factors (settled sheet))
 
 Law relied on:
@@ -940,7 +941,7 @@ Law relied on:
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52.
   - Quoted: "the applicable #dwelling unit# factor shall be 680. Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one #dwelling unit#."
 
-Why the rule applies: ZR 23-52 divides the maximum residential floor area by the factor 680; for the real lot 20,150 / 680 = 29.63, the fraction 0.63 below three-quarters, so 29. The readers took this as the settled answer held by cases/real-lot.json row L6 and checked the arithmetic; this row restates the settled ceiling for the six-step comparison and does not supersede or compete with row L6.
+Why the rule applies: This row restates the real lot's legal dwelling-unit ceiling for step 5 of the six-step comparison; it does not read it afresh. The current answer stays at cases/real-lot.json row L6, which other tasks read; its figure (29) is restated here mechanically, and a test pins this figure to the live value of row L6 so the two can never disagree. ZR 23-52 divides the maximum residential floor area by the factor 680 (20,150 / 680 = 29.63; the fraction 0.63 is below three-quarters, so 29).
 
 Working, step by step:
 
@@ -950,7 +951,7 @@ Expected value: 29 dwelling units
 
 Where this stands in the independent reading: return-independent-hand-calculation-13.md Q6b (real lot = 29; 20,150 / 680 = 29.63 -> 29; settled at real-lot#L6) and return-independent-hand-calculation-14.md Q6b (same; settled at real-lot#L6). Both readings reach this on the same basis (both readings: return-independent-hand-calculation-13.md and return-independent-hand-calculation-14.md).
 
-What this row does not establish: The legal ceiling on dwelling units for the real lot is 29 - the settled answer held by cases/real-lot.json row L6, which the readers were given as settled and checked (ZR 23-52: 20,150 / 680 = 29.63; the fraction 0.63 is below three-quarters, so 29). This row restates that settled ceiling, separate from the preliminary estimate, for the six-step comparison, and does not supersede or compete with row L6, where the current answer to the real lot's dwelling-unit ceiling stays. It says nothing complies.
+What this row does not establish: It restates the current answer held by cases/real-lot.json row L6 (which remains the current answer and is kept unchanged, because other tasks read it) for step 5 of the comparison; its figure is pinned by a test to the live value of row L6 so the two can never disagree. It is kept apart from the estimate and says nothing complies.
 
 ### both-readers-did-not-have - What both readers did not have (a text outside their folder that an answer waits on)
 
