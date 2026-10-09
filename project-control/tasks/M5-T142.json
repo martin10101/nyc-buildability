@@ -1,0 +1,194 @@
+{
+  "task_id": "M5-T142",
+  "title": "On the first results screen (behind the off-by-default switch), lay out each figure's conditions as a visibly-marked, per-line list so a reader can tell settled from conditional from not-known at a glance and never by colour alone, and announce a new result and each failure to screen-reader users; it does NOT change any server file, the results-document words, the browser-test harness or specs, and turns no switch on [backlog DB-206 (a) and (b); owner rows D-090-R229, R258, R267, R268, R269, R570]",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Make the first results screen (task M5-T140, merged; the 'Results' tool in the property workspace, behind the off-by-default INTERNAL_RESULTS_UI switch) readable and announced, for the two points of backlog row DB-206. Do NOT change any server file, any word of the results document, the browser-test harness or its specs, and do NOT turn any switch on. READING (mine, to verify): how a condition reaches the screen today. A conditional value's conditions are read in apps/web/src/lib/architect/three-answers.ts, function conditionLine (lines 251-256): it maps each ValueState condition to condition.assumption.trim() and joins them with a single space into ONE string (line 253-254), prefixing 'If ' only when the joined text does not already start with it; answerView builds ShownValueView.condition from it (lines 285-288, 209-214). In the committed journey fixture each condition.assumption already begins with 'If ' (verified: packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json, floor_area_allowance has 2 conditions per value, permitted_envelope 1 each), so several conditions run together as one dense 'If a If b' string. AnswerCard.tsx renders it as a single inline span <ConditionNote> (lines 150-160, testid answer-condition) in the figure's own flow; the headline number is .ta-headline-number at 2.25rem/700 (three-answers.css lines 97-102) so the large figure draws the eye before its conditions. A withheld value (AnswerCard.tsx WithheldLine lines 123-146) prints 'Not known \u2014 <reason>' then, joined by a space INLINE, the kind-of-gap span (testid answer-gap-kind); inside the .ta-withheld dl the dd is font-weight 600 (three-answers.css lines 130-134), so the reason and its kind-of-gap sentence run together in bold. The contract shapes are fixed: ValueState conditional carries conditions: ValueCondition[] with assumption: NonEmptyString; withheld carries label, reason, gap_kind (packages/contracts/generated/results.ts lines 17-35). STEP 1 \u2014 LAYOUT (serves R229, R258, R267, R268, R269, R570). (1a) In three-answers.ts extend the EXISTING interface ShownValueView (lines 209-214) so that it carries the conditions as a LIST and no longer as one joined line (ruling L1 below): ONE representation only, populated in the EXISTING shownView (lines 285-288). Add NO new top-level exported symbol to three-answers.ts (it already carries a warn-level symbol_ceiling signal, DB-206 d; verified today with python tools/modularity_check.py \u2014report: warn, failures 0). Put the one new fixed label as a const in AnswerCard.tsx (as NOT_KNOWN already lives there, line 22). (1b) In AnswerCard.tsx, for a conditional shown value (headline and each row) render, beside/under the figure, a visible fixed marker word 'Conditional' (new const, normal weight, plain text \u2014 never colour-only), then the conditions as a <ul> with one <li data-testid=\"answer-condition\"> per entry of conditions, each the document's assumption text verbatim, in NORMAL weight (not the figure's weight). A SETTLED value (no state or way 'settled') renders the figure alone \u2014 no marker, no If-line. A WITHHELD value keeps the 'Not known' marker and reason but the reason is NORMAL weight and the kind-of-gap line (testid answer-gap-kind) becomes its OWN short line/block, no longer inline-joined. The headline figure when conditional stays large but is immediately qualified by the adjacent 'Conditional' marker so it never reads as confirmed. (1c) three-answers.css: a .ta-conditions block list and .ta-conditional-marker in normal weight set apart from the number; .ta-withheld-reason weight 400; .ta-gap-kind display:block with a top margin. STEP 2 \u2014 ANNOUNCEMENTS (serves walkthrough F2; accessibility is G3 acceptance evidence per .claude/rules/frontend-web.md). READING (mine): the existing pattern is a persistent visually-hidden role=\"status\" aria-live=\"polite\" aria-atomic region, the OutcomeAnnouncer component (apps/web/src/components/property/OutcomeAnnouncer.tsx), whose parent sets the message on arrival and clears it to '' while in flight so a repeated identical outcome re-announces (PropertyLookup.tsx line 266-271, DashboardEntry.tsx line 141, CompareScreen line 103). FailureNoticeCard carries NO aria-live by design (DashboardFailureNotice.tsx lines 14-21) and relies on such an announcer; ResultsPanel mounts none, and focusTitle only sets tabIndex=-1 (DashboardFailureNotice.tsx line 39) \u2014 nothing calls .focus(). So the smallest honest change the existing patterns support is a polite live region, NOT a focus move. In ResultsPanel.tsx import and mount OutcomeAnnouncer (testId 'results-announcer') and compute its message: '' while busy or when outcome is null/aborted; a fixed short sentence (proposed: 'Development results are ready.' \u2014 a new fixed AT-only label; reviewer may adjust the wording) when outcome.kind==='success'; the NotConnected card's own title when outcome.kind==='not_available'; otherwise resultsFailureNotice(outcome)?.title (the SAME title the failure card shows). Extract the NotConnected title ('Results are not connected yet', line 194) to a const reused by both the card and the announcement so they cannot drift. Do not add aria-live to the cards (avoid a double-announce). FIXED LABELS THE WEBSITE ADDS (every one): 'Conditional' (the state marker) and 'Development results are ready.' (the success announcement, AT-only). Already-present labels reused unchanged: 'Not known', 'Not available', the NotConnected title and each failure title. TESTS (one per state, a red proof, and a mutation proof per pinned branch; a table of states->assertions in the producer report). Reader-own test three-answers.test.ts: update every assertion that reads view...shown.condition (e.g. line 183) and every .toEqual over a shown view to the new conditions array shape. three-answers-panel.test.tsx: prove the count of answer-condition items equals the number of conditions the document carries; each item's text equals the document's assumption verbatim; the 'Conditional' marker is present on a conditional value and on a conditional headline (the large number never renders without it); a settled value shows no marker and no If-line; a withheld value shows 'Not known', its reason in normal weight and the kind-of-gap line as its own element; all distinctions are asserted on textContent (nothing by colour alone). results-panel.test.tsx: the live region text equals the fixed sentence on a success, the NotConnected title on a 404, and the notice's own title for each failure outcome (table-driven over inputs_unavailable, lot_conditions_unconfirmed, validation_error, rate_limited, internal_error, internal_contract_error, validation_failure, network_error, client_timeout, unexpected_response); the region is '' while busy; a retry that fails the same way re-announces. NOT IN THIS TASK: no file under services/, packages/, .github/, tools/ or .claude/; no dependency or lockfile change; no change to the browser-test harness apps/web/e2e/harness/fixture_api.py or to any e2e spec (apps/web/e2e/results.flag-on.spec.ts and results.spec.ts stay as-is \u2014 their condition checks are substring toContainText matches each within a single assumption, so splitting conditions into list items does not break them; the whole browser suite is CI's word on the pushed head, read before any gate \u2014 DB-207); no switch turned on; no new result, figure or server word; no change to the results-document strip wording (the server's); no scope-view split of three-answers.ts (that stays the separate DB-206 d follow-up); ResultsForm.tsx, OutcomeAnnouncer.tsx, ThreeAnswersPanel.tsx and ScopeSummary.tsx are read-only here.\n\nRULINGS OF THE ORCHESTRATOR (after reading the draft against the code; not the builder's to change; a ruling that cannot be built as written is a STOP and a report).\n\nL1 ONE REPRESENTATION OF THE CONDITIONS. `ShownValueView.condition` (one joined string or null) is REPLACED by `conditions: readonly string[]` (empty for a settled value). Each entry is one condition of the document: its `assumption`, trimmed, with the reader's EXISTING rule applied to EACH entry by itself: the words 'If ' are put in front only when the entry does not already begin with them (today's `conditionLine`, lines 251 to 256, applies that rule once to the joined text; the reader's own test at line 183 expects 'If the recorded lot area is confirmed' from an assumption without the prefix). No joined line is kept beside the list, so the two cannot disagree. The card shows one list item per entry.\n\nL2 THE BUILDER STARTS NO SERVER AND RUNS NO BROWSER TEST. The owner's test preview is running on this machine and holds the ports the browser tests need. This task changes no browser spec and no harness file; the whole browser suite, the whole unit suite and the build run in CI on the pushed head, and that run is read on the exact head before any gate (the changed rules of `.claude/rules/CODING_RULES.md`, owner rows D-090-R638 and R639). Locally: lint, typecheck and the touched test files, plus the other test files of the two touched folders.\n\nL3 THE TWO WORDS THE WEBSITE ADDS, exactly: the marker 'Conditional' and the announcement 'Development results are ready.' No other new text. The marker is real text in the page (never an image, never colour alone) and is read out with the figure it marks.\n\nL4 NOTHING ELSE MOVES. The strip, the scope summary, the form, the parking line, the stale-inputs line and every failure text stay as they are; the numbers and the document's words are not touched; `ResultsForm.tsx`, `ThreeAnswersPanel.tsx`, `ScopeSummary.tsx`, `ResultsStatusStrip.tsx` and `OutcomeAnnouncer.tsx` are read only.",
+  "business_reason": "The owner needs the full feasibility report to be read without being misread. Owner rows R229/R267/R268/R269/R570 require that a figure which depends on something unchecked never looks confirmed and that a reader can tell settled, conditional and not-known apart at a glance and not by colour alone (.claude/rules/frontend-web.md); R258 requires missing information and unfinished work to be kept apart. Today the conditions run on as dense text in the figure's weight (DB-206 a). The accessibility rule makes a screen-reader announcement of a result and of a failure G3 acceptance evidence, not an extra; today neither is announced (DB-206 b; walkthrough F2). DB-206 states (a) and (b) are one small website task after M5-T140.",
+  "inputs": [
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/ResultsForm.tsx",
+    "apps/web/src/components/property/OutcomeAnnouncer.tsx",
+    "apps/web/src/components/architect/workspace/DashboardFailureNotice.tsx",
+    "apps/web/src/components/property/PropertyLookup.tsx",
+    "apps/web/src/lib/results-api.ts",
+    "packages/contracts/generated/results.ts",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/scope-summary.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-option-notes.test.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "project-control/reports/M5-T140-HJ.md",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "project-control/reports/M5-T142-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T140",
+    "M5-T141"
+  ],
+  "allowed_paths": [
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "project-control/reports/M5-T142-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "No file under services/, packages/, .github/, tools/ or .claude/ \u2014 if a server word or a contract field seems to need changing, stop and ask; it is not this task.",
+    "No dependency manifest or lockfile change (apps/web/package.json, package-lock.json).",
+    "Do not change the browser-test harness apps/web/e2e/harness/fixture_api.py or any Playwright config.",
+    "Do not change any e2e spec (apps/web/e2e/results.flag-on.spec.ts, apps/web/e2e/results.spec.ts); their substring assertions must keep passing unchanged.",
+    "Do not change ResultsForm.tsx, OutcomeAnnouncer.tsx, ThreeAnswersPanel.tsx or ScopeSummary.tsx (read-only here).",
+    "Do not turn the INTERNAL_RESULTS_UI (or any) switch on, and do not add a second standing-review label.",
+    "Do not retype or reword any results-document text; render the document's words verbatim.",
+    "Do not add a new top-level exported symbol to three-answers.ts, and do not split its scope-view part (DB-206 d is a separate follow-up).",
+    "Start no server and run no browser test on this machine (ruling L2).",
+    "apps/web/src/components/architect/answers/ResultsStatusStrip.tsx (read only)."
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "settled_value_shows_figure_only",
+      "input": "a constructed 1.3.0 document whose floor-area headline value has value_states way 'settled'",
+      "expected": "the card shows the figure with NO 'Conditional' marker, NO answer-condition item and NO 'Not known'"
+    },
+    {
+      "id": "S2",
+      "case": "conditional_row_two_conditions",
+      "input": "a value with value_states way 'conditional' carrying exactly 2 conditions",
+      "expected": "exactly 2 answer-condition items render, each textContent equals the document's condition.assumption verbatim, in normal weight; a 'Conditional' marker is present on that value"
+    },
+    {
+      "id": "S3",
+      "case": "conditional_single_condition",
+      "input": "a value with way 'conditional' carrying exactly 1 condition (the existing probe assumption)",
+      "expected": "exactly 1 answer-condition item renders equal to the assumption; the 'Conditional' marker is present"
+    },
+    {
+      "id": "S4",
+      "case": "conditional_headline_figure_marked",
+      "input": "a document whose designated headline key is conditional",
+      "expected": "the large headline number renders together with the adjacent 'Conditional' marker (the number never renders without it) and the conditions list below it"
+    },
+    {
+      "id": "S5",
+      "case": "withheld_value_layout",
+      "input": "the committed journey fixture (permitted_envelope: max_lot_coverage, rear_yard, setback_above_base withheld, gap_kind work_owed)",
+      "expected": "each withheld value shows 'Not known' + its reason in normal weight + the kind-of-gap line 'Not built yet: this part of the program is still owed.' as its OWN element (answer-gap-kind); no number appears"
+    },
+    {
+      "id": "S6",
+      "case": "states_distinct_by_text_not_colour",
+      "input": "a document carrying a settled, a conditional and a withheld value in one card",
+      "expected": "the three are distinguishable from textContent alone: conditional shows 'Conditional', withheld shows 'Not known', settled shows neither; asserted without reading any colour"
+    },
+    {
+      "id": "S7",
+      "case": "announce_result_ready",
+      "input": "a successful results fetch (journey fixture, 200)",
+      "expected": "the results-announcer live region text equals the fixed sentence 'Development results are ready.'"
+    },
+    {
+      "id": "S8",
+      "case": "announce_failure_title_each_outcome",
+      "input": "each failure outcome: inputs_unavailable, lot_conditions_unconfirmed, validation_error, rate_limited, internal_error, internal_contract_error, validation_failure, network_error, client_timeout, unexpected_response",
+      "expected": "for each, the results-announcer text equals the notice's own rendered title (resultsFailureNotice(outcome).title), table-driven"
+    },
+    {
+      "id": "S9",
+      "case": "announce_not_connected_on_404",
+      "input": "a 404 response (switch-off not-connected)",
+      "expected": "the results-announcer text equals the NotConnected card's title 'Results are not connected yet'"
+    },
+    {
+      "id": "S10",
+      "case": "announcer_clears_while_busy",
+      "input": "a request in flight (deferred fetch)",
+      "expected": "the results-announcer text is '' while busy, so an outcome is announced only on arrival"
+    },
+    {
+      "id": "S11",
+      "case": "repeat_failure_reannounces",
+      "input": "a retry that fails the same way (same failure outcome twice with a busy gap between)",
+      "expected": "the live region clears to '' between, so the identical title is announced again"
+    },
+    {
+      "id": "S12",
+      "case": "each_condition_gets_its_own_if",
+      "input": "A conditional value with two conditions, one whose assumption begins with 'If ' and one whose assumption does not.",
+      "expected": "Two list items; the first as the document has it; the second with 'If ' put in front; no item holds the text of the other (ruling L1)."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Announcement text drifts from the visible title -> the announcement reads the SAME resultsFailureNotice(outcome).title and the SAME extracted NotConnected-title const the card shows; S8/S9 assert equality against the rendered title.",
+    "A conditional figure still reads as confirmed -> the 'Conditional' marker renders adjacent to the number for every conditional value and headline; S2/S3/S4 assert the marker is present and S4 that the number never renders without it.",
+    "The condition list count disagrees with the document -> S2/S3 assert item count equals the document's condition count and each item text equals the assumption verbatim; mutation: joining conditions fails S2.",
+    "A withheld value shows a number or a substitute (R570) -> the withheld layout keeps the existing no-number guard; S5 asserts no number and reuses the journey assertions in journey-215-16-northern.test.tsx (must still pass).",
+    "The live region never re-announces a repeated outcome -> message clears to '' while busy; S10/S11 assert the clear and the re-announce.",
+    "A settled value is mistaken for conditional/withheld -> S1/S6 assert a settled value shows neither marker nor If-line.",
+    "three-answers.ts grows past its warn-level symbol signal -> the change extends the existing ShownValueView interface and shownView only and adds no top-level export; the new marker const lives in AnswerCard.tsx; run modularity --check to confirm failures stay 0.",
+    "A joined line and a list both exist and drift apart -> ruling L1: one representation only; the reader's test asserts the list and the type no longer has the joined field.",
+    "The local checks pass and CI's do not (wave 13) -> CI on the exact pushed head is read before any gate; no local full run stands in for it."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-08T23:59:27.297763+00:00",
+  "updated_at": "2026-10-08T23:59:27.684337+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R258",
+        "D-090-R267",
+        "D-090-R268",
+        "D-090-R269",
+        "D-090-R570"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-08T23:59:27.298043+00:00",
+  "path_notes": "One producer (frontend-engineer) in an isolated worktree, git reset --hard to the claim head before editing. Current sizes at head 1cd18f68: three-answers.ts 628 lines (carries a warn-level symbol_ceiling signal \u2014 DB-206 d; do NOT add top-level symbols and do NOT split scope-view here), AnswerCard.tsx 302 lines, three-answers.css 336 lines, ResultsPanel.tsx 284 lines. READ-ONLY: ThreeAnswersPanel.tsx, ScopeSummary.tsx, ResultsStatusStrip.tsx, ResultsForm.tsx, OutcomeAnnouncer.tsx, DashboardTools.tsx (the mount), the e2e specs and the e2e harness. Files that must STILL PASS unchanged and be run: journey-215-16-northern.test.tsx, scope-summary.test.tsx, building-option-notes.test.tsx, building-option-notes-view.test.ts, results-contract-checks.test.ts, and the two e2e specs (CI). Run python tools/modularity_check.py --check from the repo root before the checkpoint. Checked by the orchestrator at the claim base: `ShownValueView.condition` is read at AnswerCard.tsx lines 71 and 84, three-answers-panel.test.tsx line 424 and three-answers.test.ts line 183, and nowhere else.",
+  "documented_test_commands": [
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund   # once per worktree; lockfile packages only",
+    "cd apps/web && npm run lint",
+    "cd apps/web && npm run typecheck",
+    "cd apps/web && npx vitest run src/lib/architect/__tests__ src/components/architect/answers/__tests__ src/components/architect/__tests__/results-panel.test.tsx   # the touched tests and their folders",
+    "python3 tools/modularity_check.py --check   # from the repository root; failures 0 and no NEW warning"
+  ],
+  "worktree": "/root/project/w-wave14"
+}
