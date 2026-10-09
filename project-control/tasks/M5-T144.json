@@ -178,14 +178,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Flipping the C2-2/R6B rear-yard support row changes behaviour for a C2-2/R6B corner lot WITHIN 100 ft (now shown settled, S2) -> the builder sweeps every existing decision-module and emit test by git grep for a C2-2/R6B rear-yard assertion and confirms each still asserts the correct new state; any out-of-scope test update is routed to the orchestrator, never left red.",
     "The corrected reason could over-claim the law -> the exact texts above claim no more than step-p5 rows zr-34-23-page and benchmark-rear-yard-23-342-23-344, step-p4 rear-yard and step-p3 real-lot-rear-yard-beyond-corner; no raw section number in the prose; never 'professional review' or 'qualified'; the data-contract-verifier and directive-compliance-verifier check the texts against those rows.",
@@ -201,7 +201,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T03:48:47.483601+00:00",
-  "updated_at": "2026-10-09T03:48:47.914123+00:00",
+  "updated_at": "2026-10-09T03:50:19.642716+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -233,5 +233,14 @@
     "cd apps/web && npx vitest run src/components/architect/__tests__/results-panel.test.tsx src/components/architect/answers/__tests__ src/lib/__tests__/results-api.test.ts src/lib/__tests__/results-contract-checks.test.ts src/lib/architect/__tests__/three-answers.test.ts",
     "python3 tools/modularity_check.py --check   # from the repository root; failures 0; no new warning"
   ],
-  "worktree": "/root/project/w-wave16"
+  "worktree": "/root/project/w-wave16",
+  "progress_log": [
+    {
+      "at": "2026-10-09T03:50:19.642587+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed. The draft was read against the code and the reference case first (where the rear yard's reason comes from; what the no-overlay branch says today; every file that pins the texts to change; the website tests that assert the rear yard's kind-of-gap line; the update switches of the three regenerated files). At the claim base: ruff exit 0; the six server test folders and files 1459 passed, 2 skipped, 1 expected failure; the website's test files that read the committed document 199 passed. Not pushed: the seams ride with the push of the head under review. Next: one builder (rules-engineer) in an isolated worktree reset to the claim-seam head."
+    }
+  ]
 }
