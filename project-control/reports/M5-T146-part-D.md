@@ -302,3 +302,46 @@ Two evidence logs refreshed to commit `1796eba6` per GUIDE step 2, matching the 
 `automated_tests` fields; the other four entries' logs are unchanged.
 
 END-OF-REPORT
+
+## Fifth round (resync after the second walkthrough correction: older text gone from the drawing layers)
+
+Built on `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66` (server commit 4068929a, W14 c). The older
+building-option text ("below the minimum base height") still reached `geometry.floor_plates.reason`
+in the committed benchmark (and its two drawing snapshots) and the paths without a shown allowance.
+PART B's second fix removed it: `three_way_document.py` reconciles `geometry.floor_plates.reason` to
+a true reason, and `result_ways.py`'s withheld-building-option text now states only what is true on
+every no-allowance path. Both modules changed, so all six calculation entries failed the register
+check. No checker/renderer code; no human decision; no test-file edit (no verdict moves).
+
+### Entries resynced (all six; code module changed -> new code identity, evidence -> commit 423aa189, history appended seq 24-29)
+- `result_ways.py` (new sha `8cf693a8...`) is fingerprinted by calc-floor-area-allowance (rev 2->3),
+  calc-lot-coverage-by-portion (4->5), calc-building-option-floor-stack (5->6),
+  calc-legal-dwelling-unit-limit (2->3) and calc-first-building-option-complete.
+- `three_way_document.py` (new sha `4fc35c95...`) is fingerprinted by
+  calc-preliminary-apartment-estimate (5->6) and calc-first-building-option-complete (5->6).
+- Each entry's history line states truthfully that the change is the W14 c text/drawing-layer fix and
+  that the entry's own calculation/behaviour is unchanged.
+
+### Did any verdict move? No. The regenerated benchmark changed only `geometry.floor_plates.reason`
+(a drawing layer) and the notes that print it (reason_kind unchanged); no six-step actual side
+changed, so every step verdict holds. Stated in the six-step entry's history line.
+
+### Text / gaps: no change needed. The buildings_not_worked behaviour (what the document gives at 16
+ft and 25 ft: no building listed, each building's reason) was already stated in round four and is
+still accurate; a scan for the removed wording ("below the minimum base height") found none in the
+entries. The 23 rule pages are byte-identical.
+
+### Checks (direct exit codes)
+- `ruff check app/rules/review_register tests/rules/test_zoning_rule_review_register_calculations.py`
+  (my files): 0. `ruff check .` (whole services/api): 1 - the ONLY error is a pre-existing E501 in a
+  PART B test file (`tests/scenario/three_answers/test_three_answers_three_way_emit.py:1897`),
+  unchanged by me and outside my scope. `pytest register + calc + reference_cases`: 0 - 196 passed
+  (calc file alone 53). `render_review_register.py --check`: 0. `modularity_check --check`: 0.
+  `check_lane_paths --coverage`: 0 (9753 files). `git diff 423aa189 -- docs/zoning-rule-review/rules`:
+  empty.
+
+### Scope note
+All six evidence logs refreshed to commit `423aa189` (all six code identities changed) per GUIDE
+step 2. No STOP needed for the register; the PART B ruff E501 is flagged for its owner / CI.
+
+END-OF-REPORT

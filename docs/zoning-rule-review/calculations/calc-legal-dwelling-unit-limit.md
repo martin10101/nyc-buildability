@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: dwelling_units
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-09)
+- Revision: 3 (last changed 2026-10-09)
 - Combines rule entries: `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `e353aa1181e2ce0ac8a513233cacc24e26781b67e2ac45e4a9c16f6119cef008`
+- Combined code identity: `860dd8729758f3e62959b3f8b4f7736f008646dd2be95e7c5b9f7ed12377ed48`
 - Modules:
   - `services/api/app/scenario/three_answers/dwelling_units.py` (`57abec65ce2e2ad961fefcc995c5c41d62e760dc46111ab6df1f0050e16d2c8a`)
-  - `services/api/app/scenario/three_answers/result_ways.py` (`58788c78183f2c33a59bbae40b98fe27533b5eaa79e30f1fc2a2a94580eebd5c`)
+  - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
 
 ## Law
 
@@ -84,8 +84,8 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `e353aa1181e2ce0ac8a513233cacc24e26781b67e2ac45e4a9c16f6119cef008`
-- Commit tested: `455caec46895298a772505cdf34325d7fd758d96`
+- Code identity tested: `860dd8729758f3e62959b3f8b4f7736f008646dd2be95e7c5b9f7ed12377ed48`
+- Commit tested: `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed

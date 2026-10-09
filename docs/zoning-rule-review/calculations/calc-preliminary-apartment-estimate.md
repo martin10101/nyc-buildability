@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: apartment_estimate
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 5 (last changed 2026-10-09)
+- Revision: 6 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `30a94e811b4f077f538fd776cd99f58909402657e9a7ff8aa4d98eff23a1fed4`
+- Combined code identity: `97574de10b9a4e4a216dae1cba79549e39d0b16940266b3e423398c92c62ef6b`
 - Modules:
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`2deb3d3a61e1cb40530a777ddeb291008dab875bc9ad955a510ff90a8f5fa911`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`4fc35c950840f9544dcdb2972918c47e8a662e1ecc65dfcd41c62c50e0aed3cc`)
   - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law
@@ -79,8 +79,8 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `30a94e811b4f077f538fd776cd99f58909402657e9a7ff8aa4d98eff23a1fed4`
-- Commit tested: `1796eba6eaf23c87e8db587706b471fa1e6d8fbb`
+- Code identity tested: `97574de10b9a4e4a216dae1cba79549e39d0b16940266b3e423398c92c62ef6b`
+- Commit tested: `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66`
 - Date tested: 2026-10-09
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
