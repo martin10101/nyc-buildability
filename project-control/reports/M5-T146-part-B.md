@@ -524,4 +524,100 @@ From the root:
   three_way_document.py, which changed): EXPECTED; the register is resynced by its own builder after
   me. I touched no register file.
 
+## Walkthrough correction, second round (W14 c: the older text gone from the drawing layers and the no-allowance paths)
+
+Producer: rules-engineer (an AI agent). Base (reset HEAD): `4fe5669813766e426b083576e0ab2797986afdfd`.
+
+WHAT WAS WRONG: my first-round report claimed the decision module's older building-option text
+"never reaches a document where it is false". It still did: `geometry.floor_plates.reason` in the
+committed benchmark (and the two drawing snapshots that print it) carried "No building option is
+shown yet: the building option is below the minimum base height ...", which is false at 10 ft
+(building B stands 30 ft, at the minimum base), and on the paths where the floor-area allowance is
+not shown that sentence states facts about a building never worked.
+
+TWO fixes:
+1. `three_way_document.py` - a new reconcile `_reconcile_floor_plates_geometry`, run wherever the
+   first option is applied (the `if changed` tail, beside the building_option pointer): it replaces
+   `geometry.floor_plates.reason` (which `_apply_geometry` had copied from the building-option way)
+   with the TRUE reason and NO base-height or rear-yard claim. New text (constant
+   `FLOOR_PLATES_FOLLOW_FIRST_OPTION`):
+   "No floor plate is drawn: no placement on the lot is worked for any building. The first-building
+   alternatives worked for this lot are listed in building_alternatives, and any building of the
+   method that was not worked is listed, with the reason, in buildings_not_worked."
+   reason_kind stays `rule_not_implemented` (only the text changes).
+2. `result_ways.py` - the `option_withheld` way text, which reaches `building_option.reason` AND
+   `geometry.floor_plates.reason` wherever the first option is NOT applied, now states only what is
+   true on EVERY such path. New text:
+   "No building option is shown: this program does not work a single building option."
+   resolved_by: "Reading the first-building alternatives the program works instead
+   (building_alternatives and buildings_not_worked), where the lot allows them." gap_kind WORK_OWED.
+
+WHY NOT the brief's exact "because the floor-area allowance is not shown" clause: `option_withheld`
+reaches `building_option`/`floor_plates` on TWO kinds of first-option-not-applied path, not one:
+(a) the allowance is not shown (a blanket withhold - a recorded overlay with no supporting reading),
+and (b) the allowance is SHOWN but SETTLED (the first-option step is keyed on the conditional way,
+so a settled allowance is not worked from - a pre-existing limit, out of this correction's scope).
+A single fixed text that said "the allowance is not shown" would be FALSE on (b). The generic text
+above is true on both, and on the conditional path it is replaced by the pointer / the floor-plates
+reconcile. Honest kind: WORK_OWED - the single building option is a result this milestone does not
+produce (it works the first-building alternatives instead); it blames no missing property fact.
+Honest resolver: it points to the alternatives the program works instead.
+
+BENCHMARK + SNAPSHOT DIFFS (one line each; regenerated once with UPDATE_JOURNEY_FIXTURE=1,
+UPDATE_DRAWING_SNAPSHOTS=1, UPDATE_DXF_SNAPSHOTS=1):
+- `recorded_215_16_northern_journey.json`: only `geometry.floor_plates.reason` old->new
+  (reason_kind unchanged).
+- `...results_dxf/....dxf`: only the floor-plates note line old->new.
+- `...site_plan.svg`: the floor-plates note old->new; the canvas viewBox/height/background grow
+  1118->1138 because the new note wraps to two more lines (the note that prints the reason, nothing
+  else).
+
+TESTS CHANGED (none weakened):
+- `test_result_ways_facts_area_overlay.py::test_s8_...` (renamed to
+  `test_s8_the_single_building_option_is_withheld_and_states_only_what_is_true`): OLD expected
+  `"rear yard" in reason`; NEW expects `"does not work a single building option" in reason` and
+  asserts "rear yard" and "below the minimum base height" are ABSENT.
+- `test_result_ways_truth_table.py` BO1_option row: OLD must_contain `["building option", "rear
+  yard"]`; NEW must_contain `["does not work a single building option"]`, must_not_contain
+  `["rear yard", "below the minimum base height"]`; gap_kind work_owed unchanged.
+- `test_three_answers_three_way_emit.py::test_every_text_the_transform_writes_is_plain_and_true`:
+  added `FLOOR_PLATES_FOLLOW_FIRST_OPTION` to the authored-texts list (it passes the L3 checks).
+
+TESTS ADDED:
+- emitter: `test_w14c_floor_plates_reason_is_the_true_placement_reason_on_the_benchmark`;
+  `test_w14c_false_building_option_text_appears_in_no_emitted_string` (walks EVERY string at 10, 14,
+  16, 25 ft and on a lane-off no-allowance path, asserts "below the minimum base height" nowhere);
+  `test_w14c_allowance_not_shown_building_option_states_only_what_is_true` (blanket-withhold path).
+- live route: `test_w14c_live_route_false_building_option_text_appears_nowhere` (walks every string
+  at the default 10 ft and 14/16/25 ft - the heights the existing helpers allow; the lane-off
+  no-allowance path returns the engine's own "Lane A not enabled" reason, not option_withheld, so it
+  is covered through the emitter instead).
+
+MUTATION PROOFS (scratch script OUTSIDE the repository, `scratchpad/mutate_w14c.py`, reverted):
+- the old text restored in the floor-plates layer -> a string walk of the benchmark finds "below
+  the minimum base height"; caught by
+  `test_w14c_false_building_option_text_appears_in_no_emitted_string`.
+- the old text restored on the allowance-not-shown path -> `building_option.reason` carries it;
+  caught by `test_w14c_allowance_not_shown_building_option_states_only_what_is_true` (and, at the
+  ways level, `test_s8_...` and the truth-table BO1 row).
+
+CHECKS (second round), each with its DIRECT exit code. From `services/api` (the lanes venv):
+- `python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/spatial tests/journey
+  tests/api tests/drawings tests/cad tests/documents/test_pdf_content.py` -> 3479 passed, 8 skipped
+  (exit 0; +4 over the previous round).
+From the root:
+- `python3 services/api/scripts/sync_contract_schemas.py --check` -> byte-identical (exit 0; no
+  contract file changed this round)
+- `python .github/scripts/validate_contracts.py` -> Checked 23 schema file(s); 0 failure(s) (exit 0)
+- `python3 tools/modularity_check.py --check` -> failures 0 (exit 0; no warning on result_ways.py or
+  three_way_document.py)
+- `python3 scripts/lanes/check_lane_paths.py --coverage` -> LANE COVERAGE PASS: 9753 files (exit 0)
+- `render_review_register.py --check` -> FAILED, 7 issues (result_ways.py and three_way_document.py
+  sha256 changed): EXPECTED; the register is resynced after me. I touched no register file.
+
+I did not change first_option_results.py or geometry.py this round (listed as allowed, not needed:
+geometry.py's own floor-plates text is a benign "Floor plates need the building option." that
+`_apply_geometry` overrides; the fix lives in the transform's reconcile and the decision text).
+
 END-OF-REPORT

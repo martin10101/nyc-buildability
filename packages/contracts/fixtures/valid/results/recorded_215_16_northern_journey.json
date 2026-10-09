@@ -592,7 +592,7 @@
     },
     "floor_plates": {
       "status": "not_available",
-      "reason": "No building option is shown yet: the building option is below the minimum base height and has not been checked against an independently worked example, and its footprint needs the rear yard, which is not settled.",
+      "reason": "No floor plate is drawn: no placement on the lot is worked for any building. The first-building alternatives worked for this lot are listed in building_alternatives, and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.",
       "reason_kind": "rule_not_implemented"
     }
   },

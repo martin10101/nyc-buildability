@@ -451,6 +451,43 @@ def test_w14_s27_live_route_fourteen_ft_building_b_listed_building_a_not_worked(
     assert doc["buildings_not_worked"][0]["gap_kind"] == "missing_information"
 
 
+def _all_strings(node) -> list[str]:
+    out: list[str] = []
+
+    def walk(n):
+        if isinstance(n, str):
+            out.append(n)
+        elif isinstance(n, dict):
+            for key, value in n.items():
+                out.append(key)
+                walk(value)
+        elif isinstance(n, list):
+            for value in n:
+                walk(value)
+
+    walk(node)
+    return out
+
+
+def test_w14c_live_route_false_building_option_text_appears_nowhere(enabled, monkeypatch) -> None:
+    """W14 (c) second round / requirement 3 through the LIVE ROUTE: the phrase 'below the minimum
+    base height' appears in NO string of the returned document, at the default 10 ft and at 14, 16
+    and 25 ft (the heights the existing helpers allow). geometry.floor_plates states the true
+    placement reason."""
+    _no_network(monkeypatch)
+    for f2f in (None, 14, 16, 25):
+        body = {"housing_program": "standard_residence"}
+        if f2f is not None:
+            body["floor_to_floor_ft"] = f2f
+        response = _post(app_with(benchmark_provider()), body)
+        assert response.status_code == 200
+        doc = response.json()
+        for text in _all_strings(doc):
+            assert "below the minimum base height" not in text, (f2f, text)
+        fp = doc["geometry"]["floor_plates"]
+        assert fp["reason"].startswith("No floor plate is drawn: no placement on the lot is worked")
+
+
 # =========================================================================== T9
 def test_t9_rate_limit_before_any_other_work(enabled, monkeypatch) -> None:
     """T9: more calls than the per-caller limit -> a typed 429 BEFORE any other work. The limiter

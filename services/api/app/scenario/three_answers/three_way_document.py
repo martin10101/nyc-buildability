@@ -89,6 +89,7 @@ __all__ = [
     "BUILDING_OPTION_POINTS_TO_ALTERNATIVES",
     "CONTRACT_VERSION_FIRST_OPTION",
     "CONTRACT_VERSION_THREE_WAY",
+    "FLOOR_PLATES_FOLLOW_FIRST_OPTION",
     "FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "FLOOR_STACK_GIVEN_IN_ALTERNATIVES",
     "FLOOR_TO_FLOOR_KEY",
@@ -169,6 +170,17 @@ BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION = (
 ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION = (
     "This gain is not known: it is worked out from building options, which are not known for this "
     "lot."
+)
+
+# The geometry floor-plates layer wherever the first option is applied (ruling W14 c): no placement
+# on the lot is worked for any building, so no floor plate is drawn; it points to the two building
+# lists and makes NO base-height or rear-yard claim (the decision module's older building-option
+# text, which _apply_geometry would otherwise copy here, was false - the walkthrough's F1).
+FLOOR_PLATES_FOLLOW_FIRST_OPTION = (
+    "No floor plate is drawn: no placement on the lot is worked for any building. The "
+    "first-building alternatives worked for this lot are listed in building_alternatives, and any "
+    "building of the method that was not worked is listed, with the reason, in "
+    "buildings_not_worked."
 )
 
 # The withheld standard legal unit limit when the module shows it but the engine's inner
@@ -597,8 +609,11 @@ def _apply_first_option(
     if changed:
         # Wherever the first option is applied the single building_option points to BOTH lists and
         # claims nothing else - ALSO when no building is listed - so its reason is never the
-        # decision module's older (possibly false) one (ruling W14 c).
+        # decision module's older (possibly false) one (ruling W14 c). The geometry floor-plates
+        # layer, which _apply_geometry filled with that same older text, is reconciled to the true
+        # "no placement worked" reason (ruling W14 c, second round).
         _point_building_option_to_alternatives(doc)
+        _reconcile_floor_plates_geometry(doc)
         doc["contract_version"] = CONTRACT_VERSION_FIRST_OPTION
 
 
@@ -634,6 +649,23 @@ def _reconcile_envelope_geometry(doc: dict, ways: ResultWays, coverage_block: di
     geometry["envelope"] = _not_available(
         coverage_block["reason"], REASON_KIND_BY_GAP[coverage_block["gap_kind"]]
     )
+
+
+def _reconcile_floor_plates_geometry(doc: dict) -> None:
+    """The geometry floor-plates layer, wherever the first option is applied (ruling W14 c), states
+    the true reason: no placement is worked for any building, so no floor plate is drawn, and it
+    points to the two building lists. _apply_geometry would otherwise have copied the decision
+    module's older building-option text here (the walkthrough's F1 false 'below the minimum base
+    height'). Only when the layer is not_available (nothing is drawn anyway); its reason_kind stays
+    the work-owed kind, so only the reason text changes."""
+    geometry = doc.get("geometry")
+    if not isinstance(geometry, dict):
+        return
+    floor_plates = geometry.get("floor_plates")
+    if isinstance(floor_plates, dict) and floor_plates.get("status") == "not_available":
+        geometry["floor_plates"] = _not_available(
+            FLOOR_PLATES_FOLLOW_FIRST_OPTION, _WORK_OWED_REASON_KIND
+        )
 
 
 def _reconcile_list_dependents(doc: dict) -> None:

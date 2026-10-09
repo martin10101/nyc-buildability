@@ -260,7 +260,8 @@ _TABLE = [
      ["not set by this formula", "ZR 23-52(a)(2)", "has not been checked"], ["separate rule"]),
     # --- building option ---
     ("BO1_option", lambda: plain_inputs(**k20(True)),
-     "achieved_zoning_floor_area", WAY_W, "work_owed", ["building option", "rear yard"], []),
+     "achieved_zoning_floor_area", WAY_W, "work_owed",
+     ["does not work a single building option"], ["rear yard", "below the minimum base height"]),
 ]
 
 

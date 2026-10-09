@@ -616,19 +616,22 @@ def decide_result_ways(inp: ResultWayInputs) -> ResultWays:
     )
     envelope = _answer("permitted_envelope", envelope_rows)
 
-    # (O3) a result computed from a withheld result is withheld and names it: the building
-    # option's footprint depends on the rear yard, which is not settled this milestone.
+    # The single building option is not worked in this milestone: the program works the
+    # first-building alternatives instead (building_alternatives / buildings_not_worked, ruling
+    # W14). This text reaches a document only where the first option is NOT applied (no shown
+    # floor-area allowance, or a settled allowance the first-option step does not yet work from):
+    # there it must state ONLY what is true on every such path - that the single building option is
+    # not worked - with NO claim about a building that was never worked (no base height, no rear
+    # yard) and NO claim the allowance is or is not shown (it is not shown on some of these paths
+    # and settled on others). Where the first option IS applied the emitter replaces this text (the
+    # building_option pointer and the floor-plates reconciliation, ruling W14 c).
     option_withheld = Withheld(
         label="Building option",
-        reason=(
-            "No building option is shown yet: the building option is below the minimum base "
-            "height and has not been checked against an independently worked example, and its "
-            "footprint needs the rear yard, which is not settled."
-        ),
+        reason="No building option is shown: this program does not work a single building option.",
         gap_kind=WORK_OWED,
         resolved_by=(
-            "Working out the building-option generator and checking it against an "
-            "independently worked example."
+            "Reading the first-building alternatives the program works instead "
+            "(building_alternatives and buildings_not_worked), where the lot allows them."
         ),
     )
     if _building_option_withheld():

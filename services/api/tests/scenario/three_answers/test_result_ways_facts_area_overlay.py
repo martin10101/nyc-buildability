@@ -174,13 +174,17 @@ def test_s8_not_supported_result_is_withheld_naming_the_reading_owed():
     assert coverage.way.gap_kind == "work_owed"
 
 
-def test_s8_a_dependent_result_names_what_it_depends_on():
-    # The building option depends on the withheld rear yard (its footprint); it is withheld and
-    # names that dependency (gaps K4, K6).
+def test_s8_the_single_building_option_is_withheld_and_states_only_what_is_true():
+    # The single building option is not worked in this milestone (the program works the
+    # first-building alternatives instead, ruling W14); it is withheld and says only that, with NO
+    # claim about a building that was never worked - no rear yard, no base height (walkthrough F1,
+    # second round). The dependent-result wording that named the rear yard was false here.
     ways = decide_result_ways(plain_inputs(lot_type=LotType.CORNER, **k20(True)))
     assert not ways.building_option.is_available
     reason = ways.building_option.values[0].way.reason
-    assert "rear yard" in reason
+    assert "does not work a single building option" in reason
+    assert "rear yard" not in reason
+    assert "below the minimum base height" not in reason
 
 
 def test_s8_module_holds_no_table_of_what_a_reading_supports():

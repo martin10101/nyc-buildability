@@ -57,6 +57,7 @@ from app.scenario.three_answers.three_way_document import (
     ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
     BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
     BUILDING_OPTION_POINTS_TO_ALTERNATIVES,
+    FLOOR_PLATES_FOLLOW_FIRST_OPTION,
     FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION,
     FLOOR_STACK_GIVEN_IN_ALTERNATIVES,
     FLOOR_TO_FLOOR_KEY,
@@ -720,6 +721,7 @@ def test_every_text_the_transform_writes_is_plain_and_true(benchmark):
         BUILDING_OPTION_POINTS_TO_ALTERNATIVES,
         UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES,
         FLOOR_STACK_GIVEN_IN_ALTERNATIVES,
+        FLOOR_PLATES_FOLLOW_FIRST_OPTION,  # W14 c second round: the true floor-plates reason
     ]
     # the one text the transform builds at run time: the shown unit-limit value object label
     with pytest.MonkeyPatch.context() as mp:
@@ -1831,3 +1833,75 @@ def test_w14_no_not_worked_reason_claims_feasible_or_preferred():
             blob = json.dumps(entry).lower()
             for banned in _BANNED_W14:
                 assert banned not in blob, (f2f, banned, entry["building"])
+
+
+# ==================================== W14 (c) second round: no false building-option text
+_FALSE_BUILDING_OPTION_PHRASE = "below the minimum base height"
+
+
+def _all_strings(node) -> list[str]:
+    """Every string anywhere in the document (keys and values), so a false reason cannot hide in
+    any block."""
+    out: list[str] = []
+
+    def walk(n):
+        if isinstance(n, str):
+            out.append(n)
+        elif isinstance(n, dict):
+            for key, value in n.items():
+                out.append(key)
+                walk(value)
+        elif isinstance(n, list):
+            for value in n:
+                walk(value)
+
+    walk(node)
+    return out
+
+
+def test_w14c_floor_plates_reason_is_the_true_placement_reason_on_the_benchmark():
+    """W14 (c) second round: on the benchmark (first option applied) geometry.floor_plates no longer
+    carries the decision module's older building-option text; it states the true reason - no
+    placement is worked, so no floor plate is drawn - and points to the two building lists, with no
+    base-height or rear-yard claim."""
+    doc = _benchmark_emit_at(10)
+    fp = doc["geometry"]["floor_plates"]
+    assert fp["status"] == "not_available"
+    assert fp["reason"].startswith("No floor plate is drawn: no placement on the lot is worked")
+    assert "building_alternatives" in fp["reason"] and "buildings_not_worked" in fp["reason"]
+    assert "minimum base height" not in fp["reason"]
+    assert "rear yard" not in fp["reason"]
+    assert fp["reason_kind"] == "rule_not_implemented"  # unchanged
+
+
+def test_w14c_false_building_option_text_appears_in_no_emitted_string():
+    """W14 (c) second round / requirement 3: the phrase 'below the minimum base height' appears in
+    NO string of the emitted document - at 10, 14, 16 and 25 ft (the first option applied) and on a
+    path where the floor-area allowance is NOT shown (the engine lane off). Through the emitter."""
+    docs = [_benchmark_emit_at(f2f) for f2f in (10, 14, 16, 25)]
+    with pytest.MonkeyPatch.context() as mp:
+        docs.append(_benchmark_adapter(mp, env={}).document)  # lane A off: no floor-area allowance
+    for doc in docs:
+        for text in _all_strings(doc):
+            assert _FALSE_BUILDING_OPTION_PHRASE not in text, text
+
+
+def test_w14c_allowance_not_shown_building_option_states_only_what_is_true():
+    """W14 (c) second round / requirement 2: on a path where the floor-area allowance is NOT shown
+    (a blanket withhold - a recorded overlay with no supporting reading) the decision module's
+    building-option text reaches the document, and it says ONLY that the program does not work a
+    single building option - no base-height claim, no rear-yard claim, nothing about a building that
+    was never worked. The geometry floor-plates layer carries the same true text (the first option
+    is not applied, so it is not reconciled)."""
+    _engine, doc = _emit_made_up(
+        lot_area=10075, lot_type="corner", way_inputs=base_inputs(),  # overlay, no support -> blanket
+    )
+    assert doc["answers"]["floor_area_allowance"]["status"] != "available"  # allowance not shown
+    reason = doc["answers"]["building_option"]["reason"]
+    assert "this program does not work a single building option" in reason
+    assert "minimum base height" not in reason
+    assert "has not been checked against an independently worked example" not in reason
+    assert "rear yard" not in reason
+    floor_plates = doc["geometry"]["floor_plates"]
+    assert "this program does not work a single building option" in floor_plates["reason"]
+    assert "minimum base height" not in floor_plates["reason"]
