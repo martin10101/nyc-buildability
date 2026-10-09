@@ -144,15 +144,15 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Announcement text drifts from the visible title -> the announcement reads the SAME resultsFailureNotice(outcome).title and the SAME extracted NotConnected-title const the card shows; S8/S9 assert equality against the rendered title.",
     "A conditional figure still reads as confirmed -> the 'Conditional' marker renders adjacent to the number for every conditional value and headline; S2/S3/S4 assert the marker is present and S4 that the number never renders without it.",
@@ -166,7 +166,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-08T23:59:27.297763+00:00",
-  "updated_at": "2026-10-08T23:59:27.684337+00:00",
+  "updated_at": "2026-10-09T00:00:49.187060+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -190,5 +190,14 @@
     "cd apps/web && npx vitest run src/lib/architect/__tests__ src/components/architect/answers/__tests__ src/components/architect/__tests__/results-panel.test.tsx   # the touched tests and their folders",
     "python3 tools/modularity_check.py --check   # from the repository root; failures 0 and no NEW warning"
   ],
-  "worktree": "/root/project/w-wave14"
+  "worktree": "/root/project/w-wave14",
+  "progress_log": [
+    {
+      "at": "2026-10-09T00:00:49.186943+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "Contracted and claimed. The draft was read against the code first (how the conditions are joined; every reader of the joined line; the browser journey's checks; the announcer component). Not pushed: under the owner's simplification the contract and claim seams ride with the push of the head under review. Next: one builder (frontend-engineer) in an isolated worktree reset to the claim-seam head; it starts no server and runs no browser test."
+    }
+  ]
 }
