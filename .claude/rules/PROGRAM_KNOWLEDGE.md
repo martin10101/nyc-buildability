@@ -99,14 +99,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   modularity `python tools/modularity_check.py --check`.
 - Rules: `services/api/app/rules/rulesets/*.rule.json`; ZR snapshots
   `docs/research/zr-snapshots/v1/`; snapshot sync `sync_zr_snapshots`.
-- Wide-street stack (all accepted): `dcm_street_centerline_arcgis.py` (transport; returnGeometry
-  TRUE, parse discards geometry) → `dcm_street_width_classifier.py` (24 classes, byte-immutable)
-  → `dcm_street_width_policy.py` (D-052; no-default `AttestedPreconditions` that VALUE-gates to
-  UNRESOLVED) → `dcm_street_centerline_geometry.py` (B3, typed 2263 polylines) →
-  `wide_street_buffer_engine.py` (B4, 100.0-ft buffer ∩ lot). B7 rule-wiring is NEXT and must be
-  its OWN module + close the B4 input-bounds gap (see Tier 2). Lot side:
-  `mappluto_geometry_arcgis.py` (2263, measurement) vs `mappluto_lot_outline.py` (4326, display
-  only, NEVER measure).
+- Wide-street stack (all accepted): moved to Tier 2, section "Wide-street stack" (2026-10-09). Lot side:
+  `mappluto_geometry_arcgis.py` (2263, measurement) vs `mappluto_lot_outline.py` (4326, display only, NEVER measure).
 
 ## Domain anchors (verified)
 

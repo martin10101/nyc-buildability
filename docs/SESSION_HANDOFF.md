@@ -54,6 +54,14 @@ Removed from the old list because done: the piece that emits the results documen
 ## 7. The one-time workflow audit of this session
 Report (not committed, raw records stay on the server): `C/SESSION_WORKFLOW_AUDIT_2026-10-08_5b29ad99-7c30-4e36-8c3f-cf862905fe8f.md`. Its cutoff is in `C/audit-final-cutoff.txt`. The audit ends with this handoff; the next session does not continue it.
 
+## 8. Design (architect presentation contract)
+
+- Contract: `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md`, adopted 2026-10-09 (D-090 source-079, rows R800 to R891; task M0-T189). Revision: `git log -1 --format=%H -- docs/design/ARCHITECT_PRESENTATION_CONTRACT.md`. First committed on branch `task/wave19-first-option-wiring`, before its merge.
+- Last surface checked: none in the product yet. The one-off test PDF version 5 (the brief applied to today's output) is outside the repository, in `/root/project/lanes-runtime/owner-docs/session-2026-10-09a/test-pdf/`.
+- Not run yet: acceptance UX-01 to UX-16 on any product surface.
+- Questions: `/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md`. Open: A1, A2, C1, C2, D1 (paper size), B1 to B6 (B6 is the PDF converter).
+- Next visible action: after wave 19 merges, the brief's step 2 (shared tokens), then step 3 (one complete website slice on the results panel), then the PDF slice (question B6 first). Hold: the results-screen files wait for wave 19; every production switch stays off.
+
 ## Authoritative files (smallest set)
 `CLAUDE.md`; `python tools/project_control.py status`; `project-control/tasks/M5-T144.json`; `docs/DISCOVERY_BACKLOG.md` (rows DB-196 to DB-209 and the last sweep lines); D-090 `requirements.json` rows R617 to R668.
 
