@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 755,
+ "requirement_count": 757,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T06:15:04+00:00",
+ "updated_at": "2026-10-09T06:21:04+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -25595,6 +25595,72 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the owner on when to compact).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R756",
+   "text": "'Can we set up the hook for the compaction so it knows, you know, like we discussed, so it can get the information needed?': a hook for compaction is set up. ORCHESTRATOR'S READING: 'like we discussed' is the hook the program itself runs right after a compaction, planned or automatic, that puts the latest checkpoint of the session notes in front of the session; the owner said in the message before that the instruction file `CLAUDE.md` should not be cluttered, so it is not touched; as the session undertook, the documentation is checked first and the exact lines are brought to the owner before anything is switched on.",
+   "source_ref": "source-072-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R750"
+   ],
+   "required_harness": "The hook exists in the form the documentation gives, was shown to the owner as exact lines before it was switched on, and `CLAUDE.md` is unchanged.",
+   "required_evidence": "The settings lines and the hook file; the owner's approval of them.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the compaction hook).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R757",
+   "text": "'Can we set up the hook for the compaction so it knows, you know, like we discussed, so it can get the information needed?': the hook is there so that the session gets the information it needs after a compaction.",
+   "source_ref": "source-072-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R735"
+   ],
+   "required_harness": "A trial shows it: after a compaction the latest checkpoint's text is in front of the session without a bulk read.",
+   "required_evidence": "The session record of the first compaction after the hook is on.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the compaction hook).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

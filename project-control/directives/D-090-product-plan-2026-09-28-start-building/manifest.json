@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T06:15:04+00:00",
+ "updated_at": "2026-10-09T06:21:04+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -776,10 +776,12 @@
   "D-090-R752",
   "D-090-R753",
   "D-090-R754",
-  "D-090-R755"
+  "D-090-R755",
+  "D-090-R756",
+  "D-090-R757"
  ],
- "requirements_id_digest_sha256": "c25f7d63bb3d4a0aa8603f5a17d0772c7c36818cb9fc80214f2923d74b3b33b0",
- "requirements_content_digest_sha256": "74e39f813a20be48d67446dec1e97906fb6b70b5e5f7f2fc80670f122c445c7b",
+ "requirements_id_digest_sha256": "adc6a3adcfcefecc245fe2688fad50016bf3cd87bc7e0a993fe0083e81427b78",
+ "requirements_content_digest_sha256": "9b54074b1fd8d5b92c98017fa0c4789b7447c03dd305bd475cee534192a35a5f",
  "sources": [
   {
    "file": "source-001.md",
@@ -1347,6 +1349,14 @@
    "recorded_at": "2026-10-09T06:15:04+00:00",
    "content_digest_sha256": "92aeac34085286369701aa7a0ade086d19f0808723dd0b63c993188e0df73e98",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-072-amendment.md",
+   "kind": "amendment",
+   "sequence": 72,
+   "recorded_at": "2026-10-09T06:21:04+00:00",
+   "content_digest_sha256": "439529449fc0a18faa9870a95426c71f544dbf102cbfbcd9f6270cc10d073c1c",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1419,7 +1429,8 @@
   "source-068-amendment.md",
   "source-069-amendment.md",
   "source-070-amendment.md",
-  "source-071-amendment.md"
+  "source-071-amendment.md",
+  "source-072-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2155,6 +2166,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-071 (session 013RaGmC: the owner on when to compact, 2026-10-09: the third concern is bulk rereading; compact at the next quiet point with an accurate checkpoint, reuse a current checkpoint, never during an acceptance or a merge, no need to wait for reviewers; afterwards read only the checkpoint and what the next action needs; review evidence stays in the records; the diagnostic with the next normal update; 'growth is slower' an expectation until measured; no further audit or process discussion; the building-option work goes on) and requirements D-090-R745 to R755, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T06:21:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-072 (session 013RaGmC: the owner asks for the compaction hook, 2026-10-09: a hook so that the session gets the information it needs after a compaction; the documentation checked first and the exact lines brought to the owner; CLAUDE.md not touched) and requirements D-090-R756 to R757, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
