@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T07:15:00+00:00",
+ "updated_at": "2026-10-09T07:43:29+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -793,10 +793,11 @@
   "D-090-R769",
   "D-090-R770",
   "D-090-R771",
-  "D-090-R772"
+  "D-090-R772",
+  "D-090-R773"
  ],
- "requirements_id_digest_sha256": "1e30b794955646bec0bf352290fb4093a8c737becbce0999c92048387671fe2d",
- "requirements_content_digest_sha256": "a3368bfbe4d39ef78cfd1d5891f7c3b3ffd0297d2602268dd22bb3772e44e4eb",
+ "requirements_id_digest_sha256": "480b148d08550d57ea9e5d03b96888560fdb13a354f6be1fd60a801ea583d68c",
+ "requirements_content_digest_sha256": "8ca84d4a58f268a09486c28ff0645d11ed59cbe806db3c7ebfeea23c5f1b91f9",
  "sources": [
   {
    "file": "source-001.md",
@@ -1388,6 +1389,14 @@
    "recorded_at": "2026-10-09T07:15:00+00:00",
    "content_digest_sha256": "52f19aaa1bed54f7606d2d3fd01f040c6ad671af50ed806a87644acb2a1bf85a",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-075-amendment.md",
+   "kind": "amendment",
+   "sequence": 75,
+   "recorded_at": "2026-10-09T07:43:29+00:00",
+   "content_digest_sha256": "ee1be4afdcc99fc65cc9bc264deb9a9753c6a7ef48028085e31b10494b14a7b3",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1463,7 +1472,8 @@
   "source-071-amendment.md",
   "source-072-amendment.md",
   "source-073-amendment.md",
-  "source-074-amendment.md"
+  "source-074-amendment.md",
+  "source-075-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2224,6 +2234,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-074 (session 013RaGmC: the owner sends two screenshots and asks to do what they show, 2026-10-09: a table of contents within the first 100 lines of every reference file of the owner's own skills; no skill is created; vendor-synced skills are not edited; no repository file changes) and requirements D-090-R771 to R772, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T07:43:29+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-075 (session 013RaGmC: the owner asks that long tasks be broken up or built by several agents side by side, 2026-10-09; read within the recorded limits on helpers and the no-shared-file rule) and requirements D-090-R773 to R773, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

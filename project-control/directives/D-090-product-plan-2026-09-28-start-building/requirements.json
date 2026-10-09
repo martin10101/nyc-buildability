@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 772,
+ "requirement_count": 773,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T07:15:00+00:00",
+ "updated_at": "2026-10-09T07:43:29+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -26161,6 +26161,42 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the two screenshots).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R773",
+   "text": "'Its working for Alma hour on this for the future can you brake up tesk like this so it donts take so long or that a few different agents run in same test but on different parts to make it go faster?': the owner saw one builder work for almost an hour on one task and asks that, in future, tasks like it are broken up so that a piece does not take so long, or that several agents work at once on different parts. ORCHESTRATOR'S READING: packets are cut smaller, along the lines of the files each part owns, and parts that do not depend on each other are built side by side by different builders; this stays inside the owner's recorded limits on helpers (rows R494 to R497) and the rule that parallel work shares no file and no test; reviews, gates and the one-at-a-time rule for heavy runs and merges are unchanged; where one part needs another's result first, they stay in order and the record says so.",
+   "source_ref": "source-075-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R494",
+    "D-090-R495",
+    "D-090-R496",
+    "D-090-R497"
+   ],
+   "required_harness": "From the next task on, a packet whose work can be divided into parts with separate files is contracted as several smaller tasks built side by side within the recorded limits, or its record says why it could not be divided.",
+   "required_evidence": "The packets and concurrency records of the next tasks; the builders' run times.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (smaller tasks, parts built side by side).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
