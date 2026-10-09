@@ -94,8 +94,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "import-guard trip -> the new module must import only from .engine_conditions and must NOT contain the substring 'result_way'; if any needed import forces that substring into the file, add three_way_scope_lines.py to the permitted set in test_result_ways.py (lines 85-98) in this same task and say so in the report.",
     "hidden wording drift -> S2's full-document deep-equality to the committed fixture, plus running the drawings/CAD/PDF snapshot tests that render the fixture, proves no string moved.",
@@ -106,7 +106,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T01:25:49.508134+00:00",
-  "updated_at": "2026-10-09T03:13:58.240144+00:00",
+  "updated_at": "2026-10-09T03:14:00.974580+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
