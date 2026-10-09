@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T06:44:55+00:00",
+ "updated_at": "2026-10-09T07:15:00+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -791,10 +791,12 @@
   "D-090-R767",
   "D-090-R768",
   "D-090-R769",
-  "D-090-R770"
+  "D-090-R770",
+  "D-090-R771",
+  "D-090-R772"
  ],
- "requirements_id_digest_sha256": "94bf179d549815615b6875be74f43695d266526c39cc3cfd497fbb89f30f1e5a",
- "requirements_content_digest_sha256": "39093a36a93e71c56decd7d190d0c7faf1307cbde326e3c85f8782352ca453e0",
+ "requirements_id_digest_sha256": "1e30b794955646bec0bf352290fb4093a8c737becbce0999c92048387671fe2d",
+ "requirements_content_digest_sha256": "a3368bfbe4d39ef78cfd1d5891f7c3b3ffd0297d2602268dd22bb3772e44e4eb",
  "sources": [
   {
    "file": "source-001.md",
@@ -1378,6 +1380,14 @@
    "recorded_at": "2026-10-09T06:30:52+00:00",
    "content_digest_sha256": "e549e06021b256a28f47575c37c5749c3dec294717ef708ef98c21e48ee7faae",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-074-amendment.md",
+   "kind": "amendment",
+   "sequence": 74,
+   "recorded_at": "2026-10-09T07:15:00+00:00",
+   "content_digest_sha256": "52f19aaa1bed54f7606d2d3fd01f040c6ad671af50ed806a87644acb2a1bf85a",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1452,7 +1462,8 @@
   "source-070-amendment.md",
   "source-071-amendment.md",
   "source-072-amendment.md",
-  "source-073-amendment.md"
+  "source-073-amendment.md",
+  "source-074-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2207,6 +2218,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M4-T038 (G0 contract: calculation entries in the zoning-rule review register and the first building option's calculation comparison) to R379, R686, R687, R688, R689, R690, R691, R692, R693, R694, R695, R696, R697, R698, R699, R700, R701, R702, R703, R704, R705, R706, R707 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-09T07:15:00+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-074 (session 013RaGmC: the owner sends two screenshots and asks to do what they show, 2026-10-09: a table of contents within the first 100 lines of every reference file of the owner's own skills; no skill is created; vendor-synced skills are not edited; no repository file changes) and requirements D-090-R771 to R772, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

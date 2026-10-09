@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 770,
+ "requirement_count": 772,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T06:44:55+00:00",
+ "updated_at": "2026-10-09T07:15:00+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -26097,6 +26097,70 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (the hook approved with corrections).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R771",
+   "text": "'Please read and do it': the owner sends two screenshots and asks the session to read them and do what they show. ORCHESTRATOR'S READING OF THE PICTURES (transcribed by the orchestrator, not typed by the owner): each shows a prompt typed into Claude Code in a short video by a third party. Picture 1: 'Audit all my skills and make sure ALL the reference files have a table of contents within the first 100 lines'. Picture 2: 'Create a skill using skillsmith and make sure all the reference files have a table of contents.' What is done: the first, for the skills on this machine that are the owner's own (the project's skills and the owner's user-level skills): every reference file of a skill that is longer than 100 lines has a table of contents within its first 100 lines. Not done: the second names a tool this setup does not have and no skill to create, so nothing is created; skills that are supplied and synced by the vendor are not edited (a sync would undo it).",
+   "source_ref": "source-074-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R711"
+   ],
+   "required_harness": "An audit lists every skill's reference files and whether each has a table of contents in its first 100 lines; after the change the audit shows none of the owner's own reference files longer than 100 lines without one; each changed file differs from its saved copy only by the added table.",
+   "required_evidence": "The audit before and after, and the saved copies, in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the two screenshots).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R772",
+   "text": "'Please read and do it': ORCHESTRATOR'S READING: what a skill tells the session to do is not changed by this: only a table of contents is added to reference files; no skill's instructions, name or description change, and no repository file changes (the project's own skills have no reference files).",
+   "source_ref": "source-074-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [],
+   "required_harness": "The repository's working tree is unchanged by this work; each changed file's lines other than the added table are identical to before.",
+   "required_evidence": "The diffs against the saved copies.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (the two screenshots).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
