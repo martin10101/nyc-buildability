@@ -369,3 +369,146 @@
   display: block;
   color: var(--text-secondary, #4b4b47);
 }
+
+/* ---- First building options (contract 1.4.0, M5-T146/M5-T147) ----
+   The worked building alternatives, each with its floor schedule, conditions, what was not checked
+   and its own preliminary capacity estimate; the legal dwelling-unit limit kept separate; coverage
+   by portion. No status is encoded by colour; the state is told by the words and the markers. */
+
+.ta-options {
+  margin: var(--space-4, 1rem) 0 0;
+  padding: var(--space-4, 1rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-card, 10px);
+  background: var(--surface-card, #ffffff);
+}
+
+.ta-options-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.ta-options-lead {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-option {
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding: var(--space-3, 0.75rem);
+  border: 1px solid var(--border-quiet, #e4e4df);
+  border-radius: var(--radius-control, 6px);
+  background: var(--surface-inset, #f4f4f1);
+}
+
+.ta-option-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.ta-option-summary {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-floor-schedule {
+  margin: var(--space-3, 0.75rem) 0 0;
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-floor-schedule-caption {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: var(--space-1, 0.25rem);
+}
+
+.ta-floor-schedule th,
+.ta-floor-schedule td {
+  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
+  border-bottom: 1px solid var(--border-quiet, #e4e4df);
+  text-align: right;
+}
+
+.ta-floor-schedule thead th,
+.ta-floor-schedule tbody th {
+  text-align: left;
+  font-weight: 600;
+}
+
+.ta-option-not-checked,
+.ta-capacity {
+  margin: var(--space-3, 0.75rem) 0 0;
+}
+
+.ta-option-not-checked-heading,
+.ta-capacity-assumptions-heading {
+  margin: 0;
+  font-weight: 600;
+}
+
+.ta-option-not-checked-list,
+.ta-capacity-assumptions-list {
+  margin: var(--space-1, 0.25rem) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-capacity-label {
+  margin: 0;
+  font-weight: 650;
+}
+
+.ta-capacity-range {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-capacity-wholes {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-capacity-assumptions {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-legal-limit,
+.ta-coverage {
+  margin: var(--space-3, 0.75rem) 0 0;
+  padding-top: var(--space-3, 0.75rem);
+  border-top: 1px solid var(--border-quiet, #e4e4df);
+}
+
+.ta-legal-limit-label,
+.ta-coverage-label {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 650;
+}
+
+.ta-legal-limit-value {
+  margin: var(--space-1, 0.25rem) 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-legal-limit-note,
+.ta-coverage-resolved {
+  margin: var(--space-1, 0.25rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}
+
+.ta-coverage-figures {
+  margin: var(--space-2, 0.5rem) 0 0;
+}
+
+.ta-option-sections {
+  margin: var(--space-2, 0.5rem) 0 0;
+  color: var(--text-secondary, #4b4b47);
+}

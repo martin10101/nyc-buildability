@@ -48,6 +48,13 @@ export type ThreeAnswersResults = Pick<
   | "draft"
   | "street_width_case"
   | "scope"
+  // Results contract 1.4.0 additive blocks (M5-T146/M5-T147). All OPTIONAL/absent on an earlier
+  // document, so the panel renders unchanged for every 1.0.0–1.3.0 instance (FirstBuildingOptions
+  // reads these). unit_estimate is the legal dwelling-unit limit, shown withheld beside — never as —
+  // the preliminary capacity estimate (D-090-R688).
+  | "building_alternatives"
+  | "coverage_by_portion"
+  | "unit_estimate"
 >;
 
 export type AnswerKey = keyof ThreeAnswersResults["answers"];
@@ -251,14 +258,29 @@ function valueStates(
 /** Each condition of a value whose way is conditional, one line per condition (ruling L1); an
  * empty list for a settled value. Nothing is retyped (each line is the document's assumption,
  * trimmed); the reader's rule is applied to EACH entry by itself — "If " is put in front only
- * when that entry does not already begin with it, so the two assumptions never run together. */
-function conditionList(state: ValueState | undefined): readonly string[] {
+ * when that entry does not already begin with it, so the two assumptions never run together.
+ * Exported so the 1.4.0 first-building-options view renders an alternative's / coverage's `way`
+ * through the ONE representation of conditions the panel already uses. */
+export function conditionList(state: ValueState | undefined): readonly string[] {
   if (!state || state.way !== "conditional") return [];
   return state.conditions.map(condition => {
     const text = condition.assumption.trim();
     return text.startsWith(IF_PREFIX) ? text : `${IF_PREFIX}${text}`;
   });
 }
+
+/** True when the document carries at least one worked first-building alternative (contract 1.4.0).
+ * On such a lot the single `building_option` answer is superseded by the LIST shown below. */
+export function hasBuildingAlternatives(results: ThreeAnswersResults): boolean {
+  const alternatives = results.building_alternatives;
+  return Array.isArray(alternatives) && alternatives.length > 0;
+}
+
+/** The plain-words reason the single building-option card shows when worked alternatives are listed
+ * below it (contract 1.4.0). It points the reader to the list instead of repeating the document's
+ * machine reason, which names the `building_alternatives` contract field (never put on the screen —
+ * plan §5a item 5). "Not available —" is prepended by notAvailableText. */
+export const BUILDING_OPTIONS_BELOW_REASON = "the worked building options are shown below";
 
 export function answerView(
   results: ThreeAnswersResults,
@@ -267,6 +289,17 @@ export function answerView(
 ): AnswerView {
   const answer = results.answers[key];
   if (answer.status !== "available") {
+    // On a lot with worked alternatives (contract 1.4.0) the single building option points to the
+    // list below, in plain words, never the document's machine reason (R556/§5a item 5). The list
+    // itself renders in FirstBuildingOptions.
+    const pointsToAlternatives = key === "building_option" && hasBuildingAlternatives(results);
+    if (pointsToAlternatives) {
+      return {
+        kind: "not_available",
+        text: notAvailableText(BUILDING_OPTIONS_BELOW_REASON, key),
+        gapKindLine: null,
+      };
+    }
     // A whole not-available answer that carries a gap_kind says which kind it is (ruling R6).
     return {
       kind: "not_available",

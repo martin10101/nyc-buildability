@@ -3,11 +3,13 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   ANSWER_KEYS,
   ANSWER_TITLES,
+  BUILDING_OPTIONS_BELOW_REASON,
   REACHES_ALLOWANCE_TEXT,
   RULES_NOT_REVIEWED_REASON,
   STRIP_MAX_ITEMS,
   displayQuantity,
   gapKindLine,
+  hasBuildingAlternatives,
   notAvailableText,
   quantityText,
   type AnswerKey,
@@ -57,6 +59,22 @@ const PROBE_VALUE = { name: "probe height", value: 1, unit: "feet" as const };
 
 function card(key: AnswerKey): HTMLElement {
   return screen.getByTestId(`answer-${key}`);
+}
+
+/** On a lot with worked alternatives (contract 1.4.0) the single building-option card points to the
+ * list below in plain words, never the document's machine reason (which names the building_alternatives
+ * field). These mirror answerView so the loop's not-available checks stay exact for those fixtures. */
+function notAvailableFor(doc: Results, key: AnswerKey, reason: string): string {
+  return key === "building_option" && hasBuildingAlternatives(doc)
+    ? notAvailableText(BUILDING_OPTIONS_BELOW_REASON, key)
+    : notAvailableText(reason, key);
+}
+function gapKindFor(
+  doc: Results,
+  key: AnswerKey,
+  gapKind: Parameters<typeof gapKindLine>[0],
+): string | null {
+  return key === "building_option" && hasBuildingAlternatives(doc) ? null : gapKindLine(gapKind);
 }
 
 function panelText(): string {
@@ -135,13 +153,14 @@ for (const { name, doc } of FIXTURES) {
         const answer = doc.answers[key];
         if (answer.status !== "not_available") continue;
         const cardEl = card(key);
-        const expected = notAvailableText(answer.reason, key);
+        const expected = notAvailableFor(doc, key, answer.reason);
         expect(expected.startsWith("Not available — ")).toBe(true);
         const line = within(cardEl).getByTestId("answer-not-available");
         expect(line.textContent).toBe(expected);
         // An answer that carries a gap_kind also shows the plain-words kind line (ruling R6); a
-        // not-available answer with no gap_kind shows none.
-        const gapLine = gapKindLine(answer.gap_kind);
+        // not-available answer with no gap_kind shows none. The building-option card that points to
+        // the worked alternatives shows the pointer line and no kind line.
+        const gapLine = gapKindFor(doc, key, answer.gap_kind);
         if (gapLine) {
           expect(within(cardEl).getByTestId("answer-gap-kind").textContent).toBe(gapLine);
         } else {
@@ -166,13 +185,13 @@ for (const { name, doc } of FIXTURES) {
         const cardEl = card(key);
         const expected =
           answer.status === "not_available"
-            ? notAvailableText(answer.reason, key)
+            ? notAvailableFor(doc, key, answer.reason)
             : doc.draft
               ? `Not available — ${RULES_NOT_REVIEWED_REASON}`
               : null;
         if (expected === null) continue;
         // Only a natively not-available answer carries its own gap_kind line; the draft gate adds none.
-        const gapLine = answer.status === "not_available" ? gapKindLine(answer.gap_kind) : null;
+        const gapLine = answer.status === "not_available" ? gapKindFor(doc, key, answer.gap_kind) : null;
         expect(within(cardEl).getByTestId("answer-not-available").textContent).toBe(expected);
         expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}${gapLine ?? ""}`);
         expect(without(cardEl.textContent ?? "", expected, gapLine ?? "")).not.toMatch(/\d/);

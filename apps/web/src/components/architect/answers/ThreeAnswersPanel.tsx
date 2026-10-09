@@ -10,7 +10,9 @@ import {
   shortfallView,
   type ThreeAnswersResults,
 } from "@/lib/architect/three-answers";
+import { firstBuildingOptionsView } from "@/lib/architect/first-building-options";
 import { AnswerCard, BuildingOptionNotes, ShortfallBlock, SupplementRow } from "./AnswerCard";
+import { FirstBuildingOptions } from "./FirstBuildingOptions";
 import { ResultsStatusStrip } from "./ResultsStatusStrip";
 import { ScopeSummary } from "./ScopeSummary";
 import "./three-answers.css";
@@ -40,6 +42,7 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
   const headingId = useId();
   const remaining = remainingFloorAreaView(results);
   const scope = scopeView(results);
+  const firstOptions = firstBuildingOptionsView(results, showDraftValues);
   return (
     <section className="ta-panel" aria-labelledby={headingId} data-testid="three-answers-panel">
       <h2 id={headingId} className="ta-panel-title">
@@ -71,6 +74,7 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
           <BuildingOptionNotes notes={buildingOptionNotesView(results)} />
         </AnswerCard>
       </div>
+      {firstOptions ? <FirstBuildingOptions view={firstOptions} /> : null}
       <p className="ta-completeness" data-testid="three-answers-completeness">
         {results.completeness_line.text}
       </p>
