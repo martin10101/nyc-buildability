@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T02:49:16+00:00",
+ "updated_at": "2026-10-09T03:24:19+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -680,10 +680,19 @@
   "D-090-R656",
   "D-090-R657",
   "D-090-R658",
-  "D-090-R659"
+  "D-090-R659",
+  "D-090-R660",
+  "D-090-R661",
+  "D-090-R662",
+  "D-090-R663",
+  "D-090-R664",
+  "D-090-R665",
+  "D-090-R666",
+  "D-090-R667",
+  "D-090-R668"
  ],
- "requirements_id_digest_sha256": "b0d6e390f49f13533c2e6940a9b09157f31746752f069da24a6b1f0d735839b4",
- "requirements_content_digest_sha256": "7c6e7aec1ca63aa35920e9db16f79aa266233633c9690a5b3fe8cbf1c3f18dff",
+ "requirements_id_digest_sha256": "b222a91f4bd88abdbaaebbd481be79f600694a95821f7bd8040cbfe09684697d",
+ "requirements_content_digest_sha256": "c002ccb753fc9b4195849214e898de42b554babc738bb0b169a6a94e037e573a",
  "sources": [
   {
    "file": "source-001.md",
@@ -1203,6 +1212,14 @@
    "recorded_at": "2026-10-09T02:49:16+00:00",
    "content_digest_sha256": "8023450ce17c0177a992e4351ab1921d66129c68aaac388574baff15f9c39b03",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-066-amendment.md",
+   "kind": "amendment",
+   "sequence": 66,
+   "recorded_at": "2026-10-09T03:24:19+00:00",
+   "content_digest_sha256": "ecee4d292f9c69a7f18e60e0734d9cfd589341c8c5bacf0478a6b89764df84d3",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1269,7 +1286,8 @@
   "source-062-amendment.md",
   "source-063-amendment.md",
   "source-064-amendment.md",
-  "source-065-amendment.md"
+  "source-065-amendment.md",
+  "source-066-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1955,6 +1973,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-065 (session 013RaGmC: owner message 127, 2026-10-09: the overall label of the zoning results; M5-T143 first, then the first building shape, the floor schedule and the preliminary apartment estimate with their corrections and checks; completed research reused; the rear yard's reason corrected with the answer withheld; blockers told apart in three kinds; the next screen change; updates in four bullets; no audit, handoff, process redesign or activation) and requirements D-090-R641 to R659, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-09T03:24:19+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-066 (session 013RaGmC: owner message 128, 2026-10-09: go on as described; the height-data defect repaired and tested before drawings or estimates use those values; then the first building shape, the floor schedule and the apartment estimate by the smallest remaining work; the waiting list replaced at the next normal handoff; updates in four bullets that tell maintenance from new capability; no report now) and requirements D-090-R660 to R668, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 659,
+ "requirement_count": 668,
  "producer": "orchestrator",
- "updated_at": "2026-10-09T02:49:16+00:00",
+ "updated_at": "2026-10-09T03:24:19+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -22448,6 +22448,308 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Requested 2026-10-09 (message 127).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R660",
+   "text": "'Continue as described.': the work goes on as the orchestrator's update described it. ORCHESTRATOR'S READING: that update (02:53 UTC) said: finish M5-T143; then one server change with the owner's label and the corrected rear-yard reason; the repair of the height-data defect as its own next piece; no new reading before a list of the necessary ones exists.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R643",
+    "D-090-R648"
+   ],
+   "required_harness": "The next tasks contracted after M5-T143 are those named.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R661",
+   "text": "'The height-data defect is a valid correctness fix: repair and test it before drawings or estimates consume those values.': the owner confirms that the height-data defect is a real fault of correctness, to be repaired and tested. ORCHESTRATOR'S READING: the defect is backlog row DB-209: when a height limit is withheld, the results document's geometry block can still hold that height's figure.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R570"
+   ],
+   "required_harness": "The geometry block holds no figure of a withheld result in any state the decision module can produce, shown by tests layer by layer; the expected-failure mark that pins the defect is removed by the repair.",
+   "required_evidence": "The emitter's tests at the head that repairs it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R662",
+   "text": "'The height-data defect is a valid correctness fix: repair and test it before drawings or estimates consume those values.': the repair and its tests come BEFORE any drawing or estimate uses those values.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R661",
+    "D-090-R293"
+   ],
+   "required_harness": "No task that makes a building shape, a floor schedule, a drawing or an estimate read the geometry block is contracted before the repair is accepted and merged.",
+   "required_evidence": "The packets' dependency lists and the merge order.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R663",
+   "text": "'After these bounded fixes, prioritize the first building shape, floor schedule and apartment estimate.': after these bounded fixes the first building shape, the floor schedule and the apartment estimate have priority. ORCHESTRATOR'S READING: 'these bounded fixes' are M5-T143, the rear yard's reason, the owner's label and the height-data repair; nothing else is put before the three results unless it is one of their own dependencies. It confirms row R643.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R643",
+    "D-090-R644"
+   ],
+   "required_harness": "The tasks contracted after the bounded fixes are the three results or what they depend on.",
+   "required_evidence": "The ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R664",
+   "text": "'Use the helper\u2019s findings to identify the smallest remaining work needed for that milestone.': the smallest remaining work for that milestone is identified from the helper's findings. ORCHESTRATOR'S READING: the helper's findings are the study of this morning (what the first shape, the schedule and the estimate each depend on; one missing property fact; no unresolved law; the code not built; no new law reading necessary); its statements are checked against the repository before they are used.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R645",
+    "D-090-R650",
+    "D-090-R651"
+   ],
+   "required_harness": "A written list names the smallest pieces from the bounded fixes to the first shape, schedule and estimate, each with its kind and what it depends on, and each fact of the study it rests on is checked.",
+   "required_evidence": "That list, in the record of the first task it leads to.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R665",
+   "text": "'At the next normal handoff, replace the outdated waiting list with the current remaining work so future sessions do not repeat completed research.': at the next normal handoff the outdated waiting list is replaced by the work that really remains, so that a later session does not repeat research that is complete. ORCHESTRATOR'S READING: the list is the section 'Waiting work, in this order' of `docs/SESSION_HANDOFF.md`, whose item on reading the captured law texts was stale and led to the wrong statement of 01:51 UTC.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R645"
+   ],
+   "required_harness": "The handoff file's waiting list holds only work that remains, each item checked against the repository, and names the completed research with where it is.",
+   "required_evidence": "The handoff file at the next normal handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R666",
+   "text": "'Keep this four-bullet update format.': updates keep the four-bullet form. It confirms row R655.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R655"
+   ],
+   "required_harness": "Each ordinary update has the four bullets.",
+   "required_evidence": "The updates in the session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R667",
+   "text": "'Distinguish maintenance completed from new capability I can actually use.': an update tells apart maintenance that was completed from new capability the owner can actually use.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R655"
+   ],
+   "required_harness": "Each update says which completed items are maintenance and which are something the owner can use, and says 'none' when there is none.",
+   "required_evidence": "The updates in the session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R668",
+   "text": "'No further report is needed now.': no further report is wanted now.",
+   "source_ref": "source-066-amendment.md#owner-message-128-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-09"
+   },
+   "dependencies": [
+    "D-090-R658"
+   ],
+   "required_harness": "No report is written on the strength of this message.",
+   "required_evidence": "The session record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Requested 2026-10-09 (message 128).",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
