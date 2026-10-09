@@ -4823,84 +4823,145 @@
     "D-090-R700"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c",
+   "reviewed_manifest_sha256": "0f1c094df0baa5128d1af7917639a05d425a4f200c7c14d5b4b74061892276f3",
    "requirements": [
     {
      "id": "D-090-R256",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share: every design value is SHOWN, with no hidden default. The floor-to-floor height is read from the document and shown on every storey of the floor schedule (FirstBuildingOptions.tsx FloorScheduleTable \u2192 row.floorToFloor, sourced from floor_schedule[].floor_to_floor_ft), and the share range and apartment size are shown under \"Preliminary assumptions used (not editable here):\" (first-building-options.ts CapacityView.shareLow/shareHigh/apartmentSize, read from the document, never typed).",
+      "The committed benchmark carries floor_to_floor_ft 10.0 on all three storeys and share 0.60\u20130.75 / size 700 \u2014 the panel formats, it does not invent (verified in recorded_215_16_northern_journey.json).",
+      "What this task CANNOT satisfy and stays open in the registry: changing these starting values ON this screen is explicitly not built here (ruling W7, recorded as work owed DB-213(a)); the \"editable\" clause of R256 remains open for a later screen task (row still applies to M5-T135/T145/T146 and the editor work).",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R509",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share (display only): the screen shows the estimate worked from the proposed building's OWN residential zoning floor area, not from the maximum permitted. The capacity block prints \"\u2026from {floorArea} of residential floor area\" where floorArea = capacity_estimate.floor_area_sqft (20,150 sq ft), and the maximum-permitted floor area stays a separate answer card, never the estimate's starting area.",
+      "I re-derived the shown quotients from the document's own fields: 20,150 \u00d7 0.60 / 700 = 17.271\u2026 \u2192 17.27 and 20,150 \u00d7 0.75 / 700 = 21.589\u2026 \u2192 21.59; both read from quotient_low/quotient_high (first-building-options.ts twoDp), not computed on screen.",
+      "Stays open: the formula/measurement-basis RECORD and the arithmetic itself are the share of M5-T133/M5-T145/M5-T146; R509 remains applicable to those tasks for the non-display obligations.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R526",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Each worked building shows a \"Not checked for this option:\" list read item-for-item from the document, and the benchmark list includes \"Parking, loading and bicycle requirements\" (not_checked in recorded_215_16_northern_journey.json; test S6 asserts the rendered items deep-equal alternative.not_checked).",
+      "Nothing is called feasible: the only \"feasible/complies/legally correct\" strings in non-test web source are a NEGATIVE statement (\"It is not shown as feasible.\") and code comments; tests S1/S6/journey/e2e all assert the section does NOT match /feasible|complies|legally correct|\\bvalidated\\b/.",
+      "Stays open: the later report SECTION carrying the parking/loading/bicycle COUNTS (R526's \"can come later\") is not part of this task and remains owed.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R540",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share: the residential-share range 0.60\u20130.75 is shown with its values (CapacityBlock \u2192 \"Residential share: {shareLow} to {shareHigh}\") under the heading \"Preliminary assumptions used (not editable here):\", and is never presented as realistic, expected or validated (no such wording anywhere in the section; the state is told in words).",
+      "The values are read from capacity_estimate.share_low/share_high (0.6/0.75), not typed; the contract check refuses a wrong-shape estimate.",
+      "Stays open: on-screen editability and the fuller \"unvalidated sensitivity range\" characterisation are governed by ruling W7 (shown as a preliminary assumption here) and stay open in the registry for M5-T135/T145/T146 and a later editor.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R541",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The starting apartment size 700 sq ft is shown as a chosen starting value \u2014 \"Apartment size: {apartmentSize} (on the HPD measurement basis)\" \u2014 read from capacity_estimate.apartment_size_sqft (700.0), not described as a measured or typical average.",
+      "It is grouped under \"Preliminary assumptions used (not editable here):\", keeping it a preliminary assumption; the words \"(on the HPD measurement basis)\" are a static label typed in the panel (FirstBuildingOptions.tsx:202), flagged by G3 as provenance-consistent with the contract field description and not blocking.",
+      "Stays open: changing the size on this screen is work owed (ruling W7); the typed HPD-basis phrase is a standing low-risk NOTE (carry it as a document field later).",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R543",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The estimate's label is rendered byte-exact from the document: capacityView narrows on estimate.label === \"Preliminary capacity estimate\" and the panel prints view.label; the committed benchmark carries exactly that label. The \"Not known\" path renders estimate.label + reason for a not-yet-worked option.",
+      "The web contract check fails CLOSED on a non-owner label (results-contract-checks-1-4-0.test.ts \"refuses a worked alternative whose estimate label is not an owner label\", flips it to \"Apartments\" and expects rejection) \u2014 the check is non-vacuous (it also accepts two real 1.4.0 fixtures).",
+      "Stays open: nothing for this task's display share; the row also binds the document producers (M5-T135/T136/T145/T146) for emitting the labels.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R544",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The estimate starts from the floor area the proposed building actually accommodates (20,150 sq ft shown), and the legal ceiling on the number of apartments is a SEPARATE figure: it is the withheld legal_unit_limit_standard value_state on the floor_area_allowance card, not restated in the building-options section (journey test S4; first-building-options.test.tsx S4 asserts queryByTestId(\"legal-unit-limit\") is null in the section).",
+      "The maximum permitted floor area is likewise a separate answer, never the estimate's starting area.",
+      "Stays open: nothing for this task; R544 continues to bind the document/modules producers.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R556",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The withheld-fallback bug is fixed in three-answers.ts (lines 360\u2013385): when the designated headline key is withheld, the headline renders that entry's reason (kind \"withheld\"), explicitly \"never values[0]\"; the fall-through to values[0] fires only when the headline key is ENTIRELY ABSENT (e.g. a 1.0.0 document), which is not a withheld case \u2014 so no withheld result can surface an older or substitute value.",
+      "The web contract check refuses a withheld coverage that carries a footprint number (results-contract-checks-1-4-0.test.ts R556/R570 case sets footprint_sqft=8060 and expects \"\u2026coverage_by_portion.footprint_sqft\u2026never carry a number\"); the withheld coverage block and the withheld legal-limit row render no numeric field (CoverageView.withheld / journey S4 asserts the legal-limit reason does not match /\\d/).",
+      "Stays open: nothing for this task's screen share; R556 also binds the server emitter (M5-T136/T140) in the registry.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "A withheld value stays withheld on the screen: test S5 proves the withheld coverage shows no footprint testid AND that building B's footprint (6,716.67 sq ft) never appears in the withheld coverage block's place; the benchmark coverage, the legal-unit limit and (at 16 ft) building B all render reason-only with no number.",
+      "The not-worked building blocks carry no footprint figure: journey S10 asserts building A's not-worked block textContent does not contain \" sq ft\", and the document's buildings_not_worked entry for A has no numeric field.",
+      "Stays open: nothing for this task's screen share; R570 additionally binds the document and export (M5-T144 etc.).",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R641",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The overall label \"Preliminary zoning results\" is read from the document status_strip (first item) and rendered by the untouched ResultsStatusStrip; it is NOT typed in any non-test web source (grep of apps/web/src excluding tests returns none).",
+      "Test S7 asserts the rendered status strip contains \"Preliminary zoning results\" AND that doc.status_strip carries it (so the pass is not vacuous); the committed document's status_strip[0].text is exactly that string.",
+      "Stays open: nothing for this task; R641 also binds M5-T144 (the document producer that emits the strip text).",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R688",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The preliminary apartment estimate is kept SEPARATE from the applicable legal dwelling-unit limit: the building-options section shows the estimate but does NOT restate the legal limit (first-building-options.test.tsx S4), while the legal limit is the withheld value_state on the floor_area_allowance card (journey S4), and the top-level unit_estimate is a pointer (\"\u2026given in building_alternatives\") not a figure.",
+      "The two never contradict on screen because only one place shows each; the legal limit shows \"Not known \u2026\" with no number.",
+      "Stays open: nothing for this task; R688 also binds the hand-worked comparison tasks (M4-T037/T038, M5-T145/T146).",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     },
     {
      "id": "D-090-R700",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The apartment-size and efficiency (share) assumptions stay labelled as preliminary assumptions on screen: both sit under \"Preliminary assumptions used (not editable here):\" and nothing presents them as law, measured, typical or validated.",
+      "Values are read from the document (share_low/high, apartment_size_sqft), not typed.",
+      "Stays open: making these assumptions changeable on this screen is work owed (ruling W7); that clause of R700 remains open in the registry.",
+      "Verifier's carry-forward condition met at 58e5958d: the task's allowed-path files are identical to those verified at c10ac73f (content identity 0f1c094d), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, and the walkthrough by one human-journey-reviewer; the same three in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T147-DCV.md."
+     ],
+     "reviewed_sha": "58e5958d6fb236416674e15c4fb3f1908538676c"
     }
-   ]
+   ],
+   "verified_at": "2026-10-09T23:29:43+00:00"
   },
   {
    "directive_id": "D-090",

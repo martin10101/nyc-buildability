@@ -116,8 +116,8 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "ONE PR WITH TASK 1: this task is reviewed at the SAME head as task 1 and merged in the SAME pull request; it starts after task 1's PART A (contract) is integrated on the branch, and its content tests and e2e run against task 1's PART E regenerated document. It edits apps/web only and shares no file with task 1 (packages/contracts and services/api are forbidden). Task 1's id is set by the orchestrator (dependencies here hold only existing task ids, W7); the wait on task 1 is stated here, not in dependencies.",
     "ADDITIVE: the web source that reads existing blocks is unchanged; only the panel (to render the new blocks), the version pins (if any) and the web content tests change. Confirm by rerunning lint, typecheck and the web tests.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-09T10:47:18.939040+00:00",
-  "updated_at": "2026-10-09T23:15:33.057441+00:00",
+  "updated_at": "2026-10-09T23:29:44.698590+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -187,5 +187,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-09, after the walkthrough FAILED at 7cf94e09 (F1, N4)] ruling W15 and scenarios S9 to S11: the screen shows why each building was not worked, from the document, never an empty heading; the floor table scrolls inside its box on narrow screens. No path, gate, reviewer or bound row changed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-09T23:29:44.698455+00:00"
 }
