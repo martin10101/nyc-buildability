@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T144",
+  "gate_id": "G3",
+  "reviewer": "data-contract-verifier",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T144-G3G4.md",
+  "reviewed_at": "2026-10-09T05:06:18.533281+00:00",
+  "content_manifest_sha256": "d0ca0ca725a8e4c139d73bc1dc6d6c0642a8694a7a54d9a0eb3b8fd49b19aed2",
+  "reviewed_sha": "b6de4c0cf90505b17818e1a54775761a24058f87",
+  "updated_at": "2026-10-09T05:06:18.989563+00:00"
+}
