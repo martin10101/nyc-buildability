@@ -100,3 +100,21 @@ CHECKS (lanes venv, direct exit codes): ruff check . exit 0; pytest -q tests/dra
 
 Files (all allowed): layout.py, page_location.py, page_decision_summary.py, test_location_sheet.py, report-print.flag-on.spec.ts, ARCHITECT_PRESENTATION_CONTRACT.md.
 END-OF-REPORT
+
+
+---
+
+REWORK 3 RETURN (saved unchanged by the orchestrator):
+
+M5-T156 REWORK 3 complete. I am an AI agent (backend-engineer).
+
+COMMIT: f9e14fb10c29d88e31d274348954e180a83986ae  PARENT: 174d6a9c58cdda1a8ba76886a9b4e9c9e2edd852. Clean tree. No report file written.
+
+FIX: the html table builder marks any table of 8 rows or fewer "no-split"; the print CSS gives .no-split break-inside: avoid, and its heading stays with it (h3 break-after: avoid). Short tables now move whole.
+
+PAGE COUNT: 8 (rendered file:// headless Chromium). LAST PAGE (8): the complete 6-row status-label key with its "Status-label key" heading, moved whole — no 2/4 fragment. Page 7 ends cleanly after the drawing notes.
+
+CHECKS (lanes venv, direct exit codes): ruff check . exit 0; pytest -q tests/drawings tests/api tests/contracts tests/journey 2816 passed/6 skipped exit 0; modularity_check.py --check exit 0; check_lane_paths.py --coverage PASS exit 0.
+
+Files (allowed): html.py, layout.py, test_report_pages.py.
+END-OF-REPORT
