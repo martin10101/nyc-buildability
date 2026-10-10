@@ -63,8 +63,10 @@ def test_s7_report_shows_surroundings_with_the_recorded_pack(enabled) -> None:
     # the location sheet and the site plan among the surroundings carry drawings.
     site = body[body.index('id="site-and-context"'):body.index('id="option-comparison"')]
     assert site.count("<svg") >= 3
-    assert "last edited" in body  # captions name their sources' dates
-    assert "No building is placed on this plan yet:" in body
+    assert "Sources: NYC City Planning, MapPLUTO (edited" in body  # plain source caption
+    assert "via NYC Open Data" not in body and "5zhs" not in body
+    assert ("No building is placed on this plan yet: the program does not yet work out "
+            "where a building sits on the lot.") in body
 
 
 def test_s7_provider_is_asked_for_the_same_lot_as_the_body(enabled) -> None:

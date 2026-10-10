@@ -85,11 +85,10 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
         children.append(
             el("p", "This building is below the minimum base height.", class_="limitation")
         )
-    placed = readers.not_placed_reason(results)
-    if placed:
-        # The document's OWN reason that no building is placed on the plan (ruling
-        # Y8); no footprint, building outline or 3D view is drawn.
-        children.append(short_line(f"No building is placed on this plan yet: {placed}"))
+    if readers.building_not_placed(results):
+        # One plain sentence whenever the document gives no floor plate (ruling Y8);
+        # no footprint, building outline or 3D view is drawn.
+        children.append(short_line(readers.NOT_PLACED_LINE))
     children.append(
         figure(
             stack,
@@ -100,18 +99,22 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
     )
     if view.get("label"):
         children.append(el("div", el("h3", "Why it has this shape"), el("p", view["label"])))
-    children.append(el("h3", "Floor schedule"))
-    children.append(
+    # The floor schedule, what was not checked and the preliminary apartment estimate
+    # stay TOGETHER on one page, so the estimate never lands as a lone line on a page
+    # of its own (rework 1 fix 5).
+    tail: list[object] = [
+        el("h3", "Floor schedule"),
         table(_SCHEDULE_HEADERS, _schedule_rows(raw_building),
-              caption="Floor schedule for this building")
-    )
-    children.append(_not_checked(view))
+              caption="Floor schedule for this building"),
+        _not_checked(view),
+    ]
     estimate = readers.apartment_estimate_text(view.get("capacity_estimate"))
     if estimate is not None:
-        children.append(
+        tail.append(
             el("p", raw(f'<strong>Preliminary apartment estimate:</strong> {estimate} '),
                label_chip(labels.PROVISIONAL))
         )
+    children.append(el("div", *tail, class_="sheet-tail"))
     return str(
         el("section", *children, class_="report-page", id=f"scenario-{view.get('building')}")
     )

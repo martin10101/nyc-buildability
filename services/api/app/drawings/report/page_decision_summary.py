@@ -104,12 +104,13 @@ def _answers_table(results: Mapping) -> raw:
 
 def _summary_block(results: Mapping, env, site_context_plan) -> raw:
     answers = el("div", _answers_table(results), class_="summary-answers")
-    # When the surroundings are available, page type 1's small site figure becomes
-    # the report frame of the site context plan (ruling Y10). It is the full report
-    # width, so it stacks below the answers rather than sitting beside them.
+    # When the surroundings are available, page type 1's small site figure is the
+    # COMPACT summary frame of the site context plan (ruling Y10), beside the answers
+    # as in wave 21 so the decision summary fits its first printed page.
     if site_context_plan is not None and site_context_plan.is_drawing:
-        plan = figure(site_context_plan, site_context_plan.caption or "")
-        return el("div", answers, plan)
+        plan = figure(site_context_plan, site_context_plan.caption or "",
+                      figure_class="summary-figure")
+        return el("div", answers, plan, class_="summary")
     site_plan = drawings_embed.embed_summary_site_plan(results, env=env)
     if site_plan.is_drawing:
         plan = figure(

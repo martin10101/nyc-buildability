@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import labels, readers, sources
+from . import labels, map_caption, readers, sources
 from .components import short_line
 from .html import el, escape, escape_attr, raw, table
 
@@ -73,18 +73,22 @@ def _provenance(results: Mapping) -> object:
     return el("ul", *items)
 
 
+_SURVEY_NOTE = (
+    "Map geometry only; tax boundaries do not establish the legal zoning lot; "
+    "nothing is surveyed."
+)
+
+
 def _attributions(map_context) -> list[str]:
-    notes: list[str] = []
-    if isinstance(map_context, Mapping):
-        context = map_context.get("map_context")
-        context = context if isinstance(context, Mapping) else {}
-        for layer_name in ("zoning_districts", "building_footprints"):
-            layer = context.get(layer_name)
-            if isinstance(layer, Mapping):
-                for field in ("attribution", "accuracy", "use_limitation"):
-                    if layer.get(field):
-                        notes.append(str(layer[field]))
-    return notes
+    """The map sources in plain words - a readable title and its edit date once per
+    layer shown (ruling Y7/X6), then the honesty note. No dataset id, no "via NYC
+    Open Data" phrase and no terms-of-use text (rework 1 fix 3)."""
+    if not isinstance(map_context, Mapping):
+        return []
+    lines = map_caption.source_lines(map_context, map_caption.SITE_LAYERS)
+    if not lines:
+        return []
+    return [*lines, _SURVEY_NOTE]
 
 
 def _label_key() -> object:

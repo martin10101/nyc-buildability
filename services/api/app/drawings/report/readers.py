@@ -24,8 +24,9 @@ __all__ = [
     "input_rows",
     "label_meta_statement",
     "lot_area_basis",
+    "NOT_PLACED_LINE",
+    "building_not_placed",
     "named_value",
-    "not_placed_reason",
     "not_worked_buildings",
     "open_items",
     "results_lot_outline",
@@ -447,27 +448,21 @@ def results_lot_outline(results: Mapping) -> list | None:
     return rings if isinstance(rings, list) and rings else None
 
 
-def not_placed_reason(results: Mapping) -> str | None:
-    """The document's OWN reason that no building is placed on the plan, read from
-    ``/geometry/floor_plates/reason`` (ruling Y8, D-090 R939). Any sentence that
-    names an internal document field is dropped so only plain words reach the
-    reader (ruling X6); ``None`` once a floor plate is placed or when the document
-    carries no reason."""
-    import re
+# The ONE plain sentence shown whenever the results document gives no floor plate
+# (ruling Y8, D-090 R939). The document's reason text is never spliced in.
+NOT_PLACED_LINE = (
+    "No building is placed on this plan yet: the program does not yet work out "
+    "where a building sits on the lot."
+)
 
+
+def building_not_placed(results: Mapping) -> bool:
+    """True when the results document carries a floor-plates block that is not
+    ``available`` - no building is placed on the plan yet (ruling Y8). False when a
+    floor plate is placed or the document carries no floor-plates block."""
     geometry = results.get("geometry")
-    if not isinstance(geometry, Mapping):
-        return None
-    plates = geometry.get("floor_plates")
-    if not isinstance(plates, Mapping) or plates.get("status") == "available":
-        return None
-    reason = plates.get("reason")
-    if not reason:
-        return None
-    sentences = re.split(r"(?<=[.])\s+", str(reason).strip())
-    kept = [s for s in sentences if not re.search(r"\b[a-z]+_[a-z]+\b", s)]
-    text = " ".join(kept).strip()
-    return text or None
+    plates = geometry.get("floor_plates") if isinstance(geometry, Mapping) else None
+    return isinstance(plates, Mapping) and plates.get("status") != "available"
 
 
 _INPUT_NAMES = {

@@ -21,7 +21,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from dataclasses import dataclass
 
-from . import drawings_embed, readers
+from . import drawings_embed, map_caption, readers
 from .components import figure, short_line
 from .drawings_embed import Embedded
 from .html import el
@@ -45,15 +45,18 @@ _SURROUNDINGS_UNAVAILABLE = (
 @dataclass(frozen=True)
 class Surroundings:
     """The resolved site-context maps for one report. ``available`` is true only
-    when the one-outline check passed and at least one map drew; the three maps
-    are the report-frame drawings (``neighbourhood`` and ``block`` for the location
-    sheet, ``site_plan`` for the decision summary and the constraints sheet)."""
+    when the one-outline check passed and the drawings drew. ``neighbourhood`` and
+    ``block`` are the COMPACT summary-frame thumbnails for the one-page location
+    sheet; ``summary_plan`` is the compact site plan beside page 1's answers; and
+    ``report_plan`` is the full-size site plan shown once, on the constraints
+    sheet. The same full-size drawing is never printed twice."""
 
     available: bool
     reason: str | None = None
     neighbourhood: Embedded | None = None
     block: Embedded | None = None
-    site_plan: Embedded | None = None
+    summary_plan: Embedded | None = None
+    report_plan: Embedded | None = None
 
 
 def _ring(rings: object) -> list[tuple[float, float]] | None:
@@ -112,38 +115,48 @@ def _subject_outline(map_context: Mapping) -> object:
 
 
 def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
-    """Decide whether the report may show the surroundings and render the three
-    report-frame maps when it may (ruling Y5). A missing map document, a failed
-    one-outline check or maps that do not draw all yield ``available=False`` with a
-    short limitation line - never a partial or mismatched picture (S2, S6)."""
+    """Decide whether the report may show the surroundings and render the maps when
+    it may (ruling Y5). The location sheet and page 1 take COMPACT summary-frame
+    drawings; the constraints sheet takes the one full-size plan. A missing map
+    document, a failed one-outline check or maps that do not draw all yield
+    ``available=False`` with a short limitation line - never a partial or mismatched
+    picture (S2, S6)."""
     if not isinstance(map_context, Mapping):
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)
     if not outlines_match(_subject_outline(map_context), readers.results_lot_outline(results)):
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)
-    neighbourhood = drawings_embed.embed_map("render_neighbourhood_map", map_context, env=env)
-    block = drawings_embed.embed_map("render_block_map", map_context, env=env)
-    site_plan = drawings_embed.embed_map("render_site_context_plan", map_context, env=env)
-    drawn = [m for m in (neighbourhood, block, site_plan) if m.is_drawing]
+
+    def embed(fn_name, layers, frame):
+        return drawings_embed.embed_map(fn_name, map_context, layers=layers, frame=frame, env=env)
+
+    neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "summary")
+    block = embed("render_block_map", map_caption.BLOCK_LAYERS, "summary")
+    summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary")
+    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "report")
+    drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
     if not drawn:
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)
-    return Surroundings(True, neighbourhood=neighbourhood, block=block, site_plan=site_plan)
+    return Surroundings(True, neighbourhood=neighbourhood, block=block,
+                        summary_plan=summary_plan, report_plan=report_plan)
 
 
 def render(surroundings: Surroundings) -> object:
-    """The 'Where is the lot?' sheet: the neighbourhood map and the block close-up,
-    each captioned, or one short line when the surroundings are not available. No
-    photo, empty frame or photo wording (ruling Y9); the grid can take a third
-    figure later."""
+    """The 'Where is the lot?' sheet on ONE page: the neighbourhood map and the
+    block close-up as compact thumbnails side by side, each with a short caption, or
+    one short line when the surroundings are not available. No photo, empty frame or
+    photo wording (ruling Y9); the grid can take a third figure later without a
+    redesign."""
     children: list[object] = [el("h2", QUESTION)]
     if not surroundings.available:
         children.append(short_line(surroundings.reason or _SURROUNDINGS_UNAVAILABLE))
         return el("div", *children, class_="location-sheet")
     grid: list[object] = []
-    for drawing, fallback in (
-        (surroundings.neighbourhood, "The neighbourhood map is not shown here."),
-        (surroundings.block, "The block close-up is not shown here."),
-    ):
-        if drawing is not None:
-            grid.append(figure(drawing, drawing.caption or "", line_when_absent=fallback))
+    for title, drawing in (("Neighbourhood", surroundings.neighbourhood),
+                           ("Block close-up", surroundings.block)):
+        if drawing is not None and drawing.is_drawing:
+            grid.append(el("div",
+                           el("p", title, class_="figure-title"),
+                           figure(drawing, drawing.caption or ""),
+                           class_="location-figure"))
     children.append(el("div", *grid, class_="location-figures"))
     return el("div", *children, class_="location-sheet")

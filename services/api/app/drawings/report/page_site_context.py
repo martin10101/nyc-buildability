@@ -82,12 +82,12 @@ def _site_outline(results: Mapping, site_plan: Embedded) -> object:
 
 
 def _not_placed(results: Mapping) -> list[object]:
-    """The document's OWN reason that no building is placed on the plan (Y8); no
-    building footprint, outline or 3D view is drawn."""
-    reason = readers.not_placed_reason(results)
-    if not reason:
+    """One plain sentence whenever the results document gives no floor plate (Y8);
+    no building footprint, outline or 3D view is drawn. The document's reason text
+    is never spliced in."""
+    if not readers.building_not_placed(results):
         return []
-    return [short_line(f"No building is placed on this plan yet: {reason}")]
+    return [short_line(readers.NOT_PLACED_LINE)]
 
 
 def render(

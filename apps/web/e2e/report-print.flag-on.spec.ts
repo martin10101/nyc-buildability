@@ -185,7 +185,8 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
         hasQuestion: where >= 0,
         whereBeforeConstraints: where >= 0 && constrains >= 0 && where < constrains,
         locationSvgs: sheet ? sheet.querySelectorAll("svg").length : 0,
-        captionWithDate: captions.some((c) => /last edited/i.test(c)),
+        captionWithDate: captions.some((c) => /Sources:.*\(edited /.test(c)),
+        noDatasetId: !sheetText.includes("5zhs") && !sheetText.includes("via nyc open data"),
         images: document.querySelectorAll("img").length,
         photoWords: ["photo", "street view", "aerial"].filter((w) => sheetText.includes(w)),
       };
@@ -195,8 +196,9 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
     expect(
       location.locationSvgs,
       "the location sheet holds the neighbourhood map and the block close-up",
-    ).toBeGreaterThanOrEqual(2);
-    expect(location.captionWithDate, "a location caption names its source's last-edited date").toBe(true);
+    ).toBe(2);
+    expect(location.captionWithDate, "a location caption names its sources with an edit date").toBe(true);
+    expect(location.noDatasetId, "no dataset id or 'via NYC Open Data' in a caption").toBe(true);
     expect(location.images, "the report carries no photograph (no raster image)").toBe(0);
     expect(location.photoWords, "no photo wording on the location sheet").toEqual([]);
 

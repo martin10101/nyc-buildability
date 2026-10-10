@@ -72,25 +72,69 @@ def test_s1_location_sheet_opens_page_type_two() -> None:
     location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
     assert location.count("<figure") == 2 and location.count("<svg") == 2
     assert site.count("<svg") >= 3
+    # the two location thumbnails are titled so the reader knows which is which.
+    assert "Neighbourhood" in location and "Block close-up" in location
+
+
+def test_page1_carries_the_summary_frame_site_plan() -> None:
+    # Page 1's small site figure is the COMPACT summary-frame site context plan,
+    # beside the answers (rework 1 fix 1): a summary-figure, not the full-size plan.
+    html = _report_with_maps()
+    decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+    assert "<svg" in decision
+    assert 'class="summary-figure"' in decision  # beside the answers, as in wave 21
+    # the full-size plan is printed ONCE, on the constraints sheet - not on page 1.
+    site = _site_section(html)
+    constraints = site[site.index("What constrains the design?"):]
+    assert "<svg" in constraints
+
+
+def test_location_sheet_holds_two_summary_frame_figures() -> None:
+    # The location sheet holds exactly the neighbourhood map and the block close-up
+    # as two compact figures (rework 1 fix 2); the full-size plan is not here.
+    site = _site_section(_report_with_maps())
+    location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
+    assert location.count('class="location-figure"') == 2
+    assert location.count("<svg") == 2
 
 
 def test_s1_captions_name_sources_and_their_dates() -> None:
     # Each location-sheet figure is captioned with its sources and dates in plain
-    # words (Y7): the caption names a source and carries its last-edited date.
+    # words (Y7): one short "Sources: ..." line with a readable title and an edit
+    # date for each layer the drawing shows.
     site = _site_section(_report_with_maps())
     raw_caps = re.findall(r"<figcaption>(.*?)</figcaption>", site, re.S)
     captions = [_html.unescape(c) for c in raw_caps]
     assert len(captions) >= 3
     assert all(cap.strip() for cap in captions)  # every figure is captioned
-    dated = [cap for cap in captions if "last edited" in cap]
-    assert dated, "at least one caption names its source's last-edited date"
-    # the recorded source edit dates reach the caption (from the map provenance).
+    sourced = [cap for cap in captions if cap.startswith("Sources:")]
+    assert sourced, "a location caption opens with a plain 'Sources:' line"
     joined = " ".join(captions)
-    for date in ("2026-09-09", "2025-12-01", "2026-09-27"):
+    # readable source titles from the report package's wording (never code words).
+    assert "NYC City Planning, MapPLUTO" in joined
+    assert "NYC Digital City Map street centre lines" in joined
+    # the recorded source edit dates reach the caption in plain words, each once.
+    for date in ("9 Sep 2026", "27 Sep 2026", "1 Dec 2025"):
         assert date in joined, f"source edit date {date} missing from the captions"
-    # no URL, field name or code word in a caption (ruling X6/Y7).
-    assert "http" not in joined.lower()
+
+
+def test_s1_captions_are_plain_no_dataset_id_no_doubled_date() -> None:
+    # Caption rules (rework 1 fix 3): no dataset id, no "via NYC Open Data", no
+    # terms-of-use text, no "last edited" doubling, and each date exactly once.
+    html = _report_with_maps()
+    raw_caps = re.findall(r"<figcaption>(.*?)</figcaption>", html, re.S)
+    captions = [_html.unescape(c) for c in raw_caps]
+    joined = " ".join(captions)
+    low = joined.lower()
+    assert "5zhs" not in low and "via nyc open data" not in low
+    assert "terms of use" not in low
+    assert "last edited" not in low  # no "Source edit date … (last edited …)" doubling
+    assert "http" not in low
     assert re.search(r"\b[a-z]+_[a-z]+\b", joined) is None
+    # each date appears once per caption (no doubling within a caption).
+    for cap in captions:
+        for date in ("9 Sep 2026", "27 Sep 2026", "1 Dec 2025"):
+            assert cap.count(date) <= 1, f"date {date} doubled in a caption"
 
 
 def test_s1_six_page_types_unchanged() -> None:
@@ -137,16 +181,18 @@ def test_s2_tolerance_is_one_hundredth_of_a_foot() -> None:
 # =========================================================================== S3
 def test_s3_not_yet_placed_on_site_plan_and_scenario_sheet() -> None:
     doc = benchmark()
-    reason = readers.not_placed_reason(doc)
-    assert reason  # read from /geometry/floor_plates/reason
-    line = f"No building is placed on this plan yet: {reason}"
+    assert readers.building_not_placed(doc) is True  # the document gives no floor plate
+    line = readers.NOT_PLACED_LINE
+    # the fixed sentence, not spliced from the document's reason text (fix 4).
+    assert line == ("No building is placed on this plan yet: the program does not yet "
+                    "work out where a building sits on the lot.")
     html = build_report_html(doc, map_context=map_context(), env=_LANE_E)
     site = _site_section(html)
     scenario = html[html.index('id="scenario-B"'):]
     assert line in visible_text(site)
     assert line in visible_text(scenario)
-    # the reason is the document's own, with any internal-field clause dropped.
-    assert reason in doc["geometry"]["floor_plates"]["reason"]
+    # the document's own reason text is never spliced into the report.
+    assert "No floor plate is drawn" not in visible_text(html)
 
 
 # =========================================================================== S4

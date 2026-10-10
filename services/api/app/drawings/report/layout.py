@@ -110,9 +110,16 @@ a {{ color: {action}; }}
 .estimate-line {{ margin: 2mm 0 3mm; }}
 .coverage {{ margin-top: 4mm; }}
 .coverage-line {{ font-size: 9pt; margin: 0 0 1mm; }}
-/* Page type 2 opens with the 'Where is the lot?' sheet; the 'What constrains the
-   design?' sheet follows on its own printed page (ruling Y10). The location maps
-   are full-report-width, so each figure stacks. */
+/* Page type 2 opens with the one-page 'Where is the lot?' sheet; the 'What
+   constrains the design?' sheet follows on its own printed page (ruling Y10). The
+   two location thumbnails sit side by side; the grid can take a third later. */
 .constraints-sheet {{ break-before: page; }}
-.location-figures figure {{ break-inside: avoid; margin: 3mm 0; }}
+.location-figures {{ display: flex; flex-wrap: wrap; gap: 6mm; align-items: flex-start; }}
+.location-figure {{ flex: 0 1 auto; max-width: 88mm; break-inside: avoid; margin: 3mm 0; }}
+.location-figure figure {{ margin: 0; }}
+.location-figure figcaption {{ max-width: 88mm; }}
+.figure-title {{ font-size: 9pt; font-weight: 700; margin: 0 0 1mm; }}
+/* The scenario sheet's schedule, unchecked items and estimate stay together, so
+   the estimate never lands alone on a page (rework 1 fix 5). */
+.sheet-tail {{ break-inside: avoid; }}
 """.strip()

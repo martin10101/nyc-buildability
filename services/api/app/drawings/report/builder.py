@@ -63,8 +63,10 @@ def build_report_html(
     # otherwise today's lot-only plan is kept and one limitation line is printed.
     # Two outlines are never drawn together (S2).
     surroundings = page_location.resolve(map_context, results, env=env)
-    if surroundings.available and surroundings.site_plan is not None:
-        site_plan = surroundings.site_plan  # the map-based site plan among its surroundings
+    if surroundings.available and surroundings.report_plan is not None:
+        # The full-size site plan among its surroundings, shown once on the
+        # constraints sheet (the same full-size drawing is never printed twice).
+        site_plan = surroundings.report_plan
     else:
         site_plan = drawings_embed.embed_kit_drawing(
             "render_site_plan", results, env=env,
@@ -73,7 +75,9 @@ def build_report_html(
     # 'Context maps' moves to what the report covers only when the maps are printed
     # (ruling Y10 / S5); otherwise the coverage block reports them as not yet.
     maps_present = surroundings.available
-    summary_plan = surroundings.site_plan if surroundings.available else None
+    # Page 1 carries the COMPACT summary-frame site plan beside the answers (not the
+    # full-size one); ``None`` falls back to the wave-21 summary site plan.
+    summary_plan = surroundings.summary_plan if surroundings.available else None
     pages = [
         page_decision_summary.render(results, ident, maps_present=maps_present,
                                      site_context_plan=summary_plan, env=env),

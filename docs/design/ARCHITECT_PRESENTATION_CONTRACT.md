@@ -14,14 +14,14 @@
 
 The owner looked at the report and said the site drawing was "a rectangle on an angle" with "no reference to where he is", and that it did not look like a competitor's report, which opens with a location page (rows R936 to R939). Street photographs come later (row R940; no Street View picture in a saved report, row R551). This change amends page types 1 and 2:
 
-- **Page type 2 opens with a sheet titled "Where is the lot?"** holding the neighbourhood map (the street network around the lot, north-up, the lot marked) and the block close-up (the lot among its neighbouring lots and the surrounding streets). Each is captioned with its sources and their dates in plain words. The existing sheet "What constrains the design?" follows, with the site plan shown **among its surroundings** (the neighbouring lots, the street areas from the gaps between tax lots, and the existing buildings). The page-type list stays at six: the location sheet lives inside page type 2.
-- **Page type 1's small site figure becomes the site context plan** (the lot among its surroundings) when it is available.
+- **Page type 2 opens with a one-page sheet titled "Where is the lot?"** holding the neighbourhood map (the street network around the lot, north-up, the lot marked) and the block close-up (the lot among its neighbouring lots and the surrounding streets) as two compact thumbnails side by side, each titled and captioned. The figure grid can take a third figure later without a redesign. The existing sheet "What constrains the design?" follows on its own page, with the full-size site plan shown **among its surroundings** (the neighbouring lots, the street areas from the gaps between tax lots, and the existing buildings). The page-type list stays at six: the location sheet lives inside page type 2.
+- **Page type 1's small site figure is the compact site context plan**, beside the answers, when it is available. The same full-size drawing is never printed twice.
 - **The surroundings are shown only when the map document's subject outline equals the results document's lot outline** within 0.01 ft at every vertex (the one-outline check). Otherwise the report keeps today's lot-only plan and prints one short limitation line, never a blank sheet. Two outlines are never drawn together.
-- **The site plan and the scenario sheet print the document's own reason that no building is placed on the plan yet** (no building footprint, outline or 3D view is drawn) until the engine places one.
-- **No street photograph, empty figure frame or photo wording** appears on the location sheet; the figure grid can take a third figure later without a redesign. "Aerial and street photographs" stays under the scope list's "Not yet".
+- **The site plan and the scenario sheet print one plain sentence whenever no building is placed on the plan yet** ("No building is placed on this plan yet: the program does not yet work out where a building sits on the lot."); no building footprint, outline or 3D view is drawn, and the document's reason text is never spliced in.
+- **No street photograph, empty figure frame or photo wording** appears on the location sheet. "Aerial and street photographs" stays under the scope list's "Not yet".
 - **The scope list moves "Context maps" to what the report covers only when the maps are printed.**
 
-The captions name their sources and dates in plain words; no URL, field name, code word or version number is shown.
+Every map caption, and the evidence page's drawing notes, name their sources and dates in plain words - one short "Sources: <readable title> (edited <date>); …" line, each date once, with no dataset id, no "via NYC Open Data" phrase, no terms-of-use text and no URL, field name, code word or version number.
 
 ## Report page types (2026-10-10; D-090 source-081, rows R900 to R933)
 
