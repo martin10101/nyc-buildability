@@ -32,8 +32,8 @@ column is not read; nothing is invented here.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from app.contracts.evaluator_inputs import build_three_answer_inputs
@@ -73,6 +73,19 @@ _PRESENCE_BY_RECORDED = {
     Recorded.ABSENT: Presence.ABSENT,
     Recorded.NOT_READ: Presence.NOT_READ,
 }
+
+
+def _measured_outline_ring(
+    prepared_outline: PreparedOutline | None,
+) -> list[list[float]] | None:
+    """The prepared tax-map outline's exterior ring as plain ``[x, y]`` lists in EPSG:2263 US
+    survey feet (the measurement-grade coordinates ``prepare_outline`` validated and oriented), or
+    None when no outline was produced. ``geometry.build_geometry`` translates it to the local-feet
+    drawing plane; no default stands for a missing outline (reading O21/rule L1)."""
+    if prepared_outline is None:
+        return None
+    vertices: Sequence[Sequence[float]] = prepared_outline.vertices
+    return [[float(x), float(y)] for x, y in vertices]
 
 
 def _is_corner(lot_type: LotType | None) -> bool | None:
@@ -233,10 +246,18 @@ def run_engine_and_result_ways_from_evidence(
         prepared_outline=prepared_outline,
         site_geometry=site_geometry,
     )
+    # Thread the MEASURED tax-map outline onto the engine inputs so the site plan draws the parcel's
+    # own polygon (translated to local feet by geometry.build_geometry), never a rectangle sized to
+    # the recorded lot area (D-090-R896). When no outline was produced, nothing is threaded and the
+    # geometry block is withheld whole (S2): no site plan is drawn and the reason is given.
+    outline_ring = _measured_outline_ring(prepared_outline)
+    if outline_ring is not None:
+        inputs = replace(inputs, lot_outline=outline_ring)
     engine_result = generate_results(inputs, registry=registry, env=env)
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         condition_sources=conditions, user_choices=user_choices,
         corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
+        lot_outline_available=outline_ring is not None,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

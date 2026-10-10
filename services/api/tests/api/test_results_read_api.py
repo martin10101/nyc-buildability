@@ -385,6 +385,12 @@ def test_m5t146_live_route_lists_building_b_without_the_tax_map_outline(
     assert doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]["reason"] == (
         coverage["reason"]
     )
+    # M5-T150 (S2 / R896): with no tax-map outline the site plan is not drawn - the whole geometry
+    # block is not_available with its reason, never a rectangle sized to the recorded lot area.
+    assert doc["geometry"]["status"] == "not_available"
+    assert "outline is not available" in doc["geometry"]["reason"]
+    assert doc["geometry"]["reason_kind"] == "missing_input"
+    assert "lot_outline" not in doc["geometry"]
 
 
 # ======================================================= W14 (walkthrough F1) live route

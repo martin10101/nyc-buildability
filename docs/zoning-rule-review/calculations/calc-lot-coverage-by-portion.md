@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: lot_coverage
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 5 (last changed 2026-10-09)
+- Revision: 6 (last changed 2026-10-10)
 - Combines rule entries: `r6b-lot-coverage`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `28e4895b8be3505aa0d66335f6ad711cdec1644e4708f2ad097457f967ba1594`
+- Combined code identity: `34494afc68e6c10d85ef6fcf02a66420ab31d1c19f26133c250fd3de698c6cc1`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
-  - `services/api/app/scenario/three_answers/geometry.py` (`c44b2490469b4b1f9760d540bf0a13d2c847767672379d4a1275b1755d778589`)
+  - `services/api/app/scenario/three_answers/geometry.py` (`09cb7072807c0e5194900ccfa33a77ad289e26c9144619b7a2bd19d9702ed52c`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
 
@@ -81,9 +81,9 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `28e4895b8be3505aa0d66335f6ad711cdec1644e4708f2ad097457f967ba1594`
-- Commit tested: `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66`
-- Date tested: 2026-10-09
+- Code identity tested: `34494afc68e6c10d85ef6fcf02a66420ab31d1c19f26133c250fd3de698c6cc1`
+- Commit tested: `42fc2ae11e6b90084972e7ca32816cc50b8a085a`
+- Date tested: 2026-10-10
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-lot-coverage-by-portion.txt)

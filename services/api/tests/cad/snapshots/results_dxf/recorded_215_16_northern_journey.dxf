@@ -15,15 +15,15 @@ $EXTMIN
 10
 0.000000
 20
--86.957593
+-104.504908
 30
 0.000000
 9
 $EXTMAX
 10
-102.303030
+122.946934
 20
-98.481931
+120.663459
 30
 0.000000
 0
@@ -53,9 +53,9 @@ VPORT
 21
 1.000000
 12
-51.151515
+61.473467
 22
-5.762169
+8.079276
 13
 0.000000
 23
@@ -81,7 +81,7 @@ VPORT
 37
 0.000000
 40
-203.983476
+247.685203
 41
 1.000000
 42
@@ -215,7 +215,7 @@ VERTEX
 8
 C-PROP-LINE
 10
-0.000000
+21.604298
 20
 0.000000
 30
@@ -225,9 +225,9 @@ VERTEX
 8
 C-PROP-LINE
 10
-102.303030
+23.773259
 20
-0.000000
+0.493746
 30
 0.000000
 0
@@ -235,9 +235,19 @@ VERTEX
 8
 C-PROP-LINE
 10
-102.303030
+122.946934
 20
-98.481931
+23.061306
+30
+0.000000
+0
+VERTEX
+8
+C-PROP-LINE
+10
+101.289814
+20
+120.663459
 30
 0.000000
 0
@@ -247,7 +257,7 @@ C-PROP-LINE
 10
 0.000000
 20
-98.481931
+97.614285
 30
 0.000000
 0
@@ -261,11 +271,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--4.092122
+-4.917878
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Tax-lot-only estimate
 0
@@ -275,11 +285,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--7.161213
+-8.606286
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Queens block 7334, lot 70
 0
@@ -289,11 +299,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--10.230305
+-12.294695
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Assumed conditions
 0
@@ -303,11 +313,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--13.299397
+-15.983104
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Zoning district R6B city_records Zoning district R6B is read from recorded city data.
 0
@@ -317,11 +327,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--16.368488
+-19.671512
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Commercial overlay present Yes city_records A commercial overlay (C2-2) is recorded for this lot in the city's records.
 0
@@ -331,11 +341,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--19.437579
+-23.359921
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Special purpose district No city_records The city's records list no special purpose district for this lot.
 0
@@ -345,11 +355,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--22.506671
+-27.048329
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Special density area Not known assumed Whether the lot is in a special density area is not known; it is taken to be in one for the calculation, so the legal dwelling-unit limit that depends on it is withheld.
 0
@@ -359,11 +369,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--25.575762
+-30.736737
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Lot type corner approximate_tax_map The lot type (corner) is read from the approximate city tax-map outline.
 0
@@ -373,11 +383,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--28.644854
+-34.425146
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Lot frontage 103.88 feet approximate_tax_map Front lot line assumed to be the Northern Boulevard frontage (the address street); the lot is a corner lot with two frontages (215 Place 99.98 ft); which street is legally the front lot line is a qualified-review question.
 0
@@ -387,11 +397,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--31.713945
+-38.113554
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Lot depth 100 feet city_records The lot depth of 100 feet is read from recorded city data.
 0
@@ -401,11 +411,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--34.783037
+-41.801963
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Site measurement basis approximate tax map default The results carry the label of their weakest input; no survey or entered measurement was supplied, so the weakest recorded source sets the label.
 0
@@ -415,11 +425,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--37.852128
+-45.490372
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Within 100 ft of a street-line intersection No approximate_tax_map Measured from the tax-map outline, the lot's farthest point is 144.60 feet from the corner where its two street lines meet, more than 100 feet from it.
 0
@@ -429,11 +439,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--40.921220
+-49.178780
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Street-line intersection angle 89.7 degrees approximate_tax_map Measured from the tax-map outline, the lot's two street lines meet at about 89.7 degrees.
 0
@@ -443,11 +453,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--43.990312
+-52.867189
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Housing program standard residence default Standard residence is used as the default housing program.
 0
@@ -457,11 +467,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--47.059403
+-56.555597
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Floor-to-floor height 10 feet default A 10-foot floor-to-floor height is used as the default.
 0
@@ -471,11 +481,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--50.128495
+-60.244006
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Based on the lots you selected - the app does not verify the zoning lot
 0
@@ -485,11 +495,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--53.197586
+-63.932414
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Remaining development capacity: Not confirmed
 0
@@ -499,11 +509,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--56.266678
+-67.620823
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Needs verified zoning-lot boundaries and existing zoning floor area.
 0
@@ -513,11 +523,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--59.335769
+-71.309231
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Option opt-test - revision 1
 0
@@ -527,11 +537,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--62.404860
+-74.997640
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Results res-215-16-northern-journey - computed 2026-10-03T00:00:00Z
 0
@@ -541,11 +551,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--65.473952
+-78.686048
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Approximate - city tax map, not a survey (lot outline)
 0
@@ -555,11 +565,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--68.543043
+-82.374457
 30
 0.000000
 40
-2.046061
+2.458939
 1
 The corner rear-yard waiver does not cover the whole lot: the far corner is 144.60 ft from the point where the two street lines meet, beyond the rear-yard waiver area (the waiver covers the area within 100 ft of that point); the two street lines meet at 89.7 degrees, within the waiver's limit of 135 degrees. For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.
 0
@@ -569,11 +579,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--71.612135
+-86.062865
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Setback lines need the ZR 23-433 setback depths, not encoded in this slice.
 0
@@ -583,11 +593,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--74.681226
+-89.751273
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).
 0
@@ -597,11 +607,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--77.750318
+-93.439682
 30
 0.000000
 40
-2.046061
+2.458939
 1
 No floor plate is drawn: no placement on the lot is worked for any building. The first-building alternatives worked for this lot are listed in building_alternatives, and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.
 0
@@ -611,11 +621,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--80.819410
+-97.128090
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
 0
@@ -625,11 +635,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--83.888501
+-100.816499
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Units: feet, 1 drawing unit = 1 ft (scale 1:1)
 0
@@ -639,11 +649,11 @@ A-ANNO-NOTE
 10
 0.000000
 20
--86.957593
+-104.504908
 30
 0.000000
 40
-2.046061
+2.458939
 1
 Not a city record - drawn from the results
 0
