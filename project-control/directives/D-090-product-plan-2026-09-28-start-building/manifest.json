@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-09T23:56:46+00:00",
+ "updated_at": "2026-10-10T00:00:09+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -923,7 +923,7 @@
   "D-090-R899"
  ],
  "requirements_id_digest_sha256": "f31113ebdb803a0187e5092ed61d63be4ad3d089062ff1452d94c446a7405dcd",
- "requirements_content_digest_sha256": "3ce74103d08450a4ac70b94b07cd634dffc7d0db203ba37c11a8191c8d5e5445",
+ "requirements_content_digest_sha256": "59a3752d3d2c60ed2f4d858295f914b12d14cdf97faa3811e8f157f63d2e5304",
  "sources": [
   {
    "file": "source-001.md",
@@ -1696,7 +1696,10 @@
   "M5-T145",
   "M5-T146",
   "M5-T147",
-  "M0-T189"
+  "M0-T189",
+  "M5-T148",
+  "M5-T150",
+  "M5-T149"
  ],
  "affected_prs": [
   262,
@@ -2475,6 +2478,24 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-080 (session 013RaGmC: the owner's forwarded review of test PDF version 5a, six findings) and requirements D-090-R892 to R899, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-10T00:00:03+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T148 (shared presentation (presentation contract step 2)) to R641, R804, R807, R810, R811, R812, R833, R835, R836, R837, R838, R855, R856, R857, R858, R859, R871, R872, R873, R877, R886, R888, R890, R895 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-10T00:00:06+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T150 (the site plan draws the parcel's own outline) to R192, R239, R257, R570, R804, R841, R846, R878, R886, R888, R890, R896, R899 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-10T00:00:09+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T149 (the architect-facing results slice (presentation contract step 3)) to R256, R267, R526, R543, R544, R556, R570, R641, R700, R804, R805, R807, R809, R810, R811, R812, R813, R816, R817, R819, R820, R821, R822, R823, R824, R825, R826, R827, R828, R829, R830, R831, R832, R833, R856, R859, R869, R870, R871, R872, R873, R874, R875, R876, R877, R881, R882, R885, R886, R888, R890, R894, R895 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
   }
  ]
 }

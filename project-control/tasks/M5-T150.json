@@ -1,0 +1,128 @@
+{
+  "task_id": "M5-T150",
+  "title": "The site plan draws the parcel's own outline: the results document's lot outline comes from the measured tax-map polygon (translated to local feet, its area equal to the measured outline area), never a rectangle sized to the recorded lot area; with no outline, no outline is drawn and the geometry says why",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Correct the program's drawing geometry (the owner's review, row R896): `services/api/app/scenario/three_answers/geometry.py` draws an axis-aligned rectangle whose area equals the RECORDED lot area (10,075 sq ft on the benchmark lot) and the site plan labels it as the tax-map outline (10,387.99 sq ft). The lot outline must come from the measured tax-map polygon the results path already reads for the area comparison, translated to local feet with the transform stated; where there is no outline, nothing is drawn and the reason is given. No legal figure changes.",
+  "business_reason": "The owner's reviewer found that the site plan and the measurement explanation disagree; the presentation contract forbids a pleasant rectangle in place of the actual lot and stretching the outline to the recorded area (rows R841, R846).",
+  "inputs": [
+    "services/api/app/scenario/three_answers/geometry.py (the rectangle)",
+    "the outline gathered in result_way_bridge.py and threaded by result_way_engine_bridge.py (as wave 19 threaded the lot areas)",
+    "services/api/app/drawings/kit/ (the site plan and its labels)",
+    "the committed benchmark document and its drawing and CAD snapshots"
+  ],
+  "outputs": [
+    "the outline threaded into the geometry block",
+    "the benchmark document and its snapshots regenerated",
+    "tests that the drawn outline's area equals the measured outline area and that no outline means no drawing"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/inputs.py",
+    "services/api/tests/scenario/three_answers",
+    "services/api/tests/api/test_results_read_api.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/drawings/kit/snapshots",
+    "services/api/tests/cad/snapshots",
+    "services/api/app/rules/review_register",
+    "docs/zoning-rule-review",
+    "project-control/reports/M5-T150-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/contracts/schemas/**",
+    "services/api/app/rules/rulesets/**",
+    "services/api/app/drawings/kit/styles.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "The benchmark lot draws its own outline",
+      "input": "the recorded journey for 215-16 Northern Boulevard",
+      "expected": "geometry.lot_outline is the measured tax-map polygon in local feet; its area equals the measured outline area (10,387.99 sq ft, within 0.5 sq ft); it is not a rectangle sized to 10,075 sq ft; the transform from the measured coordinates is stated in the measurement record."
+    },
+    {
+      "id": "S2",
+      "case": "No outline",
+      "input": "the live route with no outline (the spatial provider off)",
+      "expected": "no lot outline is drawn and the geometry gives the reason (the lot's outline is not available); no rectangle is drawn from the recorded area."
+    },
+    {
+      "id": "S3",
+      "case": "The site plan's labels",
+      "input": "the regenerated site-plan snapshot",
+      "expected": "the dimension labels are the measured polygon's edge lengths; the measurement note names the tax-map outline and the transform; no label claims a basis the drawing does not use."
+    },
+    {
+      "id": "S4",
+      "case": "Nothing else moves",
+      "input": "the regenerated benchmark document",
+      "expected": "only the geometry block changes; no legal figure, no withheld value, no reason outside geometry; the CAD snapshot follows the same outline."
+    },
+    {
+      "id": "S5",
+      "case": "Independent check",
+      "input": "the benchmark outline's area by the shoelace formula in the test, and the recorded measurement",
+      "expected": "the two agree within 0.5 sq ft; the expected figure is parsed from the recorded measurement, never retyped from a program run."
+    },
+    {
+      "id": "S6",
+      "case": "Layers that scale the lot shape",
+      "input": "the footprint and envelope layers",
+      "expected": "a layer that would scale the lot shape into a footprint or an envelope is not drawn unless a placement is worked (ruling W5 of wave 19); where it was drawn before, it is now withheld with its reason, and the change is listed."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The drawing kit's dimension labels assume rectangle edges: a polygon may need its label placement checked (contract section 6).",
+    "Other committed valid documents with geometry may change; each change is listed."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T00:00:05.811157+00:00",
+  "updated_at": "2026-10-10T00:00:06.256329+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R192",
+        "D-090-R239",
+        "D-090-R257",
+        "D-090-R570",
+        "D-090-R804",
+        "D-090-R841",
+        "D-090-R846",
+        "D-090-R878",
+        "D-090-R886",
+        "D-090-R888",
+        "D-090-R890",
+        "D-090-R896",
+        "D-090-R899"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T00:00:05.811338+00:00",
+  "path_notes": "ONE builder (geospatial-engineer). The register is resynced inside this task if a calculation entry's code identity changes. A builder who finds the outline is not available on a path STOPS and reports which paths have it.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 20 (they govern; later over earlier). V1: three tasks on ONE branch, reviewed at ONE head, merged as ONE pull request: M5-T148 (shared presentation), M5-T149 (the website slice, after M5-T148) and M5-T150 (the parcel's own outline; server only, beside M5-T148). Order: M5-T148 parts A and B and M5-T150 side by side (three builders, disjoint files); integrate; then M5-T149 parts A, B and C side by side (three builders); then the orchestrator builds the website, runs the browser tests (stopping the owner's preview for the run and restarting it), takes the pictures and starts the reviews. V2: the website types no number, label, condition or reason; the presentation adapters only format numbers and group what the document says; they decide no law and recalculate nothing (D-090 R855). V3: the screen's statuses stay as the owner decided (row R641: 'Preliminary zoning results'; settled, conditional, not known); the owner's question C2 (the PDF's six labels on the screen) is open; 'Verified' is never shown. V4: the font token equals the application's existing font stack (`apps/web/src/app/layout.tsx`); no font changes in this wave. V5: a floor schedule whose placement and site fit are not established is never called 'achieved' (row R895): it is the 'scheduled area', with 'site fit not verified' beside it, before any caveat; the option comparison uses ONE wording per situation (row R894). V6: builders never start Next, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests. V7: a builder who finds that a file outside its part must change STOPS and reports. V8: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere. V9: the estimate on the benchmark lot is 17.27 to 21.59 apartments (from the document); the planning draft's '22.20' was wrong.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/api tests/drawings tests/cad tests/journey",
+    "python services/api/app/rules/review_register/render_review_register.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
