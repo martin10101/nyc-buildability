@@ -118,3 +118,30 @@ CHECKS (lanes venv, direct exit codes): ruff check . exit 0; pytest -q tests/dra
 
 Files (allowed): html.py, layout.py, test_report_pages.py.
 END-OF-REPORT
+
+
+---
+
+CORRECTIONS RETURN, after the review wave (saved unchanged by the orchestrator):
+
+M5-T156 CORRECTIONS complete. I am an AI agent (backend-engineer).
+
+COMMIT: 1355a82fb06d80a5f10ec14e6d8c4371af164fb7  PARENT: 4d9aef34d4a54a14c534fefff9eeb16e866c1340. Clean tree. No report file written.
+
+PAGE COUNT: 7 (was 8). One line per page:
+1 Decision summary - answers + compact site plan + estimate + open items + coverage.
+2 Where is the lot? - the neighbourhood map and the block close-up as two CO-EQUAL full-width wide maps stacked, each titled and captioned (T156-C2).
+3 What constrains the design? - lot-area basis + full-size site plan + not-placed line + constraints table.
+4 Option comparison - shared limitations, bar chart, 11-option table, worked/not-worked.
+5 Scenario sheet - scheduled line, not-placed line, floor-stack, schedule, not-checked, estimate.
+6 Assumptions and open items - 11 assumptions + open-items table.
+7 Calculations and evidence - inputs, allowance, envelope, provenance + drawing notes in TWO COLUMNS, and the full status-label key all on this page (T156-C1: no orphaned near-empty page 8).
+
+C3: builder.py now requires report_plan.is_drawing, so a missing tax_lots/building_footprints layer falls back to today's lot-only plan + its tax-map limitation line (never the drawing's reason).
+
+MUTATION: revert the C3 fix (drop .is_drawing) -> test_c4_constraints_falls_back_to_lot_only_when_a_layer_is_unavailable FAILS (both tax_lots and building_footprints); passes with the fix.
+
+Note: page 2's maps underscale in my chrome CLI (pt rendered as px); they render full-size in the orchestrator's Playwright print (~92% fill, fits one page).
+
+CHECKS (lanes venv, direct exit codes): ruff check . exit 0; pytest -q tests/drawings tests/api tests/contracts tests/journey 2848 passed/6 skipped exit 0; modularity_check.py --check exit 0; check_lane_paths.py --coverage PASS exit 0.
+END-OF-REPORT
