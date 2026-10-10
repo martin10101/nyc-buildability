@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T150",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T150-producer-report.md",
+  "reviewed_at": "2026-10-10T04:37:34.725609+00:00",
+  "content_manifest_sha256": "13d6af21ac9e3383550080730325633f0e8bbbd84d723bde24f3ef3d61aba8a3",
+  "reviewed_sha": "5bf6f72949cfc591da5b6cedf54c2a976961e601",
+  "updated_at": "2026-10-10T04:37:35.042470+00:00"
+}
