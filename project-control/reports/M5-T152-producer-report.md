@@ -68,3 +68,21 @@ Benchmark changed only at shortfall + best_combination; no figure/value/way/with
 
 CHECKS (direct RC): ruff RC0. pytest tests/drawings tests/cad tests/scenario/three_answers tests/api/test_results_read_api.py tests/journey tests/spatial RC0 -> 2461 passed, 8 skipped. register --check RC0. sync_contract_schemas RC0. validate_contracts RC0 (23/0). modularity RC0 (0 failures). lane coverage RC0 (9880).
 END-OF-REPORT
+
+---
+
+## Rework 3 (the builder's return, saved verbatim by the orchestrator)
+
+Builder commit `aa374360fbb484126a8a88d3f05d956acc712b19` (parent `a719082efe312d2b13c2859840a7f99f12ab6565`). The findings it answers: `/root/project/lanes-runtime/owner-docs/session-2026-10-10a/rework-w21-T152-3.md` (K5 to K7).
+
+M5-T152 rework 3 done. One commit, not pushed. Rasterised every changed drawing (Playwright Chromium, no server).
+COMMIT aa374360fbb484126a8a88d3f05d956acc712b19  PARENT a719082efe312d2b13c2859840a7f99f12ab6565
+
+K5 (report 512x422, summary 238x219): "Northern Boulevard" was clipped at the top (box top -6.7/-5.0 pt); a top-bias now shifts the lot down so every label sits wholly inside with margin. New test checks each text's rotated box vs the viewBox over all fixtures + a mutation.
+K6 (summary): the north arrow and scale bar now sit immediately beneath the plan content (placed dynamically) - the large empty band is gone.
+K7 (report floor stack 360x358): the drawing's own "Drawn from the floor schedule..." caption is dropped in the report frame (the report prints one); the default frame still draws it.
+
+No sheet snapshot or benchmark change; no tracked calc module touched (no register resync).
+
+CHECKS (direct RC): ruff RC0. pytest tests/drawings tests/cad tests/scenario/three_answers tests/api/test_results_read_api.py tests/journey tests/spatial RC0 -> 2483 passed, 8 skipped. register RC0. sync_contract_schemas RC0. validate_contracts RC0 (23/0). modularity RC0 (0 failures). lane coverage RC0 (9880).
+END-OF-REPORT
