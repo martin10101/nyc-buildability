@@ -170,11 +170,12 @@ export function AnswerCard({
   );
 }
 
-/** The building-option card as the SCHEDULED area (ruling V11 (2); R895): when a building is listed
- * it reads "Scheduled area: 20,150 sq ft" with "Site fit not verified" ahead of any caveat, and
- * never "Not available"/"shown below"; when none is listed it reads "Not known" with the document's
- * reason and what would settle it (one wording — ruling V11 (3)). The area is read from the listed
- * building through Part B's view model; the standing lines are fixed labels. */
+/** The building-option card as the SCHEDULED area (ruling V11 (2); R895/R922; scenario S1/S8): when a
+ * building is listed it reads the one-line phrase "Scheduled floor area: 20,150 sq ft; site fit
+ * unverified" — the SAME adapter line the building-options block uses, never "achieved", never
+ * "Not available"/"shown below"; when none is listed it reads "Not known" with the document's reason
+ * and what would settle it (one wording — ruling V11 (3)). The area is read from the listed building
+ * through Part B's view model. */
 export type BuildingOptionCardView =
   | { kind: "not_reviewed"; text: string }
   | { kind: "scheduled"; scheduledArea: string; conditionNames: readonly string[] }

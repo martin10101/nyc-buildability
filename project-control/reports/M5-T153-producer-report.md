@@ -245,4 +245,32 @@ drawings/title)
   `/^calculations and evidence$/im` (label text confirmed in `print-int4/report.html`). Every other
   assertion unchanged. Checks: `npm run lint` → EXIT 0; `npm run typecheck` → EXIT 0.
 
+## Corrections after review (reset to 7f972796604ee8cc2207983413cd94f56acab0d5; all reviewers PASS;
+`return-review-w21-walk.txt` corrections 1–3 + CI run 38044133021)
+
+- **CI-1 (required).** CI's web-dependency-security job runs `node --test scripts/tests/*.test.mjs`
+  WITHOUT browsers, so the Chromium-launching `scripts/tests/print-report-pdf.test.mjs` failed there.
+  Deleted that file (scripts/tests is now browser-free: `node --test scripts/tests/*.test.mjs` → EXIT
+  0, 50 tests) and moved the check into `report-print.flag-on.spec.ts` as a second test that drives
+  `scripts/print-report-pdf.mjs` through a child process (the real CLI) — keeping every former node
+  assertion: a valid run writes A4 pages (every MediaBox A4), a missing output argument and no
+  arguments each fail with a clear message, and a non-existent input fails. The orchestrator runs it.
+- **W1.** `BuildingOptionsComparison.tsx` per-building worked summary now reads the one-line phrase
+  `scheduledFloorAreaLine(column.scheduledArea)` ("Scheduled floor area: N sq ft; site fit unverified")
+  instead of a separate "Site fit not verified" note beside a duplicate "Scheduled area" row — one
+  wording per situation. The aligned table keeps its "Scheduled area" metric row. Test asserts the
+  worked summaries read the phrase and never "Site fit not verified".
+- **W2.** `ResultDetails.tsx` opener now carries `aria-label="Details — <name>"` (visible label stays
+  "Details"/"Hide details"), so several disclosures on one screen no longer all read "Details" to a
+  screen reader. Test renders two and asserts the accessible names differ.
+- **W3.** Updated the stale doc comments in `FirstBuildingOptions.tsx` (module header) and
+  `AnswerCard.tsx` (BuildingOptionCard header) to the one-line phrase; comment-only, nothing rendered.
+
+### Corrections checks (apps/web, direct exit codes)
+
+- `npm run lint` → EXIT 0 (same 2 pre-existing warnings, untouched files).
+- `npm run typecheck` → EXIT 0.
+- `npx vitest run src/components/architect src/lib` → EXIT 0; 112 files, 2293 tests passed.
+- `node --test scripts/tests/*.test.mjs` → EXIT 0; 50 tests, 0 fail, NO browser used.
+
 END-OF-REPORT

@@ -1,4 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
+import { spawn } from "node:child_process";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
 
 /**
@@ -226,5 +231,61 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
       expect(Math.abs(height - A4_HEIGHT_PT)).toBeLessThanOrEqual(PT_TOLERANCE);
     }
     await printPage.close();
+  });
+
+  // The print-script check (scenario S5) lives here, NOT in scripts/tests, because it launches
+  // Chromium: CI's web-dependency-security job runs `node --test scripts/tests/*.test.mjs` WITHOUT
+  // browsers, so a browser-using test there fails. This spec runs under the browser-capable e2e
+  // project. It drives scripts/print-report-pdf.mjs as a child process — the real CLI — and keeps
+  // every assertion the former node test made: a valid run writes A4 pages; a missing argument fails
+  // with a clear message; a non-existent input fails. The orchestrator runs this (ruling X10).
+  test("the print script writes A4 pages and fails clearly on a bad argument (S5; CI-safe)", async () => {
+    const script = fileURLToPath(new URL("../scripts/print-report-pdf.mjs", import.meta.url));
+    const run = (args: string[]): Promise<{ code: number | null; stderr: string }> =>
+      new Promise((resolve) => {
+        const child = spawn(process.execPath, [script, ...args], { stdio: ["ignore", "ignore", "pipe"] });
+        let stderr = "";
+        child.stderr.on("data", (d) => {
+          stderr += String(d);
+        });
+        child.on("close", (code) => resolve({ code, stderr }));
+      });
+
+    const dir = mkdtempSync(join(tmpdir(), "print-report-"));
+    const htmlPath = join(dir, "a4.html");
+    const pdfPath = join(dir, "a4.pdf");
+    writeFileSync(
+      htmlPath,
+      `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>tiny</title>` +
+        `<style>@page { size: A4; margin: 14mm; } html, body { margin: 0; } h1 { font-size: 24pt; }</style>` +
+        `</head><body><h1>A4 print-size probe</h1><p>One short paragraph.</p></body></html>`,
+    );
+    try {
+      // A valid run writes a PDF whose every page is A4 (preferCSSPageSize honoured the @page size).
+      const ok = await run([htmlPath, pdfPath]);
+      expect(ok.code, ok.stderr).toBe(0);
+      expect(existsSync(pdfPath)).toBe(true);
+      const bytes = readFileSync(pdfPath);
+      expect(bytes.subarray(0, 5).toString("latin1")).toBe("%PDF-");
+      const boxes = mediaBoxes(bytes);
+      expect(boxes.length).toBeGreaterThanOrEqual(1);
+      for (const [width, height] of boxes) {
+        expect(Math.abs(width - A4_WIDTH_PT)).toBeLessThanOrEqual(PT_TOLERANCE);
+        expect(Math.abs(height - A4_HEIGHT_PT)).toBeLessThanOrEqual(PT_TOLERANCE);
+      }
+      // A missing output argument, and no arguments at all, fail with a clear message and non-zero exit.
+      const missingOut = await run([htmlPath]);
+      expect(missingOut.code).not.toBe(0);
+      expect(missingOut.stderr).toMatch(/missing <out\.pdf>/);
+      const noArgs = await run([]);
+      expect(noArgs.code).not.toBe(0);
+      expect(noArgs.stderr).toMatch(/missing <url-or-html-file>/);
+      // A non-existent input file fails clearly too.
+      const noInput = await run([join(dir, "nope.html"), pdfPath]);
+      expect(noInput.code).not.toBe(0);
+      expect(noInput.stderr).toMatch(/input not found/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });

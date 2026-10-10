@@ -16,11 +16,13 @@ import "./building-options.css";
  * The first-building-options section (results contract 1.4.0; M5-T146 / M5-T147 / M5-T149 part B;
  * rulings V2/V5/V8, W1–W5; rows R894/R895; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R688). It
  * reads the view built by firstBuildingOptionsView and shows, from the document and never from a
- * typed value: each worked building FIRST as "Building option: Site fit not verified", then its
- * "Scheduled area" — NEVER "achieved", and never "no allowance left unused" (row R895) — so the
- * site-fit distinction is clear before the reader reaches the caveats; then what was NOT checked, its
- * way (the 'Conditional' marker and each condition on its own line), its floor schedule as a table,
- * and its own preliminary capacity estimate under the owner's label. Below the buildings comes one
+ * typed value: each worked building leads with the SAME one-line phrase the rest of the screen uses,
+ * "Scheduled floor area: N sq ft; site fit unverified" — NEVER "achieved", and never "no allowance
+ * left unused" (rows R895/R922, scenario S1) — so the answer and its site-fit caveat read together
+ * before the reader reaches the detail; then, behind a named disclosure (R928 expandable detail), the
+ * conditions (the 'Conditional' marker + "Applies: Condition N"), its floor schedule as a table, what
+ * was NOT checked, and its own preliminary capacity estimate under the owner's label. Below the
+ * buildings comes one
  * comparison of the method's buildings (row R894), then coverage by portion — withheld with NO
  * figure, or its figures when available. Nothing is called feasible; a withheld result carries no
  * number and no substitute (R556/R570). The state is told by the WORDS, never by colour alone.

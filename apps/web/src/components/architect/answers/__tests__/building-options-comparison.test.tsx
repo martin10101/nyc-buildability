@@ -86,6 +86,17 @@ describe("PART B: the option comparison (scenario S7)", () => {
     const lead = screen.getByTestId("building-options-comparison-lead").textContent ?? "";
     expect(lead).toContain("None is ranked ahead of the others");
     expect(lead.toLowerCase()).not.toContain("preferred");
+
+    // W1 (one wording per situation): each worked summary leads with the one-line scheduled phrase,
+    // not a separate "Site fit not verified" note beside a duplicate "Scheduled area" row.
+    const summaryFit = screen.getAllByTestId("comparison-summary-site-fit");
+    expect(summaryFit.length).toBe(2); // both buildings are worked
+    for (const el of summaryFit) {
+      const text = el.textContent ?? "";
+      expect(text).toContain("Scheduled floor area:");
+      expect(text).toContain("site fit unverified");
+      expect(text).not.toContain("Site fit not verified");
+    }
   });
 
   it("S7: a building not worked reads 'Not known' with its reason, never 0, never an empty cell", () => {
