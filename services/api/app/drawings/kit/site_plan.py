@@ -61,6 +61,7 @@ REPORT_FURN_TOP = 356.0
 REPORT_NORTH_CX = 24.0
 REPORT_SCALE_X = 58.0
 REPORT_LEGEND_X = 180.0
+REPORT_TOP_BIAS = 14.0  # shift the lot down so the top street label clears the viewBox top (K5)
 
 # Summary frame (ruling K3): the decision summary's small visual - at most 85 mm by 85 mm
 # (85 mm = 240.94 pt; 1 user unit = 1 pt). Only the lot outline, the street names beside their
@@ -68,9 +69,9 @@ REPORT_LEGEND_X = 180.0
 # notes. Every label at least 7 pt.
 SUMMARY_MAX_PT = 240.9
 SUMMARY_CANVAS_W = 238.0
-SUMMARY_PLAN = (6.0, 6.0, 232.0, 164.0)
+SUMMARY_PLAN = (6.0, 4.0, 232.0, 182.0)
 SUMMARY_PLAN_MARGIN = 34.0
-SUMMARY_FURN_TOP = 170.0
+SUMMARY_TOP_BIAS = 10.0  # shift the lot down so the top street label clears the viewBox top (K5)
 SUMMARY_NORTH_CX = 20.0
 SUMMARY_SCALE_X = 56.0
 
@@ -91,6 +92,7 @@ def _frame(
     lot: Polygon,
     region: tuple[float, float, float, float] = PLAN,
     margin: float = PLAN_MARGIN,
+    top_bias: float = 0.0,
 ) -> _Frame:
     minx, miny, maxx, maxy = geo.bbox(lot.exterior)
     width, height = maxx - minx, maxy - miny
@@ -103,7 +105,9 @@ def _frame(
         raise DrawingInputError("lot_too_large", "lot does not fit the largest plan scale",
                                 location=lot.source)
     ox = region[0] + ((region[2] - region[0]) - width * k) / 2.0
-    oy = region[1] + ((region[3] - region[1]) - height * k) / 2.0
+    # ``top_bias`` shifts the lot DOWN within the region (the small report/summary frames keep more
+    # room above the lot for a long top-frontage street label, so no label is clipped - K5).
+    oy = region[1] + ((region[3] - region[1]) - height * k) / 2.0 + top_bias
     return _Frame(k, ox, oy, minx, maxy)
 
 
@@ -292,7 +296,8 @@ def draw_site_plan(data: DrawingInput, *, frame: str = "sheet") -> Drawing:
     if frame == "summary":
         return _draw_summary(data)
     report = frame == "report"
-    fr = _frame(data.lot, REPORT_PLAN, REPORT_PLAN_MARGIN) if report else _frame(data.lot)
+    fr = (_frame(data.lot, REPORT_PLAN, REPORT_PLAN_MARGIN, REPORT_TOP_BIAS) if report
+          else _frame(data.lot))
     sheet = Sheet()
     _footprint(sheet, data, fr)
     _yards(sheet, data, fr)
@@ -395,14 +400,19 @@ def _draw_summary(data: DrawingInput) -> Drawing:
     """The summary-frame site plan (ruling K3): the lot outline, the street names beside their
     frontages, the frontage lengths only, a north arrow and a scale bar - at most 85 mm by 85 mm,
     every label at least 7 pt. No legend, no notes."""
-    fr = _frame(data.lot, SUMMARY_PLAN, SUMMARY_PLAN_MARGIN)
+    fr = _frame(data.lot, SUMMARY_PLAN, SUMMARY_PLAN_MARGIN, SUMMARY_TOP_BIAS)
     sheet = Sheet()
     sheet.line(path_data(_px_rings(data.lot, fr)), "lot_line",
                [("fill-rule", "evenodd"), ("data-source", data.lot.source)])
     _summary_frontages(sheet, data, fr)
-    panel = north_arrow(SUMMARY_NORTH_CX, SUMMARY_FURN_TOP)
-    bar_parts, bar_labels = scale_bar(SUMMARY_SCALE_X, SUMMARY_FURN_TOP + 14.0, fr.k, 86.0)
-    height = min(SUMMARY_MAX_PT, SUMMARY_FURN_TOP + 46.0 + 8.0)
+    # Compose tightly (K6): put the north arrow and scale bar immediately beneath the drawn content
+    # (the lot and its labels), so there is no empty band between the plan and the furniture.
+    lot_bottom = max(y for _, y in (fr.px(p) for p in data.lot.exterior))
+    content_bottom = max([lot_bottom, *(box.y1 for box in sheet.boxes)])
+    furn_top = content_bottom + 10.0
+    panel = north_arrow(SUMMARY_NORTH_CX, furn_top)
+    bar_parts, bar_labels = scale_bar(SUMMARY_SCALE_X, furn_top + 14.0, fr.k, 86.0)
+    height = min(SUMMARY_MAX_PT, furn_top + 46.0 + 6.0)
     body = sheet.parts + panel + bar_parts
     svg = svg_document(width=SUMMARY_CANVAS_W, height=height, drawing="site_plan",
                        title="Site plan", defs=hatch_defs(sheet.kinds), body=body)

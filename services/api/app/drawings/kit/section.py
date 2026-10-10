@@ -66,9 +66,10 @@ def _num_ft(value: object) -> str:
     return f"{text or '0'} ft"
 
 
-def draw_floor_stack(alternative: Mapping) -> Drawing | Unavailable:
-    """The floor-stack section for one worked building (report frame), or ``Unavailable`` when the
-    alternative carries no floor schedule to draw."""
+def draw_floor_stack(alternative: Mapping, *, caption: bool = True) -> Drawing | Unavailable:
+    """The floor-stack section for one worked building, or ``Unavailable`` when the alternative
+    carries no floor schedule to draw. ``caption=False`` (the report frame, K7) omits the drawing's
+    own caption because the report prints one beneath it; the default keeps the caption."""
     rows = _rows(alternative)
     if not rows:
         return Unavailable("floor_stack", "The building has no floor schedule to draw.",
@@ -138,10 +139,14 @@ def draw_floor_stack(alternative: Mapping) -> Drawing | Unavailable:
         sheet.label([(_STACK_X0, y - 7.0, 0.0)], "Minimum base height", size=size,
                     source=None, role="floor_stack_min_base")
 
-    caption_y = grade_y + _CAPTION_GAP
-    sheet.parts.append(text_element(_STACK_X0 - 14.0, caption_y, _CAPTION,
-                                    size=TYPOGRAPHY.note_pt, source=None, role="caption"))
-    height = min(REPORT_MAX_H_PT, caption_y + 14.0)
+    if caption:
+        caption_y = grade_y + _CAPTION_GAP
+        sheet.parts.append(text_element(_STACK_X0 - 14.0, caption_y, _CAPTION,
+                                        size=TYPOGRAPHY.note_pt, source=None, role="caption"))
+        bottom = caption_y
+    else:
+        bottom = grade_y
+    height = min(REPORT_MAX_H_PT, bottom + 14.0)
     svg = svg_document(width=_CANVAS_W, height=height, drawing="floor_stack",
                        title="Floor-stack section", defs="", body=sheet.parts)
     return Drawing("floor_stack", svg, tuple(sheet.labels), tuple(sheet.kinds))

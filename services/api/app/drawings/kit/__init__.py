@@ -89,4 +89,5 @@ def render_floor_stack(
     if frame != "report":
         raise DrawingInputError("unknown_frame", f"the floor stack has no {frame!r} frame",
                                 location="/floor_schedule")
-    return draw_floor_stack(alternative)
+    # The report frame omits the drawing's own caption: the report prints one beneath it (K7).
+    return draw_floor_stack(alternative, caption=False)

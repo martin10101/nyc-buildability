@@ -167,9 +167,9 @@ def test_s3_floor_stack_one_band_per_storey_from_the_schedule(_id, alternative):
         for value in numbers_in(text):
             assert any(abs(value - s) <= 0.01 for s in schedule_numbers), (text, value)
 
-    # The caption says it is drawn from the schedule with no placement on the lot.
+    # K7: the report-frame floor stack draws NO caption of its own (the report prints one beneath).
     captions = [t for el, t in texts(root) if el.get("data-role") == "caption"]
-    assert captions == ["Drawn from the floor schedule; no placement on the lot."]
+    assert captions == []
 
     # The minimum base height line appears ONLY where the document gives it (a to_min_base building
     # reaches the minimum base height at its building height); a 'widest' building draws none.
