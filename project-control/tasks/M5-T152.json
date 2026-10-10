@@ -1,0 +1,169 @@
+{
+  "task_id": "M5-T152",
+  "title": "Drawings for the report and the engine's wording: the street frontages the spatial engine already identifies carried into the results geometry and drawn with their names; a report frame for the site plan, the massing and the two context maps (no notes column, sized for A4, labels legible); a floor-stack section from a worked building's schedule; no 'achieved' and no stale 'building options not known' sentence in the document; no field names in drawing text",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Give the report real drawings at its printed size: carry into geometry.streets the street frontages the spatial engine already matches to the lot outline (names, frontage lines, source) where it has them, so the site plan draws street names beside their frontages; add the report frame (ruling X9) to the site plan, the massing and the two context maps; add a floor-stack section drawn from a worked building's schedule; and correct the engine's user-facing wording that overstates or contradicts ('achieved' labels; the add-on reason saying building options are not known while a building is worked; field names in drawing notes). No legal figure changes.",
+  "business_reason": "The owner's correction asks for a site composition showing supported street relationships, dimensions and constraints in place of a notes column, real maps where supported, and no wording that suggests stronger proof than the report gives (D-090 source-081).",
+  "inputs": [
+    "services/api/app/spatial/lot_reach.py and corner_reach_area.py (the frontage edges; read only)",
+    "services/api/app/scenario/three_answers/geometry.py (streets is written as an empty list today)",
+    "services/api/app/drawings/kit/site_plan.py (_streets already draws names from geometry.streets)",
+    "the results schema's geometry.streets item shape (read only; no schema change)",
+    "the recorded Northern pack and the committed snapshots"
+  ],
+  "outputs": [
+    "geometry.streets populated from the engine's frontages",
+    "frame='report' on the four renderers and render_floor_stack",
+    "the engine wording corrected",
+    "the benchmark document and the snapshots regenerated, each change listed"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/drawings/kit/__init__.py",
+    "services/api/app/drawings/kit/adapter.py",
+    "services/api/app/drawings/kit/furniture.py",
+    "services/api/app/drawings/kit/labels.py",
+    "services/api/app/drawings/kit/model.py",
+    "services/api/app/drawings/kit/scope.py",
+    "services/api/app/drawings/kit/sheet.py",
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/app/drawings/kit/massing.py",
+    "services/api/app/drawings/kit/section.py",
+    "services/api/app/drawings/kit/geometry.py",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/maps/adapter.py",
+    "services/api/app/drawings/maps/frame.py",
+    "services/api/app/drawings/maps/layout.py",
+    "services/api/app/drawings/maps/location_map.py",
+    "services/api/app/drawings/maps/zoning_map.py",
+    "services/api/app/drawings/maps/model.py",
+    "services/api/tests/drawings/kit",
+    "services/api/tests/drawings/maps",
+    "services/api/tests/cad/snapshots",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/building_option.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/inputs.py",
+    "services/api/tests/scenario/three_answers",
+    "services/api/tests/api/test_results_read_api.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/app/rules/review_register",
+    "docs/zoning-rule-review",
+    "project-control/reports/M5-T152-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/**",
+    "packages/contracts/schemas/**",
+    "services/api/app/rules/rulesets/**",
+    "services/api/app/drawings/kit/styles.py",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "services/api/app/drawings/report/**",
+    "services/api/app/spatial/**",
+    "services/api/app/api/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Street frontages carried and drawn",
+      "input": "the recorded journey for 215-16 Northern Boulevard",
+      "expected": "geometry.streets lists the frontages the spatial engine matched (each name, its frontage line on the lot outline in local feet, its source); the site plan draws each name beside its frontage; where the engine has no frontage, streets stays empty and no name is invented."
+    },
+    {
+      "id": "S2",
+      "case": "Report frame of the site plan",
+      "input": "render_site_plan(doc, frame='report') on the benchmark and the synthetic documents",
+      "expected": "no notes column; legend only for what is drawn; at most 182 mm by 150 mm; every text at least 7 pt at that size; no two labels overlap (a collision check); dimensions are the outline's edge lengths; the default frame's output is byte-identical to the committed snapshots."
+    },
+    {
+      "id": "S3",
+      "case": "Floor-stack section",
+      "input": "render_floor_stack on building B of the benchmark and on both buildings of the two-building document",
+      "expected": "one band per scheduled storey with its floor-to-floor and top height; the minimum base height line where the document gives it; every number drawn is in the schedule; the caption says it is drawn from the schedule with no placement on the lot."
+    },
+    {
+      "id": "S4",
+      "case": "Report frame of the maps",
+      "input": "render_location_map and render_zoning_map with frame='report' on the recorded map document",
+      "expected": "no notes column; the attribution and notes are still available to the caller for the evidence page; labels at least 7 pt; the default frames byte-identical."
+    },
+    {
+      "id": "S5",
+      "case": "Engine wording",
+      "input": "the regenerated benchmark document and every label the engine can emit",
+      "expected": "no user-facing label or reason says 'achieved'; an add-on gain's reason states what is actually missing (no building is fitted to the site) and never says building options are not known while a building is worked; each changed sentence is listed with before and after."
+    },
+    {
+      "id": "S6",
+      "case": "No field names in drawing text",
+      "input": "the report-frame drawings of the benchmark",
+      "expected": "no text holds a field or code word (building_alternatives, buildings_not_worked, city_records, approximate_tax_map or any snake_case word)."
+    },
+    {
+      "id": "S7",
+      "case": "Nothing else moves",
+      "input": "the regenerated benchmark document",
+      "expected": "only geometry.streets and the listed sentences change; no legal figure, no withheld value, no way changes; the CAD snapshot follows."
+    },
+    {
+      "id": "S8",
+      "case": "Independent check",
+      "input": "the frontage lines against the outline edges; the names against the recorded pack",
+      "expected": "each frontage line lies on outline edges (within 0.01 ft); its length matches the engine's frontage length; each name equals the recorded source's street name; the expected values are read from the pack, never retyped."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The frontage data may not reach the geometry block on every path: where it does not, streets stays empty and the path is named.",
+    "Snapshot regeneration can hide a drawing regression: each regenerated snapshot is listed and looked at."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T07:36:30.903766+00:00",
+  "updated_at": "2026-10-10T07:36:31.308248+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R795",
+        "D-090-R893",
+        "D-090-R896",
+        "D-090-R912",
+        "D-090-R913",
+        "D-090-R914",
+        "D-090-R915",
+        "D-090-R920",
+        "D-090-R921",
+        "D-090-R922",
+        "D-090-R923",
+        "D-090-R924",
+        "D-090-R927"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T07:36:30.903954+00:00",
+  "path_notes": "ONE builder (geospatial-engineer). The register is resynced inside this task if a calculation entry's code identity changes. A builder who finds the frontage data is not available on a path STOPS and reports which paths have it.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 21 (they govern; later over earlier). X1: three tasks on ONE branch (task/wave21-report-redesign), reviewed at ONE head, merged as ONE pull request. M5-T151 (the report generator), M5-T152 (the drawings for the report and the engine's wording) and M5-T153 (the website) are built side by side by three builders on disjoint files; the orchestrator integrates, prints the PDF, runs the browser tests and starts the reviews. X2: the program's report is HTML built on the server from the results document in services/api/app/drawings/report/, printed by a browser engine. A4 portrait with 14 mm margins on every sheet (question D1 is open; A4 meanwhile); no other sheet size. No new package of any kind (question B6, the converter, is open); no template engine; the Python standard library's html escaping. X3: the page types are those of /root/project/lanes-runtime/owner-docs/session-2026-10-10a/page-types.md (the orchestrator's definition, recorded in the presentation contract by M5-T151); a page type starts a new sheet; tables repeat header rows; a normal row never splits; a heading stays with its first row; body 9.5 pt, table text and captions at least 8 pt, drawing labels at least 7 pt at the printed size; nothing is shrunk to fit. X4: six labels (rows R779 to R799), one per output; nothing is labelled Verified (question C1 open). Mapping from the document: a settled value -> Provisional; a conditional value or a worked building whose way is conditional -> Conditional; a withheld value whose gap is missing information -> Unresolved; a withheld value or a result awaiting a rule, a check or a calculation not yet made -> Pending verification; a drawing derived from a schedule with no placement on the lot -> Illustrative; the preliminary apartment estimate -> Provisional; site fit and anything listed as not checked -> Pending verification. X5: wording. A floor schedule whose placement and site fit are not established reads 'Scheduled floor area: N sq ft; site fit unverified' (N from the document). Never used for a result, anywhere in the report or on the website: 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred', 'recommended'. A shared limitation is stated ONCE and referred to by its number. X6: the report carries no developer information: no HTTP checks or status codes, implementation notes, field or key names (snake_case words), internal identifiers (task, requirement, backlog or question numbers), owner-question references, development backlog words ('wiring', 'flag', 'endpoint', 'fixture', 'not encoded in this slice', 'owed'). Sources carry readable titles; reproducibility detail (revision, rule versions, source references) is in the evidence page type. X7: no number is typed in presentation code. Every figure comes from the results document (or the map document) and is only formatted; the presentation groups and orders what the document says and computes no law and no geometry; a missing value stays missing with a short accurate limitation line, never a number, never a block of prose, never an invented shape. X8: the eleven development options are listed in the owner-approved order (D-090 rows R539 and R551; docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md section 4, row 1): 1 Standard residences; 2 Qualifying affordable housing; 3 Qualifying senior housing; 4 More, smaller apartments; 5 Ground-floor shops with residences above; 6 Residences with a community facility; 7 A community facility alone; 8 A split lot with two buildings; 9 Shared housing; 10 Shared housing with the parking waiver; 11 All programs combined. Each row reads its result from the document block that holds it (1: the worked buildings; 2, 3, 5, 6: the matching add-on gain; 11: the best combination; any option with no block: one shared limitation line saying the program does not yet work that option). The list is presentation data held in ONE place in the report package. X9: interfaces between the tasks. (a) M5-T152 adds a keyword-only argument frame: str = 'sheet' to render_site_plan and render_massing in app.drawings.kit and to render_location_map and render_zoning_map in app.drawings.maps; frame='report' returns a Drawing for the report: no notes column, legend reduced to what is drawn, sized to at most 182 mm wide by 150 mm high, every label at least 7 pt at that size; the default frame keeps today's output byte-identical. (b) M5-T152 adds render_floor_stack(alternative: Mapping, *, frame: str = 'report', env=None) -> Drawing | Unavailable in app.drawings.kit, drawing one worked building's floor schedule as a section (storey bands, floor-to-floor and top heights, the minimum base height line where the document gives it), from the schedule only. (c) A Drawing's SVG text and its caption, notes and attribution are read as the kit already exposes them; M5-T151 places notes and attribution in the evidence page type. (d) M5-T151 serves POST /api/v1/properties/{bbl}/report with the SAME request body and the same gating as the results route, answering text/html; charset=utf-8 (the whole report, standalone, no script); M5-T153 calls it with the same inputs the results form sends. X10: builders never start Next, uvicorn, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests and prints the PDF. A builder who finds that a file outside its allowed paths must change STOPS and reports. X11: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere; the standing label (ADR-007, rows R164 and R165) appears once in the report, compactly. ",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings tests/cad tests/scenario/three_answers tests/api/test_results_read_api.py tests/journey",
+    "python services/api/app/rules/review_register/render_review_register.py --check",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

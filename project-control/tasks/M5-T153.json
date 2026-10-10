@@ -1,0 +1,150 @@
+{
+  "task_id": "M5-T153",
+  "title": "The website follows the report's priorities and wording: 'Scheduled floor area: N sq ft; site fit unverified'; each building's available result, state and material limitation without repeated state columns; shared limitations once with expandable detail; a report action that opens the program's report for printing; a print script and a browser test for the printed report",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Apply the report's information priorities and result wording to the website's results surface: the scheduled-area phrase and 'site fit unverified' as one line; for each worked or not-worked building its available result, its state and its material limitation, with no repeated state columns; shared limitations once with detail behind a disclosure; a report action in the results window and in the workspace report tool (results switched on) that sends the same inputs to the report route and shows the report for printing, with loading, error and out-of-date states; a print script that prints a report URL or file to an A4 PDF with the page size honoured, bookmarks and tags; and a browser test of the printed report that the orchestrator runs.",
+  "business_reason": "The owner asked for the same information priorities and result wording on the website, with expandable supporting detail where appropriate (D-090 source-081, row R928).",
+  "inputs": [
+    "N/page-types.md and the rulings",
+    "the results components under apps/web/src/components/architect/answers/ and the adapters under apps/web/src/lib/architect/",
+    "apps/web/src/components/architect/workspace/DashboardTools.tsx (the report tool)",
+    "the route of ruling X9 (d)"
+  ],
+  "outputs": [
+    "the answers components and adapters with the new wording",
+    "apps/web/src/components/architect/report/ (the report preview and print action)",
+    "apps/web/src/lib/report-api.ts",
+    "apps/web/scripts/print-report-pdf.mjs with its node test",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "the results browser specs updated for the wording"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "apps/web/src/components/architect/answers/FirstBuildingOptions.tsx",
+    "apps/web/src/components/architect/answers/BuildingOptionsComparison.tsx",
+    "apps/web/src/components/architect/answers/SharedConditions.tsx",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/ResultDetails.tsx",
+    "apps/web/src/components/architect/answers/building-options.css",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/__tests__",
+    "apps/web/src/lib/architect/presented-results.ts",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/first-building-options.ts",
+    "apps/web/src/lib/architect/__tests__",
+    "apps/web/src/components/architect/report",
+    "apps/web/src/lib/report-api.ts",
+    "apps/web/src/lib/__tests__/report-api.test.ts",
+    "apps/web/src/components/architect/workspace/DashboardTools.tsx",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/results-panel.css",
+    "apps/web/scripts/print-report-pdf.mjs",
+    "apps/web/scripts/tests/print-report-pdf.test.mjs",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/results-layout.flag-on.spec.ts",
+    "project-control/reports/M5-T153-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/**",
+    "packages/**",
+    "apps/web/e2e/harness/**",
+    "apps/web/src/components/architect/ReportView.tsx",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Scheduled wording",
+      "input": "the benchmark document on the results screen",
+      "expected": "building B reads 'Scheduled floor area: 20,150 sq ft; site fit unverified' as one line, the same phrase as the report; the rendered text holds none of 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred', 'recommended'."
+    },
+    {
+      "id": "S2",
+      "case": "Each building: result, state, limitation",
+      "input": "the benchmark document; the two-building document",
+      "expected": "each worked building shows its available result, its state and its material limitation; a building not worked shows its reason once; no column or row repeats the same 'not computed' state; a limitation shared by both buildings is stated once."
+    },
+    {
+      "id": "S3",
+      "case": "Expandable detail",
+      "input": "the results screen",
+      "expected": "the first view shows the answer and the limitation; the conditions and the schedule detail open from a disclosure with an accessible name; keyboard reaches and opens it."
+    },
+    {
+      "id": "S4",
+      "case": "The report action",
+      "input": "the results window and the workspace report tool with results switched on; a 503, a failed fetch, inputs changed after the report loaded",
+      "expected": "the action sends the same inputs as the results form to the report route and shows the returned report in a frame with no script permission, with a 'Print or save as PDF' button; loading and error states in plain words with no developer text; after the inputs change the shown report is marked out of date and cannot be printed until reloaded; with results switched off the workspace report tool is unchanged."
+    },
+    {
+      "id": "S5",
+      "case": "Print script",
+      "input": "node --test apps/web/scripts/tests/print-report-pdf.test.mjs (a small HTML page)",
+      "expected": "the script writes a PDF whose pages use the CSS page size (A4), with bookmarks from the headings and a tagged structure where the engine supports it; it uses only installed packages; a missing input fails with a clear message."
+    },
+    {
+      "id": "S6",
+      "case": "Browser test of the printed report (run by the orchestrator)",
+      "input": "apps/web/e2e/report-print.flag-on.spec.ts through the e2e harness",
+      "expected": "the report opens from the results window; in print media the six page-type titles are present in order; no visible text is smaller than 7 pt in drawings or 8 pt elsewhere; no element is wider than the A4 content box; none of the forbidden words appears; the printed PDF's pages are all A4."
+    },
+    {
+      "id": "S7",
+      "case": "Results specs follow the wording",
+      "input": "results.flag-on.spec.ts, results-layout.flag-on.spec.ts",
+      "expected": "their assertions match the new wording; no assertion is weakened or removed without the reason being listed."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The report route is built in parallel (M5-T151): the preview is tested against the route's interface (ruling X9 d) with stubbed responses whose shape matches the real route, and end to end by the orchestrator after integration.",
+    "Printing from a frame must not allow scripts in the frame."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T07:36:32.862987+00:00",
+  "updated_at": "2026-10-10T07:36:33.246070+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R894",
+        "D-090-R895",
+        "D-090-R903",
+        "D-090-R917",
+        "D-090-R918",
+        "D-090-R922",
+        "D-090-R924",
+        "D-090-R927",
+        "D-090-R928",
+        "D-090-R929"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T07:36:32.863180+00:00",
+  "path_notes": "ONE builder (frontend-engineer). The report route of M5-T151 is not there while this task is built: the tests stub it with the shape of ruling X9 (d). The browser specs are written but run only by the orchestrator.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 21 (they govern; later over earlier). X1: three tasks on ONE branch (task/wave21-report-redesign), reviewed at ONE head, merged as ONE pull request. M5-T151 (the report generator), M5-T152 (the drawings for the report and the engine's wording) and M5-T153 (the website) are built side by side by three builders on disjoint files; the orchestrator integrates, prints the PDF, runs the browser tests and starts the reviews. X2: the program's report is HTML built on the server from the results document in services/api/app/drawings/report/, printed by a browser engine. A4 portrait with 14 mm margins on every sheet (question D1 is open; A4 meanwhile); no other sheet size. No new package of any kind (question B6, the converter, is open); no template engine; the Python standard library's html escaping. X3: the page types are those of /root/project/lanes-runtime/owner-docs/session-2026-10-10a/page-types.md (the orchestrator's definition, recorded in the presentation contract by M5-T151); a page type starts a new sheet; tables repeat header rows; a normal row never splits; a heading stays with its first row; body 9.5 pt, table text and captions at least 8 pt, drawing labels at least 7 pt at the printed size; nothing is shrunk to fit. X4: six labels (rows R779 to R799), one per output; nothing is labelled Verified (question C1 open). Mapping from the document: a settled value -> Provisional; a conditional value or a worked building whose way is conditional -> Conditional; a withheld value whose gap is missing information -> Unresolved; a withheld value or a result awaiting a rule, a check or a calculation not yet made -> Pending verification; a drawing derived from a schedule with no placement on the lot -> Illustrative; the preliminary apartment estimate -> Provisional; site fit and anything listed as not checked -> Pending verification. X5: wording. A floor schedule whose placement and site fit are not established reads 'Scheduled floor area: N sq ft; site fit unverified' (N from the document). Never used for a result, anywhere in the report or on the website: 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred', 'recommended'. A shared limitation is stated ONCE and referred to by its number. X6: the report carries no developer information: no HTTP checks or status codes, implementation notes, field or key names (snake_case words), internal identifiers (task, requirement, backlog or question numbers), owner-question references, development backlog words ('wiring', 'flag', 'endpoint', 'fixture', 'not encoded in this slice', 'owed'). Sources carry readable titles; reproducibility detail (revision, rule versions, source references) is in the evidence page type. X7: no number is typed in presentation code. Every figure comes from the results document (or the map document) and is only formatted; the presentation groups and orders what the document says and computes no law and no geometry; a missing value stays missing with a short accurate limitation line, never a number, never a block of prose, never an invented shape. X8: the eleven development options are listed in the owner-approved order (D-090 rows R539 and R551; docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md section 4, row 1): 1 Standard residences; 2 Qualifying affordable housing; 3 Qualifying senior housing; 4 More, smaller apartments; 5 Ground-floor shops with residences above; 6 Residences with a community facility; 7 A community facility alone; 8 A split lot with two buildings; 9 Shared housing; 10 Shared housing with the parking waiver; 11 All programs combined. Each row reads its result from the document block that holds it (1: the worked buildings; 2, 3, 5, 6: the matching add-on gain; 11: the best combination; any option with no block: one shared limitation line saying the program does not yet work that option). The list is presentation data held in ONE place in the report package. X9: interfaces between the tasks. (a) M5-T152 adds a keyword-only argument frame: str = 'sheet' to render_site_plan and render_massing in app.drawings.kit and to render_location_map and render_zoning_map in app.drawings.maps; frame='report' returns a Drawing for the report: no notes column, legend reduced to what is drawn, sized to at most 182 mm wide by 150 mm high, every label at least 7 pt at that size; the default frame keeps today's output byte-identical. (b) M5-T152 adds render_floor_stack(alternative: Mapping, *, frame: str = 'report', env=None) -> Drawing | Unavailable in app.drawings.kit, drawing one worked building's floor schedule as a section (storey bands, floor-to-floor and top heights, the minimum base height line where the document gives it), from the schedule only. (c) A Drawing's SVG text and its caption, notes and attribution are read as the kit already exposes them; M5-T151 places notes and attribution in the evidence page type. (d) M5-T151 serves POST /api/v1/properties/{bbl}/report with the SAME request body and the same gating as the results route, answering text/html; charset=utf-8 (the whole report, standalone, no script); M5-T153 calls it with the same inputs the results form sends. X10: builders never start Next, uvicorn, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests and prints the PDF. A builder who finds that a file outside its allowed paths must change STOPS and reports. X11: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere; the standing label (ADR-007, rows R164 and R165) appears once in the report, compactly. ",
+  "documented_test_commands": [
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/components/architect src/lib",
+    "cd apps/web && node --test scripts/tests/print-report-pdf.test.mjs"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
