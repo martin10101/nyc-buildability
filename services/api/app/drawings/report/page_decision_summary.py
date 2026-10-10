@@ -108,8 +108,13 @@ def _summary_block(results: Mapping, env, site_context_plan) -> raw:
     # COMPACT summary frame of the site context plan (ruling Y10), beside the answers
     # as in wave 21 so the decision summary fits its first printed page.
     if site_context_plan is not None and site_context_plan.is_drawing:
-        plan = figure(site_context_plan, site_context_plan.caption or "",
-                      figure_class="summary-figure")
+        # Page 1's thumbnail carries a SHORT caption that fits its column; the full
+        # sources-and-dates caption is on the site plan of the 'What constrains the
+        # design?' sheet and on the evidence page (rework 2 fix 1).
+        plan = el("figure",
+                  raw(site_context_plan.svg or ""),
+                  el("figcaption", "The lot among its neighbours (city map; not surveyed)."),
+                  class_="summary-figure")
         return el("div", answers, plan, class_="summary")
     site_plan = drawings_embed.embed_summary_site_plan(results, env=env)
     if site_plan.is_drawing:

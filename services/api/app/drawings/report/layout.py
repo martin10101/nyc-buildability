@@ -99,7 +99,8 @@ a {{ color: {action}; }}
 .nowrap {{ white-space: nowrap; }}
 .summary {{ display: flex; gap: 6mm; align-items: flex-start; }}
 .summary-answers {{ flex: 1 1 auto; }}
-.summary-figure {{ flex: 0 0 auto; }}
+.summary-figure {{ flex: 0 0 88mm; }}
+.summary-figure figcaption {{ white-space: normal; }}
 .answers-table td {{ vertical-align: top; }}
 .answers-table .answer-figure {{ font-weight: 700; font-size: 11pt; white-space: nowrap; }}
 .reason-row td {{
@@ -112,12 +113,14 @@ a {{ color: {action}; }}
 .coverage-line {{ font-size: 9pt; margin: 0 0 1mm; }}
 /* Page type 2 opens with the one-page 'Where is the lot?' sheet; the 'What
    constrains the design?' sheet follows on its own printed page (ruling Y10). The
-   two location thumbnails sit side by side; the grid can take a third later. */
+   full-width neighbourhood map sits on top; below it the compact block close-up is
+   in the left half with both captions in the right half (rework 2 fix 2). */
 .constraints-sheet {{ break-before: page; }}
-.location-figures {{ display: flex; flex-wrap: wrap; gap: 6mm; align-items: flex-start; }}
-.location-figure {{ flex: 0 1 auto; max-width: 88mm; break-inside: avoid; margin: 3mm 0; }}
-.location-figure figure {{ margin: 0; }}
-.location-figure figcaption {{ max-width: 88mm; }}
+.location-wide {{ margin: 3mm 0; break-inside: avoid; }}
+.location-row {{ display: flex; gap: 6mm; align-items: flex-start; margin: 2mm 0; }}
+.location-block {{ flex: 0 0 auto; max-width: 88mm; }}
+.location-block figure {{ margin: 0; }}
+.location-captions {{ flex: 1 1 auto; min-width: 0; }}
 .figure-title {{ font-size: 9pt; font-weight: 700; margin: 0 0 1mm; }}
 /* The scenario sheet's schedule, unchecked items and estimate stay together, so
    the estimate never lands alone on a page (rework 1 fix 5). */

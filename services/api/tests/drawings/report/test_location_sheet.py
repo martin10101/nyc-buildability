@@ -83,30 +83,57 @@ def test_page1_carries_the_summary_frame_site_plan() -> None:
     decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
     assert "<svg" in decision
     assert 'class="summary-figure"' in decision  # beside the answers, as in wave 21
+    # Page 1's thumbnail carries a SHORT caption that fits its column (rework 2 fix
+    # 1); the long sources-and-dates caption is NOT on page 1.
+    assert "The lot among its neighbours (city map; not surveyed)." in decision
+    assert "Sources:" not in decision
     # the full-size plan is printed ONCE, on the constraints sheet - not on page 1.
     site = _site_section(html)
     constraints = site[site.index("What constrains the design?"):]
     assert "<svg" in constraints
 
 
-def test_location_sheet_holds_two_summary_frame_figures() -> None:
-    # The location sheet holds exactly the neighbourhood map and the block close-up
-    # as two compact figures (rework 1 fix 2); the full-size plan is not here.
+def test_fix1_captions_wrap_and_figure_column_is_bounded() -> None:
+    # rework 2 fix 1: page 1's figure column has a bounded width so its caption
+    # wraps inside it, and no caption element is set to nowrap.
+    from app.drawings.report import layout
+
+    css = layout.report_css("H", "F")
+    assert re.search(r"\.summary-figure\s*\{[^}]*flex:\s*0 0 88mm", css), "figure column bounded"
+    for rule in css.split("}"):
+        if "white-space: nowrap" in rule:
+            assert "figcaption" not in rule and "figure-note" not in rule, (
+                f"a caption is set to nowrap: {rule.strip()!r}"
+            )
+
+
+def _caption_texts(markup: str) -> list[str]:
+    """Every caption on the page: the figcaptions (full-size plan) and the location
+    sheet's caption paragraphs (shown in the right column, class figure-note)."""
+    caps = re.findall(r"<figcaption>(.*?)</figcaption>", markup, re.S)
+    caps += re.findall(r'<p class="figure-note">(.*?)</p>', markup, re.S)
+    return [_html.unescape(c) for c in caps]
+
+
+def test_location_page_layout_full_neighbourhood_and_compact_block() -> None:
+    # The location page carries the full-width neighbourhood map and the compact
+    # block close-up (rework 2 fix 2), two drawings in all; the full-size site plan
+    # is NOT here (it stays on the constraints sheet).
     site = _site_section(_report_with_maps())
     location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
-    assert location.count('class="location-figure"') == 2
+    assert location.count('class="location-wide"') == 1  # full-width neighbourhood
+    assert location.count('class="location-block"') == 1  # compact block close-up
     assert location.count("<svg") == 2
+    assert "Neighbourhood" in location and "Block close-up" in location
 
 
 def test_s1_captions_name_sources_and_their_dates() -> None:
-    # Each location-sheet figure is captioned with its sources and dates in plain
-    # words (Y7): one short "Sources: ..." line with a readable title and an edit
-    # date for each layer the drawing shows.
-    site = _site_section(_report_with_maps())
-    raw_caps = re.findall(r"<figcaption>(.*?)</figcaption>", site, re.S)
-    captions = [_html.unescape(c) for c in raw_caps]
+    # Each location drawing is captioned with its sources and dates in plain words
+    # (Y7): one short "Sources: ..." line with a readable title and an edit date for
+    # each layer the drawing shows.
+    captions = _caption_texts(_site_section(_report_with_maps()))
     assert len(captions) >= 3
-    assert all(cap.strip() for cap in captions)  # every figure is captioned
+    assert all(cap.strip() for cap in captions)  # every drawing is captioned
     sourced = [cap for cap in captions if cap.startswith("Sources:")]
     assert sourced, "a location caption opens with a plain 'Sources:' line"
     joined = " ".join(captions)
@@ -121,9 +148,7 @@ def test_s1_captions_name_sources_and_their_dates() -> None:
 def test_s1_captions_are_plain_no_dataset_id_no_doubled_date() -> None:
     # Caption rules (rework 1 fix 3): no dataset id, no "via NYC Open Data", no
     # terms-of-use text, no "last edited" doubling, and each date exactly once.
-    html = _report_with_maps()
-    raw_caps = re.findall(r"<figcaption>(.*?)</figcaption>", html, re.S)
-    captions = [_html.unescape(c) for c in raw_caps]
+    captions = _caption_texts(_report_with_maps())
     joined = " ".join(captions)
     low = joined.lower()
     assert "5zhs" not in low and "via nyc open data" not in low
