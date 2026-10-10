@@ -67,6 +67,11 @@ def el(tag: str, *children: object, **attributes: object) -> _Raw:
     return _Raw(f"<{tag}{attrs(clean)}>{body}</{tag}>")
 
 
+# A table with this many body rows or fewer is never split across a page break
+# (it moves whole, with its heading): it is marked ``no-split`` for the print CSS.
+SHORT_TABLE_MAX_ROWS = 8
+
+
 def table(
     headers: Iterable[object],
     rows: Iterable[Iterable[object]],
@@ -75,12 +80,17 @@ def table(
     caption: object | None = None,
 ) -> _Raw:
     """A table with a repeating header group (``thead``) and body rows. Header and
-    body cells are escaped unless passed as ``raw(...)``."""
+    body cells are escaped unless passed as ``raw(...)``. A SHORT table (at most
+    ``SHORT_TABLE_MAX_ROWS`` body rows, e.g. the status-label key) is marked
+    ``no-split`` so the print CSS never breaks it across a page."""
     head = el("tr", *[el("th", header) for header in headers])
     body = [el("tr", *[el("td", cell) for cell in row]) for row in rows]
+    names = [class_] if class_ else []
+    if len(body) <= SHORT_TABLE_MAX_ROWS:
+        names.append("no-split")
     children: list[object] = []
     if caption is not None:
         children.append(el("caption", caption))
     children.append(el("thead", head))
     children.append(el("tbody", *body))
-    return el("table", *children, class_=class_)
+    return el("table", *children, class_=" ".join(names) or None)

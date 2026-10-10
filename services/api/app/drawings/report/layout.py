@@ -86,6 +86,9 @@ th, td {{
 th {{ font-size: 8pt; color: {ink}; }}
 td.num, th.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
 tr {{ break-inside: avoid; }}
+/* A short table (the html builder marks it) moves whole across a page break, never
+   splitting into a lone fragment; its heading stays with it (h3 break-after: avoid). */
+.no-split {{ break-inside: avoid; }}
 caption {{ text-align: left; font-weight: 600; font-size: 8.5pt; break-after: avoid; }}
 /* Figures carry space above (D7) and keep together; drawings are embedded at
    their designed point size and are NEVER scaled by this stylesheet (D1): this

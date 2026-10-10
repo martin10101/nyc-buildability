@@ -425,6 +425,27 @@ def test_f11_evidence_inputs_label_key_and_nowrap() -> None:
     assert "the figures below are read from the result" not in text
 
 
+# ================================================= short tables never split (rework 3)
+def test_short_tables_carry_the_no_split_rule() -> None:
+    from app.drawings.report.html import SHORT_TABLE_MAX_ROWS, table
+
+    short = str(table(["A", "B"], [["1", "2"]] * SHORT_TABLE_MAX_ROWS))
+    longer = str(table(["A", "B"], [["1", "2"]] * (SHORT_TABLE_MAX_ROWS + 1)))
+    assert 'class="no-split"' in short  # <= 8 rows: never split across a page
+    assert "no-split" not in longer  # > 8 rows: may split
+    # the print CSS gives no-split the break-inside rule.
+    css = layout.report_css("H", "F")
+    assert re.search(r"\.no-split\s*\{[^}]*break-inside:\s*avoid", css)
+
+
+def test_status_label_key_is_a_no_split_table() -> None:
+    # the status-label key (a short table) moves whole, never a lone fragment.
+    html = build_report_html(benchmark())
+    evidence = html[html.index('id="calculations-evidence"'):]
+    key_table = evidence[evidence.index("<table", evidence.index("Status-label key")):]
+    assert key_table.startswith('<table class="key-table no-split"')
+
+
 # =========================================================================== A2
 def test_a2_no_non_drawing_text_below_8pt() -> None:
     css = layout.report_css("H", "F")
