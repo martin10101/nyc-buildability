@@ -1,0 +1,73 @@
+{
+  "_expected_failure": "streets entry mapped_width_ft is the string \"60\" instead of a number-or-null: the mapped width must be a parsed number (D-052), never the raw text, so the type [number, null] is violated.",
+  "contract_version": "1.1.0",
+  "document_kind": "map_context",
+  "map_context": {
+    "crs": "EPSG:2263",
+    "units": "feet",
+    "measurement": {
+      "rank": "approximate_tax_map",
+      "label": "Approximate — tax map"
+    },
+    "subject_lot": {
+      "bbl": "4073340070",
+      "outline": [
+        [
+          [1048788.63, 216310.44],
+          [1048888.63, 216310.44],
+          [1048888.63, 216410.44],
+          [1048788.63, 216410.44],
+          [1048788.63, 216310.44]
+        ]
+      ]
+    },
+    "zoning_districts": {
+      "status": "not_available",
+      "reason": "Zoning districts are not fetched for the report site-context map.",
+      "reason_kind": "source_unavailable"
+    },
+    "building_footprints": {
+      "status": "not_available",
+      "reason": "Building footprints are not included in this fixture.",
+      "reason_kind": "source_unavailable"
+    },
+    "context_window": {
+      "xmin": 1048388.63,
+      "ymin": 215910.44,
+      "xmax": 1049311.58,
+      "ymax": 216831.1
+    },
+    "streets": {
+      "status": "available",
+      "window": {
+        "xmin": 1047788.63,
+        "ymin": 215310.44,
+        "xmax": 1049911.58,
+        "ymax": 217431.1
+      },
+      "attribution": "Street centre lines: NYC Department of City Planning, Digital City Map (DCM) Street Center Line, via NYC Open Data under the NYC Open Data Terms of Use; source edit date 2025-12-01.",
+      "entries": [
+        {
+          "name": "Northern Boulevard",
+          "width_text": "60",
+          "mapped_width_ft": "60",
+          "paths": [
+            [
+              [1048300.0, 216280.0],
+              [1049400.0, 216280.0]
+            ]
+          ]
+        }
+      ],
+      "provenance": {
+        "source_id": "test-fixture-synthetic",
+        "dataset_id": "DCM_Street_Center_Line/FeatureServer/0",
+        "request_url": "https://example.invalid/test-fixture-synthetic/dcm_window",
+        "retrieved_at": "2026-10-10T19:05:57Z",
+        "raw_digest_sha256": "sha256:5c01484c55bfdc12432323a1744d5747d81066498adc4309c79779027c1ed1ec",
+        "source_data_last_edited": "2025-12-01",
+        "dataset_version": "test-fixture-synthetic"
+      }
+    }
+  }
+}

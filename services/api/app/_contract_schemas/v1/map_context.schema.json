@@ -9,8 +9,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0"],
-      "description": "CLOSED enum of published map_context contract versions. 1.0.0 = the initial shape (D-090-R124). Append-only: a new version is admitted only by an accepted contract task that appends to this enum."
+      "enum": ["1.0.0", "1.1.0"],
+      "description": "CLOSED enum of published map_context contract versions. 1.0.0 = the initial shape (D-090-R124). 1.1.0 = adds three OPTIONAL members to map_context for the report's site-context maps (D-090-R936/R937, task M5-T154): context_window, tax_lots and streets; every 1.0.0 document stays valid unchanged. Append-only: a new version is admitted only by an accepted contract task that appends to this enum."
     },
     "document_kind": {
       "type": "string",
@@ -59,6 +59,24 @@
           "description": "The building-footprint layer: either drawable (available) with its footprints, attribution and provenance, or not_available carrying the data's own reason.",
           "oneOf": [
             { "$ref": "#/$defs/buildings_available" },
+            { "$ref": "#/$defs/layer_unavailable" }
+          ]
+        },
+        "context_window": {
+          "$ref": "#/$defs/window_box",
+          "description": "OPTIONAL (contract 1.1.0, task M5-T154). The EPSG:2263 box the building footprints and the neighbouring tax lots were fetched for: the subject lot's bounding box plus a padding (the report uses the lot's bbox + 400 ft). Finite numbers in the document's CRS. A 1.0.0 document omits it."
+        },
+        "tax_lots": {
+          "description": "OPTIONAL (contract 1.1.0, task M5-T154). The neighbouring tax lots inside context_window, so the lot is drawn among its neighbours: either drawable (available) with its lots, attribution and provenance, or not_available carrying the data's own reason. The subject lot is NEVER an entry; no owner name or any personal field is requested or stored. A 1.0.0 document omits it.",
+          "oneOf": [
+            { "$ref": "#/$defs/tax_lots_available" },
+            { "$ref": "#/$defs/layer_unavailable" }
+          ]
+        },
+        "streets": {
+          "description": "OPTIONAL (contract 1.1.0, task M5-T154). The named street centre lines in a wider window around the lot (the report uses the lot's bbox + 1,000 ft): either drawable (available) with its centre lines, attribution and provenance, or not_available carrying the data's own reason. A 1.0.0 document omits it.",
+          "oneOf": [
+            { "$ref": "#/$defs/streets_available" },
             { "$ref": "#/$defs/layer_unavailable" }
           ]
         }
@@ -186,6 +204,116 @@
           "description": "OPTIONAL 7-digit NYC Building Identification Number for the footprint."
         }
       }
+    },
+    "window_box": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["xmin", "ymin", "xmax", "ymax"],
+      "description": "An axis-aligned EPSG:2263 box (US survey feet): the extent the surrounding layers were fetched for. Finite numbers; each bounded by app.drawings.maps.adapter.MAX_ABS_COORD_FT (1e8 ft) exactly like a map point. The adapter additionally rejects non-finite values; xmin<xmax and ymin<ymax are the builder's concern (a schema cannot compare siblings).",
+      "properties": {
+        "xmin": { "type": "number", "minimum": -100000000, "maximum": 100000000 },
+        "ymin": { "type": "number", "minimum": -100000000, "maximum": 100000000 },
+        "xmax": { "type": "number", "minimum": -100000000, "maximum": 100000000 },
+        "ymax": { "type": "number", "minimum": -100000000, "maximum": 100000000 }
+      }
+    },
+    "tax_lots_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "entries", "attribution", "provenance"],
+      "description": "A drawable neighbouring-tax-lot layer: the lots around the subject (the subject itself is never an entry) with the dataset attribution and the per-layer provenance so nothing unsourced is drawn.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "entries": {
+          "type": "array",
+          "maxItems": 2000,
+          "description": "The neighbouring tax lots. Capped at 2000 entries, equal to app.drawings.maps.adapter.MAX_MAP_FEATURES.",
+          "items": { "$ref": "#/$defs/tax_lot_entry" }
+        },
+        "attribution": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Dataset attribution read from the data, crediting DCP MapPLUTO under the NYC Open Data Terms of Use, with the source edit date."
+        },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "tax_lot_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bbl", "outline"],
+      "description": "One neighbouring tax lot, labelled by its BBL. The outline is the source MapPLUTO outline unchanged (approximate - tax map), EPSG:2263 US survey feet.",
+      "properties": {
+        "bbl": {
+          "$ref": "common.schema.json#/$defs/bbl",
+          "description": "The lot's Borough-Block-Lot label read from the data."
+        },
+        "address": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "OPTIONAL street address of the lot as served (a non-empty string)."
+        },
+        "outline": {
+          "$ref": "#/$defs/polygon",
+          "description": "The lot polygon (exterior ring first, then the source's remaining rings), EPSG:2263 US survey feet, verbatim from MapPLUTO."
+        }
+      }
+    },
+    "streets_available": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "window", "entries", "attribution", "provenance"],
+      "description": "A drawable street-centre-line layer: the named mapped street centre lines in the streets window, with the dataset attribution and the per-layer provenance so nothing unsourced is drawn.",
+      "properties": {
+        "status": { "type": "string", "const": "available" },
+        "window": {
+          "$ref": "#/$defs/window_box",
+          "description": "The EPSG:2263 box the street centre lines were fetched for (the report uses the lot's bbox + 1,000 ft)."
+        },
+        "entries": {
+          "type": "array",
+          "maxItems": 2000,
+          "description": "The street centre lines in the window. Capped at 2000 entries, equal to app.drawings.maps.adapter.MAX_MAP_FEATURES.",
+          "items": { "$ref": "#/$defs/street_entry" }
+        },
+        "attribution": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "Dataset attribution read from the data, crediting DCP Digital City Map (DCM) Street Center Line under the NYC Open Data Terms of Use, with the source edit date."
+        },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "street_entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "width_text", "mapped_width_ft", "paths"],
+      "description": "One street centre line: its name, the raw source width text and the mapped width in feet ONLY when that text is one plain number (D-052; '60-75' or any other text is null), and its polyline paths verbatim in EPSG:2263.",
+      "properties": {
+        "name": {
+          "$ref": "common.schema.json#/$defs/non_empty_string",
+          "description": "The street name read from the data (DCM Street_NM)."
+        },
+        "width_text": {
+          "type": ["string", "null"],
+          "description": "The source mapped-width text (DCM Streetwidth) UNCHANGED, or null when the source carries none. Free text; may be empty."
+        },
+        "mapped_width_ft": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "The mapped street width in feet, a number ONLY when width_text is one plain number such as '60' or '100'; '60-75', '<=75' or any other text gives null (D-052). Not a wide/narrow classification."
+        },
+        "paths": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The street centre line's polyline paths, each a line of at least two points, EPSG:2263 US survey feet, verbatim from the source.",
+          "items": { "$ref": "#/$defs/line" }
+        }
+      }
+    },
+    "line": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 20000,
+      "description": "One polyline path: at least two [x, y] points in EPSG:2263 US survey feet (a centre line, never a closed ring).",
+      "items": { "$ref": "#/$defs/point" }
     },
     "provenance": {
       "type": "object",
