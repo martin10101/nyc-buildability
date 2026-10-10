@@ -35,7 +35,8 @@
     "services/api/tests/connectors/test_mappluto_window_arcgis.py",
     "services/api/tests/contracts/test_map_context_window.py",
     "services/api/tests/api/test_report_context_provider.py",
-    "project-control/reports/M5-T154-producer-report.md"
+    "project-control/reports/M5-T154-producer-report.md",
+    "services/api/tests/contracts/test_map_context_contract.py"
   ],
   "forbidden_paths": [
     "services/api/requirements*",
@@ -153,6 +154,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-10T19:41:43+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, after the producer's return, before submission] added services/api/tests/contracts/test_map_context_contract.py to the allowed paths. The producer stopped as ruling Y12 requires: map document 1.1.0 and its two new examples change two assertions there (the pinned version list and the example counts). They are consumer updates of the contract this task changes, not a weakening; the producer makes them. No other path, gate, reviewer, scenario or bound row changed."
     }
   ]
 }
