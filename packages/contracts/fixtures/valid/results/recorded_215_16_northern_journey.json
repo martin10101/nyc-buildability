@@ -403,7 +403,7 @@
   },
   "shortfall": {
     "status": "not_available",
-    "reason": "The gap to the allowance is not known: it is worked out from the building option, which is not known for this lot.",
+    "reason": "The gap to the allowance is not known: it needs a building fitted to the site, and none is fitted yet.",
     "reason_kind": "rule_not_implemented"
   },
   "addon_gains": [
@@ -500,7 +500,7 @@
   ],
   "best_combination": {
     "status": "not_available",
-    "reason": "The best combination is not known: it is worked out from building options, which are not known for this lot.",
+    "reason": "The best combination is not known: it needs a building fitted to the site, and none is fitted yet.",
     "reason_kind": "rule_not_implemented"
   },
   "completeness_line": {

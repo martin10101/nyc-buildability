@@ -15,9 +15,22 @@ from __future__ import annotations
 from app.scenario.three_answers.result_way_inputs import LABELS
 from app.scenario.three_answers.three_way_document import (
     ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
 )
 
 from .test_three_answers_benchmark import _generate, _value
+
+# Every reason that follows a withheld single building option (shortfall, best combination, floor
+# stack, add-on gain) must name what is actually missing - a building fitted to the site - and must
+# never say a building option is 'not known' for this lot while building B is worked (rework 2 B1).
+_FOLLOWS_WITHHELD_REASONS = (
+    SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION,
+    ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION,
+)
 
 
 def test_s5_building_option_label_is_scheduled_not_achieved() -> None:
@@ -45,3 +58,33 @@ def test_s5_addon_gain_reason_names_the_missing_fit_not_unknown_options() -> Non
     assert "none is fitted" in reason
     assert "not known for this lot" not in reason
     assert "building options" not in reason.lower()
+
+
+def test_s5_no_follows_withheld_reason_says_building_options_not_known() -> None:
+    """S5 / rework 2 (B1): the shortfall, best-combination, floor-stack and add-on-gain reasons each
+    name what is actually missing (a building fitted to the site) and NONE says a building option is
+    'not known for this lot' - correcting the best combination's stale sentence shown on the report
+    while building B is worked. Reverting any constant to the 'building option(s) ... not known'
+    wording fails this test (the B1 mutation proof)."""
+    for reason in _FOLLOWS_WITHHELD_REASONS:
+        assert "fitted to the site" in reason, reason
+        assert "not known for this lot" not in reason, reason
+        assert "building option" not in reason.lower(), reason
+
+
+def test_s5_benchmark_document_has_no_stale_building_option_sentence() -> None:
+    """S5 / rework 2 (B1): the committed benchmark three-way document (building B worked) carries no
+    user-facing reason saying a building option is 'not known for this lot'; its shortfall and best
+    combination reasons name the missing site fit."""
+    import json
+    from pathlib import Path
+
+    repo = Path(__file__).resolve().parents[5]
+    fixture = (repo / "packages" / "contracts" / "fixtures" / "valid" / "results"
+               / "recorded_215_16_northern_journey.json")
+    document = json.loads(fixture.read_text(encoding="utf-8"))
+    text = json.dumps(document)
+    assert "building option, which is not known for this lot" not in text
+    assert "building options, which are not known for this lot" not in text
+    assert "fitted to the site" in document["shortfall"]["reason"]
+    assert "fitted to the site" in document["best_combination"]["reason"]

@@ -3641,14 +3641,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "98ee71c5dd23062fdc368fb10cf7605c9a03eeb58e1c0979c5a1728e8713d8f5"
+          "sha256": "003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "a8ddce0b8c02e608ebfffe595892a331b9330b2bf85e20bef2e021f1ec2b2159",
+      "code_identity_sha256": "64dc8306dcf1e7dd32135800359257baeeb7f2e758f25d04ff6f08c6ada5d1c1",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -3714,7 +3714,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 8,
+      "revision": 9,
       "last_changed": "2026-10-10",
       "human_review": {
         "decision": null,
@@ -3841,7 +3841,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "98ee71c5dd23062fdc368fb10cf7605c9a03eeb58e1c0979c5a1728e8713d8f5"
+          "sha256": "003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3860,7 +3860,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "f92111b92c3161d1533ca30a300de6e8e389e6dbee10b10d0b373f56d5ebd871",
+      "code_identity_sha256": "9d78119686d169efb7052662e2b26e6872844f511b5bfc26a42bc5419ecc9326",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3963,7 +3963,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 8,
+      "revision": 9,
       "last_changed": "2026-10-10",
       "human_review": {
         "decision": null,
@@ -4518,6 +4518,24 @@
       "event": "implementation_changed",
       "summary": "implementation_changed: three_way_document.py changed (M5-T152: an add-on gain's reason states a building must be fitted to the site and none is yet, never that building options are not known while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
       "by": "M5-T152 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 37,
+      "date": "2026-10-10",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 9,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T152 rework 2: the shortfall, best-combination and floor-stack 'follows withheld building option' reasons name the missing site fit and no longer say a building option is not known for this lot while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
+      "by": "M5-T152 rework 2 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 38,
+      "date": "2026-10-10",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 9,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T152 rework 2: the shortfall, best-combination and floor-stack 'follows withheld building option' reasons name the missing site fit and no longer say a building option is not known for this lot while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
+      "by": "M5-T152 rework 2 (geospatial-engineer, an AI agent)"
     }
   ],
   "coverage_gaps": [
