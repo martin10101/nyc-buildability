@@ -63,6 +63,50 @@ def _lot_dimensions(inputs: ThreeAnswerInputs) -> tuple[float, float]:
     return width, depth
 
 
+def _build_streets(inputs: ThreeAnswerInputs) -> list[dict]:
+    """The street frontages the spatial engine already matched to the lot outline, each carried as
+    ``{street, frontage_line, street_width_fact_id}`` for the site plan (results-v1
+    ``geometry.streets`` item shape; no schema change). The frontage line is the confirmed
+    frontage's own lot-outline edges, translated to the SAME local-feet plane as the lot outline
+    (its minimum x and y subtracted), so every point lies exactly on the drawn outline.
+
+    Streets stays EMPTY - and nothing is invented - on every path that does not carry the
+    frontages: the direct engine path (no prepared outline and no site geometry threaded), or a
+    threaded geometry whose frontages are not confirmed. The names are the recorded source's own
+    street names (``StreetFrontage.street_name``); the engine derives no street-width figure here,
+    so ``street_width_fact_id`` is null (the study has none for this path)."""
+    geometry = inputs.site_geometry
+    prepared = inputs.prepared_outline
+    measured = inputs.lot_outline
+    if geometry is None or prepared is None or measured is None or len(measured) < 3:
+        return []
+    from app.spatial.site_geometry.results import FRONTAGE_CONFIRMED
+
+    minx = min(float(x) for x, _ in measured)
+    miny = min(float(y) for _, y in measured)
+    edges = prepared.edges
+    streets: list[dict] = []
+    for frontage in geometry.frontages:
+        name = frontage.street_name
+        if frontage.status != FRONTAGE_CONFIRMED or not name:
+            continue
+        line: list[list[float]] = []
+        for index in frontage.edge_indices:
+            if not 0 <= index < len(edges):
+                line = []
+                break
+            edge = edges[index]
+            if not line:
+                line.append([edge.start[0] - minx, edge.start[1] - miny])
+            line.append([edge.end[0] - minx, edge.end[1] - miny])
+        if len(line) < 2:
+            continue
+        streets.append(
+            {"street": name, "frontage_line": line, "street_width_fact_id": None}
+        )
+    return streets
+
+
 def _local_feet_ring(measured: Sequence[Sequence[float]]) -> list[list[float]]:
     """Translate a MEASURED outline ring (EPSG:2263 US survey feet) to the local-feet drawing
     plane: subtract the minimum x and y so the origin sits at the lot's min corner; keep the
@@ -184,7 +228,7 @@ def build_geometry(
         "units": "feet",
         "measurement": dict(measurement),
         "lot_outline": lot_outline,
-        "streets": [],
+        "streets": _build_streets(inputs),
         "yards": yards,
         "setback_lines_per_level": setback_lines,
         "envelope": envelope_layer,

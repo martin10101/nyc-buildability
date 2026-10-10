@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 from . import geometry as geo
 from .color import mix
-from .furniture import case_notes, legend, notes_block, scope_notes
+from .furniture import case_notes, legend, legend_flow, notes_block, scope_notes
 from .hatches import hatch_defs
 from .labels import format_area, format_feet, text_box
 from .model import Drawing, DrawingInput, FloorPlate, FloorRow, LayerUnavailable, Unavailable
@@ -33,6 +33,17 @@ HEADER_Y = 28.0
 ROW_H = 12.0
 SWATCH_W = 11.0
 
+# Report frame (ruling X9 a): A4, at most 182 mm (515.9 pt) wide by 150 mm (425.2 pt) high. The
+# massing fills the left; a compact floor table sits on the right; the legend flows below; no notes
+# column. 1 user unit = 1 pt, so every label (>= 7.5 pt) is at least 7 pt at the printed size.
+REPORT_MAX_W_PT = 515.9
+REPORT_MAX_H_PT = 425.2
+REPORT_CANVAS_W = 512.0
+REPORT_DRAW = (8.0, 30.0, 300.0, 300.0)
+REPORT_COL_NAME_X, REPORT_COL_AREA_X, REPORT_COL_HEIGHT_X = 312.0, 432.0, 504.0
+REPORT_HEADER_Y = 30.0
+REPORT_LEGEND_W = REPORT_CANVAS_W - REPORT_COL_NAME_X - 8.0
+
 
 @dataclass(frozen=True)
 class _Fit:
@@ -47,14 +58,17 @@ class _Fit:
         return self.ox + (sx - self.min_x) * self.k, self.oy + (self.max_y - sy) * self.k
 
 
-def _fit(points3d: list[tuple[float, float, float]]) -> _Fit:
+def _fit(
+    points3d: list[tuple[float, float, float]],
+    draw: tuple[float, float, float, float] = DRAW,
+) -> _Fit:
     projected = [project(*p) for p in points3d]
     min_x, min_y, max_x, max_y = geo.bbox(projected)
     width, height = max(max_x - min_x, 1e-9), max(max_y - min_y, 1e-9)
-    avail_w, avail_h = DRAW[2] - DRAW[0], DRAW[3] - DRAW[1]
+    avail_w, avail_h = draw[2] - draw[0], draw[3] - draw[1]
     k = min(avail_w / width, avail_h / height)
-    ox = DRAW[0] + (avail_w - width * k) / 2.0
-    oy = DRAW[1] + (avail_h - height * k) / 2.0
+    ox = draw[0] + (avail_w - width * k) / 2.0
+    oy = draw[1] + (avail_h - height * k) / 2.0
     return _Fit(k, ox, oy, min_x, max_y)
 
 
@@ -82,52 +96,64 @@ def _floor_anchor(floor: int, plates, levels, origin, fit: _Fit) -> tuple[float,
                for plate in plates if plate.floor == floor for x, y in _local(plate, origin))
 
 
-def _row_values(sheet: Sheet, row: FloorRow, y: float, size: float) -> float:
+def _row_values(
+    sheet: Sheet, row: FloorRow, y: float, size: float, cols: tuple[float, float, float]
+) -> float:
     """One table row: use swatch, floor name, gross area, floor-to-floor height.
     Returns the baseline of the values line (a long name pushes it down)."""
+    col_name_x, col_area_x, col_height_x = cols
     style = style_for(row.use)
     sheet.parts.append(element("rect", [
-        ("x", COL_NAME_X), ("y", y - 6.5), ("width", 7.0), ("height", 7.0),
+        ("x", col_name_x), ("y", y - 6.5), ("width", 7.0), ("height", 7.0),
         ("fill", style.fill), ("stroke", style.outline), ("stroke-width", 0.5),
         ("data-use", row.use)]))
     area, height = format_area(row.gross_sf), format_feet(row.height_ft)
-    name_x = COL_NAME_X + SWATCH_W
+    name_x = col_name_x + SWATCH_W
     two_lines = (text_box(name_x, 0.0, row.label, size).x1 + 4.0
-                 > text_box(COL_AREA_X, 0.0, area, size, "end").x0)
+                 > text_box(col_area_x, 0.0, area, size, "end").x0)
     values_y = y + ROW_H if two_lines else y
     sheet.label([(name_x, y, 0.0)], row.label, size=size,
                 source=f"{row.source}/floor_label", role="floor_name")
-    sheet.label([(COL_AREA_X, values_y, 0.0)], area, size=size,
+    sheet.label([(col_area_x, values_y, 0.0)], area, size=size,
                 source=f"{row.source}/gross_sf", role="floor_area", anchor="end")
-    sheet.label([(COL_HEIGHT_X, values_y, 0.0)], height, size=size,
+    sheet.label([(col_height_x, values_y, 0.0)], height, size=size,
                 source=f"{row.source}/height_ft", role="floor_height", anchor="end")
     return values_y
 
 
-def _floor_table(sheet: Sheet, data: DrawingInput, levels, origin, fit: _Fit) -> float:
+def _floor_table(
+    sheet: Sheet, data: DrawingInput, levels, origin, fit: _Fit,
+    *, cols: tuple[float, float, float], header_y: float,
+) -> float:
     """Rows read from floor_by_floor, grouped by floor (top floor first), one
     leader per floor; rows never overlap. Returns the last baseline."""
+    col_name_x, col_area_x, col_height_x = cols
     size = TYPOGRAPHY.label_pt
-    for x, text, anchor in ((COL_NAME_X, "Floor", "start"), (COL_AREA_X, "Gross area", "end"),
-                            (COL_HEIGHT_X, "Floor-to-floor", "end")):
-        sheet.parts.append(text_element(x, HEADER_Y, text, size=size, source=None,
+    for x, text, anchor in ((col_name_x, "Floor", "start"), (col_area_x, "Gross area", "end"),
+                            (col_height_x, "Floor-to-floor", "end")):
+        sheet.parts.append(text_element(x, header_y, text, size=size, source=None,
                                         role="furniture", anchor=anchor, weight="bold"))
-    y = HEADER_Y
+    y = header_y
     for floor in sorted({row.floor for row in data.floor_rows}, reverse=True):
         ax, ay = _floor_anchor(floor, data.floor_plates, levels, origin, fit)
         y = max(ay + size * 0.35, y + ROW_H)
         sheet.parts.append(element("path", [
-            ("d", polyline_data([(ax + 3.0, ay), (COL_NAME_X - 4.0, y - size * 0.35)])),
+            ("d", polyline_data([(ax + 3.0, ay), (col_name_x - 4.0, y - size * 0.35)])),
             ("fill", "none"), ("stroke", "#666666"), ("stroke-width", 0.4),
             ("data-floor", floor)]))
         rows = [row for row in data.floor_rows if row.floor == floor]
         for j, row in enumerate(rows):
-            y = _row_values(sheet, row, y + (ROW_H if j else 0.0), size)
+            y = _row_values(sheet, row, y + (ROW_H if j else 0.0), size, cols)
     return y
 
 
-def draw_massing(data: DrawingInput) -> Drawing | Unavailable:
-    """The axonometric massing, or Unavailable when there are no floor plates."""
+def draw_massing(data: DrawingInput, *, frame: str = "sheet") -> Drawing | Unavailable:
+    """The axonometric massing, or Unavailable when there are no floor plates.
+
+    ``frame='sheet'`` (default) is today's sheet, byte-identical to the committed snapshots.
+    ``frame='report'`` is the A4 report composition (ruling X9 a): the same massing and floor
+    table, but no notes column, sized at most 182 mm by 150 mm with every label at least 7 pt."""
+    report = frame == "report"
     plates = data.floor_plates
     if isinstance(plates, LayerUnavailable):
         return Unavailable("massing", plates.reason, plates.reason_kind, f"{plates.source}/reason")
@@ -142,7 +168,7 @@ def draw_massing(data: DrawingInput) -> Drawing | Unavailable:
     for plate in plates:
         z0, z1 = levels[plate.floor]
         extent += [(x, y, z) for x, y in _local(plate, origin) for z in (z0, z1)]
-    fit = _fit(extent)
+    fit = _fit(extent, REPORT_DRAW if report else DRAW)
 
     sheet = Sheet()
     indexed = list(enumerate(plates))
@@ -162,7 +188,21 @@ def draw_massing(data: DrawingInput) -> Drawing | Unavailable:
         sheet.line(path_data(lot_rings), "lot_line",
                    [("fill-rule", "evenodd"), ("data-source", data.lot.source)])
 
-    table_bottom = _floor_table(sheet, data, levels, origin, fit)
+    if report:
+        table_bottom = _floor_table(
+            sheet, data, levels, origin, fit,
+            cols=(REPORT_COL_NAME_X, REPORT_COL_AREA_X, REPORT_COL_HEIGHT_X),
+            header_y=REPORT_HEADER_Y)
+        legend_parts, legend_bottom = legend_flow(
+            sheet.kinds, REPORT_COL_NAME_X, table_bottom + 12.0, REPORT_LEGEND_W)
+        height = min(REPORT_MAX_H_PT, max(REPORT_DRAW[3], legend_bottom) + 12.0)
+        svg = svg_document(width=REPORT_CANVAS_W, height=height, drawing="massing",
+                           title="Axonometric massing", defs=hatch_defs(sheet.kinds),
+                           body=sheet.parts + legend_parts)
+        return Drawing("massing", svg, tuple(sheet.labels), tuple(sheet.kinds))
+
+    table_bottom = _floor_table(sheet, data, levels, origin, fit,
+                                cols=(COL_NAME_X, COL_AREA_X, COL_HEIGHT_X), header_y=HEADER_Y)
     legend_parts, legend_bottom = legend(sheet.kinds, COL_NAME_X, table_bottom + 14.0)
     note_parts, note_labels, notes_bottom = notes_block(
         scope_notes(data.scope) + case_notes(data.street_width_case), COL_NAME_X,

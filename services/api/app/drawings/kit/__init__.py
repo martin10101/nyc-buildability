@@ -25,6 +25,7 @@ from .errors import DrawingInputError
 from .flag import DrawingKitDisabled, drawing_kit_enabled
 from .massing import draw_massing
 from .model import Drawing, DrawingInput, Label, Unavailable
+from .section import draw_floor_stack
 from .site_plan import draw_site_plan
 from .styles import STYLE_TABLE, style_for, style_table_as_dict
 
@@ -38,6 +39,7 @@ __all__ = [
     "Unavailable",
     "drawing_kit_enabled",
     "load_drawing_input",
+    "render_floor_stack",
     "render_massing",
     "render_site_plan",
     "style_for",
@@ -55,14 +57,36 @@ def _input(results: Mapping, drawing: str, env: Mapping[str, str] | None):
 
 
 def render_site_plan(
-    results: Mapping, *, env: Mapping[str, str] | None = None
+    results: Mapping, *, frame: str = "sheet", env: Mapping[str, str] | None = None
 ) -> Drawing | Unavailable:
+    """The site plan. ``frame='sheet'`` (default) is today's sheet, byte-identical; ``frame=
+    'report'`` is the A4 report composition (no notes column, compact legend, at most 182 mm x
+    150 mm, labels at least 7 pt) - ruling X9 a."""
     data = _input(results, "site_plan", env)
-    return data if isinstance(data, Unavailable) else draw_site_plan(data)
+    return data if isinstance(data, Unavailable) else draw_site_plan(data, frame=frame)
 
 
 def render_massing(
-    results: Mapping, *, env: Mapping[str, str] | None = None
+    results: Mapping, *, frame: str = "sheet", env: Mapping[str, str] | None = None
 ) -> Drawing | Unavailable:
+    """The axonometric massing. ``frame='sheet'`` (default) is byte-identical; ``frame='report'``
+    is the A4 report composition (no notes column, at most 182 mm x 150 mm, labels at least
+    7 pt) - ruling X9 a."""
     data = _input(results, "massing", env)
-    return data if isinstance(data, Unavailable) else draw_massing(data)
+    return data if isinstance(data, Unavailable) else draw_massing(data, frame=frame)
+
+
+def render_floor_stack(
+    alternative: Mapping, *, frame: str = "report", env: Mapping[str, str] | None = None
+) -> Drawing | Unavailable:
+    """The floor-stack section of ONE worked building, drawn from its floor schedule only
+    (ruling X9 b): storey bands with their floor-to-floor and top heights, the minimum base height
+    line where the document gives it, and a caption that it is drawn from the schedule with no
+    placement on the lot. Report frame only. Gated behind the Lane E flag like the other
+    renderers; ``Unavailable`` when the building carries no floor schedule."""
+    if not drawing_kit_enabled(env):
+        raise DrawingKitDisabled("the drawing kit is off (LANE_E_ENABLED is not set)")
+    if frame != "report":
+        raise DrawingInputError("unknown_frame", f"the floor stack has no {frame!r} frame",
+                                location="/floor_schedule")
+    return draw_floor_stack(alternative)

@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 6 (last changed 2026-10-09)
+- Revision: 7 (last changed 2026-10-09)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-height`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `75a5d04d794f4feb5392aa6e28acac6da6582300cfe0af44b226d4f378fa1a98`
+- Combined code identity: `860aac8ab365bd660eba205537ebb7edf6e98175f0afc32c246046611c929a5c`
 - Modules:
-  - `services/api/app/scenario/three_answers/building_option.py` (`57ce8a88deede0edb505a63188082fd27dadc37b6eda5ac0de051619465789b1`)
+  - `services/api/app/scenario/three_answers/building_option.py` (`892812c49f3ff80458bd69f152f229d4f233359701994cd9dea1019e68a0455b`)
   - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
   - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
 
@@ -89,7 +89,7 @@ Planned, not built:
 
 ## Automated test result
 
-- Status: Passed
+- Status: Not run
 - Code identity tested: `75a5d04d794f4feb5392aa6e28acac6da6582300cfe0af44b226d4f378fa1a98`
 - Commit tested: `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66`
 - Date tested: 2026-10-09

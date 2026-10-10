@@ -72,12 +72,18 @@ def _context(doc: Mapping, env: Mapping[str, str] | None) -> MapContext:
 
 
 def render_location_map(
-    doc: Mapping, *, env: Mapping[str, str] | None = None
+    doc: Mapping, *, frame: str = "sheet", env: Mapping[str, str] | None = None
 ) -> Drawing | Unavailable:
-    return draw_location_map(_context(doc, env))
+    """The location map. ``frame='sheet'`` (default) is byte-identical; ``frame='report'`` is the
+    A4 report composition (no notes column, at most 182 mm x 150 mm, labels at least 7 pt, the
+    attribution kept reachable as a label) - ruling X9 a/c."""
+    return draw_location_map(_context(doc, env), frame=frame)
 
 
 def render_zoning_map(
-    doc: Mapping, *, env: Mapping[str, str] | None = None
+    doc: Mapping, *, frame: str = "sheet", env: Mapping[str, str] | None = None
 ) -> Drawing | Unavailable:
-    return draw_zoning_map(_context(doc, env))
+    """The zoning map. ``frame='sheet'`` (default) is byte-identical; ``frame='report'`` is the A4
+    report composition (no notes column, at most 182 mm x 150 mm, labels at least 7 pt, the
+    attribution/accuracy/use-limitation notes kept reachable as labels) - ruling X9 a/c."""
+    return draw_zoning_map(_context(doc, env), frame=frame)

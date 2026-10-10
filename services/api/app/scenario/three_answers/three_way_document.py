@@ -168,8 +168,7 @@ BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION = (
     "known for this lot."
 )
 ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION = (
-    "This gain is not known: it is worked out from building options, which are not known for this "
-    "lot."
+    "This gain is not known: it needs a building fitted to the site, and none is fitted yet."
 )
 
 # The geometry floor-plates layer wherever the first option is applied (ruling W14 c): no placement

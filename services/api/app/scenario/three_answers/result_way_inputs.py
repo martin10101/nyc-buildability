@@ -314,7 +314,7 @@ LABELS: dict[str, str] = {
         "Maximum building height, qualifying affordable or senior housing"
     ),
     "max_lot_coverage": "Maximum lot coverage",
-    "achieved_zoning_floor_area": "Building option: achieved zoning floor area",
+    "achieved_zoning_floor_area": "Building option: scheduled zoning floor area",
     "building_floors": "Building option: floors",
     "building_height": "Building option: height",
     "floor_plate_area": "Building option: floor plate area",

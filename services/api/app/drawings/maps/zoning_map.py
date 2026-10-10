@@ -17,34 +17,47 @@ from app.drawings.kit.styles import TYPOGRAPHY
 from app.drawings.kit.svg import path_data
 
 from .frame import fit
-from .layout import PLAN, PLAN_MARGIN, compose
+from .layout import (
+    PLAN,
+    PLAN_MARGIN,
+    REPORT_PLAN,
+    REPORT_PLAN_MARGIN,
+    compose,
+    compose_report,
+)
 from .model import Drawing, LayerUnavailable, MapContext, MapNote, Unavailable
 from .subject import draw_subject_area, label_subject
 
 __all__ = ["draw_zoning_map"]
 
 
-def draw_zoning_map(context: MapContext) -> Drawing | Unavailable:
+def draw_zoning_map(context: MapContext, *, frame: str = "sheet") -> Drawing | Unavailable:
+    """The zoning map. ``frame='sheet'`` (default) is byte-identical to the committed snapshots;
+    ``frame='report'`` is the A4 report composition - no notes column, at most 182 mm by 150 mm,
+    labels at least 7 pt - with the attribution, accuracy and use-limitation notes still reachable
+    by the caller (ruling X9 a/c)."""
+    report = frame == "report"
     layer = context.zoning
     if isinstance(layer, LayerUnavailable):
         return Unavailable("zoning_map", layer.reason, layer.reason_kind,
                            f"{layer.source}/reason")
-    frame = fit(
-        [context.subject_lot.outline, *(d.outline for d in layer.districts)], PLAN, PLAN_MARGIN
+    region, margin = (REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN)
+    frame_obj = fit(
+        [context.subject_lot.outline, *(d.outline for d in layer.districts)], region, margin
     )
     sheet = Sheet()
     for district in layer.districts:
-        rings = [[frame.px(p) for p in ring] for ring in district.outline.rings]
+        rings = [[frame_obj.px(p) for p in ring] for ring in district.outline.rings]
         sheet.area(path_data(rings), "zoning_district", [("data-source", district.source)])
-    draw_subject_area(sheet, context.subject_lot, frame)
+    draw_subject_area(sheet, context.subject_lot, frame_obj)
 
     size = TYPOGRAPHY.label_pt
     for district in layer.districts:
-        cx, cy = frame.px(geo.centroid(district.outline.exterior))
+        cx, cy = frame_obj.px(geo.centroid(district.outline.exterior))
         steps = [0.0, 2.2 * size, -2.2 * size, 4.4 * size, -4.4 * size]
         sheet.label([(cx, cy + s, 0.0) for s in steps], district.symbol, size=size,
                     source=district.symbol_source, role="zoning_district", anchor="middle")
-    label_subject(sheet, context.subject_lot, frame)
+    label_subject(sheet, context.subject_lot, frame_obj)
 
     notes = [
         MapNote(context.measurement_label, context.measurement_source),
@@ -52,4 +65,5 @@ def draw_zoning_map(context: MapContext) -> Drawing | Unavailable:
         layer.accuracy,
         layer.attribution,
     ]
-    return compose("zoning_map", "Zoning map", sheet, frame.k, notes)
+    compose_fn = compose_report if report else compose
+    return compose_fn("zoning_map", "Zoning map", sheet, frame_obj.k, notes)

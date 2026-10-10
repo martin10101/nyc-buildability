@@ -334,7 +334,7 @@ def build_building_option(
     values = [
         answer_value(
             key="achieved_zoning_floor_area",
-            label="Achieved zoning floor area (building option)",
+            label="Scheduled zoning floor area (building option)",
             value=comp.achieved_sf,
             unit="square_feet",
             zr_sections=far_zr,

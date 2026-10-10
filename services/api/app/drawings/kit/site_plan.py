@@ -19,7 +19,16 @@ from dataclasses import dataclass
 
 from . import geometry as geo
 from .errors import DrawingInputError
-from .furniture import Note, case_notes, legend, north_arrow, notes_block, scale_bar, scope_notes
+from .furniture import (
+    Note,
+    case_notes,
+    legend,
+    legend_flow,
+    north_arrow,
+    notes_block,
+    scale_bar,
+    scope_notes,
+)
 from .hatches import hatch_defs
 from .labels import YARD_KIND_NAMES, format_feet, format_number
 from .model import Drawing, DrawingInput, LayerUnavailable, Point, Polygon
@@ -40,6 +49,19 @@ STANDARD_SCALES_FT_PER_IN = (
 )
 DIM_OFFSET = 12.0
 
+# Report frame (ruling X9 a): sized for A4 at 14 mm margins - at most 182 mm wide by 150 mm high;
+# 1 user unit = 1 pt, so 182 mm = 515.91 pt and 150 mm = 425.20 pt. No notes column (the evidence
+# page carries provenance); the plan fills the top, a compact furniture strip sits below.
+REPORT_MAX_W_PT = 515.9
+REPORT_MAX_H_PT = 425.2
+REPORT_CANVAS_W = 512.0
+REPORT_PLAN = (8.0, 8.0, 504.0, 346.0)  # the plan region in the report frame
+REPORT_PLAN_MARGIN = 46.0
+REPORT_FURN_TOP = 356.0
+REPORT_NORTH_CX = 24.0
+REPORT_SCALE_X = 58.0
+REPORT_LEGEND_X = 180.0
+
 
 @dataclass(frozen=True)
 class _Frame:
@@ -53,19 +75,23 @@ class _Frame:
         return self.ox + (p[0] - self.minx) * self.k, self.oy + (self.maxy - p[1]) * self.k
 
 
-def _frame(lot: Polygon) -> _Frame:
+def _frame(
+    lot: Polygon,
+    region: tuple[float, float, float, float] = PLAN,
+    margin: float = PLAN_MARGIN,
+) -> _Frame:
     minx, miny, maxx, maxy = geo.bbox(lot.exterior)
     width, height = maxx - minx, maxy - miny
-    avail_w = (PLAN[2] - PLAN[0]) - 2 * PLAN_MARGIN
-    avail_h = (PLAN[3] - PLAN[1]) - 2 * PLAN_MARGIN
+    avail_w = (region[2] - region[0]) - 2 * margin
+    avail_h = (region[3] - region[1]) - 2 * margin
     fit = min(avail_w / width, avail_h / height)
     k = next((POINTS_PER_INCH / s for s in STANDARD_SCALES_FT_PER_IN
               if POINTS_PER_INCH / s <= fit), None)
     if k is None:
         raise DrawingInputError("lot_too_large", "lot does not fit the largest plan scale",
                                 location=lot.source)
-    ox = PLAN[0] + ((PLAN[2] - PLAN[0]) - width * k) / 2.0
-    oy = PLAN[1] + ((PLAN[3] - PLAN[1]) - height * k) / 2.0
+    ox = region[0] + ((region[2] - region[0]) - width * k) / 2.0
+    oy = region[1] + ((region[3] - region[1]) - height * k) / 2.0
     return _Frame(k, ox, oy, minx, maxy)
 
 
@@ -204,20 +230,29 @@ def _notes(data: DrawingInput) -> list[Note]:
     return notes
 
 
-def draw_site_plan(data: DrawingInput) -> Drawing:
-    """The site plan drawing (SVG text, sourced labels, kinds drawn)."""
-    frame = _frame(data.lot)
+def draw_site_plan(data: DrawingInput, *, frame: str = "sheet") -> Drawing:
+    """The site plan drawing (SVG text, sourced labels, kinds drawn).
+
+    ``frame='sheet'`` (default) is today's full sheet, byte-identical to the committed snapshots.
+    ``frame='report'`` is the A4 report composition (ruling X9 a): the same drawn lot, dimensions
+    and street names, but no notes column, a compact legend, sized at most 182 mm by 150 mm with
+    every label at least 7 pt at that size."""
+    report = frame == "report"
+    fr = _frame(data.lot, REPORT_PLAN, REPORT_PLAN_MARGIN) if report else _frame(data.lot)
     sheet = Sheet()
-    _footprint(sheet, data, frame)
-    _yards(sheet, data, frame)
-    _setbacks(sheet, data, frame)
-    sheet.line(path_data(_px_rings(data.lot, frame)), "lot_line",
+    _footprint(sheet, data, fr)
+    _yards(sheet, data, fr)
+    _setbacks(sheet, data, fr)
+    sheet.line(path_data(_px_rings(data.lot, fr)), "lot_line",
                [("fill-rule", "evenodd"), ("data-source", data.lot.source)])
-    _dimensions(sheet, data, frame)
-    _streets(sheet, data, frame)
+    _dimensions(sheet, data, fr)
+    _streets(sheet, data, fr)
+
+    if report:
+        return _compose_report(sheet, fr)
 
     panel = north_arrow(PANEL_X + 20.0, 16.0)
-    bar_parts, bar_labels = scale_bar(PANEL_X, 88.0, frame.k, 160.0)
+    bar_parts, bar_labels = scale_bar(PANEL_X, 88.0, fr.k, 160.0)
     legend_parts, legend_bottom = legend(sheet.kinds, PANEL_X, 118.0)
     note_parts, note_labels, notes_bottom = notes_block(_notes(data), PANEL_X,
                                                         legend_bottom + 10.0, PANEL_W)
@@ -227,3 +262,19 @@ def draw_site_plan(data: DrawingInput) -> Drawing:
                        defs=hatch_defs(sheet.kinds), body=body)
     labels = tuple(sheet.labels + bar_labels + note_labels)
     return Drawing("site_plan", svg, labels, tuple(sheet.kinds))
+
+
+def _compose_report(sheet: Sheet, fr: _Frame) -> Drawing:
+    """Assemble the report-frame site plan: the plan ``sheet`` plus a compact furniture strip
+    (north arrow, scale bar, legend) below it - no notes column (ruling X9 a). Sized at most
+    182 mm by 150 mm; every label at least 7 pt at that size."""
+    panel = north_arrow(REPORT_NORTH_CX, REPORT_FURN_TOP)
+    bar_parts, bar_labels = scale_bar(REPORT_SCALE_X, REPORT_FURN_TOP + 16.0, fr.k, 150.0)
+    legend_parts, legend_bottom = legend_flow(
+        sheet.kinds, REPORT_LEGEND_X, REPORT_FURN_TOP, REPORT_CANVAS_W - REPORT_LEGEND_X - 8.0)
+    north_bottom = REPORT_FURN_TOP + 46.0
+    height = min(REPORT_MAX_H_PT, max(north_bottom, legend_bottom) + 10.0)
+    body = sheet.parts + panel + bar_parts + legend_parts
+    svg = svg_document(width=REPORT_CANVAS_W, height=height, drawing="site_plan",
+                       title="Site plan", defs=hatch_defs(sheet.kinds), body=body)
+    return Drawing("site_plan", svg, tuple(sheet.labels + bar_labels), tuple(sheet.kinds))
