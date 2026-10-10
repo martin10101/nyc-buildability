@@ -87,11 +87,14 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
 
     await expect(dialog.getByTestId("three-answers-panel")).toBeVisible({ timeout: 15_000 });
 
-    // The floor-area figures appear as conditional results naming the recorded-area condition.
+    // The floor-area figures appear as conditional results. Ruling V11 (5): the card refers to the
+    // shared condition BY NAME ("Condition 1"); the condition's full text is stated once in the
+    // shared-conditions block, never repeated in the card.
     const allowance = dialog.getByTestId("answer-floor_area_allowance");
     await expect(allowance).toContainText(`${grouped(FA_STANDARD)} sq ft`);
     await expect(allowance).toContainText(`${grouped(FA_QUALIFYING)} sq ft`);
-    await expect(allowance).toContainText("recorded lot area of 10,075 sq ft");
+    await expect(allowance).toContainText("Condition 1");
+    await expect(dialog.getByTestId("shared-conditions")).toContainText("recorded lot area of 10,075 sq ft");
 
     // The height limits appear as the district's limits (Table A), conditional on the unchecked
     // conditions, and NOWHERE called the property's maximum.

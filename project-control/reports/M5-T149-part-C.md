@@ -120,3 +120,9 @@ Mutations (scratch backup outside the repo, one test run each, restored byte-ide
   "S13/V11(9): no typed parking line…" (vitest EXIT 1).
 - (10) `forAnotherLot = false` → CAUGHT by "V11(10)/S15: a results document for another lot is not
   shown…" (vitest EXIT 1).
+
+Follow-up after the whole browser suite (ruling V11 (5)): `results.flag-on.spec.ts` line 94 moved to
+the new truth — the allowance card now asserts "Condition 1" (referred to by name) and the
+`shared-conditions` block asserts the condition's full text "recorded lot area of 10,075 sq ft"
+(stated once). Every other assertion kept. Base `9ff46ee5`. `npm run lint` EXIT 0; `npm run typecheck`
+EXIT 0 (the earlier cross-part ThreeAnswersPanel `gapKindLine` error is resolved at this head).
