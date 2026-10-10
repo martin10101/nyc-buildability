@@ -4,14 +4,14 @@
 <rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
 <path d="M137.07 371.97 L378.93 371.97 L378.93 132.03 L137.07 132.03 Z" fill="#F0E442" fill-rule="evenodd" stroke="#222222" stroke-width="0.50" stroke-linejoin="round" data-source="/geometry/floor_plates/entries/0" data-floor="1"/>
 <path d="M137.07 371.97 L378.93 371.97 L378.93 132.03 L137.07 132.03 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
-<path d="M137.07 373.97 L137.07 386.97 M134.87 381.77 L139.27 386.17 M378.93 373.97 L378.93 386.97 M376.73 381.77 L381.13 386.17 M137.07 383.97 L378.93 383.97" fill="none" stroke="#333333" stroke-width="0.50"/>
+<path d="M137.07 373.97 L137.07 386.97 M134.87 381.77 L139.27 386.17 M378.93 373.97 L378.93 386.97 M376.73 381.77 L381.13 386.17 M137.07 383.97 L378.93 383.97" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M380.93 371.97 L393.93 371.97 M388.73 374.17 L393.13 369.77 M380.93 132.03 L393.93 132.03 M388.73 134.23 L393.13 129.83 M390.93 371.97 L390.93 132.03" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M378.93 130.03 L378.93 117.03 M381.13 122.23 L376.73 117.83 M137.07 130.03 L137.07 117.03 M139.27 122.23 L134.87 117.83 M378.93 120.03 L137.07 120.03" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M135.07 132.03 L122.07 132.03 M127.27 129.83 L122.87 134.23 M135.07 371.97 L122.07 371.97 M127.27 369.77 L122.87 374.17 M125.07 132.03 L125.07 371.97" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
 <text x="258.00" y="392.37" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">100.77 ft</text>
-<path d="M380.93 371.97 L393.93 371.97 M388.73 374.17 L393.13 369.77 M380.93 132.03 L393.93 132.03 M388.73 134.23 L393.13 129.83 M390.93 371.97 L390.93 132.03" fill="none" stroke="#333333" stroke-width="0.50"/>
 <text x="399.33" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 399.33 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">99.98 ft</text>
-<path d="M378.93 130.03 L378.93 117.03 M381.13 122.23 L376.73 117.83 M137.07 130.03 L137.07 117.03 M139.27 122.23 L134.87 117.83 M378.93 120.03 L137.07 120.03" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="258.00" y="118.03" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">100.77 ft</text>
-<path d="M135.07 132.03 L122.07 132.03 M127.27 129.83 L122.87 134.23 M135.07 371.97 L122.07 371.97 M127.27 369.77 L122.87 374.17 M125.07 132.03 L125.07 371.97" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="123.07" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 123.07 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">99.98 ft</text>
+<text x="258.00" y="108.03" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">100.77 ft</text>
+<text x="113.07" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 113.07 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">99.98 ft</text>
 <g data-role="north-arrow">
 <path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
 <text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>

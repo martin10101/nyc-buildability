@@ -38,6 +38,15 @@
   font-weight: var(--pt-type-property-title-weight);
 }
 
+/* The borough/block/lot line when it sits beneath the address heading (M5-T153 rework 3): a quiet
+ * supporting line, so the address leads. Colour from a token (no literal). */
+.ta-identity-sublot {
+  margin: var(--pt-space-4) 0 0;
+  font-size: var(--pt-type-compact-size);
+  line-height: var(--pt-type-compact-line);
+  color: var(--pt-color-supporting);
+}
+
 .ta-identity-facts {
   display: flex;
   flex-wrap: wrap;

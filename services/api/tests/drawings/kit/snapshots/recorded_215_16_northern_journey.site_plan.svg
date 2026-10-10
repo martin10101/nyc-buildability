@@ -3,16 +3,19 @@
 <defs></defs>
 <rect x="0.00" y="0.00" width="720.00" height="1138.00" fill="#FFFFFF"/>
 <path d="M162.31 396.80 L167.52 395.61 L405.54 341.45 L353.56 107.20 L110.46 162.52 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
-<path d="M162.76 398.75 L165.64 411.42 M162.34 406.84 L167.61 410.15 M167.96 397.56 L170.85 410.24 M167.55 405.66 L172.82 408.97 M164.98 408.50 L170.18 407.31" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="169.44" y="416.09" font-size="8.00" text-anchor="middle" transform="rotate(-12.82 169.44 416.09)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">2.22 ft</text>
-<path d="M167.96 397.56 L170.85 410.24 M167.55 405.66 L172.82 408.97 M405.98 343.40 L408.86 356.08 M405.57 351.49 L410.83 354.81 M170.18 407.31 L408.20 353.15" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="291.05" y="388.42" font-size="8.00" text-anchor="middle" transform="rotate(-12.82 291.05 388.42)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">101.71 ft</text>
-<path d="M407.49 341.02 L420.18 338.20 M415.58 341.47 L418.92 336.23 M355.51 106.77 L368.20 103.95 M363.60 107.23 L366.95 101.98 M417.25 338.85 L365.27 104.60" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="393.22" y="221.29" font-size="8.00" text-anchor="middle" transform="rotate(77.49 393.22 221.29)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">99.98 ft</text>
-<path d="M353.12 105.25 L350.23 92.58 M353.53 97.16 L348.26 93.85 M110.02 160.57 L107.14 147.90 M110.43 152.48 L105.17 149.16 M350.90 95.50 L107.80 150.82" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="228.91" y="121.21" font-size="8.00" text-anchor="middle" transform="rotate(-12.82 228.91 121.21)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">103.88 ft</text>
-<path d="M108.51 162.95 L95.82 165.76 M100.42 162.49 L97.07 167.74 M160.36 397.23 L147.67 400.04 M152.27 396.77 L148.92 402.01 M98.75 165.11 L150.60 399.39" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="116.47" y="284.07" font-size="8.00" text-anchor="middle" transform="rotate(77.52 116.47 284.07)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#4">99.98 ft</text>
+<path d="M162.76 398.75 L165.64 411.42 M162.34 406.84 L167.61 410.15 M167.96 397.56 L170.85 410.24 M167.55 405.66 L172.82 408.97 M164.98 408.50 L170.18 407.31" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M167.96 397.56 L170.85 410.24 M167.55 405.66 L172.82 408.97 M405.98 343.40 L408.86 356.08 M405.57 351.49 L410.83 354.81 M170.18 407.31 L408.20 353.15" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M407.49 341.02 L420.18 338.20 M415.58 341.47 L418.92 336.23 M355.51 106.77 L368.20 103.95 M363.60 107.23 L366.95 101.98 M417.25 338.85 L365.27 104.60" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M353.12 105.25 L350.23 92.58 M353.53 97.16 L348.26 93.85 M110.02 160.57 L107.14 147.90 M110.43 152.48 L105.17 149.16 M350.90 95.50 L107.80 150.82" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M108.51 162.95 L95.82 165.76 M100.42 162.49 L97.07 167.74 M160.36 397.23 L147.67 400.04 M152.27 396.77 L148.92 402.01 M98.75 165.11 L150.60 399.39" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<text x="171.66" y="425.85" font-size="8.00" text-anchor="middle" transform="rotate(-12.82 171.66 425.85)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">2.22 ft</text>
+<path d="M167.58 407.90 L167.58 407.90" fill="none" stroke="#333333" stroke-width="0.40" data-role="dimension-leader"/>
+<text x="299.93" y="427.42" font-size="8.00" text-anchor="middle" transform="rotate(-12.82 299.93 427.42)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">101.71 ft</text>
+<text x="432.27" y="212.63" font-size="8.00" text-anchor="middle" transform="rotate(77.49 432.27 212.63)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">99.98 ft</text>
+<text x="220.03" y="82.21" font-size="8.00" text-anchor="middle" transform="rotate(-12.82 220.03 82.21)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">103.88 ft</text>
+<text x="87.18" y="290.55" font-size="8.00" text-anchor="middle" transform="rotate(77.52 87.18 290.55)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#4">99.98 ft</text>
+<text x="457.65" y="207.00" font-size="9.00" text-anchor="middle" font-style="italic" transform="rotate(77.49 457.65 207.00)" fill="#111111" data-role="street" data-source="/geometry/streets/0/street">215 Place</text>
+<text x="214.26" y="56.86" font-size="9.00" text-anchor="middle" font-style="italic" transform="rotate(-12.82 214.26 56.86)" fill="#111111" data-role="street" data-source="/geometry/streets/1/street">Northern Boulevard</text>
 <g data-role="north-arrow">
 <path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>
 <text x="540.00" y="22.00" font-size="10.00" text-anchor="middle" font-weight="bold" fill="#111111" data-role="furniture">N</text>

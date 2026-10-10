@@ -3,14 +3,14 @@
 <defs></defs>
 <rect x="0.00" y="0.00" width="720.00" height="504.00" fill="#FFFFFF"/>
 <path d="M210.00 372.00 L306.00 372.00 L306.00 132.00 L210.00 132.00 Z" fill="none" stroke="#000000" stroke-width="1.50" stroke-linejoin="round" fill-rule="evenodd" data-source="/geometry/lot_outline"/>
-<path d="M210.00 374.00 L210.00 387.00 M207.80 381.80 L212.20 386.20 M306.00 374.00 L306.00 387.00 M303.80 381.80 L308.20 386.20 M210.00 384.00 L306.00 384.00" fill="none" stroke="#333333" stroke-width="0.50"/>
+<path d="M210.00 374.00 L210.00 387.00 M207.80 381.80 L212.20 386.20 M306.00 374.00 L306.00 387.00 M303.80 381.80 L308.20 386.20 M210.00 384.00 L306.00 384.00" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M308.00 372.00 L321.00 372.00 M315.80 374.20 L320.20 369.80 M308.00 132.00 L321.00 132.00 M315.80 134.20 L320.20 129.80 M318.00 372.00 L318.00 132.00" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M306.00 130.00 L306.00 117.00 M308.20 122.20 L303.80 117.80 M210.00 130.00 L210.00 117.00 M212.20 122.20 L207.80 117.80 M306.00 120.00 L210.00 120.00" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
+<path d="M208.00 132.00 L195.00 132.00 M200.20 129.80 L195.80 134.20 M208.00 372.00 L195.00 372.00 M200.20 369.80 L195.80 374.20 M198.00 132.00 L198.00 372.00" fill="none" stroke="#333333" stroke-width="0.50" data-role="dimension-geometry"/>
 <text x="258.00" y="392.40" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#0">40 ft</text>
-<path d="M308.00 372.00 L321.00 372.00 M315.80 374.20 L320.20 369.80 M308.00 132.00 L321.00 132.00 M315.80 134.20 L320.20 129.80 M318.00 372.00 L318.00 132.00" fill="none" stroke="#333333" stroke-width="0.50"/>
 <text x="326.40" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 326.40 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#1">100 ft</text>
-<path d="M306.00 130.00 L306.00 117.00 M308.20 122.20 L303.80 117.80 M210.00 130.00 L210.00 117.00 M212.20 122.20 L207.80 117.80 M306.00 120.00 L210.00 120.00" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="258.00" y="118.00" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">40 ft</text>
-<path d="M208.00 132.00 L195.00 132.00 M200.20 129.80 L195.80 134.20 M208.00 372.00 L195.00 372.00 M200.20 369.80 L195.80 374.20 M198.00 132.00 L198.00 372.00" fill="none" stroke="#333333" stroke-width="0.50"/>
-<text x="196.00" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 196.00 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">100 ft</text>
+<text x="258.00" y="108.00" font-size="8.00" text-anchor="middle" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#2">40 ft</text>
+<text x="186.00" y="252.00" font-size="8.00" text-anchor="middle" transform="rotate(-90.00 186.00 252.00)" fill="#111111" data-role="dimension" data-source="edge:/geometry/lot_outline/0#3">100 ft</text>
 <text x="258.00" y="415.20" font-size="9.00" text-anchor="middle" font-style="italic" fill="#111111" data-role="street" data-source="/geometry/streets/0/street">Synthetic Street C</text>
 <g data-role="north-arrow">
 <path d="M540.00 26.00 L547.00 62.00 L540.00 53.00 L533.00 62.00 Z" fill="#000000" stroke="#000000" stroke-width="0.50"/>

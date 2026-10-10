@@ -105,7 +105,7 @@ not imports, precisely so they stay out of every session's base context.
 | Parallel / multi-agent execution | `.claude/ORCHESTRATION_POLICY.md` |
 | Code navigation (dependency/impact, who-consumes, traces) — selective, advisory | tools/code_graph/README.md |
 | Lean operating process (handoffs, control-PR batching, minimal unit events, concise code) — **M2-T016 onward** | `docs/LEAN_OPERATING_PROCESS.md` |
-| Architect-facing website, report, drawing or PDF work (read BEFORE implementing; carry its revision, evidence path, open question ids, next visible action into the handoff) | `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` |
+| Architect-facing website, report, drawing or PDF work (read BEFORE implementing; its report page types of 2026-10-10 govern every page; carry its revision, evidence path, open question ids, next visible action into the handoff) | `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
 services/api, geospatial data, legal/rules, deployment, code architecture). The standard workflows are on-demand

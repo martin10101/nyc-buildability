@@ -25,6 +25,7 @@ __all__ = [
     "Note",
     "case_notes",
     "legend",
+    "legend_flow",
     "north_arrow",
     "notes_block",
     "scale_bar",
@@ -120,6 +121,34 @@ def legend(kinds_drawn: Sequence[str], x: float, top: float) -> tuple[list[str],
         y += _LEGEND_ROW
     parts.append("</g>")
     return parts, y
+
+
+def legend_flow(
+    kinds_drawn: Sequence[str], x: float, top: float, max_width: float
+) -> tuple[list[str], float]:
+    """A COMPACT legend for the report frame: the drawn kinds (table order) flowed left to right,
+    wrapping within ``max_width`` so the legend takes little height and no notes column is needed.
+    Returns the parts and the bottom y. The look (swatch + label) matches :func:`legend`."""
+    shown = [s for s in STYLE_TABLE if s.in_legend and s.kind in kinds_drawn]
+    size = TYPOGRAPHY.label_pt
+    parts = ['<g data-role="legend">',
+             text_element(x, top + 8.0, "Legend", size=size, source=None, role="furniture",
+                          weight="bold")]
+    row_top = top + 14.0
+    cx = x
+    row_h = 16.0
+    for style in shown:
+        label_w = len(style.label) * size * TYPOGRAPHY.char_width_em
+        item_w = 24.0 + label_w
+        if cx > x and cx + item_w > x + max_width:
+            cx = x
+            row_top += row_h
+        parts.extend(_swatch(style.kind, cx, row_top))
+        parts.append(text_element(cx + 24.0, row_top + 8.5, style.label, size=size,
+                                  source=None, role="legend"))
+        cx += item_w + 14.0
+    parts.append("</g>")
+    return parts, row_top + row_h
 
 
 @dataclass(frozen=True)

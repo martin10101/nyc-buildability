@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 7 (last changed 2026-10-10)
+- Revision: 9 (last changed 2026-10-10)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `2ed063ce11573a720d5d508d659c364b760387b63abf46b48ebd7cc391854de2`
+- Combined code identity: `9d78119686d169efb7052662e2b26e6872844f511b5bfc26a42bc5419ecc9326`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`1ebe1225f29971154411f5d1c139caed3aa92c3c000edfe3773497de715c416c`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
   - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
@@ -135,7 +135,7 @@ Planned, not built:
 
 ## Automated test result
 
-- Status: Passed
+- Status: Not run
 - Code identity tested: `2ed063ce11573a720d5d508d659c364b760387b63abf46b48ebd7cc391854de2`
 - Commit tested: `42fc2ae11e6b90084972e7ca32816cc50b8a085a`
 - Date tested: 2026-10-10

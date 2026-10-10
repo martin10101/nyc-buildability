@@ -6,6 +6,35 @@
 - **Reading it:** the brief below is kept word for word. Its sample figures belong to the supplied test assembly, not to any current result. The owner's questions file is `/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md` (outside the repository); its open questions on this contract are C1, C2 and D1 (paper size).
 - **Related decisions:** the PDF's six status labels (D-090 rows R779 to R799); the screen's statuses and the overall label (row R641; question C2 open). Where an older design document differs, this contract wins (see the note at the top of `docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md`).
 
+## Changes
+
+### Change 2026-10-10: report page types (D-090 source-081, rows R900 to R933)
+
+## Report page types (2026-10-10; D-090 source-081, rows R900 to R933)
+
+The report answers four questions in this order: what can I potentially build; what constrains the design; how do the options compare; what remains unresolved and what would resolve it. Evidence comes last. Every page type below is a reusable layout. A page type starts on a new sheet and may run onto more sheets; a type with nothing to show prints one short line, never a blank page.
+
+**Sheet.** A4 portrait, 14 mm margins on every sheet (question D1, paper size, is open; A4 meanwhile). No other sheet size. Running header: the address and borough block and lot on the left, "Preliminary zoning results" on the right. Running footer: the result's revision and computed date on the left, "Page X of Y" on the right. Header and footer sit in reserved page-margin boxes, never over the content. Each page title is a bookmark.
+
+**Type.** Body text 9.5 pt; table text and captions at least 8 pt; drawing labels at least 7 pt at the printed size. Nothing is shrunk to fit: a drawing that does not fit is recomposed. Text stays selectable and drawings stay vector.
+
+**Tables.** Header rows repeat after a page break; a normal row never splits; a heading stays with its first row; a caption stays with its figure.
+
+**Labels.** One of the six labels per output (Verified, Provisional, Illustrative, Conditional, Pending verification, Unresolved; rows R779 to R799), shown in headings, table rows and captions. Nothing is labelled Verified (question C1 open).
+
+**Wording.** A floor schedule whose placement and site fit are not established reads "Scheduled floor area: N sq ft; site fit unverified". The report never uses "achieved", "no allowance left unused", "optimal", "compliant", "feasible", "preferred" or "recommended" for a result. A shared limitation is stated once and referred to by its number. The report carries no HTTP checks, implementation notes, internal identifiers, field names, task or requirement numbers, owner-question references or development backlog words. Sources carry readable titles.
+
+| # | Page type | The reader's question | What the page shows first | Its visual | Its table | What it never carries |
+|---|---|---|---|---|---|---|
+| 1 | Decision summary | What can I potentially build? | The property (address, borough block and lot, district and overlay, the lot selection) and the three answers: floor-area allowance, permitted envelope, scheduled building | A small site plan of the measured outline | The three answers with their labels; the preliminary apartment estimate apart; the three most important open items with their effect | Status definitions, assembly notes, version history |
+| 2 | Site and context | What constrains the design? | The lot-area basis in two lines: the recorded lot area used in every calculation, and the tax-map outline the drawing shows, with their disagreement | The site plan at a stated scale: measured outline, edge dimensions, street names and frontages where the program has them, north, scale bar; the zoning map and location map where available | The constraints: coverage by portion, yards, heights and setbacks, street walls, each with its state | A notes column; raw source codes; provenance detail (it goes to the evidence) |
+| 3 | Option comparison | How do the options compare? | All eleven options in the owner-approved order, on one basis | The floor-area allowance against the scheduled area of each worked building, on one scale | One row per option: the option, its available result, its label, its material limitation (or a shared limitation's number); the worked and not-worked buildings | Seven columns repeating the same "not computed" state |
+| 4 | Scenario sheet | What is this option? (one sheet per worked building) | "Scheduled floor area: N sq ft; site fit unverified", storeys and height | A section of the floor stack drawn from the schedule (labelled Illustrative: no placement on the lot) | The floor schedule; why it has this shape; what was not checked; its preliminary apartment estimate | A sheet for a building that was not worked (it is one row on page type 3) |
+| 5 | Assumptions and open items | What remains unresolved, and what would resolve it? | The shared assumptions, each once, numbered | None | The open items: the item, its effect on the answer, what would resolve it, its label; then the report's coverage of the promised sections | Developer backlog, owner questions |
+| 6 | Calculations and evidence | How was this derived? | The inputs with their sources | None | Inputs; the allowance arithmetic as the document gives it; the rule sections with links to the law; readable source titles; provenance (revision, computed date, rule versions); the status-label key | Raw records, HTTP results, field names |
+
+**Report code paths.** The program's report generator is `services/api/app/drawings/report/` (`build_report_html` plus one module per page type - decision summary, site and context, option comparison, scenario sheet, assumptions and open items, calculations and evidence), served for printing by the route `services/api/app/api/v1/report_read.py` (`POST /api/v1/properties/{bbl}/report`, mounted in `services/api/app/main.py`).
+
 <!-- BEGIN ADOPTED BRIEF (byte-identical to the owner's file; everything below this line) -->
 # NYC Buildability: architect-facing website and PDF
 

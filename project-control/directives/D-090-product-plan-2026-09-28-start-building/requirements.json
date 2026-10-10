@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 899,
+ "requirement_count": 933,
  "producer": "orchestrator",
- "updated_at": "2026-10-10T00:00:09+00:00",
+ "updated_at": "2026-10-10T07:36:33+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -26568,7 +26568,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T151"
     ],
     "task_types": [],
     "milestones": [],
@@ -26661,7 +26662,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T151"
     ],
     "task_types": [],
     "milestones": [],
@@ -26940,7 +26942,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T152"
     ],
     "task_types": [],
     "milestones": [],
@@ -30077,7 +30080,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
     ],
     "task_types": [],
     "milestones": [],
@@ -30109,7 +30114,9 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T149"
+     "M5-T149",
+     "M5-T151",
+     "M5-T153"
     ],
     "task_types": [],
     "milestones": [],
@@ -30142,7 +30149,9 @@
     "task_ids": [
      "D-090-BOOTSTRAP",
      "M5-T148",
-     "M5-T149"
+     "M5-T149",
+     "M5-T151",
+     "M5-T153"
     ],
     "task_types": [],
     "milestones": [],
@@ -30174,7 +30183,8 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T150"
+     "M5-T150",
+     "M5-T152"
     ],
     "task_types": [],
     "milestones": [],
@@ -30208,7 +30218,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T151"
     ],
     "task_types": [],
     "milestones": [],
@@ -30239,7 +30250,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T151"
     ],
     "task_types": [],
     "milestones": [],
@@ -30286,6 +30298,1130 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured 2026-10-09; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R900",
+   "text": "'Next action: handoff section 4.': the session resumes at the handoff's next action. ORCHESTRATOR'S READING: the owner's correction in the same message is newer and is done first; D1 and B6 are still unanswered, so the work follows their 'Meanwhile' lines (A4 pages; no new converter package). The no-decision items that overlap the correction (the drawing's notes and street names, DB-216 b and c; DB-221) are carried by it.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The ledger tasks contracted for this correction.",
+   "required_evidence": "The task packets.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R901",
+   "text": "'Report READY TO RESUME or BLOCKED.': the session reports READY TO RESUME or BLOCKED after its read-only checks.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The session's first reply.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R902",
+   "text": "'The v5a report improves the first page, but the overall report still requires substantial design work.' 'It still makes the architect read too much repeated status information to understand the site and the available options.': the report is redesigned so the architect understands the site and the available options without reading repeated status information. The v5a first-page approach is kept.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R892"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R903",
+   "text": "'Please implement the following correction in the actual report generator and corresponding website components.': the correction is made in the program's own report generator and in the matching website components. ORCHESTRATOR'S READING (checked 2026-10-10): the program has no server PDF maker; its report is the web app's report page, printed by the browser. The correction is built there, from the results document and the drawing kit, and printed at the report's page size. How the server will make and store PDFs stays question B6.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The program's report templates and website components changed under ledger tasks.",
+   "required_evidence": "The task diffs and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R904",
+   "text": "'What can I potentially build?' 'What constrains the design?' 'How do the options compare?' 'What remains unresolved, and what would resolve it?': the report is organised around four questions, in this order: what can I potentially build; what constrains the design; how do the options compare; what remains unresolved and what would resolve it.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R806"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R905",
+   "text": "'Each main page needs a clear purpose, an immediately visible answer or limitation, and an appropriate drawing, comparison, or schedule.': each main page has one clear purpose, shows its answer or limitation at once, and carries a fitting drawing, comparison or schedule.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R906",
+   "text": "'Supporting explanations belong beside the relevant result or in the evidence section.': supporting explanations sit beside the result they explain or in the evidence section, not in the reading path.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R907",
+   "text": "'The competitor is a reference for visual communication, not a source of verified facts.': the competitor's study is used only as a reference for visual communication; none of its figures enters the report as a fact.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R908",
+   "text": "'Preserve our complete scope.' 'There is no three-page target, and shortening the report must not remove necessary information.': the complete scope is kept: there is no page-count target, and no necessary information is removed to shorten the report.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R803"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R909",
+   "text": "'Define every page type before generating the full report.': every page type is defined as a reusable layout before the full report is generated.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The report template code: one layout per page type.",
+   "required_evidence": "The task diff and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R910",
+   "text": "'Create reusable layouts for the decision summary, site/context, option comparison, individual scenarios, calculations/evidence, and assumptions/open items.': reusable layouts exist for six page types: decision summary, site and context, option comparison, individual scenario, calculations and evidence, assumptions and open items.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R842"
+   ],
+   "required_harness": "The report template code and the PDF.",
+   "required_evidence": "The task diff, the PDF and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R911",
+   "text": "'The earlier three-page reference did not sufficiently control the remaining page types.' 'Apply the design to the entire report.': the design is applied to every page of the report, not only the first pages.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R912",
+   "text": "'Use real maps, dimensions, diagrams, and schedules when supported by the available data.': the report uses real maps, dimensions, diagrams and schedules wherever the available data supports them.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R913",
+   "text": "'Do not invent missing geometry or replace missing drawings with large blocks of explanatory prose.' 'State the limitation briefly and accurately.': missing geometry is never invented, and a missing drawing is never replaced by a block of prose; the limitation is stated briefly and accurately.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R914",
+   "text": "'Page 3 uses an approximately 13 \u00d7 20.5-inch sheet while the other pages use A4.' 'Its small notes become approximately 5-point text when fitted to A4.' 'Recompose it for the intended print size.' 'The simple lot drawing does not justify this oversized sheet.': every page, the site page included, uses the report's page size (A4 until question D1 is answered); no oversized sheet is shrunk to fit, and no text prints smaller than the report's minimum size.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R893"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R915",
+   "text": "'Replace the tall notes column with a useful site composition showing supported street relationships, dimensions, and constraints.': the site page shows a site composition: the lot, its supported street relationships (street names and frontages), its dimensions and its constraints, in place of a column of notes. ORCHESTRATOR'S READING: street names and frontages are drawn only where the program has them; otherwise the page says briefly what is missing.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R893"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R916",
+   "text": "'Put detailed provenance and secondary assumptions in the evidence section.': detailed provenance and secondary assumptions are in the evidence section, not on the site page.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R917",
+   "text": "'Rework pages 4\u20135.' 'Preserve all 11 options, but remove the seven-column repetition of \u201cnot computed,\u201d \u201cnot worked,\u201d \u201cpending verification,\u201d and \u201coutputs owed.\u201d Show each option\u2019s available result, current state, and material limitation.': the option comparison keeps all eleven options, shows for each its available result, its current state and its material limitation, and drops the repeated 'not computed', 'not worked', 'pending verification' and 'outputs owed' columns.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R894"
+   ],
+   "required_harness": "The PDF's comparison page and the website's comparison.",
+   "required_evidence": "The PDF, the website tests and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R918",
+   "text": "'Explain shared limitations once.': a limitation shared by several options is explained once, not repeated per option.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R919",
+   "text": "'Review page breaks and space allocation.' 'Page 2 is mostly empty while page 3 is overloaded.': page breaks and space are balanced: no page is mostly empty while another is overloaded.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R920",
+   "text": "'Page 2 gives a tax-map area of 10,387.99 square feet, but page 3\u2019s displayed rectangle dimensions imply approximately 10,075 square feet.' 'Explain or correct the measurement basis; do not silently reshape geometry to match a preferred figure.': the report explains the two lot areas and their bases (the city's recorded lot area and the tax-map outline's measured area) and the drawing matches the area it is said to show; geometry is never reshaped to match a preferred figure. ORCHESTRATOR'S READING: since M5-T150 the program draws the measured outline; the report names which area each figure uses.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R896"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R921",
+   "text": "'Reconcile the page 3 note about an option being below minimum base height with the Building B result shown elsewhere.': no note says an option is below the minimum base height while another page shows building B meeting it; every statement about the building options agrees across the report.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R897"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R922",
+   "text": "'Use wording such as \u201cScheduled floor area: 20,150 sq ft; site fit unverified\u201d while placement and applicable geometry checks remain incomplete. \u201cAchieved\u201d and \u201cno allowance left unused\u201d currently suggest stronger proof than the report provides.': while placement and the applicable geometry checks are incomplete, a floor schedule is worded like 'Scheduled floor area: 20,150 sq ft; site fit unverified'; 'achieved' and 'no allowance left unused' are not used. This applies to the PDF and to the website.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R895"
+   ],
+   "required_harness": "A text search of the PDF and of the website's strings; the gates.",
+   "required_evidence": "The search output and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R923",
+   "text": "'The scope inventory also claims context maps are available.' 'Include useful supported maps or correct that claim.': the report includes the supported context maps (location and zoning), or its scope inventory does not claim them.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R898"
+   ],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R924",
+   "text": "'Remove HTTP checks, implementation notes, internal identifiers, owner-question references, and development backlog language from the main report.': the main report carries no HTTP checks, implementation notes, internal identifiers, owner-question references or development backlog language.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R898"
+   ],
+   "required_harness": "A text search of the PDF for developer words.",
+   "required_evidence": "The search output and the reviewer's record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R925",
+   "text": "'Keep meaningful sources, assumptions, and uncertainty accessible.' 'Use readable source titles.': sources, assumptions and uncertainty stay available in the report, with readable source titles.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R926",
+   "text": "'Put detailed reproducibility information in supporting evidence and developer diagnostics in the existing development records.': detailed reproducibility information is in the supporting evidence; developer diagnostics stay in the existing development records.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R927",
+   "text": "'Change the reusable templates and presentation logic, rather than hand-polishing a separate sample.': the change is made in the reusable templates and presentation logic, not by hand-polishing a separate sample.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T152",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The task diffs: the PDF is printed from the program, not from a hand-written page.",
+   "required_evidence": "The diffs and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R928",
+   "text": "'Apply the same information priorities and result wording to the website, using expandable supporting detail where appropriate.': the website uses the same information priorities and result wording, with expandable supporting detail where useful.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The website's results surface checked with the same wording rules (tests and an independent visual review).",
+   "required_evidence": "The website tests, pictures and gates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R929",
+   "text": "'Generate the full current-scope PDF.' 'Render and inspect every page at its intended print size.': the full current-scope PDF is generated from the program, and every page is rendered and inspected at its print size.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151",
+     "M5-T153"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The full current-scope PDF printed from the program's own report templates, every page rendered at its print size and inspected by an independent visual reviewer.",
+   "required_evidence": "The PDF, its page images, the reviewer's page-by-page record and the task's gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R930",
+   "text": "'Check legibility, overlaps, table breaks, navigation, repeated content, contradictory claims, and whether the visuals actually answer the page\u2019s question.' 'Automated checks alone do not establish good design.': the inspection checks legibility, overlaps, table breaks, navigation, repeated content, contradictory claims, and whether each visual answers its page's question; it is done by looking at the pages, not by automated checks alone.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "An independent visual reviewer's page-by-page record, plus the automated checks.",
+   "required_evidence": "The record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R931",
+   "text": "'Update the existing presentation contract, relevant project instructions, and normal session handoff.' 'Reuse the current documentation structure rather than creating competing guidance.': the presentation contract, the relevant project instructions and the session handoff are updated in place; no competing guidance is created.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP",
+     "M5-T151"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The contract's dated change entry, the path rule and the handoff.",
+   "required_evidence": "The diffs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R932",
+   "text": "'Put material unresolved questions in our existing active owner MD questionnaire.' 'Preserve answered decisions and continue work that is already clear.': material unresolved questions go into OWNER_QUESTIONS.md (and the chat); answered decisions are kept, and clear work continues without waiting.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "OWNER_QUESTIONS.md.",
+   "required_evidence": "The file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R933",
+   "text": "'Return the revised PDF, a short list of changes, and any remaining failures.' 'The rendered result\u2014not another long explanation of the design process\u2014is the main deliverable.': the return is the revised PDF, a short list of changes and any remaining failures; the rendered result is the main deliverable, not a long explanation.",
+   "source_ref": "source-081-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The final reply to the owner.",
+   "required_evidence": "The reply and the PDF file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

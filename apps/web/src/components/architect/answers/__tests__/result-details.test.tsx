@@ -62,6 +62,27 @@ describe("ResultDetails focus and disclosure behaviour", () => {
     expect(document.activeElement).toBe(button);
   });
 
+  it("W2: each opener has a distinguishing accessible name (so several 'Details' do not collide)", () => {
+    render(
+      <>
+        <ResultDetails name="Floor-area allowance">
+          <p>a</p>
+        </ResultDetails>
+        <ResultDetails name="Permitted envelope">
+          <p>b</p>
+        </ResultDetails>
+      </>,
+    );
+    const buttons = screen.getAllByTestId("answer-details-button");
+    expect(buttons).toHaveLength(2);
+    const names = buttons.map(b => b.getAttribute("aria-label"));
+    expect(names[0]).toBe("Details — Floor-area allowance");
+    expect(names[1]).toBe("Details — Permitted envelope");
+    expect(names[0]).not.toBe(names[1]);
+    // the visible label stays the generic toggle text.
+    expect(buttons[0].textContent).toBe("Details");
+  });
+
   it("the button toggles closed again on a second click", () => {
     renderDetails();
     const button = screen.getByTestId<HTMLButtonElement>("answer-details-button");

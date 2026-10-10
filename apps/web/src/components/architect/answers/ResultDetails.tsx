@@ -42,6 +42,10 @@ export function ResultDetails({ name, children }: { name: string; children: Reac
         className="ta-details-button"
         aria-expanded={open}
         aria-controls={regionId}
+        // The visible label stays "Details"/"Hide details"; the accessible name carries the result's
+        // own name so several disclosures on one screen do not all read "Details" to a screen reader
+        // navigating by buttons (rework 4 corrections, W2).
+        aria-label={`${open ? "Hide details" : "Details"} — ${name}`}
         data-testid="answer-details-button"
         onClick={() => setOpen(value => !value)}
       >

@@ -109,12 +109,14 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     // Coverage and the rear yard read "not known".
     await expect(envelope).toContainText("Not known");
 
-    // Ruling V11 (2): building B is listed at the default run, so the building-option card reads
-    // "Scheduled area: …" with "Site fit not verified" ahead of any caveat — never "Not available"
-    // or "shown below".
+    // S8 (M5-T153 rework 1): building B is listed at the default run, so the compact building-option
+    // card reads the report's ONE-LINE phrase — the same adapter line as the block — never
+    // "Not available"/"shown below". The wave-20 pair ("Scheduled area" / "Site fit not verified")
+    // no longer renders on the card.
     const buildingOptionCard = dialog.getByTestId("answer-building_option");
-    await expect(buildingOptionCard).toContainText("Scheduled area");
-    await expect(buildingOptionCard).toContainText("Site fit not verified");
+    await expect(buildingOptionCard).toContainText("Scheduled floor area: 20,150 sq ft; site fit unverified");
+    await expect(buildingOptionCard).not.toContainText("Scheduled area:");
+    await expect(buildingOptionCard).not.toContainText("Site fit not verified");
     await expect(buildingOptionCard).not.toContainText("Not available");
     await expect(buildingOptionCard).not.toContainText("shown below");
 
@@ -133,6 +135,14 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(options).toBeVisible();
     const buildingBlock = options.getByTestId("building-alternative").first();
     await expect(buildingBlock.getByTestId("building-alternative-label")).toHaveText(buildingB.label);
+    // M5-T153 (ruling R928 "expandable supporting detail", scenario S3): the one-line scheduled
+    // phrase leads the block; its conditions and floor schedule are supporting detail behind a
+    // disclosure. Open it so the schedule, conditions, what-was-not-checked and the estimate are
+    // visible (they stay in the DOM when closed). New step; no assertion weakened.
+    await expect(buildingBlock.getByTestId("building-alternative-scheduled")).toHaveText(
+      `Scheduled floor area: ${buildingB.total_floor_area_sqft.toLocaleString("en-US")} sq ft; site fit unverified`,
+    );
+    await buildingBlock.getByTestId("answer-details-button").first().click();
     // its floor schedule: one body row per worked storey (three storeys).
     await expect(buildingBlock.getByTestId("floor-schedule").getByTestId("floor-schedule-row")).toHaveCount(
       buildingB.storey_count,
@@ -183,11 +193,13 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
       "Standard residence was selected for this run as the housing program.",
     );
     // Building B's floor schedule now shows the entered 14-foot floor-to-floor height, never 10.
-    const schedule14 = dialog
+    // The result re-rendered, so the supporting-detail disclosure is closed again; reopen it (S3).
+    const block14 = dialog
       .getByTestId("first-building-options")
       .getByTestId("building-alternative")
-      .first()
-      .getByTestId("floor-schedule");
+      .first();
+    await block14.getByTestId("answer-details-button").first().click();
+    const schedule14 = block14.getByTestId("floor-schedule");
     await expect(schedule14).toContainText("14 ft");
     await expect(schedule14).not.toContainText("10 ft");
 

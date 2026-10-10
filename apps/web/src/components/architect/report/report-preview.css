@@ -1,0 +1,73 @@
+/* The report action (task M5-T153, scenario S4). Colours, spacing, radii and the control height
+ * come from the shared presentation tokens (docs/design/ARCHITECT_PRESENTATION_CONTRACT.md §5); no
+ * colour literal appears here and no colour carries meaning on its own — every state is in the
+ * text. */
+
+.report-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pt-space-12);
+  padding: var(--pt-space-16);
+  color: var(--pt-color-ink);
+  font-family: var(--pt-font-family);
+  background: var(--pt-color-surface);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+}
+
+.report-preview-title {
+  margin: 0;
+  font-size: var(--pt-type-section-title-size);
+  line-height: var(--pt-type-section-title-line);
+  font-weight: var(--pt-type-section-title-weight);
+}
+
+.report-preview-lead {
+  margin: 0;
+  color: var(--pt-color-supporting);
+}
+
+.report-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-12);
+  align-items: center;
+}
+
+.report-preview-actions .primary-button,
+.report-preview-actions .secondary-button {
+  min-height: var(--pt-control-height);
+}
+
+.report-preview-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.report-preview-note {
+  margin: 0;
+  color: var(--pt-color-supporting);
+}
+
+.report-preview-error {
+  margin: 0;
+  color: var(--pt-color-caution-ink);
+  font-weight: 600;
+}
+
+.report-preview-stale {
+  margin: 0;
+  color: var(--pt-color-caution-ink);
+  font-weight: 600;
+}
+
+/* The report sits in a tall frame on the surface colour; the border is a quiet divider, not a
+ * control edge. The report composes its own A4 pages; this box only previews them. */
+.report-preview-frame {
+  width: 100%;
+  height: 60vh;
+  min-height: 24rem;
+  background: var(--pt-color-surface);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+}

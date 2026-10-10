@@ -16,6 +16,7 @@ import {
   type AnswerKey,
   type Results,
 } from "@/lib/architect/three-answers";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-fixtures";
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
 
@@ -318,16 +319,19 @@ describe("S4 — the Details focus behaviour and the 'Conditional' marker (UX-09
 });
 
 describe("S13 — the building-option answer is the scheduled area (ruling V11 (2))", () => {
-  it("at 10 ft reads 'Scheduled area' + 'Site fit not verified', never 'Not available'/'shown below'", () => {
+  it("S8: at 10 ft the card reads the ONE-LINE scheduled phrase, never 'Not available'/'shown below'", () => {
     const doc = loadResultsFixture(BENCHMARK);
     const alternative = (doc.building_alternatives ?? [])[0];
     if (!alternative) throw new Error("fixture changed: the benchmark must list a building");
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const cardEl = card("building_option");
+    // S8: one wording across the screen — the compact card uses the same adapter line as the block.
     expect(within(cardEl).getByTestId("answer-scheduled-area").textContent).toBe(
-      quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet")),
+      scheduledFloorAreaLine(quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet"))),
     );
-    expect(within(cardEl).getByTestId("answer-site-fit").textContent).toBe("Site fit not verified");
+    // the wave-20 pair no longer renders on the card.
+    expect(within(cardEl).queryByTestId("answer-site-fit")).toBeNull();
+    expect(cardEl.textContent ?? "").not.toContain("Site fit not verified");
     expect(cardEl.textContent ?? "").not.toContain("Not available");
     expect(cardEl.textContent ?? "").not.toContain("shown below");
   });
@@ -342,7 +346,7 @@ describe("S13 — the building-option answer is the scheduled area (ruling V11 (
     expect(within(cardEl).getByTestId("answer-not-known").textContent).toBe(
       `Not known — ${notWorked[0].reason}`,
     );
-    expect(cardEl.textContent ?? "").not.toContain("Scheduled area");
+    expect(cardEl.textContent ?? "").not.toContain("Scheduled floor area");
     expect(cardEl.textContent ?? "").not.toContain("Not available");
   });
 });
@@ -515,6 +519,61 @@ describe("fixture-specific behaviour", () => {
     expect(screen.getByTestId("three-answers-draft-tag").textContent).toContain(
       "rules not professionally reviewed",
     );
+  });
+});
+
+describe("S1: the rendered results never hold a word that overstates a result (ruling X5)", () => {
+  // The seven words the owner forbids for a result, anywhere on the website (scenario S1, ruling
+  // X5): 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred',
+  // 'recommended'. The scan reads the whole panel's textContent (the ResultDetails keep their
+  // children in the DOM, so folded detail is scanned too).
+  const FORBIDDEN = [
+    "achieved",
+    "no allowance left unused",
+    "optimal",
+    "compliant",
+    "feasible",
+    "preferred",
+    "recommended",
+  ];
+  // The live product path is the building-alternatives shape (the journey): the building-option
+  // answer is the BuildingOptionCard and building B is a worked alternative. On that path the
+  // presentation types no result wording of its own that overstates a result. (A legacy
+  // single-answer fixture carries the engine's own "Achieved zoning floor area" label, which is
+  // document/engine wording — services/** and packages/**, outside this task; the key
+  // `achieved_zoning_floor_area` stays a key, and in this path no presentation text overstates.)
+  it(`${BENCHMARK}: the panel text holds none of the forbidden words, and building B is honest`, () => {
+    render(<ThreeAnswersPanel results={loadResultsFixture(BENCHMARK)} showDraftValues />);
+    const text = (screen.getByTestId("three-answers-panel").textContent ?? "").toLowerCase();
+    for (const word of FORBIDDEN) expect(text).not.toContain(word);
+    // building B's scheduled line reads the honest one-line phrase.
+    expect(text).toContain("scheduled floor area");
+    expect(text).toContain("site fit unverified");
+  });
+});
+
+describe("E1 (rework 3): the identity shows the same address the report titles the property with", () => {
+  it("leads with the address and keeps the borough/block/lot beneath when an address is known", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    const lotDisplay = doc.scope?.lot.display;
+    if (!lotDisplay) throw new Error("fixture changed: the benchmark must carry a lot display");
+    const address = "215-16 NORTHERN BOULEVARD, Queens";
+    render(<ThreeAnswersPanel results={doc} showDraftValues address={address} />);
+    const identity = screen.getByTestId("three-answers-identity");
+    // the address leads as the heading…
+    expect(within(identity).getByTestId("three-answers-identity-address").textContent).toBe(address);
+    // …with the borough/block/lot beneath it.
+    expect(within(identity).getByTestId("three-answers-identity-lot").textContent).toBe(lotDisplay);
+  });
+
+  it("keeps today's lot heading when no address is known", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    const lotDisplay = doc.scope?.lot.display;
+    if (!lotDisplay) throw new Error("fixture changed: the benchmark must carry a lot display");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const identity = screen.getByTestId("three-answers-identity");
+    expect(within(identity).queryByTestId("three-answers-identity-address")).toBeNull();
+    expect(within(identity).getByTestId("three-answers-identity-lot").textContent).toBe(lotDisplay);
   });
 });
 

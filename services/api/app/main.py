@@ -38,6 +38,7 @@ from app.api.v1.parity_read import router as parity_read_v1_router
 from app.api.v1.properties import router as properties_v1_router
 from app.api.v1.proposal_checks_api import router as proposal_checks_v1_router
 from app.api.v1.proposal_validation import router as proposal_validation_v1_router
+from app.api.v1.report_read import router as report_read_v1_router
 from app.api.v1.results_read import router as results_read_v1_router
 from app.api.v1.rule_evaluation import router as rule_evaluation_v1_router
 from app.api.v1.scenario import router as scenario_v1_router
@@ -270,6 +271,14 @@ def create_app() -> FastAPI:
     # separate and off in production, so production (neither flag set) keeps the route a 404 and
     # turns no zoning computation on. See app.api.v1.results_read.
     application.include_router(results_read_v1_router)
+    # Internal, feature-flag-gated REPORT route (task M5-T151). It builds the full current-scope
+    # feasibility report as printable HTML from the SAME results document the results route emits,
+    # delegating the whole flag/gating/engine flow to app.api.v1.results_read.post_results and
+    # returning every non-200 verbatim (same 404 flag-off and same typed refusals). SAME posture as
+    # the results route - ALWAYS registered but a generic 404 unless INTERNAL_RESULTS_ENABLED is an
+    # explicit true token; absent/unknown -> disabled (fail safe). On 200 it answers text/html;
+    # charset=utf-8. Production sets no flag, so the route stays a 404. See app.api.v1.report_read.
+    application.include_router(report_read_v1_router)
     # Read-only build-info record (queue C-02, plan M1-02). Ungated like health: it returns
     # only the deployed commit SHA, API_VERSION and a fixed allowlist of flags as booleans,
     # and reads no other env var. See app.api.v1.build_info.

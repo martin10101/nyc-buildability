@@ -1,0 +1,80 @@
+{
+ "task_id": "M5-T153",
+ "material_commits": [
+  "2d055b37 (wording, report action, print script, e2e)",
+  "5eba3fbe (rework 1)",
+  "2c8f2cb5 (rework 2)",
+  "9d718679 (rework 3)",
+  "7f972796 (rework 4)",
+  "3c80637c (corrections after review (CI-1, W1 to W3))",
+  "f28d065f ([ORCH-CORRECTED per G3 delta] the moved test resolves the script with __dirname; material head)"
+ ],
+ "claim_seam_head": "876d7a2e5fcaea6fb24b51bf0b30aa76f39b97ef",
+ "files_changed": [
+  "apps/web/e2e/report-print.flag-on.spec.ts",
+  "apps/web/e2e/results.flag-on.spec.ts",
+  "apps/web/scripts/print-report-pdf.mjs",
+  "apps/web/scripts/tests/print-report-pdf.test.mjs",
+  "apps/web/src/components/architect/ResultsPanel.tsx",
+  "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+  "apps/web/src/components/architect/answers/AnswerCard.tsx",
+  "apps/web/src/components/architect/answers/BuildingOptionsComparison.tsx",
+  "apps/web/src/components/architect/answers/FirstBuildingOptions.tsx",
+  "apps/web/src/components/architect/answers/ResultDetails.tsx",
+  "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+  "apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/result-details.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/answers/three-answers.css",
+  "apps/web/src/components/architect/report/ReportPreview.tsx",
+  "apps/web/src/components/architect/report/__tests__/report-preview.test.tsx",
+  "apps/web/src/components/architect/report/report-preview.css",
+  "apps/web/src/components/architect/workspace/DashboardTools.tsx",
+  "apps/web/src/lib/__tests__/report-api.test.ts",
+  "apps/web/src/lib/architect/presented-results.ts",
+  "apps/web/src/lib/report-api.ts",
+  "project-control/reports/M5-T153-producer-report.md"
+ ],
+ "what_did_not_change": "No server file, contract or package; ReportView and the flag-off report tool unchanged.",
+ "known_limits": [
+  "The real-person ten-second test and a real screen-reader pass are not run."
+ ],
+ "checks_at_material_head": [
+  "apps/web lint 0, typecheck 0, vitest src 2641 passed, node --test scripts/tests 50 passed (browser-free) at d7444220",
+  "the whole Playwright suite at 334b07d1: 167 of 168 passed (the one failure was the new report test's loose title match, fixed in 7f972796); CI web-e2e (the whole suite) green at 7f972796; the report and results specs at f28d065f: 15 of 15"
+ ],
+ "requirements": {
+  "D-090-R894": [
+   "Each building's result, state and limitation without repeated state columns: apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx; apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx."
+  ],
+  "D-090-R895": [
+   "The one-line scheduled phrase on the card and the block: apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx, apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results.flag-on.spec.ts (passed)."
+  ],
+  "D-090-R903": [
+   "The website opens the program's report (POST /api/v1/properties/{bbl}/report with the same inputs and the address) and prints it: apps/web/src/components/architect/report/__tests__/report-preview.test.tsx, apps/web/src/lib/__tests__/report-api.test.ts, apps/web/e2e/report-print.flag-on.spec.ts (passed)."
+  ],
+  "D-090-R917": [
+   "The website's comparison follows the same rules: apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx."
+  ],
+  "D-090-R918": [
+   "Shared conditions once on the screen (SharedConditions) kept; one wording per situation."
+  ],
+  "D-090-R922": [
+   "No 'achieved' or 'no allowance left unused' renders: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx (forbidden words) and the mutation proof in the producer report."
+  ],
+  "D-090-R924": [
+   "Plain-word loading and error states with no developer text: apps/web/src/components/architect/report/__tests__/report-preview.test.tsx, apps/web/src/lib/__tests__/report-api.test.ts."
+  ],
+  "D-090-R927": [
+   "Reusable components and the shared adapter line (presented-results.ts scheduledFloorAreaLine); no hand-made sample."
+  ],
+  "D-090-R928": [
+   "The same priorities and wording on the website with expandable detail (a named disclosure): apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx; pictures print-final/desktop-*.png, phone-*.png; the walkthrough review (project-control/reports/M5-T153-G3G4.md)."
+  ],
+  "D-090-R929": [
+   "The print script prints A4 with bookmarks and tags (checked by the second test of apps/web/e2e/report-print.flag-on.spec.ts, moved out of scripts/tests so CI's browser-free job stays clean); the browser test prints the report and checks A4 pages, legibility and drawings (apps/web/e2e/report-print.flag-on.spec.ts, passed at f28d065f)."
+  ]
+ }
+}

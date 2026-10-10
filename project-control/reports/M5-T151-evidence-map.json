@@ -1,0 +1,158 @@
+{
+ "task_id": "M5-T151",
+ "material_commits": [
+  "7bf9df32 (the report generator, route, harness, contract change)",
+  "475404f1 (rework 1: twelve page findings)",
+  "8b82814f (rework 2: drawings on the route, 8 pt, labels)",
+  "a719082e (rework 3: drawings at designed size)",
+  "b0698b0d (rework 4: coverage block)",
+  "d7444220 (corrections after review (V-C1, V-C2, Q1, Q3, CODE-1); material head)"
+ ],
+ "claim_seam_head": "876d7a2e5fcaea6fb24b51bf0b30aa76f39b97ef",
+ "files_changed": [
+  "apps/web/e2e/harness/fixture_api.py",
+  "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+  "project-control/reports/M5-T151-producer-report.md",
+  "services/api/app/api/v1/report_read.py",
+  "services/api/app/drawings/report/__init__.py",
+  "services/api/app/drawings/report/builder.py",
+  "services/api/app/drawings/report/components.py",
+  "services/api/app/drawings/report/coverage.py",
+  "services/api/app/drawings/report/drawings_embed.py",
+  "services/api/app/drawings/report/formatting.py",
+  "services/api/app/drawings/report/html.py",
+  "services/api/app/drawings/report/labels.py",
+  "services/api/app/drawings/report/layout.py",
+  "services/api/app/drawings/report/options.py",
+  "services/api/app/drawings/report/page_assumptions.py",
+  "services/api/app/drawings/report/page_decision_summary.py",
+  "services/api/app/drawings/report/page_evidence.py",
+  "services/api/app/drawings/report/page_option_comparison.py",
+  "services/api/app/drawings/report/page_scenario_sheet.py",
+  "services/api/app/drawings/report/page_site_context.py",
+  "services/api/app/drawings/report/readers.py",
+  "services/api/app/drawings/report/sources.py",
+  "services/api/app/main.py",
+  "services/api/tests/api/test_report_read_api.py",
+  "services/api/tests/drawings/report/test_report_pages.py"
+ ],
+ "what_did_not_change": "No rule file, capture, contract schema, legal figure or production switch; the report computes no law and no geometry; the drawing kit and the engine are M5-T152's.",
+ "known_limits": [
+  "Context maps are not in the report: the report path does not yet fetch map data (stated in the report's coverage).",
+  "The ten-second test with a real person and a real screen-reader pass are not run (they need a person)."
+ ],
+ "checks_at_material_head": [
+  "ruff check services/api: 0",
+  "pytest tests/drawings tests/api tests/cad tests/scenario/three_answers tests/journey tests/spatial: 3600 passed, 8 skipped (pre-existing skips) at d7444220",
+  "register check, schema copy, contract validator, modularity, lane coverage, context budget: all 0 at 334b07d1",
+  "apps/web lint 0, typecheck 0, vitest src 2641 passed, node --test scripts/tests 50 passed (browser-free) at d7444220",
+  "the whole Playwright suite at 334b07d1: 167 of 168 passed (the one failure was the new report test's loose title match, fixed in 7f972796); CI web-e2e (the whole suite) green at 7f972796; the report and results specs at f28d065f: 15 of 15"
+ ],
+ "requirements": {
+  "D-090-R783": [
+   "One of the six labels per output, none Verified, the owner's definitions in the key: services/api/tests/drawings/report/test_report_pages.py: test_s8_q1_one_label_per_output_on_every_fixture, services/api/tests/drawings/report/test_report_pages.py: test_f11_evidence_inputs_label_key_and_nowrap; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), pages 1 to 6."
+  ],
+  "D-090-R786": [
+   "No option is called optimal, compliant, feasible or preferred: services/api/tests/drawings/report/test_report_pages.py: test_s3_scheduled_wording_and_no_forbidden_words; pdftotext of the printed report holds none of those words."
+  ],
+  "D-090-R893": [
+   "The site page is A4 with the drawing at its designed size and no notes column; street names drawn: services/api/tests/drawings/report/test_report_pages.py: test_d1_d2_drawings_embedded_at_designed_point_size; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), page 2."
+  ],
+  "D-090-R894": [
+   "The eleven options in one table: option, allowance, scheduled building, label, the number of a shared limitation: services/api/tests/drawings/report/test_report_pages.py: test_s5_eleven_options_shared_limitations_once; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), page 3."
+  ],
+  "D-090-R895": [
+   "'Scheduled floor area: 20,150 sq ft; site fit unverified'; no 'achieved': services/api/tests/drawings/report/test_report_pages.py: test_s3_scheduled_wording_and_no_forbidden_words, services/api/tests/drawings/report/test_report_pages.py: test_d6_every_scheduled_building_uses_one_phrase."
+  ],
+  "D-090-R897": [
+   "No contradiction about the minimum base height; coverage claims match the pages: services/api/tests/drawings/report/test_report_pages.py: test_s6_no_min_base_contradiction; the visual review's cross-page check (project-control/reports/M5-T151-G3G4.md)."
+  ],
+  "D-090-R898": [
+   "No developer information: services/api/tests/drawings/report/test_report_pages.py: test_s4_no_developer_information_benchmark; the printed text searched for developer words (none)."
+  ],
+  "D-090-R902": [
+   "The report is built around the questions, with status information stated once: services/api/tests/drawings/report/test_report_pages.py: test_s1_six_page_types_in_order; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png)."
+  ],
+  "D-090-R903": [
+   "Built in the program's report generator (services/api/app/drawings/report/, route services/api/app/api/v1/report_read.py), not a hand-made sample; the website opens it (M5-T153)."
+  ],
+  "D-090-R904": [
+   "Page titles are the four questions in order, then evidence: services/api/tests/drawings/report/test_report_pages.py: test_s1_six_page_types_in_order; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png)."
+  ],
+  "D-090-R905": [
+   "Each page leads with its answer or limitation and carries a drawing, comparison or schedule: the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), pages 1 to 4; the visual review."
+  ],
+  "D-090-R906": [
+   "Explanations sit beside their result (open items carry their detail; the lot-area condition with the allowance): services/api/tests/drawings/report/test_report_pages.py: test_f8_open_items_short_effect_and_full_reason, services/api/tests/drawings/report/test_report_pages.py: test_s7_lot_area_basis_quoted_with_result."
+  ],
+  "D-090-R907": [
+   "No figure from the competitor's study: every number comes from the results document (services/api/tests/drawings/report/test_report_pages.py: test_s9_every_number_comes_from_the_document)."
+  ],
+  "D-090-R908": [
+   "All promised sections are listed with their state in the coverage block: services/api/tests/drawings/report/test_report_pages.py: test_f10_d9_coverage_compact_block_on_decision_summary; no page-count target."
+  ],
+  "D-090-R909": [
+   "The page types were defined before the report was generated: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/page-types.md at contract time (876d7a2e), recorded in the presentation contract by 7bf9df320."
+  ],
+  "D-090-R910": [
+   "Six reusable page modules: services/api/app/drawings/report/page_decision_summary.py, page_site_context.py, page_option_comparison.py, page_scenario_sheet.py (one per worked building), page_assumptions.py, page_evidence.py; services/api/tests/drawings/report/test_report_pages.py: test_s1_two_worked_buildings_two_sheets."
+  ],
+  "D-090-R911": [
+   "The design applies to every page: the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), all six pages."
+  ],
+  "D-090-R912": [
+   "Real drawings and schedules: the measured site plan with streets and dimensions, the floor-stack section from the schedule, the floor schedule table: services/api/tests/drawings/report/test_report_pages.py: test_summary_frame_site_plan_in_decision_summary, services/api/tests/api/test_report_read_api.py: test_a1_drawings_render_on_the_route_under_the_drawing_flag."
+  ],
+  "D-090-R913": [
+   "Missing drawings are one accurate line, never invented: services/api/tests/drawings/report/test_report_pages.py: test_a9_unavailable_drawing_line_names_the_drawing, services/api/tests/drawings/report/test_report_pages.py: test_s10_partial_data_every_page."
+  ],
+  "D-090-R914": [
+   "Every page A4; nothing below 8 pt outside drawings or 7 pt in drawings: services/api/tests/drawings/report/test_report_pages.py: test_s2_page_size_furniture_and_literal_header_footer, services/api/tests/drawings/report/test_report_pages.py: test_a2_no_non_drawing_text_below_8pt, services/api/tests/drawings/report/test_report_pages.py: test_d1_d2_drawings_embedded_at_designed_point_size; pdfinfo of the printed report: 6 pages, all 594.96 x 841.92 pt."
+  ],
+  "D-090-R916": [
+   "Provenance and secondary assumptions are on the evidence and assumptions pages, not the site page: the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), pages 2, 5, 6."
+  ],
+  "D-090-R917": [
+   "Eleven options with result, state and limitation, no repeated state columns: services/api/tests/drawings/report/test_report_pages.py: test_s5_eleven_options_shared_limitations_once, services/api/tests/drawings/report/test_report_pages.py: test_f7_columns_chart_and_units."
+  ],
+  "D-090-R918": [
+   "Each shared limitation stated once: services/api/tests/drawings/report/test_report_pages.py: test_s5_eleven_options_shared_limitations_once (mutation: a limitation printed twice is caught)."
+  ],
+  "D-090-R919": [
+   "Six pages with no near-empty sheet: the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png); the decision summary and the site page on one sheet each."
+  ],
+  "D-090-R920": [
+   "The lot-area basis in the document's own words, framed with the allowance; the drawing shows the measured outline: services/api/tests/drawings/report/test_report_pages.py: test_s7_lot_area_basis_quoted_with_result; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), page 2."
+  ],
+  "D-090-R921": [
+   "No below-minimum-base-height note unless the document says so of that building: services/api/tests/drawings/report/test_report_pages.py: test_s6_no_min_base_contradiction, services/api/tests/drawings/report/test_report_pages.py: test_s6_below_min_base_only_when_document_says_so."
+  ],
+  "D-090-R922": [
+   "The scheduled phrase everywhere; none of 'achieved' or 'no allowance left unused': services/api/tests/drawings/report/test_report_pages.py: test_s3_scheduled_wording_and_no_forbidden_words, services/api/tests/drawings/report/test_report_pages.py: test_d6_every_scheduled_building_uses_one_phrase."
+  ],
+  "D-090-R923": [
+   "Context maps are not claimed: the coverage says 'Not yet in this report': services/api/tests/drawings/report/test_report_pages.py: test_s6_no_empty_maps_section_inventory_reports_maps."
+  ],
+  "D-090-R924": [
+   "No HTTP checks, field names, identifiers, owner questions or backlog words: services/api/tests/drawings/report/test_report_pages.py: test_s4_no_developer_information_benchmark, services/api/tests/drawings/report/test_report_pages.py: test_s4_no_developer_information_partial."
+  ],
+  "D-090-R925": [
+   "Sources with readable titles and law links; assumptions and uncertainty on their pages: services/api/tests/drawings/report/test_report_pages.py: test_f11_evidence_inputs_label_key_and_nowrap; the printed report of the frozen head, received by the real website from the real route and printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-final3/ (report.pdf, 6 A4 pages, tagged; page-1.png to page-6.png), page 6."
+  ],
+  "D-090-R926": [
+   "Reproducibility (revision, computed date, rule versions) in the evidence page; developer diagnostics stay in the development records (none in the report)."
+  ],
+  "D-090-R927": [
+   "The change is in the reusable templates and presentation code; the PDF is printed from the program's route output, not from a hand-written page (report-request.txt in print-final)."
+  ],
+  "D-090-R929": [
+   "The full current-scope PDF generated from the program and every page rendered and looked at by the orchestrator (prints int1 to int5, final, final3) and by the independent visual reviewer (project-control/reports/M5-T151-G3G4.md)."
+  ],
+  "D-090-R930": [
+   "The independent visual review checked legibility, overlaps, table breaks, navigation, repetition, contradictions and whether each visual answers its page, by looking at every page (project-control/reports/M5-T151-G3G4.md), besides the automated checks."
+  ],
+  "D-090-R931": [
+   "The presentation contract's dated change of 2026-10-10 (7bf9df320); the path rule and the CLAUDE.md routing row (3efdc96d0); the session handoff updated at the seam."
+  ]
+ }
+}

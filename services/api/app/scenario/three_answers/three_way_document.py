@@ -156,20 +156,19 @@ RESERVED_UNIT_ESTIMATE_REASON = (
 )
 
 FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION = (
-    "The floor stack is not known: it is worked out from the building option and the lot coverage, "
-    "and neither is known for this lot."
+    "The floor stack is not known: it needs a building fitted to the site and the lot coverage, "
+    "and neither is worked yet."
 )
 SHORTFALL_FOLLOWS_WITHHELD_BUILDING_OPTION = (
-    "The gap to the allowance is not known: it is worked out from the building option, which is "
-    "not known for this lot."
+    "The gap to the allowance is not known: it needs a building fitted to the site, and none is "
+    "fitted yet."
 )
 BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION = (
-    "The best combination is not known: it is worked out from building options, which are not "
-    "known for this lot."
+    "The best combination is not known: it needs a building fitted to the site, and none is "
+    "fitted yet."
 )
 ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION = (
-    "This gain is not known: it is worked out from building options, which are not known for this "
-    "lot."
+    "This gain is not known: it needs a building fitted to the site, and none is fitted yet."
 )
 
 # The geometry floor-plates layer wherever the first option is applied (ruling W14 c): no placement

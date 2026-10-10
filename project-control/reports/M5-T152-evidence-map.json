@@ -1,0 +1,104 @@
+{
+ "task_id": "M5-T152",
+ "material_commits": [
+  "6f11d83d (streets, report frames, floor stack, wording)",
+  "bff2ef7c (the return kept as its report)",
+  "347d5218 (rework 1)",
+  "f2320618 (report)",
+  "9f7d5dd0 (rework 2)",
+  "4e7729a5 (report)",
+  "38973bb4 (rework 3)",
+  "334b07d1 (report; material head)"
+ ],
+ "claim_seam_head": "876d7a2e5fcaea6fb24b51bf0b30aa76f39b97ef",
+ "files_changed": [
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T152-producer-report.md",
+  "services/api/app/drawings/kit/__init__.py",
+  "services/api/app/drawings/kit/furniture.py",
+  "services/api/app/drawings/kit/massing.py",
+  "services/api/app/drawings/kit/section.py",
+  "services/api/app/drawings/kit/site_plan.py",
+  "services/api/app/drawings/maps/__init__.py",
+  "services/api/app/drawings/maps/layout.py",
+  "services/api/app/drawings/maps/location_map.py",
+  "services/api/app/drawings/maps/zoning_map.py",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/building_option.py",
+  "services/api/app/scenario/three_answers/geometry.py",
+  "services/api/app/scenario/three_answers/result_way_inputs.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_all_answers_available.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_building_option_min_base_height_note_northern.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_envelope_not_available_existing_building.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_interior_lot_mixed_use.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_irregular_corner_lot_2263.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_needs_street_width_narrow_case.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_needs_street_width_wide_case.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_scope_and_notes_contract_1_2_0.site_plan.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_scope_tax_lot_only_northern.site_plan.svg",
+  "services/api/tests/drawings/kit/test_report_frame.py",
+  "services/api/tests/drawings/kit/test_report_frame_rework1.py",
+  "services/api/tests/drawings/kit/test_report_frame_rework3.py",
+  "services/api/tests/drawings/maps/test_report_frame.py",
+  "services/api/tests/scenario/three_answers/test_engine_wording_m5_t152.py",
+  "services/api/tests/scenario/three_answers/test_geometry_streets.py"
+ ],
+ "what_did_not_change": "No rule file, capture or contract schema; no legal figure, value, way or withheld state; the CAD snapshots unchanged.",
+ "known_limits": [
+  "Street frontages are carried on the evidence path only; the direct engine path and unconfirmed frontages keep streets empty (by design, nothing invented)."
+ ],
+ "checks_at_material_head": [
+  "ruff check services/api: 0",
+  "pytest tests/drawings tests/api tests/cad tests/scenario/three_answers tests/journey tests/spatial: 3600 passed, 8 skipped (pre-existing skips) at d7444220",
+  "register check, schema copy, contract validator, modularity, lane coverage, context budget: all 0 at 334b07d1"
+ ],
+ "requirements": {
+  "D-090-R795": [
+   "Drawings use the measured outline and the engine's matched frontages; the floor stack is drawn from the schedule only: services/api/tests/scenario/three_answers/test_geometry_streets.py: test_s1_streets_carry_the_engine_frontages_on_the_outline."
+  ],
+  "D-090-R893": [
+   "Street names drawn beside their frontages; no notes column in the report frame: services/api/tests/drawings/kit/test_report_frame.py: test_s2_site_plan_report_fits_a4_and_is_legible."
+  ],
+  "D-090-R896": [
+   "The drawing keeps the measured outline (no reshaping); dimensions are the outline's edges: services/api/tests/drawings/kit/test_report_frame.py; the data review (project-control/reports/M5-T152-G3G4.md)."
+  ],
+  "D-090-R912": [
+   "Real dimensions and street relationships from the spatial engine: services/api/tests/scenario/three_answers/test_geometry_streets.py: test_s1_streets_carry_the_engine_frontages_on_the_outline."
+  ],
+  "D-090-R913": [
+   "No invented street where the engine has no frontage (streets stays empty): services/api/tests/scenario/three_answers/test_geometry_streets.py."
+  ],
+  "D-090-R914": [
+   "Report frames sized for A4 with labels at least 7 pt; summary frame at most 85 mm: services/api/tests/drawings/kit/test_report_frame.py, services/api/tests/drawings/kit/test_report_frame_rework3.py."
+  ],
+  "D-090-R915": [
+   "A site composition with street names, frontage lengths and dimensions in place of a notes column: services/api/tests/drawings/kit/test_report_frame.py; the printed report, page 2."
+  ],
+  "D-090-R920": [
+   "The drawing is the measured tax-map outline, never reshaped to the recorded area; its caption names the basis."
+  ],
+  "D-090-R921": [
+   "Stale sentences saying building options are not known while a building is worked are corrected (add-on gains, best combination, shortfall, floor stack): services/api/tests/scenario/three_answers/test_engine_wording_m5_t152.py."
+  ],
+  "D-090-R922": [
+   "The engine's 'achieved' labels are now 'scheduled': services/api/tests/scenario/three_answers/test_engine_wording_m5_t152.py."
+  ],
+  "D-090-R923": [
+   "The context-map renderers gain a report frame (services/api/tests/drawings/maps/test_report_frame.py); the report does not yet fetch map data and does not claim the maps."
+  ],
+  "D-090-R924": [
+   "No field or code word in report-frame drawing text: services/api/tests/drawings/kit/test_report_frame.py."
+  ],
+  "D-090-R927": [
+   "The change is in the drawing kit and the engine, reused by the report; no hand-made drawing."
+  ]
+ }
+}

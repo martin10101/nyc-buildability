@@ -1,0 +1,216 @@
+{
+  "task_id": "M5-T151",
+  "title": "The program's report generator: the full feasibility report built on the server from the results document in six reusable page types (decision summary, site and context, option comparison, scenario sheet, assumptions and open items, calculations and evidence), A4 with running identity and page numbers, served as HTML for printing; the page types recorded in the presentation contract",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Build the program's report generator: a package that turns one results document (and, where available, the map document) into the complete current-scope report in the six page types of the orchestrator's definition, with print CSS for A4 portrait, running identity and page numbers in reserved margin boxes, tables that break cleanly, the six labels, the scheduled-area wording, all eleven options, shared limitations once, no developer information, and the drawings of M5-T152 embedded at their printed size; serve it from a flag-gated route; record the page types in the presentation contract as a dated change.",
+  "business_reason": "The owner asked for the correction to be made in the program's own report generator and templates, not in a hand-made sample (D-090 source-081). The program has no report generator for the results today; the test PDFs were assembled by hand.",
+  "inputs": [
+    "N/page-types.md (the page-type definition)",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md (sections 2, 4, 5, 6, 7, 12)",
+    "packages/contracts/schemas/v1/results.schema.json and the committed results fixtures",
+    "services/api/app/api/v1/results_read.py (the request body and gating to mirror)",
+    "services/api/app/drawings/kit and maps (read only; the report frame comes from M5-T152)",
+    "services/api/app/drawings/kit/presentation_tokens.py (the shared tokens; read only)",
+    "the v6 test report N/../session-2026-10-09a/test-pdf/test-report.html (a reference for composition only; nothing copied as a fact)"
+  ],
+  "outputs": [
+    "the report package under services/api/app/drawings/report/ (focused modules: page types, wording and labels, the option list, layout and print CSS, HTML assembly)",
+    "the route services/api/app/api/v1/report_read.py mounted in main.py",
+    "tests under services/api/tests/drawings/report/ and tests/api/test_report_read_api.py",
+    "the dated change in the presentation contract",
+    "the e2e harness serving the report"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/drawings/report",
+    "services/api/tests/drawings/report",
+    "services/api/app/api/v1/report_read.py",
+    "services/api/app/main.py",
+    "services/api/tests/api/test_report_read_api.py",
+    "apps/web/e2e/harness/fixture_api.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "project-control/reports/M5-T151-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/kit/**",
+    "services/api/app/drawings/maps/**",
+    "services/api/app/scenario/**",
+    "packages/**",
+    "apps/web/src/**",
+    "services/api/requirements*",
+    "services/api/pyproject.toml",
+    ".github/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Six page types in order",
+      "input": "the benchmark document (recorded 215-16 Northern journey); the two-building synthetic document",
+      "expected": "the report holds, in order: decision summary, site and context, option comparison, one scenario sheet per worked building, assumptions and open items, calculations and evidence; each opens with its reader question; the benchmark has one scenario sheet (building B), the two-building document two; a building that was not worked is one row of the comparison, not a sheet."
+    },
+    {
+      "id": "S2",
+      "case": "One sheet size and reserved page furniture",
+      "input": "the report's CSS",
+      "expected": "@page size A4 portrait with 14 mm margins and no other size; the running identity and 'Page X of Y' are in page-margin boxes (counter(page), counter(pages)); each page type breaks before; table header rows repeat (thead as a table-header-group); rows do not split."
+    },
+    {
+      "id": "S3",
+      "case": "Scheduled wording",
+      "input": "the benchmark document",
+      "expected": "'Scheduled floor area: 20,150 sq ft; site fit unverified' appears for building B; the visible text contains none of 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred', 'recommended' (case-insensitive), and 'Verified' appears only in the label key's definition row."
+    },
+    {
+      "id": "S4",
+      "case": "No developer information",
+      "input": "the benchmark document; the partial-data document of S10",
+      "expected": "the visible text matches none of: 'HTTP', a status code, 'endpoint', 'fixture', 'flag', 'wiring', 'backlog', 'owed', 'null', 'None', 'true', 'false', a snake_case word, 'DB-' or 'R' plus three digits or 'M' digit '-T' digit identifiers, 'question C1'/'D1'/'B6'; source references show readable titles."
+    },
+    {
+      "id": "S5",
+      "case": "Eleven options, shared limitations once",
+      "input": "the benchmark document",
+      "expected": "eleven rows in the owner-approved order (ruling X8), each with its available result, one label and its limitation or a shared limitation's number; every shared limitation sentence appears exactly once in the whole report; no column repeats the same state on every row; building A appears as not worked with the document's reason."
+    },
+    {
+      "id": "S6",
+      "case": "No contradiction",
+      "input": "the benchmark document; a document whose worked building is below the minimum base height",
+      "expected": "no text says a building is below the minimum base height unless the document says so of THAT building; statements about each building agree on every page; the coverage inventory lists the maps as included only when the map pages are present (tested with and without a map document)."
+    },
+    {
+      "id": "S7",
+      "case": "Lot-area basis",
+      "input": "the benchmark document",
+      "expected": "the site page states, in the document's own words, the recorded lot area used in the calculations and the tax-map outline the drawing shows, and that they disagree; the drawing's caption says it shows the tax-map outline; no figure is computed or retyped."
+    },
+    {
+      "id": "S8",
+      "case": "Labels",
+      "input": "every committed valid results fixture",
+      "expected": "every answer, table row, drawing caption and schedule carries exactly one of the six labels per ruling X4; none is Verified; a withheld value shows no digit."
+    },
+    {
+      "id": "S9",
+      "case": "No typed number",
+      "input": "the benchmark document",
+      "expected": "every number in the visible text, other than page numbers and dates, equals a number in the results document or the map document after formatting (the test extracts and compares); the expected figures are read from the document, never retyped."
+    },
+    {
+      "id": "S10",
+      "case": "Partial data",
+      "input": "a document with geometry not available, no worked building and every answer withheld; no map document",
+      "expected": "every page type still appears with a short accurate limitation line, no blank sheet, no exception, no invented drawing; the site page says the outline is not available."
+    },
+    {
+      "id": "S11",
+      "case": "Escaping",
+      "input": "a document whose strings hold '<script>', '&' and quotes",
+      "expected": "all are escaped; the report holds no script element and no event attribute."
+    },
+    {
+      "id": "S12",
+      "case": "The route",
+      "input": "POST /api/v1/properties/{bbl}/report with the results body; flags off; flags on; a body for another lot",
+      "expected": "the same gating and refusals as the results route (flag off -> the results route's fail-safe status); flag on -> 200 text/html for the benchmark pack in the e2e harness; nothing cached across properties."
+    },
+    {
+      "id": "S13",
+      "case": "The contract records the page types",
+      "input": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+      "expected": "a dated change entry above the adopted brief (2026-10-10, D-090 source-081, rows R900 to R933) holding the page-type definition text of N/page-types.md word for word, and the report's code paths; the adopted brief below its marker is unchanged byte for byte."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "visual-quality-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The kit's report frame is built in parallel (M5-T152): the report embeds it through the interface of ruling X9 and is checked after integration.",
+    "Margin boxes and repeated table headers behave differently across print engines: the CSS keeps to features both a browser and a server converter support, and the orchestrator checks the printed PDF.",
+    "The results document carries some figures only inside sentences: the report quotes the sentence rather than extracting or retyping the figure."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T07:36:28.759982+00:00",
+  "updated_at": "2026-10-10T11:24:12.673164+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R783",
+        "D-090-R786",
+        "D-090-R893",
+        "D-090-R894",
+        "D-090-R895",
+        "D-090-R897",
+        "D-090-R898",
+        "D-090-R902",
+        "D-090-R903",
+        "D-090-R904",
+        "D-090-R905",
+        "D-090-R906",
+        "D-090-R907",
+        "D-090-R908",
+        "D-090-R909",
+        "D-090-R910",
+        "D-090-R911",
+        "D-090-R912",
+        "D-090-R913",
+        "D-090-R914",
+        "D-090-R916",
+        "D-090-R917",
+        "D-090-R918",
+        "D-090-R919",
+        "D-090-R920",
+        "D-090-R921",
+        "D-090-R922",
+        "D-090-R923",
+        "D-090-R924",
+        "D-090-R925",
+        "D-090-R926",
+        "D-090-R927",
+        "D-090-R929",
+        "D-090-R930",
+        "D-090-R931"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T07:36:28.760164+00:00",
+  "path_notes": "ONE builder (backend-engineer). The report package is split into focused modules (modularity policy): one module per page type, plus wording and labels, the option list, layout and print CSS, and HTML assembly. Drawing embedding is tested against M5-T152's interface after integration; until then the tests that need the report frame are written and marked to run once the frame exists, and say so.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 21 (they govern; later over earlier). X1: three tasks on ONE branch (task/wave21-report-redesign), reviewed at ONE head, merged as ONE pull request. M5-T151 (the report generator), M5-T152 (the drawings for the report and the engine's wording) and M5-T153 (the website) are built side by side by three builders on disjoint files; the orchestrator integrates, prints the PDF, runs the browser tests and starts the reviews. X2: the program's report is HTML built on the server from the results document in services/api/app/drawings/report/, printed by a browser engine. A4 portrait with 14 mm margins on every sheet (question D1 is open; A4 meanwhile); no other sheet size. No new package of any kind (question B6, the converter, is open); no template engine; the Python standard library's html escaping. X3: the page types are those of /root/project/lanes-runtime/owner-docs/session-2026-10-10a/page-types.md (the orchestrator's definition, recorded in the presentation contract by M5-T151); a page type starts a new sheet; tables repeat header rows; a normal row never splits; a heading stays with its first row; body 9.5 pt, table text and captions at least 8 pt, drawing labels at least 7 pt at the printed size; nothing is shrunk to fit. X4: six labels (rows R779 to R799), one per output; nothing is labelled Verified (question C1 open). Mapping from the document: a settled value -> Provisional; a conditional value or a worked building whose way is conditional -> Conditional; a withheld value whose gap is missing information -> Unresolved; a withheld value or a result awaiting a rule, a check or a calculation not yet made -> Pending verification; a drawing derived from a schedule with no placement on the lot -> Illustrative; the preliminary apartment estimate -> Provisional; site fit and anything listed as not checked -> Pending verification. X5: wording. A floor schedule whose placement and site fit are not established reads 'Scheduled floor area: N sq ft; site fit unverified' (N from the document). Never used for a result, anywhere in the report or on the website: 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred', 'recommended'. A shared limitation is stated ONCE and referred to by its number. X6: the report carries no developer information: no HTTP checks or status codes, implementation notes, field or key names (snake_case words), internal identifiers (task, requirement, backlog or question numbers), owner-question references, development backlog words ('wiring', 'flag', 'endpoint', 'fixture', 'not encoded in this slice', 'owed'). Sources carry readable titles; reproducibility detail (revision, rule versions, source references) is in the evidence page type. X7: no number is typed in presentation code. Every figure comes from the results document (or the map document) and is only formatted; the presentation groups and orders what the document says and computes no law and no geometry; a missing value stays missing with a short accurate limitation line, never a number, never a block of prose, never an invented shape. X8: the eleven development options are listed in the owner-approved order (D-090 rows R539 and R551; docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md section 4, row 1): 1 Standard residences; 2 Qualifying affordable housing; 3 Qualifying senior housing; 4 More, smaller apartments; 5 Ground-floor shops with residences above; 6 Residences with a community facility; 7 A community facility alone; 8 A split lot with two buildings; 9 Shared housing; 10 Shared housing with the parking waiver; 11 All programs combined. Each row reads its result from the document block that holds it (1: the worked buildings; 2, 3, 5, 6: the matching add-on gain; 11: the best combination; any option with no block: one shared limitation line saying the program does not yet work that option). The list is presentation data held in ONE place in the report package. X9: interfaces between the tasks. (a) M5-T152 adds a keyword-only argument frame: str = 'sheet' to render_site_plan and render_massing in app.drawings.kit and to render_location_map and render_zoning_map in app.drawings.maps; frame='report' returns a Drawing for the report: no notes column, legend reduced to what is drawn, sized to at most 182 mm wide by 150 mm high, every label at least 7 pt at that size; the default frame keeps today's output byte-identical. (b) M5-T152 adds render_floor_stack(alternative: Mapping, *, frame: str = 'report', env=None) -> Drawing | Unavailable in app.drawings.kit, drawing one worked building's floor schedule as a section (storey bands, floor-to-floor and top heights, the minimum base height line where the document gives it), from the schedule only. (c) A Drawing's SVG text and its caption, notes and attribution are read as the kit already exposes them; M5-T151 places notes and attribution in the evidence page type. (d) M5-T151 serves POST /api/v1/properties/{bbl}/report with the SAME request body and the same gating as the results route, answering text/html; charset=utf-8 (the whole report, standalone, no script); M5-T153 calls it with the same inputs the results form sends. X10: builders never start Next, uvicorn, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests and prints the PDF. A builder who finds that a file outside its allowed paths must change STOPS and reports. X11: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere; the standing label (ADR-007, rows R164 and R165) appears once in the report, compactly. ",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings/report tests/api/test_report_read_api.py tests/api/test_results_read_api.py",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T07:36:39.589895+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-10T11:11:06.456556+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built, four page-review rounds, corrected after review; G3 and G4 PASS; delta attestations carry; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-10T11:24:12.673032+00:00"
+}

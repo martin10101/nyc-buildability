@@ -26,6 +26,7 @@ import {
 } from "./ResultsForm";
 import { FailureNoticeCard } from "./workspace/DashboardFailureNotice";
 import { referenceRow, type DashboardFailureNoticeModel } from "./workspace/dashboard-failure";
+import { ReportPreview } from "./report/ReportPreview";
 import "./results-panel.css";
 
 const RETRY_SAFE = "The property you entered is fine. Trying again is safe.";
@@ -242,11 +243,14 @@ export function resultsAnnouncement(
 
 export interface ResultsPanelProps {
   bbl: string;
+  /** The property's street address, as the dashboard already shows it. Passed to the report action
+   * so the report carries it (scenario S9); absent when no confirmed address is known. */
+  address?: string;
   /** Injection point for tests; defaults to the global fetch (the live path). */
   fetchImpl?: typeof fetch;
 }
 
-export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
+export function ResultsPanel({ bbl, address, fetchImpl }: ResultsPanelProps) {
   const [values, setValues] = useState<ResultsFormValues>(INITIAL_VALUES);
   const [heightError, setHeightError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -310,6 +314,13 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
     setEditing(true);
     pendingFormFocus.current = true;
   }, []);
+
+  // The report action sends the SAME inputs the results form sends (scenario S4). Built from the
+  // current form values; a refused height yields no body, so the report cannot be created until the
+  // field is fixed. When these inputs change after a report has loaded, ReportPreview marks the
+  // shown report out of date and disables printing until it is reloaded.
+  const currentRequest = buildRequest(values);
+  const reportBody = currentRequest.ok ? currentRequest.body : null;
 
   const showingDocument = !busy && outcome?.kind === "success";
   // Ruling V11 (10): a document whose identity names a different lot than the one requested is not
@@ -379,10 +390,12 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
           <AnotherLotCard onAskAgain={submit} />
         ) : (
           <div className="results-document" data-testid="results-document">
-            <ThreeAnswersPanel results={outcome.document} showDraftValues />
+            <ThreeAnswersPanel results={outcome.document} showDraftValues address={address} />
           </div>
         )
       ) : null}
+
+      <ReportPreview bbl={bbl} request={reportBody} address={address} fetchImpl={fetchImpl} />
     </section>
   );
 }

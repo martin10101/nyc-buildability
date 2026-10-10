@@ -3,7 +3,7 @@ import {
   type BuildingOptionsComparisonView,
   type ComparisonColumn,
 } from "@/lib/architect/first-building-options";
-import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 
 /**
  * One comparison of the step-P6 method's buildings, side by side (M5-T149 part B; presentation
@@ -22,7 +22,7 @@ import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
 
 /** The lead: the buildings are shown together, and none is preferred (question A2 open, row R894). */
 const COMPARISON_LEAD =
-  "The method's buildings, side by side on the same measures. None is preferred, and none is checked against where it would sit on the lot.";
+  "The method's buildings, side by side on the same measures. None is ranked ahead of the others, and none is checked against where it would sit on the lot.";
 
 /** The comparison's metric rows, in one fixed order with one unit each — the SAME rows for every
  * building (row R894). A not-worked building reads the one not-known wording in each cell. */
@@ -106,8 +106,10 @@ export function BuildingOptionsComparison({ view }: { view: BuildingOptionsCompa
   );
 }
 
-/** One building's summary: a worked building lists its measures under "Site fit not verified"; a
- * not-worked building reads the one not-known wording with its reason (never 0, never empty). */
+/** One building's summary: a worked building leads with the SAME one-line scheduled phrase the rest
+ * of the screen uses ("Scheduled floor area: N sq ft; site fit unverified" — one wording per
+ * situation), then its other measures; a not-worked building reads the one not-known wording with
+ * its reason (never 0, never empty). */
 function ComparisonSummary({ column }: { column: ComparisonColumn }) {
   if (column.kind === "not_worked") {
     return (
@@ -129,8 +131,11 @@ function ComparisonSummary({ column }: { column: ComparisonColumn }) {
       <h5 className="bo-compare-summary-label" data-testid="comparison-summary-label">
         {column.label}
       </h5>
+      {/* One wording per situation (rework 4 corrections, W1): the scheduled area and its site-fit
+          caveat read as the SAME one-line phrase used across the screen — never a separate
+          "Site fit not verified" note beside a duplicate "Scheduled area" row. */}
       <p className="bo-compare-site-fit" data-testid="comparison-summary-site-fit">
-        {SITE_FIT_NOT_VERIFIED}
+        {scheduledFloorAreaLine(column.scheduledArea)}
       </p>
       <dl className="bo-compare-summary-metrics">
         <div className="bo-row">
@@ -140,10 +145,6 @@ function ComparisonSummary({ column }: { column: ComparisonColumn }) {
         <div className="bo-row">
           <dt>Height</dt>
           <dd>{column.height}</dd>
-        </div>
-        <div className="bo-row">
-          <dt>Scheduled area</dt>
-          <dd>{column.scheduledArea}</dd>
         </div>
         <div className="bo-row">
           <dt>Plan per storey</dt>

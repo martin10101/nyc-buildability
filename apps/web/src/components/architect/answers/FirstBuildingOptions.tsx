@@ -7,19 +7,22 @@ import type {
   FloorRowView,
 } from "@/lib/architect/first-building-options";
 import { APARTMENT_SIZE_BASIS_NOTE, storeyText } from "@/lib/architect/first-building-options";
-import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { BuildingOptionsComparison } from "./BuildingOptionsComparison";
+import { ResultDetails } from "./ResultDetails";
 import "./building-options.css";
 
 /**
  * The first-building-options section (results contract 1.4.0; M5-T146 / M5-T147 / M5-T149 part B;
  * rulings V2/V5/V8, W1–W5; rows R894/R895; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R688). It
  * reads the view built by firstBuildingOptionsView and shows, from the document and never from a
- * typed value: each worked building FIRST as "Building option: Site fit not verified", then its
- * "Scheduled area" — NEVER "achieved", and never "no allowance left unused" (row R895) — so the
- * site-fit distinction is clear before the reader reaches the caveats; then what was NOT checked, its
- * way (the 'Conditional' marker and each condition on its own line), its floor schedule as a table,
- * and its own preliminary capacity estimate under the owner's label. Below the buildings comes one
+ * typed value: each worked building leads with the SAME one-line phrase the rest of the screen uses,
+ * "Scheduled floor area: N sq ft; site fit unverified" — NEVER "achieved", and never "no allowance
+ * left unused" (rows R895/R922, scenario S1) — so the answer and its site-fit caveat read together
+ * before the reader reaches the detail; then, behind a named disclosure (R928 expandable detail), the
+ * conditions (the 'Conditional' marker + "Applies: Condition N"), its floor schedule as a table, what
+ * was NOT checked, and its own preliminary capacity estimate under the owner's label. Below the
+ * buildings comes one
  * comparison of the method's buildings (row R894), then coverage by portion — withheld with NO
  * figure, or its figures when available. Nothing is called feasible; a withheld result carries no
  * number and no substitute (R556/R570). The state is told by the WORDS, never by colour alone.
@@ -38,7 +41,7 @@ const NOT_KNOWN = "Not known";
  * (ruling W15): a lead about worked shapes ONLY when at least one building is worked; otherwise a
  * plain statement that no shape was worked, so the not-worked reasons below carry the explanation. */
 const LEAD_WORKED =
-  "Draft building shapes worked from the floor-area allowance. None is preferred, and none is checked against where it would sit on the lot.";
+  "Draft building shapes worked from the floor-area allowance. None is ranked ahead of the others, and none is checked against where it would sit on the lot.";
 const LEAD_NONE_WORKED =
   "No building shape could be worked for this lot at these inputs. For each building of the method, why:";
 
@@ -101,14 +104,11 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
       <h4 className="ta-option-label" data-testid="building-alternative-label">
         {view.label}
       </h4>
-      {/* The site-fit distinction FIRST, before any caveat (row R895): a floor schedule whose
-          placement and site fit are not established is never "achieved". */}
-      <p className="ta-option-site-fit" data-testid="building-alternative-site-fit">
-        Building option: {SITE_FIT_NOT_VERIFIED}
-      </p>
-      {/* The value: the scheduled area, read from the document; never "no allowance left unused". */}
+      {/* The answer AND its limitation on ONE line, the same phrase the report uses (ruling X5,
+          scenario S1): "Scheduled floor area: 20,150 sq ft; site fit unverified". The figure is read
+          from the document; never "achieved", never "no allowance left unused" (row R895). */}
       <p className="ta-option-scheduled" data-testid="building-alternative-scheduled">
-        Scheduled area: {view.totalFloorArea}
+        {scheduledFloorAreaLine(view.totalFloorArea)}
       </p>
       <p className="ta-option-summary" data-testid="building-alternative-summary">
         {storeyText(view.storeyCount)} · {view.height}
@@ -118,24 +118,31 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
           {view.fitNote}
         </p>
       ) : null}
-      {view.isConditional ? <AppliesConditions refs={view.conditionRefs} /> : null}
       {view.isWithheld && view.withheldReason !== null ? (
         <p className="ta-withheld-reason" data-testid="building-alternative-withheld">
           {NOT_KNOWN} — {view.withheldReason}
         </p>
       ) : null}
-      <FloorScheduleTable rows={view.floorSchedule} />
-      <div className="ta-option-not-checked" data-testid="building-alternative-not-checked">
-        <p className="ta-option-not-checked-heading">Not checked for this option:</p>
-        <ul className="ta-option-not-checked-list">
-          {view.notChecked.map((item, index) => (
-            <li key={`${index}-${item}`} data-testid="building-alternative-not-checked-item">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <CapacityBlock view={view.capacity} />
+      {/* Supporting detail opens from a disclosure (ruling R928 "expandable supporting detail",
+          scenario S3): the conditions this shape rests on, its floor schedule, what was not checked
+          and its preliminary capacity estimate. The first view keeps the answer and its limitation;
+          the detail stays in the DOM (ResultDetails uses the `hidden` attribute) so assistive tech
+          and in-page search still reach it. The disclosure carries an accessible name. */}
+      <ResultDetails name={`${view.label} — conditions and floor schedule`}>
+        {view.isConditional ? <AppliesConditions refs={view.conditionRefs} /> : null}
+        <FloorScheduleTable rows={view.floorSchedule} />
+        <div className="ta-option-not-checked" data-testid="building-alternative-not-checked">
+          <p className="ta-option-not-checked-heading">Not checked for this option:</p>
+          <ul className="ta-option-not-checked-list">
+            {view.notChecked.map((item, index) => (
+              <li key={`${index}-${item}`} data-testid="building-alternative-not-checked-item">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <CapacityBlock view={view.capacity} />
+      </ResultDetails>
     </section>
   );
 }

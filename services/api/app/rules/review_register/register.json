@@ -3090,7 +3090,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/geometry.py",
-          "sha256": "09cb7072807c0e5194900ccfa33a77ad289e26c9144619b7a2bd19d9702ed52c"
+          "sha256": "9f43f9f30019194f8d83d473b7fed328fdaad316bf70877cd68c668964a60d13"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3101,7 +3101,7 @@
           "sha256": "8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83"
         }
       ],
-      "code_identity_sha256": "34494afc68e6c10d85ef6fcf02a66420ab31d1c19f26133c250fd3de698c6cc1",
+      "code_identity_sha256": "0125e46ac41fea6d50dde5e5096bb27eb955813492c51ec7913fba6168cae927",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The by-portion lot coverage a corner lot takes: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. Reported through the emitter by how the recorded lot area and the tax-map outline area compare - available with its figures where they agree, withheld where they disagree (the benchmark lot), and withheld (the outline not available) where the lot's tax-map outline is missing.",
@@ -3151,7 +3151,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
         "tested_on": "2026-10-10",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3163,7 +3163,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 6,
+      "revision": 7,
       "last_changed": "2026-10-10",
       "human_review": {
         "decision": null,
@@ -3255,7 +3255,7 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/building_option.py",
-          "sha256": "57ce8a88deede0edb505a63188082fd27dadc37b6eda5ac0de051619465789b1"
+          "sha256": "892812c49f3ff80458bd69f152f229d4f233359701994cd9dea1019e68a0455b"
         },
         {
           "path": "services/api/app/scenario/three_answers/result_ways.py",
@@ -3266,7 +3266,7 @@
           "sha256": "f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62"
         }
       ],
-      "code_identity_sha256": "75a5d04d794f4feb5392aa6e28acac6da6582300cfe0af44b226d4f378fa1a98",
+      "code_identity_sha256": "860aac8ab365bd660eba205537ebb7edf6e98175f0afc32c246046611c929a5c",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate to the height limit and caps at the floor-area allowance, with a partial top floor. The single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional) on every path where the floor-area allowance is shown, and building A is listed where the two lot areas agree.",
@@ -3342,7 +3342,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "423aa189fdb8fd7f16aead0dfec3af50e5bcbd66",
         "tested_on": "2026-10-09",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3354,7 +3354,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 6,
+      "revision": 7,
       "last_changed": "2026-10-09",
       "human_review": {
         "decision": null,
@@ -3641,14 +3641,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "1ebe1225f29971154411f5d1c139caed3aa92c3c000edfe3773497de715c416c"
+          "sha256": "003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "9b1a85a7dc90864bad1b4f796d69e55502d8c8370088995d190b23db98c38be2",
+      "code_identity_sha256": "64dc8306dcf1e7dd32135800359257baeeb7f2e758f25d04ff6f08c6ada5d1c1",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -3702,7 +3702,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
         "tested_on": "2026-10-10",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3714,7 +3714,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 7,
+      "revision": 9,
       "last_changed": "2026-10-10",
       "human_review": {
         "decision": null,
@@ -3841,7 +3841,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "1ebe1225f29971154411f5d1c139caed3aa92c3c000edfe3773497de715c416c"
+          "sha256": "003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3860,7 +3860,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "2ed063ce11573a720d5d508d659c364b760387b63abf46b48ebd7cc391854de2",
+      "code_identity_sha256": "9d78119686d169efb7052662e2b26e6872844f511b5bfc26a42bc5419ecc9326",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3951,7 +3951,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
         "tested_on": "2026-10-10",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3963,7 +3963,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 7,
+      "revision": 9,
       "last_changed": "2026-10-10",
       "human_review": {
         "decision": null,
@@ -4482,6 +4482,60 @@
       "event": "implementation_changed",
       "summary": "implementation_changed: three_way_document.py changed (M5-T150: the lot-outline-available signal; the measured lot outline the engine drew is kept, a rectangle never shown), so the code module, combined code identity, test commit and counts are resynced; the first-building-option behaviour is unchanged.",
       "by": "M5-T150 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 33,
+      "date": "2026-10-10",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 7,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: geometry.py changed (M5-T152: the street frontages the spatial engine matches are carried into geometry.streets, drawn with their names); the code module, combined code identity and the recorded automated-test run are resynced. The lot-coverage-by-portion calculation is unchanged.",
+      "by": "M5-T152 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 34,
+      "date": "2026-10-10",
+      "entry_id": "calc-building-option-floor-stack",
+      "revision": 7,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: building_option.py changed (M5-T152: the floor-area value label reads 'scheduled', never 'achieved'); the code module, combined code identity and the recorded automated-test run are resynced. The building-option floor-stack calculation is unchanged.",
+      "by": "M5-T152 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 35,
+      "date": "2026-10-10",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 8,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T152: an add-on gain's reason states a building must be fitted to the site and none is yet, never that building options are not known while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
+      "by": "M5-T152 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 36,
+      "date": "2026-10-10",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 8,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T152: an add-on gain's reason states a building must be fitted to the site and none is yet, never that building options are not known while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
+      "by": "M5-T152 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 37,
+      "date": "2026-10-10",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 9,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T152 rework 2: the shortfall, best-combination and floor-stack 'follows withheld building option' reasons name the missing site fit and no longer say a building option is not known for this lot while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
+      "by": "M5-T152 rework 2 (geospatial-engineer, an AI agent)"
+    },
+    {
+      "seq": 38,
+      "date": "2026-10-10",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 9,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T152 rework 2: the shortfall, best-combination and floor-stack 'follows withheld building option' reasons name the missing site fit and no longer say a building option is not known for this lot while a building is worked); the code module, combined code identity and the recorded automated-test run are resynced. The calculation is unchanged.",
+      "by": "M5-T152 rework 2 (geospatial-engineer, an AI agent)"
     }
   ],
   "coverage_gaps": [
