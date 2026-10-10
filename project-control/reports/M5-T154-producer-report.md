@@ -151,3 +151,35 @@ in that file changed, as a second commit on top of 962a21a2.
   (the connector raises; the provider demotes that one layer to not_available) — the rest of the
   map still draws. The benchmark window has none.
 - No server was started; ports 3000/3001/8000 untouched (Y12). Nothing is labelled Verified (Y13).
+
+
+---
+
+RETURN AFTER SCOPE CORRECTION 1 (saved unchanged by the orchestrator):
+
+Done, as an AI agent, in the same worktree on top of 962a21a2.
+
+New commit: `c8361c760f878f1f6df41b536ca54d48e6a30eda` — parent `962a21a27afd28787e9914cb32c3b94aa7b9607e`. Tree clean.
+
+Changes: `services/api/tests/contracts/test_map_context_contract.py` only — the two named consumer assertions (valid count 4→5 and the INVALID set gains `street_mapped_width_not_a_number.json`; version enum `["1.0.0","1.1.0"]`), docstring counts kept consistent, nothing else. Diff: +6 / −4 (10 lines) in that file; +5 lines in the producer report.
+
+Suite (lanes venv, direct exit): `ruff check .` passed; `pytest tests/connectors tests/contracts tests/api tests/spatial tests/drawings/maps` → 3545 passed, 4 skipped, EXIT 0.
+
+END-OF-REPORT
+
+
+---
+
+CORRECTIONS RETURN, after the review wave (saved unchanged by the orchestrator):
+
+M5-T154 corrections done (AI agent), one commit on 9b72bb4c.
+
+Commit: `b7c077a48c9cb22e2f574bbf9772ecba19755afc` — parent `9b72bb4c46cd73f9fdb242cd651b05a28b180b76`. Tree clean.
+
+FIXES: (1) switch-off test now uses counting spies and asserts zero calls on every fetcher; (2) window-pack integrity tests added to tests/connectors/test_mappluto_window_arcgis.py (SHA-256 per recording, MANIFEST == on-disk, README + `* -text` .gitattributes present) — no new file, no STOP needed; (3) `_pack_url_map` refuses any MANIFEST entry escaping its pack folder (`_resolve_inside`), with a parametrized test (`../`, `sub/`, absolute).
+
+MUTATION (scratch copy): removed the live-flag gate → the switch-off test FAILED (PYTEST_RC 1) → caught.
+
+CHECKS (lanes venv, direct exit): ruff check . = 0; pytest tests/connectors tests/contracts tests/api tests/spatial = 0 (3474 passed); validate_contracts.py = 0 (0 failures); modularity_check --check = 0; check_lane_paths --coverage = 0 (9952 files).
+
+END-OF-REPORT
