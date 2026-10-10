@@ -128,15 +128,15 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "visual-quality-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The kit's report frame is built in parallel (M5-T152): the report embeds it through the interface of ruling X9 and is checked after integration.",
     "Margin boxes and repeated table headers behave differently across print engines: the CSS keeps to features both a browser and a server converter support, and the orchestrator checks the printed PDF.",
@@ -144,7 +144,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-10T07:36:28.759982+00:00",
-  "updated_at": "2026-10-10T07:36:29.096015+00:00",
+  "updated_at": "2026-10-10T07:36:39.590031+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -194,5 +194,14 @@
     "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings/report tests/api/test_report_read_api.py tests/api/test_results_read_api.py",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T07:36:39.589895+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    }
+  ]
 }
