@@ -326,7 +326,9 @@ def open_items(results: Mapping) -> list[dict]:
 
     basis = lot_area_basis(results)
     if basis:
-        put("lot_area", "Recorded lot area", basis,
+        # The full lot-area condition sentence is stated once, on the Site and
+        # context page; the open item points to it rather than repeating it (V-C2).
+        put("lot_area", "Recorded lot area", "See Site and context for the lot-area basis.",
             "A survey or deed that confirms the lot area.", labels.CONDITIONAL)
     for name in ANSWER_NAMES:
         for row in withheld_values(answer_block(results, name)):
@@ -403,18 +405,27 @@ def lot_area_basis(results: Mapping) -> str | None:
 
 
 def apartment_estimate_text(estimate: object) -> str | None:
-    """The preliminary apartment estimate as a plain range, from the document's
-    own whole-number range and apartment size. No percentage is computed."""
+    """The preliminary apartment estimate with the assumptions that make it
+    reconcile (V-C1): the document's whole-number range, its usable-share
+    sensitivity range (D-090 R540) and its chosen starting apartment size on the
+    HPD basis (D-090 R541). Every figure comes from the document; none is retyped
+    and no percentage is computed."""
     if not isinstance(estimate, Mapping):
         return None
     low = formatting.format_int_commas(estimate.get("whole_below_low"))
     high = formatting.format_int_commas(estimate.get("whole_above_high"))
     size = formatting.format_int_commas(estimate.get("apartment_size_sqft"))
+    share_low = formatting.format_int_commas(estimate.get("share_low"))
+    share_high = formatting.format_int_commas(estimate.get("share_high"))
     if low is None or high is None:
         return None
     text = f"about {low} to {high} apartments"
+    if share_low is not None and share_high is not None:
+        text += (f", using {share_low} to {share_high} of the floor area inside apartments "
+                 "as an unvalidated sensitivity range")
     if size is not None:
-        text += f", assuming about {size} sq ft per apartment"
+        text += (f", and a chosen starting apartment size of {size} sq ft "
+                 "measured as HPD measures an apartment")
     return text
 
 

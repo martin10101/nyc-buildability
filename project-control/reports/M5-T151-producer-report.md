@@ -179,3 +179,13 @@ Base `a719082efe312d2b13c2859840a7f99f12ab6565`.
 - D10 the floor-stack section keeps ONE caption - the report's own "Floor-stack section (Illustrative): drawn from the schedule only, with no placement on the lot." (with the Illustrative label). The drawing's own in-SVG caption is dropped by M5-T152 in the report frame; no report change was needed to keep one caption, and the single-caption test (test_f4) still holds.
 - D11 this section.
 Checks (rework 4): ruff 0; pytest 173 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html; the report is 6 page types for the benchmark.
+
+## Corrections after review (all reviewers PASS; two required + three advisories)
+
+Base `7f972796604ee8cc2207983413cd94f56acab0d5`.
+- V-C1 (required) the apartment estimate now states its usable-share assumption so the range reconciles: "using 0.60 to 0.75 of the floor area inside apartments as an unvalidated sensitivity range, and a chosen starting apartment size of 700 sq ft measured as HPD measures an apartment" (D-090 R540, R541; share and size read from the capacity-estimate fields, never retyped). It is the one estimate line on pages 1 and 4.
+- V-C2 (required) the two long sentences are stated once: the lot-area condition on the Site and context page (the open item points to it, "See Site and context for the lot-area basis."); the lot-coverage-by-portion sentence as the open item's detail on the assumptions page (the page-2 constraint cell is a short "Not a single figure; by portion (see item N)"). A test asserts no long prose sentence from the document is printed twice, allowing only the estimate line (on pages 1 and 4).
+- Q1 the S8 test now checks every answer value, option row, open-item row, constraint row and the drawing caption carries exactly one of the six labels, on every committed fixture, and that every rendered label chip is one of the six.
+- Q3 a with-map-document case: when a map document's maps render, the coverage says context maps are "In this report" and the maps appear on the Site and context page; without, it stays "Not yet". The route builds no map document, so it keeps "Not yet" (no empty section).
+- CODE-1 the comparison bar's fill comes from the shared presentation tokens (COLOR["action"]), not a literal colour.
+Checks: ruff 0; pytest 177 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html.

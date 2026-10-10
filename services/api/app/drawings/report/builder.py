@@ -61,12 +61,22 @@ def build_report_html(
         "render_site_plan", results, env=env,
         not_available_line="The site plan is not available for this report.",
     )
-    # Context maps are not shown in the report on this path (no map document is
-    # built), so there is no maps section and no maps sheet (F3); the coverage
-    # inventory reports them as not in the report.
+    # Context maps are shown ONLY when a map document is given AND the maps render
+    # (Q3); otherwise there is no maps section (no empty sheet, F3) and the coverage
+    # block reports them as not yet in the report. The route builds no map document.
+    location_map = (
+        drawings_embed.embed_map("render_location_map", map_context, env=env)
+        if isinstance(map_context, Mapping) else None
+    )
+    zoning_map = (
+        drawings_embed.embed_map("render_zoning_map", map_context, env=env)
+        if isinstance(map_context, Mapping) else None
+    )
+    maps = [m for m in (zoning_map, location_map) if m is not None and m.is_drawing]
+    maps_present = bool(maps)
     pages = [
-        page_decision_summary.render(results, ident, env=env),
-        page_site_context.render(results, ident, site_plan=site_plan, env=env),
+        page_decision_summary.render(results, ident, maps_present=maps_present, env=env),
+        page_site_context.render(results, ident, site_plan=site_plan, maps=maps, env=env),
         page_option_comparison.render(results, ident, env=env),
         page_scenario_sheet.render(results, ident, env=env),
         page_assumptions.render(results, ident, env=env),

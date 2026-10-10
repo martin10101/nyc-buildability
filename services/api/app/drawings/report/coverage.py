@@ -52,8 +52,9 @@ FURTHER_SECTIONS = (
 )
 
 
-def coverage_entries(results: Mapping) -> list[dict]:
-    """Every section with its state, a short note and whether it is owner-held."""
+def coverage_entries(results: Mapping, *, maps_present: bool = False) -> list[dict]:
+    """Every section with its state, a short note and whether it is owner-held.
+    Context maps read 'In this report' when a map document rendered (Q3)."""
     worked = readers.worked_buildings(results)
     n_worked = len(worked)
     has_schedule = any(b.get("floor_schedule") for b in worked)
@@ -82,18 +83,20 @@ def coverage_entries(results: Mapping) -> list[dict]:
         state, note = states[letter]
         entries.append({"name": name, "state": state, "note": note, "held": False})
     for name, state, note, held in FURTHER_SECTIONS:
+        if name == "Context maps" and maps_present:
+            state, note = IN_REPORT, ""
         entries.append({"name": name, "state": state, "note": note, "held": held})
     return entries
 
 
-def coverage_groups(results: Mapping) -> list[tuple[str, list[str]]]:
+def coverage_groups(results: Mapping, *, maps_present: bool = False) -> list[tuple[str, list[str]]]:
     """The coverage grouped by state, as at most a few compact lines (D9):
     'In this report' as plain names; 'Partly' with each short note; 'Not yet'
     (any 'Not yet …' state) as names, the owner-held one marked 'held'."""
     in_report: list[str] = []
     partly: list[str] = []
     not_yet: list[str] = []
-    for entry in coverage_entries(results):
+    for entry in coverage_entries(results, maps_present=maps_present):
         name, state, note = entry["name"], entry["state"], entry["note"]
         if state == IN_REPORT:
             in_report.append(name)

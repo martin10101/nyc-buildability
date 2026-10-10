@@ -146,11 +146,11 @@ def _open_items(results: Mapping) -> raw:
     return el("div", el("h3", "Most important open items"), el("ul", *items), class_="open-items")
 
 
-def _coverage_block(results: Mapping) -> raw:
+def _coverage_block(results: Mapping, maps_present: bool) -> raw:
     """A compact 'What this report covers' block grouped by state (D9), at most a
     few lines; it replaces the coverage table that was on the assumptions page."""
     lines = []
-    for label, names in coverage.coverage_groups(results):
+    for label, names in coverage.coverage_groups(results, maps_present=maps_present):
         lines.append(
             el("p", raw(f"<strong>{escape(label)}:</strong> {escape('; '.join(names))}"),
                class_="coverage-line")
@@ -158,7 +158,7 @@ def _coverage_block(results: Mapping) -> raw:
     return el("div", el("h3", "What this report covers"), *lines, class_="coverage")
 
 
-def render(results: Mapping, ident: Mapping, *, env=None) -> str:
+def render(results: Mapping, ident: Mapping, *, maps_present: bool = False, env=None) -> str:
     worked = readers.worked_buildings(results)
     children = [
         _property_heading(ident),
@@ -170,5 +170,5 @@ def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     if estimate is not None:
         children.append(estimate)
     children.append(_open_items(results))
-    children.append(_coverage_block(results))
+    children.append(_coverage_block(results, maps_present))
     return str(el("section", *children, class_="report-page", id="decision-summary"))

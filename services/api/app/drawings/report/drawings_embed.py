@@ -17,6 +17,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from xml.sax.saxutils import escape as _xml_escape
 
+from app.drawings.kit.presentation_tokens import COLOR
+
 __all__ = [
     "Embedded",
     "allowance_bar_chart_svg",
@@ -200,8 +202,9 @@ def _bar(y: int, track: float, name: str, value_text: str, value: float, scale: 
     name_s = _xml_escape(name)
     value_s = _xml_escape(value_text)
     # font-size in viewBox units (points): at least 7 so it prints legibly (D2).
+    fill = COLOR["action"]
     return (
         f'<text x="0" y="{y + 9}" font-size="8">{name_s}</text>'
-        f'<rect x="150" y="{y}" width="{width:.1f}" height="12" fill="#18577A"></rect>'
+        f'<rect x="150" y="{y}" width="{width:.1f}" height="12" fill="{fill}"></rect>'
         f'<text x="{150 + width + 5:.1f}" y="{y + 9}" font-size="8">{value_s}</text>'
     )

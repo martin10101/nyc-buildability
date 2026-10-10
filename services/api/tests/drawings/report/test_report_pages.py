@@ -258,19 +258,42 @@ def test_f6_one_coverage_row_in_constraints() -> None:
     assert "Not shown" not in visible_text(site)  # states are named, never bare "Not shown"
 
 
-# =========================================================================== S8
+# =========================================================================== S8 / Q1
 ALL_FIXTURES = [p.stem for p in sorted(_FIXTURES.glob("*.json"))]
 SIX_LABELS = ("Provisional", "Illustrative", "Conditional", "Pending verification", "Unresolved")
+ALL_SIX = ("Verified", *SIX_LABELS)
 
 
 @pytest.mark.parametrize("name", ALL_FIXTURES)
-def test_s8_labels_on_every_fixture(name: str) -> None:
+def test_s8_q1_one_label_per_output_on_every_fixture(name: str) -> None:
     doc = load_results(name)
-    text = visible_text(build_report_html(doc))
+    html = build_report_html(doc)
+    text = visible_text(html)
     assert text.count("Verified") <= 1
     assert any(label in text for label in SIX_LABELS)
-    for row in readers.withheld_values(readers.answer_block(doc, "permitted_envelope")):
-        assert row["status_label"] in ("Unresolved", "Pending verification")
+    # Q1: every answer value, option row, open-item row and constraint (withheld)
+    # row carries exactly one of the six labels.
+    for option in options.option_rows(doc):
+        assert option["status_label"] in ALL_SIX
+    for item in readers.open_items(doc):
+        assert item["status_label"] in ALL_SIX
+    for name_ in readers.ANSWER_NAMES:
+        block = readers.answer_block(doc, name_)
+        for value in readers.present_values(block):
+            assert value["status_label"] in ALL_SIX
+        for withheld in readers.withheld_values(block):
+            assert withheld["status_label"] in ("Unresolved", "Pending verification")
+    for building in (*readers.worked_buildings(doc), *readers.not_worked_buildings(doc)):
+        assert building["status_label"] in ALL_SIX
+    # every rendered label chip is one of the six (no stray label).
+    for chip in re.findall(r'class="label-chip">([^<]*)<', html):
+        assert chip in ALL_SIX, f"stray label chip: {chip!r}"
+
+
+def test_q1_drawing_caption_carries_a_label() -> None:
+    # the floor-stack caption (a drawing caption) carries the Illustrative label.
+    text = visible_text(build_report_html(benchmark(), env=_LANE_E))
+    assert "Floor-stack section (Illustrative)" in text
 
 
 # =========================================================================== S9
@@ -462,6 +485,90 @@ def test_d6_every_scheduled_building_uses_one_phrase() -> None:
     area = readers.worked_buildings(doc)[0]["scheduled_display"]
     assert f"Scheduled floor area: {area} sq ft; site fit unverified" in text
     assert f"scheduled {area} sq ft" not in text  # no abbreviated mention
+
+
+# =========================================================================== V-C1
+def test_vc1_apartment_estimate_states_its_usable_share() -> None:
+    doc = benchmark()
+    text = visible_text(build_report_html(doc, env=_LANE_E))
+    estimate = readers.apartment_estimate_text(doc["building_alternatives"][0]["capacity_estimate"])
+    # the share range (0.60 to 0.75) and the HPD size are stated so the range reconciles.
+    assert "0.60 to 0.75 of the floor area inside apartments" in estimate
+    assert "unvalidated sensitivity range" in estimate
+    assert "chosen starting apartment size of 700 sq ft measured as HPD" in estimate
+    assert estimate in text
+
+
+# =========================================================================== V-C2
+# Prose fields in the results document (not metric labels, which legitimately
+# recur as table row names): the long sentences a report must state once.
+_PROSE_KEYS = {"reason", "statement", "assumption", "settled_by", "resolved_by"}
+
+
+def _long_document_sentences(obj, out: set[str], key: str | None = None) -> None:
+    if isinstance(obj, str):
+        normalized = " ".join(obj.split())
+        if key in _PROSE_KEYS and len(normalized) >= 60:
+            out.add(normalized)
+    elif isinstance(obj, dict):
+        for name, value in obj.items():
+            _long_document_sentences(value, out, name)
+    elif isinstance(obj, list):
+        for value in obj:
+            _long_document_sentences(value, out, key)
+
+
+def test_vc2_no_long_document_sentence_printed_twice() -> None:
+    doc = benchmark()
+    text = " ".join(visible_text(build_report_html(doc)).split()).lower()
+    sentences: set[str] = set()
+    _long_document_sentences(doc, sentences)
+    for sentence in sentences:
+        # case-normalized so the lot-area condition (quoted after "holds if …") matches.
+        assert text.count(sentence.lower()) <= 1, (
+            f"document sentence printed twice: {sentence[:70]!r}"
+        )
+    # the two sentences the review flagged each appear once; the lot-area item points away.
+    assert text.count("by portion the law allows up to 100 percent coverage") == 1
+    assert text.count("if the recorded lot area of 10,075 sq ft is confirmed") == 1
+    assert "see site and context for the lot-area basis." in text
+    # the estimate line (composed; carried on pages 1 and 4) is the allowed repeat.
+    estimate = readers.apartment_estimate_text(doc["building_alternatives"][0]["capacity_estimate"])
+    assert text.count(estimate.lower()) == 2
+
+
+# =========================================================================== Q3
+class _FakeMap:
+    def __init__(self) -> None:
+        self.svg = '<svg viewBox="0 0 120 90"></svg>'
+        self.caption = "Zoning map"
+        self.notes = ()
+        self.attribution = "DCP"
+
+
+def _fake_map_render(_doc, *, frame: str = "report", env=None):
+    return _FakeMap()
+
+
+def test_q3_coverage_and_maps_with_and_without_a_map_document(monkeypatch) -> None:
+    doc = benchmark()
+    from app.drawings.report import coverage
+
+    # without a map document: context maps are Not yet, and no maps section.
+    without = build_report_html(doc)
+    groups_without = dict(coverage.coverage_groups(doc, maps_present=False))
+    assert "Context maps" in groups_without["Not yet"]
+    assert "Context maps" not in visible_text(without[without.index('id="site-and-context"'):])
+
+    # with a map document whose maps render: context maps are In this report, and shown.
+    monkeypatch.setattr("app.drawings.maps.render_location_map", _fake_map_render, raising=False)
+    monkeypatch.setattr("app.drawings.maps.render_zoning_map", _fake_map_render, raising=False)
+    with_maps = build_report_html(doc, map_context={"map_context": {"zoning_districts": {}}})
+    groups_with = dict(coverage.coverage_groups(doc, maps_present=True))
+    assert "Context maps" in groups_with["In this report"]
+    start = with_maps.index('id="site-and-context"')
+    site = with_maps[start:with_maps.index('id="option-comparison"')]
+    assert "Context maps" in visible_text(site) and "<svg" in site
 
 
 # =============================================== drawing frame (ruling X9); run once integrated

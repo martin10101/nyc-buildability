@@ -33,14 +33,6 @@ def _lot_area_basis(results: Mapping) -> object:
     return el("div", *children)
 
 
-def _by_portion_sentence(reason: str | None) -> str:
-    text = str(reason or "")
-    marker = "By portion"
-    if marker in text:
-        return text[text.index(marker):].strip()
-    return "The square-foot coverage figure is withheld."
-
-
 def _constraint_rows(results: Mapping, item_number: dict) -> list[list[object]]:
     rows: list[list[object]] = []
     env = readers.answer_block(results, "permitted_envelope")
@@ -64,10 +56,11 @@ def _constraint_rows(results: Mapping, item_number: dict) -> list[list[object]]:
 
     coverage = results.get("coverage_by_portion")
     if isinstance(coverage, Mapping) and coverage.get("status") == "withheld":
-        sentence = _by_portion_sentence(coverage.get("reason"))
+        # The full by-portion sentence is stated once, as the open item's detail on
+        # the assumptions page; this cell is a short state that points to it (V-C2).
         rows.append([
             coverage.get("label") or "Maximum lot coverage",
-            f"{sentence} The square-foot figure is withheld.{see('coverage')}",
+            f"Not a single figure; by portion{see('coverage')}",
             label_chip(labels.UNRESOLVED),
         ])
     rows.append(["Street wall", "Not checked" + see("street_wall"),
@@ -85,7 +78,21 @@ def _site_outline(results: Mapping, site_plan: Embedded) -> object:
     return figure(site_plan, "")
 
 
-def render(results: Mapping, ident: Mapping, *, site_plan: Embedded, env=None) -> str:
+def _maps(maps: list[Embedded]) -> list[object]:
+    """A context-maps section ONLY when a map document rendered (Q3); no empty
+    section otherwise."""
+    if not maps:
+        return []
+    out: list[object] = [el("h3", "Context maps")]
+    for drawing in maps:
+        out.append(figure(drawing, drawing.caption or "Context map"))
+    return out
+
+
+def render(
+    results: Mapping, ident: Mapping, *, site_plan: Embedded,
+    maps: list[Embedded] | None = None, env=None,
+) -> str:
     item_number = {item["category"]: item["number"] for item in readers.open_items(results)}
     children = [
         el("p", "Site and context", class_="type-name"),
@@ -98,5 +105,6 @@ def render(results: Mapping, ident: Mapping, *, site_plan: Embedded, env=None) -
             _constraint_rows(results, item_number),
             caption="Zoning constraints for this lot",
         ),
+        *_maps(maps or []),
     ]
     return str(el("section", *children, class_="report-page", id="site-and-context"))
