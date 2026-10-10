@@ -1,0 +1,149 @@
+{
+  "task_id": "M5-T154",
+  "title": "The map data around the lot for the report: neighbouring lots, building footprints and named street centre lines in a window around the lot, as map document 1.1.0, with a report provider and a recorded benchmark pack (D-090 source-082)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Fetch and record what surrounds a lot so the report can draw it: a new window query for neighbouring tax lots (sibling module of the MapPLUTO geometry connector, which is not changed), the existing building-footprint window query, and the existing Digital City Map street centre-line window query; extend the map document builder and schema to 1.1.0 (ruling Y2); add the report's map-context provider (ruling Y4); record the benchmark lot's windows once (ruling Y11).",
+  "business_reason": "The owner: the report's site drawing is a lone outline with 'no reference to where he is' (D-090 source-082, rows R936 and R937). The report route fetches no map data today (DB-222).",
+  "inputs": [
+    "services/api/app/connectors/mappluto_geometry_arcgis.py (import only)",
+    "services/api/app/connectors/building_footprints_arcgis.py (fetch_context_buildings)",
+    "services/api/app/connectors/dcm_street_centerline_geometry.py (fetch_street_segment_geometries)",
+    "services/api/app/contracts/map_context.py; packages/contracts/schemas/v1/map_context.schema.json",
+    "services/api/app/spatial/site_geometry/live_streets.py (how the street window is fetched today)",
+    "services/api/tests/fixtures/benchmark_215_16_northern/ (the lot's recorded pack)",
+    "N/plan-wave22.md"
+  ],
+  "outputs": [
+    "app/connectors/mappluto_window_arcgis.py",
+    "map document 1.1.0 (builder, both schema copies, one valid and one invalid example)",
+    "app/api/v1/report_context.py",
+    "the recorded window pack and its replay helper",
+    "the tests of S1 to S8"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/connectors/mappluto_window_arcgis.py",
+    "services/api/app/contracts/map_context.py",
+    "packages/contracts/schemas/v1/map_context.schema.json",
+    "services/api/app/_contract_schemas/v1/map_context.schema.json",
+    "packages/contracts/fixtures/valid/map_context",
+    "packages/contracts/fixtures/invalid/map_context",
+    "services/api/app/api/v1/report_context.py",
+    "services/api/tests/fixtures/benchmark_215_16_northern_window",
+    "services/api/tests/spatial/_northern_window_replay.py",
+    "services/api/tests/connectors/test_mappluto_window_arcgis.py",
+    "services/api/tests/contracts/test_map_context_window.py",
+    "services/api/tests/api/test_report_context_provider.py",
+    "project-control/reports/M5-T154-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/requirements*",
+    "services/api/pyproject.toml",
+    ".github/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "services/api/app/rules/rulesets/**",
+    "services/api/app/scenario/**",
+    "services/api/app/connectors/mappluto_geometry_arcgis.py",
+    "services/api/app/connectors/building_footprints_arcgis.py",
+    "services/api/app/connectors/dcm_street_centerline_arcgis.py",
+    "services/api/app/drawings/**",
+    "services/api/app/api/v1/report_read.py",
+    "apps/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Neighbouring lots in a window",
+      "input": "the recorded MapPLUTO window response for the benchmark lot's bounding box plus 400 ft",
+      "expected": "every lot whose outline meets the window is returned once with its BBL and outline in EPSG:2263; the subject lot is not among them; the request asks only for the object id, BBL, block, lot, address and version fields (never an owner name); the request URL equals the MANIFEST's byte for byte."
+    },
+    {
+      "id": "S2",
+      "case": "The connector refuses bad answers",
+      "input": "replayed responses with a wrong CRS, an ArcGIS error object, a paging fault, a malformed ring",
+      "expected": "each is refused with the connector's typed error; no partial result is returned."
+    },
+    {
+      "id": "S3",
+      "case": "Map document 1.1.0",
+      "input": "the benchmark pack through the builder",
+      "expected": "a schema-valid 1.1.0 document with context_window, tax_lots, building_footprints and streets as ruling Y2; every outline and path is an input geometry unchanged; every 1.0.0 example in the repository still validates."
+    },
+    {
+      "id": "S4",
+      "case": "Street widths",
+      "input": "width texts '60', '100', '60-75', '<=75', '' and a missing width",
+      "expected": "mapped_width_ft is 60, 100, null, null, null, null; width_text keeps the source text."
+    },
+    {
+      "id": "S5",
+      "case": "Provider gating",
+      "input": "the provider with LIVE_SPATIAL_PROVIDER_ENABLED off; on with replayed fetchers; on with one fetcher refusing",
+      "expected": "off gives None and makes no call; on gives the document; a refusing fetcher makes only that layer layer_unavailable with its reason; nothing raises; no network in tests."
+    },
+    {
+      "id": "S6",
+      "case": "Recorded pack",
+      "input": "services/api/tests/fixtures/benchmark_215_16_northern_window/",
+      "expected": "MANIFEST, README and the three recordings (lots and footprints for plus 400 ft, street centre lines for plus 1,000 ft) with request URLs, retrieval times and SHA-256 digests that match the files; .gitattributes keeps them byte-exact."
+    },
+    {
+      "id": "S7",
+      "case": "Independent check of the window",
+      "input": "the recorded lots",
+      "expected": "lot 1 (BBL 4073340001) is a neighbour sharing the 99.98 ft line with the subject lot within 0.01 ft; the streets layer names Northern Boulevard, 215 Place and 215 Street with mapped widths 100, 60 and 60."
+    },
+    {
+      "id": "S8",
+      "case": "Harness binding",
+      "input": "the provider bound to the recorded pack folder with only the app package importable",
+      "expected": "it returns the same document as S3."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The live services may page or throttle the window query: the recording uses the connectors' interactive caps and the tests replay only.",
+    "MapPLUTO lots meeting the window may include a condominium base lot or a lot split across the window edge: entries keep the source outline unchanged."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T18:56:09.656444+00:00",
+  "updated_at": "2026-10-10T18:56:10.061672+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R843",
+        "D-090-R936",
+        "D-090-R937"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T18:56:09.656676+00:00",
+  "path_notes": "ONE builder (geospatial-engineer). The parent MapPLUTO, footprint and street connectors are imported, never changed (two are near the 1,000-line limit; one is in the size baseline).\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 22 (they govern; later over earlier). Y1: three tasks on ONE branch (task/wave22-site-context), reviewed at ONE head, merged as ONE pull request. M5-T154 (the map data) and M5-T155 (the drawings) are built side by side against the document shape of Y2 and the interfaces of Y3 and Y4. M5-T156 (the report) is built after both are integrated on the branch; its builder starts then. Y2: the map document becomes contract_version 1.1.0; every 1.0.0 document stays valid unchanged. 1.1.0 adds three OPTIONAL members to map_context: (a) 'context_window': {xmin, ymin, xmax, ymax}, finite numbers in the document's CRS (EPSG:2263, US survey feet), the box the building footprints and the neighbouring lots were fetched for (the lot's bounding box plus 400 ft); (b) 'tax_lots': a layer_unavailable object or {status: 'available', entries: [{bbl, address (optional non-empty string), outline: polygon}], attribution, provenance}; the subject lot is never an entry; no owner name or any personal field is requested or stored; (c) 'streets': a layer_unavailable object or {status: 'available', window: {xmin, ymin, xmax, ymax} (the lot's bounding box plus 1,000 ft), entries: [{name, width_text (string or null, the source text unchanged), mapped_width_ft (number or null: a number only when width_text is one plain number such as '60' or '100'; '60-75', '<=75' or any other text gives null, D-052), paths: [line]}], attribution, provenance}, where line is an array of at least two points. Polygons, points, layer_unavailable and provenance reuse the schema's existing definitions. Only keywords the contract validator knows are used. Y3: drawing interfaces (M5-T155), exported from app.drawings.maps like render_location_map: render_site_context_plan(context, *, frame='sheet') -> Drawing | Unavailable: the lot among its surroundings, about 80 ft around the lot at a standard scale; render_block_map(context, *, frame='sheet'): the close-up of the block, the whole context_window; render_neighbourhood_map(context, *, frame='sheet'): the street network of the streets window with street names, the lot marked. frame='report' gives the report frame of wave 21 (no notes column; at most 182 mm by 150 mm; every text at least 7 pt at the printed size; legend only for what is drawn; attribution and notes returned to the caller for the caption). A drawing whose needed layer is not available returns Unavailable with its reason; it never draws a partial picture that looks complete. Y4: data interface (M5-T154), in app/api/v1/report_context.py: a provider (bbl, correlation_id) -> a schema-valid 1.1.0 map document or None, and the FastAPI dependency get_report_map_context_provider. The live binding runs only when LIVE_SPATIAL_PROVIDER_ENABLED is on and never raises: a connector refusal makes that layer layer_unavailable; no subject outline gives None. The assembly takes injectable fetch functions, and the module offers an entry point that binds the provider to a recorded pack folder, so the browser-test harness can use the recorded pack with only the app package on the Python path. Y5: one outline. The map document's subject outline is the measurement-grade MapPLUTO outline (EPSG:2263). The report (M5-T156) uses the surroundings only when that outline, shifted by its own minimum x and y, equals the results document's lot outline within 0.01 ft at every vertex; otherwise it drops the surroundings and prints one limitation line. Two outlines are never drawn together. Y6: drawings compute no law. No yard, corner area, setback, coverage portion or building position is drawn: the engine does not produce them yet. Street areas are the space between the tax lots inside the window, labelled with the name of the street centre line that runs through them, and '<n> ft mapped width' only where mapped_width_ft is a number. The site plan's caption says plainly that street areas are drawn from the gaps between tax lots and that nothing is surveyed. Edge lengths of the lot are drawing measures of the outline. North arrow: grid north. Y7: every map and plan caption names its sources and their dates in plain words (from attribution and provenance: the source's last-edited date or version), e.g. 'Sources: NYC Department of City Planning, MapPLUTO 26v2; NYC building footprints, edited <date>; Digital City Map street centre lines, edited <date>'. No URL, field name or code word in the visible text (wave-21 ruling X6). Y8: the building is not placed (D-090 R939). Until the engine places it, the site plan and the scenario sheet print the results document's own reason (/geometry/floor_plates/reason), e.g. 'No building is placed on this plan yet: <reason>'. No footprint, no outline of a building and no 3D view is drawn. Y9: no street photo (D-090 R940, R551). No picture, empty frame or wording that suggests a photo. The location sheet's figure grid can take a third figure later without a redesign. Y10: page structure (M5-T156). Page type 2 'Site and context' opens with a sheet titled 'Where is the lot?' holding the neighbourhood map and the block close-up, each with its caption; then the existing sheet 'What constrains the design?' with the site plan among its surroundings and the constraints. Page type 1's small site figure becomes the report frame of the site context plan when it is available. The page-type list stays at six; M5-T156 records the change in docs/design/ARCHITECT_PRESENTATION_CONTRACT.md as a dated change entry citing D-090 rows R936 to R940. The report's scope list moves 'Context maps' to what the report covers only when they are printed; 'Aerial and street photographs' stays under 'Not yet'. Y11: recording. M5-T154's builder may make the recording requests ONCE: keyless GET requests to the official ArcGIS services the project's connectors already use (MapPLUTO, building footprints, Digital City Map street centre lines), for the benchmark lot's windows only; each response is kept byte-exact with its request URL and SHA-256 in the pack's MANIFEST; the tests only replay; no other network call; no key, account or email address. Y12: builders never start Next, uvicorn, Playwright or any server and never touch ports 3000, 3001 or 8000; the orchestrator runs the browser tests and prints the PDF. A builder who finds that a file outside its allowed paths must change STOPS and reports it. No new package (shapely 2.0.7 is already pinned). Y13: nothing is called feasible, compliant, verified, optimal or preferred; labels follow the six-label mapping of wave 21 (ruling X4); nothing is labelled Verified.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/connectors tests/contracts tests/api/test_report_context_provider.py tests/spatial tests/drawings/maps",
+    "python .github/scripts/validate_contracts.py && python -m pytest -q .github/scripts/tests",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 940,
  "producer": "orchestrator",
- "updated_at": "2026-10-10T18:42:30+00:00",
+ "updated_at": "2026-10-10T18:56:14+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -18858,7 +18858,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -28480,7 +28481,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T154",
+     "M5-T155",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -30082,7 +30086,8 @@
     "task_ids": [
      "D-090-BOOTSTRAP",
      "M5-T151",
-     "M5-T152"
+     "M5-T152",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -31080,7 +31085,8 @@
     "task_ids": [
      "D-090-BOOTSTRAP",
      "M5-T151",
-     "M5-T152"
+     "M5-T152",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -31500,7 +31506,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T154",
+     "M5-T155",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -31531,7 +31540,10 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T154",
+     "M5-T155",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -31562,7 +31574,9 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T155",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -31593,7 +31607,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
@@ -31624,7 +31639,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-090-BOOTSTRAP"
+     "D-090-BOOTSTRAP",
+     "M5-T156"
     ],
     "task_types": [],
     "milestones": [],
