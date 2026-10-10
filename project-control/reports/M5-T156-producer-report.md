@@ -80,3 +80,23 @@ CHECKS (lanes venv, direct exit codes):
 
 Files changed (all in allowed paths): report/{builder,drawings_embed,layout,page_decision_summary,page_evidence,page_location,page_scenario_sheet,page_site_context,readers,sources}.py + new report/map_caption.py; tests/api/test_report_read_context.py; tests/drawings/report/test_location_sheet.py; report-print.flag-on.spec.ts; ARCHITECT_PRESENTATION_CONTRACT.md. (fixture_api.py and report_read.py from my first commit were already correct in the base head.)
 END-OF-REPORT
+
+
+---
+
+REWORK 2 RETURN (saved unchanged by the orchestrator):
+
+M5-T156 REWORK 2 complete. I am an AI agent (backend-engineer).
+
+COMMIT: 1de64504e8902b55339d371f7b64dbbc9deaa3df  PARENT: fd63367ffd67d62c4b245551d96a1950d789c56e. Clean tree. No report file written.
+
+PAGE COUNT: 8 A4 pages (rendered file:// via headless Chromium; pdftotext -bbox confirms max glyph x=555.7pt, content edge ~555.6, zero glyphs beyond the page — no caption runs off, FIX 1).
+PAGE 1 (decision summary): property, the three answers, and the compact site plan beside them with a SHORT caption that wraps inside its bounded 88mm column; apartment estimate, open items, coverage — all on one page.
+PAGE 2 ("Where is the lot?"): the full-width neighbourhood map on top (its own title, legend, north arrow, scale bar), then the compact block close-up in the left half with both captions (sources + notes) in the right half. Fits and fills one page; no empty frame; the full-size site plan stays only on "What constrains the design?" (FIX 2).
+
+Note: the true unscaled layout is 8 pages (the earlier 7 was Chromium shrinking the doc to absorb the off-page caption — the very FIX-1 defect). Page 8 is a 4-row status-key continuation with a repeating header (allowed).
+
+CHECKS (lanes venv, direct exit codes): ruff check . exit 0; pytest -q tests/drawings tests/api tests/contracts tests/journey 2814 passed/6 skipped exit 0; tools/modularity_check.py --check exit 0; scripts/lanes/check_lane_paths.py --coverage PASS exit 0.
+
+Files (all allowed): layout.py, page_location.py, page_decision_summary.py, test_location_sheet.py, report-print.flag-on.spec.ts, ARCHITECT_PRESENTATION_CONTRACT.md.
+END-OF-REPORT
