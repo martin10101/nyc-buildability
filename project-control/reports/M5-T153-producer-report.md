@@ -136,4 +136,41 @@ scope and change its two building_option assertions (lines ~90–91). I did not 
 
 REQUESTED STATUS: awaiting_gate (G2 self-check / G3 / G4; the two e2e specs and the full PDF render are
 the orchestrator's to run per ruling X10).
+
+## Rework 1 (reset to integrated head 1fbc856cb7b64ed15717e0e0b9023b17c1ed3cb5; scope now includes
+`__tests__/results-panel.test.tsx`; scenarios S8, S9)
+
+- **G1 (S8) — one wording for a scheduled building across the WHOLE screen.** The compact
+  building-option card (`AnswerCard.tsx` `BuildingOptionCard`, scheduled branch) now renders the same
+  adapter line as the building-options block: `scheduledFloorAreaLine(view.scheduledArea)` →
+  "Scheduled floor area: 20,150 sq ft; site fit unverified". Removed the wave-20 pair
+  (`SCHEDULED_AREA_LABEL` "Scheduled area" + `SITE_FIT_NOT_VERIFIED` "Site fit not verified", both now
+  deleted from AnswerCard; the `answer-site-fit` element is gone). It renders nowhere for a scheduled
+  building. Assertions changed:
+  - `__tests__/results-panel.test.tsx` (W-2 loop, building_option branch): `toContain("Scheduled area")`
+    + `toContain("Site fit not verified")` → `toContain("Scheduled floor area:")` +
+    `toContain("site fit unverified")` + `not.toContain("Site fit not verified")`.
+  - `answers/__tests__/three-answers-panel.test.tsx` S13: `answer-scheduled-area` now
+    `.toBe(scheduledFloorAreaLine(quantityText(displayQuantity(...))))`; the `answer-site-fit`
+    assertion → `queryByTestId("answer-site-fit")` is null + `not.toContain("Site fit not verified")`;
+    the no-worked case `not.toContain("Scheduled area")` → `not.toContain("Scheduled floor area")`.
+  - `answers/__tests__/journey-215-16-northern.test.tsx`: same two changes (one-line phrase;
+    `answer-site-fit` null).
+- **G2 (S9) — the street address reaches the report.** `report-api.ts`: new `sanitizeReportAddress`
+  (trim → strip to `[A-Za-z0-9 \-.,'#/&]` → cap 120 → trim; empty → null) and `fetchReport` adds
+  `?address=<encodeURIComponent(sanitized)>` when present, else no parameter (`FetchReportOptions.address`).
+  `ReportPreview` takes an `address?` prop and passes it; `ResultsPanel` takes `address?` and passes it
+  to `ReportPreview`; `DashboardTools` passes the property's street label `address?.label` to both the
+  Results panel and the report tool. Tests: report-api S9 block (with address → encoded query; without
+  → no param; over-long 200-char → decoded length 120; `sanitizeReportAddress` unit) and a ReportPreview
+  test (address prop → request `?address=`).
+
+### Rework 1 checks (apps/web, direct exit codes)
+
+- `npm run lint` → EXIT 0 (same 2 pre-existing warnings, untouched files).
+- `npm run typecheck` → EXIT 0.
+- `npx vitest run src/components/architect src/lib` → EXIT 0; 112 files, 2289 tests passed.
+- `node --test scripts/tests/print-report-pdf.test.mjs` → EXIT 0; 4/4 (unchanged script).
+- root `python3 tools/modularity_check.py --check` → EXIT 0 (no file of mine flagged).
+
 END-OF-REPORT

@@ -1,6 +1,7 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { displayQuantity, quantityText, type Results } from "@/lib/architect/three-answers";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { loadResultsFixture } from "@/test-support/results-fixtures";
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
 
@@ -131,10 +132,12 @@ describe("journey cards leg: 215-16 Northern recorded-data (D-090-R137)", () => 
     if (!alternative) throw new Error("fixture changed: the journey must list a building");
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const card = screen.getByTestId("answer-building_option");
+    // S8: one wording across the screen — the compact card reads the report's one-line phrase.
     expect(within(card).getByTestId("answer-scheduled-area").textContent).toBe(
-      quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet")),
+      scheduledFloorAreaLine(quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet"))),
     );
-    expect(within(card).getByTestId("answer-site-fit").textContent).toBe("Site fit not verified");
+    expect(within(card).queryByTestId("answer-site-fit")).toBeNull();
+    expect(card.textContent ?? "").not.toContain("Site fit not verified");
     expect(card.textContent ?? "").not.toContain("Not available");
     expect(card.textContent ?? "").not.toContain("shown below");
     expect(card.textContent ?? "").not.toMatch(SNAKE_CASE);

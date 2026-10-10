@@ -85,10 +85,13 @@ describe("ResultsPanel — W-2: every value equals the returned document (nothin
       const answer = doc.answers[key];
       const cardEl = screen.getByTestId(`answer-${key}`);
       if (key === "building_option") {
-        // Ruling V11 (2): the journey lists building B, so the card reads "Scheduled area: …" with
-        // "Site fit not verified" ahead of any caveat, never "Not available" or "shown below".
-        expect(cardEl.textContent).toContain("Scheduled area");
-        expect(cardEl.textContent).toContain("Site fit not verified");
+        // S8 (M5-T153 rework 1): one wording across the whole screen — the journey lists building B,
+        // so the compact card reads the report's one-line phrase
+        // "Scheduled floor area: … sq ft; site fit unverified", the same adapter line as the block.
+        // The wave-20 pair "Scheduled area" / "Site fit not verified" no longer renders on the card.
+        expect(cardEl.textContent).toContain("Scheduled floor area:");
+        expect(cardEl.textContent).toContain("site fit unverified");
+        expect(cardEl.textContent).not.toContain("Site fit not verified");
         expect(cardEl.textContent).not.toContain("Not available");
         expect(cardEl.textContent).not.toContain("shown below");
         continue;

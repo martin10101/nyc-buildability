@@ -102,6 +102,22 @@ describe("ReportPreview — the report action (controlled mode)", () => {
     expect(screen.getByTestId("report-create").textContent).toBe("Update report");
   });
 
+  it("S9: passes the property's street address to the report request when it has one", async () => {
+    const fetchImpl = vi.fn(async () => htmlResponse(REPORT_HTML));
+    render(
+      <ReportPreview
+        bbl={BBL}
+        request={STANDARD}
+        address="215-16 Northern Boulevard, Queens"
+        fetchImpl={fetchImpl as unknown as typeof fetch}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("report-create"));
+    await screen.findByTestId("report-frame");
+    const url = (fetchImpl.mock.calls[0] as unknown as [string])[0];
+    expect(new URL(url).searchParams.get("address")).toBe("215-16 Northern Boulevard, Queens");
+  });
+
   it("disables Create when the current inputs are not valid (no body to send)", () => {
     render(<ReportPreview bbl={BBL} request={null} fetchImpl={stub(htmlResponse(REPORT_HTML))} />);
     expect(screen.getByTestId("report-create")).toBeDisabled();

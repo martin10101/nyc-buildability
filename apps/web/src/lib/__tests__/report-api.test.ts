@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchReport, type ReportRequestBody } from "@/lib/report-api";
+import { fetchReport, sanitizeReportAddress, type ReportRequestBody } from "@/lib/report-api";
 
 /**
  * M5-T153 scenario S4 [WIRING]: the report client POSTs the SAME body the results form sends to the
@@ -103,5 +103,44 @@ describe("fetchReport — the report route's answers route to one plain state [W
     });
     expect(outcome.kind).toBe("aborted");
     expect(fetchImpl).not.toHaveBeenCalled();
+  });
+});
+
+describe("fetchReport — the optional street address query parameter (S9)", () => {
+  it("carries the street address as ?address=<encoded> when the website knows it", async () => {
+    const fetchImpl = vi.fn(async () => htmlResponse(REPORT_HTML));
+    await fetchReport(BBL, BODY, {
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+      address: "215-16 Northern Boulevard, Queens",
+    });
+    const url = (fetchImpl.mock.calls[0] as unknown as [string])[0];
+    expect(url).toContain(`/${BBL}/report?address=`);
+    expect(new URL(url).searchParams.get("address")).toBe("215-16 Northern Boulevard, Queens");
+  });
+
+  it("sends no parameter when no address is known", async () => {
+    const fetchImpl = vi.fn(async () => htmlResponse(REPORT_HTML));
+    await fetchReport(BBL, BODY, { fetchImpl: fetchImpl as unknown as typeof fetch });
+    const url = (fetchImpl.mock.calls[0] as unknown as [string])[0];
+    expect(url).toContain(`/${BBL}/report`);
+    expect(url).not.toContain("?address=");
+  });
+
+  it("trims, strips and caps an over-long or dirty address to the server's rule", async () => {
+    const fetchImpl = vi.fn(async () => htmlResponse(REPORT_HTML));
+    const overLong = `  ${"A".repeat(200)}  `;
+    await fetchReport(BBL, BODY, { fetchImpl: fetchImpl as unknown as typeof fetch, address: overLong });
+    const url = (fetchImpl.mock.calls[0] as unknown as [string])[0];
+    expect((new URL(url).searchParams.get("address") ?? "").length).toBe(120);
+  });
+
+  it("sanitizeReportAddress trims, strips disallowed characters, caps to 120, and empties to null", () => {
+    expect(sanitizeReportAddress("  215-16 Northern Blvd, Queens  ")).toBe("215-16 Northern Blvd, Queens");
+    expect(sanitizeReportAddress("12 Main St* (Apt 4!)")).toBe("12 Main St Apt 4");
+    expect((sanitizeReportAddress("A".repeat(200)) ?? "").length).toBe(120);
+    expect(sanitizeReportAddress("")).toBeNull();
+    expect(sanitizeReportAddress("   ")).toBeNull();
+    expect(sanitizeReportAddress(undefined)).toBeNull();
+    expect(sanitizeReportAddress("=@%")).toBeNull();
   });
 });

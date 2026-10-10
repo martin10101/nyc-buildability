@@ -68,6 +68,23 @@ export interface FetchReportOptions {
   fetchImpl?: typeof fetch;
   signal?: AbortSignal;
   timeoutMs?: number;
+  /** The property's street address, as the website already shows it. Sent as the optional
+   * `?address=` query parameter when present; trimmed, stripped and capped client-side to the
+   * server's rule (scenario S9). */
+  address?: string;
+}
+
+/** The report route's optional `address` rule (M5-T151 rework / scenario S9): at most 120 characters
+ * after trimming; letters, digits, spaces and `-.,'#/&` only (anything else is ignored by the
+ * server). The website trims, strips to that set and caps to 120 client-side, so it never sends a
+ * value the server would ignore. Returns null when nothing usable remains (then no parameter). */
+const REPORT_ADDRESS_MAX = 120;
+const REPORT_ADDRESS_DISALLOWED = /[^A-Za-z0-9 \-.,'#/&]/g;
+
+export function sanitizeReportAddress(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const cleaned = raw.trim().replace(REPORT_ADDRESS_DISALLOWED, "").slice(0, REPORT_ADDRESS_MAX).trim();
+  return cleaned.length > 0 ? cleaned : null;
 }
 
 /** The plain message shown when the gating declines the report but sends no message of its own. */
@@ -86,7 +103,9 @@ export async function fetchReport(
 ): Promise<ReportFetchOutcome> {
   const fetchImpl = options.fetchImpl ?? fetch;
   const timeoutMs = options.timeoutMs ?? DEFAULT_REPORT_TIMEOUT_MS;
-  const url = `${apiBaseUrl()}/api/v1/properties/${encodeURIComponent(bbl)}/report`;
+  const address = sanitizeReportAddress(options.address);
+  const query = address === null ? "" : `?address=${encodeURIComponent(address)}`;
+  const url = `${apiBaseUrl()}/api/v1/properties/${encodeURIComponent(bbl)}/report${query}`;
 
   const controller = new AbortController();
   let timedOut = false;

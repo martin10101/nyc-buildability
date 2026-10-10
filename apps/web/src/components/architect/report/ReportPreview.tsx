@@ -86,11 +86,15 @@ export interface ReportPreviewProps {
   /** Self-contained mode (the workspace report tool): render the results inputs form and build the
    * request from it. */
   withInputs?: boolean;
+  /** The property's street address, as the website already shows it (scenario S9). Sent to the
+   * report route as the optional `?address=` parameter; trimmed and capped client-side. Absent when
+   * the website has no confirmed address. */
+  address?: string;
   /** Injection point for tests; defaults to the global fetch (the live path). */
   fetchImpl?: typeof fetch;
 }
 
-export function ReportPreview({ bbl, request = null, withInputs = false, fetchImpl }: ReportPreviewProps) {
+export function ReportPreview({ bbl, request = null, withInputs = false, address, fetchImpl }: ReportPreviewProps) {
   const [values, setValues] = useState<ResultsFormValues>(INITIAL_VALUES);
   const [heightError, setHeightError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -124,13 +128,13 @@ export function ReportPreview({ bbl, request = null, withInputs = false, fetchIm
     const asked = body;
     setLoading(true);
     void (async () => {
-      const result = await fetchReport(bbl, body, { fetchImpl, signal: controller.signal });
+      const result = await fetchReport(bbl, body, { fetchImpl, signal: controller.signal, address });
       if (id !== requestId.current) return; // a newer request has replaced this one
       setOutcome(result);
       setLoading(false);
       if (result.kind === "success") setLoadedRequest(asked);
     })();
-  }, [bbl, fetchImpl]);
+  }, [bbl, fetchImpl, address]);
 
   // Abort any in-flight request when the component unmounts (the window is closed).
   useEffect(() => () => controllerRef.current?.abort(), []);

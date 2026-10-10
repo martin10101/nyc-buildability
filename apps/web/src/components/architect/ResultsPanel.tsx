@@ -243,11 +243,14 @@ export function resultsAnnouncement(
 
 export interface ResultsPanelProps {
   bbl: string;
+  /** The property's street address, as the dashboard already shows it. Passed to the report action
+   * so the report carries it (scenario S9); absent when no confirmed address is known. */
+  address?: string;
   /** Injection point for tests; defaults to the global fetch (the live path). */
   fetchImpl?: typeof fetch;
 }
 
-export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
+export function ResultsPanel({ bbl, address, fetchImpl }: ResultsPanelProps) {
   const [values, setValues] = useState<ResultsFormValues>(INITIAL_VALUES);
   const [heightError, setHeightError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -392,7 +395,7 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
         )
       ) : null}
 
-      <ReportPreview bbl={bbl} request={reportBody} fetchImpl={fetchImpl} />
+      <ReportPreview bbl={bbl} request={reportBody} address={address} fetchImpl={fetchImpl} />
     </section>
   );
 }

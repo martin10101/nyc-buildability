@@ -16,6 +16,7 @@ import {
   type AnswerKey,
   type Results,
 } from "@/lib/architect/three-answers";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-fixtures";
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
 
@@ -318,16 +319,19 @@ describe("S4 — the Details focus behaviour and the 'Conditional' marker (UX-09
 });
 
 describe("S13 — the building-option answer is the scheduled area (ruling V11 (2))", () => {
-  it("at 10 ft reads 'Scheduled area' + 'Site fit not verified', never 'Not available'/'shown below'", () => {
+  it("S8: at 10 ft the card reads the ONE-LINE scheduled phrase, never 'Not available'/'shown below'", () => {
     const doc = loadResultsFixture(BENCHMARK);
     const alternative = (doc.building_alternatives ?? [])[0];
     if (!alternative) throw new Error("fixture changed: the benchmark must list a building");
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const cardEl = card("building_option");
+    // S8: one wording across the screen — the compact card uses the same adapter line as the block.
     expect(within(cardEl).getByTestId("answer-scheduled-area").textContent).toBe(
-      quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet")),
+      scheduledFloorAreaLine(quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet"))),
     );
-    expect(within(cardEl).getByTestId("answer-site-fit").textContent).toBe("Site fit not verified");
+    // the wave-20 pair no longer renders on the card.
+    expect(within(cardEl).queryByTestId("answer-site-fit")).toBeNull();
+    expect(cardEl.textContent ?? "").not.toContain("Site fit not verified");
     expect(cardEl.textContent ?? "").not.toContain("Not available");
     expect(cardEl.textContent ?? "").not.toContain("shown below");
   });
@@ -342,7 +346,7 @@ describe("S13 — the building-option answer is the scheduled area (ruling V11 (
     expect(within(cardEl).getByTestId("answer-not-known").textContent).toBe(
       `Not known — ${notWorked[0].reason}`,
     );
-    expect(cardEl.textContent ?? "").not.toContain("Scheduled area");
+    expect(cardEl.textContent ?? "").not.toContain("Scheduled floor area");
     expect(cardEl.textContent ?? "").not.toContain("Not available");
   });
 });

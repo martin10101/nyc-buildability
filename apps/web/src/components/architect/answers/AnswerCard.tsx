@@ -15,6 +15,7 @@ import {
   type Unit,
   type WithheldValueView,
 } from "@/lib/architect/three-answers";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { ResultDetails } from "./ResultDetails";
 
 /** Leading words shown for a withheld value (results contract 1.3.0): it is not known, with the
@@ -24,12 +25,6 @@ const NOT_KNOWN = "Not known";
 /** The fixed marker word the website puts beside a conditional figure so the figure never reads as
  * confirmed (ruling L3; R229/R267/R269). Plain text, normal weight, never a colour-only signal. */
 const CONDITIONAL_MARKER = "Conditional";
-
-/** The building-option card's compact label for the scheduled figure, and the standing honesty line
- * beside it (ruling V11 (2); R895). The card is the compact ANSWER; building B's authoritative block
- * (FirstBuildingOptions) carries the report's exact one-line phrase (scenario S1). Fixed labels. */
-const SCHEDULED_AREA_LABEL = "Scheduled area";
-export const SITE_FIT_NOT_VERIFIED = "Site fit not verified";
 
 /** One lookup from a result id ("floor_area_allowance.max_residential_floor_area",
  * "building_alternative.B") to the shared conditions it refers to, by name ("Condition 1"). */
@@ -220,14 +215,11 @@ export function BuildingOptionCard({ view }: { view: BuildingOptionCardView }) {
   return (
     <section className="ta-answer" data-testid="answer-building_option">
       <h3 className="ta-answer-title">{title}</h3>
-      <p className="ta-headline" data-testid="answer-headline">
-        <span className="ta-headline-label">{SCHEDULED_AREA_LABEL}</span>{" "}
-        <span className="ta-scheduled-area" data-testid="answer-scheduled-area">
-          {view.scheduledArea}
-        </span>
-      </p>
-      <p className="ta-site-fit" data-testid="answer-site-fit">
-        {SITE_FIT_NOT_VERIFIED}
+      {/* S8: one wording per situation across the WHOLE screen — the compact card reads the report's
+          exact one-line phrase, the same adapter line as the building-options block. The wave-20 pair
+          "Scheduled area" / "Site fit not verified" no longer renders for a scheduled building. */}
+      <p className="ta-headline ta-scheduled-line" data-testid="answer-scheduled-area">
+        {scheduledFloorAreaLine(view.scheduledArea)}
       </p>
       {view.conditionNames.length > 0 ? (
         <ResultDetails name={title}>
