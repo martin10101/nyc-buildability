@@ -108,13 +108,18 @@ def render(results: Mapping, ident: Mapping, *, map_context=None, env=None) -> s
         el("h3", "Permitted envelope"),
         table(["Figure", "Value", "Law"], _figure_rows(results, "permitted_envelope"),
               caption="Envelope figures and their law sections"),
-        el("h3", "Provenance"),
-        _provenance(results),
     ]
+    # Provenance and the drawing notes sit side by side in two columns, so this page
+    # is compact enough to hold the status-label key and the key is never orphaned on
+    # a near-empty last page (corrections T156-C1).
+    columns = [el("div", el("h3", "Provenance"), _provenance(results), class_="evidence-column")]
     attributions = _attributions(map_context)
     if attributions:
-        children.append(el("h3", "Drawing notes and map attributions"))
-        children.append(el("ul", *[el("li", note) for note in attributions]))
+        columns.append(el("div",
+            el("h3", "Drawing notes and map attributions"),
+            el("ul", *[el("li", note) for note in attributions]),
+            class_="evidence-column"))
+    children.append(el("div", *columns, class_="evidence-columns"))
     children.append(el("h3", "Status-label key"))
     children.append(_label_key())
     return str(el("section", *children, class_="report-page", id="calculations-evidence"))

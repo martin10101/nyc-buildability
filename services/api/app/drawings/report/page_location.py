@@ -129,11 +129,12 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     def embed(fn_name, layers, frame):
         return drawings_embed.embed_map(fn_name, map_context, layers=layers, frame=frame, env=env)
 
-    # The neighbourhood map fills the top of the location page at full width (its
-    # own title, legend, north arrow and scale bar are inside it); the block
-    # close-up is the compact thumbnail below it (rework 2 fix 2).
-    neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "report")
-    block = embed("render_block_map", map_caption.BLOCK_LAYERS, "summary")
+    # The neighbourhood map and the block close-up are CO-EQUAL wide strips stacked
+    # full width on the location page (each at most 182 by 105 mm, no title inside -
+    # the report adds the title); page 1 takes the compact summary plan, the
+    # constraints sheet the one full-size plan (corrections T156-C2).
+    neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "wide")
+    block = embed("render_block_map", map_caption.BLOCK_LAYERS, "wide")
     summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary")
     report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "report")
     drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
@@ -143,37 +144,30 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
                         summary_plan=summary_plan, report_plan=report_plan)
 
 
-def _caption_block(title: str, drawing: Embedded | None) -> list[object]:
-    """A titled caption (sources and notes) for the right-hand column."""
-    if drawing is None or not drawing.is_drawing or not drawing.caption:
-        return []
-    return [el("p", title, class_="figure-title"),
-            el("p", drawing.caption, class_="figure-note")]
+def _wide_figure(title: str, drawing: Embedded | None) -> object | None:
+    """One co-equal full-width location map: its title, the drawing, then its
+    sources-and-dates caption below it."""
+    if drawing is None or not drawing.is_drawing:
+        return None
+    parts: list[object] = [el("p", title, class_="figure-title"),
+                           el("figure", raw(drawing.svg or ""))]
+    if drawing.caption:
+        parts.append(el("p", drawing.caption, class_="figure-note"))
+    return el("div", *parts, class_="location-wide-figure")
 
 
 def render(surroundings: Surroundings) -> object:
-    """The 'Where is the lot?' sheet, filling ONE A4 page (rework 2 fix 2): the
-    full-width neighbourhood map on top (its own title, legend, north arrow and
-    scale bar inside it), then the compact block close-up in the left half with both
-    captions (sources and notes) in the right half beside it. One short line when
-    the surroundings are not available. No photo, empty frame or photo wording
-    (ruling Y9); the row can take a third figure later without a redesign."""
+    """The 'Where is the lot?' sheet, filling ONE balanced A4 page (corrections
+    T156-C2): the neighbourhood map and the block close-up as two co-equal
+    full-width wide strips stacked, each with its title and its sources-and-dates
+    caption. One short line when the surroundings are not available. No photo, empty
+    frame or photo wording (ruling Y9); the stack can take a third figure later
+    without a redesign."""
     children: list[object] = [el("h2", QUESTION)]
     if not surroundings.available:
         children.append(short_line(surroundings.reason or _SURROUNDINGS_UNAVAILABLE))
         return el("div", *children, class_="location-sheet")
-    neighbourhood, block = surroundings.neighbourhood, surroundings.block
-    if neighbourhood is not None and neighbourhood.is_drawing:
-        # Full-width; its caption is shown beside the block below, not under it.
-        children.append(el("figure", raw(neighbourhood.svg or ""), class_="location-wide"))
-    row: list[object] = []
-    if block is not None and block.is_drawing:
-        # The block's caption is shown in the right column, not under the thumbnail.
-        row.append(el("div", el("figure", raw(block.svg or "")), class_="location-block"))
-    captions = (_caption_block("Neighbourhood", neighbourhood)
-                + _caption_block("Block close-up", block))
-    if captions:
-        row.append(el("div", *captions, class_="location-captions"))
-    if row:
-        children.append(el("div", *row, class_="location-row"))
+    stack = [fig for fig in (_wide_figure("Neighbourhood", surroundings.neighbourhood),
+                             _wide_figure("Block close-up", surroundings.block)) if fig is not None]
+    children.append(el("div", *stack, class_="location-stack"))
     return el("div", *children, class_="location-sheet")

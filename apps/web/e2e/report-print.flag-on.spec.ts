@@ -183,12 +183,14 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
         (c) => c.textContent ?? "",
       );
       const sheetText = (sheet?.textContent ?? "").toLowerCase();
+      // The two co-equal full-width wide maps, each with its own caption below it.
+      const wideFigures = Array.from(sheet?.querySelectorAll(".location-wide-figure") ?? []);
       return {
         hasQuestion: where >= 0,
         whereBeforeConstraints: where >= 0 && constrains >= 0 && where < constrains,
         locationSvgs: sheet ? sheet.querySelectorAll("svg").length : 0,
-        hasWideNeighbourhood: !!sheet?.querySelector(".location-wide svg"),
-        hasCompactBlock: !!sheet?.querySelector(".location-block svg"),
+        wideFigureCount: wideFigures.length,
+        everyWideHasSvg: wideFigures.length > 0 && wideFigures.every((f) => !!f.querySelector("svg")),
         captionWithDate: captions.some((c) => /Sources:.*\(edited /.test(c)),
         noDatasetId: !sheetText.includes("5zhs") && !sheetText.includes("via nyc open data"),
         images: document.querySelectorAll("img").length,
@@ -201,8 +203,8 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
       location.locationSvgs,
       "the location sheet holds the neighbourhood map and the block close-up",
     ).toBe(2);
-    expect(location.hasWideNeighbourhood, "the full-width neighbourhood map is on top").toBe(true);
-    expect(location.hasCompactBlock, "the compact block close-up is below it").toBe(true);
+    expect(location.wideFigureCount, "two co-equal full-width location maps").toBe(2);
+    expect(location.everyWideHasSvg, "each co-equal location map carries its drawing").toBe(true);
     expect(location.captionWithDate, "a location caption names its sources with an edit date").toBe(true);
     expect(location.noDatasetId, "no dataset id or 'via NYC Open Data' in a caption").toBe(true);
     expect(location.images, "the report carries no photograph (no raster image)").toBe(0);

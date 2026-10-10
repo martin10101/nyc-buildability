@@ -116,16 +116,20 @@ a {{ color: {action}; }}
 .coverage-line {{ font-size: 9pt; margin: 0 0 1mm; }}
 /* Page type 2 opens with the one-page 'Where is the lot?' sheet; the 'What
    constrains the design?' sheet follows on its own printed page (ruling Y10). The
-   full-width neighbourhood map sits on top; below it the compact block close-up is
-   in the left half with both captions in the right half (rework 2 fix 2). */
+   neighbourhood map and the block close-up are two co-equal full-width wide strips
+   stacked, each titled and captioned, filling the page (corrections T156-C2). */
 .constraints-sheet {{ break-before: page; }}
-.location-wide {{ margin: 3mm 0; break-inside: avoid; }}
-.location-row {{ display: flex; gap: 6mm; align-items: flex-start; margin: 2mm 0; }}
-.location-block {{ flex: 0 0 auto; max-width: 88mm; }}
-.location-block figure {{ margin: 0; }}
-.location-captions {{ flex: 1 1 auto; min-width: 0; }}
-.figure-title {{ font-size: 9pt; font-weight: 700; margin: 0 0 1mm; }}
+.location-stack {{ margin-top: 2mm; }}
+.location-wide-figure {{ break-inside: avoid; margin: 0 0 5mm; }}
+.location-wide-figure figure {{ margin: 1mm 0; }}
+.figure-title {{ font-size: 9.5pt; font-weight: 700; margin: 0 0 1mm; }}
 /* The scenario sheet's schedule, unchecked items and estimate stay together, so
    the estimate never lands alone on a page (rework 1 fix 5). */
 .sheet-tail {{ break-inside: avoid; }}
+/* Provenance and the drawing notes share a row in two columns so the evidence page
+   stays compact and the status-label key is not orphaned (corrections T156-C1). */
+.evidence-columns {{ display: flex; gap: 8mm; align-items: flex-start; break-inside: avoid; }}
+.evidence-column {{ flex: 1 1 0; min-width: 0; }}
+.evidence-column h3 {{ margin-top: 0; }}
+.evidence-column ul {{ margin: 0; }}
 """.strip()

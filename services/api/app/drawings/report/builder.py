@@ -63,9 +63,13 @@ def build_report_html(
     # otherwise today's lot-only plan is kept and one limitation line is printed.
     # Two outlines are never drawn together (S2).
     surroundings = page_location.resolve(map_context, results, env=env)
-    if surroundings.available and surroundings.report_plan is not None:
+    if (surroundings.available and surroundings.report_plan is not None
+            and surroundings.report_plan.is_drawing):
         # The full-size site plan among its surroundings, shown once on the
         # constraints sheet (the same full-size drawing is never printed twice).
+        # When a layer the site plan needs is not available, report_plan is a
+        # non-drawing Embedded: fall back to today's lot-only plan + the limitation
+        # line, the same as page 1 (QA C3; S6, R843) - never the drawing's reason.
         site_plan = surroundings.report_plan
     else:
         site_plan = drawings_embed.embed_kit_drawing(

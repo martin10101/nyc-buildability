@@ -20,6 +20,8 @@ import json
 import re
 from pathlib import Path
 
+import pytest
+
 from app.drawings.report import build_report_html, coverage, page_location, readers
 
 _FIXTURES = (
@@ -115,16 +117,17 @@ def _caption_texts(markup: str) -> list[str]:
     return [_html.unescape(c) for c in caps]
 
 
-def test_location_page_layout_full_neighbourhood_and_compact_block() -> None:
-    # The location page carries the full-width neighbourhood map and the compact
-    # block close-up (rework 2 fix 2), two drawings in all; the full-size site plan
-    # is NOT here (it stays on the constraints sheet).
+def test_location_page_layout_two_co_equal_wide_maps() -> None:
+    # The location page carries the neighbourhood map and the block close-up as two
+    # CO-EQUAL full-width wide strips stacked (corrections T156-C2), two drawings in
+    # all; the full-size site plan is NOT here (it stays on the constraints sheet).
     site = _site_section(_report_with_maps())
     location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
-    assert location.count('class="location-wide"') == 1  # full-width neighbourhood
-    assert location.count('class="location-block"') == 1  # compact block close-up
-    assert location.count("<svg") == 2
+    assert location.count('class="location-wide-figure"') == 2  # two co-equal figures
+    assert location.count("<figure") == 2 and location.count("<svg") == 2
     assert "Neighbourhood" in location and "Block close-up" in location
+    # each wide figure carries its own sources-and-dates caption.
+    assert location.count('class="figure-note"') == 2
 
 
 def test_s1_captions_name_sources_and_their_dates() -> None:
@@ -265,6 +268,38 @@ def test_s6_without_map_data_one_line_never_blank() -> None:
 def test_s6_resolve_returns_unavailable_without_a_document() -> None:
     s = page_location.resolve(None, benchmark(), env=_LANE_E)
     assert s.available is False and s.reason
+
+
+# ================================================ QA C3/C4: partially-unavailable map
+def _map_with_layer_unavailable(layer: str) -> dict:
+    """The benchmark map document with one layer marked not_available (streets
+    stay available, so the one-outline check still passes and the location sheet
+    still draws the neighbourhood)."""
+    doc = copy.deepcopy(map_context())
+    doc["map_context"][layer] = {
+        "status": "not_available",
+        "reason": "This layer is not available for this area.",
+        "reason_kind": "source_unavailable",
+    }
+    return doc
+
+
+@pytest.mark.parametrize("layer", ["tax_lots", "building_footprints"])
+def test_c4_constraints_falls_back_to_lot_only_when_a_layer_is_unavailable(layer: str) -> None:
+    # QA C3/C4: the one-outline check passes but a layer the site plan needs is not
+    # available, so report_plan is a non-drawing Embedded. The constraints sheet must
+    # fall back to today's lot-only plan WITH its tax-map limitation line (S6/R843),
+    # never print the drawing's reason line.
+    doc = _map_with_layer_unavailable(layer)
+    html = build_report_html(benchmark(), map_context=doc, env=_LANE_E)
+    site = _site_section(html)
+    constraints = site[site.index("What constrains the design?"):]
+    assert "<svg" in constraints  # today's lot-only plan is drawn
+    # the lot-only plan's own tax-map limitation caption, not the map-based plan.
+    assert "Approximate" in visible_text(constraints)
+    assert "Sources:" not in constraints  # not the site-context plan among surroundings
+    # the layer's reason line never reaches the report.
+    assert "This layer is not available for this area." not in visible_text(html)
 
 
 # =========================================================================== S8
