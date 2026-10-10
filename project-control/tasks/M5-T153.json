@@ -126,15 +126,15 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The report route is built in parallel (M5-T151): the preview is tested against the route's interface (ruling X9 d) with stubbed responses whose shape matches the real route, and end to end by the orchestrator after integration.",
     "Printing from a frame must not allow scripts in the frame."
   ],
   "blockers": [],
   "created_at": "2026-10-10T07:36:32.862987+00:00",
-  "updated_at": "2026-10-10T11:11:17.284831+00:00",
+  "updated_at": "2026-10-10T11:24:14.423594+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -182,5 +182,7 @@
       "actor": "orchestrator",
       "change": "Added apps/web/src/components/architect/__tests__/results-panel.test.tsx and scenarios S8 (one wording for building B across the screen) and S9 (the street address sent to the report route) after the builder's first return; no row added."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-10T11:24:14.423463+00:00"
 }
