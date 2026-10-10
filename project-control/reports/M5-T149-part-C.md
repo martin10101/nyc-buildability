@@ -1,1 +1,48 @@
-placeholder: written by the producer of M5-T149
+# M5-T149 part C - producer's report
+
+The builder (frontend-engineer, an AI agent) made no report file in its commit; its return is kept here unchanged, saved by the orchestrator from the session transcript (`return-builder-w20-T149C.txt`).
+
+```
+I am an AI agent (frontend-engineer producer). M5-T149 PART C — the Results window as a wide two-column tool, every data state, labelled inputs with a reset, and the browser layout tests — is built, all local checks pass, one commit made. No STOP; no file outside my scope changed. Not a human/professional review.
+
+WORKTREE: /root/project/nyc-buildability/.claude/worktrees/agent-af6b6833ff63e3790
+COMMIT: 99a933610166009b87ed33633469a4e52df8f895  PARENT: 57a217a102799384d69ca168664a54d73da1b32d (contract head). `git status --porcelain` empty.
+
+FILES CHANGED (8; 340+/32-):
+- src/components/architect/workspace/DashboardEntry.tsx — added "results" to the wide-window list (the ONLY change).
+- src/components/architect/workspace/floating-workspace-window.css — every colour + the panel radius moved onto --pt-* tokens (no colour literal); overlay shadow tint via color-mix on the ink token; added one scoped rule `…__content:has(> .results-panel){padding:0}` so the Results window hands its padding to results-panel.css.
+- src/components/architect/results-panel.css — rewritten on tokens; `@container` layout: 24px panel padding base, 32px at ≥1000px, 16px one column at ≤700px; 44px controls; no colour literal.
+- src/components/architect/ResultsForm.tsx — added a "Reset inputs" secondary button + onReset prop + a wrapping actions row; height input keeps its label-with-unit "(feet)" and >0 bound.
+- src/components/architect/ResultsPanel.tsx — wired the reset handler (restores starting inputs, clears the field error, asks the server nothing).
+- __tests__/results-panel.test.tsx — kept all existing tests; added a reset test and a "no colour literal" test for results-panel.css.
+- workspace/__tests__/floating-workspace-window.test.tsx — kept all; added a wide-is-wider test and a "no colour literal" test for the frame CSS.
+- e2e/results-layout.flag-on.spec.ts — new (was a placeholder): six widths (320/390/768/1024/1440/1920) with no sideways page scroll and no clipped text outside labelled scroll regions; at 1440 the answers column 40–48% of the window width and ≥320px; at 1280 a text-spacing override and a 200%-zoom reflow (640px) with no sideways scroll; keyboard focus-into-tool + Escape-return + a tolerant per-result Details check.
+
+WHAT IT SHOWS ON THE BENCHMARK LOT (in words):
+- Desktop (1440; the wide window opens ~1100px): the form — housing program, floor-to-floor height in feet, the optional density statement, and Show results / Reset inputs — runs full-width across the top with 32px panel padding and 44px controls; the returned document sits below with the identity/status strip across the top, the three answers in the left column near 44% and the details/comparison on the right. Colours are from the tokens; the focus ring is visible.
+- 390px: the window fills the viewport (~374px) with 16px padding; everything is one column — form, then identity, then each answer stacked; no sideways scroll; labels and values wrap and never ellipsize; any wide table sits in its own labelled scroll region.
+
+CHECKS (in apps/web unless noted; direct exit codes):
+- npm run lint → EXIT 0 (2 warnings, both pre-existing untouched files: lot-site-setup.test.tsx, study-vocabulary.test.ts; 0 from my files).
+- npm run typecheck → EXIT 0 (tsconfig include is **/*.ts, so e2e/results-layout.flag-on.spec.ts is covered and clean).
+- npx vitest run src/components/architect src/lib → EXIT 0; Test Files 110 passed (110), Tests 2246 passed (2246).
+- root python3 tools/modularity_check.py --check → EXIT 0 (warnings all pre-existing tools/ files; none mine).
+- root python3 scripts/lanes/check_lane_paths.py --coverage → EXIT 0, "LANE COVERAGE PASS: 9811 file(s)".
+
+MUTATION PROOFS (file backed up to the scratchpad OUTSIDE the repo, mutated, single test run, restored; cmp confirms each file byte-identical after restore; repo untouched):
+1. Reintroduced a colour literal (`#123456`) in results-panel.css → vitest EXIT 1, CAUGHT by results-panel.test.tsx › "results-panel.css carries no colour literal (every colour comes from a presentation token)".
+2. Made the Reset button a no-op in ResultsForm.tsx → vitest EXIT 1, CAUGHT by results-panel.test.tsx › "Reset restores the starting inputs and clears a field error, asking the server nothing".
+
+ASSUMPTIONS / LIMITATIONS (please verify at the gate / reconcile across parts):
+- Boundary: the inner two-column grid itself (minmax(320px,44fr) 56fr, answers left | details+comparison right) is composed by part A's three-answers.css and part B's building-options.css in the rebuilt ThreeAnswersPanel, NOT in results-panel.css. ThreeAnswersPanel is a single child of .results-panel and holds the identity, answers, details and comparison, so part C cannot lay those out from its own files without colliding; part C owns the wide window, the container-query outer flow (form+identity across the top, document below), the padding tiers, the content-padding handoff, the frame tokens, the form, and the browser tests. If part A does not build the 44fr column, the 1440 answers-column assertion in results-layout will fail — this is the #1 integration point.
+- I did NOT start any server/Playwright (ruling V6). The two e2e specs are the orchestrator's to run; I verified them only by reasoning and the real-route fixture pattern, NOT by execution — treat them as unverified-by-me. results-layout measures the answers column through the stable answer-floor_area_allowance card id, uses three-answers-panel, and a tolerant /details/i locator for part A's per-result Details control.
+- The frame close-button red hover was removed (no danger token exists, and "Close window — keeps your work" is non-destructive; its accessible name states the effect). Frame SPACING was left stable to avoid regressing the other tool windows; only colours and the panel radius moved to tokens there. This touches every window frame's colours — a visual-quality reviewer should confirm no regression on map/report/evidence windows.
+- results.flag-on.spec.ts was reviewed and left UNCHANGED: the wide window and two-column layout change no testid or content, so every existing assertion still holds and none was layout-driven.
+- Per the no-report-file override and the M5-T148 precedent I did NOT create project-control/reports/M5-T149-part-C.md; the commit contains only the 8 code/test files (matching its message). Please save THIS return verbatim as that report at the submit seam.
+
+NO SERVER STARTED; ports 3000/3001/8000 untouched.
+
+REQUESTED STATUS: awaiting_gate (ready for G2 self-check / G3 / G4; the two e2e specs run by the orchestrator per ruling V6).
+END-OF-REPORT
+
+```
