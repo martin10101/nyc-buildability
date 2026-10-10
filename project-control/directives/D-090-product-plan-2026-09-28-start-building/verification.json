@@ -5442,90 +5442,156 @@
     "D-090-R899"
    ],
    "producer": "geospatial-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd",
+   "reviewed_manifest_sha256": "13d6af21ac9e3383550080730325633f0e8bbbd84d723bde24f3ef3d61aba8a3",
    "requirements": [
     {
      "id": "D-090-R192",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "geometry.build_geometry (services/api/app/scenario/three_answers/geometry.py) draws the lot outline from inputs.lot_outline (the measured tax-map polygon), never the recorded-area rectangle; the committed benchmark fixture's geometry.lot_outline is a 5-distinct-vertex polygon whose shoelace area I computed as 10,387.99 sq ft, not the old 102.30x98.48 rectangle (=10,075.0) it replaced.",
+      "I ran tests/scenario/three_answers/test_geometry_lot_outline.py (lanes venv, frozen head): test_s1_benchmark_lot_outline_is_the_measured_polygon asserts area==measured within 0.5, area != recorded by >1.0, and >=5 distinct vertices \u2014 passed (118 passed, exit 0 with test_results_read_api.py).",
+      "Open: R192 is broader than this task (any parcel-specific conclusion \u2014 yards, coverage, footprint, what-fits) and stays bound to M5-T145/M5-T146; this task corrects only the drawn site-plan outline.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R239",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The two figures are the recorded lot area (10,075) and the outline area (10,387.99); the drawing uses the outline's area while the recorded area still feeds the floor-area path \u2014 I verified the benchmark fixture changed ONLY under /geometry (key-level flatten: 0 non-geometry leaf changes; all other geometry sub-keys byte-identical), so no figure was mixed into another.",
+      "test_s1 asserts the drawn area is >1.0 sq ft away from the recorded 10,075, proving the recorded area was not used to size the drawing; _lot_dimensions (a recorded-area rectangle) exists only as an internal option-comparison extent, never shown.",
+      "Open: the full written decision of how each area figure is used across all calculations stays with M5-T130/M5-T145/M5-T146.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R257",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Neither area is stretched to the other: R846's _local_feet_ring only translates (area-preserving), and the no-outline path withholds rather than substituting \u2014 the live route (test_m5t146_live_route_lists_building_b_without_the_tax_map_outline, which I ran green) returns coverage_by_portion status \"withheld\", gap_kind \"missing_information\", reason \"...outline is not available\", with no footprint_sqft number.",
+      "The drawing shows the measured outline where present and the affected coverage is withheld where the two areas disagree; the recorded area is never placed into the withheld coverage result.",
+      "Open: full conflicting-area establishment across M5-T129/T130/T134/T136/T138/T146 remains.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "With no measured outline the whole geometry block is withheld: test_s2_no_outline_draws_nothing_and_says_why and the live-route test both assert geometry.status==\"not_available\", reason contains \"outline is not available\", reason_kind==\"missing_input\", and \"lot_outline\" not in geometry \u2014 I reproduced both (green).",
+      "No number, older value or substitute appears in place of the withheld geometry/coverage (no footprint_sqft; the recorded 10,075 rectangle is never rendered); the transform _apply_geometry (three_way_document.py, lot_outline_available is False branch) replaces the block with LOT_OUTLINE_NOT_AVAILABLE_REASON and returns.",
+      "Open: R570 applies program-wide (also M5-T136..M5-T149); this task covers only the geometry/outline slice.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R804",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The diff touches only geometry threading, the regenerated benchmark + its SVG/DXF snapshots, the review-register resync and the V11(4) reason wording; no rule file, schema, or production switch changed (git diff base..head shows no services/api/app/rules/rulesets, no packages/contracts/schemas, no render.yaml production toggle), so scope, calculation authority, security and production holds are preserved.",
+      "python tools/validate_directive_compliance.py --check returned exit 0 (quiet-on-success, per the script's own line-22 contract); deterministic code still calculates (the engine/decision modules are read-only in this diff).",
+      "Open: R804 is program-wide and also bound to M0-T189/M5-T148/M5-T149.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R841",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The lot outline is the document's real measured polygon drawn through the existing server drawing kit (forbidden styles.py untouched; the SVG snapshot carries 5 dimension texts each data-source=\"edge:/geometry/lot_outline/0#N\"); no stand-in rectangle reaches any shown output.",
+      "I independently traced the shown path: the API route services/api/app/api/v1/results_read.py calls run_engine_and_result_ways_from_evidence (line 385), and test_t3_route_files_name_neither_older_entry_nor_the_inputs_builder asserts \"run_engine_and_result_ways(\" not in the route source \u2014 so the only path that could keep the rectangle is test-only; the live-route no-outline test proves the route withholds the whole block instead.",
+      "The DXF snapshot carries the measured polygon vertices (6 matches on 101.28981/122.9469/120.6634/97.6142) and zero occurrences of the old rectangle coordinates (102.303030/98.481931); screen/PDF/DXF follow the same canonical geometry. Open: the contract's PDF/drawing surfaces (steps 4/5) carry R841 further.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R846",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The block is labelled crs \"local_feet\", units \"feet\" \u2014 never EPSG:2263; _local_feet_ring subtracts min x/min y (area-preserving translation), and test_s1_lot_outline_is_translated_to_local_feet asserts min x==0, min y==0, max<1000 ft (not State-Plane ~1.05e6), which I reproduced green.",
+      "The outline is never stretched to the recorded area: the drawn area is 10,387.99 (the measured area), not 10,075; test_s1 asserts area==measured within 0.5 and area != recorded.",
+      "Open: the transform is stated via the crs=\"local_feet\" + measurement \"Approximate \u2014 tax map\" fields (the producer could not add a free-text transform sentence because the schema fields are const/additionalProperties:false); the drawing never mislabels, so nothing is owed, but a richer transform note is a later-surface item.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R878",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-10 geometry/metric match is met: test_s5_drawn_outline_area_equals_the_recorded_measurement compares the shoelace of the drawn ring to the Shapely area of the recorded fixture within 0.5 sq ft (green), and I independently recomputed the five edge lengths of the drawn polygon as 2.22, 101.71, 99.98, 103.88, 99.98 ft \u2014 exactly the SVG's five dimension labels.",
+      "The old rectangle dimensions (102.30/98.48 ft) are absent from the SVG; the three \"99.98 ft\" strings are two dimension labels plus one scope note (215 Place frontage), not a false dimension.",
+      "Open (I did not verify): \"labels remain legible at final output size\" + collision checks + visual inspection \u2014 the genuine 2.22 ft sliver label legibility is explicitly a G4 visual-quality/human-walkthrough item (DB-216), and street names/context are not drawn yet; this row continues on the drawings/PDF surfaces.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R886",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The expected area is independently established, not a program echo: test_s5 reads the measured polygon from the recorded replay fixture (_measured_outline().polygon.area via lot_outline_from_mappluto(replay_lot_geometry()) + prepare_outline) and compares it to an in-test shoelace, never a retyped literal (_RECORDED_LOT_AREA=10075.0 is used only to prove the drawing is NOT the recorded value).",
+      "Only the one benchmark fixture whose geometry actually changed and its two snapshots were regenerated (git diff shows no other valid results fixture's geometry moved), so baselines were not updated wholesale.",
+      "Open: visual review of the regenerated SVG/DXF snapshot images is a G4/walkthrough item; the numeric correctness value is verified here.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R888",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Producer/reviewer separation holds: producer geospatial-engineer (+ rules-engineer for the V11(4) wording); independent reviewers were a data-contract-verifier (G3) and a qa-engineer (G4), the same two across two rounds, and the visual-quality review + walkthrough FAILED in round 1 and forced corrections (a producer checklist did not pass itself).",
+      "verification.json carries exactly one M5-T150 row with the 13 ids, producer \"geospatial-engineer\", verifier \"\" (empty) \u2014 this DCV pass is the independent verification; the gate records G3/G4 name the independent reviewer types, not the producer.",
+      "Open: none specific to this task.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R890",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The producer report and evidence map claim only what changed and list honest known-limits (street names not drawn, 2.22 ft label may read cramped, register tested_commit informational); nothing is called perfect/complete/fully-verified/production-ready.",
+      "The review-register resync entered implementation_changed events \"behaviour unchanged\" by \"M5-T150 (geospatial-engineer, an AI agent)\" and human_review.reviewer_name stayed \"\" \u2014 no session entered a human verdict (CLAUDE.md item 20).",
+      "Open: none specific to this task.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R896",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The owner's finding 4 is corrected: before, geometry.py drew a rectangle sized to the recorded area (10,075) while the site plan labelled it the tax-map outline (10,387.99); the frozen benchmark fixture's lot_outline is now the 5-vertex measured polygon of area 10,387.99 with the measurement label \"Approximate \u2014 tax map\" unchanged, so the drawing and the measurement explanation now agree.",
+      "Where no outline exists, nothing is drawn and the page says why: the live-route no-outline test asserts geometry.status==\"not_available\" with the reason, through the real API route (reproduced green).",
+      "Open: nothing for the correction itself; drawing completeness (street names/context) is R893/R899 territory for later surfaces.",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     },
     {
      "id": "D-090-R899",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The mismatched drawing information is corrected now (per R896); the V11(4) wording share is met: _B_BOUND_RESOLVED in first_option_results.py now reads \"the program's method for a first building does not yet cover.\" (no \"step-P6\"; the remaining \"step-P6\" strings are docstrings/comments at lines 26/123/319, never emitted), and the new _sqft formatter prints whole numbers without \".00\" and keeps fractions (6,716.67 sq ft).",
+      "test_v11_4_live_route_plain_words_and_whole_square_feet_without_decimals walks EVERY string of the returned document at 10/14/16/25 ft asserting no \"step-p6\" and no /\\d\\.00 sq ft/ \u2014 I reproduced it green.",
+      "Open: the crowded-presentation and inconsistent-wording shares belong to M5-T148/M5-T149 (website); street names/context stay honestly not-drawn (backlog R893).",
+      "Verifier's carry-forward condition met at d4446cea: the task's allowed-path files are identical to those verified at db7824e7 (content identity 13d6af21), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent data-contract-verifier, G4 one independent qa-engineer; the same two in both rounds; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T150-DCV.md."
+     ],
+     "reviewed_sha": "d4446cea4754a8bd0ef63bb34b333fe61aecffcd"
     }
-   ]
+   ],
+   "verified_at": "2026-10-10T04:56:53+00:00"
   },
   {
    "directive_id": "D-090",
