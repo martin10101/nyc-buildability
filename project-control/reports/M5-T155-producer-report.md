@@ -135,3 +135,32 @@ Images (real pack, viewed):
 
 Checks (lanes venv): ruff exit 0; pytest tests/drawings tests/cad exit 0 (1593 passed, 6 skipped); modularity exit 0 (site_context_plan.py 744 SLOC, under 750); lane coverage PASS.
 END-OF-REPORT
+
+
+---
+
+CORRECTIONS RETURN, after the review wave (saved unchanged by the orchestrator):
+
+M5-T155 CORRECTIONS complete (AI agent). The rework-4 wide frames (cherry-picked) and all five corrections are squashed into ONE commit.
+COMMIT: 7792d38f7e5802849081e40562b65d4b7846a307  PARENT: 9b72bb4c46cd73f9fdb242cd651b05a28b180b76 (clean tree)
+
+Done: (1) subject fill drawn ABOVE the grey buildings; its existing building is a dashed outline with legend "Existing building (city records)"; (2) unnamed outer-corner gaps left neutral white (not street); (3) more room for the labels below Lot 70; (4) the view-frame/projection/label/compose helpers moved to context_scene.py; (5) clean wide frames - block labels the subject only on/beside it (else the coral marker alone), neighbourhood's "Subject lot" has a short leader, no label overlaps another, the marker, or runs along another street's line (new S4 tests on the real pack).
+
+Images (real pack):
+- scratchpad/corr/site_report.png - Lot 70 clean coral above the existing building, neutral corners.
+- scratchpad/corr/block_report.png - coral marker in the street grid, NORTHERN BOULEVARD named.
+- scratchpad/corr/nbhd_wide4.png - short leader to the marker, no label collisions.
+
+Sizes: site_context_plan.py 512 code lines (no modularity warning); context_scene.py 424.
+Checks (lanes venv): ruff check . exit 0; pytest tests/drawings tests/cad exit 0 (1616 passed, 6 skipped); modularity exit 0; lane coverage exit 0.
+END-OF-REPORT
+
+
+---
+
+POLISH RETURN (saved unchanged by the orchestrator):
+
+M5-T155 polish DONE. One commit 93c85ec78e3a32ec69ca45c70874c77379e0bf5c (parent 4d9aef34d4a54a14c534fefff9eeb16e866c1340). Both fixes verified by rendering the real pack: neighbourhood (every frame) the coral marker now stands alone, no street-crossing leader (dense grid leaves no 15mm clear spot, so no label - legend explains it); block wide fills the frame height via fit_view(fill=True). Files: block_map.py, context_scene.py, site_context_plan.py + tests context_support.py, test_context_maps.py.
+Images: /tmp/claude-0/-root-project-nyc-buildability/50c08967-446d-42a3-87c6-8f67f187f2f3/scratchpad/polish/{nbhd_wide,nbhd_report,nbhd_summary,block_wide,block_report}.png
+Checks: ruff 0; pytest tests/drawings tests/cad 1620 passed 6 skipped (exit 0); modularity 0 (site_context_plan 509<600, context_scene 446); lane coverage PASS.
+END-OF-REPORT
