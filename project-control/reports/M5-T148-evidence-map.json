@@ -97,7 +97,7 @@
    "UX-05: the identity adapter gives lot, results id and revision; another lot is a mismatch (result-identity tests). Open: the PDF and drawings later."
   ],
   "D-090-R877": [
-   "UX-09: the contrast of every declared pair is tested; focus-ring tokens exist. Open: the screen's keyboard checks are M5-T149's."
+   "UX-09, contrast share only: the contrast of every declared text and control pair is tested. [ORCH-CORRECTED per the rule check: no focus token exists in the source.] Open: focus, keyboard and reduced motion are the screen's (M5-T149)."
   ],
   "D-090-R886": [
    "Expected values come from the contract's own table and the committed fixtures, never from the adapters' own output (G4 check 2)."
