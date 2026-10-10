@@ -134,6 +134,7 @@ def _buildings(raw: Mapping) -> BuildingLayer | LayerUnavailable:
         footprints=footprints,
         attribution=_note(raw["attribution"], f"{base}/attribution"),
         source=base,
+        edited=_prov_date(raw),
     )
 
 
@@ -184,6 +185,7 @@ def _tax_lots(raw: object) -> TaxLotLayer | LayerUnavailable | None:
         lots=lots,
         attribution=_note(layer["attribution"], f"{base}/attribution"),
         source=base,
+        edited=_prov_date(layer),
     )
 
 
@@ -217,7 +219,18 @@ def _streets(raw: object) -> StreetLayer | LayerUnavailable | None:
         streets=streets,
         attribution=_note(layer["attribution"], f"{base}/attribution"),
         source=base,
+        edited=_prov_date(layer),
     )
+
+
+def _prov_date(raw: Mapping) -> str | None:
+    """The source's last-edited date from provenance, for the caption (ruling
+    Y7); ``None`` when the document carries no provenance date."""
+    prov = raw.get("provenance")
+    if not isinstance(prov, Mapping):
+        return None
+    date = prov.get("source_data_last_edited")
+    return _text(date, "provenance/source_data_last_edited") if isinstance(date, str) else None
 
 
 def _street_line(raw: Mapping, location: str) -> StreetLine:

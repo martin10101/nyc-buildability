@@ -33,7 +33,10 @@ __all__ = [
     "MIN_STREET_AREA_SQFT",
     "StreetArea",
     "StreetRun",
+    "clip_polygon_to_rect",
+    "clip_polyline_to_rect",
     "clip_street",
+    "gaps_in_rect",
     "street_areas",
 ]
 
@@ -221,6 +224,62 @@ def clip_street(
         for g in geoms:
             if not g.is_empty and g.length > 0.0:
                 out.append(tuple((float(x), float(y)) for x, y in g.coords))
+    out.sort(key=lambda c: (round(c[0][0], 3), round(c[0][1], 3)))
+    return out
+
+
+Rings = list[tuple[Point, ...]]
+Rect = tuple[float, float, float, float]
+
+
+def _rings_of(geom: ShapelyPolygon) -> Rings:
+    rings: Rings = [tuple((float(x), float(y)) for x, y in geom.exterior.coords)]
+    rings += [tuple((float(x), float(y)) for x, y in r.coords) for r in geom.interiors]
+    return rings
+
+
+def clip_polygon_to_rect(rings: Rings, rect: Rect) -> list[Rings]:
+    """Clip a polygon (exterior ring first, then holes) to the axis-aligned
+    ``rect`` (x0, y0, x1, y1). Returns a list of polygons (each a list of rings),
+    EMPTY if nothing is inside - so lots and buildings are cut at the drawing
+    frame, never floating past it. Coordinate-agnostic (world OR screen)."""
+    poly = make_valid(ShapelyPolygon(rings[0], list(rings[1:])))
+    clipped = poly.intersection(box(*rect))
+    return [_rings_of(p) for p in _polygon_pieces(clipped)]
+
+
+def gaps_in_rect(rect: Rect, lot_rings: Iterable[Rings], min_area: float) -> list[Rings]:
+    """The street space inside ``rect``: the rectangle minus the union of the lot
+    polygons (each clipped to the rect), pieces under ``min_area`` (in the
+    coordinate units squared) dropped. Even coverage over the WHOLE viewport, so
+    the street hatching is continuous. Deterministically ordered."""
+    frame = box(*rect)
+    covered = []
+    for rings in lot_rings:
+        piece = make_valid(ShapelyPolygon(rings[0], list(rings[1:]))).intersection(frame)
+        if not piece.is_empty:
+            covered.append(piece)
+    union = unary_union(covered) if covered else None
+    gap = frame.difference(union) if union is not None else frame
+    out = [_rings_of(p) for p in _polygon_pieces(gap) if p.area >= min_area]
+    out.sort(key=lambda rings: (round(min(p[0] for p in rings[0]), 3),
+                                round(min(p[1] for p in rings[0]), 3)))
+    return out
+
+
+def clip_polyline_to_rect(polyline: Iterable[Point], rect: Rect) -> list[Line]:
+    """Clip a polyline to ``rect``; returns the in-rect pieces, ordered."""
+    line = LineString([tuple(p) for p in polyline])
+    clipped = line.intersection(box(*rect))
+    if clipped.is_empty:
+        return []
+    if clipped.geom_type == "LineString":
+        geoms = [clipped]
+    elif clipped.geom_type in ("MultiLineString", "GeometryCollection"):
+        geoms = [g for g in clipped.geoms if g.geom_type == "LineString"]
+    else:
+        geoms = []
+    out = [tuple((float(x), float(y)) for x, y in g.coords) for g in geoms if g.length > 0.0]
     out.sort(key=lambda c: (round(c[0][0], 3), round(c[0][1], 3)))
     return out
 

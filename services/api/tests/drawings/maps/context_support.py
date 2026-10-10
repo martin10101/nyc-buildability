@@ -58,6 +58,20 @@ ZONING_UNAVAILABLE = {
 }
 
 
+def recorded_document() -> dict:
+    """The REAL 1.1.0 ``map_context`` document for 215-16 Northern, assembled by
+    the production provider from the recorded window pack (200 neighbouring lots,
+    263 buildings, 35 street segments) - the data the report actually draws. The
+    tests read the provider and the recorded pack; they never edit them."""
+    from app.api.v1.report_context import recorded_pack_provider
+    provider = recorded_pack_provider(
+        TESTS / "fixtures" / "benchmark_215_16_northern_window",
+        base_pack_dir=TESTS / "fixtures" / "benchmark_215_16_northern")
+    doc = provider("4073340070", "test")
+    assert doc is not None, "recorded pack provider returned None"
+    return doc
+
+
 def _features(path: Path) -> list[dict]:
     return json.loads(path.read_text(encoding="utf-8"))["features"]
 
@@ -232,6 +246,16 @@ def with_layer_unavailable(doc: dict, layer: str) -> dict:
     return out
 
 
+def as_legacy(doc: dict) -> dict:
+    """A copy of ``doc`` as a 1.0.0-shaped document: every optional 1.1.0 member
+    removed, so the new drawings are honestly Unavailable (S6)."""
+    out = copy.deepcopy(doc)
+    out["contract_version"] = "1.0.0"
+    for member in ("context_window", "tax_lots", "streets"):
+        out["map_context"].pop(member, None)
+    return out
+
+
 def without_member(doc: dict, member: str) -> dict:
     """A copy of ``doc`` with an optional 1.1.0 member removed (e.g. to make a
     1.0.0-shaped document)."""
@@ -296,7 +320,15 @@ def label_problems(svg: str, doc: dict) -> list[str]:
             problems += _check_number(text, _edge_length(doc, source), source)
             continue
         value = resolve(doc, source)
-        if role == "lot_number":
+        if role == "title":
+            # the subtitle 'Queens, Block 7334, lot 70' derives its numbers from
+            # the subject BBL (borough-block-lot); every number must match.
+            bbl = str(value)
+            allowed = {float(int(bbl[1:6])), float(int(bbl[6:]))} if len(bbl) == 10 else set()
+            for n in numbers_in(text):
+                if not any(abs(n - a) <= TOL for a in allowed):
+                    problems.append(f"{text!r}: number {n} not from bbl {bbl!r}")
+        elif role == "lot_number":
             expected = f"Lot {int(str(value)[-4:])}"
             if text != expected:
                 problems.append(f"{text!r} is not {expected!r} for bbl {value!r}")

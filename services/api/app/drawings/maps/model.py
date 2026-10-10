@@ -113,11 +113,14 @@ class ZoningLayer:
 
 @dataclass(frozen=True)
 class BuildingLayer:
-    """Building footprints around the lot plus the dataset attribution note."""
+    """Building footprints around the lot plus the dataset attribution note.
+    ``edited`` is the source's last-edited date read from provenance when the
+    document carries it (for the caption; ruling Y7), else ``None``."""
 
     footprints: tuple[BuildingFootprint, ...]
     attribution: MapNote
     source: str
+    edited: str | None = None
 
 
 @dataclass(frozen=True)
@@ -159,6 +162,7 @@ class TaxLotLayer:
     lots: tuple[NeighbourLot, ...]
     attribution: MapNote
     source: str
+    edited: str | None = None
 
 
 @dataclass(frozen=True)
@@ -189,6 +193,7 @@ class StreetLayer:
     streets: tuple[StreetLine, ...]
     attribution: MapNote
     source: str
+    edited: str | None = None
 
 
 @dataclass(frozen=True)
