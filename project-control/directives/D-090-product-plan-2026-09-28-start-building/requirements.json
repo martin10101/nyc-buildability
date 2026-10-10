@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 933,
+ "requirement_count": 939,
  "producer": "orchestrator",
- "updated_at": "2026-10-10T07:36:33+00:00",
+ "updated_at": "2026-10-10T18:36:53+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -31418,6 +31418,192 @@
    "dependencies": [],
    "required_harness": "The final reply to the owner.",
    "required_evidence": "The reply and the PDF file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R934",
+   "text": "'I asked for a md and hmu build a website why dont you stuck to what I ask also in terms of the layout of the building inside the pdf what exactly.': documents for the owner come in the format the owner asks for; the research brief goes to the owner as an .md file, not as a web page. Session delivery, not repository work.",
+   "source_ref": "source-082-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The session's reply.",
+   "required_evidence": "The .md file sent to the owner: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/research-brief-215-16-northern.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R935",
+   "text": "'Am I looking at? Just seems like I rectangle on an angle inside a pdf, like how the world would architect and understand what he's even looking at.': the owner asks what the report's drawing shows; the session answers in plain words what each drawing is and what it is not.",
+   "source_ref": "source-082-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The session's reply.",
+   "required_evidence": "The reply.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R936",
+   "text": "'Am I looking at? Just seems like I rectangle on an angle inside a pdf, like how the world would architect and understand what he's even looking at.': an architect must understand the report's site drawing at a glance: the drawing names what it is, and shows the lot among its surroundings: the streets drawn as streets with their names and mapped widths, the street corner, the neighbouring lots and the existing buildings. An isolated lot outline is not the site plan.",
+   "source_ref": "source-082-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The report task's tests on the site drawing's content, and an independent visual review of the printed pages.",
+   "required_evidence": "The printed report pages and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R937",
+   "text": "'There's no reference to where he is.' 'There's no reference.': the report shows where the lot is: a location map at city or neighbourhood scale with the lot marked, and a close-up of the block, each with its source and date (the context maps of DB-222).",
+   "source_ref": "source-082-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The report task's tests on the location pages, and an independent visual review of the printed pages.",
+   "required_evidence": "The printed report pages and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R938",
+   "text": "'It doesn't look like my competitors.' 'You know design': the report's drawings and pages reach the visual standard of the competitor sample the owner supplied: a property-location page, coloured and clearly labelled drawings at a stated scale, and the building's shape shown on its lot. ORCHESTRATOR'S READING: the sample's look and contents, not its numbers; within the presentation contract (sourced or licensed map data and imagery only, every drawing with its status label, no stock or made-up pictures). A paid or licensed imagery source is an owner decision.",
+   "source_ref": "source-082-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "An independent visual review comparing the printed report with the competitor sample's location, section and plan pages.",
+   "required_evidence": "The printed report pages, the sample pages compared, and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R939",
+   "text": "'I asked for a md and hmu build a website why dont you stuck to what I ask also in terms of the layout of the building inside the pdf what exactly.': the report shows the building's layout on the lot: the building's footprint placed on the site plan, not only a floor stack with no placement. Until the program works out where the building sits (the report's open item), the drawings say plainly that the building is not yet placed.",
+   "source_ref": "source-082-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [],
+   "required_harness": "The report task's tests on the scenario drawing, and an independent visual review of the printed pages.",
+   "required_evidence": "The printed report pages and the review record.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
