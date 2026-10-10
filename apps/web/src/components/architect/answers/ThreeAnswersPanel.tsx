@@ -155,7 +155,7 @@ function buildingOptionCardView(
   return {
     kind: "not_known",
     reason: notWorked ? notWorked.reason : "",
-    gapTag: notWorked ? notWorked.gapKindLine : null,
+    gapTag: notWorked ? notWorked.propertyInfoTag : null,
     resolvedBy: notWorked ? notWorked.resolvedBy : null,
   };
 }
