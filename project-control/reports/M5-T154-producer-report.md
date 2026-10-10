@@ -134,6 +134,11 @@ file to scope):
 Every other assertion in that file still passes (the globbed valid/invalid fixture tests already
 cover the new fixtures correctly, verified). No other out-of-scope file must change.
 
+**Scope correction 1 (orchestrator, packet at 3ef5b09b4):** `test_map_context_contract.py` was
+added to this task's allowed paths; the two named assertions above are now applied in this
+worktree (valid count 4->5 + the new invalid name; version enum `["1.0.0","1.1.0"]`), nothing else
+in that file changed, as a second commit on top of 962a21a2.
+
 ## Assumptions / limitations
 
 - The subject outline from the window query is byte-identical (0.00 ft) to the base pack's per-BBL
