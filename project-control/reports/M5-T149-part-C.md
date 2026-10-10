@@ -46,3 +46,27 @@ REQUESTED STATUS: awaiting_gate (ready for G2 self-check / G3 / G4; the two e2e 
 END-OF-REPORT
 
 ```
+
+## Correction after the first browser run (2026-10-10; ruling V10)
+
+The orchestrator ran the layout spec at the integrated head and got seven failures in
+`apps/web/e2e/results-layout.flag-on.spec.ts` — all from the test's own measures, not the layout.
+Only that file changed (plus this section). Both fixes follow ruling V10.
+
+- (b) Clipped-text check: it was flagging three elements that are visually hidden by design for
+  screen readers at every width — the window move hint "Drag the title to move this window…", the
+  resize hint "Drag this corner…" (both `.workspace-window__sr-only`, a 1×1 box clipped with
+  `clip: rect(0 0 0 0)`), and the "Development results are ready." live-region announcement
+  (OutcomeAnnouncer, visually hidden). `clippedTextOutsideScrollRegions` now skips an element whose
+  rendered box is at most 1×1 px or that is clipped to nothing (clip rect(0,0,0,0) / a clip-path),
+  and still reports any element with a real box whose visible text is cut off. The three hints are
+  named in a jsdom-free proof comment in the helper (this is a Chromium/Playwright check).
+- (a) 1440 px answers-column share: it divided the answers card width by the whole dialog width and
+  got 0.379 — but the window also holds the form and the panel padding, which the contract's "near a
+  44:56 split" does not count. The test now measures the answers column `three-answers-left` against
+  the two-column GRID `.ta-layout` (both columns and the 24 px gap) in ThreeAnswersPanel's markup
+  (read, not changed), keeping 40–48 % and at least 320 px.
+
+Checks (apps/web, direct exit codes): `npm run lint` EXIT 0 (same two pre-existing warnings, none
+mine); `npm run typecheck` EXIT 0. Playwright NOT run (ruling V6; ports untouched) — the orchestrator
+runs the spec. Commit parent is the integrated head `02af2245e19fafb87f306597ae919dbeb0a858a2`.

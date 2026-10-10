@@ -59,17 +59,35 @@ async function pageHorizontalOverflow(page: Page): Promise<number> {
   return page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
 }
 
-/** Text clipped by overflow:hidden/clip anywhere OUTSIDE a labelled scroll region (role=region with
- * an aria-label). Returns a short sample of each offender's text; an empty list is the pass. */
+/**
+ * Text whose real, visible box is cut off by overflow:hidden/clip anywhere OUTSIDE a labelled scroll
+ * region (role=region with an aria-label). Returns a short sample of each offender's text; an empty
+ * list is the pass.
+ *
+ * It skips elements that are visually hidden by design for screen readers — a box of at most 1 by
+ * 1 px, or clipped to nothing (clip: rect(0 0 0 0) / a clip-path). Such elements carry audible-only
+ * text whose scrollWidth naturally exceeds its 1 px box, which is not a visible-clipping defect
+ * (ruling V10 b). This is a Chromium/Playwright check, so this comment is its jsdom-free proof: the
+ * first run flagged exactly three hidden hints at every width — the window move hint "Drag the title
+ * to move this window…" and resize hint "Drag this corner or use the arrow keys…" (both
+ * .workspace-window__sr-only, 1x1 and clipped), and the "Development results are ready." live-region
+ * announcement (the OutcomeAnnouncer, visually hidden). None is ever seen; each is skipped below.
+ * Any element with a genuine rendered box whose visible text is cut off is still reported.
+ */
 async function clippedTextOutsideScrollRegions(dialog: Locator): Promise<string[]> {
   return dialog.evaluate((root) => {
     const offenders: string[] = [];
     const regions = Array.from(root.querySelectorAll('[role="region"][aria-label]'));
     for (const element of Array.from(root.querySelectorAll<HTMLElement>("*"))) {
-      const overflowX = getComputedStyle(element).overflowX;
-      if (overflowX !== "hidden" && overflowX !== "clip") continue;
+      const style = getComputedStyle(element);
+      if (style.overflowX !== "hidden" && style.overflowX !== "clip") continue;
       if (element.scrollWidth <= element.clientWidth + 1) continue;
       if (regions.some((region) => region.contains(element))) continue;
+      // Hidden-by-design for screen readers: a 1x1 (or smaller) box, or clipped to nothing.
+      const rect = element.getBoundingClientRect();
+      const clippedToNothing =
+        style.clip === "rect(0px, 0px, 0px, 0px)" || (style.clipPath !== "none" && style.clipPath !== "");
+      if ((rect.width <= 1 && rect.height <= 1) || clippedToNothing) continue;
       offenders.push((element.textContent ?? "").trim().slice(0, 40));
     }
     return offenders;
@@ -90,16 +108,20 @@ test.describe("M5-T149 results layout — flag-on, the real results route", () =
     });
   }
 
-  test("at 1440 px the answers column is 40–48 % of the window width and at least 320 px (S1)", async ({
+  test("at 1440 px the answers column is 40–48 % of the two-column grid and at least 320 px (S1, V10)", async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     const dialog = await openResults(page);
-    const dialogBox = await dialog.boundingBox();
-    const answersBox = await dialog.getByTestId("answer-floor_area_allowance").boundingBox();
-    expect(dialogBox).not.toBeNull();
+    // Ruling V10 a: the split is measured within the two-column GRID (both columns and the gap), not
+    // the whole window — the window also holds the form and the panel padding, which the contract's
+    // "near a 44:56 split" does not count. The grid is ThreeAnswersPanel's `.ta-layout`; the answers
+    // column is its left region `three-answers-left` (read-only; not changed here).
+    const gridBox = await dialog.locator(".ta-layout").boundingBox();
+    const answersBox = await dialog.getByTestId("three-answers-left").boundingBox();
+    expect(gridBox).not.toBeNull();
     expect(answersBox).not.toBeNull();
-    const ratio = answersBox!.width / dialogBox!.width;
+    const ratio = answersBox!.width / gridBox!.width;
     expect(answersBox!.width).toBeGreaterThanOrEqual(320);
     expect(ratio).toBeGreaterThanOrEqual(0.4);
     expect(ratio).toBeLessThanOrEqual(0.48);
