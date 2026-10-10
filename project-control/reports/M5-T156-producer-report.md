@@ -51,3 +51,32 @@ OBSERVATIONS for review (not defects I can fix in scope):
 
 Requested status: awaiting_gate.
 END-OF-REPORT
+
+
+---
+
+REWORK 1 RETURN (saved unchanged by the orchestrator):
+
+M5-T156 REWORK 1 complete. I am an AI agent (backend-engineer producer).
+
+COMMIT: 54a6a5cbf7abb57554f34dfc3deb7089fdeb952c  PARENT: c1d05fc0b792fa458df257ae1b150b502bcb33d5. git status clean. (No report file written, per harness instruction.)
+
+PRINTED PAGES — now 7 A4 (was 13), none nearly empty, no lone line/row (rendered file:// via headless Chromium and looked at every page):
+1 Decision summary — property, three answers, the COMPACT summary-frame site plan beside the answers, apartment estimate, open items, coverage (all on one page).
+2 Where is the lot? — ONE page: the Neighbourhood and Block close-up summary thumbnails side by side, each titled and captioned (room left for a third figure).
+3 What constrains the design? — lot-area basis, the full-size site plan among its surroundings (printed once), the fixed not-placed sentence, the whole constraints table.
+4 Option comparison — shared limitations, allowance bar chart, eleven options, worked/not-worked.
+5 Scenario sheet (Building B) — scheduled line, not-placed sentence, floor stack, why, floor schedule, what-not-checked, and the apartment estimate kept with them (no lone line).
+6 Assumptions and open items — eleven assumptions, open-items table.
+7 Calculations and evidence — inputs, allowance, envelope, provenance, Drawing notes (plain "Sources: … (edited …)" lines, no dataset id / "via NYC Open Data" / terms-of-use), status-label key.
+
+Captions: one short "Sources: NYC City Planning, MapPLUTO (edited 9 Sep 2026); NYC building footprints (edited 27 Sep 2026); NYC Digital City Map street centre lines (edited 1 Dec 2025)." plus the drawing's own notes — each date once, no doubling, no dataset id. Not-placed line is the fixed sentence, never spliced.
+
+CHECKS (lanes venv, direct exit codes):
+- services/api `ruff check .` → exit 0.
+- services/api `pytest -q tests/drawings tests/api tests/contracts tests/journey` → 2813 passed, 6 skipped, exit 0.
+- `tools/modularity_check.py --check` → 0 failures, exit 0.
+- `scripts/lanes/check_lane_paths.py --coverage` → PASS, exit 0.
+
+Files changed (all in allowed paths): report/{builder,drawings_embed,layout,page_decision_summary,page_evidence,page_location,page_scenario_sheet,page_site_context,readers,sources}.py + new report/map_caption.py; tests/api/test_report_read_context.py; tests/drawings/report/test_location_sheet.py; report-print.flag-on.spec.ts; ARCHITECT_PRESENTATION_CONTRACT.md. (fixture_api.py and report_read.py from my first commit were already correct in the base head.)
+END-OF-REPORT
