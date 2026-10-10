@@ -802,6 +802,12 @@ def build_app():
     os.environ[LANE_FLAG_ENV_VARS["A"]] = "1"
     results_inputs_provider = harness_results_inputs_provider()
     app.dependency_overrides[get_results_study_inputs_provider] = lambda: results_inputs_provider
+    # M5-T151: the report route (POST /api/v1/properties/{bbl}/report, mounted in app.main) is
+    # served through the SAME real flow with NO extra seam. It delegates to the results route's
+    # post_results, so it reuses INTERNAL_RESULTS_ENABLED (set above) and this same
+    # get_results_study_inputs_provider override; on 200 it renders the emitted results document
+    # into the full HTML report. No map document is built on this path (the map connectors are not
+    # produced here), so no map replay is added and the report is produced without maps.
     # W5: the three W2/W3/W4 internal reads, mounted in app.main (self-gated and
     # default off). Enable each flag FOR THIS PROCESS ONLY and inject the one
     # provider per route from a recorded official pack, so route/connector/builder/
