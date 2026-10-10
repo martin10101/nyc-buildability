@@ -96,14 +96,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "The drawing kit's dimension labels assume rectangle edges: a polygon may need its label placement checked (contract section 6).",
     "Other committed valid documents with geometry may change; each change is listed."
   ],
   "blockers": [],
   "created_at": "2026-10-10T00:00:05.811157+00:00",
-  "updated_at": "2026-10-10T02:23:20.574157+00:00",
+  "updated_at": "2026-10-10T04:37:28.848834+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -139,6 +139,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-10T04:37:28.848731+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; V11 (4) wording; G3 and G4 PASS in both rounds; review record and evidence map written"
     }
   ],
   "scope_corrections": [

@@ -1,0 +1,115 @@
+{
+ "task_id": "M5-T148",
+ "material_commits": [
+  "b6c92236 (part A: the token source, generated CSS and Python, parity and contrast tests)",
+  "a2cffc97 (part B: the five presentation adapters and their tests)",
+  "22dc1a04 (the producers' report assembled = material head)"
+ ],
+ "claim_seam_head": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
+ "files_changed": [
+  "apps/web/scripts/presentation-tokens.mjs",
+  "apps/web/scripts/tests/presentation-tokens.test.mjs",
+  "apps/web/src/app/globals.css",
+  "apps/web/src/lib/architect/__tests__/metric-format.test.ts",
+  "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+  "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+  "apps/web/src/lib/architect/__tests__/result-identity.test.ts",
+  "apps/web/src/lib/architect/__tests__/result-status.test.ts",
+  "apps/web/src/lib/architect/metric-format.ts",
+  "apps/web/src/lib/architect/presented-notices.ts",
+  "apps/web/src/lib/architect/presented-results.ts",
+  "apps/web/src/lib/architect/result-identity.ts",
+  "apps/web/src/lib/architect/result-status.ts",
+  "docs/design/presentation-tokens.json",
+  "project-control/reports/M5-T148-part-A.md",
+  "project-control/reports/M5-T148-producer-report.md",
+  "services/api/app/drawings/kit/presentation_tokens.py",
+  "services/api/tests/drawings/test_presentation_tokens.py"
+ ],
+ "what_did_not_change": "No rule file, capture, reference case or contract schema; no legal figure; no human verdict; no production switch.",
+ "known_limits": [
+  "The adapters are consumed by the screen only (M5-T149); the drawings and the PDF will use the tokens in the contract's step 4.",
+  "The drawing kit's own label sizes (8 and 7.5 pt) are not changed here (DB-216 c)."
+ ],
+ "checks_at_material_head": [
+  "website: lint 0, typecheck 0, vitest 126 files / 2615 tests",
+  "the whole Playwright suite 167/167 at d745b635",
+  "server: ruff 0; focused suites 3689 passed",
+  "register, contracts, size, lanes, budget, directive validator: all 0",
+  "CI run 38023638114 on d745b635: 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-090-R641": [
+   "The status words map to the owner's screen statuses only (settled, conditional, not known; apps/web/src/lib/architect/result-status.ts); 'Verified' is never produced (apps/web/src/lib/architect/__tests__/result-status.test.ts). project-control/reports/M5-T148-G3G4.md: G3 check 3."
+  ],
+  "D-090-R804": [
+   "Only presentation files change: tokens, generated CSS and Python, pure adapters; no calculation, rule, security or switch (packet forbidden paths; G3 check 1)."
+  ],
+  "D-090-R807": [
+   "Built on the branch cut from the merged main line 0bb6acb2 after the earlier wave merged; the route and token wiring were read first (the survey of 2026-10-09 and the planning draft, plan-wave20-draft.txt in the session folder)."
+  ],
+  "D-090-R810": [
+   "metric-format gives concise values ('20,150 sq ft'); presented-results gives each result's label, value or unavailable state, one exception and a details key (apps/web/src/lib/architect/metric-format.ts, presented-results.ts)."
+  ],
+  "D-090-R811": [
+   "presented-notices lists the conditions repeated across results once and lets each result refer to them; none is lost (apps/web/src/lib/architect/__tests__/presented-notices.test.ts, S7)."
+  ],
+  "D-090-R812": [
+   "presented-results tells allowance, envelope, scheduled option and estimate apart; a listed building is a scheduled option, never 'achieved' (apps/web/src/lib/architect/__tests__/presented-results.test.ts, S6)."
+  ],
+  "D-090-R833": [
+   "The mapping follows the owner's decision for the screen (row R641); a withheld value never becomes conditional to be shown (apps/web/src/lib/architect/__tests__/result-status.test.ts over every committed fixture). Open: question C2 (the six PDF labels on the screen) is the owner's."
+  ],
+  "D-090-R835": [
+   "One sans-serif family token, equal to the application's font stack (ruling V4); tabular formatting and '20,150 sq ft' (metric-format); the type sizes of the contract's two columns in docs/design/presentation-tokens.json (G3 check 2)."
+  ],
+  "D-090-R836": [
+   "Spacing 4 to 48 px, control height 44 px, radii 6 and 8 px, generated from the one source (services/api/tests/drawings/test_presentation_tokens.py: test_contract_section_5_values)."
+  ],
+  "D-090-R837": [
+   "Every declared text and background pair is computed for WCAG 2.2 contrast in apps/web/scripts/tests/presentation-tokens.test.mjs: text 5.76 to 14.53:1, control edges 7.14 and 7.83:1; the quiet divider is marked never a control edge."
+  ],
+  "D-090-R838": [
+   "One source docs/design/presentation-tokens.json; generated CSS block and Python module; parity tests in Node and Python fail on drift (test_changed_json_colour_without_regeneration_fails; node --check)."
+  ],
+  "D-090-R855": [
+   "The adapters only format and group what the document says; no law, no recalculation (ruling V2; project-control/reports/M5-T148-G3G4.md: G3 check 3)."
+  ],
+  "D-090-R856": [
+   "Zero is '0 sq ft', never not known; a missing value is not known, never a number; the identity adapter carries a revision fingerprint so a stale or other-lot document is caught (apps/web/src/lib/architect/__tests__/metric-format.test.ts, result-identity.test.ts)."
+  ],
+  "D-090-R857": [
+   "No sample constant from the reference package enters the code; every number comes from the results document (G3 check 2)."
+  ],
+  "D-090-R858": [
+   "No new package: the generator uses the Node standard library; the Python module is generated text (G3 check 2; package files unchanged)."
+  ],
+  "D-090-R859": [
+   "This task is the contract's step 2 (shared presentation), done before the website slice (step 3), as the wave's concurrency record states."
+  ],
+  "D-090-R871": [
+   "UX-03: no presentation path promotes a withheld or unknown value to a number or a draft to verified (presented-results and result-status tests over every committed fixture; project-control/reports/M5-T148-G3G4.md: G4 mutations)."
+  ],
+  "D-090-R872": [
+   "UX-04: shared conditions once and at most three notices with a count (presented-notices tests). Open: the screen applies it in M5-T149."
+  ],
+  "D-090-R873": [
+   "UX-05: the identity adapter gives lot, results id and revision; another lot is a mismatch (result-identity tests). Open: the PDF and drawings later."
+  ],
+  "D-090-R877": [
+   "UX-09: the contrast of every declared pair is tested; focus-ring tokens exist. Open: the screen's keyboard checks are M5-T149's."
+  ],
+  "D-090-R886": [
+   "Expected values come from the contract's own table and the committed fixtures, never from the adapters' own output (G4 check 2)."
+  ],
+  "D-090-R888": [
+   "Two builders produced the parts; an independent code-reviewer and a qa-engineer reviewed in two rounds (project-control/reports/M5-T148-G3G4.md)."
+  ],
+  "D-090-R890": [
+   "The reports and this map claim only what changed and was tested; nothing is called complete or verified."
+  ],
+  "D-090-R895": [
+   "The result kind has no 'achieved' member; a listed building is 'scheduled' with 'Site fit not verified' (apps/web/src/lib/architect/presented-results.ts; G3 check 3)."
+  ]
+ }
+}
