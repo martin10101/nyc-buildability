@@ -3,7 +3,6 @@ import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import profileFixture from "../../../packages/contracts/fixtures/valid/property_profile/builder_output_m1_t005.json";
 
 /**
@@ -240,7 +239,9 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
   // every assertion the former node test made: a valid run writes A4 pages; a missing argument fails
   // with a clear message; a non-existent input fails. The orchestrator runs this (ruling X10).
   test("the print script writes A4 pages and fails clearly on a bad argument (S5; CI-safe)", async () => {
-    const script = fileURLToPath(new URL("../scripts/print-report-pdf.mjs", import.meta.url));
+    // [ORCH-CORRECTED per G3 delta] Playwright compiles specs as CommonJS here, so `import.meta`
+    // does not load; resolve the script beside this spec with __dirname.
+    const script = join(__dirname, "..", "scripts", "print-report-pdf.mjs");
     const run = (args: string[]): Promise<{ code: number | null; stderr: string }> =>
       new Promise((resolve) => {
         const child = spawn(process.execPath, [script, ...args], { stdio: ["ignore", "ignore", "pipe"] });
