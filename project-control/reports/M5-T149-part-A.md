@@ -176,3 +176,27 @@ Checks (final): `npm run lint` EXIT 0; `npm run typecheck` EXIT 0; `npx vitest r
 src/lib` EXIT 0 — Test Files 110 passed, Tests 2263 passed (Part C's results-panel.test.tsx now passes
 on the integrated base). Root `modularity_check --check` EXIT 0; `check_lane_paths --coverage` EXIT 0
 (9811 files).
+
+## Local-exception rule — a one-result condition stays with its result (rebuilt on 13c8bd16)
+
+The browser run (results.flag-on.spec.ts) showed that after the special-density statement the
+allowance card displayed "29 units" but no longer carried the condition it rests on, because every
+condition had been moved to the shared list. The contract (§3) keeps a condition that changes a number
+attached to that number, and only shared conditions are stated once and named (V11 (5)). Fixed in
+AnswerCard.tsx, SharedConditions.tsx, three-answers.ts and their tests only (ResultDetails needed no
+change).
+
+- three-answers.ts: `conditionIndex` walks the document (notices-adapter order) and gives each distinct
+  condition its position and fan-out (how many results reference it). `answerView` now splits each
+  value's conditions into `localConditions` (fan-out 1, shown in full) and `sharedConditionNames`
+  (fan-out ≥ 2, named "Condition N"). New `sharedConditionsView` returns the shared conditions only.
+- AnswerCard.tsx: a value's local conditions render in full (one sentence each) with the value; shared
+  ones render as "Applies: Condition N". The special-density statement's condition applies only to the
+  standard legal-unit-limit, so "29 units" now carries its full condition in the allowance card.
+- SharedConditions.tsx: lists only the shared (≥ 2) conditions, each by its own name; the one-result
+  conditions are never here.
+
+Checks (final): `npm run lint` EXIT 0; `npm run typecheck` EXIT 0; `npx vitest run src/components/architect
+src/lib` EXIT 0 — 110 files, 2266 tests passed (Part C's results-panel.test.tsx passes: on the plain
+journey every condition is shared, so named in the cards and stated once in the shared list). Root
+`modularity_check --check` EXIT 0; `check_lane_paths --coverage` EXIT 0 (9811).

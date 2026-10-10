@@ -9,9 +9,11 @@ import {
   answerView,
   displayQuantity,
   gapKindLine,
+  conditionIndex,
   notAvailableText,
   openItemsView,
   quantityText,
+  sharedConditionsView,
   remainingFloorAreaView,
   shortfallView,
   statusStripItems,
@@ -183,7 +185,9 @@ describe("answerView — the draft gate and the headline", () => {
     const view = answerView(probe, "floor_area_allowance", true);
     if (view.kind !== "available") throw new Error("expected an available view");
     if (view.headline.kind !== "value") throw new Error("expected a value headline");
-    expect(view.headline.shown.conditions).toEqual(["If the recorded lot area is confirmed"]);
+    // The headline condition applies to this one result, so it is a local exception (shown in full).
+    expect(view.headline.shown.localConditions).toEqual(["If the recorded lot area is confirmed"]);
+    expect(view.headline.shown.sharedConditionNames).toEqual([]);
     expect(view.withheld).toEqual([
       {
         key: "legal_unit_limit_standard",
@@ -287,7 +291,8 @@ describe("the conditions of a value as a per-line list (M5-T142, ruling L1)", ()
     const view = answerView(results, "floor_area_allowance", true);
     if (view.kind !== "available") throw new Error("expected an available view");
     if (view.headline.kind !== "value") throw new Error("expected a value headline");
-    return view.headline.shown.conditions;
+    // These probes put the conditions on one result only, so they are local (shown in full).
+    return view.headline.shown.localConditions;
   }
 
   it("a settled value carries an empty conditions list (no joined line to disagree with)", () => {
@@ -295,8 +300,12 @@ describe("the conditions of a value as a per-line list (M5-T142, ruling L1)", ()
     const view = answerView(doc, "floor_area_allowance", true);
     if (view.kind !== "available") throw new Error("expected an available view");
     if (view.headline.kind !== "value") throw new Error("expected a value headline");
-    expect(view.headline.shown.conditions).toEqual([]);
-    for (const row of view.rows) expect(row.conditions).toEqual([]);
+    expect(view.headline.shown.localConditions).toEqual([]);
+    expect(view.headline.shown.sharedConditionNames).toEqual([]);
+    for (const row of view.rows) {
+      expect(row.localConditions).toEqual([]);
+      expect(row.sharedConditionNames).toEqual([]);
+    }
   });
 
   it("two conditions become two lines, each the assumption verbatim (none joined into one)", () => {
@@ -471,5 +480,75 @@ describe("ruling V11: the heading note and the open-items list", () => {
   it("(6) an item with no resolver is omitted, and duplicates are collapsed", () => {
     const doc = loadResultsFixture("synthetic_all_answers_available"); // no withheld values
     expect(openItemsView(doc)).toEqual([]);
+  });
+});
+
+describe("the contract's local-exception rule: a one-result condition stays with its result", () => {
+  const DENSITY_CONDITION = "If the lot is not in a special density area, as the user states";
+
+  // The benchmark with the owner's special-density statement: the standard legal unit limit becomes a
+  // CONDITIONAL shown value whose condition applies to it ALONE (built the way the panel tests do).
+  function densityStatementProbe(): Results {
+    const base = loadResultsFixture("recorded_215_16_northern_journey");
+    const fa = base.answers.floor_area_allowance;
+    if (fa.status !== "available") throw new Error("fixture changed");
+    return {
+      ...base,
+      answers: {
+        ...base.answers,
+        floor_area_allowance: {
+          ...fa,
+          values: [
+            ...fa.values,
+            {
+              key: "legal_unit_limit_standard",
+              label: "Legal dwelling-unit limit, standard residences",
+              value: 29,
+              unit: "dwelling_units",
+              exception_label: null,
+              zr_sections: ["ZR 23-22"],
+              sources: [],
+            },
+          ],
+          value_states: {
+            ...(fa.value_states ?? {}),
+            legal_unit_limit_standard: {
+              way: "conditional",
+              conditions: [
+                { kind: "unchecked_condition", assumption: DENSITY_CONDITION, settled_by: "Sourced evidence" },
+              ],
+            },
+          },
+        },
+      },
+    };
+  }
+
+  it("on the plain benchmark both conditions are shared (fan-out >= 2) and named for the shared list", () => {
+    const doc = loadResultsFixture("recorded_215_16_northern_journey");
+    const index = conditionIndex(doc);
+    for (const info of index.values()) expect(info.count).toBeGreaterThanOrEqual(2);
+    const shared = sharedConditionsView(doc);
+    expect(shared.length).toBe(index.size);
+    expect(shared.map(condition => condition.name)).toEqual(["Condition 1", "Condition 2"]);
+  });
+
+  it("the density condition (one result) is a LOCAL exception: shown in full, not in the shared list", () => {
+    const doc = densityStatementProbe();
+    // it stays with the legal-unit-limit value (localConditions), never named, never shared.
+    const view = answerView(doc, "floor_area_allowance", true);
+    if (view.kind !== "available") throw new Error("expected an available view");
+    const legalRow = view.rows.find(row => row.value.key === "legal_unit_limit_standard");
+    if (!legalRow) throw new Error("the legal-limit row is missing");
+    expect(legalRow.localConditions).toEqual([DENSITY_CONDITION]);
+    expect(legalRow.sharedConditionNames).toEqual([]);
+    // the shared list holds the two shared conditions and NOT the density condition.
+    const shared = sharedConditionsView(doc);
+    expect(shared.some(condition => condition.text === DENSITY_CONDITION)).toBe(false);
+    expect(shared.length).toBe(2);
+    // the headline still refers to the two shared conditions by name.
+    if (view.headline.kind !== "value") throw new Error("expected a value headline");
+    expect(view.headline.shown.sharedConditionNames).toEqual(["Condition 1", "Condition 2"]);
+    expect(view.headline.shown.localConditions).toEqual([]);
   });
 });

@@ -36,24 +36,27 @@ export const SITE_FIT_NOT_VERIFIED = "Site fit not verified";
 export type ConditionNames = (resultId: string) => readonly string[];
 
 /**
- * One of the three answers, in the presentation contract's reading order (§4; M5-T149 part A, ruling
- * V11). The FACE is short: the title, the headline value (or its "Not known"/"Not available" state
- * with its short gap tag), the 'Conditional' marker, at most one exception, and a Details button. The
- * derivation opens on demand in ResultDetails — the other value rows, each result's OWN exceptions,
- * the shared conditions referred to BY NAME (never repeated in full — ruling V11 (5)), the rule
- * sections and the measurement basis. A withheld value reads one wording: "Not known", the reason,
- * then what would settle it (ruling V11 (3)).
+ * One of the three answers, in the presentation contract's reading order (§4; M5-T149 part A, rulings
+ * V11/V12 + the local-exception rule). The FACE is short: the title, the headline value (or its
+ * "Not known"/"Not available" state with its short gap tag), the 'Conditional' marker, at most one
+ * exception, and a Details button. The derivation opens on demand in ResultDetails — the other value
+ * rows, each result's OWN exceptions, the conditions a value rests on (a one-result condition IN
+ * FULL with the value; a shared condition referred to BY NAME, stated once in the shared list — §3,
+ * ruling V11 (5)), the rule sections and the measurement basis. A withheld value reads one wording:
+ * "Not known", the reason, then what would settle it (ruling V11 (3)).
+ *
+ * The split between local and shared conditions is carried on the view (three-answers.ts); the
+ * `conditionNames` prop is retained for the panel's call shape and is no longer read here.
  */
 export function AnswerCard({
   answerKey,
   view,
-  conditionNames,
   children,
 }: {
   answerKey: AnswerKey;
   view: AnswerView;
-  /** The shared conditions each value refers to, by name (ruling V11 (5)). */
-  conditionNames: ConditionNames;
+  /** Retained for the panel's call shape; the local/shared split now rides on the view. */
+  conditionNames?: ConditionNames;
   /** Extra detail shown only while the answer itself is shown (remaining area, shortfall, notes). */
   children?: ReactNode;
 }) {
@@ -73,12 +76,11 @@ export function AnswerCard({
       </section>
     );
   }
-  const headlineConditions =
-    view.headline.kind === "value" ? view.headline.shown.conditions : [];
-  const headlineRefs =
-    view.headline.kind === "value" && headlineConditions.length > 0
-      ? conditionNames(`${answerKey}.${view.headline.shown.value.key}`)
-      : [];
+  const headlineLocal =
+    view.headline.kind === "value" ? view.headline.shown.localConditions : [];
+  const headlineSharedNames =
+    view.headline.kind === "value" ? view.headline.shown.sharedConditionNames : [];
+  const headlineConditional = headlineLocal.length > 0 || headlineSharedNames.length > 0;
   const shownValues: AnswerValue[] =
     view.headline.kind === "value"
       ? [view.headline.shown.value, ...view.rows.map(row => row.value)]
@@ -87,7 +89,7 @@ export function AnswerCard({
     view.rows.length > 0 ||
     view.withheld.length > 0 ||
     shownValues.length > 0 ||
-    headlineConditions.length > 0 ||
+    headlineConditional ||
     children != null;
   return (
     <section className="ta-answer" data-testid={`answer-${answerKey}`}>
@@ -100,14 +102,19 @@ export function AnswerCard({
             unit={view.headline.shown.value.unit}
           />
           <ExceptionTag label={view.headline.shown.value.exception_label} />
-          {headlineConditions.length > 0 ? <ConditionalMarker /> : null}
+          {headlineConditional ? <ConditionalMarker /> : null}
         </p>
       ) : (
         <WithheldLine entry={view.headline.withheld} testid="answer-headline-withheld" />
       )}
       {hasDetail ? (
         <ResultDetails name={title}>
-          {headlineRefs.length > 0 ? <ConditionRefs names={headlineRefs} /> : null}
+          {headlineConditional ? (
+            <div className="ta-conditional" data-testid="answer-headline-conditions">
+              {headlineLocal.length > 0 ? <LocalConditions conditions={headlineLocal} /> : null}
+              {headlineSharedNames.length > 0 ? <ConditionRefs names={headlineSharedNames} /> : null}
+            </div>
+          ) : null}
           {view.rows.length > 0 ? (
             <dl className="ta-rows">
               {view.rows.map((row, index) => (
@@ -116,10 +123,15 @@ export function AnswerCard({
                   <dd>
                     {quantityText(displayQuantity(row.value.value, row.value.unit))}
                     <ExceptionTag label={row.value.exception_label} />
-                    {row.conditions.length > 0 ? (
+                    {row.localConditions.length > 0 || row.sharedConditionNames.length > 0 ? (
                       <span className="ta-conditional" data-testid="answer-conditional">
                         <ConditionalMarker />
-                        <ConditionRefs names={conditionNames(`${answerKey}.${row.value.key}`)} />
+                        {row.localConditions.length > 0 ? (
+                          <LocalConditions conditions={row.localConditions} />
+                        ) : null}
+                        {row.sharedConditionNames.length > 0 ? (
+                          <ConditionRefs names={row.sharedConditionNames} />
+                        ) : null}
                       </span>
                     ) : null}
                   </dd>
@@ -270,13 +282,29 @@ function ConditionalMarker() {
 }
 
 /** Refers to the shared conditions BY NAME (ruling V11 (5)): "Applies: Condition 1, Condition 2" —
- * never the full text again. Nothing is drawn when the value refers to no condition. */
+ * never the full text again. Nothing is drawn when the value refers to no shared condition. */
 function ConditionRefs({ names }: { names: readonly string[] }) {
   if (names.length === 0) return null;
   return (
     <span className="ta-condition-refs" data-testid="answer-condition-refs">
       Applies: {names.join(", ")}
     </span>
+  );
+}
+
+/** A condition that applies to THIS result only, shown IN FULL with the value — one sentence per
+ * line (the contract's local-exception rule, "a condition that changes a number stays attached to
+ * that number"). Each line is the document's assumption, never retyped. */
+function LocalConditions({ conditions }: { conditions: readonly string[] }) {
+  if (conditions.length === 0) return null;
+  return (
+    <ul className="ta-conditions">
+      {conditions.map((condition, index) => (
+        <li className="ta-condition" data-testid="answer-condition" key={`${index}-${condition}`}>
+          {condition}
+        </li>
+      ))}
+    </ul>
   );
 }
 

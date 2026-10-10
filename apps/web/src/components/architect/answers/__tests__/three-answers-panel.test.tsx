@@ -388,6 +388,8 @@ describe("S5 — the legal unit limit sits with the allowance, apart from the es
     };
   }
 
+  const DENSITY_CONDITION = "If the lot is not in a special density area, as the user states";
+
   it("shows '29 units' with the allowance, apart from the estimate", () => {
     const doc = densityStatementProbe();
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
@@ -398,6 +400,24 @@ describe("S5 — the legal unit limit sits with the allowance, apart from the es
     expect(options.textContent ?? "").not.toContain("29 units");
     // and the estimate range is not inside the allowance card (kept apart — N2)
     expect(allowance.textContent ?? "").not.toContain("17.27 to 21.59");
+  });
+
+  it("keeps the density condition IN FULL with the '29 units' value, never only in the shared list", () => {
+    // The statement's condition applies to the legal-unit-limit alone, so it is a local exception:
+    // shown in full with that result (the contract's local-exception rule), not in the shared list.
+    const doc = densityStatementProbe();
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const allowance = card("floor_area_allowance");
+    const legalRow = within(allowance)
+      .getAllByTestId("answer-value")
+      .find(row => (row.querySelector("dt")?.textContent ?? "").includes("Legal dwelling-unit limit"));
+    if (!legalRow) throw new Error("the legal-limit value row is missing");
+    expect(legalRow.textContent).toContain(DENSITY_CONDITION);
+    // it is a one-result condition, so it is NOT named and NOT in the shared-conditions list.
+    const shared = screen.getByTestId("shared-conditions");
+    expect(shared.textContent ?? "").not.toContain(DENSITY_CONDITION);
+    // the shared list still holds the two conditions shared across the other results, by name.
+    expect(within(shared).getAllByTestId("shared-condition").length).toBeGreaterThanOrEqual(2);
   });
 });
 

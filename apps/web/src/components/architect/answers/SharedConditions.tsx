@@ -1,19 +1,24 @@
-import { capNotices, collectConditions } from "@/lib/architect/presented-notices";
-import { openItemsView, type ThreeAnswersResults } from "@/lib/architect/three-answers";
+import { capNotices } from "@/lib/architect/presented-notices";
+import {
+  openItemsView,
+  sharedConditionsView,
+  type ThreeAnswersResults,
+} from "@/lib/architect/three-answers";
 
 /**
  * The shared conditions, stated ONCE, and the short "What needs resolving" list (presentation
- * contract §1/§2 item 6/§3; walkthrough notes N3/N6; ruling V11 (5)/(6)). M5-T149 part A.
+ * contract §1/§2 item 6/§3; walkthrough notes N3/N6; rulings V11 (5)/(6)). M5-T149 part A.
  *
- * Conditions: read through the M5-T148 notices adapter — `collectConditions` lists each distinct
- * condition once, in first-appearance order; `capNotices` shows at most three and counts the rest.
- * They are named "Condition 1 / Condition 2" (the component's naming), never the adapter id "C1".
+ * Only conditions shared by TWO OR MORE results are listed here — each named "Condition N" and
+ * stated once (`sharedConditionsView`). A condition that applies to a single result is a local
+ * exception and is shown in full WITH that result (AnswerCard), never here (the contract's
+ * local-exception rule). `capNotices` shows at most three and counts the rest.
  *
- * Open items: read through `openItemsView` (the document's own reasons and resolvers) and capped the
+ * Open items: read through `openItemsView` (the document's own reasons and resolvers), capped the
  * same way; each names what it affects and what would settle it. No text is typed here (ruling V2).
  */
 export function SharedConditions({ results }: { results: ThreeAnswersResults }) {
-  const { shared } = collectConditions(results);
+  const shared = sharedConditionsView(results);
   const openItems = openItemsView(results);
   if (shared.length === 0 && openItems.length === 0) return null;
   const conditions = capNotices(shared);
@@ -26,12 +31,12 @@ export function SharedConditions({ results }: { results: ThreeAnswersResults }) 
     >
       {shared.length > 0 ? (
         <div className="ta-shared-conditions-group">
-          <h3 className="ta-shared-conditions-heading">Conditions that apply to these results</h3>
+          <h3 className="ta-shared-conditions-heading">Conditions that apply to several results</h3>
           <ol className="ta-shared-conditions-list">
-            {conditions.visible.map((condition, index) => (
-              <li className="ta-shared-condition" data-testid="shared-condition" key={condition.id}>
+            {conditions.visible.map(condition => (
+              <li className="ta-shared-condition" data-testid="shared-condition" key={condition.name}>
                 <span className="ta-shared-condition-label" data-testid="shared-condition-label">
-                  {`Condition ${index + 1}`}
+                  {condition.name}
                 </span>
                 {`: ${condition.text}`}
               </li>
