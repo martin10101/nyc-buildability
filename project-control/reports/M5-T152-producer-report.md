@@ -50,3 +50,21 @@ CHECKS (direct RC): ruff . RC0. pytest tests/drawings tests/cad tests/scenario/t
 
 MUTATION (scratch copy outside the repo): reverting the K2 recompose (no tick/line reservation, no short-edge handling) -> tests/drawings/kit/test_report_frame_rework1.py::test_k2_no_label_touches_a_dimension_tick_or_line FAILS on 10 fixtures (the present overlap, incl. the benchmark "2.22 ft"). A self-contained in-repo mutation also ships: test_k2_mutation_a_label_on_a_dimension_line_is_caught.
 END-OF-REPORT
+
+---
+
+## Rework 2 (the builder's return, saved verbatim by the orchestrator)
+
+Builder commit `1282f404cb23f411d7153e235667f68ca9b356f8` (parent `475404f114333da71fc564b29faebcc781b9dc8b`), integrated as `9f7d5dd0`. The finding it answers: `/root/project/lanes-runtime/owner-docs/session-2026-10-10a/rework-w21-T152-2.md` (B1, B2).
+
+M5-T152 rework 2 done. One commit, not pushed.
+COMMIT 1282f404cb23f411d7153e235667f68ca9b356f8  PARENT 475404f114333da71fc564b29faebcc781b9dc8b
+
+Sentences changed (three_way_document.py; before -> after):
+1. Best combination: "The best combination is not known: it is worked out from building options, which are not known for this lot." -> "The best combination is not known: it needs a building fitted to the site, and none is fitted yet."
+2. Shortfall: "The gap to the allowance is not known: it is worked out from the building option, which is not known for this lot." -> "The gap to the allowance is not known: it needs a building fitted to the site, and none is fitted yet."
+3. Floor stack (emitted only when NO building is worked; in no committed fixture): "...worked out from the building option and the lot coverage, and neither is known for this lot." -> "...it needs a building fitted to the site and the lot coverage, and neither is worked yet."
+Benchmark changed only at shortfall + best_combination; no figure/value/way/withheld change. S5 test extended (B2) with a mutation over all four constants. Register resynced (both three_way entries, rev 9). first_building_options.py:153 and result_ways.py:619 left (a specific building's missing inputs; a code comment).
+
+CHECKS (direct RC): ruff RC0. pytest tests/drawings tests/cad tests/scenario/three_answers tests/api/test_results_read_api.py tests/journey tests/spatial RC0 -> 2461 passed, 8 skipped. register --check RC0. sync_contract_schemas RC0. validate_contracts RC0 (23/0). modularity RC0 (0 failures). lane coverage RC0 (9880).
+END-OF-REPORT
