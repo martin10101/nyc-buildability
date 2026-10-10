@@ -57,7 +57,6 @@
     "apps/web/src/lib/architect/__tests__/three-answers.test.ts"
   ],
   "forbidden_paths": [
-    "apps/web/src/lib/architect/three-answers.ts",
     "apps/web/src/lib/results-api.ts",
     "apps/web/src/lib/results-contract-checks.ts",
     "services/**",
@@ -278,6 +277,11 @@
       "at": "2026-10-10T03:25:10+00:00",
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-10, after the browser run] ruling V12: the orchestrator's V11 (7) order corrected to the contract's (answers before open items and shared conditions); one older browser assertion follows V11 (5). No path, gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-10T04:29:08+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, found by the code reviewer's delta re-review] apps/web/src/lib/architect/three-answers.ts removed from forbidden_paths: ruling V11 added it to allowed_paths but left it forbidden. No other path, gate, reviewer, scenario or bound row changed."
     }
   ]
 }
