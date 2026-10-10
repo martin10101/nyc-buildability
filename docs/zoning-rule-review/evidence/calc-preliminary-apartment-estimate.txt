@@ -1,12 +1,12 @@
-# Test-run evidence for the zoning-rule review register - calculation entries (M5-T146 PART D)
+# Test-run evidence for the zoning-rule review register - calculation entries (M5-T150)
 # Committed log of one deterministic run of this calculation entry's linked test file,
-# executed in the task worktree on the integrated code head 423aa189. three_way_document.py changed (M5-T146 W14 c: geometry.floor_plates.reason reconciled to a true reason), so the code module, combined code identity, commit and counts are resynced; the estimate behaviour is unchanged.
+# executed in the task worktree over the base code head 42fc2ae1 with the M5-T150 change. three_way_document.py changed (M5-T150: the lot-outline-available signal withholds the whole geometry block when no measured outline is available), so the code module, combined code identity, commit and counts are resynced; the estimate behaviour is unchanged.
 # The automated-tests field records the result; the checker never re-runs tests, it only checks
 # that the recorded code-identity and test-file digests still match the files.
 entry: calc-preliminary-apartment-estimate
 command (from services/api): python -m pytest -q -p no:cacheprovider tests/rules/test_zoning_rule_review_register_calculations.py
-run date: 2026-10-09
-commit tested: 423aa189fdb8fd7f16aead0dfec3af50e5bcbd66
+run date: 2026-10-10
+commit tested: 42fc2ae11e6b90084972e7ca32816cc50b8a085a
 exit code: 0
 ---
 53 passed

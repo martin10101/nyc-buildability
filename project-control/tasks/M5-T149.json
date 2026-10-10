@@ -1,0 +1,296 @@
+{
+  "task_id": "M5-T149",
+  "title": "The architect-facing results slice (the presentation contract's step 3): the Results tool shows the property's identity, the three answers in the order label, value, exception, details, one option comparison, and every data state, on the shared tokens, at desktop and phone widths",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Rebuild the Results tool to the owner's presentation contract for the benchmark lot and every data state: identity first; one context strip of at most three items; the three answers together, each as label, value or unavailable state, one exception, details; 'Building option: site fit not verified' with the scheduled area; one option comparison with the same rows, order and units, a not-worked building as 'Not known' never 0; shared conditions once; at most three notices; two columns at desktop and one at 320 to 700 px; focus and keyboard behaviour; no developer words.",
+  "business_reason": "The owner's brief: the first screen must make the useful answer, its basis and its material limitation understandable at once; the full evidence stays available. The walkthrough notes N1 to N3 (DB-214) and the screen wordings (DB-215 b) are closed here.",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md (sections 2, 3, 4, 5 and 12)",
+    "the adapters and tokens of M5-T148",
+    "the committed results fixtures",
+    "the walkthrough notes in project-control/reports/M5-T147-G3G4.md",
+    "D-090 source-080 (the owner's review: rows R894, R895)"
+  ],
+  "outputs": [
+    "the rebuilt Results tool and its tests",
+    "a browser layout test at six widths"
+  ],
+  "dependencies": [
+    "M5-T148"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/ResultsStatusStrip.tsx",
+    "apps/web/src/components/architect/answers/ScopeSummary.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/ResultDetails.tsx",
+    "apps/web/src/components/architect/answers/SharedConditions.tsx",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/scope-summary.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/result-details.test.tsx",
+    "apps/web/src/components/architect/answers/FirstBuildingOptions.tsx",
+    "apps/web/src/components/architect/answers/BuildingOptionsComparison.tsx",
+    "apps/web/src/components/architect/answers/building-options.css",
+    "apps/web/src/lib/architect/first-building-options.ts",
+    "apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-option-notes.test.tsx",
+    "apps/web/src/lib/architect/__tests__/first-building-options.test.ts",
+    "apps/web/src/test-support/results-two-buildings.ts",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/ResultsForm.tsx",
+    "apps/web/src/components/architect/results-panel.css",
+    "apps/web/src/components/architect/workspace/DashboardEntry.tsx",
+    "apps/web/src/components/architect/workspace/floating-workspace-window.css",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/src/components/architect/workspace/__tests__/floating-workspace-window.test.tsx",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/results-layout.flag-on.spec.ts",
+    "project-control/reports/M5-T149-part-A.md",
+    "project-control/reports/M5-T149-part-B.md",
+    "project-control/reports/M5-T149-part-C.md",
+    "project-control/reports/M5-T149-producer-report.md",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/lib/results-api.ts",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "services/**",
+    "packages/**",
+    "apps/web/src/app/globals.css",
+    "apps/web/src/components/architect/workspace/DashboardPanels.tsx",
+    "apps/web/src/app/property/workspace.css",
+    "apps/web/src/app/dashboard/dashboard.css",
+    "apps/web/playwright.config.ts",
+    "apps/web/e2e/harness/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Desktop composition",
+      "input": "the benchmark lot at 1440 x 900, the Results tool open",
+      "expected": "two columns: the answers at 40 to 48 percent of the window's width and at least 320 px, the details on the right; the lot, the program and the floor height are visible without scrolling (UX-01)."
+    },
+    {
+      "id": "S2",
+      "case": "Widths and text",
+      "input": "320, 390, 768, 1024, 1440 and 1920 px; 200 percent zoom and the text-spacing check at 1280 px",
+      "expected": "no sideways page scroll; no clipped text outside labelled scroll regions; 16 px padding at 700 px and below (UX-07, UX-08)."
+    },
+    {
+      "id": "S3",
+      "case": "Context strip and notices",
+      "input": "the benchmark lot",
+      "expected": "the strip shows the document's status_strip items, at most three; shared conditions are stated once; at most three notices show at once, the rest behind a count (UX-04)."
+    },
+    {
+      "id": "S4",
+      "case": "Each result's order; focus",
+      "input": "every result on the benchmark lot",
+      "expected": "label, then the value or 'Not known'/'Not available', then at most one exception, then Details; Details moves focus into its region; Escape returns focus to the opener (UX-09)."
+    },
+    {
+      "id": "S5",
+      "case": "Legal limit apart from the estimate (DB-214 N2)",
+      "input": "the benchmark lot with the special-density statement made",
+      "expected": "'29 units' appears only with the floor-area allowance, marked Conditional; '17.27 to 21.59' appears only with the building option, tagged as an estimate (UX-02, UX-14)."
+    },
+    {
+      "id": "S6",
+      "case": "Building option first, scheduled not achieved",
+      "input": "the benchmark lot at 10 ft; at 16 ft",
+      "expected": "at 10 ft: 'Building option: site fit not verified' with 'Scheduled area: 20,150 sq ft' and the document's not_checked items; the word 'achieved' appears nowhere (row R895). At 16 ft: no scheduled area; each building's reason from the document."
+    },
+    {
+      "id": "S7",
+      "case": "One option comparison",
+      "input": "the benchmark lot; the synthetic two-building test document",
+      "expected": "buildings side by side with the same rows, order and units; a not-worked building reads 'Not known' with its reason, never 0; one wording per situation (row R894); at 700 px and below, stacked summaries with the table in a labelled scroll region (UX-06, UX-14)."
+    },
+    {
+      "id": "S8",
+      "case": "Normal and partial states",
+      "input": "synthetic_all_answers_available; the benchmark lot",
+      "expected": "the normal state shows three headline values with units; the partial state shows the withheld results as 'Not known' with the kind of gap and no number (UX-02, UX-03)."
+    },
+    {
+      "id": "S9",
+      "case": "No geometry",
+      "input": "the route's lot_conditions_unconfirmed answer",
+      "expected": "a notice that names what is missing, no number, no 'safe to retry' (UX-03, UX-13)."
+    },
+    {
+      "id": "S10",
+      "case": "Failed fetch, stale answer, another lot",
+      "input": "a network error; a slow first answer overtaken by a second; a changed input; a document for another lot",
+      "expected": "a notice with retry; only the newest answer shows; a stale answer is marked stale; another lot's document is not shown (UX-05)."
+    },
+    {
+      "id": "S11",
+      "case": "No developer words",
+      "input": "the loading, empty, partial, error and normal states",
+      "expected": "a text check finds no field name, code, route, contract version, task id or raw state word; the measurement-basis words of the estimate are tied to the contract's text by a test (DB-215 b) (UX-13)."
+    },
+    {
+      "id": "S12",
+      "case": "The first screen after Show results",
+      "input": "the benchmark lot at 1440 x 900 and at 390 x 844, after Show results",
+      "expected": "the form is folded into a one-line summary with 'Change inputs'; focus is on the results heading; the property's identity and the three answers' headline values are inside the first screen (V11 (1))."
+    },
+    {
+      "id": "S13",
+      "case": "The building-option answer",
+      "input": "the benchmark lot at 10 ft; at 16 ft",
+      "expected": "at 10 ft the card reads 'Scheduled area: 20,150 sq ft' with 'site fit not verified', never 'Not available' or 'shown below'; at 16 ft 'Not known' with the document's reason (V11 (2))."
+    },
+    {
+      "id": "S14",
+      "case": "One wording, conditions by name, open items",
+      "input": "every state of the benchmark lot",
+      "expected": "no 'still owed', 'Not built yet', 'Not worked' or 'internal preview' on the screen; shared conditions referred to by name under the building option and in Details; a list of at most three open items with what each affects and what would settle it (V11 (3), (4), (5), (6))."
+    },
+    {
+      "id": "S15",
+      "case": "Another lot",
+      "input": "a results document whose identity is for another lot",
+      "expected": "it is not shown; the panel says the results are for another property (V11 (10))."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "visual-quality-reviewer",
+    "human-journey-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Part A moves the building-option styles (three-answers.css lines 373 to 547) to Part B's new building-options.css: both parts must agree the move, and the CSS import moves with FirstBuildingOptions.tsx.",
+    "The comparison depends on the owner's open question A2; it is built under its meanwhile rule (every building, none preferred)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T00:00:08.476097+00:00",
+  "updated_at": "2026-10-10T04:56:56.670605+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R256",
+        "D-090-R267",
+        "D-090-R526",
+        "D-090-R543",
+        "D-090-R544",
+        "D-090-R556",
+        "D-090-R570",
+        "D-090-R641",
+        "D-090-R700",
+        "D-090-R804",
+        "D-090-R805",
+        "D-090-R807",
+        "D-090-R809",
+        "D-090-R810",
+        "D-090-R811",
+        "D-090-R812",
+        "D-090-R813",
+        "D-090-R816",
+        "D-090-R817",
+        "D-090-R819",
+        "D-090-R820",
+        "D-090-R821",
+        "D-090-R822",
+        "D-090-R823",
+        "D-090-R824",
+        "D-090-R825",
+        "D-090-R826",
+        "D-090-R827",
+        "D-090-R828",
+        "D-090-R829",
+        "D-090-R830",
+        "D-090-R831",
+        "D-090-R832",
+        "D-090-R833",
+        "D-090-R856",
+        "D-090-R859",
+        "D-090-R869",
+        "D-090-R870",
+        "D-090-R871",
+        "D-090-R872",
+        "D-090-R873",
+        "D-090-R874",
+        "D-090-R875",
+        "D-090-R876",
+        "D-090-R877",
+        "D-090-R881",
+        "D-090-R882",
+        "D-090-R885",
+        "D-090-R886",
+        "D-090-R888",
+        "D-090-R890",
+        "D-090-R894",
+        "D-090-R895"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T00:00:08.476352+00:00",
+  "path_notes": "PARTS: A (the answers, the strip, the scope summary, the details and shared conditions; three-answers.css), B (the building options, the comparison, building-options.css, the view model's building part, the synthetic two-building test document) and C (the Results window and form, the wide-window list in DashboardEntry, the window CSS, the browser tests) share no file and run side by side after M5-T148 is integrated. FirstBuildingOptions keeps its props, so Part A's journey test only checks that Part B's section is present.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 20 (they govern; later over earlier). V1: three tasks on ONE branch, reviewed at ONE head, merged as ONE pull request: M5-T148 (shared presentation), M5-T149 (the website slice, after M5-T148) and M5-T150 (the parcel's own outline; server only, beside M5-T148). Order: M5-T148 parts A and B and M5-T150 side by side (three builders, disjoint files); integrate; then M5-T149 parts A, B and C side by side (three builders); then the orchestrator builds the website, runs the browser tests (stopping the owner's preview for the run and restarting it), takes the pictures and starts the reviews. V2: the website types no number, label, condition or reason; the presentation adapters only format numbers and group what the document says; they decide no law and recalculate nothing (D-090 R855). V3: the screen's statuses stay as the owner decided (row R641: 'Preliminary zoning results'; settled, conditional, not known); the owner's question C2 (the PDF's six labels on the screen) is open; 'Verified' is never shown. V4: the font token equals the application's existing font stack (`apps/web/src/app/layout.tsx`); no font changes in this wave. V5: a floor schedule whose placement and site fit are not established is never called 'achieved' (row R895): it is the 'scheduled area', with 'site fit not verified' beside it, before any caveat; the option comparison uses ONE wording per situation (row R894). V6: builders never start Next, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests. V7: a builder who finds that a file outside its part must change STOPS and reports. V8: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere. V9: the estimate on the benchmark lot is 17.27 to 21.59 apartments (from the document); the planning draft's '22.20' was wrong.\n\nCORRECTION BY THE ORCHESTRATOR AFTER THE FIRST BROWSER RUN (2026-10-10). V10: (a) scenario S1's measure is the share of the TWO-COLUMN GRID: the answers column's width against the grid's width (both columns and the gap), 40 to 48 percent, and at least 320 px. The whole window also holds the form and the panel padding, which the contract's 'near a 44:56 split' does not count; measured against the window the 44:56 grid gave 37.9 percent at 1440 px. (b) The layout test's clipped-text check skips elements that are visually hidden by design for screen readers (a box of at most 1 by 1 px, or clipped to nothing), and still reports every element whose real, visible text is cut off; the first run reported three such hidden hints at every width ('Drag the title to move this window ...', 'Development results are ready.', 'Drag this corner ...').\n\nCORRECTION AFTER THE REVIEWS (orchestrator, 2026-10-10; the visual-quality review FAILED on one blocking item and the walkthrough FAILED on two; G3 and G4 passed with notes). V11, the corrections, one round: (1) FIRST SCREEN (walkthrough B1, visual note a): once results are shown, the form folds into a one-line summary of the inputs used with a 'Change inputs' control, and focus moves to the results heading; at 1440 and at 390 px the property's identity and the three answers' headline values are in the first screen after 'Show results'. (2) THE BUILDING-OPTION ANSWER (walkthrough B2, N5): when a building is listed, its card shows 'Scheduled area: 20,150 sq ft' with 'site fit not verified' from the document's listed building, never 'Not available' and never 'shown below'; when none is listed, 'Not known' with the document's reason. (3) ONE WORDING PER SITUATION (walkthrough N1; the owner's row R894): a result with no value reads 'Not known', then the document's reason, then what would settle it; no second or third phrase for the same situation ('Not worked', 'still owed', 'Not built yet'); a missing fact about the property may carry the short tag 'Needs property information'. (4) NO DEVELOPER WORDS (walkthrough N2; visual blocking item): no 'internal preview' in the heading (keep 'rules not professionally reviewed'); the server's reasons name no internal method ('step-P6 method') and write whole square feet without '.00'. (5) CONDITIONS BY NAME (visual note c): the shared conditions are stated once; under the building option and inside Details they are referred to by name ('Applies: Condition 1, Condition 2'), never repeated in full; Details shows only the result's own exceptions. (6) WHAT NEEDS RESOLVING (walkthrough N6; contract section 2 item 6): a short list of at most three open items, each with what it affects and what would settle it, grouped from the document's own reasons and resolvers. (7) BALANCE AND READING ORDER (visual note d; walkthrough N3): left column: identity, context strip, conditions and open items, the three answers, then the building options and the comparison; right column: the details region and the assumed conditions, which stay OPEN by default (owner rule R119), never folded. (8) THE COMPARISON keeps its row labels in view when its table scrolls sideways (walkthrough N4). (9) THE TYPED PARKING LINE in ResultsPanel is removed (a condition typed in the website; the document's not_checked list carries it). (10) ANOTHER LOT (G4 note): the results surface uses the identity adapter, and a document for another lot is not shown; a test proves it. (11) THE MEASUREMENT-BASIS WORDS of the estimate are tied to the contract's text by a test (G4 note; DB-215 b).\n\nCORRECTION OF THE ORCHESTRATOR'S OWN RULING, after the browser run of 2026-10-10 03:24 UTC. V12: ruling V11 (7) put the shared conditions and the open items BEFORE the three answers in the left column; that contradicts the contract's reading order (section 2: the property, the floor-area allowance, the envelope, the building option, what changes between options, what needs resolving, how it was derived) and pushed the answers out of the first screen (scenario S12 failed at 1440 and 390 px). The left column's order is: identity, context strip, the three answers, the building options and the comparison, then what needs resolving and the shared conditions (stated once; the answers refer to them by name). The right column stays: the details region and the assumed conditions, open (R119). The older browser test that looked for a shared condition's full text inside the allowance card now finds it in the shared conditions, and the card's reference by name (V11 (5)).",
+  "documented_test_commands": [
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/components/architect src/lib",
+    "the browser tests and the layout test are run by the orchestrator (ruling V6)"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T00:41:30.126124+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed after M5-T148 was integrated; parts A and B dispatched side by side, part C after the M5-T150 builder returns (three-builder limit)"
+    },
+    {
+      "at": "2026-10-10T04:37:28.620277+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and corrected (V10, V11, V12); visual review and walkthrough FAILED then PASSED; G3 and G4 PASS; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-10T01:40:16+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, after the first browser run, before any review] ruling V10: scenario S1's measure is the two-column grid's split, not the whole window; the clipped-text check skips screen-reader-only text. No path, gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-10T02:23:17+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, after the visual-quality review and the walkthrough FAILED] ruling V11 and scenarios S12 to S15: the first screen, the building-option answer, one wording per situation, conditions by name, open items, balance, the comparison's row labels, the typed parking line, another lot, the measurement-basis words. Two paths added: apps/web/src/lib/architect/three-answers.ts and its test (its constants hold the stacked wording, 'internal preview' and 'shown below')."
+    },
+    {
+      "at": "2026-10-10T03:25:10+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, after the browser run] ruling V12: the orchestrator's V11 (7) order corrected to the contract's (answers before open items and shared conditions); one older browser assertion follows V11 (5). No path, gate, reviewer, scenario or bound row changed."
+    },
+    {
+      "at": "2026-10-10T04:29:08+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, found by the code reviewer's delta re-review] apps/web/src/lib/architect/three-answers.ts removed from forbidden_paths: ruling V11 added it to allowed_paths but left it forbidden. No other path, gate, reviewer, scenario or bound row changed."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-10T04:56:56.670449+00:00"
+}

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import re
 import socket
 from pathlib import Path
 
@@ -385,6 +386,12 @@ def test_m5t146_live_route_lists_building_b_without_the_tax_map_outline(
     assert doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]["reason"] == (
         coverage["reason"]
     )
+    # M5-T150 (S2 / R896): with no tax-map outline the site plan is not drawn - the whole geometry
+    # block is not_available with its reason, never a rectangle sized to the recorded lot area.
+    assert doc["geometry"]["status"] == "not_available"
+    assert "outline is not available" in doc["geometry"]["reason"]
+    assert doc["geometry"]["reason_kind"] == "missing_input"
+    assert "lot_outline" not in doc["geometry"]
 
 
 # ======================================================= W14 (walkthrough F1) live route
@@ -486,6 +493,25 @@ def test_w14c_live_route_false_building_option_text_appears_nowhere(enabled, mon
             assert "below the minimum base height" not in text, (f2f, text)
         fp = doc["geometry"]["floor_plates"]
         assert fp["reason"].startswith("No floor plate is drawn: no placement on the lot is worked")
+
+
+def test_v11_4_live_route_plain_words_and_whole_square_feet_without_decimals(
+    enabled, monkeypatch,
+) -> None:
+    """V11 (4) / M5-T150 S7 through the LIVE ROUTE, walking EVERY string of the returned document at
+    the default 10 ft and at 14, 16 and 25 ft: no reason names an internal method ('step-P6'), and
+    no whole square-foot figure carries '.00' (fractions like '6,716.67 sq ft' are kept)."""
+    _no_network(monkeypatch)
+    whole_with_decimals = re.compile(r"\d\.00 sq ft")
+    for f2f in (None, 14, 16, 25):
+        body = {"housing_program": "standard_residence"}
+        if f2f is not None:
+            body["floor_to_floor_ft"] = f2f
+        response = _post(app_with(benchmark_provider()), body)
+        assert response.status_code == 200
+        for text in _all_strings(response.json()):
+            assert "step-p6" not in text.lower(), (f2f, text)
+            assert not whole_with_decimals.search(text), (f2f, text)
 
 
 # =========================================================================== T9

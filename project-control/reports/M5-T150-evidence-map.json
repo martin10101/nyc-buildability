@@ -1,0 +1,85 @@
+{
+ "task_id": "M5-T150",
+ "material_commits": [
+  "d183c487 (the measured outline threaded into the geometry; the benchmark and snapshots regenerated; register resync)",
+  "57a217a1 (the producer's return kept as its report)",
+  "bcc5a2ac (V11 (4): plain words in the reasons = material head)"
+ ],
+ "claim_seam_head": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
+ "files_changed": [
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+  "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+  "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T150-producer-report.md",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/first_option_results.py",
+  "services/api/app/scenario/three_answers/geometry.py",
+  "services/api/app/scenario/three_answers/inputs.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/api/test_results_read_api.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/scenario/three_answers/test_geometry_lot_outline.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+ ],
+ "what_did_not_change": "No rule file, capture, reference case or contract schema; no legal figure; no human verdict; no production switch.",
+ "known_limits": [
+  "The site plan does not draw street names or neighbours yet; its notes column still prints raw source words (DB-216); the 2.22 ft edge label may read cramped.",
+  "The register's tested_commit is informational and was not resynced."
+ ],
+ "checks_at_material_head": [
+  "website: lint 0, typecheck 0, vitest 126 files / 2615 tests",
+  "the whole Playwright suite 167/167 at d745b635",
+  "server: ruff 0; focused suites 3689 passed",
+  "register, contracts, size, lanes, budget, directive validator: all 0",
+  "CI run 38023638114 on d745b635: 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-090-R192": [
+   "The site plan is drawn from the parcel's own measured tax-map polygon (5 vertices, area 10,387.99 sq ft), not a rectangle (services/api/tests/scenario/three_answers/test_geometry_lot_outline.py: test_s1_benchmark_lot_outline_is_the_measured_polygon)."
+  ],
+  "D-090-R239": [
+   "The drawing uses the outline and states it; the recorded area (10,075) still feeds the floor-area calculation; they are never mixed (test_s5_drawn_outline_area_equals_the_recorded_measurement; the G3 check 2 trace)."
+  ],
+  "D-090-R257": [
+   "Neither area is stretched to the other; the drawing shows the measured outline, and the coverage by portion stays withheld where the two disagree (benchmark unchanged except geometry.lot_outline; G3 check 5)."
+  ],
+  "D-090-R570": [
+   "With no outline the whole geometry block is withheld with its reason and nothing is drawn (test_s2_no_outline_draws_nothing_and_says_why; the live-route test)."
+  ],
+  "D-090-R804": [
+   "Only the geometry threading, the regenerated benchmark and snapshots, the register resync and the reasons' wording change; no rule or legal figure."
+  ],
+  "D-090-R841": [
+   "The drawing kit draws the document's real outline; no stand-in rectangle reaches any shown output (G3 check 3 traced every caller)."
+  ],
+  "D-090-R846": [
+   "The outline is translated to local feet (min x and y to 0) and labelled local feet, never EPSG:2263; it is never stretched to the recorded area (test_s1_lot_outline_is_translated_to_local_feet)."
+  ],
+  "D-090-R878": [
+   "UX-10: the drawn outline's area equals the measured area within 0.5 sq ft; the dimension labels are the polygon's own edges (2.22, 101.71, 99.98, 103.88, 99.98 ft). Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further. The street names and the 2.22 ft label's legibility are open (backlog)."
+  ],
+  "D-090-R886": [
+   "The expected area is the Shapely area of the recorded replay fixture, compared by the shoelace formula in the test, never a program run."
+  ],
+  "D-090-R888": [
+   "One geospatial builder and one rules-engineer (the wording); an independent data-contract-verifier and a qa-engineer in two rounds (project-control/reports/M5-T150-G3G4.md)."
+  ],
+  "D-090-R890": [
+   "The report and this map claim only what changed; nothing is called complete or verified."
+  ],
+  "D-090-R896": [
+   "The owner's review finding 4 is corrected in the program: the drawing and the measurement now agree (the outline drawn is the measured one)."
+  ],
+  "D-090-R899": [
+   "Corrected now as the owner asked; the missing street names and context stay honestly listed as not yet drawn (backlog)."
+  ]
+ }
+}

@@ -1,13 +1,19 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import type { Results } from "@/lib/architect/three-answers";
 import {
+  APARTMENT_SIZE_BASIS_NOTE,
+  buildingOptionsComparisonView,
   feet,
   firstBuildingOptionsView,
   percent,
   sqft,
+  storeyText,
   twoDp,
 } from "@/lib/architect/first-building-options";
 import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-fixtures";
+import { twoBuildingsDocument } from "@/test-support/results-two-buildings";
 
 /**
  * The view model for the first-building-options blocks (results contract 1.4.0). Pure functions over
@@ -62,8 +68,15 @@ describe("firstBuildingOptionsView (contract 1.4.0)", () => {
       "label",
       "reason",
       "resolvedBy",
-      "gapKindLine",
+      "propertyInfoTag",
     ]);
+    // ONE WORDING (ruling V11 (3)): a missing-property-fact building carries the short tag; a
+    // work-owed building carries none — no "Not built yet" / "still owed" kind line.
+    const byBuilding = Object.fromEntries(view.notWorked.map(entry => [entry.building, entry]));
+    const missing = notWorked.find(entry => entry.gap_kind === "missing_information");
+    if (missing) expect(byBuilding[missing.building].propertyInfoTag).toBe("Needs property information");
+    const workOwed = notWorked.find(entry => entry.gap_kind === "work_owed");
+    if (workOwed) expect(byBuilding[workOwed.building].propertyInfoTag).toBeNull();
   });
 
   it("returns a view when only buildings_not_worked is present (no alternative, no coverage)", () => {
@@ -96,6 +109,10 @@ describe("firstBuildingOptionsView (contract 1.4.0)", () => {
     // the alternative is conditional, never settled by silence (ruling W2).
     expect(mapped.isConditional).toBe(true);
     expect(mapped.conditions.length).toBeGreaterThan(0);
+    // the conditions are also named "Condition N" for the by-name reference (ruling V11 (5)), one per
+    // "If …" line, in the shared-conditions order.
+    expect(mapped.conditionRefs).toHaveLength(mapped.conditions.length);
+    mapped.conditionRefs.forEach(name => expect(name).toMatch(/^Condition \d+$/));
     expect(mapped.notChecked).toEqual(alternative.not_checked);
   });
 
@@ -159,5 +176,81 @@ describe("firstBuildingOptionsView (contract 1.4.0)", () => {
     expect(doc.draft).toBe(true);
     expect(firstBuildingOptionsView(doc, false)?.draftHidden).toBe(true);
     expect(firstBuildingOptionsView(doc, true)?.draftHidden).toBe(false);
+  });
+
+  it("carries a comparison on the benchmark (B worked, A not worked) and none on a single building", () => {
+    const journey = loadResultsFixture(JOURNEY);
+    const view = firstBuildingOptionsView(journey, true);
+    expect(view?.comparison?.columns.length).toBe(2);
+    // the single-building benchmark fixture carries no comparison.
+    expect(firstBuildingOptionsView(loadResultsFixture(BENCHMARK), true)?.comparison).toBeNull();
+  });
+});
+
+describe("buildingOptionsComparisonView (contract 1.4.0, row R894)", () => {
+  it("returns null for fewer than two buildings, a view for two or more", () => {
+    // one worked building, no not-worked -> no comparison.
+    expect(buildingOptionsComparisonView(loadResultsFixture(BENCHMARK))).toBeNull();
+    expect(buildingOptionsComparisonView(loadResultsFixture(COVERAGE_AVAILABLE))).toBeNull();
+    // benchmark: one worked plus one not worked -> a comparison of two.
+    expect(buildingOptionsComparisonView(loadResultsFixture(JOURNEY))?.columns).toHaveLength(2);
+    // synthetic document: two worked -> a comparison of two.
+    expect(buildingOptionsComparisonView(twoBuildingsDocument())?.columns).toHaveLength(2);
+  });
+
+  it("orders columns by building id and reads each worked building's metrics from the document", () => {
+    const doc = twoBuildingsDocument();
+    const byId = Object.fromEntries((doc.building_alternatives ?? []).map(a => [a.building, a]));
+    const view = buildingOptionsComparisonView(doc);
+    const columns = view?.columns ?? [];
+    expect(columns.map(c => c.building)).toEqual(["A", "B"]);
+    for (const column of columns) {
+      if (column.kind !== "worked") throw new Error("both buildings should be worked");
+      const source = byId[column.building];
+      expect(column.label).toBe(source.label);
+      expect(column.storeys).toBe(storeyText(source.storey_count));
+      expect(column.height).toBe(feet(source.height_ft));
+      expect(column.scheduledArea).toBe(sqft(source.total_floor_area_sqft));
+      expect(column.planPerStorey).toBe(sqft(source.footprint_area_sqft));
+    }
+  });
+
+  it("a not-worked column carries only its reason — no numeric metric field (never 0)", () => {
+    const view = buildingOptionsComparisonView(loadResultsFixture(JOURNEY));
+    const notWorked = (view?.columns ?? []).find(c => c.kind === "not_worked");
+    if (!notWorked || notWorked.kind !== "not_worked") throw new Error("expected a not-worked column");
+    expect(Object.keys(notWorked).sort()).toEqual(["building", "kind", "label", "reason"]);
+    expect(notWorked.reason.length).toBeGreaterThan(0);
+  });
+});
+
+describe("the estimate's measurement-basis words are tied to the contract (ruling V11 (11), DB-215 b)", () => {
+  it("the shown measurement-basis words appear in the results schema's apartment-size description", () => {
+    // The schema file is READ ONLY; the words the UI shows beside the apartment size must be the
+    // contract's own, not an invented UI label. Resolves from the vitest cwd (apps/web).
+    const schema = JSON.parse(
+      readFileSync(resolve(process.cwd(), "../../packages/contracts/schemas/v1/results.schema.json"), "utf8"),
+    ) as unknown;
+
+    const descriptions: string[] = [];
+    const walk = (node: unknown): void => {
+      if (Array.isArray(node)) {
+        node.forEach(walk);
+      } else if (node && typeof node === "object") {
+        const record = node as Record<string, unknown>;
+        const size = record.apartment_size_sqft;
+        if (size && typeof size === "object") {
+          const description = (size as Record<string, unknown>).description;
+          if (typeof description === "string") descriptions.push(description);
+        }
+        Object.values(record).forEach(walk);
+      }
+    };
+    walk(schema);
+
+    expect(descriptions.length).toBeGreaterThan(0);
+    // every apartment_size_sqft description in the schema carries the measurement-basis words the UI
+    // shows, so the UI phrase is the contract's wording.
+    for (const description of descriptions) expect(description).toContain(APARTMENT_SIZE_BASIS_NOTE);
   });
 });

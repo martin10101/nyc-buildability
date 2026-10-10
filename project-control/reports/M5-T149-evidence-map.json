@@ -1,0 +1,229 @@
+{
+ "task_id": "M5-T149",
+ "material_commits": [
+  "4f9ea1b1 (part B)",
+  "63e0daca (part C)",
+  "923f3905 (part A (its builder's memory files not integrated))",
+  "9632a6bb (part C report)",
+  "b4126d55 (the layout test's measures (V10))",
+  "873c87dc (part B V11)",
+  "553c09fe (part A V11)",
+  "c8551767 (part C V11)",
+  "dec878c2 ([ORCH-CORRECTED] propertyInfoTag)",
+  "d22ddd78 (part C assertion)",
+  "da1fea97 (part A V12 order)",
+  "13c8bd16 (part C one-line inputs)",
+  "ad786e43 (part C phone height)",
+  "d745b635 (part A one-result conditions)",
+  "427db1b6 (the producers' report assembled = material head)"
+ ],
+ "claim_seam_head": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
+ "files_changed": [
+  "apps/web/e2e/results-layout.flag-on.spec.ts",
+  "apps/web/e2e/results.flag-on.spec.ts",
+  "apps/web/src/components/architect/ResultsForm.tsx",
+  "apps/web/src/components/architect/ResultsPanel.tsx",
+  "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+  "apps/web/src/components/architect/answers/AnswerCard.tsx",
+  "apps/web/src/components/architect/answers/BuildingOptionsComparison.tsx",
+  "apps/web/src/components/architect/answers/FirstBuildingOptions.tsx",
+  "apps/web/src/components/architect/answers/ResultDetails.tsx",
+  "apps/web/src/components/architect/answers/SharedConditions.tsx",
+  "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+  "apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/result-details.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/answers/building-options.css",
+  "apps/web/src/components/architect/answers/three-answers.css",
+  "apps/web/src/components/architect/results-panel.css",
+  "apps/web/src/components/architect/workspace/DashboardEntry.tsx",
+  "apps/web/src/components/architect/workspace/__tests__/floating-workspace-window.test.tsx",
+  "apps/web/src/components/architect/workspace/floating-workspace-window.css",
+  "apps/web/src/lib/architect/__tests__/first-building-options.test.ts",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "apps/web/src/lib/architect/first-building-options.ts",
+  "apps/web/src/lib/architect/three-answers.ts",
+  "apps/web/src/test-support/results-two-buildings.ts",
+  "project-control/reports/M5-T149-part-A.md",
+  "project-control/reports/M5-T149-part-B.md",
+  "project-control/reports/M5-T149-part-C.md",
+  "project-control/reports/M5-T149-producer-report.md"
+ ],
+ "what_did_not_change": "No rule file, capture, reference case or contract schema; no legal figure; no human verdict; no production switch.",
+ "known_limits": [
+  "Cosmetic notes stand: at 320 px the first answer's unit sits about 3 px below the first screen; the right column is light on wide screens; 'Applies' reads heavier than the status chip.",
+  "The page's fixed legal disclaimer draws over the bottom edge of a floating window (outside this task's files; backlog).",
+  "The share range and the apartment size cannot be changed on the screen (DB-213 a).",
+  "The ten-second target was judged by AI reviewers on pictures, not by a real architect."
+ ],
+ "checks_at_material_head": [
+  "website: lint 0, typecheck 0, vitest 126 files / 2615 tests",
+  "the whole Playwright suite 167/167 at d745b635",
+  "server: ruff 0; focused suites 3689 passed",
+  "register, contracts, size, lanes, budget, directive validator: all 0",
+  "CI run 38023638114 on d745b635: 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-090-R256": [
+   "The entered floor-to-floor height shows on every storey and in the folded inputs line. Open: changing the share range and the apartment size on the screen is work owed (DB-213 a)."
+  ],
+  "D-090-R267": [
+   "The building option reads 'Site fit not verified' with what was not checked; nothing reads as confirmed (S6, S13)."
+  ],
+  "D-090-R526": [
+   "Each listed building shows parking, loading and bicycle among what was not checked, from the document; the typed line is gone (V11 (9))."
+  ],
+  "D-090-R543": [
+   "The estimate's label is shown as the document gives it (first-building-options tests)."
+  ],
+  "D-090-R544": [
+   "The 29-unit legal limit stays with the floor-area allowance and its user condition; the estimate stays with the building option (S5)."
+  ],
+  "D-090-R556": [
+   "A withheld result never falls back to an older value; 'Not known' with its reason (S8; G4 check 3)."
+  ],
+  "D-090-R570": [
+   "No withheld value shows a number on the screen (S8, S11)."
+  ],
+  "D-090-R641": [
+   "The overall label 'Preliminary zoning results' is read from the document's status strip (S3)."
+  ],
+  "D-090-R700": [
+   "The share range and the apartment size are called preliminary assumptions; the measurement-basis words are tied to the schema by a test (V11 (11)). Open: editing them on the screen (DB-213 a)."
+  ],
+  "D-090-R804": [
+   "Only the results screen's files change; no calculation, rule, security or production switch."
+  ],
+  "D-090-R805": [
+   "The first screen shows the property and its useful answer; the full evidence stays behind Details and in the right column (S12; the walkthrough)."
+  ],
+  "D-090-R807": [
+   "Built from the merged main line after the earlier wave; the screen's route wiring was read before editing (the planning draft)."
+  ],
+  "D-090-R809": [
+   "The screen leads with the property and the three answers (V12 order)."
+  ],
+  "D-090-R810": [
+   "Each result is a concise row: label, value, one exception, Details (S4)."
+  ],
+  "D-090-R811": [
+   "Shared context once; local exceptions kept with their result (V11 (5) and the local-condition fix)."
+  ],
+  "D-090-R812": [
+   "Allowance, envelope and the scheduled option are told apart; site fit not verified is said explicitly (S6, S13)."
+  ],
+  "D-090-R813": [
+   "The comparison shows the results that exist; a not-worked building reads 'Not known' with its reason, no repeated baseline (S7)."
+  ],
+  "D-090-R816": [
+   "The order follows the contract's seven questions: property, allowance, envelope, building option, comparison, what needs resolving, details (V12)."
+  ],
+  "D-090-R817": [
+   "The ten-second target was judged by an AI walkthrough on pictures (B1 fixed). Open: the contract asks for a test with a real person."
+  ],
+  "D-090-R819": [
+   "The existing single dashboard with its floating Results tool is kept; no new navigation."
+  ],
+  "D-090-R820": [
+   "Identity with the answers, a 44:56 two-column grid at 1000 px and more, the property kept in view (S1)."
+  ],
+  "D-090-R821": [
+   "One context strip of at most three items; notices at most three with a count (S3, S14)."
+  ],
+  "D-090-R822": [
+   "Details open in place; one tool at a time; no stacked dialogs."
+  ],
+  "D-090-R823": [
+   "Changing an input marks the shown result stale; the comparison keeps one site and basis (S10, S7)."
+  ],
+  "D-090-R824": [
+   "No display toggle touches a legal input (the existing-building preference unchanged)."
+  ],
+  "D-090-R825": [
+   "The results tool stays behind its internal switch; no held feature is activated."
+  ],
+  "D-090-R826": [
+   "One column at 320 to 700 px with 16 px padding; the window fills the phone's height; no material limitation hidden (S2, S12)."
+  ],
+  "D-090-R827": [
+   "The narrow comparison keeps row order, names and units, its table in a labelled scroll region with sticky row labels (S7; V11 (8))."
+  ],
+  "D-090-R828": [
+   "Focus moves into Details, Escape returns it; the folded form's Change inputs returns focus to the form (S4)."
+  ],
+  "D-090-R829": [
+   "The reference's three stacked sheets are not copied; the existing window is used."
+  ],
+  "D-090-R830": [
+   "Each result: label, value or 'Not known', one exception, Details (S4, S14)."
+  ],
+  "D-090-R831": [
+   "No developer wording: 'Not built yet: this part of the program is still owed' removed; one wording per situation (V11 (3))."
+  ],
+  "D-090-R832": [
+   "No implementation identifier, route, contract version or task number in the view (S11)."
+  ],
+  "D-090-R833": [
+   "The screen keeps the owner's statuses (R641); question C2 stays open; nothing shows 'Verified'."
+  ],
+  "D-090-R856": [
+   "Zero, missing and withheld stay distinct; another lot's or a stale document is not shown as current (S10, S15)."
+  ],
+  "D-090-R859": [
+   "This task is the contract's step 3, after the shared presentation of M5-T148."
+  ],
+  "D-090-R869": [
+   "UX-01: identity and the first answer's headline are in the first screen after Show results at 1440 and 390 (S12 browser test; the delta pictures' first screens; the walkthrough's B1 fixed). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R870": [
+   "UX-02: allowance, envelope, the scheduled building option and the estimate are told apart; the 29-unit limit stays with the allowance, the estimate with the building option (S5; the walkthrough's check 3). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R871": [
+   "UX-03: no withheld value shows a number; 'Not known' with its reason (S8; G4 mutations). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R872": [
+   "UX-04: shared conditions stated once and named elsewhere; a one-result condition kept with its result; at most three open items with a count (S3, S14). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R873": [
+   "UX-05: a document for another lot is not shown; a stale answer is marked; only the newest answer shows (S10, S15). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R874": [
+   "UX-06: one comparison of the method's buildings with the same rows, order and units; a not-worked building 'Not known', never 0 (S7). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R875": [
+   "UX-07: no sideways page scroll and no clipped text outside labelled regions at six widths (results-layout spec, 167/167). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R876": [
+   "UX-08: long values wrap; 200 percent zoom and text spacing at 1280 px pass (results-layout spec). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R877": [
+   "UX-09: Details focus in and Escape back; focus moves to the results heading; labelled scroll regions (S4, S12; the walkthrough's check 7). No screen reader was used: an AI reviewer read the code. Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R881": [
+   "UX-13: no developer words: 'step-P6', 'still owed', 'internal preview' and the typed parking line removed (S11, S14; the visual review's blocking item fixed). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R882": [
+   "UX-14: the scheduled area with 'site fit not verified' before any caveat; nothing feasible or preferred (S6, S13). Tests: apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx, result-details.test.tsx, first-building-options.test.tsx, building-options-comparison.test.tsx, journey-215-16-northern.test.tsx; apps/web/src/components/architect/__tests__/results-panel.test.tsx; apps/web/e2e/results-layout.flag-on.spec.ts and results.flag-on.spec.ts (the whole Playwright suite 167/167 at d745b635). project-control/reports/M5-T149-G3G4.md: delta round. Open: the contract's other surfaces (the drawings and the PDF, its steps 4 and 5) carry this row further."
+  ],
+  "D-090-R885": [
+   "States covered: normal, partial (the benchmark), no geometry, failed fetch, stale, another lot, 16 ft and 25 ft (S8 to S10, S15). Open: the contract's remaining states (an existing building's zoning floor area, add-ons, overlapping gains) need their own results first."
+  ],
+  "D-090-R886": [
+   "Expected values come from the committed fixtures and the independent reference case, not the screen's own output (results.flag-on.spec.ts reads real-lot.json)."
+  ],
+  "D-090-R888": [
+   "Five builders; four independent reviewers in two rounds, the FAILs and their fixes kept in project-control/reports/M5-T149-G3G4.md."
+  ],
+  "D-090-R890": [
+   "Nothing is called complete or verified; the visual review's and the walkthrough's cosmetic notes are listed."
+  ],
+  "D-090-R894": [
+   "One wording per situation on the screen, as the owner's review asked of the PDF (V11 (3))."
+  ],
+  "D-090-R895": [
+   "Never 'achieved': the scheduled area with 'site fit not verified' first (S6, S13)."
+  ]
+ }
+}

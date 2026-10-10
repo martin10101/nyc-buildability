@@ -6,17 +6,23 @@ import type {
   FirstBuildingOptionsView,
   FloorRowView,
 } from "@/lib/architect/first-building-options";
+import { APARTMENT_SIZE_BASIS_NOTE, storeyText } from "@/lib/architect/first-building-options";
+import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
+import { BuildingOptionsComparison } from "./BuildingOptionsComparison";
+import "./building-options.css";
 
 /**
- * The first-building-options section (results contract 1.4.0; M5-T146 / M5-T147; rulings W1–W5;
- * D-090-R509/R526/R540/R541/R543/R544/R556/R570/R688). It reads the view built by
- * firstBuildingOptionsView and shows, from the document and never from a typed value: each worked
- * building as a LABELLED alternative (NONE preferred) with its floor schedule as a table, its way
- * (the 'Conditional' marker and each condition on its own line), what was NOT checked, and its own
- * preliminary capacity estimate under the owner's label; the legal dwelling-unit limit kept SEPARATE
- * (never a substitute); and coverage by portion — withheld with NO figure, or its figures when
- * available. Nothing is called feasible; a withheld result carries no number and no substitute
- * (R556/R570). The state is told by the WORDS, never by colour alone.
+ * The first-building-options section (results contract 1.4.0; M5-T146 / M5-T147 / M5-T149 part B;
+ * rulings V2/V5/V8, W1–W5; rows R894/R895; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R688). It
+ * reads the view built by firstBuildingOptionsView and shows, from the document and never from a
+ * typed value: each worked building FIRST as "Building option: Site fit not verified", then its
+ * "Scheduled area" — NEVER "achieved", and never "no allowance left unused" (row R895) — so the
+ * site-fit distinction is clear before the reader reaches the caveats; then what was NOT checked, its
+ * way (the 'Conditional' marker and each condition on its own line), its floor schedule as a table,
+ * and its own preliminary capacity estimate under the owner's label. Below the buildings comes one
+ * comparison of the method's buildings (row R894), then coverage by portion — withheld with NO
+ * figure, or its figures when available. Nothing is called feasible; a withheld result carries no
+ * number and no substitute (R556/R570). The state is told by the WORDS, never by colour alone.
  *
  * On a draft architect surface the numbers are hidden behind the same gate the three answer cards
  * use (results.draft && !showDraftValues); the section then shows one not-reviewed line.
@@ -56,6 +62,7 @@ export function FirstBuildingOptions({ view }: { view: FirstBuildingOptionsView 
           {view.notWorked.map((entry, index) => (
             <NotWorkedBlock key={`${entry.building}-${index}`} view={entry} />
           ))}
+          {view.comparison ? <BuildingOptionsComparison view={view.comparison} /> : null}
           {view.coverage ? <CoverageBlock view={view.coverage} /> : null}
         </>
       )}
@@ -74,9 +81,11 @@ function NotWorkedBlock({ view }: { view: BuildingNotWorkedView }) {
       <p className="ta-withheld-reason" data-testid="building-not-worked-reason">
         {NOT_KNOWN} — {view.reason}
       </p>
-      {view.gapKindLine !== null ? (
-        <p className="ta-gap-kind" data-testid="building-not-worked-gap-kind">
-          {view.gapKindLine}
+      {/* One wording per situation (ruling V11 (3)): a missing property fact carries a short tag; a
+          building the method cannot yet work carries none — no "Not worked" / "still owed" line. */}
+      {view.propertyInfoTag !== null ? (
+        <p className="ta-property-info-tag" data-testid="building-not-worked-tag">
+          {view.propertyInfoTag}
         </p>
       ) : null}
       <p className="ta-option-resolved" data-testid="building-not-worked-resolved">
@@ -86,27 +95,30 @@ function NotWorkedBlock({ view }: { view: BuildingNotWorkedView }) {
   );
 }
 
-function storeyCountText(count: number): string {
-  return `${count} ${count === 1 ? "storey" : "storeys"}`;
-}
-
 function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
   return (
     <section className="ta-option" data-testid="building-alternative">
       <h4 className="ta-option-label" data-testid="building-alternative-label">
         {view.label}
       </h4>
+      {/* The site-fit distinction FIRST, before any caveat (row R895): a floor schedule whose
+          placement and site fit are not established is never "achieved". */}
+      <p className="ta-option-site-fit" data-testid="building-alternative-site-fit">
+        Building option: {SITE_FIT_NOT_VERIFIED}
+      </p>
+      {/* The value: the scheduled area, read from the document; never "no allowance left unused". */}
+      <p className="ta-option-scheduled" data-testid="building-alternative-scheduled">
+        Scheduled area: {view.totalFloorArea}
+      </p>
       <p className="ta-option-summary" data-testid="building-alternative-summary">
-        {storeyCountText(view.storeyCount)} · {view.height} · {view.totalFloorArea} total floor area
-        {" · "}
-        {view.unusedFloorArea} unused
+        {storeyText(view.storeyCount)} · {view.height}
       </p>
       {view.fitNote !== null ? (
         <p className="ta-option-fit-note" data-testid="building-alternative-fit-note">
           {view.fitNote}
         </p>
       ) : null}
-      {view.isConditional ? <ConditionList conditions={view.conditions} /> : null}
+      {view.isConditional ? <AppliesConditions refs={view.conditionRefs} /> : null}
       {view.isWithheld && view.withheldReason !== null ? (
         <p className="ta-withheld-reason" data-testid="building-alternative-withheld">
           {NOT_KNOWN} — {view.withheldReason}
@@ -199,7 +211,7 @@ function CapacityBlock({ view }: { view: CapacityView }) {
             Residential share: {view.shareLow} to {view.shareHigh}
           </li>
           <li data-testid="capacity-estimate-size">
-            Apartment size: {view.apartmentSize} (on the HPD measurement basis)
+            Apartment size: {view.apartmentSize} ({APARTMENT_SIZE_BASIS_NOTE})
           </li>
         </ul>
       </div>
@@ -255,6 +267,24 @@ function CoverageBlock({ view }: { view: CoverageView }) {
       {view.conditions.length > 0 ? <ConditionList conditions={view.conditions} /> : null}
       <RuleSections sections={view.zrSections} />
     </section>
+  );
+}
+
+/** Under the building option the shared conditions are referred to BY NAME (ruling V11 (5)): the
+ * "Conditional" marker, then "Applies: Condition 1, Condition 2" in the shared-conditions card's
+ * order. The full "If …" text is stated once in that card, never repeated here. */
+function AppliesConditions({ refs }: { refs: readonly string[] }) {
+  return (
+    <div className="ta-conditional" data-testid="option-conditional">
+      <span className="ta-conditional-marker" data-testid="option-conditional-marker">
+        {CONDITIONAL_MARKER}
+      </span>
+      {refs.length > 0 ? (
+        <span className="ta-applies" data-testid="option-applies">
+          Applies: {refs.join(", ")}
+        </span>
+      ) : null}
+    </div>
   );
 }
 

@@ -10,11 +10,15 @@
   max-width: calc(100vw - 16px);
   max-height: calc(100dvh - 16px);
   overflow: hidden;
-  color: #17243a;
-  background: #fff;
-  border: 1px solid #b8cadc;
-  border-radius: 8px;
-  box-shadow: 0 14px 50px #17243a35, 0 2px 8px #17243a1a;
+  /* M5-T149 part C: the window frame's colours and panel radius come from the shared presentation
+     tokens (docs/design/ARCHITECT_PRESENTATION_CONTRACT.md §5); no colour literal. The overlay
+     shadow keeps its two layers, their tint mixed from the ink token (color-mix), never a hex. */
+  color: var(--pt-color-ink);
+  background: var(--pt-color-surface);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  box-shadow: 0 14px 50px color-mix(in srgb, var(--pt-color-ink) 21%, transparent),
+    0 2px 8px color-mix(in srgb, var(--pt-color-ink) 10%, transparent);
 }
 .architect-shell .workspace-window[hidden] { display: none !important; }
 .architect-shell .workspace-window__header {
@@ -23,8 +27,8 @@
   flex: 0 0 auto;
   min-height: 50px;
   padding: 4px 6px 4px 10px;
-  background: #e8f0f8;
-  border-bottom: 1px solid #cfdae5;
+  background: var(--pt-color-selected);
+  border-bottom: 1px solid var(--pt-color-divider);
 }
 .architect-shell .workspace-window__heading { flex: 1; min-width: 0; margin: 0; font-size: 16px; line-height: 1.35; }
 .architect-shell .workspace-window__move {
@@ -46,7 +50,7 @@
   user-select: none;
 }
 .architect-shell .workspace-window__move:active { cursor: grabbing; }
-.architect-shell .workspace-window__grip { flex: 0 0 auto; color: #526985; }
+.architect-shell .workspace-window__grip { flex: 0 0 auto; color: var(--pt-color-supporting); }
 .architect-shell .workspace-window__controls { display: flex; gap: 3px; flex: 0 0 auto; }
 .architect-shell .workspace-window__controls button {
   display: grid;
@@ -57,15 +61,17 @@
   font: inherit;
   font-size: 22px;
   line-height: 1;
-  color: #244365;
+  color: var(--pt-color-action);
   background: transparent;
   border: 1px solid transparent;
   border-radius: 5px;
   cursor: pointer;
 }
-.architect-shell .workspace-window__controls button:hover { background: #fff; border-color: #bfcedd; }
-.architect-shell .workspace-window__controls .workspace-window__close:hover { color: #9c2626; background: #fdebeb; border-color: #edbebe; }
-.architect-shell .workspace-window button:focus-visible { outline: 3px solid #1762d6; outline-offset: -2px; }
+.architect-shell .workspace-window__controls button:hover { background: var(--pt-color-surface); border-color: var(--pt-color-divider); }
+/* M5-T149 part C: the close control's hover uses the shared neutral control treatment above. The
+   earlier red hover had no danger token, and "Close window — keeps your work" is non-destructive,
+   so no colour-only destructive cue is carried; the control's accessible name states its effect. */
+.architect-shell .workspace-window button:focus-visible { outline: 3px solid var(--pt-color-action); outline-offset: -2px; }
 .architect-shell .workspace-window__controls button:disabled,
 .architect-shell .workspace-window__resize:disabled { opacity: .4; cursor: default; }
 /* Plan §5a item 5 (floating tool windows): a plain-English line naming what the window shows,
@@ -75,7 +81,7 @@
   flex: 0 0 auto;
   margin: 0;
   padding: 8px 18px 0;
-  color: #324258;
+  color: var(--pt-color-ink);
   font-size: 14px;
   line-height: 1.45;
 }
@@ -188,8 +194,8 @@
   width: 28px;
   height: 28px;
   padding: 0;
-  color: #476487;
-  background: #f2f6fa;
+  color: var(--pt-color-action);
+  background: var(--pt-color-page);
   border: 0;
   border-radius: 5px 0 0;
   cursor: nwse-resize;
@@ -206,6 +212,20 @@
   white-space: nowrap;
   border: 0;
 }
+/* M5-T149 part C (S12 at 390 px): on a narrow viewport (700 px and below) a floating tool window
+   fills the screen's height instead of the JS centred ~690 px frame, so the first answer reaches the
+   first screen. The JS writes the frame as an inline top/height, so this overrides it with
+   !important; it is scoped to narrow viewports only, so desktop behaviour is unchanged. The 8 px
+   gutter (the frame's minimum) is kept. A maximized window is already full height, so it is left
+   alone. */
+@media (max-width: 700px) {
+  .architect-shell .workspace-window:not(.workspace-window--maximized) {
+    top: 8px !important;
+    height: calc(100dvh - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+  }
+}
+
 @media (max-width: 640px) {
   .architect-shell .workspace-window { border-radius: 8px 8px 4px 4px; }
   .architect-shell .workspace-window__header { flex-wrap: wrap; padding: 4px 6px; }
@@ -222,3 +242,9 @@
 .architect-shell .workspace-window__content small {
   font-size: 14px;
 }
+
+/* M5-T149 part C: the Results window owns its own internal padding through its container-query
+   layout (results-panel.css), so the generic content padding is handed off to it. Scoped by
+   :has() to the one window whose direct child is the results panel; every other window keeps the
+   padding above. This needs no extra class and no change to DashboardEntry beyond the wide list. */
+.architect-shell .workspace-window__content:has(> .results-panel) { padding: 0; }

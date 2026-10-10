@@ -87,22 +87,36 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
 
     await expect(dialog.getByTestId("three-answers-panel")).toBeVisible({ timeout: 15_000 });
 
-    // The floor-area figures appear as conditional results naming the recorded-area condition.
+    // The floor-area figures appear as conditional results. Ruling V11 (5): the card refers to the
+    // shared condition BY NAME ("Condition 1"); the condition's full text is stated once in the
+    // shared-conditions block, never repeated in the card.
     const allowance = dialog.getByTestId("answer-floor_area_allowance");
     await expect(allowance).toContainText(`${grouped(FA_STANDARD)} sq ft`);
     await expect(allowance).toContainText(`${grouped(FA_QUALIFYING)} sq ft`);
-    await expect(allowance).toContainText("recorded lot area of 10,075 sq ft");
+    await expect(allowance).toContainText("Condition 1");
+    await expect(dialog.getByTestId("shared-conditions")).toContainText("recorded lot area of 10,075 sq ft");
 
     // The height limits appear as the district's limits (Table A), conditional on the unchecked
     // conditions, and NOWHERE called the property's maximum.
     const envelope = dialog.getByTestId("answer-permitted_envelope");
     for (const feet of HEIGHTS) await expect(envelope).toContainText(`${feet} ft`);
-    await expect(envelope).toContainText("none of these conditions, which were not checked");
+    // Ruling V11 (5): the card refers to the shared condition BY NAME ("Condition 2"); the full text
+    // ("none of these conditions, which were not checked") is stated once in the shared-conditions block.
+    await expect(envelope).toContainText("Condition 2");
+    await expect(dialog.getByTestId("shared-conditions")).toContainText(
+      "none of these conditions, which were not checked",
+    );
     // Coverage and the rear yard read "not known".
     await expect(envelope).toContainText("Not known");
 
-    // The single building option reads "Not available" and points to the worked list below.
-    await expect(dialog.getByTestId("answer-building_option")).toContainText("Not available");
+    // Ruling V11 (2): building B is listed at the default run, so the building-option card reads
+    // "Scheduled area: …" with "Site fit not verified" ahead of any caveat — never "Not available"
+    // or "shown below".
+    const buildingOptionCard = dialog.getByTestId("answer-building_option");
+    await expect(buildingOptionCard).toContainText("Scheduled area");
+    await expect(buildingOptionCard).toContainText("Site fit not verified");
+    await expect(buildingOptionCard).not.toContainText("Not available");
+    await expect(buildingOptionCard).not.toContainText("shown below");
 
     // The worked first-building option appears through the LIVE route (contract 1.4.0) as a labelled
     // alternative with its floor schedule, its conditions, what was not checked, and its preliminary
@@ -154,7 +168,9 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     expect(await dialog.innerText()).toContain("10-foot floor-to-floor height is used as the default");
 
     // Enter 14 ft and press again: the returned line says the height was entered, and the form's
-    // program label (Standard residence) is the name in the returned housing-program line (R3).
+    // program label (Standard residence) is the name in the returned housing-program line (R3). The
+    // form folded once results showed (ruling V11 (1)); reopen it with "Change inputs" first.
+    await dialog.getByTestId("results-change-inputs").click();
     await dialog.getByTestId("results-floor-to-floor").fill("14");
     const secondResponse = waitResults(page);
     await dialog.getByTestId("results-show").click();
@@ -176,7 +192,9 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(schedule14).not.toContainText("10 ft");
 
     // Make the special-density statement and press again: the standard legal unit limit appears as
-    // a conditional result naming that statement (reference L6), never as a settled number.
+    // a conditional result naming that statement (reference L6), never as a settled number. Reopen
+    // the folded form first (ruling V11 (1)).
+    await dialog.getByTestId("results-change-inputs").click();
     await dialog.getByTestId("results-density-statement").check();
     const thirdResponse = waitResults(page);
     await dialog.getByTestId("results-show").click();
@@ -190,6 +208,8 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     // option in the page, never retyped here (R3).
     const programSelect = dialog.getByTestId("results-housing-program");
     for (const value of ["qualifying_affordable_housing", "qualifying_senior_housing"]) {
+      // The form folded after the previous result; reopen it (ruling V11 (1)) before changing it.
+      await dialog.getByTestId("results-change-inputs").click();
       await programSelect.selectOption(value);
       const label = await programSelect.evaluate(
         (element) => (element as HTMLSelectElement).selectedOptions[0]?.textContent?.trim() ?? "",
@@ -246,9 +266,12 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(notWorked.first().getByTestId("building-not-worked-resolved")).toContainText(
       "What would let it be worked:",
     );
-    // the single Building option card adds no false reason and names no machine field.
+    // the Building option card: no building is listed at 16 ft, so it reads "Not known" (ruling
+    // V11 (2), one wording) — never "Not available"/"shown below" — and names no machine field.
     const optionCard = dialog.getByTestId("answer-building_option");
-    await expect(optionCard).toContainText("Not available");
+    await expect(optionCard).toContainText("Not known");
+    await expect(optionCard).not.toContainText("Not available");
+    await expect(optionCard).not.toContainText("shown below");
     await expect(optionCard).not.toContainText("below the minimum base height");
     await expect(optionCard).not.toContainText("buildings_not_worked");
   });

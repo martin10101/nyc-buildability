@@ -1,0 +1,351 @@
+/* ---- Building options (results contract 1.4.0; M5-T146 / M5-T147 / M5-T149 part B) ----
+   The worked building alternatives, each shown first as a scheduled option with site fit not
+   verified (row R895), with its floor schedule, conditions, what was not checked and its own
+   preliminary capacity estimate; the buildings of the method that were NOT worked; one comparison of
+   the method's buildings (row R894); and coverage by portion.
+
+   Moved here from three-answers.css lines 373-547 (M5-T149 part A removes them there) and imported by
+   FirstBuildingOptions.tsx. The class names are unchanged; only the values changed to the shared
+   presentation tokens (apps/web/src/app/globals.css, from docs/design/presentation-tokens.json). No
+   status is encoded by colour; the state is told by the words and the markers. No colour literal
+   appears in this file — every colour is a shared token. */
+
+.ta-options {
+  margin: var(--pt-space-16) 0 0;
+  padding: var(--pt-space-16);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  background: var(--pt-color-surface);
+}
+
+.ta-options-title {
+  margin: 0;
+  font-size: var(--pt-type-section-title-size);
+  font-weight: 650;
+}
+
+.ta-options-lead {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+.ta-option {
+  margin: var(--pt-space-12) 0 0;
+  padding: var(--pt-space-12);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-color-page);
+}
+
+.ta-option-label {
+  margin: 0;
+  font-size: var(--pt-type-body-size);
+  font-weight: 650;
+}
+
+/* The site-fit distinction, shown before any caveat (row R895): a floor schedule whose placement and
+   site fit are not established is never "achieved". A plain word carries it, not a colour. */
+.ta-option-site-fit {
+  margin: var(--pt-space-4) 0 0;
+  font-weight: 600;
+}
+
+/* The scheduled area value. Never "no allowance left unused" (row R895): no "unused" figure is shown. */
+.ta-option-scheduled {
+  margin: var(--pt-space-4) 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-option-summary {
+  margin: var(--pt-space-4) 0 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The sentence why the plan fits (contract 1.4.0 fit_note): plain text beside the building; it
+   qualifies the plan against coverage only, never a statement that the building fits the lot. */
+.ta-option-fit-note {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+/* "Applies: Condition 1, Condition 2" — the shared conditions referred to by name (ruling V11 (5)),
+   beside the "Conditional" marker; the full text is stated once in the shared-conditions card. */
+.ta-applies {
+  margin-left: var(--pt-space-8);
+  color: var(--pt-color-supporting);
+}
+
+/* The short tag a missing-property-fact carries on a not-worked building (ruling V11 (3)); a quiet
+   outlined chip, the state told by the words, not by colour. */
+.ta-property-info-tag {
+  display: inline-block;
+  margin: var(--pt-space-4) 0 0;
+  padding: 0 var(--pt-space-8);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  color: var(--pt-color-supporting);
+  font-size: var(--pt-type-compact-size);
+}
+
+/* N4: the floor table scrolls INSIDE this box on narrow screens, so the page never scrolls sideways.
+   The box is a keyboard-reachable, named region (role + aria-label + tabindex in the component). */
+.ta-floor-schedule-scroll {
+  margin: var(--pt-space-12) 0 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.ta-floor-schedule-scroll:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--pt-color-action);
+}
+
+.ta-floor-schedule {
+  width: 100%;
+  /* Keep all six columns legible; below this the box (not the page) scrolls sideways. */
+  min-width: 32rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-floor-schedule-caption {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: var(--pt-space-4);
+}
+
+.ta-floor-schedule th,
+.ta-floor-schedule td {
+  padding: var(--pt-space-4) var(--pt-space-8);
+  border-bottom: 1px solid var(--pt-color-divider);
+  text-align: right;
+}
+
+.ta-floor-schedule thead th,
+.ta-floor-schedule tbody th {
+  text-align: left;
+  font-weight: 600;
+}
+
+.ta-option-not-checked,
+.ta-capacity {
+  margin: var(--pt-space-12) 0 0;
+}
+
+.ta-option-not-checked-heading,
+.ta-capacity-assumptions-heading {
+  margin: 0;
+  font-weight: 600;
+}
+
+.ta-option-not-checked-list,
+.ta-capacity-assumptions-list {
+  margin: var(--pt-space-4) 0 0;
+  padding-left: 1.25rem;
+}
+
+.ta-capacity-label {
+  margin: 0;
+  font-weight: 650;
+}
+
+/* The estimate's range, shown larger. 24 px sits between the section-title (18 px) and the
+   headline-value (40 px) tokens, so there is no exact type token for it. */
+.ta-capacity-range {
+  margin: var(--pt-space-4) 0 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-capacity-wholes {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+.ta-capacity-assumptions {
+  margin: var(--pt-space-8) 0 0;
+}
+
+.ta-legal-limit,
+.ta-coverage {
+  margin: var(--pt-space-12) 0 0;
+  padding-top: var(--pt-space-12);
+  border-top: 1px solid var(--pt-color-divider);
+}
+
+.ta-legal-limit-label,
+.ta-coverage-label {
+  margin: 0;
+  font-size: var(--pt-type-body-size);
+  font-weight: 650;
+}
+
+.ta-legal-limit-value {
+  margin: var(--pt-space-4) 0 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-legal-limit-note,
+.ta-coverage-resolved {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+.ta-coverage-figures {
+  margin: var(--pt-space-8) 0 0;
+}
+
+.ta-option-sections {
+  margin: var(--pt-space-8) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+/* A building of the method that was NOT worked (ruling W14/W15): its reason and what would resolve
+   it, plain text from the document; no figure is a result here. The border only sets it apart. */
+.ta-option-not-worked .ta-withheld-reason {
+  display: block;
+  margin: var(--pt-space-4) 0 0;
+}
+
+.ta-option-resolved {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+/* ---- One comparison of the method's buildings (M5-T149 part B; row R894) ----
+   Two presentations of the same buildings: per-building summaries that stack on a narrow screen and
+   sit side by side on a wide one; and one aligned table in a labelled, keyboard-reachable scroll box.
+   None is preferred (question A2 open). A not-worked building reads the one not-known wording. */
+
+.bo-compare {
+  margin: var(--pt-space-12) 0 0;
+  padding-top: var(--pt-space-12);
+  border-top: 1px solid var(--pt-color-divider);
+}
+
+.bo-compare-title {
+  margin: 0;
+  font-size: var(--pt-type-body-size);
+  font-weight: 650;
+}
+
+.bo-compare-lead {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+/* The stacked option summaries: one column at 700 px and below, side by side above it. */
+.bo-compare-summaries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pt-space-12);
+  margin: var(--pt-space-12) 0 0;
+}
+
+@media (min-width: 701px) {
+  .bo-compare-summaries {
+    flex-direction: row;
+  }
+}
+
+.bo-compare-summary {
+  flex: 1 1 0;
+  min-width: 0;
+  padding: var(--pt-space-12);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-color-surface);
+}
+
+.bo-compare-summary-label {
+  margin: 0;
+  font-size: var(--pt-type-body-size);
+  font-weight: 650;
+}
+
+.bo-compare-site-fit {
+  margin: var(--pt-space-4) 0 0;
+  font-weight: 600;
+}
+
+.bo-compare-not-known {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+.bo-compare-summary-metrics {
+  margin: var(--pt-space-8) 0 0;
+}
+
+.bo-compare-summary-metrics .bo-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pt-space-8);
+  padding: var(--pt-space-4) 0;
+  border-bottom: 1px solid var(--pt-color-divider);
+}
+
+.bo-compare-summary-metrics .bo-row dt {
+  color: var(--pt-color-supporting);
+}
+
+.bo-compare-summary-metrics .bo-row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The detailed table behind the summaries. On a narrow screen it scrolls INSIDE this box, not the
+   page; the box is a named, keyboard-reachable region so every building column stays reachable. */
+.bo-compare-table-scroll {
+  margin: var(--pt-space-12) 0 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.bo-compare-table-scroll:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--pt-color-action);
+}
+
+.bo-compare-table {
+  width: 100%;
+  min-width: 28rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.bo-compare-caption {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: var(--pt-space-4);
+}
+
+.bo-compare-table th,
+.bo-compare-table td {
+  padding: var(--pt-space-4) var(--pt-space-8);
+  border-bottom: 1px solid var(--pt-color-divider);
+  text-align: right;
+}
+
+.bo-compare-table thead th,
+.bo-compare-table tbody th {
+  text-align: left;
+  font-weight: 600;
+}
+
+.bo-compare-corner {
+  color: var(--pt-color-supporting);
+}
+
+/* The row-label column stays in view when the table scrolls sideways (ruling V11 (8)): a sticky
+   first column, its background a shared token so scrolled cells never show through it. */
+.bo-compare-rowhead {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--pt-color-surface);
+}

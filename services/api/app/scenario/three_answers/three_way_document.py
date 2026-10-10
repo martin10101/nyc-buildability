@@ -199,6 +199,16 @@ STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY = (
 # option are calculations the program has not built yet (work owed), not a missing fact.
 _WORK_OWED_REASON_KIND = "rule_not_implemented"
 
+# S2 / D-090-R896: when no measured tax-map outline is available, no site plan is drawn and the
+# geometry block says why. The lot outline must be a polygon whenever the geometry block is
+# 'available' (results schema), so a missing outline is the WHOLE geometry block not_available -
+# never a rectangle sized to the recorded lot area. A missing property fact (the outline), so the
+# reason_kind is missing_input.
+LOT_OUTLINE_NOT_AVAILABLE_REASON = (
+    "The lot's outline is not available, so no site plan is drawn. The outline comes from the city "
+    "tax map and was not available for this lot."
+)
+
 # The two results the engine's envelope geometry draws (geometry.py): the maximum building height
 # sets the tier's top, the lot coverage sets the footprint. The envelope follows EITHER when it is
 # withheld (reading O29; M5-T144 ruling C5 / DB-199 a). The height is named FIRST in a combined
@@ -390,16 +400,30 @@ def _apply_building_option_dependents(doc: dict) -> None:
             )
 
 
-def _apply_geometry(doc: dict, ways: ResultWays, *, building_option_withheld: bool) -> None:
+def _apply_geometry(
+    doc: dict, ways: ResultWays, *, building_option_withheld: bool,
+    lot_outline_available: bool | None = None,
+) -> None:
     """The geometry layers follow the ways (reading O29): the rear yard, the envelope tier (it draws
     the maximum building height AND the lot coverage) and the floor plates (they need the building
     option) become not available with the withheld result's own reason; the lot outline stays. The
     envelope follows EITHER the maximum building height or the lot coverage when withheld (M5-T144
     ruling C5 / DB-199 a); when both are withheld the reason names the maximum building height first
-    then the lot coverage. The engine's geometry is rewritten here; geometry.py stays read-only."""
+    then the lot coverage. The engine's geometry is rewritten here; geometry.py stays read-only.
+
+    ``lot_outline_available`` (M5-T150, S2/R896), when the caller threads it: False means no
+    measured tax-map outline is available, so the WHOLE geometry block is not_available (nothing is
+    drawn and the geometry says why) - never a rectangle sized to the recorded lot area. True / None
+    leave the lot outline the engine drew (the measured polygon from build_geometry)."""
     geometry = doc.get("geometry")
     if not isinstance(geometry, dict) or geometry.get("status") != "available":
         return  # not even the lot outline is available (e.g. the lane is off): nothing to follow
+
+    if lot_outline_available is False:
+        # No measured outline: withhold the whole geometry block (S2). The engine's fallback extent
+        # (a local-feet rectangle sized to the recorded area) is never shown.
+        doc["geometry"] = _not_available(LOT_OUTLINE_NOT_AVAILABLE_REASON, "missing_input")
+        return
 
     rear = ways.rear_yard.way
     if isinstance(rear, Withheld):
@@ -693,6 +717,7 @@ def emit_three_way_document(
     user_choices: frozenset[str] | None = None,
     corner_areas: CornerPortionAreas | None = None,
     lot_area: LotAreaFigures | None = None,
+    lot_outline_available: bool | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
@@ -715,8 +740,12 @@ def emit_three_way_document(
     comparison and the measured by-portion areas), drive the first-building-option blocks:
     AGREE + a measured corner split shows the footprint and building A; DISAGREE or an outline that
     is not available withholds the footprint (a missing fact) and lists building B alone. When None,
-    the agreement is read from the floor-area way's conditions as before. The engine, disclosure
-    builder and schema stay read-only."""
+    the agreement is read from the floor-area way's conditions as before.
+
+    ``lot_outline_available`` (M5-T150, S2/R896), when the caller threads it: False withholds the
+    WHOLE geometry block (no measured tax-map outline, so no site plan is drawn and the geometry
+    says why) - never a rectangle sized to the recorded lot area; True / None leave the measured
+    lot outline the engine drew. The engine, disclosure builder and schema stay read-only."""
     doc = copy.deepcopy(document)
     doc["contract_version"] = CONTRACT_VERSION_THREE_WAY
 
@@ -758,7 +787,10 @@ def emit_three_way_document(
     building_option_withheld = ways.building_option.whole_answer_not_available is not None
     if building_option_was_available and building_option_withheld:
         _apply_building_option_dependents(doc)
-    _apply_geometry(doc, ways, building_option_withheld=building_option_withheld)
+    _apply_geometry(
+        doc, ways, building_option_withheld=building_option_withheld,
+        lot_outline_available=lot_outline_available,
+    )
 
     # (O36) rewrite the five scope lines from the per-condition sources the evidence entry derived;
     # (M5-T139) rewrite the two design-choice lines the user made. Both read the scope block.

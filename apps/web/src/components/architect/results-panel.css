@@ -1,23 +1,53 @@
-/* Results panel layout (task M5-T140). Layout of the form and the states only; the shown
- * results use the existing three-answers cards and global classes (card, section-note,
- * primary-button, architect-eyebrow). No colour carries meaning; the state is in the text. */
+/* Results panel layout (tasks M5-T140, M5-T149 part C).
+ *
+ * The Results window content is a size container (apps/web/src/app/property/workspace.css line 53:
+ * container-type:inline-size), and that window hands its own padding to this file (see
+ * floating-workspace-window.css `:has(> .results-panel)`). This file lays out the form across the
+ * top and the returned results below, on the shared presentation tokens
+ * (docs/design/ARCHITECT_PRESENTATION_CONTRACT.md §3, §5).
+ *
+ * Every colour, space, radius and the control height come from the --pt-* tokens; no colour
+ * literal appears here, and no colour carries meaning on its own (the states are in the text). The
+ * answers / details / comparison two-column grid itself is composed by the three-answers (part A)
+ * and building-options (part B) layouts; this file owns the window-level flow and padding only. */
 
 .results-panel {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--pt-space-24);
+  padding: var(--pt-space-24);
+  color: var(--pt-color-ink);
+  font-family: var(--pt-font-family);
+}
+
+/* Desktop: when the content container is 1000 px or wider, a comfortable panel padding
+ * (contract §5: 24–32 px desktop) and a 24 px rhythm. The form sits full width across the top; the
+ * returned results flow below, where parts A and B compose the two-column grid. */
+@container (min-width: 1000px) {
+  .results-panel {
+    padding: var(--pt-space-32);
+    gap: var(--pt-space-24);
+  }
+}
+
+/* Phone (320–700 px content width): one column with 16 px internal padding (contract §3). */
+@container (max-width: 700px) {
+  .results-panel {
+    padding: var(--pt-space-16);
+    gap: var(--pt-space-16);
+  }
 }
 
 .results-form {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--pt-space-16);
 }
 
 .results-field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: var(--pt-space-8);
 }
 
 .results-field > label {
@@ -26,9 +56,14 @@
 
 .results-field select,
 .results-field input[type="text"] {
+  min-height: var(--pt-control-height);
   max-width: 24rem;
-  padding: 0.4rem 0.5rem;
+  padding: var(--pt-space-8) var(--pt-space-12);
   font: inherit;
+  color: var(--pt-color-ink);
+  background: var(--pt-color-surface);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
 }
 
 .results-density > label {
@@ -37,16 +72,83 @@
 }
 
 .results-field-error {
-  color: inherit;
+  color: var(--pt-color-caution-ink);
   font-weight: 600;
+}
+
+/* The form's actions (Show results, Reset) sit in a row that wraps on a narrow container; both
+ * controls meet the 44 px target height (contract §5). */
+.results-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-12);
+  align-items: center;
+}
+
+.results-form-actions .primary-button,
+.results-form-actions .secondary-button {
+  min-height: var(--pt-control-height);
 }
 
 .results-stale {
   font-weight: 600;
+  color: var(--pt-color-caution-ink);
 }
 
 .results-document {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--pt-space-16);
+}
+
+/* The folded inputs summary shown once results are visible (rulings V11 (1), V12): ONE compact line
+ * — "Inputs used: …" with the "Change inputs" control on the same line, wrapping only on a narrow
+ * window. No card and minimal vertical padding, so the answers reach the first screen after Show
+ * results. Colours and spacing from the tokens. */
+.results-inputs-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pt-space-8) var(--pt-space-12);
+  padding: var(--pt-space-4) 0;
+}
+
+.results-summary-line {
+  margin: 0;
+  color: var(--pt-color-ink);
+  overflow-wrap: anywhere;
+}
+
+.results-summary-eyebrow {
+  color: var(--pt-color-supporting);
+}
+
+.results-inputs-summary .secondary-button {
+  min-height: var(--pt-control-height);
+}
+
+/* Phone (320–700 px content width): keep the inputs summary about one line tall so the first answer
+ * reaches the first screen (S12 at 390 px). The "Inputs used:" label is kept for screen readers but
+ * hidden from view (so the visible text is just "Standard residence · Starting height"), and the
+ * "Change inputs" button is compact, so it stays beside the text where it fits. */
+@container (max-width: 700px) {
+  .results-summary-eyebrow {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .results-inputs-summary {
+    gap: var(--pt-space-4) var(--pt-space-8);
+  }
+
+  .results-inputs-summary .secondary-button {
+    padding: var(--pt-space-4) var(--pt-space-12);
+  }
 }

@@ -77,13 +77,14 @@ export const ANSWER_TITLES: Readonly<Record<AnswerKey, string>> = {
 export const NOT_AVAILABLE = "Not available";
 
 /**
- * The two kinds of gap in plain words, keyed by the document's `gap_kind` (D-090-R258,
- * ruling R6). The ONE place these words live. A `gap_kind` that is absent, null or unknown
- * to the website shows NO kind line and never a machine word.
+ * The kind-of-gap tag in plain words, keyed by the document's `gap_kind` (D-090-R258, ruling R6;
+ * ruling V11 (3) "one wording per situation"). The ONE place this word lives. Only a MISSING FACT
+ * about the property carries the short tag "Needs property information"; work still owed carries no
+ * second phrase at all — the owner's rows R894/R894 remove "Not worked", "still owed" and "Not built
+ * yet". A `gap_kind` that is absent, null or not this one shows NO tag and never a machine word.
  */
 export const GAP_KIND_LINES: Readonly<Record<string, string>> = {
-  missing_information: "Missing information about this property.",
-  work_owed: "Not built yet: this part of the program is still owed.",
+  missing_information: "Needs property information",
 };
 
 /** The plain-words gap-kind line for a document `gap_kind`, or null when it is absent, null or
@@ -95,8 +96,9 @@ export function gapKindLine(gapKind: GapKind | string | null | undefined): strin
 /** Reason shown for an available answer computed from rules that are not reviewed yet. */
 export const RULES_NOT_REVIEWED_REASON = "the rules for this answer are not reviewed yet";
 
-/** Heading tag on a lane-flag surface that shows draft numbers (never an architect surface). */
-export const DRAFT_PREVIEW_TAG = "internal preview, rules not reviewed";
+/** Standing note in the heading of a draft document: the rules are not professionally reviewed
+ * (ADR-007; ruling V11 (4) drops the old "internal preview" dev framing). */
+export const DRAFT_PREVIEW_TAG = "rules not professionally reviewed";
 
 /** Reason shown if an available answer arrives without any value (the contract forbids it). */
 export const NO_VALUE_REASON = "no value was returned for this answer";
@@ -210,18 +212,25 @@ export interface WithheldValueView {
   key: string;
   label: string;
   reason: string;
-  /** Which kind of gap this is, in plain words (D-090-R258, ruling R6), after the reason; null
-   * when the document carries no gap_kind the website knows. */
+  /** The short kind-of-gap tag in plain words (D-090-R258, ruling R6/V11); null when the document
+   * carries no gap_kind the website tags. */
   gapKindLine: string | null;
+  /** What would settle it, read from the document's `resolved_by` (ruling V11 (3)); null if absent. */
+  resolvedBy: string | null;
 }
 
-/** A shown value and, when its way is conditional, each condition on its own line. */
+/** A shown value and, when its way is conditional, the conditions it rests on — split by the
+ * contract's local-exception rule ("A condition that changes a number stays attached to that
+ * number"; §3): a condition that applies to THIS result only is shown in full here; a condition
+ * shared by two or more results is referred to by name and stated once in the shared list. */
 export interface ShownValueView {
   value: AnswerValue;
-  /** One "If <assumption>" line per condition when the value's way is conditional (work order
-   * §0; ruling L1). EMPTY for a settled value — the ONE representation of the conditions, so no
-   * joined line can disagree with the list. */
-  conditions: readonly string[];
+  /** Conditions that apply to THIS result only — shown IN FULL with the value, one sentence each.
+   * EMPTY for a settled value (ruling L1: the ONE representation of the local conditions). */
+  localConditions: readonly string[];
+  /** Names of the shared conditions (two or more results) this value refers to, e.g. "Condition 1"
+   * — stated once in the shared list and named here (ruling V11 (5)). */
+  sharedConditionNames: readonly string[];
 }
 
 /** The big headline of an available answer: a shown value, or - when the designated headline key is
@@ -298,6 +307,54 @@ export function hasFirstBuildingOptions(results: ThreeAnswersResults): boolean {
  * is prepended by notAvailableText. */
 export const BUILDING_OPTIONS_BELOW_REASON = "the building options are shown below";
 
+/** Each distinct condition of the document, with its first-appearance position (1-based) and how
+ * many RESULTS reference it (its fan-out). The walk order matches the notices adapter, so a shared
+ * condition's "Condition N" name agrees across the panel. A condition with a fan-out of one is a
+ * local exception (shown in full with its result); two or more make it a shared condition. */
+export interface ConditionFanout {
+  position: number;
+  count: number;
+}
+
+export function conditionIndex(results: ThreeAnswersResults): Map<string, ConditionFanout> {
+  const index = new Map<string, ConditionFanout>();
+  const noteResult = (state: ValueState | undefined): void => {
+    for (const text of conditionList(state)) {
+      const existing = index.get(text);
+      if (existing) existing.count += 1;
+      else index.set(text, { position: index.size + 1, count: 1 });
+    }
+  };
+  for (const key of ANSWER_KEYS) {
+    const answer = results.answers[key];
+    if (answer.status !== "available" || !answer.value_states) continue;
+    for (const state of Object.values(answer.value_states as Record<string, ValueState>)) {
+      noteResult(state);
+    }
+  }
+  for (const alternative of results.building_alternatives ?? []) noteResult(alternative.way);
+  const coverage = results.coverage_by_portion;
+  if (coverage && coverage.status === "available") noteResult(coverage.way);
+  return index;
+}
+
+/** One shared condition for the shared list: its name ("Condition 1") and its full text. */
+export interface SharedConditionView {
+  name: string;
+  text: string;
+}
+
+/** The conditions shared by two or more results, in first-appearance order, each named by its
+ * position — stated ONCE in the shared list (the local, one-result conditions are NOT here; they
+ * stay in full with their result). */
+export function sharedConditionsView(results: ThreeAnswersResults): SharedConditionView[] {
+  const index = conditionIndex(results);
+  return [...index.entries()]
+    .filter(([, info]) => info.count >= 2)
+    .sort((a, b) => a[1].position - b[1].position)
+    .map(([text, info]) => ({ name: `Condition ${info.position}`, text }));
+}
+
 export function answerView(
   results: ThreeAnswersResults,
   key: AnswerKey,
@@ -337,10 +394,18 @@ export function answerView(
   }
   const states = valueStates(answer);
   const shownKeys = new Set(values.map(value => value.key));
-  const shownView = (value: AnswerValue): ShownValueView => ({
-    value,
-    conditions: conditionList(states[value.key]),
-  });
+  const index = conditionIndex(results);
+  const shownView = (value: AnswerValue): ShownValueView => {
+    const localConditions: string[] = [];
+    const sharedConditionNames: string[] = [];
+    for (const text of conditionList(states[value.key])) {
+      const info = index.get(text);
+      // Shared by two or more results -> named and stated once; otherwise shown in full here.
+      if (info && info.count >= 2) sharedConditionNames.push(`Condition ${info.position}`);
+      else localConditions.push(text);
+    }
+    return { value, localConditions, sharedConditionNames };
+  };
 
   // The withheld values: every value_states entry whose way is 'withheld' and that is NOT shown in
   // values[] (a withheld value carries no number, so it is never a values[] entry). Shown as its
@@ -353,6 +418,7 @@ export function answerView(
         label: state.label,
         reason: state.reason,
         gapKindLine: gapKindLine(state.gap_kind),
+        resolvedBy: state.resolved_by ?? null,
       });
     }
   }
@@ -376,6 +442,7 @@ export function answerView(
         label: headlineState.label,
         reason: headlineState.reason,
         gapKindLine: gapKindLine(headlineState.gap_kind),
+        resolvedBy: headlineState.resolved_by ?? null,
       },
     };
     headlineKeyShown = headlineKey;
@@ -679,4 +746,54 @@ export function buildingOptionNotesView(results: ThreeAnswersResults): BuildingO
       zrSections: note.zr_sections,
       snapshotIds: note.snapshot_ids,
     }));
+}
+
+// ---- What needs resolving (presentation contract §2 item 6; ruling V11 (6)) ----
+// A short, prioritised list of the document's open items, grouped from its OWN reasons and
+// resolvers — never typed here (ruling V2). Each item names what it affects and what would settle
+// it. The caller (SharedConditions) shows at most three through the notices adapter's cap.
+
+/** One open item: what it affects, the document's reason, and what would settle it. */
+export interface OpenItem {
+  /** The result this affects, read from the document (its label). */
+  affects: string;
+  /** The document's reason it is not settled. */
+  reason: string;
+  /** What would settle it, read from the document's resolver. */
+  settledBy: string;
+}
+
+/**
+ * The document's open items, in document order: every withheld value of the three answers, a
+ * withheld coverage-by-portion block, and every building the method did not work — each carrying a
+ * resolver. An item with no resolver is omitted (nothing would settle it is not an action). Deduped
+ * by what it affects and what settles it, so the same gap is not listed twice. Every string is read
+ * from the document.
+ */
+export function openItemsView(results: ThreeAnswersResults): OpenItem[] {
+  const items: OpenItem[] = [];
+  const seen = new Set<string>();
+  const add = (affects: string, reason: string, settledBy: string | null | undefined): void => {
+    if (settledBy == null || settledBy === "") return;
+    const keyed = `${affects}\u0000${settledBy}`;
+    if (seen.has(keyed)) return;
+    seen.add(keyed);
+    items.push({ affects, reason, settledBy });
+  };
+  for (const key of ANSWER_KEYS) {
+    const answer = results.answers[key];
+    if (answer.status !== "available" || !answer.value_states) continue;
+    const states = answer.value_states as Record<string, ValueState>;
+    for (const state of Object.values(states)) {
+      if (state.way === "withheld") add(state.label, state.reason, state.resolved_by);
+    }
+  }
+  const coverage = results.coverage_by_portion;
+  if (coverage && coverage.status === "withheld") {
+    add(coverage.label, coverage.reason, coverage.resolved_by);
+  }
+  for (const entry of results.buildings_not_worked ?? []) {
+    add(entry.label, entry.reason, entry.resolved_by);
+  }
+  return items;
 }

@@ -1,0 +1,182 @@
+{
+  "task_id": "M5-T148",
+  "title": "Shared presentation for the architect-facing outputs (the presentation contract's step 2): one token source with generated CSS and Python and parity checks, and pure presentation adapters (number formatting, status words, result kind, shared conditions once, at most three notices, result identity); no screen and no number changes",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Give the website, the drawings and the later PDF one source of presentation tokens (spacing, colour, type, shape, status) with generated CSS and Python and a parity check, and pure adapters that format numbers and units, map the document's states to the owner's status words, tell allowance, envelope, scheduled option and estimate apart, state shared conditions once, cap notices at three, and carry the result's identity. Nothing on the screen and no number changes in this task.",
+  "business_reason": "The owner's presentation contract (D-090 source-079) asks for shared presentation before the first website slice, so that the screen, the drawings and the PDF use one set of values and never scatter magic numbers.",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md (sections 4, 5 and 8)",
+    "apps/web/src/app/globals.css",
+    "services/api/app/drawings/kit/styles.py (read only)",
+    "the committed results fixtures under packages/contracts/fixtures/valid/results/"
+  ],
+  "outputs": [
+    "docs/design/presentation-tokens.json",
+    "a generated block in apps/web/src/app/globals.css",
+    "services/api/app/drawings/kit/presentation_tokens.py (generated)",
+    "five adapter modules under apps/web/src/lib/architect/ with tests"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/design/presentation-tokens.json",
+    "apps/web/scripts/presentation-tokens.mjs",
+    "apps/web/scripts/tests/presentation-tokens.test.mjs",
+    "apps/web/src/app/globals.css",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "services/api/tests/drawings/test_presentation_tokens.py",
+    "apps/web/src/lib/architect/metric-format.ts",
+    "apps/web/src/lib/architect/result-status.ts",
+    "apps/web/src/lib/architect/result-identity.ts",
+    "apps/web/src/lib/architect/presented-results.ts",
+    "apps/web/src/lib/architect/presented-notices.ts",
+    "apps/web/src/lib/architect/__tests__/metric-format.test.ts",
+    "apps/web/src/lib/architect/__tests__/result-status.test.ts",
+    "apps/web/src/lib/architect/__tests__/result-identity.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+    "project-control/reports/M5-T148-part-A.md",
+    "project-control/reports/M5-T148-part-B.md",
+    "project-control/reports/M5-T148-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/first-building-options.ts",
+    "apps/web/src/components/**",
+    "services/api/app/drawings/kit/styles.py",
+    "apps/web/src/app/layout.tsx",
+    "packages/**",
+    ".github/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Token parity",
+      "input": "node --test apps/web/scripts/tests/presentation-tokens.test.mjs; the api test",
+      "expected": "the generated block in globals.css and presentation_tokens.py equal a fresh generation from presentation-tokens.json; a changed colour in the JSON without regeneration fails both tests; ruff is clean (lines at most 100 characters)."
+    },
+    {
+      "id": "S2",
+      "case": "The contract's values",
+      "input": "presentation-tokens.json against the contract's section 5",
+      "expected": "spacing 4, 8, 12, 16, 24, 32, 48 px; the nine palette colours of the contract's table; control height 44 px; radii 6 and 8 px; the type sizes of the screen and print columns; the font token equals the existing application font stack (ruling V4)."
+    },
+    {
+      "id": "S3",
+      "case": "Contrast",
+      "input": "every declared text and background pair",
+      "expected": "ordinary text at least 4.5:1, a control boundary at least 3:1, computed by the test; the quiet divider is marked as never a control edge."
+    },
+    {
+      "id": "S4",
+      "case": "Number formatting",
+      "input": "20150 sq ft; 0; 1234567.891; null; an unknown unit",
+      "expected": "'20,150 sq ft'; '0 sq ft' (zero is never 'Not known'); '1,234,567.89 sq ft'; null gives the not-known state, never a number; an unknown unit gives the bare number. Full precision is never changed in the data."
+    },
+    {
+      "id": "S5",
+      "case": "Status words",
+      "input": "every committed results fixture",
+      "expected": "a withheld value maps to 'Not known' with its reason and no digit; a conditional value maps to 'Conditional'; a settled value has no marker; 'Verified' is never produced (ruling V3)."
+    },
+    {
+      "id": "S6",
+      "case": "Result kind",
+      "input": "the benchmark document",
+      "expected": "the floor-area allowance and the unit limits are allowance; the heights are envelope; building B is a scheduled option, never 'achieved' (ruling V5); the capacity estimate is an estimate."
+    },
+    {
+      "id": "S7",
+      "case": "Shared conditions once; at most three notices",
+      "input": "the benchmark document; a list of five notices",
+      "expected": "the conditions repeated under many results are listed once and each result refers to them, with none lost; five notices give three shown and '2 more'."
+    },
+    {
+      "id": "S8",
+      "case": "Result identity",
+      "input": "the benchmark document; a document for another lot; a document without a scope",
+      "expected": "the identity carries the lot, the results id and a revision fingerprint; another lot is a mismatch; no scope gives an unknown identity, never a guessed one."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The generated CSS block sits inside the hand-written globals.css: the generator must touch only its marked block.",
+    "Contrast pairs from the contract's table must be checked on the real combinations, not the token list alone."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T00:00:02.564240+00:00",
+  "updated_at": "2026-10-10T04:56:52.458432+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R641",
+        "D-090-R804",
+        "D-090-R807",
+        "D-090-R810",
+        "D-090-R811",
+        "D-090-R812",
+        "D-090-R833",
+        "D-090-R835",
+        "D-090-R836",
+        "D-090-R837",
+        "D-090-R838",
+        "D-090-R855",
+        "D-090-R856",
+        "D-090-R857",
+        "D-090-R858",
+        "D-090-R859",
+        "D-090-R871",
+        "D-090-R872",
+        "D-090-R873",
+        "D-090-R877",
+        "D-090-R886",
+        "D-090-R888",
+        "D-090-R890",
+        "D-090-R895"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T00:00:02.564486+00:00",
+  "path_notes": "PARTS: A (tokens: the JSON source, the Node generator and its test, the marked globals.css block, the generated Python module and its test) and B (the five adapter modules and their tests) share no file and run side by side.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 20 (they govern; later over earlier). V1: three tasks on ONE branch, reviewed at ONE head, merged as ONE pull request: M5-T148 (shared presentation), M5-T149 (the website slice, after M5-T148) and M5-T150 (the parcel's own outline; server only, beside M5-T148). Order: M5-T148 parts A and B and M5-T150 side by side (three builders, disjoint files); integrate; then M5-T149 parts A, B and C side by side (three builders); then the orchestrator builds the website, runs the browser tests (stopping the owner's preview for the run and restarting it), takes the pictures and starts the reviews. V2: the website types no number, label, condition or reason; the presentation adapters only format numbers and group what the document says; they decide no law and recalculate nothing (D-090 R855). V3: the screen's statuses stay as the owner decided (row R641: 'Preliminary zoning results'; settled, conditional, not known); the owner's question C2 (the PDF's six labels on the screen) is open; 'Verified' is never shown. V4: the font token equals the application's existing font stack (`apps/web/src/app/layout.tsx`); no font changes in this wave. V5: a floor schedule whose placement and site fit are not established is never called 'achieved' (row R895): it is the 'scheduled area', with 'site fit not verified' beside it, before any caveat; the option comparison uses ONE wording per situation (row R894). V6: builders never start Next, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests. V7: a builder who finds that a file outside its part must change STOPS and reports. V8: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere. V9: the estimate on the benchmark lot is 17.27 to 21.59 apartments (from the document); the planning draft's '22.20' was wrong.",
+  "documented_test_commands": [
+    "cd apps/web && node --test scripts/tests/*.test.mjs",
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/architect",
+    "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings/test_presentation_tokens.py"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T00:00:17.225319+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; parts A and B dispatched side by side"
+    },
+    {
+      "at": "2026-10-10T04:37:28.360734+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; G3 and G4 PASS in both rounds; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-10T04:56:52.458241+00:00"
+}

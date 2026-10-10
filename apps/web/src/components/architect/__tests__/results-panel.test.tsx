@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { jsonResponse } from "@/test-support/fixtures";
@@ -9,7 +11,7 @@ import {
   type Results,
 } from "@/lib/architect/three-answers";
 import type { ResultsRequestBody } from "@/lib/results-api";
-import { PARKING_LINE, ResultsPanel, STALE_INPUTS_LINE } from "../ResultsPanel";
+import { ResultsPanel, STALE_INPUTS_LINE } from "../ResultsPanel";
 
 /**
  * The results panel (task M5-T140). W-2 proves every shown value, conditional line and "not known"
@@ -77,9 +79,20 @@ describe("ResultsPanel — W-2: every value equals the returned document (nothin
     await pressShow();
     await screen.findByTestId("three-answers-panel");
 
+    const panelText = screen.getByTestId("three-answers-panel").textContent ?? "";
+    const conditionAssumptions = new Set<string>();
     for (const key of ANSWER_KEYS) {
       const answer = doc.answers[key];
       const cardEl = screen.getByTestId(`answer-${key}`);
+      if (key === "building_option") {
+        // Ruling V11 (2): the journey lists building B, so the card reads "Scheduled area: …" with
+        // "Site fit not verified" ahead of any caveat, never "Not available" or "shown below".
+        expect(cardEl.textContent).toContain("Scheduled area");
+        expect(cardEl.textContent).toContain("Site fit not verified");
+        expect(cardEl.textContent).not.toContain("Not available");
+        expect(cardEl.textContent).not.toContain("shown below");
+        continue;
+      }
       if (answer.status !== "available") {
         // The whole not-available answer reads its reason (no number falls back).
         expect(within(cardEl).getByTestId("answer-not-available").textContent).toContain("Not available");
@@ -90,11 +103,12 @@ describe("ResultsPanel — W-2: every value equals the returned document (nothin
         // Every shown value's number+unit appears exactly as the document carries it.
         expect(cardEl.textContent).toContain(quantityText(displayQuantity(value.value, value.unit)));
         const state = states[value.key];
-        // Every conditional value shows its assumption line, read from the document.
-        if (state && state.way === "conditional") {
-          for (const condition of state.conditions) {
-            expect(cardEl.textContent).toContain(condition.assumption);
-          }
+        // Ruling V11 (5): a conditional value refers to its condition BY NAME in the card
+        // ("Applies: Condition N"); its full assumption text is stated once in the shared-conditions
+        // block, never repeated in each card.
+        if (state && state.way === "conditional" && state.conditions.length > 0) {
+          expect(cardEl.textContent).toMatch(/Condition \d+/);
+          for (const condition of state.conditions) conditionAssumptions.add(condition.assumption);
         }
       }
       // Every withheld value reads "Not known" with its reason, never a number.
@@ -106,6 +120,9 @@ describe("ResultsPanel — W-2: every value equals the returned document (nothin
         expect(cardEl.textContent).toContain(state.reason);
       }
     }
+    // Each distinct condition's full assumption text is stated once in the panel (read from the
+    // document, not retyped) — the shared-conditions block holds it (ruling V11 (5)).
+    for (const assumption of conditionAssumptions) expect(panelText).toContain(assumption);
     // The completeness line is the document's, verbatim.
     expect(screen.getByTestId("three-answers-completeness").textContent).toBe(doc.completeness_line.text);
   });
@@ -137,12 +154,14 @@ describe("ResultsPanel — W-3 / S13 / S14: states and honest text", () => {
     expect(calls[0]).toEqual({ housing_program: "standard_residence" });
     expect(calls[0].floor_to_floor_ft).toBeUndefined();
     expect(calls[0].special_density_statement).toBeUndefined();
-    // (b) an entered height is sent in feet.
+    // (b) an entered height is sent in feet. The form folded once results showed (V11 (1)); reopen it.
+    fireEvent.click(screen.getByTestId("results-change-inputs"));
     fireEvent.change(screen.getByTestId("results-floor-to-floor"), { target: { value: "14" } });
     await pressShow();
     await waitFor(() => expect(calls.length).toBe(2));
     expect(calls[1].floor_to_floor_ft).toBe(14);
     // (c) the statement is sent only when made.
+    fireEvent.click(screen.getByTestId("results-change-inputs"));
     fireEvent.click(screen.getByTestId("results-density-statement"));
     await pressShow();
     await waitFor(() => expect(calls.length).toBe(3));
@@ -205,15 +224,16 @@ describe("ResultsPanel — W-3 / S13 / S14: states and honest text", () => {
     expect(coverageRow).not.toMatch(/\d+%/);
   });
 
-  it("S13: a result shows the parking line and no option is called feasible", async () => {
+  it("S13/V11(9): no typed parking line; the concern comes from the document's not_checked list, and no option is called feasible", async () => {
     render(<ResultsPanel bbl={BBL} fetchImpl={successFetch(loadResultsFixture(JOURNEY))} />);
     await pressShow();
     const doc = await screen.findByTestId("results-document");
-    expect(screen.getByTestId("results-parking").textContent).toBe(PARKING_LINE);
-    // The only mention of "feasible" is the parking line's own disclaimer ("not shown as
-    // feasible"); nothing else on the panel presents an option as feasible.
-    const withoutParking = (doc.textContent ?? "").split(PARKING_LINE).join("");
-    expect(withoutParking).not.toMatch(/\bfeasible\b/);
+    // Ruling V11 (9): the website no longer types its own parking line. The parking concern reaches
+    // the reader from the listed building's own not_checked list in the returned document.
+    expect(screen.queryByTestId("results-parking")).toBeNull();
+    expect(doc.textContent ?? "").toContain("Parking, loading and bicycle requirements");
+    // Nothing on the shown document presents an option as feasible.
+    expect(doc.textContent ?? "").not.toMatch(/\bfeasible\b/);
     expect(doc.textContent ?? "").not.toContain("maximum for this property");
   });
 
@@ -359,6 +379,8 @@ describe("ResultsPanel — W-4 / W-6 / S19 / S22", () => {
     await pressShow();
     await screen.findByTestId("results-document");
     expect(screen.queryByTestId("results-stale")).toBeNull();
+    // The form folded once results showed (V11 (1)); reopen it, keeping the inputs, then change one.
+    fireEvent.click(screen.getByTestId("results-change-inputs"));
     // Change an input: the stale line appears and the shown numbers are unchanged.
     fireEvent.change(screen.getByTestId("results-housing-program"), {
       target: { value: "qualifying_affordable_housing" },
@@ -503,5 +525,82 @@ describe("ResultsPanel — M5-T142: a new result and each failure are announced 
     await waitFor(() => expect(announcer().textContent).toBe(""));
     second.resolve(jsonResponse({ state: "inputs_unavailable", message: "x" }, 503));
     await waitFor(() => expect(announcer().textContent).toBe(title));
+  });
+});
+
+/** Colour literals in a CSS file, after stripping comments and `var(...)` / `color-mix(...)`
+ * references. An empty result means every colour comes from a token (M5-T149 part C). */
+function colourLiterals(css: string): string[] {
+  const stripped = css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/var\([^)]*\)/g, "");
+  return stripped.match(/#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\(/g) ?? [];
+}
+
+describe("ResultsPanel — M5-T149 part C: reset and tokens", () => {
+  it("Reset restores the starting inputs and clears a field error, asking the server nothing", () => {
+    const fetchImpl = vi.fn(async () => jsonResponse(loadResultsFixture(JOURNEY), 200));
+    render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl as unknown as typeof fetch} />);
+    // Change every input and refuse a height, so there is something to reset and an error to clear.
+    fireEvent.change(screen.getByTestId("results-housing-program"), { target: { value: "qualifying_senior_housing" } });
+    fireEvent.change(screen.getByTestId("results-floor-to-floor"), { target: { value: "0" } });
+    fireEvent.click(screen.getByTestId("results-density-statement"));
+    fireEvent.click(screen.getByTestId("results-show")); // 0 is refused: an error, and no call
+    expect(screen.getByTestId("results-floor-to-floor-error")).toBeInTheDocument();
+    expect(fetchImpl).not.toHaveBeenCalled();
+    // Reset: the inputs return to their starting choices, the error clears, and still no call.
+    fireEvent.click(screen.getByTestId("results-reset"));
+    expect(screen.getByTestId<HTMLSelectElement>("results-housing-program").value).toBe("standard_residence");
+    expect(screen.getByTestId<HTMLInputElement>("results-floor-to-floor").value).toBe("");
+    expect(screen.getByTestId<HTMLInputElement>("results-density-statement").checked).toBe(false);
+    expect(screen.queryByTestId("results-floor-to-floor-error")).toBeNull();
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("results-panel.css carries no colour literal (every colour comes from a presentation token)", () => {
+    const css = readFileSync(resolve(process.cwd(), "src/components/architect/results-panel.css"), "utf8");
+    expect(colourLiterals(css)).toEqual([]);
+  });
+
+  it("V11(1)/S12: once results show, the form folds to a one-line summary with Change inputs, and focus moves to the results heading", async () => {
+    render(<ResultsPanel bbl={BBL} fetchImpl={successFetch(loadResultsFixture(JOURNEY))} />);
+    // Before the first result the form shows as today.
+    expect(screen.getByTestId("results-form")).toBeInTheDocument();
+    expect(screen.queryByTestId("results-inputs-summary")).toBeNull();
+    await pressShow();
+    await screen.findByTestId("results-document");
+    // The form folded to the one-line summary of the inputs used, with a Change inputs control.
+    expect(screen.queryByTestId("results-form")).toBeNull();
+    const summary = screen.getByTestId("results-summary-line");
+    expect(summary.textContent).toContain("Standard residence");
+    expect(summary.textContent).toContain("Starting height"); // an empty height reads "Starting height"
+    // Focus moved to the results heading (the ThreeAnswersPanel title), focus only.
+    await waitFor(() => {
+      const heading = document.querySelector(".ta-panel-title");
+      expect(heading).not.toBeNull();
+      expect(heading).toHaveFocus();
+    });
+    // Change inputs reopens the form with the inputs kept; the results stay shown below.
+    fireEvent.click(screen.getByTestId("results-change-inputs"));
+    expect(screen.getByTestId("results-form")).toBeInTheDocument();
+    expect(screen.getByTestId<HTMLSelectElement>("results-housing-program").value).toBe("standard_residence");
+    expect(screen.getByTestId("results-document")).toBeInTheDocument();
+  });
+
+  it("V11(10)/S15: a results document for another lot is not shown; the panel says so and offers to ask again", async () => {
+    const base = loadResultsFixture(JOURNEY);
+    if (!base.scope) throw new Error("fixture changed: the journey must carry a scope");
+    // A document whose identity (scope.lot.bbl) names a DIFFERENT lot than the requested BBL.
+    const anotherLot: Results = {
+      ...base,
+      scope: { ...base.scope, lot: { ...base.scope.lot, bbl: "1000010010" } },
+    };
+    render(<ResultsPanel bbl={BBL} fetchImpl={successFetch(anotherLot)} />);
+    await pressShow();
+    await screen.findByTestId("results-another-lot");
+    // The document is not shown; the panel names the problem and offers to ask again.
+    expect(screen.queryByTestId("results-document")).toBeNull();
+    expect(screen.queryByTestId("three-answers-panel")).toBeNull();
+    expect(screen.getByTestId("results-ask-again")).toBeInTheDocument();
   });
 });

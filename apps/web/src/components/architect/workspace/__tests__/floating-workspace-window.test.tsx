@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { useEffect, useState } from "react";
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -287,5 +289,43 @@ describe("tool window descriptions (plan §5a item 5)", () => {
       expect(description).not.toMatch(/_/);
       expect(description).not.toMatch(/bbl|workspace/i);
     }
+  });
+});
+
+describe("FloatingWorkspaceWindow — M5-T149 part C: wide window and tokens", () => {
+  it("opens a wide window noticeably wider than a standard one at the same viewport", () => {
+    // innerWidth is stubbed to 1440 in beforeEach, so neither window is viewport-capped.
+    render(<div className="architect-shell">
+      <FloatingWorkspaceWindow id="w-standard" title="Standard" open onClose={() => undefined}><p>body</p></FloatingWorkspaceWindow>
+      <FloatingWorkspaceWindow id="w-wide" title="Wide" open wide onClose={() => undefined}><p>body</p></FloatingWorkspaceWindow>
+    </div>);
+    const standard = Number.parseFloat(screen.getByRole("dialog", { name: "Standard" }).style.width);
+    const wide = Number.parseFloat(screen.getByRole("dialog", { name: "Wide" }).style.width);
+    // The Results window is in DashboardEntry's wide list; a wide frame is distinctly wider.
+    expect(wide).toBeGreaterThan(standard);
+  });
+
+  it("the window frame CSS carries no colour literal (colours come from the tokens)", () => {
+    const css = readFileSync(
+      resolve(process.cwd(), "src/components/architect/workspace/floating-workspace-window.css"),
+      "utf8",
+    );
+    const stripped = css.replace(/\/\*[\s\S]*?\*\//g, "").replace(/var\([^)]*\)/g, "");
+    expect(stripped.match(/#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\(/g) ?? []).toEqual([]);
+  });
+
+  it("fills the window to the screen height on a narrow viewport (<=700 px) so the first answer is on the first screen (S12 at 390 px)", () => {
+    // jsdom applies no media queries, so this asserts the CSS RULE exists: a <=700 px media query
+    // that overrides the JS inline frame height with the full dynamic viewport height. The ! guard
+    // is needed because the window height is written inline by the drag/resize logic.
+    const css = readFileSync(
+      resolve(process.cwd(), "src/components/architect/workspace/floating-workspace-window.css"),
+      "utf8",
+    );
+    const block = css.match(/@media\s*\(max-width:\s*700px\)\s*\{[\s\S]*?\n\}/);
+    expect(block).not.toBeNull();
+    const rule = block![0];
+    expect(rule).toMatch(/\.workspace-window/);
+    expect(rule).toMatch(/height:\s*calc\(100dvh - 16px\)\s*!important/);
   });
 });

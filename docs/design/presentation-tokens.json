@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "purpose": "One source of presentation tokens for the architect-facing website, drawings and PDF.",
+    "contract": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md, section 5",
+    "directive": "D-090 source-079 (R800-R891); wave 20 ruling V4 for the font token",
+    "task": "M5-T148 part A",
+    "generator": "apps/web/scripts/presentation-tokens.mjs",
+    "prefix": "pt",
+    "edit": "Edit this file only. Then run the generator; the CSS block and the Python module are generated.",
+    "typeNotes": {
+      "chosenWithinContractRanges": "Each type size sits inside the contract's stated screen/print range.",
+      "lineHeightDefaults": "source-note line_height 1.4 and drawing-label line_height 1.2 are chosen defaults; the contract table gives no screen line height for those two roles."
+    }
+  },
+  "color": {
+    "ink": "#182B3A",
+    "supporting": "#52616C",
+    "action": "#18577A",
+    "page": "#F2F5F6",
+    "surface": "#FFFFFF",
+    "divider": "#D8E0E5",
+    "selected": "#EEF4F7",
+    "caution-ink": "#795318",
+    "caution-surface": "#FBF4E7"
+  },
+  "spacing": {
+    "4": 4,
+    "8": 8,
+    "12": 12,
+    "16": 16,
+    "24": 24,
+    "32": 32,
+    "48": 48
+  },
+  "control": {
+    "height": 44,
+    "radius": 6
+  },
+  "radius": {
+    "panel": 8
+  },
+  "font": {
+    "family": "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
+  },
+  "type": {
+    "property-title": {
+      "screen_px": 28,
+      "line_height": 1.2,
+      "weight": 700,
+      "print_pt": 22
+    },
+    "headline-value": {
+      "screen_px": 40,
+      "line_height": 1.1,
+      "weight": 700,
+      "print_pt": 30
+    },
+    "section-title": {
+      "screen_px": 18,
+      "line_height": 1.3,
+      "weight": 600,
+      "print_pt": 12
+    },
+    "body": {
+      "screen_px": 16,
+      "line_height": 1.5,
+      "weight": 400,
+      "print_pt": 10.5,
+      "print_line_height": 1.4
+    },
+    "compact": {
+      "screen_px": 14,
+      "line_height": 1.35,
+      "weight": 400,
+      "print_pt": 9.5
+    },
+    "source-note": {
+      "screen_px": 13,
+      "line_height": 1.4,
+      "weight": 400,
+      "print_pt": 8.5
+    },
+    "drawing-label": {
+      "screen_px": 14,
+      "line_height": 1.2,
+      "weight": 400,
+      "print_pt": 8.5,
+      "print_pt_preferred": 9.5
+    }
+  },
+  "status": {
+    "settled": {
+      "marker": false
+    },
+    "conditional": {
+      "marker": true,
+      "color_role": "secondary",
+      "ink": "#795318",
+      "surface": "#FBF4E7"
+    },
+    "not-known": {
+      "marker": true,
+      "color_role": "secondary",
+      "ink": "#52616C",
+      "surface": "#F2F5F6"
+    }
+  },
+  "contrastPairs": [
+    { "name": "ink on page", "fg": "ink", "bg": "page", "role": "text" },
+    { "name": "ink on surface", "fg": "ink", "bg": "surface", "role": "text" },
+    { "name": "ink on selected", "fg": "ink", "bg": "selected", "role": "text" },
+    { "name": "supporting on page", "fg": "supporting", "bg": "page", "role": "text" },
+    { "name": "supporting on surface", "fg": "supporting", "bg": "surface", "role": "text" },
+    { "name": "supporting on selected", "fg": "supporting", "bg": "selected", "role": "text" },
+    { "name": "action on page", "fg": "action", "bg": "page", "role": "text" },
+    { "name": "action on surface", "fg": "action", "bg": "surface", "role": "text" },
+    { "name": "action on selected", "fg": "action", "bg": "selected", "role": "text" },
+    { "name": "caution ink on caution surface", "fg": "caution-ink", "bg": "caution-surface", "role": "text" },
+    { "name": "caution ink on surface", "fg": "caution-ink", "bg": "surface", "role": "text" },
+    { "name": "action control edge on surface", "fg": "action", "bg": "surface", "role": "control" },
+    { "name": "action control edge on page", "fg": "action", "bg": "page", "role": "control" },
+    { "name": "quiet divider on surface", "fg": "divider", "bg": "surface", "role": "divider", "controlEdge": false },
+    { "name": "quiet divider on page", "fg": "divider", "bg": "page", "role": "divider", "controlEdge": false }
+  ]
+}

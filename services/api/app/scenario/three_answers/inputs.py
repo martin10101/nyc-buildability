@@ -124,6 +124,12 @@ class ThreeAnswerInputs:
     # --- optional lot geometry inputs (feet) ---
     lot_front_ft: float | None = None
     lot_depth_ft: float | None = None
+    # The MEASURED tax-map parcel ring (EPSG:2263 US survey feet), threaded from the prepared Lane B
+    # outline by the engine bridge when one is produced. ``geometry.build_geometry`` translates it
+    # to the local-feet drawing plane (subtracting its minimum x and y) as the lot outline, so the
+    # drawn outline is the parcel's own shape with its own measured area - never a rectangle sized
+    # to the recorded lot area (owner contract section 6; D-090-R896). None means no outline was
+    # produced: no default stands for a fact, and the shown geometry is then withheld.
     lot_outline: Sequence[Sequence[float]] | None = None
 
     # --- editable building defaults ---

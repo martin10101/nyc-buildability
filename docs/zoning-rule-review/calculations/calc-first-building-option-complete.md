@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 6 (last changed 2026-10-09)
+- Revision: 7 (last changed 2026-10-10)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `28c1fc61cba73545c65a1f85e23f0155935b2c97daac5ae4392f41b6c129f6d4`
+- Combined code identity: `2ed063ce11573a720d5d508d659c364b760387b63abf46b48ebd7cc391854de2`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`4fc35c950840f9544dcdb2972918c47e8a662e1ecc65dfcd41c62c50e0aed3cc`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`1ebe1225f29971154411f5d1c139caed3aa92c3c000edfe3773497de715c416c`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
   - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
@@ -136,9 +136,9 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `28c1fc61cba73545c65a1f85e23f0155935b2c97daac5ae4392f41b6c129f6d4`
-- Commit tested: `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66`
-- Date tested: 2026-10-09
+- Code identity tested: `2ed063ce11573a720d5d508d659c364b760387b63abf46b48ebd7cc391854de2`
+- Commit tested: `42fc2ae11e6b90084972e7ca32816cc50b8a085a`
+- Date tested: 2026-10-10
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-first-building-option-complete.txt)
