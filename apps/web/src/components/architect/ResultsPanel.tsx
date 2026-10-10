@@ -390,7 +390,7 @@ export function ResultsPanel({ bbl, address, fetchImpl }: ResultsPanelProps) {
           <AnotherLotCard onAskAgain={submit} />
         ) : (
           <div className="results-document" data-testid="results-document">
-            <ThreeAnswersPanel results={outcome.document} showDraftValues />
+            <ThreeAnswersPanel results={outcome.document} showDraftValues address={address} />
           </div>
         )
       ) : null}

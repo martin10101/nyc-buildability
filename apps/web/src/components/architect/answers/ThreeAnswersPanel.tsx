@@ -42,6 +42,12 @@ export interface ThreeAnswersPanelProps {
    * reads "Not available — the rules for this answer are not reviewed yet" (D-090-R010).
    */
   showDraftValues?: boolean;
+  /**
+   * The property's street address — the SAME address the report receives (the typed label, else the
+   * recorded address, resolved upstream; M5-T153 rework 3). When present it leads the identity as the
+   * heading, with the borough/block/lot beneath; absent, the identity keeps today's lot heading.
+   */
+  address?: string;
 }
 
 // The two scope assumptions the identity line names beside the lot (presentation contract §2
@@ -56,7 +62,7 @@ const IDENTITY_KEYS = ["housing_program", "floor_to_floor_ft"] as const;
  * The right column holds the detailed scope and the assumed conditions, open by default (R119). It
  * renders one `results` document and fetches nothing; Part C wires the live request.
  */
-export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAnswersPanelProps) {
+export function ThreeAnswersPanel({ results, showDraftValues = false, address }: ThreeAnswersPanelProps) {
   const headingId = useId();
   const scope = scopeView(results);
   const remaining = remainingFloorAreaView(results);
@@ -74,7 +80,7 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
       </h2>
       <div className="ta-layout">
         <div className="ta-left" data-testid="three-answers-left">
-          {results.scope ? <IdentityLine scope={results.scope} /> : null}
+          {results.scope ? <IdentityLine scope={results.scope} address={address} /> : null}
           <ResultsStatusStrip results={results} />
           <div className="ta-answers">
             <AnswerCard
@@ -162,20 +168,36 @@ function buildingOptionCardView(
 }
 
 /**
- * The identity line (presentation contract §2 item 1): the lot first, then the housing program and
- * the floor height. Every string is read from the document's scope in plain words (never a machine
- * key or code, never a typed value — ruling V2). An absent assumption is simply omitted.
+ * The identity line (presentation contract §2 item 1; M5-T153 rework 3, E1): the SAME identity the
+ * report titles the property with. When an address is known (the typed label or the recorded
+ * address, resolved upstream and passed in), the address leads as the heading and the borough/block/
+ * lot sits beneath it — so the screen and the report name the property the same way. With no address
+ * the lot label stays the heading (today's behaviour). Then the housing program and the floor height.
+ * Every string is read from the document's scope (or the resolved address) in plain words, never a
+ * machine key or a typed-into-the-form value (ruling V2). An absent assumption is simply omitted.
  */
-function IdentityLine({ scope }: { scope: Scope }) {
+function IdentityLine({ scope, address }: { scope: Scope; address?: string }) {
   const facts = IDENTITY_KEYS.flatMap(key => {
     const assumption = scope.assumptions.find(entry => entry.key === key);
     return assumption ? [assumption] : [];
   });
+  const hasAddress = typeof address === "string" && address.trim() !== "";
   return (
     <header className="ta-identity" data-testid="three-answers-identity">
-      <p className="ta-identity-lot" data-testid="three-answers-identity-lot">
-        {scope.lot.display}
-      </p>
+      {hasAddress ? (
+        <>
+          <p className="ta-identity-lot" data-testid="three-answers-identity-address">
+            {address}
+          </p>
+          <p className="ta-identity-sublot" data-testid="three-answers-identity-lot">
+            {scope.lot.display}
+          </p>
+        </>
+      ) : (
+        <p className="ta-identity-lot" data-testid="three-answers-identity-lot">
+          {scope.lot.display}
+        </p>
+      )}
       {facts.length > 0 ? (
         <div className="ta-identity-facts">
           {facts.map(assumption => (

@@ -209,4 +209,30 @@ drawings/title)
 - `node --test scripts/tests/print-report-pdf.test.mjs` → EXIT 0; 4/4.
 - root `python3 tools/modularity_check.py --check` → EXIT 0.
 
+## Rework 3 (reset to integrated head 8b82814f3cb1462941c427dffb373546f4f1f239; evidence
+`print-int3/desktop-results.png`; scenario E1 — the screen's identity matches the report's title)
+
+- **E1 — the Results window shows the same property identity as the report.** The report now titles
+  the property with its address ("215-16 NORTHERN BOULEVARD, Queens") while the screen's identity
+  heading read "Queens block 7334, lot 70". `ThreeAnswersPanel` takes a new optional `address` prop
+  (the SAME address the report receives — the typed label, else the recorded address, resolved
+  upstream by `reportAddress` and passed `DashboardTools → ResultsPanel → ThreeAnswersPanel`). Its
+  `IdentityLine` now leads with the address as the heading (testid `three-answers-identity-address`)
+  and keeps the borough/block/lot beneath it (testid `three-answers-identity-lot`, new quiet class
+  `.ta-identity-sublot` in three-answers.css, colour from a token). With no address it keeps today's
+  lot heading. Files: ThreeAnswersPanel.tsx, three-answers.css, ResultsPanel.tsx (passes `address`).
+- **Tests.** three-answers-panel.test.tsx: with an address → the address is the heading and the lot
+  line sits beneath; with no address → no address element and today's lot heading. The existing
+  identity assertions (rendered without an address) still read `three-answers-identity-lot` =
+  `scope.lot.display`, unchanged.
+- **Browser-spec assertions expecting the old heading:** none. The only identity assertion in my
+  browser specs is `results-layout.flag-on.spec.ts:206` (`three-answers-identity` is in the viewport),
+  which is text-agnostic and needs no change.
+
+### Rework 3 checks (apps/web, direct exit codes)
+
+- `npm run lint` → EXIT 0 (same 2 pre-existing warnings, untouched files).
+- `npm run typecheck` → EXIT 0.
+- `npx vitest run src/components/architect src/lib` → EXIT 0; 112 files, 2292 tests passed.
+
 END-OF-REPORT

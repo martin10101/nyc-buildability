@@ -552,6 +552,31 @@ describe("S1: the rendered results never hold a word that overstates a result (r
   });
 });
 
+describe("E1 (rework 3): the identity shows the same address the report titles the property with", () => {
+  it("leads with the address and keeps the borough/block/lot beneath when an address is known", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    const lotDisplay = doc.scope?.lot.display;
+    if (!lotDisplay) throw new Error("fixture changed: the benchmark must carry a lot display");
+    const address = "215-16 NORTHERN BOULEVARD, Queens";
+    render(<ThreeAnswersPanel results={doc} showDraftValues address={address} />);
+    const identity = screen.getByTestId("three-answers-identity");
+    // the address leads as the heading…
+    expect(within(identity).getByTestId("three-answers-identity-address").textContent).toBe(address);
+    // …with the borough/block/lot beneath it.
+    expect(within(identity).getByTestId("three-answers-identity-lot").textContent).toBe(lotDisplay);
+  });
+
+  it("keeps today's lot heading when no address is known", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    const lotDisplay = doc.scope?.lot.display;
+    if (!lotDisplay) throw new Error("fixture changed: the benchmark must carry a lot display");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const identity = screen.getByTestId("three-answers-identity");
+    expect(within(identity).queryByTestId("three-answers-identity-address")).toBeNull();
+    expect(within(identity).getByTestId("three-answers-identity-lot").textContent).toBe(lotDisplay);
+  });
+});
+
 describe("the tokens: no colour literal lives in three-answers.css (every part)", () => {
   it("uses only var(--token) for colour — no hex, rgb/rgba or hsl literal", () => {
     const css = readFileSync(
