@@ -171,3 +171,11 @@ Base `8b82814f3cb1462941c427dffb373546f4f1f239`. Cause confirmed: the kit's SVGs
 - D7 the site plan has its own block with space above (figure margin-top), so the top street name no longer touches a line above.
 - D8 the tax-map-outline caption is stated once, below the drawing: the report's redundant line above is removed; the single caption is the kit's own "Lot outline: Approximate - tax map" inside the SVG. NOTE: making that caption text the report's own would require editing the kit SVG (`services/api/app/drawings/kit/**`, M5-T152's scope); flagged for the orchestrator.
 Checks (rework 3): ruff 0; pytest 173 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html.
+
+## Rework 4 (7-page print: near-empty page 6; floor stack captioned twice)
+
+Base `a719082efe312d2b13c2859840a7f99f12ab6565`.
+- D9 the coverage of the promised sections moved OFF the assumptions page (where it held a near-empty sheet) ONTO the decision summary as a compact block "What this report covers", grouped by state in a few lines: In this report (sections); Partly (each with its short note, e.g. "Development options (1 of 11 options worked)"); Not yet (sections, the owner-held "Financial analysis inputs (held)"). Same content and states; a new module `coverage.py` holds the data and grouping; the assumptions page no longer carries the table. The F10 test now checks the compact block on the decision summary and its absence from the assumptions page.
+- D10 the floor-stack section keeps ONE caption - the report's own "Floor-stack section (Illustrative): drawn from the schedule only, with no placement on the lot." (with the Illustrative label). The drawing's own in-SVG caption is dropped by M5-T152 in the report frame; no report change was needed to keep one caption, and the single-caption test (test_f4) still holds.
+- D11 this section.
+Checks (rework 4): ruff 0; pytest 173 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html; the report is 6 page types for the benchmark.

@@ -363,18 +363,25 @@ def test_a3_not_checked_items_have_no_redundant_detail() -> None:
     assert expected < len(readers.open_items(doc))
 
 
-# =========================================================================== F10 / A8
-def test_f10_coverage_three_states_and_further_sections() -> None:
-    text = visible_text(build_report_html(benchmark()))
-    assert "In this report" in text and "Partly in this report" in text
-    assert "Not yet in the program" in text
+# =========================================================================== F10 / D9
+def test_f10_d9_coverage_compact_block_on_decision_summary() -> None:
+    html = build_report_html(benchmark())
+    decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+    text = visible_text(decision)
+    # D9: a compact block grouped by state, on the decision summary.
+    assert "What this report covers" in text
+    assert "In this report:" in text and "Partly:" in text and "Not yet:" in text
     assert "1 of 11 options worked" in text
-    for further in ("Comparable sales nearby", "Financial analysis inputs", "Context maps",
-                    "Tax abatement eligibility"):
+    for further in ("Comparable sales nearby", "Context maps", "Tax abatement eligibility"):
         assert further in text
-    # A8: context maps carry their own state and note.
-    assert "Not yet in this report" in text
-    assert "Map data is not yet fetched for the report." in text
+    # the owner-held section is marked.
+    assert "Financial analysis inputs (held)" in text
+    # D9: the coverage table is removed from the assumptions page (stated once).
+    assumptions = html[
+        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
+    ]
+    assert "What this report covers" not in visible_text(assumptions)
+    assert "Coverage of the promised sections" not in visible_text(assumptions)
 
 
 # =========================================================================== F11

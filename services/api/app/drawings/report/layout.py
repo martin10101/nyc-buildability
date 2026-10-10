@@ -108,4 +108,6 @@ a {{ color: {action}; }}
 }}
 .open-number {{ white-space: nowrap; }}
 .estimate-line {{ margin: 2mm 0 3mm; }}
+.coverage {{ margin-top: 4mm; }}
+.coverage-line {{ font-size: 9pt; margin: 0 0 1mm; }}
 """.strip()

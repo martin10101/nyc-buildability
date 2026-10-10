@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import drawings_embed, labels, readers
+from . import coverage, drawings_embed, labels, readers
 from .components import figure, label_chip
 from .html import el, escape, raw
 
@@ -146,6 +146,18 @@ def _open_items(results: Mapping) -> raw:
     return el("div", el("h3", "Most important open items"), el("ul", *items), class_="open-items")
 
 
+def _coverage_block(results: Mapping) -> raw:
+    """A compact 'What this report covers' block grouped by state (D9), at most a
+    few lines; it replaces the coverage table that was on the assumptions page."""
+    lines = []
+    for label, names in coverage.coverage_groups(results):
+        lines.append(
+            el("p", raw(f"<strong>{escape(label)}:</strong> {escape('; '.join(names))}"),
+               class_="coverage-line")
+        )
+    return el("div", el("h3", "What this report covers"), *lines, class_="coverage")
+
+
 def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     worked = readers.worked_buildings(results)
     children = [
@@ -158,4 +170,5 @@ def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     if estimate is not None:
         children.append(estimate)
     children.append(_open_items(results))
+    children.append(_coverage_block(results))
     return str(el("section", *children, class_="report-page", id="decision-summary"))
