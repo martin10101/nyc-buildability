@@ -5151,156 +5151,277 @@
     "D-090-R895"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9",
+   "reviewed_manifest_sha256": "734f2446beae8faf5e8966bfa191bcf96b0f8480195e7439898b3c088f323b87",
    "requirements": [
     {
      "id": "D-090-R641",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "result-status.ts maps the document value_state to the owner's three screen words only: settled (no marker), conditional \u2192 \"Conditional\", withheld \u2192 \"Not known\" with the document reason and no digit; the switch is exhaustive with no \"verified\" branch.",
+      "__tests__/result-status.test.ts walks every committed fixture and asserts JSON.stringify(status) never contains \"Verified\"; the node and python token tests assert no \"verified\" key in status tokens. All passed.",
+      "Open: applying these words on the screen is M5-T149, and the PDF's six labels (owner question C2) are not mapped onto the screen in this wave \u2014 the row stays bound to M5-T149 too.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R804",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Only presentation files change: `git diff --name-only 0bb6acb2..db7824` contains no apps/web/package.json, package-lock, requirements.txt, .github/, deploy, services/api/app/rules/rulesets/*, migration or styles.py; the five adapters are pure (format/group only).",
+      "The task is awaiting_gate, not in state.json accepted_tasks; no production switch flipped, nothing merged/accepted/deployed/installed/purchased/closed.",
+      "Open: this is a standing preservation prohibition across all tasks; nothing specific remains for M5-T148.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R807",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "globals.css is purely additive: `git diff 0bb6acb2..db7824 -- globals.css` has 0 deletion lines; every pre-existing token is preserved and only the marked generated block is added \u2014 \"preserve fixes already made\" is satisfied in code.",
+      "Part A read layout.tsx and styles.py read-only; the adapters add no route wiring, so no active route/export path was rewritten.",
+      "Open: the pre-edit reconciliation narrative (branch/task/directive/route recheck, \"never infer from a stale handoff\") is an orchestrator process claim partly outside code evidence; the code-level portions reproduced clean.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R810",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presented-results.ts gives each result in the contract's reading order: label, then display (a formatted value OR the not-known state), one material `exception`, and a `detailsKey` \u2014 concise fields, the long detail pushed to the evidence surface, not into the row.",
+      "metric-format.ts produces concise one-line values (\"20,150 sq ft\"); FormattedMetric separates number/unit/text.",
+      "Open: rendering concise metric rows and the separate open-items table on the screen/PDF is M5-T149 and the PDF step; this task supplies the data shape only.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R811",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presented-notices.ts collectConditions dedupes each distinct \"If \u2026\" line by exact text in first-appearance order (C1, C2, \u2026) and records per-result references by id, so shared context is stated once and none is lost.",
+      "__tests__/presented-notices.test.ts proves on the benchmark that the shared set equals an independently computed distinct-condition set, ids resolve, and multiplicities (2 and 1) are preserved; capNotices partitions visible/hidden with no drop.",
+      "Open: \"retain a local exception only where it changes that result\" on the screen lives in three-answers.ts (M5-T149, forbidden to this task); this task supplies the shared-once grouping adapter.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R812",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presented-results.ts tags results allowance | envelope | scheduled | estimate; there is deliberately no \"achieved\" member; a listed building is \"scheduled\" carrying note SITE_FIT_NOT_VERIFIED = \"Site fit not verified\".",
+      "__tests__/presented-results.test.ts asserts floor-area/unit-limits=allowance, heights/coverage=envelope, building B=scheduled with the note and never \"achieved\", capacity=estimate.",
+      "Open: the on-screen visual treatment that keeps a floor schedule from looking like proof is M5-T149/PDF; this task tells the kinds apart in the model.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R833",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "result-status.ts follows the R641 screen mapping; a withheld value becomes \"Not known\" (never relabelled \"Conditional\" to be shown) and carries a short reason, never a digit; there is no code path to \"Verified\", so it is never a synonym for merged/arithmetic/source-link.",
+      "presentation-tokens.json marks status colour color_role:\"secondary\" (colour secondary), markers on conditional/not-known only.",
+      "Open: the PDF six-label mapping (owner C2) is the owner's open decision and not applied to the screen here.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R835",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presentation-tokens.json font.family = \"system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif\", byte-equal to apps/web/src/app/layout.tsx fontFamily (ruling V4); the node S2 and python font tests read layout.tsx and assert equality.",
+      "metric-format.ts yields \"20,150 sq ft\" and keeps full precision (metric-format.test.ts asserts the input value is unchanged across repeated formats); presented-results tags the capacity as an \"estimate\".",
+      "Open: tabular-numeral right alignment is applied in screen/PDF CSS (M5-T149+), and PDF font embedding is the PDF step; this task provides the single family token and the formatting adapter.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R836",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presentation-tokens.json carries spacing 4,8,12,16,24,32,48 px, control.height 44, control.radius 6, radius.panel 8; python test_contract_section_5_values and node S2 assert these exact values and generate the CSS/Python from the one source.",
+      "The generated globals.css block emits --pt-space-4..48, --pt-control-height:44px, --pt-control-radius:6px, --pt-radius-panel:8px.",
+      "Open: the ~1,360 px shell, dividers-not-boxes, 55\u201380 char lines and \"no fixed-height cards/overflow:hidden\" are layout behaviours applied on the screen/PDF (M5-T149+); this task fixes the token values.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R837",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presentation-tokens.json declares 15 contrast pairs; presentation-tokens.test.mjs computes WCAG 2.2 relative-luminance ratios and asserts text \u2265 4.5:1 and control edges \u2265 3:1. Reproduced ratios: text 5.76\u201314.53:1, control edges 7.14 and 7.83:1; the quiet divider pairs (1.22, 1.34) are marked controlEdge:false and asserted never a control edge.",
+      "The nine palette colours match the contract \u00a75 table exactly (verified against ARCHITECT_PRESENTATION_CONTRACT.md Palette).",
+      "Open: checking actual rendered foreground/background combinations, visible focus and reduced-motion are the screen's job (M5-T149 browser walkthrough); this task checks the declared token pairs arithmetically.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R838",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "One source docs/design/presentation-tokens.json generates both the marked globals.css block and services/api/app/drawings/kit/presentation_tokens.py; `node presentation-tokens.mjs --check` exit 0 confirms both equal a fresh render.",
+      "Drift fails closed: node S1 and python test_changed_json_colour_without_regeneration_fails prove a changed colour without regeneration breaks both outputs; dr.sha256_text_artifact(requirements.json) and the parity tests all reproduced.",
+      "Open: consumers (TSX/SVG/PDF templates) adopting the tokens instead of scattered magic numbers is later work (M5-T149+); the shared source and parity mechanism exist now.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R855",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "All five adapters read values/labels/units/reasons/conditions from the generated contract types and only format or group; I read each file and found no law decision, no zoning recalculation and no geometry invention (ruling V2).",
+      "presented-results/presented-notices operate over ThreeAnswersResults; result-identity reads scope; metric-format reuses displayQuantity/quantityText; nothing writes back or recomputes.",
+      "Open: none for this task; wiring the adapters over the one canonical result on the screen is M5-T149.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R856",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "metric-format.ts distinguishes 0 (a value \u2192 \"0 sq ft\") from null/undefined/non-finite (\u2192 not_known, never a number) using `value == null || !Number.isFinite(value)`, never `value || 0`; metric-format.test.ts proves exactly-0 and the null/NaN/Infinity cases.",
+      "result-identity.ts carries a revisionFingerprint (FNV-1a over results_id/study_id/option_id/revision/computed_at); identitiesMatch returns false for another lot and for a bumped revision (stale export caught), proven in result-identity.test.ts.",
+      "Open: enforcing \"screen and export share one revision / prevent stale export\" across surfaces is wired in M5-T149/PDF; the full six-way taxonomy (NA, not-assessed, failed-check) lives in the document value_state model plus result-status reasons \u2014 this task supplies the distinctions and the stale-export detector.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R857",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No reference sample constant enters the adapters: production values are read from the document (e.g. presented-results computes `${twoDp(estimate.quotient_low)} to ${twoDp(estimate.quotient_high)}`); the only constants are UI wording (\"Not known\", \"Conditional\", \"Site fit not verified\", NO_SCOPE_REASON).",
+      "The literal \"17.27 to 21.59\" appears only in a TEST as a cross-check of the fixture value; the benchmark fixture carries quotient_low 17.27 / high 21.59 (ruling V9), confirmed in packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json.",
+      "Open: none for this task.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R858",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presentation-tokens.mjs imports only Node built-ins (node:fs, node:url, node:path, node:process); the Python module is generated text with no import; apps/web/package.json and package-lock.json are unchanged in the whole branch diff.",
+      "No framework, chart library, PDF converter or font service added.",
+      "Open: none for this task.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R859",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task is the contract's step 2 (shared presentation: tokens + metric formatting + status/reason presentation + result identity), the step M5-T149 (step 3, the website slice) consumes; the wave concurrency record and the packet order place it before the slice.",
+      "The adapters are built as pure libraries with no component consuming them yet, matching \"establish shared presentation\" before \"finish one website slice\".",
+      "Open: steps 3\u20137 (website slice, PDF slice, remaining sections, bounded acceptance, deliver) are M5-T149 and later tasks.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R871",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "PresentedStatus has no numeric field and no \"verified\" case; presented-results never gives a withheld value a digit (presented-results.test.ts \"never gives a withheld value a digit\" over every committed fixture) and never produces \"verified\"/\"achieved\".",
+      "result-status.test.ts over every committed fixture asserts withheld\u2192not_known-with-reason-no-digit and never \"Verified\"; these are state tests on the canonical generated contract.",
+      "Open: the full UX-03 state tests on the live screen (promotion on the rendered surface) are M5-T149; this task meets it at the adapter/contract level.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R872",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "collectConditions lists shared notices once with per-result references; capNotices caps at three and counts the rest (\"2 more\") dropping none; proven in presented-notices.test.ts.",
+      "The adapter preserves which result carried a condition, so a material local exception is not lost.",
+      "Open: applying \"shared once, local exception visible\" on each screen surface and the disclosure inventory is M5-T149.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R873",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "result-identity.ts gives lot BBL, lot display, resultsId and a revision fingerprint; identitiesMatch is true only for same lot+resultsId+fingerprint, false for another lot and for a different revision (the stale-response detector), proven in result-identity.test.ts.",
+      "A document with no scope yields an unknown identity that matches nothing, never a guessed lot.",
+      "Open: using this identity to keep screen, comparison, drawings and PDF on one property/scenario/revision/basis, and the live stale-response scenario, are M5-T149 and the PDF/drawing step.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R877",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The contrast portion is met: every declared text/background and control pair is computed in presentation-tokens.test.mjs (text \u2265 4.5:1, control edge \u2265 3:1), and status is told by words (plain \"Conditional\"/\"Not known\"), never colour alone.",
+      "This task is a token/adapter library with no rendered screen.",
+      "Open: keyboard, focus, modal return, accessible names and status announcements are the screen's keyboard walkthrough in M5-T149; only the declared-pair contrast is satisfiable here.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R886",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Correctness values are independently established: the node/python token tests assert the contract \u00a75 table values and compute contrast arithmetically; the adapter tests read expected values from the committed reviewed fixtures (recorded_215_16_northern_journey, synthetic_all_answers_available), not from the adapters' own output.",
+      "The estimate expectation is cross-checked against the fixture (quotient_low/high 17.27/21.59), not a second copy of one fixture.",
+      "Open: screenshot baselines are M5-T149's browser gate; this task has none.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R888",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Producer/reviewer separation held: producer frontend-engineer (two builders, parts A/B); gate records show G3 reviewer \"code-reviewer\", G4 reviewer \"qa-engineer\" (both \u2260 producer); G2 is role \"self_check\" recorded by orchestrator, not called independent review; I am the independent DCV.",
+      "No extra orchestration added; heavy suites were CI's job (I did not re-run them).",
+      "Open: visual-quality and human-journey reviews concern the rendered screen (M5-T149); they are not applicable to this task's headless adapters.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R890",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The producer reports and evidence map claim only what changed and was tested; they explicitly state \"no component consumes them yet\", \"the review should confirm the chosen points\", and never say perfect/fully verified/complete/production ready.",
+      "No overclaim based on green tests was found in the M5-T148 records.",
+      "Open: none for this task.",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     },
     {
      "id": "D-090-R895",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "presented-results.ts has no \"achieved\" kind; a listed building is \"scheduled\" carrying note SITE_FIT_NOT_VERIFIED = \"Site fit not verified\" set as a field separate from any caveat; presented-results.test.ts asserts never \"achieved\" and note == \"Site fit not verified\" across fixtures.",
+      "R895's own text says \"site fit unverified\"; the orchestrator's ruling V5 (which governs, later-over-earlier) standardised the wording as \"site fit not verified\" \u2014 same meaning, no weakening.",
+      "Open: the on-screen/PDF ordering (\"before any caveat\") and the PDF text search for \"achieved\" are M5-T149 and the PDF step; this task guarantees the adapter never emits \"achieved\".",
+      "Verifier's carry-forward condition met at 092db7ff: the task's allowed-path files are identical to those verified at db7824e7 (content identity 734f2446), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer; the same two in both rounds; producer frontend-engineer is neither). DCV report: project-control/reports/M5-T148-DCV.md."
+     ],
+     "reviewed_sha": "092db7ffbd5853b048aed56356d91fb2fa1d39f9"
     }
-   ]
+   ],
+   "verified_at": "2026-10-10T04:56:51+00:00"
   },
   {
    "directive_id": "D-090",
