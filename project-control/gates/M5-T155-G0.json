@@ -5,8 +5,17 @@
   "role": "administrative",
   "result": "PASS",
   "report_file": "project-control/reports/M5-T155-G0.md",
-  "reviewed_at": "2026-10-10T18:56:16.024556+00:00",
-  "content_manifest_sha256": "efe488eb33f76a72cf7d835cec2baebab54da7ec88912f956ee16825cdb6ba72",
-  "reviewed_sha": "86df73c15671022a3444241e99e4ff1a8411a3f7",
-  "updated_at": "2026-10-10T18:56:16.253599+00:00"
+  "reviewed_at": "2026-10-10T22:19:47.483533+00:00",
+  "content_manifest_sha256": "8eb5232903e4870ca222e321bfe6234ffdebd7945f48c6c47450f919b6a374d9",
+  "reviewed_sha": "60635e40de15c244c43d0b99ad63dc518ec7f336",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T155-G0.md",
+      "reviewed_at": "2026-10-10T18:56:16.024556+00:00"
+    }
+  ],
+  "updated_at": "2026-10-10T22:19:47.785908+00:00"
 }
