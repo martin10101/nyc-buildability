@@ -136,7 +136,7 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "wide")
     block = embed("render_block_map", map_caption.BLOCK_LAYERS, "wide")
     summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary")
-    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "report")
+    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "wide")
     drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
     if not drawn:
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)

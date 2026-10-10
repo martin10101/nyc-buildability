@@ -58,12 +58,14 @@ def _open_items(results: Mapping) -> object:
 
 
 def render(results: Mapping, ident: Mapping, *, env=None) -> str:
+    # The shared assumptions (two columns) and the open-items table share one page,
+    # so neither the table is split into a near-empty fragment nor a page is left
+    # near-empty (correction 2).
     children = [
         el("p", "Assumptions and open items", class_="type-name"),
         el("h2", QUESTION),
         el("h3", "Shared assumptions"),
         _assumptions(results),
-        el("h3", "Open items"),
-        _open_items(results),
+        el("div", el("h3", "Open items"), _open_items(results), class_="open-items-block"),
     ]
     return str(el("section", *children, class_="report-page", id="assumptions-open-items"))

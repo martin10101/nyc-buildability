@@ -265,6 +265,17 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
     }, A4_CONTENT_WIDTH_PX);
     expect(tooWide, "no element wider than the A4 content box").toEqual([]);
 
+    // Correction 2: nothing overflows the printable width, so Chromium does not shrink the whole
+    // body to fit - the report prints at its TRUE size (body text at ~9.5 pt, drawing labels >= 7 pt).
+    const scroll = await printPage.evaluate(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      clientWidth: document.documentElement.clientWidth,
+    }));
+    expect(
+      scroll.scrollWidth,
+      `no element wider than the printable width (scroll ${scroll.scrollWidth} > client ${scroll.clientWidth})`,
+    ).toBeLessThanOrEqual(scroll.clientWidth);
+
     // page.pdf honours the report's own A4 page size; every page is A4. [DEPENDS ON M5-T151.]
     const pdf = await printPage.pdf({ preferCSSPageSize: true });
     const boxes = mediaBoxes(pdf);

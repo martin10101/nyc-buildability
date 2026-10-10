@@ -425,6 +425,25 @@ def test_f11_evidence_inputs_label_key_and_nowrap() -> None:
     assert "the figures below are read from the result" not in text
 
 
+# ================================================= no page wider than the paper (correction 2)
+def test_correction2_decision_row_shrinks_and_cells_wrap() -> None:
+    css = layout.report_css("H", "F")
+    # The answers column takes the remaining width and can shrink to fit.
+    assert re.search(r"\.summary-answers\s*\{[^}]*flex:\s*1 1 auto[^}]*min-width:\s*0", css)
+    # The figure stays 88 mm beside it.
+    assert re.search(r"\.summary-figure\s*\{[^}]*flex:\s*0 0 88mm", css)
+    # The answer figures WRAP (no nowrap), so the table shrinks below their one-line width.
+    cell = re.search(r"\.answers-table \.answer-figure\s*\{([^}]*)\}", css)
+    assert cell and "white-space: nowrap" not in cell.group(1)
+    # The decision row holds the shrinking answers table beside the fixed figure.
+    decision = _decision_section(build_report_html(benchmark(), env=_LANE_E))
+    assert 'class="summary-answers"' in decision and 'class="summary-figure"' in decision
+
+
+def _decision_section(html: str) -> str:
+    return html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+
+
 # ================================================= short tables never split (rework 3)
 def test_short_tables_carry_the_no_split_rule() -> None:
     from app.drawings.report.html import SHORT_TABLE_MAX_ROWS, table

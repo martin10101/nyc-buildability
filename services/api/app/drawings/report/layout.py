@@ -100,12 +100,15 @@ figcaption {{ font-size: 8pt; color: {supporting}; margin-top: 1.2mm; }}
 a {{ color: {action}; }}
 .key-table td, .key-table th {{ font-size: 8pt; }}
 .nowrap {{ white-space: nowrap; }}
+/* The decision-summary row must fit the printable width: the answers table takes
+   the remaining space and its cells wrap, the figure stays 88 mm, so nothing
+   overflows and the whole body prints at its true size (correction 2). */
 .summary {{ display: flex; gap: 6mm; align-items: flex-start; }}
-.summary-answers {{ flex: 1 1 auto; }}
+.summary-answers {{ flex: 1 1 auto; min-width: 0; }}
 .summary-figure {{ flex: 0 0 88mm; }}
 .summary-figure figcaption {{ white-space: normal; }}
-.answers-table td {{ vertical-align: top; }}
-.answers-table .answer-figure {{ font-weight: 700; font-size: 11pt; white-space: nowrap; }}
+.answers-table td {{ vertical-align: top; overflow-wrap: break-word; }}
+.answers-table .answer-figure {{ font-weight: 700; font-size: 11pt; }}
 .reason-row td {{
   font-size: 8pt; color: {supporting}; border-bottom: 0.3pt solid {divider};
   padding-top: 0; padding-bottom: 1.6mm;
@@ -132,4 +135,8 @@ a {{ color: {action}; }}
 .evidence-column {{ flex: 1 1 0; min-width: 0; }}
 .evidence-column h3 {{ margin-top: 0; }}
 .evidence-column ul {{ margin: 0; }}
+/* The shared assumptions and the open-items table are each a complete sub-section
+   on its own page, so neither the table is split into a near-empty fragment nor a
+   page holds a bare fragment (correction 2). */
+.open-items-block {{ break-before: page; }}
 """.strip()
