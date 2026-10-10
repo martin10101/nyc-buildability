@@ -136,7 +136,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "The kit's report frame is built in parallel (M5-T152): the report embeds it through the interface of ruling X9 and is checked after integration.",
     "Margin boxes and repeated table headers behave differently across print engines: the CSS keeps to features both a browser and a server converter support, and the orchestrator checks the printed PDF.",
@@ -144,7 +144,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-10T07:36:28.759982+00:00",
-  "updated_at": "2026-10-10T07:36:39.590031+00:00",
+  "updated_at": "2026-10-10T11:11:06.456672+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -202,6 +202,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-10T11:11:06.456556+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built, four page-review rounds, corrected after review; G3 and G4 PASS; delta attestations carry; review record and evidence map written"
     }
   ]
 }

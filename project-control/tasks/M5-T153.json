@@ -127,14 +127,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "The report route is built in parallel (M5-T151): the preview is tested against the route's interface (ruling X9 d) with stubbed responses whose shape matches the real route, and end to end by the orchestrator after integration.",
     "Printing from a frame must not allow scripts in the frame."
   ],
   "blockers": [],
   "created_at": "2026-10-10T07:36:32.862987+00:00",
-  "updated_at": "2026-10-10T08:25:37.541864+00:00",
+  "updated_at": "2026-10-10T11:11:07.068691+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -167,6 +167,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-10T11:11:07.068569+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built, four rounds, corrected after review and CI; G3 and G4 PASS (code, visual, walkthrough); delta attestations carry; review record and evidence map written"
     }
   ],
   "scope_corrections": [
