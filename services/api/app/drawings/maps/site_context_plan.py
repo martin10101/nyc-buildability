@@ -32,12 +32,13 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 
 from shapely import make_valid
+from shapely.geometry import LineString
 from shapely.geometry import Polygon as ShapelyPolygon
 
 from app.drawings.kit import geometry as geo
 from app.drawings.kit.furniture import legend, legend_flow, notes_block, scale_bar
 from app.drawings.kit.hatches import hatch_defs
-from app.drawings.kit.labels import format_feet, format_number, text_box
+from app.drawings.kit.labels import Box, format_feet, format_number, text_box
 from app.drawings.kit.sheet import Sheet
 from app.drawings.kit.site_plan import STANDARD_SCALES_FT_PER_IN
 from app.drawings.kit.styles import TYPOGRAPHY
@@ -121,6 +122,20 @@ TITLE_BAND_PT = 30.0           # height reserved at the top of the region for th
 FRAME_INSET = 2.0              # the viewport is inset this far inside the plan region
 STREET_LABEL_MIN_RUN_PT = 26.0  # a street piece shorter than this (on screen) is not labelled
 
+# Compact SUMMARY frame (rework 3): for page 1 and a one-page location sheet - at
+# most 88 mm (249.45 pt) by 72 mm (204.09 pt); no title, subtitle, legend or notes
+# column inside (the report captions it); a compact north arrow and scale bar.
+SUMMARY_MAX_W_PT = 249.4
+SUMMARY_MAX_H_PT = 204.0
+SUMMARY_CANVAS_W = 248.0
+SUMMARY_PLAN = (3.0, 3.0, 245.0, 168.0)
+SUMMARY_PLAN_MARGIN = 6.0
+SUMMARY_FURN_TOP = 172.0
+SUMMARY_NORTH_CX = 12.0
+SUMMARY_SCALE_X = 34.0
+SITE_SUMMARY_BORDER_FT = 90.0   # streets this close to the lot border it (site summary)
+BLOCK_SUMMARY_BORDER_FT = 230.0  # streets this close border the subject's block (block summary)
+
 _Box = tuple[float, float, float, float]
 BOROUGHS = {"1": "Manhattan", "2": "Bronx", "3": "Brooklyn", "4": "Queens", "5": "Staten Island"}
 
@@ -178,12 +193,38 @@ def fit_view(
     return ViewFrame(k, cos, sin, minrx, maxry, ox, oy, math.degrees(-alpha))
 
 
-def viewport(region: _Box) -> _Box:
+def viewport(region: _Box, top_band: float = TITLE_BAND_PT) -> _Box:
     """The clean rectangular drawing frame inside ``region``: inset on every
-    side, with the title band reserved at the top. Everything drawn is clipped
-    to this rectangle."""
-    return (region[0] + FRAME_INSET, region[1] + TITLE_BAND_PT,
+    side, with ``top_band`` reserved at the top (the title band in the report
+    frame; just the inset in the summary frame). Everything is clipped to it."""
+    return (region[0] + FRAME_INSET, region[1] + top_band,
             region[2] - FRAME_INSET, region[3] - FRAME_INSET)
+
+
+def bordering_street_names(outline: Polygon, streets: StreetLayer, max_dist: float) -> set[str]:
+    """The names of the streets whose centre line comes within ``max_dist`` feet
+    of ``outline`` - the streets that border the lot (or the block). Used to label
+    only the main streets on the compact summary frame."""
+    subj = make_valid(ShapelyPolygon(outline.exterior))
+    names: set[str] = set()
+    for street in streets.streets:
+        for path in street.paths:
+            if len(path) >= 2 and subj.distance(LineString([tuple(p) for p in path])) <= max_dist:
+                names.add(street.name)
+                break
+    return names
+
+
+def summary_notes(frontage: str | None) -> list[MapNote]:
+    """SHORT plain sentences for the caller to caption the summary frame (no
+    source names, dates or dataset ids - the report composes those from the
+    provenance)."""
+    notes = []
+    if frontage is not None:
+        notes.append(MapNote(f"Rotated to the {frontage} frontage.", "/map_context/subject_lot"))
+    notes.append(MapNote("Map geometry only; tax boundaries do not establish the legal zoning "
+                         "lot; nothing is surveyed.", "/map_context/subject_lot"))
+    return notes
 
 
 def _pad_box(box: _Box, pad: float) -> _Box:
@@ -293,12 +334,12 @@ def subtitle_from_bbl(bbl: str | None) -> str | None:
 # Label placement (drop a label rather than overlap -> S4 has zero overlaps).
 # --------------------------------------------------------------------------- #
 def _place(sheet: Sheet, candidates, text, *, size, source, role, anchor="start", style=None,
-           rect: _Box | None = None) -> bool:
+           rect: _Box | None = None, pad: float = 1.0) -> bool:
     for x, y, rot in candidates:
         box = text_box(x, y, text, size, anchor, rot)
         if rect is not None and not _box_in_rect(box, rect):
             continue
-        if any(box.overlaps(other) for other in sheet.boxes):
+        if any(box.overlaps(other, pad) for other in sheet.boxes):
             continue
         sheet.label([(x, y, rot)], text, size=size, source=source, role=role, anchor=anchor,
                     style=style)
@@ -363,9 +404,11 @@ def _data_region(context: MapContext, fr: ViewFrame):
 
 
 def _label_streets(sheet: Sheet, streets: StreetLayer, fr: ViewFrame, rect: _Box, size: float,
-                   *, with_width: bool, data_region=None) -> None:
+                   *, with_width: bool, data_region=None, only: set[str] | None = None) -> None:
     best: dict[str, tuple] = {}
     for street in streets.streets:
+        if only is not None and street.name not in only:
+            continue
         for path in street.paths:
             for piece in clip_polyline_to_rect([fr.px(p) for p in path], rect, data_region):
                 length = _poly_len(piece)
@@ -508,19 +551,21 @@ def _draw_lots_and_buildings(sheet: Sheet, context: MapContext, fr: ViewFrame, r
 
 def draw_block_scene(
     context: MapContext, fr: ViewFrame, rect: _Box, region: _Box, *,
-    title: str, with_edges: bool, with_widths: bool, label_focus: bool,
+    title: str | None, with_edges: bool, with_widths: bool, label_focus: bool,
+    street_filter: set[str] | None = None,
 ) -> Sheet:
     """The shared coloured scene for the site plan and the block close-up:
     even street areas, the subject coloured, the neighbours as thin outlines,
     buildings grey, street names centred in their street. Labels only the subject
-    (and, when ``label_focus``, its edge-sharing neighbours)."""
+    (and, when ``label_focus``, its edge-sharing neighbours). ``title=None`` and a
+    ``street_filter`` give the compact summary (no title; only the main streets)."""
     assert isinstance(context.streets, StreetLayer)
     sheet = Sheet()
     data_region = _data_region(context, fr)
     _draw_lots_and_buildings(sheet, context, fr, rect)
     size = TYPOGRAPHY.label_pt + 1.0
     _label_streets(sheet, context.streets, fr, rect, size, with_width=with_widths,
-                   data_region=data_region)
+                   data_region=data_region, only=street_filter)
     # the subject label first (most prominent), then the immediate neighbours
     subj = context.subject_lot
     _focus_lot_label(sheet, subj.outline, fr, _lot_number(subj.bbl), subj.bbl_source, None, None,
@@ -532,14 +577,16 @@ def draw_block_scene(
     if with_edges:
         _draw_edge_lengths(sheet, subj, fr, rect)
     draw_frame(sheet, rect)
-    draw_title(sheet, title, subtitle_from_bbl(subj.bbl), subj.bbl_source, region)
+    if title is not None:
+        draw_title(sheet, title, subtitle_from_bbl(subj.bbl), subj.bbl_source, region)
     return sheet
 
 
 # --------------------------------------------------------------------------- #
 # Neighbourhood scene (street network of centre lines; no tax lots at ~2,000 ft).
 # --------------------------------------------------------------------------- #
-def draw_neighbourhood_scene(context: MapContext, fr: ViewFrame, rect: _Box, region: _Box) -> Sheet:
+def draw_neighbourhood_scene(context: MapContext, fr: ViewFrame, rect: _Box, region: _Box,
+                             *, summary: bool = False) -> Sheet:
     assert isinstance(context.streets, StreetLayer)
     sheet = Sheet()
     # the street network, clipped to the viewport
@@ -551,27 +598,39 @@ def draw_neighbourhood_scene(context: MapContext, fr: ViewFrame, rect: _Box, reg
                            [("data-source", f"{street.source}/paths")])
                 pieces_by_name.setdefault(street.name, []).append((street, piece))
     all_lines = [piece for runs in pieces_by_name.values() for _s, piece in runs]
-    _mark_subject(sheet, context.subject_lot, fr, rect, TYPOGRAPHY.label_pt, all_lines)
-    _label_network(sheet, pieces_by_name, rect, TYPOGRAPHY.label_pt + 1.0)
+    _mark_subject(sheet, context.subject_lot, fr, rect, TYPOGRAPHY.label_pt, all_lines,
+                  with_label=not summary)
+    priority = (bordering_street_names(context.subject_lot.outline, context.streets, 140.0)
+                if summary else None)  # on the thumbnail, name the lot's own streets first
+    _label_network(sheet, pieces_by_name, rect, TYPOGRAPHY.label_pt + (0.0 if summary else 1.0),
+                   priority=priority, pad=5.0 if summary else 1.0)
     draw_frame(sheet, rect)
-    draw_title(sheet, "Neighbourhood", subtitle_from_bbl(context.subject_lot.bbl),
-               context.subject_lot.bbl_source, region)
+    if not summary:
+        draw_title(sheet, "Neighbourhood", subtitle_from_bbl(context.subject_lot.bbl),
+                   context.subject_lot.bbl_source, region)
     return sheet
 
 
-def _label_network(sheet: Sheet, pieces_by_name: dict, rect: _Box, size: float) -> None:
+def _label_network(sheet: Sheet, pieces_by_name: dict, rect: _Box, size: float,
+                   priority: set[str] | None = None, pad: float = 1.0) -> None:
     """One label per street, on its longest clipped piece, placed AWAY from every
     other street's lines (so no name crosses another street); dropped if no clear
-    spot exists."""
+    spot exists. ``priority`` names are placed FIRST (so the lot's own streets win
+    the space on the crowded summary thumbnail)."""
     all_lines = [piece for runs in pieces_by_name.values() for _s, piece in runs]
-    for name in sorted(pieces_by_name):
+    order = sorted(pieces_by_name)
+    if priority:
+        pri = [n for n in pieces_by_name if n in priority]
+        pri.sort(key=lambda n: (-round(max(_poly_len(p) for _s, p in pieces_by_name[n]), 2), n))
+        order = pri + sorted(n for n in pieces_by_name if n not in priority)
+    for name in order:
         runs = pieces_by_name[name]
         _street, piece = max(runs, key=lambda r: _poly_len(r[1]))
         if _poly_len(piece) < STREET_LABEL_MIN_RUN_PT:
             continue
         cands = _network_candidates(piece, all_lines, size)
         _place(sheet, cands, name.upper(), size=size, source=runs[0][0].name_source,
-               role="street", anchor="middle", style="italic", rect=rect)
+               role="street", anchor="middle", style="italic", rect=rect, pad=pad)
 
 
 def _network_candidates(piece, all_lines, size):
@@ -616,10 +675,17 @@ def _clearance(p: Point, own, all_lines) -> float:
 
 
 def _mark_subject(sheet: Sheet, subject: SubjectLot, fr: ViewFrame, rect: _Box,
-                  size: float, avoid_lines) -> None:
+                  size: float, avoid_lines, *, with_label: bool = True) -> None:
     _draw_clipped_area(sheet, _proj(subject.outline, fr), "subject_lot",
                        subject.outline.source, rect)
     _restroke_subject(sheet, subject, fr, rect)
+    if not with_label:
+        # the compact summary marks the lot with the coral marker only; reserve
+        # its footprint so no street name is drawn across the marker.
+        pts = [fr.px(p) for p in subject.outline.exterior]
+        xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+        sheet.reserve(Box(min(xs) - 3.0, min(ys) - 3.0, max(xs) + 3.0, max(ys) + 3.0))
+        return
     cx, cy = fr.px(geo.centroid(subject.outline.exterior))
     # candidates ringing the marker, ranked by clearance from the street lines, so
     # the 'Subject lot' label lands on open land - never on a street line.
@@ -679,31 +745,49 @@ def caption_notes(context: MapContext, *, layers: set[str], gaps_note: bool = Fa
     return notes
 
 
-def _north(cx: float, top: float, deg: float) -> tuple[list[str], float]:
+def _north(cx: float, top: float, deg: float, *, caption: bool = True,
+           half: float = 18.0) -> tuple[list[str], float]:
     """A grid-north arrow that rotates to point at grid north, with the 'Grid
-    north' caption kept HORIZONTAL. Returns the parts and the bottom y."""
-    cy = top + 28.0
+    north' caption kept HORIZONTAL. ``caption=False`` and a smaller ``half`` give
+    the compact summary arrow. Returns the parts and the bottom y."""
+    cy = top + half + 10.0
     size = TYPOGRAPHY.label_pt
     arrow = element("path", [
-        ("d", f"M{num(cx)} {num(cy - 18.0)} L{num(cx + 7.0)} {num(cy + 18.0)} "
-              f"L{num(cx)} {num(cy + 9.0)} L{num(cx - 7.0)} {num(cy + 18.0)} Z"),
+        ("d", f"M{num(cx)} {num(cy - half)} L{num(cx + 7.0)} {num(cy + half)} "
+              f"L{num(cx)} {num(cy + half / 2.0)} L{num(cx - 7.0)} {num(cy + half)} Z"),
         ("fill", "#000000"), ("stroke", "#000000"), ("stroke-width", 0.5)])
     transform = f' transform="rotate({num(deg)} {num(cx)} {num(cy)})"' if abs(deg) >= 1e-9 else ""
-    caption_y = cy + 28.0
     parts = [
         f'<g data-role="north-arrow"{transform}>', arrow,
-        text_element(cx, cy - 22.0, "N", size=size + 2, source=None, role="furniture",
-                     anchor="middle", weight="bold"), "</g>",
-        text_element(cx - 2.0, caption_y, "Grid north", size=size, source=None, role="furniture")]
-    return parts, caption_y + 2.0
+        text_element(cx, cy - half - 4.0, "N", size=size + 2, source=None, role="furniture",
+                     anchor="middle", weight="bold"), "</g>"]
+    bottom = cy + half + 2.0
+    if caption:
+        caption_y = cy + 28.0
+        parts.append(text_element(cx - 2.0, caption_y, "Grid north", size=size, source=None,
+                                  role="furniture"))
+        bottom = caption_y + 2.0
+    return parts, bottom
 
 
 def compose_context(drawing: str, title: str, sheet: Sheet, frame: ViewFrame,
-                    notes: Sequence[MapNote], *, report: bool) -> Drawing:
+                    notes: Sequence[MapNote], *, mode: str = "sheet") -> Drawing:
     """Assemble the scene plus the furniture (north arrow rotated to grid north).
-    The canvas height always clears the 'Grid north' caption (S: it is no longer
-    clipped)."""
-    if report:
+    ``mode`` is 'report', 'sheet' or 'summary'. The canvas height always clears
+    the furniture. Summary: compact north arrow and scale bar, no legend or notes
+    column; the short notes are returned to the caller."""
+    if mode == "summary":
+        panel, north_bottom = _north(SUMMARY_NORTH_CX, SUMMARY_FURN_TOP, frame.north_deg,
+                                     caption=False, half=9.0)
+        bar_parts, bar_labels = scale_bar(SUMMARY_SCALE_X, SUMMARY_FURN_TOP + 10.0, frame.k, 80.0)
+        height = min(SUMMARY_MAX_H_PT, max(north_bottom, SUMMARY_FURN_TOP + 26.0) + 4.0)
+        body = sheet.parts + panel + bar_parts
+        svg = svg_document(width=SUMMARY_CANVAS_W, height=height, drawing=drawing, title=title,
+                           defs=hatch_defs(sheet.kinds), body=body)
+        note_labels = [Label(n.text, n.source, "note") for n in notes]
+        return Drawing(drawing, svg, tuple(sheet.labels + bar_labels + note_labels),
+                       tuple(sheet.kinds))
+    if mode == "report":
         panel, north_bottom = _north(REPORT_NORTH_CX, REPORT_FURN_TOP, frame.north_deg)
         bar_parts, bar_labels = scale_bar(REPORT_SCALE_X, REPORT_FURN_TOP + 16.0, frame.k, 150.0)
         legend_parts, legend_bottom = legend_flow(
@@ -757,13 +841,23 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Draw
     assert isinstance(context.streets, StreetLayer)
     view = site_context_view(context.subject_lot, context.streets)
     alpha, frontage_name, frontage_source = frontage_rotation(context.subject_lot, context.streets)
+    title = "Site plan: the lot among its neighbours"
+    if frame == "summary":
+        fr = fit_view(view, SUMMARY_PLAN, SUMMARY_PLAN_MARGIN, alpha=alpha, top_band=0.0)
+        rect = viewport(SUMMARY_PLAN, FRAME_INSET)
+        border = bordering_street_names(context.subject_lot.outline, context.streets,
+                                        SITE_SUMMARY_BORDER_FT)
+        sheet = draw_block_scene(context, fr, rect, SUMMARY_PLAN, title=None, with_edges=False,
+                                 with_widths=False, label_focus=False, street_filter=border)
+        return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
+                               mode="summary")
     report = frame == "report"
     region, margin = (REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN)
     fr = fit_view(view, region, margin, alpha=alpha, top_band=TITLE_BAND_PT)
     rect = viewport(region)
-    sheet = draw_block_scene(context, fr, rect, region, title="Site plan: the lot among its"
-                             " neighbours", with_edges=True, with_widths=True, label_focus=True)
+    sheet = draw_block_scene(context, fr, rect, region, title=title, with_edges=True,
+                             with_widths=True, label_focus=True)
     notes = caption_notes(context, layers={"tax_lots", "streets", "buildings"}, gaps_note=True,
                           frontage=frontage_name, frontage_source=frontage_source)
-    return compose_context(drawing, "Site plan: the lot among its neighbours", sheet, fr, notes,
-                           report=report)
+    return compose_context(drawing, title, sheet, fr, notes,
+                           mode="report" if report else "sheet")

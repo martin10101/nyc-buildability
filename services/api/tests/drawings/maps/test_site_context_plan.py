@@ -21,6 +21,8 @@ from .context_support import (
     note_labels,
     recorded_document,
     report_too_big,
+    summary_note_leaks,
+    summary_too_big,
     texts_by_role,
     with_layer_unavailable,
 )
@@ -160,10 +162,28 @@ def test_s7_no_law_is_drawn():
 # --------------------------------------------------------------------------- #
 # S8 - deterministic.
 # --------------------------------------------------------------------------- #
-@pytest.mark.parametrize("frame", ["report", "sheet"])
+@pytest.mark.parametrize("frame", ["report", "sheet", "summary"])
 def test_s8_same_input_gives_byte_identical_svg(frame):
     first = _render(frame)
     assert isinstance(first, Drawing)
     assert first.svg == _render(frame).svg
     reordered = json.loads(json.dumps(DOC, sort_keys=True))
     assert render_site_context_plan(reordered, frame=frame, env=ENV).svg == first.svg
+
+
+# --------------------------------------------------------------------------- #
+# Summary frame (rework 3): compact, for page 1 and a one-page location sheet.
+# --------------------------------------------------------------------------- #
+def test_summary_frame_is_compact_clean_and_captionable():
+    d = _render("summary")
+    assert isinstance(d, Drawing)
+    assert not summary_too_big(d.svg)                  # at most 88 mm by 72 mm
+    assert labels_below(d.svg, 7.0) == []              # every text at least 7 pt
+    assert overlapping_labels(d.svg) == []             # no label overlaps
+    assert texts_by_role(d.svg, "title") == []         # no title or subtitle inside
+    assert texts_by_role(d.svg, "legend") == []        # no legend inside
+    assert forbidden_tokens(d.svg) == []
+    assert "Lot 70" in texts_by_role(d.svg, "lot_number")
+    assert "NORTHERN BOULEVARD" in set(texts_by_role(d.svg, "street"))  # the frontage street
+    assert texts_by_role(d.svg, "street_width") == []  # no width line on the thumbnail
+    assert summary_note_leaks(d) == []                 # notes are short plain sentences

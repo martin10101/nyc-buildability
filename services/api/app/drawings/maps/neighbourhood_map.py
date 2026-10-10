@@ -15,11 +15,15 @@ from __future__ import annotations
 from .layout import PLAN, PLAN_MARGIN, REPORT_PLAN, REPORT_PLAN_MARGIN
 from .model import Drawing, MapContext, StreetLayer, Unavailable
 from .site_context_plan import (
+    FRAME_INSET,
+    SUMMARY_PLAN,
+    SUMMARY_PLAN_MARGIN,
     TITLE_BAND_PT,
     caption_notes,
     compose_context,
     draw_neighbourhood_scene,
     fit_view,
+    summary_notes,
     unavailable_layer,
     viewport,
 )
@@ -37,6 +41,12 @@ def draw_neighbourhood_map(context: MapContext, *, frame: str = "sheet") -> Draw
     assert isinstance(context.streets, StreetLayer)
 
     window = context.streets.window.box
+    if frame == "summary":
+        fr = fit_view(window, SUMMARY_PLAN, SUMMARY_PLAN_MARGIN, alpha=0.0, top_band=0.0)
+        rect = viewport(SUMMARY_PLAN, FRAME_INSET)
+        sheet = draw_neighbourhood_scene(context, fr, rect, SUMMARY_PLAN, summary=True)
+        return compose_context(drawing, "Neighbourhood", sheet, fr, summary_notes(None),
+                               mode="summary")
     report = frame == "report"
     region, margin = (REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN)
     fr = fit_view(window, region, margin, alpha=0.0, top_band=TITLE_BAND_PT)  # north-up
@@ -44,4 +54,5 @@ def draw_neighbourhood_map(context: MapContext, *, frame: str = "sheet") -> Draw
 
     sheet = draw_neighbourhood_scene(context, fr, rect, region)
     notes = caption_notes(context, layers={"streets"})
-    return compose_context(drawing, "Neighbourhood", sheet, fr, notes, report=report)
+    return compose_context(drawing, "Neighbourhood", sheet, fr, notes,
+                           mode="report" if report else "sheet")

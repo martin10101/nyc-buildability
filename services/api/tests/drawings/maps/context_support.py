@@ -370,6 +370,23 @@ def report_too_big(svg: str) -> bool:
     return float(root.get("width")) > 515.9 or float(root.get("height")) > 425.2
 
 
+def summary_too_big(svg: str) -> bool:
+    """True if the summary frame exceeds 88 mm by 72 mm (249.45 pt by 204.09 pt)."""
+    root = ET.fromstring(svg)
+    return float(root.get("width")) > 249.5 or float(root.get("height")) > 204.1
+
+
+# Source names / dates / dataset ids that the SUMMARY notes must NOT carry (the
+# report composes those from the provenance; the summary notes are plain).
+SOURCE_TOKENS = ("MapPLUTO", "Digital City Map", "Building footprints", "Open Data", "OTI",
+                 "5zhs", "2026-", "2025-", "edit date", "Department of City Planning")
+
+
+def summary_note_leaks(drawing) -> list[str]:
+    joined = " ".join(lbl.text for lbl in note_labels(drawing))
+    return [tok for tok in SOURCE_TOKENS if tok in joined]
+
+
 _SVG_POINT = re.compile(r"[ML](-?[\d.]+) (-?[\d.]+)")
 
 

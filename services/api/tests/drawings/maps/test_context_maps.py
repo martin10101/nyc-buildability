@@ -26,6 +26,8 @@ from .context_support import (
     recorded_document,
     report_too_big,
     street_area_polys,
+    summary_note_leaks,
+    summary_too_big,
     texts_by_role,
     with_layer_unavailable,
 )
@@ -154,10 +156,50 @@ def test_s6_neighbourhood_still_draws_when_tax_lots_or_buildings_are_missing():
 # S8 - deterministic.
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("name", list(RENDERERS))
-@pytest.mark.parametrize("frame", ["report", "sheet"])
+@pytest.mark.parametrize("frame", ["report", "sheet", "summary"])
 def test_s8_same_input_gives_byte_identical_svg(name, frame):
     first = RENDERERS[name](DOC, frame=frame, env=ENV)
     assert isinstance(first, Drawing)
     assert first.svg == RENDERERS[name](DOC, frame=frame, env=ENV).svg
     reordered = json.loads(json.dumps(DOC, sort_keys=True))
     assert RENDERERS[name](reordered, frame=frame, env=ENV).svg == first.svg
+
+
+# --------------------------------------------------------------------------- #
+# Summary frame (rework 3): compact, for the one-page location sheet.
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name", list(RENDERERS))
+def test_summary_frame_is_compact_clean_and_captionable(name):
+    d = RENDERERS[name](DOC, frame="summary", env=ENV)
+    assert isinstance(d, Drawing)
+    assert not summary_too_big(d.svg)
+    assert labels_below(d.svg, 7.0) == []
+    assert overlapping_labels(d.svg) == []
+    assert texts_by_role(d.svg, "title") == []
+    assert texts_by_role(d.svg, "legend") == []
+    assert forbidden_tokens(d.svg) == []
+    assert {"NORTHERN BOULEVARD"} <= set(texts_by_role(d.svg, "street"))
+    assert summary_note_leaks(d) == []
+
+
+def test_block_summary_street_areas_stay_inside_the_data_window():
+    from shapely.geometry import Polygon as SP
+
+    from app.drawings.maps.adapter import load_map_context
+    from app.drawings.maps.site_context_plan import (
+        SUMMARY_PLAN,
+        SUMMARY_PLAN_MARGIN,
+        fit_view,
+        frontage_rotation,
+    )
+    ctx = load_map_context(DOC)
+    window = ctx.context_window.box
+    alpha, _n, _s = frontage_rotation(ctx.subject_lot, ctx.streets)
+    fr = fit_view(window, SUMMARY_PLAN, SUMMARY_PLAN_MARGIN, alpha=alpha, top_band=0.0)
+    corners = [(window[0], window[1]), (window[2], window[1]),
+               (window[2], window[3]), (window[0], window[3])]
+    cw = SP([fr.px(c) for c in corners]).buffer(0.75)
+    polys = street_area_polys(render_block_map(DOC, frame="summary", env=ENV).svg)
+    assert polys
+    for ring in polys:
+        assert cw.contains(SP(ring)), "a summary street area lies outside the data window"
