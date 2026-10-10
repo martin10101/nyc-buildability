@@ -1,0 +1,58 @@
+{
+  "fetch_failures": [
+    {
+      "file": "bis_job_440608941.html",
+      "url": "https://a810-bisweb.nyc.gov/bisweb/JobsQueryByNumberServlet?requestid=1&passjobnumber=440608941&passdocnumber=01",
+      "retrieved_at": "2026-10-10T18:46:12.099090+00:00",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "file": "bis_lot1.html",
+      "url": "https://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro=4&block=7334&lot=1&go3=+GO+&requestid=0",
+      "retrieved_at": "2026-10-10T18:46:13.707390+00:00",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "file": "dob_now_portal.html",
+      "url": "https://a810-dobnow.nyc.gov/publish/Index.html",
+      "retrieved_at": "2026-10-10T18:47:41.450918+00:00",
+      "error": "HTTP Error 403: Forbidden"
+    },
+    {
+      "file": "law_12_10.pdf",
+      "url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+      "retrieved_at": "2026-10-10T18:47:44.855862+00:00",
+      "error": "The read operation timed out"
+    },
+    {
+      "file": "bsa_99rv-74dm_block7334.json",
+      "url": "https://data.cityofnewyork.us/resource/99rv-74dm.json?block=7334&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:50:20.251989+00:00",
+      "error": "HTTP Error 400: Bad Request"
+    },
+    {
+      "file": "bsa_yvxd-uipr_block_contains7334.json",
+      "url": "https://data.cityofnewyork.us/resource/yvxd-uipr.json?%24where=block+like+%27%257334%25%27&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:57:05.918437+00:00",
+      "error": "HTTP Error 400: Bad Request"
+    }
+  ],
+  "other_access_results": [
+    {
+      "source": "ACRIS instrument images",
+      "result": "Search routed to explicit bandwidth-policy page; direct document-detail request failed. No image contents read. Used official Open Data alternative."
+    },
+    {
+      "source": "DOB BIS job documents",
+      "result": "HTTP 403. No approved plans read."
+    },
+    {
+      "source": "DOB NOW public portal",
+      "result": "Maintenance notice observed, October 9 5pm through October 11 5pm 2026. No approved ZD1/PW1 retrieved."
+    },
+    {
+      "source": "BSA searches",
+      "result": "Exact-block post-1998 query returned none. Historical broad string search returned two Brooklyn cases, no Queens match. Failed wildcard on numeric modern block field was not interpreted as an empty result."
+    }
+  ]
+}
