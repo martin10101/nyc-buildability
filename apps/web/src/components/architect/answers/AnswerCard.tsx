@@ -15,6 +15,7 @@ import {
   type Unit,
   type WithheldValueView,
 } from "@/lib/architect/three-answers";
+import { ResultDetails } from "./ResultDetails";
 
 /** Leading words shown for a withheld value (results contract 1.3.0): it is not known, with the
  * reason, and NEVER a number falling back from another value (R556, R570). */
@@ -25,12 +26,14 @@ const NOT_KNOWN = "Not known";
 const CONDITIONAL_MARKER = "Conditional";
 
 /**
- * One of the three answers (queue D-05; plan §5). Available: the headline number, large, then
- * the answer's other values and any withheld value shown as its reason; rule sections and the
- * measurement label sit behind "Rule sections" (plan §5a items 4 and 5). A conditional value shows
- * the 'Conditional' marker beside the figure and each condition on its own line. Not available: the
- * one line "Not available — <reason>" and nothing else — no number, no exception tag, no details
- * (plan §5, §5a item 3).
+ * One of the three answers, in the presentation contract's reading order (§4 "label → value and
+ * unit, or unavailable state → material exception → details action"; M5-T149 part A). The FACE is
+ * deliberately short: the answer's title, its headline value (or its "Not known"/"Not available"
+ * state with the kind of gap), the one marker that qualifies the figure ('Conditional'), at most one
+ * exception, and a Details button. The derivation — the other value rows, the condition texts, the
+ * withheld values, the rule sections and the measurement basis — opens on demand in ResultDetails
+ * (focus moves in; Escape returns to the button). A not-available answer shows only its one line and
+ * its kind-of-gap line: no number, no exception, no details.
  */
 export function AnswerCard({
   answerKey,
@@ -39,13 +42,14 @@ export function AnswerCard({
 }: {
   answerKey: AnswerKey;
   view: AnswerView;
-  /** Extra rows shown only while the answer itself is shown (remaining area, shortfall). */
+  /** Extra detail shown only while the answer itself is shown (remaining area, shortfall, notes). */
   children?: ReactNode;
 }) {
+  const title = ANSWER_TITLES[answerKey];
   if (view.kind === "not_available") {
     return (
       <section className="ta-answer" data-testid={`answer-${answerKey}`}>
-        <h3 className="ta-answer-title">{ANSWER_TITLES[answerKey]}</h3>
+        <h3 className="ta-answer-title">{title}</h3>
         <p className="ta-not-available" data-testid="answer-not-available">
           {view.text}
         </p>
@@ -57,67 +61,89 @@ export function AnswerCard({
       </section>
     );
   }
+  const headlineConditions =
+    view.headline.kind === "value" ? view.headline.shown.conditions : [];
   const shownValues: AnswerValue[] =
     view.headline.kind === "value"
       ? [view.headline.shown.value, ...view.rows.map(row => row.value)]
       : view.rows.map(row => row.value);
+  const hasDetail =
+    view.rows.length > 0 ||
+    view.withheld.length > 0 ||
+    shownValues.length > 0 ||
+    headlineConditions.length > 0 ||
+    children != null;
   return (
     <section className="ta-answer" data-testid={`answer-${answerKey}`}>
-      <h3 className="ta-answer-title">{ANSWER_TITLES[answerKey]}</h3>
+      <h3 className="ta-answer-title">{title}</h3>
       {view.headline.kind === "value" ? (
-        <>
-          <p className="ta-headline" data-testid="answer-headline">
-            <span className="ta-headline-label">{view.headline.shown.value.label}</span>{" "}
-            <HeadlineValue
-              value={view.headline.shown.value.value}
-              unit={view.headline.shown.value.unit}
-            />
-            <ExceptionTag label={view.headline.shown.value.exception_label} />
-          </p>
-          <ConditionBlock conditions={view.headline.shown.conditions} />
-        </>
+        <p className="ta-headline" data-testid="answer-headline">
+          <span className="ta-headline-label">{view.headline.shown.value.label}</span>{" "}
+          <HeadlineValue
+            value={view.headline.shown.value.value}
+            unit={view.headline.shown.value.unit}
+          />
+          <ExceptionTag label={view.headline.shown.value.exception_label} />
+          {headlineConditions.length > 0 ? <ConditionalMarker /> : null}
+        </p>
       ) : (
         <WithheldLine entry={view.headline.withheld} testid="answer-headline-withheld" />
       )}
-      {view.rows.length > 0 ? (
-        <dl className="ta-rows">
-          {view.rows.map((row, index) => (
-            <div className="ta-row" key={`${row.value.key}-${index}`} data-testid="answer-value">
-              <dt>{row.value.label}</dt>
-              <dd>
-                {quantityText(displayQuantity(row.value.value, row.value.unit))}
-                <ExceptionTag label={row.value.exception_label} />
-                <ConditionBlock conditions={row.conditions} />
-              </dd>
+      {hasDetail ? (
+        <ResultDetails name={title}>
+          {headlineConditions.length > 0 ? (
+            <div className="ta-conditional" data-testid="answer-headline-conditions">
+              <p className="ta-conditional-note">This figure applies when:</p>
+              <ConditionLines conditions={headlineConditions} />
             </div>
-          ))}
-        </dl>
-      ) : null}
-      {view.withheld.length > 0 ? (
-        <dl className="ta-withheld" data-testid="answer-withheld">
-          {view.withheld.map((entry, index) => (
-            <div className="ta-row" key={`${entry.key}-${index}`} data-testid="answer-withheld-value">
-              <dt>{entry.label}</dt>
-              <dd>
-                <WithheldLine entry={entry} />
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ) : null}
-      {children}
-      {shownValues.length > 0 ? (
-        <details className="ta-details" data-testid="answer-details">
-          <summary>Rule sections</summary>
-          <ul className="ta-sections">
-            {shownValues.map((value, index) => (
-              <li key={`${value.key}-${index}`} data-testid="answer-section">
-                {value.label}: {uniqueSections(value.zr_sections).join(", ")}
-              </li>
-            ))}
-          </ul>
-          <p className="ta-measurement">Measurements: {view.measurementLabel}</p>
-        </details>
+          ) : null}
+          {view.rows.length > 0 ? (
+            <dl className="ta-rows">
+              {view.rows.map((row, index) => (
+                <div className="ta-row" key={`${row.value.key}-${index}`} data-testid="answer-value">
+                  <dt>{row.value.label}</dt>
+                  <dd>
+                    {quantityText(displayQuantity(row.value.value, row.value.unit))}
+                    <ExceptionTag label={row.value.exception_label} />
+                    {row.conditions.length > 0 ? (
+                      <ConditionBlock conditions={row.conditions} />
+                    ) : null}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+          {view.withheld.length > 0 ? (
+            <dl className="ta-withheld" data-testid="answer-withheld">
+              {view.withheld.map((entry, index) => (
+                <div
+                  className="ta-row"
+                  key={`${entry.key}-${index}`}
+                  data-testid="answer-withheld-value"
+                >
+                  <dt>{entry.label}</dt>
+                  <dd>
+                    <WithheldLine entry={entry} />
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+          {children}
+          {shownValues.length > 0 ? (
+            <>
+              <p className="ta-sections-heading">Rule sections</p>
+              <ul className="ta-sections">
+                {shownValues.map((value, index) => (
+                  <li key={`${value.key}-${index}`} data-testid="answer-section">
+                    {value.label}: {uniqueSections(value.zr_sections).join(", ")}
+                  </li>
+                ))}
+              </ul>
+              <p className="ta-measurement">Measurements: {view.measurementLabel}</p>
+            </>
+          ) : null}
+        </ResultDetails>
       ) : null}
     </section>
   );
@@ -148,23 +174,40 @@ function WithheldLine({
   );
 }
 
-/** A conditional value: the fixed 'Conditional' marker beside the figure, then each condition on
- * its own line (ruling L1/L3). Nothing is drawn for a settled value (empty list). The marker and
- * the lines are plain text in normal weight — the state is told by the words, never by colour. */
+/** The fixed 'Conditional' marker shown beside a conditional figure (ruling L1/L3), in normal
+ * weight: the figure is told apart by the WORD, never by colour alone. The condition texts
+ * themselves are stated once at the top (shared conditions) and in the answer's details. */
+function ConditionalMarker() {
+  return (
+    <>
+      {" "}
+      <span className="ta-conditional-marker" data-testid="answer-conditional-marker">
+        {CONDITIONAL_MARKER}
+      </span>
+    </>
+  );
+}
+
+/** One "If <assumption>" line per condition, read from the document (ruling L1). */
+function ConditionLines({ conditions }: { conditions: readonly string[] }) {
+  return (
+    <ul className="ta-conditions">
+      {conditions.map((condition, index) => (
+        <li className="ta-condition" data-testid="answer-condition" key={`${index}-${condition}`}>
+          {condition}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** A conditional value's marker and its condition lines together (used for a non-headline row). */
 function ConditionBlock({ conditions }: { conditions: readonly string[] }) {
   if (conditions.length === 0) return null;
   return (
     <div className="ta-conditional" data-testid="answer-conditional">
-      <span className="ta-conditional-marker" data-testid="answer-conditional-marker">
-        {CONDITIONAL_MARKER}
-      </span>
-      <ul className="ta-conditions">
-        {conditions.map((condition, index) => (
-          <li className="ta-condition" data-testid="answer-condition" key={`${index}-${condition}`}>
-            {condition}
-          </li>
-        ))}
-      </ul>
+      <ConditionalMarker />
+      <ConditionLines conditions={conditions} />
     </div>
   );
 }
@@ -188,7 +231,7 @@ function HeadlineValue({ value, unit }: { value: number; unit: Unit }) {
   );
 }
 
-/** At most one exception beside a number, only one that changes how to read it (§5a item 3). */
+/** At most one exception beside a number, only one that changes how to read it (§4). */
 function ExceptionTag({ label }: { label: ExceptionLabel }) {
   if (!label) return null;
   return (
@@ -202,7 +245,7 @@ function ExceptionTag({ label }: { label: ExceptionLabel }) {
 }
 
 /** A value row added to an available answer, or its own not-available line and, when the view
- * carries one, its reason line under it (D-090-R038). */
+ * carries one, its reason line under it (D-090-R038). Shown inside the answer's details. */
 export function SupplementRow({ view }: { view: SupplementView }) {
   return (
     <dl className="ta-rows ta-supplement" data-testid="answer-supplement">
@@ -260,16 +303,13 @@ export function ShortfallBlock({ view }: { view: ShortfallView }) {
  * The building option's draft notes beside the heights (results contract 1.2.0, D-090-R132):
  * each is a DRAFT reading of the captured zoning text, shown openly under a fixed heading that
  * marks it pending qualified review — never a compliance statement. Rendered as a child of the
- * building-option card, so it appears only while that card shows its heights (the same draft
- * gate); an empty list draws nothing, leaving the card unchanged.
+ * building-option card's details, so it appears only while that card shows its heights; an empty
+ * list draws nothing.
  *
- * The note text and the "Based on …" line cite ZR sections (e.g. "ZR 23-432", which is also a
- * building-option value's `zoning_resolution` source). The panel guard
+ * The note text and the "Based on …" line cite ZR sections (e.g. "ZR 23-432"), which is also a
+ * building-option value's `zoning_resolution` source. The panel guard
  * (three-answers-panel.test.tsx) requires every such citation to live only inside the
- * `answer-section` citation surface it strips, so these two visible lines carry that testid: it is
- * the guard's hook for "this text cites rule sections", which is exactly what the note does. The
- * snapshot ids sit behind a disclosure (never bare in the prose) and trip no guard (hyphens, not
- * underscores; not an enum code).
+ * `answer-section` citation surface it strips, so these two visible lines carry that testid.
  */
 export function BuildingOptionNotes({ notes }: { notes: readonly BuildingOptionNoteView[] }) {
   if (notes.length === 0) return null;

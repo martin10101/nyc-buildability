@@ -1,12 +1,14 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import {
   ANSWER_KEYS,
   ANSWER_TITLES,
   BUILDING_OPTIONS_BELOW_REASON,
-  REACHES_ALLOWANCE_TEXT,
   RULES_NOT_REVIEWED_REASON,
   STRIP_MAX_ITEMS,
+  answerView,
   displayQuantity,
   gapKindLine,
   hasFirstBuildingOptions,
@@ -19,14 +21,14 @@ import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
 
 /**
- * Queue D-05 (plan §5 "Three separate answers" / "Calculation behavior", §5a "Label on the
- * box"). Renders EVERY committed valid results fixture
- * (packages/contracts/fixtures/valid/results/) and reads the expected values from the loaded
- * documents — no number is copied into the component or this suite.
+ * The architect-facing results slice (presentation contract step 3; M5-T149 part A). Renders EVERY
+ * committed valid results fixture and reads the expected values from the loaded documents — no
+ * number, label, condition or reason is copied into the component or this suite (ruling V2).
  *
- * All committed fixtures are drafts (their rule versions are not published), so the numbers
- * are asserted with `showDraftValues` (a lane-flag surface) and the architect default is
- * asserted separately: every available answer then reads "Not available — …".
+ * The three answers lead with a short face (label → value or unavailable state with its gap kind →
+ * one exception → Details button); the derivation (other rows, conditions, rule sections,
+ * measurement) opens on demand in a focus-managed region that stays in the DOM when closed.
+ * Committed fixtures are drafts, so numbers are asserted with `showDraftValues`.
  */
 
 afterEach(cleanup);
@@ -34,8 +36,9 @@ afterEach(cleanup);
 const FIXTURES = loadResultsFixtures();
 const ALL_AVAILABLE = "synthetic_all_answers_available";
 const ENVELOPE_MISSING = "synthetic_envelope_not_available_existing_building";
+const BENCHMARK = "recorded_215_16_northern_journey";
 
-// Contract enum codes (results.schema.json) that must never reach the screen (plan §5a item 5).
+// Contract enum codes (results.schema.json) that must never reach the screen (contract §4).
 const RAW_CODES = [
   "not_available",
   "not_applicable",
@@ -54,17 +57,20 @@ const RAW_CODES = [
   "zoning_resolution",
 ];
 const SNAKE_CASE = /\b[a-z0-9]+(?:_[a-z0-9]+)+\b/;
-// A compared number for probe shortfall reasons (never rendered by the panel).
-const PROBE_VALUE = { name: "probe height", value: 1, unit: "feet" as const };
 
 function card(key: AnswerKey): HTMLElement {
   return screen.getByTestId(`answer-${key}`);
 }
 
-/** On a lot with the first-building-options section (contract 1.4.0) the single building-option card
- * points to that section below in plain words, never the document's machine reason (which names the
- * building_alternatives / buildings_not_worked fields). These mirror answerView so the loop's
- * not-available checks stay exact for those fixtures. */
+function panelText(): string {
+  return screen.getByTestId("three-answers-panel").textContent ?? "";
+}
+
+/** Text with every given part removed, to check that nothing numeric is left. */
+function without(text: string, ...parts: string[]): string {
+  return parts.reduce((rest, part) => rest.split(part).join(""), text);
+}
+
 function notAvailableFor(doc: Results, key: AnswerKey, reason: string): string {
   return key === "building_option" && hasFirstBuildingOptions(doc)
     ? notAvailableText(BUILDING_OPTIONS_BELOW_REASON, key)
@@ -78,77 +84,60 @@ function gapKindFor(
   return key === "building_option" && hasFirstBuildingOptions(doc) ? null : gapKindLine(gapKind);
 }
 
-function panelText(): string {
-  return screen.getByTestId("three-answers-panel").textContent ?? "";
-}
-
-/** Text with every given part removed, to check that nothing numeric is left. */
-function without(text: string, ...parts: string[]): string {
-  return parts.reduce((rest, part) => rest.split(part).join(""), text);
-}
-
-/** Headline and value rows of an available card, as {label, text}. */
-function renderedValues(cardEl: HTMLElement): { label: string; text: string }[] {
-  const headline = within(cardEl).getByTestId("answer-headline");
-  const headlineLabel = headline.querySelector<HTMLElement>(".ta-headline-label");
-  const rows = within(cardEl)
-    .queryAllByTestId("answer-value")
-    .map(row => ({
-      label: row.querySelector<HTMLElement>("dt")?.textContent ?? "",
-      text: row.querySelector<HTMLElement>("dd")?.textContent ?? "",
-    }));
-  return [{ label: headlineLabel?.textContent ?? "", text: headline.textContent ?? "" }, ...rows];
-}
-
 it("loads the committed valid results fixtures (never a vacuous run)", () => {
   const names = FIXTURES.map(fixture => fixture.name);
   expect(names.length).toBeGreaterThanOrEqual(4);
   expect(names).toContain(ALL_AVAILABLE);
   expect(names).toContain(ENVELOPE_MISSING);
+  expect(names).toContain(BENCHMARK);
 });
 
 for (const { name, doc } of FIXTURES) {
   describe(`results fixture ${name}`, () => {
-    it("shows every available answer's numbers with units, exceptions and rule sections", () => {
+    it("shows each available answer's headline, every value, its exceptions, sections and measurement", () => {
       render(<ThreeAnswersPanel results={doc} showDraftValues />);
       for (const key of ANSWER_KEYS) {
         const answer = doc.answers[key];
         if (answer.status !== "available") continue;
         const cardEl = card(key);
-        expect(within(cardEl).getAllByTestId("answer-headline-number")).toHaveLength(1);
-        const rendered = renderedValues(cardEl);
-        expect(rendered.map(entry => entry.label).sort()).toEqual(
-          answer.values.map(value => value.label).sort(),
-        );
+        const view = answerView(doc, key, true);
+        // An available answer with no shown values collapses to a not-available view (NO_VALUE_REASON);
+        // the committed fixtures do not carry that, but skip it rather than assert a headline.
+        if (view.kind !== "available") continue;
+        // The headline is on the face: a number when the headline key is a value, else its reason.
+        if (view.headline.kind === "value") {
+          expect(within(cardEl).getAllByTestId("answer-headline-number")).toHaveLength(1);
+        } else {
+          expect(within(cardEl).getByTestId("answer-headline-withheld")).toBeInTheDocument();
+        }
+        // Every shown value's number+unit is in the card (face or details — details stay in the DOM).
+        for (const value of answer.values) {
+          const shown = quantityText(displayQuantity(value.value, value.unit));
+          expect(cardEl.textContent, value.key).toContain(shown);
+          if (Number.isInteger(value.value)) {
+            expect(cardEl.textContent).toContain(value.value.toLocaleString("en-US"));
+          }
+          if (value.exception_label) expect(cardEl.textContent).toContain(value.exception_label);
+        }
+        // The detail region carries the rule sections and the measurement basis, hidden by default.
+        const region = within(cardEl).getByTestId("answer-details-region");
+        expect(region).toHaveAttribute("hidden");
+        expect(region).toHaveTextContent(`Measurements: ${answer.measurement.label}`);
         const sectionItems = within(cardEl)
           .getAllByTestId("answer-section")
           .map(item => item.textContent ?? "");
         for (const value of answer.values) {
-          const entry = rendered.find(candidate => candidate.label === value.label);
-          expect(entry, value.key).toBeDefined();
-          const text = entry?.text ?? "";
-          expect(text).toContain(quantityText(displayQuantity(value.value, value.unit)));
-          // Independent of the panel's formatter: whole numbers read with en-US grouping.
-          if (Number.isInteger(value.value)) {
-            expect(text).toContain(value.value.toLocaleString("en-US"));
-          }
-          if (value.exception_label) expect(text).toContain(value.exception_label);
           const sections = sectionItems.find(item => item.startsWith(`${value.label}: `));
           expect(sections, value.key).toBeDefined();
           for (const section of value.zr_sections) expect(sections).toContain(section);
         }
-        // Rule sections and the measurement label are behind a closed disclosure (§5a item 4).
-        const details = within(cardEl).getByTestId("answer-details");
-        expect(details.tagName).toBe("DETAILS");
-        expect(details).not.toHaveAttribute("open");
-        expect(details).toHaveTextContent(`Measurements: ${answer.measurement.label}`);
-        // At most one exception beside each number (§5a item 3).
+        // At most one exception beside each number (contract §4).
         const exceptionCount = answer.values.filter(value => value.exception_label).length;
         expect(within(cardEl).queryAllByTestId("answer-exception")).toHaveLength(exceptionCount);
       }
     });
 
-    it("shows a not-available answer as 'Not available — <reason>', with only its kind-of-gap line", () => {
+    it("shows a not-available answer as 'Not available — <reason>', its gap line, no number, no details", () => {
       render(<ThreeAnswersPanel results={doc} showDraftValues />);
       for (const key of ANSWER_KEYS) {
         const answer = doc.answers[key];
@@ -156,25 +145,17 @@ for (const { name, doc } of FIXTURES) {
         const cardEl = card(key);
         const expected = notAvailableFor(doc, key, answer.reason);
         expect(expected.startsWith("Not available — ")).toBe(true);
-        const line = within(cardEl).getByTestId("answer-not-available");
-        expect(line.textContent).toBe(expected);
-        // An answer that carries a gap_kind also shows the plain-words kind line (ruling R6); a
-        // not-available answer with no gap_kind shows none. The building-option card that points to
-        // the worked alternatives shows the pointer line and no kind line.
+        expect(within(cardEl).getByTestId("answer-not-available").textContent).toBe(expected);
         const gapLine = gapKindFor(doc, key, answer.gap_kind);
         if (gapLine) {
           expect(within(cardEl).getByTestId("answer-gap-kind").textContent).toBe(gapLine);
         } else {
           expect(within(cardEl).queryByTestId("answer-gap-kind")).toBeNull();
         }
-        // The card holds its title, that one line and (if any) its kind line: no number, no
-        // caution tag, no details.
         expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}${gapLine ?? ""}`);
         expect(without(cardEl.textContent ?? "", expected, gapLine ?? "")).not.toMatch(/\d/);
         expect(within(cardEl).queryByTestId("answer-headline")).toBeNull();
-        expect(within(cardEl).queryAllByTestId("answer-value")).toHaveLength(0);
-        expect(within(cardEl).queryAllByTestId("answer-exception")).toHaveLength(0);
-        expect(within(cardEl).queryByTestId("answer-details")).toBeNull();
+        expect(within(cardEl).queryByTestId("answer-details-button")).toBeNull();
       }
     });
 
@@ -191,7 +172,6 @@ for (const { name, doc } of FIXTURES) {
               ? `Not available — ${RULES_NOT_REVIEWED_REASON}`
               : null;
         if (expected === null) continue;
-        // Only a natively not-available answer carries its own gap_kind line; the draft gate adds none.
         const gapLine = answer.status === "not_available" ? gapKindFor(doc, key, answer.gap_kind) : null;
         expect(within(cardEl).getByTestId("answer-not-available").textContent).toBe(expected);
         expect(cardEl.textContent).toBe(`${ANSWER_TITLES[key]}${expected}${gapLine ?? ""}`);
@@ -199,8 +179,7 @@ for (const { name, doc } of FIXTURES) {
       }
       if (doc.draft) {
         expect(screen.queryAllByTestId("answer-headline")).toHaveLength(0);
-        expect(screen.queryAllByTestId("answer-exception")).toHaveLength(0);
-        expect(screen.queryAllByTestId("answer-shortfall")).toHaveLength(0);
+        expect(screen.queryAllByTestId("answer-details-button")).toHaveLength(0);
       }
     });
 
@@ -208,25 +187,11 @@ for (const { name, doc } of FIXTURES) {
       render(<ThreeAnswersPanel results={doc} showDraftValues />);
       const strip = screen.getByTestId("three-answers-status-strip");
       expect(strip.tagName).toBe("DETAILS");
-      expect(strip).not.toHaveAttribute("open");
       const items = within(strip)
         .queryAllByTestId("three-answers-status-item")
         .map(item => item.textContent);
       expect(items.length).toBeLessThanOrEqual(STRIP_MAX_ITEMS);
       expect(items).toEqual(doc.status_strip.slice(0, STRIP_MAX_ITEMS).map(item => item.text));
-      const details = within(strip).getByTestId("three-answers-status-details");
-      expect(details).toHaveTextContent(doc.lot_selection_statement);
-      if (doc.notices_count > 0) {
-        expect(within(details).getByTestId("three-answers-notes").textContent).toBe(
-          `Notes (${doc.notices_count})`,
-        );
-      }
-      if (doc.out_of_date && doc.out_of_date_reason) {
-        expect(within(details).getByTestId("three-answers-out-of-date").textContent).toBe(
-          `Out of date — ${doc.out_of_date_reason}`,
-        );
-      }
-      // One strip only.
       expect(screen.getAllByTestId("three-answers-status-strip")).toHaveLength(1);
     });
 
@@ -243,9 +208,6 @@ for (const { name, doc } of FIXTURES) {
         const text = panelText();
         expect(text).not.toMatch(SNAKE_CASE);
         for (const code of RAW_CODES) expect(text).not.toContain(code);
-        // A source ref may legitimately appear only in the "Rule sections" disclosure — the same
-        // answer-section items the rule-sections test reads (line ~118); strip those once so the
-        // checks below can require a ZR ref to live there and nowhere else.
         const outsideSections = without(
           text,
           ...screen.queryAllByTestId("answer-section").map(item => item.textContent ?? ""),
@@ -255,10 +217,6 @@ for (const { name, doc } of FIXTURES) {
           if (answer.status !== "available") continue;
           for (const value of answer.values) {
             for (const source of value.sources) {
-              // The contract (results.schema.json $defs.value_source) allows value_source.kind
-              // `zoning_resolution`, whose ref IS a shown ZR section, so it is excluded from the
-              // bare-ref ban: it must equal one of this value's zr_sections and appear only inside
-              // the rule sections. Internal ids (site_fact, rule_table) stay forbidden everywhere.
               if (source.kind === "zoning_resolution") {
                 expect(value.zr_sections, value.key).toContain(source.ref);
                 expect(outsideSections).not.toContain(source.ref);
@@ -274,6 +232,281 @@ for (const { name, doc } of FIXTURES) {
   });
 }
 
+describe("S1 — the identity line comes first (presentation contract §2 item 1)", () => {
+  it("names the lot, the program and the floor height, read from the document's scope", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    const scope = doc.scope;
+    if (!scope) throw new Error("fixture changed: the benchmark must carry a scope");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const identity = screen.getByTestId("three-answers-identity");
+    expect(within(identity).getByTestId("three-answers-identity-lot").textContent).toBe(
+      scope.lot.display,
+    );
+    const values = within(identity)
+      .getAllByTestId("three-answers-identity-fact-value")
+      .map(element => element.textContent);
+    const program = scope.assumptions.find(entry => entry.key === "housing_program");
+    const floor = scope.assumptions.find(entry => entry.key === "floor_to_floor_ft");
+    if (!program || !floor) throw new Error("fixture changed: program/floor assumptions missing");
+    expect(values).toContain("standard residence"); // housing_program, in plain words
+    expect(values).toContain("10 feet"); // floor_to_floor_ft, grouped with its unit
+    expect(identity.textContent ?? "").not.toMatch(SNAKE_CASE);
+  });
+
+  it("renders no identity line for a document that carries no scope", () => {
+    const doc = loadResultsFixture(ALL_AVAILABLE);
+    expect(doc.scope ?? null).toBeNull();
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    expect(screen.queryByTestId("three-answers-identity")).toBeNull();
+  });
+
+  it("composes a left region (identity + answers) and a right region (details + options), in that order", () => {
+    // The desktop two-column grid lives in these two regions; jsdom cannot measure the grid itself
+    // (the browser test checks the 44/56 widths), so this proves the regions exist in reading order.
+    const doc = loadResultsFixture(BENCHMARK);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const left = screen.getByTestId("three-answers-left");
+    const right = screen.getByTestId("three-answers-right");
+    // left precedes right in the DOM (the stacked reading order below 1000 px)
+    const relation = left.compareDocumentPosition(right);
+    expect(relation & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // the answers (and the identity line) are in the left region
+    expect(within(left).getByTestId("three-answers-identity")).toBeInTheDocument();
+    for (const key of ANSWER_KEYS) {
+      expect(within(left).getByTestId(`answer-${key}`)).toBeInTheDocument();
+    }
+    // the details (scope) and Part B's building options are in the right region
+    expect(within(right).getByTestId("three-answers-scope")).toBeInTheDocument();
+    expect(within(right).getByTestId("first-building-options")).toBeInTheDocument();
+  });
+});
+
+describe("S3 — shared conditions stated once (presentation contract §1/§3; walkthrough note N3)", () => {
+  it("lists each distinct condition once as 'Condition N', never an internal id such as 'C1'", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const block = screen.getByTestId("shared-conditions");
+    const items = within(block).getAllByTestId("shared-condition");
+    // The benchmark's two "If …" lines repeat across many results; they are listed once here.
+    expect(items.length).toBe(2);
+    const labels = within(block)
+      .getAllByTestId("shared-condition-label")
+      .map(label => label.textContent);
+    expect(labels).toEqual(["Condition 1", "Condition 2"]);
+    expect(block.textContent ?? "").not.toMatch(/\bC\d\b/); // never the adapter id "C1"/"C2"
+    // Each line's text is read from the document (the same "If …" the engine emitted).
+    const fa = doc.answers.floor_area_allowance;
+    if (fa.status !== "available" || !fa.value_states) throw new Error("fixture changed");
+    const headlineState = fa.value_states.max_residential_floor_area;
+    if (!headlineState || headlineState.way !== "conditional") throw new Error("fixture changed");
+    for (const condition of headlineState.conditions) {
+      expect(block.textContent).toContain(condition.assumption);
+    }
+  });
+
+  it("shows at most three conditions and counts the rest behind a label (S3 cap)", () => {
+    // A probe that carries exactly five distinct conditions proves the cap holds past three. Built
+    // from the no-condition all-available fixture so the only conditions are the five supplied here.
+    const base = loadResultsFixture(ALL_AVAILABLE);
+    const fa = base.answers.floor_area_allowance;
+    if (fa.status !== "available") throw new Error("fixture changed");
+    const conditions = [1, 2, 3, 4, 5].map(n => ({
+      kind: "unchecked_condition" as const,
+      assumption: `If probe condition ${n} holds`,
+      settled_by: "A probe source",
+    }));
+    const doc: Results = {
+      ...base,
+      contract_version: "1.3.0",
+      answers: {
+        ...base.answers,
+        floor_area_allowance: {
+          ...fa,
+          value_states: {
+            max_residential_floor_area: { way: "conditional", conditions },
+          },
+        },
+      },
+    };
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const block = screen.getByTestId("shared-conditions");
+    expect(within(block).getAllByTestId("shared-condition")).toHaveLength(3);
+    expect(within(block).getByTestId("shared-conditions-more").textContent).toBe("2 more");
+  });
+
+  it("shows no shared-conditions block for a document with no conditions", () => {
+    const doc = loadResultsFixture(ALL_AVAILABLE);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    expect(screen.queryByTestId("shared-conditions")).toBeNull();
+  });
+});
+
+describe("S4 — each result's order and the Details focus behaviour (presentation contract §4; UX-09)", () => {
+  it("shows a Details button whose region is hidden until opened", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const allowance = card("floor_area_allowance");
+    const button = within(allowance).getByTestId("answer-details-button");
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(within(allowance).getByTestId("answer-details-region")).toHaveAttribute("hidden");
+  });
+
+  it("moves focus into the region on open and returns focus to the button on Escape", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const allowance = card("floor_area_allowance");
+    const button = within(allowance).getByTestId<HTMLButtonElement>("answer-details-button");
+    const region = within(allowance).getByTestId<HTMLDivElement>("answer-details-region");
+    fireEvent.click(button);
+    expect(region).not.toHaveAttribute("hidden");
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    expect(document.activeElement).toBe(region);
+    fireEvent.keyDown(region, { key: "Escape" });
+    expect(region).toHaveAttribute("hidden");
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(document.activeElement).toBe(button);
+  });
+
+  it("marks a conditional headline figure 'Conditional' on the face so it never reads as confirmed", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const allowance = card("floor_area_allowance");
+    const headline = within(allowance).getByTestId("answer-headline");
+    expect(within(headline).getByTestId("answer-conditional-marker").textContent).toBe("Conditional");
+  });
+
+  it("shows no 'Conditional' marker on a settled figure", () => {
+    const base = loadResultsFixture(ALL_AVAILABLE);
+    render(<ThreeAnswersPanel results={base} showDraftValues />);
+    // all_available carries no value_states, so every value is settled: no marker anywhere.
+    expect(screen.queryAllByTestId("answer-conditional-marker")).toHaveLength(0);
+  });
+});
+
+describe("S5 — the legal unit limit sits with the allowance, apart from the estimate (DB-214 N2)", () => {
+  function densityStatementProbe(): Results {
+    // The owner's special-density statement makes the standard legal unit limit a CONDITIONAL
+    // value of the floor-area allowance (walkthrough state 5). Built from the benchmark; the figure
+    // and condition are supplied as document data, never typed by the component.
+    const base = loadResultsFixture(BENCHMARK);
+    const fa = base.answers.floor_area_allowance;
+    if (fa.status !== "available") throw new Error("fixture changed");
+    return {
+      ...base,
+      answers: {
+        ...base.answers,
+        floor_area_allowance: {
+          ...fa,
+          values: [
+            ...fa.values,
+            {
+              key: "legal_unit_limit_standard",
+              label: "Legal dwelling-unit limit, standard residences",
+              value: 29,
+              unit: "dwelling_units",
+              exception_label: null,
+              zr_sections: ["ZR 23-22"],
+              sources: [],
+            },
+          ],
+          value_states: {
+            ...(fa.value_states ?? {}),
+            legal_unit_limit_standard: {
+              way: "conditional",
+              conditions: [
+                {
+                  kind: "unchecked_condition",
+                  assumption: "If the lot is not in a special density area, as the user states",
+                  settled_by: "Sourced evidence of the special density area",
+                },
+              ],
+            },
+          },
+        },
+      },
+    };
+  }
+
+  it("shows '29 units' with the allowance, marked Conditional, and never in the building-options section", () => {
+    const doc = densityStatementProbe();
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const allowance = card("floor_area_allowance");
+    expect(allowance.textContent).toContain("29 units");
+    // it is a conditional value, so a 'Conditional' marker qualifies it (never reads as confirmed)
+    expect(within(allowance).getAllByTestId("answer-conditional-marker").length).toBeGreaterThan(0);
+    // the estimate is the building options' job (Part B); the legal limit never appears there
+    const options = screen.getByTestId("first-building-options");
+    expect(options.textContent ?? "").not.toContain("29 units");
+    // and the estimate range is not inside the allowance card (kept apart — N2)
+    expect(allowance.textContent ?? "").not.toContain("17.27 to 21.59");
+  });
+});
+
+describe("S8 — normal and partial states (UX-02, UX-03)", () => {
+  it("the normal state shows three headline numbers with units", () => {
+    const doc = loadResultsFixture(ALL_AVAILABLE);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    for (const key of ANSWER_KEYS) {
+      expect(within(card(key)).getByTestId("answer-headline-number")).toBeInTheDocument();
+    }
+  });
+
+  it("the partial state shows a withheld result as 'Not known' with its kind of gap and no number", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    const env = doc.answers.permitted_envelope;
+    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
+    const coverage = env.value_states.max_lot_coverage;
+    if (!coverage || coverage.way !== "withheld") throw new Error("fixture changed");
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const envCard = card("permitted_envelope");
+    const row = within(envCard)
+      .getAllByTestId("answer-withheld-value")
+      .find(entry => (entry.querySelector("dt")?.textContent ?? "") === coverage.label);
+    if (!row) throw new Error("the withheld coverage row is missing");
+    expect(within(row).getByTestId("answer-withheld-reason").textContent).toBe(
+      `Not known — ${coverage.reason}`,
+    );
+    expect(row.textContent ?? "").not.toMatch(/\d+%/); // no number falls back
+    const gap = within(row).getByTestId("answer-gap-kind");
+    expect(gap.textContent).toBe("Missing information about this property.");
+  });
+});
+
+describe("a withheld headline key shows its reason, never the first value (R556)", () => {
+  it("renders the withheld reason as the headline, no number from another value", () => {
+    const base = loadResultsFixture(ALL_AVAILABLE);
+    const envelope = base.answers.permitted_envelope;
+    if (envelope.status !== "available") throw new Error("fixture changed");
+    const withoutHeight = envelope.values.filter(value => value.key !== "max_building_height");
+    const probe: Results = {
+      ...base,
+      contract_version: "1.3.0",
+      answers: {
+        ...base.answers,
+        permitted_envelope: {
+          ...envelope,
+          values: withoutHeight,
+          value_states: {
+            max_building_height: {
+              way: "withheld",
+              label: "Maximum building height",
+              reason: "The height depends on a rule the program has not built yet.",
+              gap_kind: "work_owed",
+              resolved_by: "Building the rule and checking it against a worked example",
+            },
+          },
+        },
+      },
+    };
+    render(<ThreeAnswersPanel results={probe} showDraftValues />);
+    const envCard = card("permitted_envelope");
+    expect(within(envCard).queryByTestId("answer-headline")).toBeNull();
+    const headlineWithheld = within(envCard).getByTestId("answer-headline-withheld");
+    expect(headlineWithheld.textContent).toContain("Maximum building height");
+    expect(headlineWithheld.textContent).toContain("Not known");
+  });
+});
+
 describe("fixture-specific behaviour", () => {
   it("envelope fixture: the allowance still shows; the envelope and option read their reasons", () => {
     const doc = loadResultsFixture(ENVELOPE_MISSING);
@@ -285,89 +518,30 @@ describe("fixture-specific behaviour", () => {
     expect(within(card("building_option")).getByTestId("answer-not-available").textContent).toBe(
       "Not available — it needs the permitted envelope.",
     );
-    // Owner wording, settled 2026-10-01 (D-090-R038; replaces plan §3 step 4's): without a
-    // verified value the row reads "Remaining development capacity" → "Not confirmed", then the
-    // reason line, while the full-site allowance shows.
+    // Owner wording (D-090-R038): the remaining-capacity row reads "Not confirmed" + reason, in the
+    // allowance card's detail.
     const allowance = card("floor_area_allowance");
     const row = within(allowance).getByTestId("answer-supplement");
     expect(row.querySelector<HTMLElement>("dt")?.textContent).toBe("Remaining development capacity");
-    expect(within(allowance).getByTestId("answer-supplement-not-available").textContent).toBe("Not confirmed");
+    expect(within(allowance).getByTestId("answer-supplement-not-available").textContent).toBe(
+      "Not confirmed",
+    );
     expect(within(allowance).getByTestId("answer-supplement-reason").textContent).toBe(
       "Needs verified zoning-lot boundaries and existing zoning floor area.",
     );
-    expect(row.textContent).toBe(
-      "Remaining development capacityNot confirmedNeeds verified zoning-lot boundaries and existing zoning floor area.",
-    );
-    // No shortfall is drawn for an option that is not shown.
-    expect(screen.queryByTestId("answer-shortfall")).toBeNull();
   });
 
   it("all-available fixture: no remaining row without a kept building; the option reaches the allowance", () => {
     const doc = loadResultsFixture(ALL_AVAILABLE);
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     expect(screen.queryByTestId("answer-supplement")).toBeNull();
-    expect(within(card("building_option")).getByTestId("answer-shortfall").textContent).toBe(
-      REACHES_ALLOWANCE_TEXT,
+    expect(within(card("building_option")).getByTestId("answer-shortfall").textContent).toContain(
+      "Reaches the full floor-area allowance.",
     );
     expect(screen.getByTestId("three-answers-draft-tag")).toBeInTheDocument();
   });
 
-  it("a shortfall shows the gap and each computed reason (plan §5 answer 3)", () => {
-    const doc: Results = {
-      ...loadResultsFixture(ALL_AVAILABLE),
-      shortfall: {
-        status: "shortfall",
-        sq_ft: 1250,
-        reasons: [
-          { text: "Probe reason one.", computed_from: ["probe-constraint"], values: [PROBE_VALUE] },
-          { text: "Probe reason two.", computed_from: ["probe-constraint"], values: [PROBE_VALUE] },
-        ],
-      },
-    };
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const option = card("building_option");
-    expect(within(option).getByTestId("answer-shortfall-amount").textContent).toBe("1,250 sq ft");
-    expect(
-      within(option)
-        .getAllByTestId("answer-shortfall-reason")
-        .map(item => item.textContent),
-    ).toEqual(["Probe reason one.", "Probe reason two."]);
-  });
-
-  it("a shortfall that is not available reads 'Not available — …' beside the option", () => {
-    const doc: Results = {
-      ...loadResultsFixture(ALL_AVAILABLE),
-      shortfall: {
-        status: "not_available",
-        reason: "the envelope check is not built yet",
-        reason_kind: "rule_not_implemented",
-      },
-    };
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const line = within(card("building_option")).getByTestId("answer-supplement-not-available");
-    expect(line.textContent).toBe("Not available — the envelope check is not built yet");
-    expect(within(card("building_option")).queryByTestId("answer-supplement-reason")).toBeNull();
-  });
-
-  it("a remaining floor area that is available shows beside the allowance", () => {
-    const doc: Results = {
-      ...loadResultsFixture(ENVELOPE_MISSING),
-      remaining_floor_area: {
-        status: "available",
-        value_sf: 1500,
-        existing_zoning_floor_area_fact_id: "probe-fact-existing-zoning-floor-area",
-      },
-    };
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const row = within(card("floor_area_allowance")).getByTestId("answer-supplement");
-    expect(row).toHaveTextContent("Remaining after the existing building");
-    expect(row).toHaveTextContent("1,500 sq ft");
-    expect(within(row).queryByTestId("answer-supplement-reason")).toBeNull();
-  });
-
-  it("strip items beyond three move behind the strip (plan §5a items 1 and 6)", () => {
-    // The contract caps the strip at three; this probe proves the panel keeps the cap even if a
-    // producer ever breaks it.
+  it("strip items beyond three move behind the strip", () => {
     const doc: Results = {
       ...loadResultsFixture(ALL_AVAILABLE),
       status_strip: ["One", "Two", "Three", "Four", "Five"].map(text => ({ text })),
@@ -387,8 +561,6 @@ describe("fixture-specific behaviour", () => {
   });
 
   it("a document that is not a draft shows its numbers without the lane-flag option", () => {
-    // Synthetic probe: `draft: false` is valid only when every rule version is published; the
-    // committed fixtures are all drafts, so the flag is flipped here to prove the gate reads it.
     const doc: Results = { ...loadResultsFixture(ALL_AVAILABLE), draft: false };
     render(<ThreeAnswersPanel results={doc} />);
     for (const key of ANSWER_KEYS) {
@@ -398,261 +570,16 @@ describe("fixture-specific behaviour", () => {
   });
 });
 
-describe("the three-way value-states layer (results contract 1.3.0; S14, R556, R570)", () => {
-  function threeWayProbe(): Results {
-    // A 1.3.0 probe from the all-available fixture: the floor-area headline is conditional and a
-    // withheld value (a legal unit limit, not shown in values[]) carries only its reason.
-    const base = loadResultsFixture(ALL_AVAILABLE);
-    const answer = base.answers.floor_area_allowance;
-    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
-    return {
-      ...base,
-      contract_version: "1.3.0",
-      answers: {
-        ...base.answers,
-        floor_area_allowance: {
-          ...answer,
-          value_states: {
-            max_residential_floor_area: {
-              way: "conditional",
-              conditions: [
-                {
-                  kind: "unchecked_condition",
-                  assumption: "If the recorded lot area is confirmed",
-                  settled_by: "A survey or deed dimensions",
-                },
-              ],
-            },
-            legal_unit_limit_standard: {
-              way: "withheld",
-              label: "Legal dwelling-unit limit, standard residences",
-              reason: "There is no evidence of a special density area, so it is not known.",
-              gap_kind: "work_owed",
-              resolved_by: "Sourced evidence of the special density area",
-            },
-          },
-        },
-      },
-    };
-  }
-
-  it("shows a conditional value's 'If <assumption>' and a withheld value's reason, no number", () => {
-    const doc = threeWayProbe();
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const allowance = card("floor_area_allowance");
-    // the conditional headline shows its assumption line
-    const condition = within(allowance).getByTestId("answer-condition");
-    expect(condition.textContent).toBe("If the recorded lot area is confirmed");
-    // the withheld value shows its reason with "Not known" and no number of its own
-    const withheld = within(allowance).getByTestId("answer-withheld-value");
-    expect(withheld.textContent).toContain("Legal dwelling-unit limit, standard residences");
-    expect(withheld.textContent).toContain("Not known");
-    expect(withheld.textContent).toContain(
-      "There is no evidence of a special density area, so it is not known.",
+describe("the tokens: no colour literal lives in three-answers.css (every part)", () => {
+  it("uses only var(--token) for colour — no hex, rgb/rgba or hsl literal", () => {
+    const css = readFileSync(
+      resolve(process.cwd(), "src/components/architect/answers/three-answers.css"),
+      "utf8",
     );
-    // the withheld value never shows a number, and its reason carries no internal snake_case code
-    const reason = within(withheld).getByTestId("answer-withheld-reason");
-    expect(reason.textContent ?? "").not.toMatch(SNAKE_CASE);
-  });
-
-  it("S5: a withheld value shows its kind-of-gap line beside its reason (journey fixture, R6)", () => {
-    const doc = loadResultsFixture("recorded_215_16_northern_journey");
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const envelope = card("permitted_envelope");
-    const gapLines = within(envelope)
-      .getAllByTestId("answer-gap-kind")
-      .map(element => element.textContent);
-    const WORK_OWED_LINE = "Not built yet: this part of the program is still owed.";
-    const MISSING_INFO_LINE = "Missing information about this property.";
-    // The split is read from the regenerated document, not hard-coded (on this 1.4.0 journey coverage
-    // and the rear yard are missing property facts; the setback above the base is still work owed).
-    const env = doc.answers.permitted_envelope;
-    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
-    const shownKeys = new Set(env.values.map(value => value.key));
-    const withheldKinds = Object.entries(env.value_states)
-      .filter(([key, state]) => state.way === "withheld" && !shownKeys.has(key))
-      .map(([, state]) => (state as { gap_kind?: string }).gap_kind);
-    expect(gapLines).toHaveLength(withheldKinds.length);
-    expect(gapLines.filter(line => line === MISSING_INFO_LINE)).toHaveLength(
-      withheldKinds.filter(kind => kind === "missing_information").length,
-    );
-    expect(gapLines.filter(line => line === WORK_OWED_LINE)).toHaveLength(
-      withheldKinds.filter(kind => kind === "work_owed").length,
-    );
-    // The single building option now points to the worked alternatives below, so it carries no
-    // gap-kind line; its card still reads "Not available".
-    const option = card("building_option");
-    expect(within(option).queryByTestId("answer-gap-kind")).toBeNull();
-    expect(option.textContent ?? "").toContain("Not available");
-  });
-
-  it("a withheld HEADLINE key shows its reason, never the first value (R556)", () => {
-    const base = loadResultsFixture(ALL_AVAILABLE);
-    const envelope = base.answers.permitted_envelope;
-    if (envelope.status !== "available") throw new Error("fixture changed: envelope not available");
-    const without = envelope.values.filter(value => value.key !== "max_building_height");
-    const probe: Results = {
-      ...base,
-      contract_version: "1.3.0",
-      answers: {
-        ...base.answers,
-        permitted_envelope: {
-          ...envelope,
-          values: without,
-          value_states: {
-            max_building_height: {
-              way: "withheld",
-              label: "Maximum building height",
-              reason: "The height depends on a rule the program has not built yet.",
-              gap_kind: "work_owed",
-              resolved_by: "Building the rule and checking it against a worked example",
-            },
-          },
-        },
-      },
-    };
-    render(<ThreeAnswersPanel results={probe} showDraftValues />);
-    const card_ = card("permitted_envelope");
-    // the headline is the withheld reason, not a number from a different value
-    expect(within(card_).queryByTestId("answer-headline")).toBeNull();
-    const headlineWithheld = within(card_).getByTestId("answer-headline-withheld");
-    expect(headlineWithheld.textContent).toContain("Maximum building height");
-    expect(headlineWithheld.textContent).toContain("Not known");
-  });
-});
-
-describe("M5-T142: the conditions as a per-line list under the 'Conditional' marker, withheld layout", () => {
-  const CONDITIONAL_MARKER = "Conditional";
-  const GAP_LINE = "Not built yet: this part of the program is still owed.";
-
-  type FloorAreaAvailable = Extract<
-    Results["answers"]["floor_area_allowance"],
-    { status: "available" }
-  >;
-
-  // A 1.3.0 probe from the all-available fixture (a draft) whose floor-area answer carries the
-  // given value_states; every value with no entry stays settled. Rendered with showDraftValues.
-  function floorAreaProbe(valueStates: NonNullable<FloorAreaAvailable["value_states"]>): Results {
-    const doc = loadResultsFixture(ALL_AVAILABLE);
-    const answer = doc.answers.floor_area_allowance;
-    if (answer.status !== "available") throw new Error("fixture changed: allowance not available");
-    return {
-      ...doc,
-      contract_version: "1.3.0",
-      answers: {
-        ...doc.answers,
-        floor_area_allowance: { ...answer, value_states: valueStates },
-      },
-    };
-  }
-
-  function conditional(assumptions: readonly string[]): NonNullable<FloorAreaAvailable["value_states"]> {
-    return {
-      max_residential_floor_area: {
-        way: "conditional",
-        conditions: assumptions.map(assumption => ({
-          kind: "unchecked_condition",
-          assumption,
-          settled_by: "A survey or deed dimensions",
-        })),
-      },
-    };
-  }
-
-  it("S1: a settled value shows the figure alone — no marker, no condition line, no 'Not known'", () => {
-    render(<ThreeAnswersPanel results={floorAreaProbe({ max_residential_floor_area: { way: "settled" } })} showDraftValues />);
-    const cardEl = card("floor_area_allowance");
-    expect(within(cardEl).getByTestId("answer-headline-number")).toBeInTheDocument();
-    expect(within(cardEl).queryAllByTestId("answer-conditional-marker")).toHaveLength(0);
-    expect(within(cardEl).queryAllByTestId("answer-condition")).toHaveLength(0);
-    expect(cardEl.textContent ?? "").not.toContain(CONDITIONAL_MARKER);
-    expect(cardEl.textContent ?? "").not.toContain("Not known");
-  });
-
-  it("S2: a conditional value shows exactly its conditions, each verbatim, under the marker", () => {
-    const first = "If the recorded lot area of 10,075 sq ft is confirmed";
-    const second = "If none of these conditions, which were not checked, applies to this lot";
-    render(<ThreeAnswersPanel results={floorAreaProbe(conditional([first, second]))} showDraftValues />);
-    const cardEl = card("floor_area_allowance");
-    const items = within(cardEl).getAllByTestId<HTMLElement>("answer-condition");
-    expect(items).toHaveLength(2);
-    expect(items.map(item => item.textContent)).toEqual([first, second]);
-    for (const item of items) expect(item.tagName).toBe("LI"); // one line each, not a joined span
-    expect(within(cardEl).getByTestId("answer-conditional-marker").textContent).toBe(CONDITIONAL_MARKER);
-  });
-
-  it("S3: a single-condition value shows one line equal to the assumption, with the marker", () => {
-    const only = "If the recorded lot area is confirmed";
-    render(<ThreeAnswersPanel results={floorAreaProbe(conditional([only]))} showDraftValues />);
-    const cardEl = card("floor_area_allowance");
-    const items = within(cardEl).getAllByTestId("answer-condition");
-    expect(items).toHaveLength(1);
-    expect(items[0].textContent).toBe(only);
-    expect(within(cardEl).getByTestId("answer-conditional-marker")).toBeInTheDocument();
-  });
-
-  it("S4: a conditional headline figure renders with the marker; the number never renders alone", () => {
-    render(<ThreeAnswersPanel results={floorAreaProbe(conditional(["If the recorded lot area is confirmed"]))} showDraftValues />);
-    const cardEl = card("floor_area_allowance");
-    // the designated headline key is conditional: the large number and the marker both render
-    expect(within(cardEl).getAllByTestId("answer-headline-number")).toHaveLength(1);
-    expect(within(cardEl).getAllByTestId("answer-conditional-marker")).toHaveLength(1);
-    expect(within(cardEl).getByTestId("answer-conditional-marker").textContent).toBe(CONDITIONAL_MARKER);
-    expect(within(cardEl).getByTestId("answer-conditional")).toBeInTheDocument(); // the list below it
-  });
-
-  it("S5: each withheld envelope value shows 'Not known' + reason + its own kind-of-gap line, not inline-joined, no figure", () => {
-    const doc = loadResultsFixture("recorded_215_16_northern_journey");
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const envelope = card("permitted_envelope");
-    const env = doc.answers.permitted_envelope;
-    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
-    const rows = within(envelope).getAllByTestId<HTMLElement>("answer-withheld-value");
-    let seen = 0;
-    for (const [key, state] of Object.entries(env.value_states)) {
-      if (state.way !== "withheld") continue;
-      seen += 1;
-      const row = rows.find(candidate => (candidate.querySelector("dt")?.textContent ?? "") === state.label);
-      if (!row) throw new Error(`withheld row missing for ${key}`);
-      const reason = within(row).getByTestId("answer-withheld-reason");
-      const gap = within(row).getByTestId("answer-gap-kind");
-      // M5-T144: the rear yard now carries gap_kind missing_information, so its kind line is the
-      // missing-information line; coverage and the setback stay work owed.
-      const expectedGap =
-        state.gap_kind === "missing_information"
-          ? "Missing information about this property."
-          : GAP_LINE;
-      expect(reason.textContent).toBe(`Not known — ${state.reason}`); // reason, no number falls back
-      expect(gap.textContent).toBe(expectedGap);
-      expect(reason.textContent ?? "").not.toContain("Not built yet"); // the gap line is set apart
-      expect(gap.previousSibling).toBe(reason); // its OWN element, no whitespace joining it inline
-      // the whole row is exactly the label, the reason and the gap line — no figure of its own
-      expect(row.textContent).toBe(`${state.label}Not known — ${state.reason}${expectedGap}`);
-    }
-    expect(seen).toBeGreaterThanOrEqual(3); // coverage, rear yard, setback above base
-  });
-
-  it("S6: settled, conditional and withheld in one card are told apart by the text, not by colour", () => {
-    const doc = floorAreaProbe({
-      max_residential_floor_area: { way: "settled" }, // the headline figure
-      max_residential_far: conditional(["If the recorded lot area is confirmed"]).max_residential_floor_area,
-      legal_unit_limit_standard: {
-        way: "withheld",
-        label: "Legal dwelling-unit limit",
-        reason: "There is no evidence of a special density area, so it is not known.",
-        gap_kind: "work_owed",
-        resolved_by: "Sourced evidence of the special density area",
-      },
-    });
-    render(<ThreeAnswersPanel results={doc} showDraftValues />);
-    const cardEl = card("floor_area_allowance");
-    const text = cardEl.textContent ?? "";
-    expect(text).toContain(CONDITIONAL_MARKER); // the conditional value is named by a word
-    expect(text).toContain("Not known"); // the withheld value is named by a word
-    // exactly one conditional value and one withheld value: the settled headline adds neither
-    expect(within(cardEl).getAllByTestId("answer-conditional-marker")).toHaveLength(1);
-    expect(within(cardEl).getAllByTestId("answer-withheld-value")).toHaveLength(1);
-    // the settled headline figure itself carries no marker
-    expect(within(cardEl).getByTestId("answer-headline").textContent ?? "").not.toContain(CONDITIONAL_MARKER);
+    expect(css).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+    expect(css).not.toMatch(/\brgba?\(/);
+    expect(css).not.toMatch(/\bhsla?\(/);
+    // and it does use the shared tokens
+    expect(css).toMatch(/var\(--pt-color-/);
   });
 });

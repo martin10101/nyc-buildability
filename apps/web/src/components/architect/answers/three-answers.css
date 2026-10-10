@@ -1,30 +1,69 @@
-/* Three-answers panel (queue D-05; plan §5a item 5 "Readable by default"): comfortable text
-   size, no small grey print, headline numbers large, status never by colour alone. */
+/* Three-answers panel — the architect-facing results slice (presentation contract step 3;
+   docs/design/ARCHITECT_PRESENTATION_CONTRACT.md §2–§5). Every colour, space, radius and type size
+   comes from a token (apps/web/src/app/globals.css); NO colour literal lives in this file. Status is
+   told by the words and a label, never by colour alone. The building-option styles moved to Part B's
+   building-options.css (M5-T149 part B); the shared value/condition/withheld classes stay here. */
 
 .ta-panel {
-  color: var(--text-primary, #1a1a1a);
-  font-size: 1rem;
-  line-height: 1.5;
+  color: var(--pt-color-ink);
+  font-size: var(--pt-type-body-size);
+  line-height: var(--pt-type-body-line);
+  padding: var(--pt-space-24);
 }
 
 .ta-panel-title {
-  margin: 0 0 var(--space-3, 0.75rem);
-  font-size: 1.25rem;
-  font-weight: 650;
+  margin: 0 0 var(--space-3);
+  font-size: var(--pt-type-section-title-size);
+  line-height: var(--pt-type-section-title-line);
+  font-weight: var(--pt-type-section-title-weight);
 }
 
 .ta-draft-tag {
   font-weight: 600;
-  color: var(--status-conflict-fg, #8a3b1f);
+  color: var(--pt-color-caution-ink);
+}
+
+/* ---- Identity line (contract §2 item 1 "Which property and site am I reviewing") ----
+   First on the screen: the lot, then the program and the floor height. Read from the document's
+   scope; no number or label is typed here. A compact header, not a hero. */
+
+.ta-identity {
+  margin: 0 0 var(--pt-space-16);
+}
+
+.ta-identity-lot {
+  margin: 0;
+  font-size: var(--pt-type-property-title-size);
+  line-height: var(--pt-type-property-title-line);
+  font-weight: var(--pt-type-property-title-weight);
+}
+
+.ta-identity-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-4) var(--pt-space-16);
+  margin: var(--pt-space-8) 0 0;
+}
+
+.ta-identity-fact {
+  margin: 0;
+}
+
+.ta-identity-fact-key {
+  color: var(--pt-color-supporting);
+}
+
+.ta-identity-fact-value {
+  font-weight: 600;
 }
 
 /* ---- The one status strip ---- */
 
 .ta-strip {
-  margin: 0 0 var(--space-4, 1rem);
-  border: 1px solid var(--border-strong, #c9c9c2);
-  border-radius: var(--radius-card, 10px);
-  background: var(--surface-inset, #f4f4f1);
+  margin: 0 0 var(--space-4);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  background: var(--pt-color-selected);
 }
 
 .ta-strip-line {
@@ -32,25 +71,26 @@
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--space-2, 0.5rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  min-height: var(--pt-control-height);
   cursor: pointer;
   font-weight: 600;
 }
 
 .ta-strip-line:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+  box-shadow: var(--focus-ring);
 }
 
 .ta-strip-hint {
-  color: var(--accent, #1f4f82);
+  color: var(--pt-color-action);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .ta-strip-details {
-  padding: 0 var(--space-4, 1rem) var(--space-3, 0.75rem);
+  padding: 0 var(--space-4) var(--space-3);
 }
 
 .ta-strip-list {
@@ -59,45 +99,112 @@
 }
 
 .ta-notes {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
   font-weight: 600;
 }
 
-/* ---- The three answers ---- */
+/* ---- Shared conditions, stated once (contract §1/§3; walkthrough note N3) ----
+   The "If …" lines that would otherwise repeat under every result are listed ONCE here, as
+   "Condition 1", "Condition 2" (plain words, never an internal id). At most three show; the rest
+   sit behind a count. The surface only sets the block apart; the state is told by the words. */
+
+.ta-shared-conditions {
+  margin: 0 0 var(--pt-space-16);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  background: var(--pt-color-surface);
+}
+
+.ta-shared-conditions-heading {
+  margin: 0;
+  font-size: var(--pt-type-body-size);
+  font-weight: 600;
+}
+
+.ta-shared-conditions-list {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ta-shared-condition {
+  margin: 0 0 var(--space-2);
+}
+
+.ta-shared-condition:last-child {
+  margin-bottom: 0;
+}
+
+.ta-shared-condition-label {
+  font-weight: 600;
+}
+
+.ta-shared-conditions-more {
+  margin: var(--space-2) 0 0;
+  color: var(--pt-color-supporting);
+  font-weight: 600;
+}
+
+/* ---- The two-column layout (presentation contract §3; M5-T149 orchestrator addition) ----
+   The window content is a size container (set by Part C's floating window). Below 1000 px the two
+   regions stack in the same reading order; at 1000 px and up they sit side by side, the answers in
+   a 44fr column (at least 320 px) and the details + building options in a 56fr column. */
+
+.ta-layout {
+  display: block;
+}
+
+.ta-left,
+.ta-right {
+  min-width: 0;
+}
+
+/* Stacked spacing between the answers and the details/options below them. */
+.ta-right {
+  margin-top: var(--space-4);
+}
+
+.ta-right > :first-child {
+  margin-top: 0;
+}
+
+/* ---- The three answers (stacked in one column, so each card fills the answers column) ---- */
 
 .ta-answers {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-  gap: var(--space-4, 1rem);
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
 }
 
 .ta-answer {
   min-width: 0;
-  padding: var(--space-4, 1rem);
-  border: 1px solid var(--border-quiet, #e4e4df);
-  border-radius: var(--radius-card, 10px);
-  background: var(--surface-card, #ffffff);
+  padding: var(--pt-space-16);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  background: var(--pt-color-surface);
 }
 
 .ta-answer-title {
-  margin: 0 0 var(--space-2, 0.5rem);
-  font-size: 1.1rem;
-  font-weight: 650;
+  margin: 0 0 var(--space-2);
+  font-size: var(--pt-type-section-title-size);
+  line-height: var(--pt-type-section-title-line);
+  font-weight: var(--pt-type-section-title-weight);
 }
 
 .ta-headline {
-  margin: 0 0 var(--space-3, 0.75rem);
+  margin: 0;
 }
 
 .ta-headline-label {
   display: block;
-  color: var(--text-secondary, #4b4b47);
+  color: var(--pt-color-supporting);
 }
 
 .ta-headline-number {
-  font-size: 2.25rem;
-  font-weight: 700;
-  line-height: 1.15;
+  font-size: var(--pt-type-headline-value-size);
+  font-weight: var(--pt-type-headline-value-weight);
+  line-height: var(--pt-type-headline-value-line);
   font-variant-numeric: tabular-nums;
 }
 
@@ -110,21 +217,71 @@
   margin-left: 0.05em;
 }
 
+/* ---- The detail disclosure (contract §2 item 7 "How was this derived; available on demand") ----
+   A real button opens the detail region; focus moves into the region on open and Escape returns
+   focus to the button (the component manages this). The region stays in the DOM when closed (the
+   `hidden` attribute), so assistive-tech structure and in-page search still find it. */
+
+.ta-details {
+  margin: var(--space-3) 0 0;
+}
+
+.ta-details-button {
+  min-height: var(--pt-control-height);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-color-surface);
+  color: var(--pt-color-action);
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ta-details-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ta-details-region {
+  margin: var(--space-2) 0 0;
+  padding: var(--space-3);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-color-page);
+}
+
+.ta-details-region[hidden] {
+  display: none;
+}
+
+.ta-details-region:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 .ta-rows {
-  margin: 0 0 var(--space-3, 0.75rem);
+  margin: 0;
+}
+
+.ta-rows + .ta-rows,
+.ta-rows + .ta-withheld,
+.ta-withheld + .ta-rows {
+  margin-top: var(--space-2);
 }
 
 .ta-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: var(--space-1, 0.25rem) var(--space-3, 0.75rem);
-  padding: var(--space-1, 0.25rem) 0;
-  border-bottom: 1px solid var(--border-quiet, #e4e4df);
+  gap: var(--space-1) var(--space-3);
+  padding: var(--space-1) 0;
+  border-bottom: 1px solid var(--pt-color-divider);
 }
 
 .ta-row dt {
-  color: var(--text-secondary, #4b4b47);
+  color: var(--pt-color-supporting);
 }
 
 .ta-row dd {
@@ -140,22 +297,27 @@
 }
 
 /* ---- Conditional figures (ruling L1/L3; R229/R267/R269) ----
-   The fixed 'Conditional' marker beside the figure, then one line per condition. Normal weight so
-   the figure is immediately qualified and never reads as confirmed; the state is told by the WORD,
-   never by colour alone. */
+   The fixed 'Conditional' marker beside the figure, in normal weight, so the figure is immediately
+   qualified and never reads as confirmed; the state is told by the WORD, never by colour alone. The
+   full condition texts are stated once at the top (shared conditions) and referenced here by name. */
 .ta-conditional {
   flex-basis: 100%;
-  margin: var(--space-1, 0.25rem) 0 0;
+  margin: var(--space-1) 0 0;
 }
 
 .ta-conditional-marker {
   display: inline-block;
   font-weight: 400;
-  color: var(--text-secondary, #4b4b47);
+  color: var(--pt-color-supporting);
+}
+
+.ta-condition-refs {
+  margin-left: var(--space-1);
+  color: var(--pt-color-supporting);
 }
 
 .ta-conditions {
-  margin: var(--space-1, 0.25rem) 0 0;
+  margin: var(--space-1) 0 0;
   padding-left: 1.25rem;
 }
 
@@ -164,36 +326,39 @@
 }
 
 /* ---- A withheld value (R258, R570, ruling R6) ----
-   The reason reads in normal weight (it is inside a bold dd), and the kind-of-gap line sits on its
-   OWN line below the reason — no longer inline-joined to it. */
+   The reason reads in normal weight, and the kind-of-gap line sits on its OWN line below it. */
+.ta-withheld {
+  margin: 0;
+}
+
 .ta-withheld-reason {
   font-weight: 400;
 }
 
 .ta-gap-kind {
   display: block;
-  margin-top: var(--space-1, 0.25rem);
+  margin-top: var(--space-1);
 }
 
 .ta-exception {
   display: inline-block;
   padding: 0 0.4em;
-  border: 1px solid var(--status-conditional-fg, #6b5416);
-  border-radius: var(--radius-control, 6px);
-  background: var(--status-conditional-bg, #f5f0e4);
-  color: var(--status-conditional-fg, #6b5416);
-  font-size: 1rem;
+  border: 1px solid var(--pt-status-conditional-ink);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-status-conditional-surface);
+  color: var(--pt-status-conditional-ink);
+  font-size: var(--pt-type-body-size);
   font-weight: 600;
 }
 
 .ta-not-available {
   margin: 0;
   font-weight: 600;
-  color: var(--text-primary, #1a1a1a);
+  color: var(--pt-color-ink);
 }
 
 .ta-shortfall {
-  margin: 0 0 var(--space-3, 0.75rem);
+  margin: var(--space-3) 0 0;
 }
 
 .ta-shortfall p {
@@ -201,54 +366,47 @@
 }
 
 .ta-shortfall-reasons {
-  margin: var(--space-1, 0.25rem) 0 0;
+  margin: var(--space-1) 0 0;
   padding-left: 1.25rem;
 }
 
-.ta-details summary {
-  cursor: pointer;
-  color: var(--accent, #1f4f82);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.ta-details summary:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+.ta-supplement {
+  margin: var(--space-2) 0 0;
 }
 
 .ta-sections {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
   padding-left: 1.25rem;
+  color: var(--pt-color-supporting);
 }
 
 .ta-measurement {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
+  color: var(--pt-color-supporting);
 }
 
 .ta-completeness {
-  margin: var(--space-4, 1rem) 0 0;
+  margin: var(--space-4) 0 0;
   font-weight: 600;
 }
 
-/* ---- Building-option draft note (contract 1.2.0, D-090-R132) ---- */
-
-/* A draft reading of the captured zoning text, shown openly under the building-option values and
+/* ---- Building-option draft note (contract 1.2.0, D-090-R132) ----
+   A draft reading of the captured zoning text, shown openly under the building-option values and
    never as a compliance statement. The heading carries the "pending qualified review" wording in
    plain text — no status is encoded by colour; the border and inset only set the block apart. */
 .ta-option-notes {
-  margin: var(--space-3, 0.75rem) 0 0;
+  margin: var(--space-3) 0 0;
 }
 
 .ta-option-note {
-  padding: var(--space-3, 0.75rem);
-  border: 1px solid var(--border-strong, #c9c9c2);
-  border-radius: var(--radius-control, 6px);
-  background: var(--surface-inset, #f4f4f1);
+  padding: var(--space-3);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-color-selected);
 }
 
 .ta-option-note + .ta-option-note {
-  margin-top: var(--space-2, 0.5rem);
+  margin-top: var(--space-2);
 }
 
 .ta-option-note-heading {
@@ -257,49 +415,49 @@
 }
 
 .ta-option-note-kind {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
+  margin: var(--space-1) 0 0;
+  color: var(--pt-color-supporting);
   font-weight: 600;
 }
 
 .ta-option-note-text {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
 }
 
 .ta-option-note-sections {
-  margin: var(--space-2, 0.5rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
+  margin: var(--space-2) 0 0;
+  color: var(--pt-color-supporting);
 }
 
 .ta-option-note-snapshots {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
 }
 
 .ta-option-note-snapshots summary {
   cursor: pointer;
-  color: var(--accent, #1f4f82);
+  color: var(--pt-color-action);
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .ta-option-note-snapshots summary:focus-visible {
   outline: none;
-  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
+  box-shadow: var(--focus-ring);
 }
 
 .ta-option-note-snapshot-list {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
   padding-left: 1.25rem;
 }
 
 /* ---- Scope beside the numbers (contract 1.1.0, D-090-R108) ---- */
 
 .ta-scope {
-  margin: 0 0 var(--space-4, 1rem);
-  padding: var(--space-3, 0.75rem) var(--space-4, 1rem);
-  border: 1px solid var(--border-quiet, #e4e4df);
-  border-radius: var(--radius-card, 10px);
-  background: var(--surface-card, #ffffff);
+  margin: var(--space-4) 0 0;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  background: var(--pt-color-surface);
 }
 
 /* The scope label is a plain-text line, never a coloured chip (owner directive). */
@@ -309,29 +467,29 @@
 }
 
 .ta-scope-lot {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
+  margin: var(--space-1) 0 0;
+  color: var(--pt-color-supporting);
 }
 
 .ta-scope-assumptions {
-  margin: var(--space-3, 0.75rem) 0 0;
+  margin: var(--space-3) 0 0;
 }
 
 /* The assumed conditions are shown open by default (D-090-R119): a plain heading over a real list,
    nothing hidden behind a disclosure. Not link-styled — it is a heading, not a toggle. */
 .ta-scope-assumptions-heading {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--pt-type-body-size);
   font-weight: 600;
 }
 
 .ta-scope-assumption-list {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
   padding-left: 1.25rem;
 }
 
 .ta-scope-assumption {
-  margin: 0 0 var(--space-2, 0.5rem);
+  margin: 0 0 var(--space-2);
 }
 
 .ta-scope-assumption-head {
@@ -343,21 +501,21 @@
 }
 
 .ta-scope-assumption-basis {
-  color: var(--text-secondary, #4b4b47);
+  color: var(--pt-color-supporting);
 }
 
 .ta-scope-assumption-statement {
   display: block;
-  color: var(--text-secondary, #4b4b47);
+  color: var(--pt-color-supporting);
 }
 
 .ta-scope-whole-site {
-  margin: var(--space-3, 0.75rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
+  margin: var(--space-3) 0 0;
+  color: var(--pt-color-supporting);
 }
 
 .ta-scope-remaining {
-  margin: var(--space-2, 0.5rem) 0 0;
+  margin: var(--space-2) 0 0;
 }
 
 .ta-scope-remaining-label {
@@ -367,181 +525,31 @@
 
 .ta-scope-remaining-reason {
   display: block;
-  color: var(--text-secondary, #4b4b47);
+  color: var(--pt-color-supporting);
 }
 
-/* ---- First building options (contract 1.4.0, M5-T146/M5-T147) ----
-   The worked building alternatives, each with its floor schedule, conditions, what was not checked
-   and its own preliminary capacity estimate; the legal dwelling-unit limit kept separate; coverage
-   by portion. No status is encoded by colour; the state is told by the words and the markers. */
+/* ---- Desktop two columns (contract §3; window content >= 1000 px) ----
+   The answers lead in a 44fr column (floor 320 px); the details and building options take the 56fr
+   column, with a 24 px gap. Part C's browser test measures the answers column via the
+   `answer-floor_area_allowance` card: 40–48 % of a 1440 px window, at least 320 px. */
+@container (min-width: 1000px) {
+  .ta-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 44fr) 56fr;
+    gap: var(--pt-space-24);
+    align-items: start;
+  }
 
-.ta-options {
-  margin: var(--space-4, 1rem) 0 0;
-  padding: var(--space-4, 1rem);
-  border: 1px solid var(--border-quiet, #e4e4df);
-  border-radius: var(--radius-card, 10px);
-  background: var(--surface-card, #ffffff);
+  .ta-right {
+    margin-top: 0;
+  }
 }
 
-.ta-options-title {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 650;
-}
-
-.ta-options-lead {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
-}
-
-.ta-option {
-  margin: var(--space-3, 0.75rem) 0 0;
-  padding: var(--space-3, 0.75rem);
-  border: 1px solid var(--border-quiet, #e4e4df);
-  border-radius: var(--radius-control, 6px);
-  background: var(--surface-inset, #f4f4f1);
-}
-
-.ta-option-label {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 650;
-}
-
-.ta-option-summary {
-  margin: var(--space-1, 0.25rem) 0 0;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-/* The sentence why the plan fits (contract 1.4.0 fit_note): plain text beside the building; it
-   qualifies the plan against coverage only, never a statement that the building fits the lot. */
-.ta-option-fit-note {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
-}
-
-/* N4: the floor table scrolls INSIDE this box on narrow screens, so the page never scrolls sideways.
-   The box is a keyboard-reachable, named region (role + aria-label + tabindex in the component). */
-.ta-floor-schedule-scroll {
-  margin: var(--space-3, 0.75rem) 0 0;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.ta-floor-schedule-scroll:focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring, 0 0 0 3px rgba(31, 79, 130, 0.9));
-}
-
-.ta-floor-schedule {
-  width: 100%;
-  /* Keep all six columns legible; below this the box (not the page) scrolls sideways. */
-  min-width: 32rem;
-  border-collapse: collapse;
-  font-variant-numeric: tabular-nums;
-}
-
-.ta-floor-schedule-caption {
-  text-align: left;
-  font-weight: 600;
-  margin-bottom: var(--space-1, 0.25rem);
-}
-
-.ta-floor-schedule th,
-.ta-floor-schedule td {
-  padding: var(--space-1, 0.25rem) var(--space-2, 0.5rem);
-  border-bottom: 1px solid var(--border-quiet, #e4e4df);
-  text-align: right;
-}
-
-.ta-floor-schedule thead th,
-.ta-floor-schedule tbody th {
-  text-align: left;
-  font-weight: 600;
-}
-
-.ta-option-not-checked,
-.ta-capacity {
-  margin: var(--space-3, 0.75rem) 0 0;
-}
-
-.ta-option-not-checked-heading,
-.ta-capacity-assumptions-heading {
-  margin: 0;
-  font-weight: 600;
-}
-
-.ta-option-not-checked-list,
-.ta-capacity-assumptions-list {
-  margin: var(--space-1, 0.25rem) 0 0;
-  padding-left: 1.25rem;
-}
-
-.ta-capacity-label {
-  margin: 0;
-  font-weight: 650;
-}
-
-.ta-capacity-range {
-  margin: var(--space-1, 0.25rem) 0 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.ta-capacity-wholes {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
-}
-
-.ta-capacity-assumptions {
-  margin: var(--space-2, 0.5rem) 0 0;
-}
-
-.ta-legal-limit,
-.ta-coverage {
-  margin: var(--space-3, 0.75rem) 0 0;
-  padding-top: var(--space-3, 0.75rem);
-  border-top: 1px solid var(--border-quiet, #e4e4df);
-}
-
-.ta-legal-limit-label,
-.ta-coverage-label {
-  margin: 0;
-  font-size: 1rem;
-  font-weight: 650;
-}
-
-.ta-legal-limit-value {
-  margin: var(--space-1, 0.25rem) 0 0;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.ta-legal-limit-note,
-.ta-coverage-resolved {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
-}
-
-.ta-coverage-figures {
-  margin: var(--space-2, 0.5rem) 0 0;
-}
-
-.ta-option-sections {
-  margin: var(--space-2, 0.5rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
-}
-
-/* A building of the method that was NOT worked (ruling W14/W15): its reason and what would resolve
-   it, plain text from the document; no figure is a result here. The border only sets it apart. */
-.ta-option-not-worked .ta-withheld-reason {
-  display: block;
-  margin: var(--space-1, 0.25rem) 0 0;
-}
-
-.ta-option-resolved {
-  margin: var(--space-1, 0.25rem) 0 0;
-  color: var(--text-secondary, #4b4b47);
+/* ---- Narrow window (contract §3 "At 320–700 px, use one column with 16 px internal padding") ----
+   The two regions already stack below 1000 px; here the panel padding tightens to 16 px. A material
+   limitation is never hidden because the screen is narrow. */
+@container (max-width: 700px) {
+  .ta-panel {
+    padding: var(--pt-space-16);
+  }
 }
