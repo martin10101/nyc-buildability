@@ -235,4 +235,14 @@ drawings/title)
 - `npm run typecheck` → EXIT 0.
 - `npx vitest run src/components/architect src/lib` → EXIT 0; 112 files, 2292 tests passed.
 
+## Rework 4 (reset to 334b07d17ebe8cd45ebe84a32fc32b1f377341fe; full browser suite 167 passed / 1 failed)
+
+- **report-print.flag-on.spec.ts "page-type titles are in order"** failed (log `e2e-4-full.log:224`)
+  because the report's decision summary now carries a coverage block naming "H. Option comparisons",
+  so the loose `/option comparison/i` first-matched on page 1. Fix: match each page type by its OWN
+  `type-name` label line, anchored and multiline — `/^decision summary$/im`, `/^site and context$/im`,
+  `/^option comparison$/im`, `/^scenario sheet\b/im`, `/^assumptions and open items$/im`,
+  `/^calculations and evidence$/im` (label text confirmed in `print-int4/report.html`). Every other
+  assertion unchanged. Checks: `npm run lint` → EXIT 0; `npm run typecheck` → EXIT 0.
+
 END-OF-REPORT
