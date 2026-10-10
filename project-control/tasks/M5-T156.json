@@ -110,22 +110,22 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "visual-quality-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The drawings and the provider arrive from the two other tasks: this builder starts after both are integrated on the branch.",
     "Adding a sheet moves page numbers: the browser test's page assertions are updated, none weakened."
   ],
   "blockers": [],
   "created_at": "2026-10-10T18:56:13.637484+00:00",
-  "updated_at": "2026-10-10T18:56:13.949628+00:00",
+  "updated_at": "2026-10-10T18:56:19.349937+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -149,5 +149,14 @@
     "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/api/test_results_read_api.py",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T18:56:19.349818+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the builder starts after M5-T154 and M5-T155 are integrated on the branch"
+    }
+  ]
 }

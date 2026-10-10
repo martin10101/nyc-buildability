@@ -104,22 +104,22 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "geospatial-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "visual-quality-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Gaps between tax lots also include rail lines, parks or unmapped land: only a gap crossed by a named street centre line is labelled as that street.",
     "Label placement on angled streets may collide: the overlap test of S4 fails closed."
   ],
   "blockers": [],
   "created_at": "2026-10-10T18:56:11.640231+00:00",
-  "updated_at": "2026-10-10T18:56:12.073580+00:00",
+  "updated_at": "2026-10-10T18:56:19.060703+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -138,5 +138,14 @@
     "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings tests/cad",
     "python tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T18:56:19.060614+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    }
+  ]
 }
