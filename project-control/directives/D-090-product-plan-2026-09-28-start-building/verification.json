@@ -5652,330 +5652,591 @@
     "D-090-R895"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87",
+   "reviewed_manifest_sha256": "f024199223e0ad07e44e5f8467d2c3384fd1004ef5e2a852bacc9731915d5f3b",
    "requirements": [
     {
      "id": "D-090-R256",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The entered floor-to-floor height is read from the document and shown on the identity line (ThreeAnswersPanel.IdentityLine, IDENTITY_KEYS includes floor_to_floor_ft) and in the folded one-line inputs summary (ResultsForm.summarizeInputs), so no value is used in a calculation without being shown.",
+      "ResultsForm exposes the height as a labelled numeric input with unit, bound and Reset (confirmed in source + G3 CHECK 6), satisfying \"visible, editable starting values / no hidden defaults\" for the inputs this screen carries.",
+      "OPEN for later work: editing the apartment-size and efficiency-share assumptions on the screen (DB-213 a) \u2014 they are displayed but not yet editable here.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R267",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The building-option card renders \"Site fit not verified\" plus the document's not_checked list (AnswerCard.BuildingOptionCard / FirstBuildingOptions), and conditional figures carry the plain-text \"Conditional\" marker (AnswerCard.ConditionalMarker), so nothing dependent on an unchecked item reads as confirmed.",
+      "result-status.ts has no \"verified\" code path (exhaustive settled/conditional/withheld); first-building-options.test.tsx S6 asserts the section never says feasible/complies/validated.",
+      "OPEN: the PDF/report surfaces carry this \"never confirmed via disclaimer\" rule further.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R526",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The benchmark fixture's building_alternatives[0].not_checked includes the literal \"Parking, loading and bicycle requirements\" (packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json), and the card renders each not_checked item verbatim (first-building-options.test.tsx asserts items == buildingB.not_checked).",
+      "The website-typed parking line was removed (ruling V11(9)); G4 mutation 8 (re-adding it) was caught; no rendered text calls an option feasible (S6 negative assertion).",
+      "OPEN: capturing/resolving the actual parking/loading/bicycle provisions and the report counts section are later work (R517 chain).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R543",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The estimate label is read from the document and branched on exactly (\"Preliminary capacity estimate\" vs \"Not known\") in lib/architect/first-building-options.ts (lines 243, 340) \u2014 the website never invents the label.",
+      "lib/architect/__tests__/first-building-options.test.ts and the component tests cover the shape/no-shape cases via the committed fixtures.",
+      "OPEN: the estimator that decides when an option \"has floors and a shape\" is server-side (M5-T145); this task only displays the document's label.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R544",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "On the benchmark the 29-unit legal dwelling-unit limit is shown withheld/conditional inside the floor-area-allowance answer, while the 17.27-21.59 apartment estimate sits only under the building option (scenario S5; confirmed in both review rounds and in the fixture values 17.27/20150/21.59).",
+      "Ruling V2 is enforced: the adapters only format/group (presented-results.ts, first-building-options.ts) and recompute nothing, so the legal ceiling and the estimate stay separate figures read from the document.",
+      "OPEN: the derivation that the estimate uses accommodated floor area (not the permitted maximum) is a server/estimator obligation verified elsewhere (R509/R392).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R556",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "lib/architect/three-answers.ts (lines ~426-446) renders a withheld DESIGNATED headline value as its reason (kind \"withheld\"), explicitly \"never values[0] \u2014 R556\"; the fallback to the first shown value happens only when the key is simply ABSENT in a legacy document, never when it is withheld.",
+      "G4 mutation 3 (\"withheld -> value 999\") was caught; ResultsPanel marks a result stale on input change rather than substituting an older value (stale guard, S10).",
+      "OPEN: the emit side (where withheld values originate) is covered by the wire-and-emit task; here only the website reader is in scope.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "AnswerCard.WithheldLine renders \"Not known \u2014 <reason>\" with NO numeric field (R556/R570 in-code), and metric-format never gives a \"not_known\" value a digit (G3 CHECK 3; three-answers-panel/results-panel tests S8/S11).",
+      "A text check (SNAKE_CASE / banned-words guards) finds no number for a withheld result on the screen.",
+      "OPEN: the document and the PDF export carry the same \"stays withheld everywhere\" obligation on their own surfaces.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R641",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"Preliminary zoning results\" is emitted server-side into status_strip[0] (services/api/app/scenario/three_answers/explanations.py:110) and is present in the benchmark fixture (line 519); the website's ResultsStatusStrip renders statusStripItems(results) from the document and types no label (ruling V2).",
+      "The owner's label therefore leads the status strip; nothing on the screen shows the old \"Zoning maximum\" wording (S3).",
+      "OPEN: the server emission of this label was done by prior/sibling work; this task only renders it.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R700",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The estimate carries the APARTMENT_SIZE_BASIS_NOTE \"on the HPD measurement basis\" and the label \"Preliminary capacity estimate\"; ruling V11(11) ties the measurement-basis wording to results.schema.json by a test (G4 mutation 9 caught dropping it), so nothing presents the share range or apartment size as law/measured/validated.",
+      "No rendered copy calls these values a requirement or a measurement (SNAKE_CASE/banned-words guards; first-building-options.ts comments at lines 66, 87).",
+      "OPEN: editing the share range (0.60-0.75) and the 700 sq ft apartment size on the screen (DB-213 a).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R804",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "All 31 files in M5-T149's evidence-map files_changed are inside the packet's allowed_paths and none is in its forbidden_paths or the forbidden services/** , packages/** prefixes (verified programmatically against the packet); the globals.css and services/** changes on the shared branch belong to sibling tasks M5-T148/M5-T150, not M5-T149.",
+      "No calculation engine, rule file, security config, render.yaml or production switch is in M5-T149's set; the evidence map's what_did_not_change (\"no rule/capture/reference/schema; no legal figure; no human verdict; no production switch\") is consistent with the diff.",
+      "OPEN: nothing \u2014 scope/authority/security/holds are preserved for this task's share.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R805",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "After \"Show results\" the form folds to a one-line \"Inputs used: \u2026 \u00b7 Change inputs\" summary and focus moves to the results heading (ResultsPanel formFolded + pendingHeadingFocus -> .ta-panel-title); identity + the three answers' headline values are in the first screen at 1440 and 390 px (scenario S12 browser test; delta visual/walkthrough PASS).",
+      "The full evidence stays available behind Details (ResultDetails) and in the right-column scope summary; nothing is hidden to shorten the screen (the removed content moved, it was not dropped \u2014 G4 CHECK 2/3).",
+      "OPEN: \"the first REPORT page\" half of this row is PDF work (contract steps 4-5).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R807",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M5-T148's token/adapter files are byte-unchanged in the reviewed delta (G3 delta \"M5-T148 \u2026 byte-unchanged\"), so earlier fixes were preserved; the slice was built on the merged main line (base 0bb6acb2) and the producer report records reading the route wiring before editing.",
+      "The evidence map and producer report state the branch/task/directives were rechecked; I verified the preservation half directly (no regression to M5-T148 adapters) but the \"rechecked before editing\" step itself is a process attestation I can only confirm through the records.",
+      "OPEN: nothing specific to this task; this is a standing discipline each editing task must restate.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R809",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The left column leads with identity, the context strip, then the three answers (ThreeAnswersPanel ta-left order, ruling V12), so the property and the three answers come first; no development status or source metadata appears in the main view (S11 SNAKE_CASE guard).",
+      "This is the V12 correction of the orchestrator's own V11(7), which had wrongly pushed conditions ahead of the answers.",
+      "OPEN: the report's page-one treatment is PDF work.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R810",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Each answer renders as a concise row (label -> value+unit/unavailable -> one exception -> Details) in AnswerCard, and the open items are a separate \"What needs resolving\" list, not long prose in table cells (S4; openItemsView).",
+      "No long-prose-in-narrow-cell pattern exists on this screen.",
+      "OPEN: the PDF \"pages 5-6 narrow cell\" concern is PDF work.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R811",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "sharedConditionsView() keeps a condition with fan-out >= 2 in the shared list stated once, named \"Condition N\"; a fan-out-1 condition stays LOCAL and is shown in full with its result (three-answers.ts conditionIndex/sharedConditionsView; AnswerCard LocalConditions vs ConditionRefs), the V11(5) + local-exception fix.",
+      "G4 mutation 4 (hiding a one-result condition behind a name) was caught; the benchmark density statement stays attached in full to the 29-unit figure.",
+      "OPEN: shared-context-once is also a PDF obligation on that surface.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R812",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The three answers are distinct cards (floor_area_allowance, permitted_envelope, building_option); the building option is explicitly the SCHEDULED area with \"Site fit not verified\" (AnswerCard.BuildingOptionCard, presented-results.ts ResultKind has no \"achieved\" member).",
+      "So allowance, envelope and the scheduled option are told apart and site-fit-unverified is stated explicitly.",
+      "OPEN: the PDF must tell the same three apart.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R813",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The comparison shows the results that exist and marks a not-worked building \"Not known\" with its reason, never 0 and never an empty cell (BuildingOptionsComparison + first-building-options.ts COMPARISON_NOT_KNOWN at line 179; S7); no baseline number is repeated across options.",
+      "G4 mutation 5 (not-worked storeys -> \"0\") was caught.",
+      "OPEN: the PDF's eleven-option comparison page.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R816",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The left-column reading order is identity -> context strip -> three answers -> building options + comparison -> what needs resolving -> shared conditions, with \"how derived\" (ScopeSummary/Details) available on demand \u2014 the contract's seven-question order (ruling V12; ThreeAnswersPanel).",
+      "The illustrative schedule is told apart from a fitted option (R895 wording), matching question 4.",
+      "OPEN: the report must follow the same seven questions (PDF work).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R817",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The ten-second target was exercised by an AI human-journey-reviewer on pictures, and the records DO say so plainly \u2014 evidence-map known_limits #4 \"judged by AI reviewers on pictures, not by a real architect\" and the R817 evidence entry \"Open: the contract asks for a test with a real person\" \u2014 so the row's prohibition (\"never claimed from screenshots\") is satisfied, with no false claim.",
+      "I confirm the brief's specific question: YES, it is stated that the ten-second target was judged by AI reviewers on pictures, not a real architect.",
+      "OPEN: the positive requirement \u2014 an actual ten-second walkthrough with a real person \u2014 was not performed in this environment and remains owed to the owner.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R819",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Only components under components/architect and lib/architect changed; no app/ route or page file was added, so the existing single dashboard with its floating Results tool is kept and there is no new multi-page navigation or route change to see a map.",
+      "DashboardEntry has a single documented one-line wide-list addition (G3 CHECK 7), not a navigation rework.",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R820",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "three-answers.css sets `@container (min-width:1000px) .ta-layout { grid-template-columns: minmax(320px,44fr) 56fr }` \u2014 the three answers together in the left column with a >=320px floor near a 44:56 split, with details on the right (scenario S1 measured against the grid per ruling V10a).",
+      "Identity (search/confirmed-property header) stays with the answers; the active property/lot/scenario stay visible when the tool is open (S1).",
+      "OPEN: the property-search header itself is pre-existing dashboard chrome.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R821",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "statusStripItems() returns at most three visible items with the rest in `overflow`, and standing notices are grouped behind a \"Notes (N)\" count (ResultsStatusStrip); the \"What needs resolving\" list caps at three with \"N more\" (S3, S14).",
+      "A condition that changes one number stays attached to that number (local-exception rule).",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R822",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Details open in place inside the answer's own ResultDetails region; the Results tool is a single floating surface and no stacked dialogs are introduced.",
+      "This matches \"details in the existing tool surfaces, one at a time\" (G3 CHECK 6).",
+      "OPEN: the comparison/map-enlargement/report-preview tool surfaces are exercised by other tasks.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R823",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The comparison keeps one site and measurement basis (BuildingOptionsComparison uses the single document); changing an input marks the shown result stale (ResultsPanel `stale = \u2026 !sameInputs(values, askedWith)`, data-testid results-stale; S10).",
+      "A withheld/newer answer never leaves an older one shown (newest-wins, S10).",
+      "OPEN: export invalidation on input change is a PDF-slice obligation.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R824",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task introduced no display toggle coupled to a legal calculation input; it changed only results-presentation files, and the existing-building display preference and calc inputs were untouched (no such file in M5-T149's set).",
+      "Hiding a layer therefore cannot change whether the existing building counts in a calculation (no coupling added).",
+      "OPEN: nothing introduced; the standing preference lives outside this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R825",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The results slice renders only behind its existing flag (e2e specs are *.flag-on.spec.ts) and activates no 3D or other held feature to match a mockup.",
+      "No held-feature switch is flipped by this task.",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R826",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "three-answers.css stacks to one column below 1000px and `@container (max-width:700px)` tightens panel padding to 16px; the phone window fills screen height via floating-workspace-window.css `@media (max-width:700px)` (S2, S12); identity, main answer and its exception stay first.",
+      "No material limitation is dropped on a narrow screen (the stacked content is the same, G4 CHECK 2/3).",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R827",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The narrow comparison keeps row order/names/units with a sticky row-label column (`.bo-compare-rowhead { position: sticky }`, ruling V11(8)) inside a labelled role=\"region\" scroll box; values/labels are not ellipsized and assumption inputs are labelled numbers with unit, >0 bound and Reset (G3 CHECK 6; S7).",
+      "Long addresses wrap (results-layout 200%-zoom / text-spacing checks).",
+      "OPEN: on-screen editing of the share/size assumptions (DB-213 a) \u2014 the one assumption input present (height) meets the rule.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R828",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "ResultDetails focuses the region on open (useEffect keyed on open) and Escape closes it and returns focus to the opener button (ResultDetails.tsx lines 27-34, 58-60); \"Change inputs\" returns focus into the form select (ResultsPanel) (S4).",
+      "Content stays in the DOM via `hidden` so focus is never stranded.",
+      "OPEN: modal focus-trap behavior of the floating window frame is pre-existing chrome.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R829",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The offline reference's three stacked sheets are not copied as navigation; the existing floating window and single-column stack are used (no three-sheet layout in the diff).",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R830",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "AnswerCard renders each result in the exact order title -> headline(label + value+unit OR withheld state) -> at most one ExceptionTag -> ConditionalMarker -> Details; the qualifying fact (withheld reason, local condition) is never truncated and stays with the result, while supporting detail moves into Details.",
+      "The budgets are applied as defaults, not truncation (WithheldLine renders the full reason).",
+      "OPEN: the PDF applies the same per-result order.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R831",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Developer wording is removed: the server reason no longer says \"step-P6 method\" (first_option_results.py, G4 mutation 1 caught restoring it) and the website drops \"still owed\"/\"Not built yet\"/\"Not worked\"/\"internal preview\" (three-answers.ts GAP_KIND_LINES; BANNED_WORDS test in three-answers-panel.test.tsx line 60).",
+      "A missing property fact carries only the short tag \"Needs property information\" (team work is never put on the architect).",
+      "OPEN: the server reasons it consumes are produced by M5-T150; this task verifies the rendered copy and the shared constants.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R832",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No implementation id, merge status, route, contract version, task number or test outcome appears in the architect view; the SNAKE_CASE regex guard and banned-field-key list in three-answers-panel.test.tsx enforce it, and technical ids stay behind a \"Technical details\" surface (S11).",
+      "G3/G4 reproduced that machine field names (building_alternatives, buildings_not_worked) never reach the screen.",
+      "OPEN: the client PDF must keep the same discipline.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R833",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The screen keeps the owner's R641 status set; the \"Conditional\" marker is compact plain text with colour secondary (AnswerCard.ConditionalMarker); result-status.ts has NO code path to \"Verified\" (so Verified is never a synonym for merged/arithmetic/link), and a withheld value is never relabelled conditional to be shown (WithheldLine stays \"Not known\").",
+      "Owner question C2 (the PDF's six labels on the screen) is left open and \"Verified\" is never shown (ruling V3).",
+      "OPEN: the PDF label mapping (R779-R799) and question C2.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R856",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "metric-format distinguishes exact 0 (\"0 sq ft\") from not_known (`value == null || !Number.isFinite`), and a document for another lot or a stale answer is not shown as current (resultIdentity + stale guard; S10, S15); the screen renders one document revision.",
+      "G4 mutations 2 and 6 confirmed the 0-vs-unavailable and another-lot guards have teeth.",
+      "OPEN: screen-and-export sharing one revision / stale-export prevention is a PDF-slice obligation.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R859",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task is the contract's step 3 (one complete website slice: real property -> three answers -> details -> one comparison -> real data states including partial), built after M5-T148's step-2 shared presentation (ruling V1 order; evidence map).",
+      "The reconcile-and-persist step (1) and shared presentation (2) are in place; this slice sits correctly at step 3.",
+      "OPEN: steps 4 (PDF slice), 5 (remaining sections/tools), 6-7 (bounded acceptance / deliver outputs) stay owed.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R869",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-01: identity \"Queens block 7334, lot 70\" and the headline \"20,150 sq ft Conditional\" are in the first screen after Show results at 1440 and 390 px (e2e results-layout S12; delta visual/walkthrough PASS; results-panel.test.tsx / three-answers-panel.test.tsx).",
+      "Desktop and phone captures plus the (AI) walkthrough observations are recorded in M5-T149-G3G4.md delta round.",
+      "OPEN: the drawings and PDF (contract steps 4-5) carry UX-01 further.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R870",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-02: allowance, envelope, the scheduled building option and the estimate are distinguishable; the 29-unit limit stays with the allowance and the 17.27-21.59 estimate with the building option (S5; first-building-options.test.tsx, three-answers-panel.test.tsx; populated + partial fixtures).",
+      "result-status.ts keeps estimates a separate kind (no \"achieved\").",
+      "OPEN: the drawings/PDF carry UX-02 further.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R871",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-03: no withheld/unknown result is promoted to a number and no draft to verified \u2014 metric-format/WithheldLine add no digit, result-status has no verified path, and draft values are hidden behind \"rules not professionally reviewed\" unless showDraftValues (G4 mutations 3/9; state tests on the canonical fixtures).",
+      "OPEN: the PDF must pass the same state tests.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R872",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-04: shared notices appear once (SharedConditions, sharedConditionsView) and are referenced by name elsewhere (\"Applies: Condition N\"); a material one-result exception stays visible in full with its result (S3, S14; disclosure inventory in the delta visual review).",
+      "OPEN: the PDF/drawing surfaces carry UX-04 further.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R873",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-05: the screen and its comparison share one property/scenario/revision/basis (single document), a stale answer is marked (results-stale) and a document for another lot is not shown (AnotherLotCard; S10, S15; result-identity.test.ts).",
+      "G4 mutation 6 confirmed the cross-lot guard.",
+      "OPEN: cross-output identity against the drawings and PDF is later work (steps 4-5).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R874",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-06: the comparison uses consistent units and one site basis with differences explicit, across at least two genuinely different buildings plus a not-worked (unresolved) case reading \"Not known\" never 0 (BuildingOptionsComparison; test-support/results-two-buildings.ts; S7).",
+      "COMPARISON_NOT_KNOWN enforces one wording per unavailable cell.",
+      "OPEN: the PDF's option comparison.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R875",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-07: no clipped text (outside labelled scroll regions), no sideways page scroll, no overlapping labels or covered controls at 320/390/768/1024/1440/1920 px \u2014 apps/web/e2e/results-layout.flag-on.spec.ts; the whole Playwright suite passed 167/167 at d745b635 and CI run 38023638114 is 21/21 success at that head.",
+      "The clip-path screen-reader-only exclusion in that spec is slightly broad (G3/G4 advisory NOTE) but real overflow:hidden clipping is still caught.",
+      "OPEN: the PDF page images carry UX-07 further.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R876",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-08: long labels/addresses/large-small values and text expansion stay readable \u2014 results-layout.flag-on.spec.ts runs 200% zoom and the text-spacing check at 1280px; values wrap (G3 CHECK 8).",
+      "OPEN: PDF stress cases are later work.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R877",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Keyboard, focus-into-tool, Escape-return, accessible names (role=\"region\" aria-label, labelled inputs), status words and token-based contrast are implemented (ResultDetails, ResultsForm; G3 CHECK 6) and the browser spec exercises focus-in/Escape-return; status is told by words not colour alone (AnswerCard).",
+      "The walkthrough reviewer states plainly \"NO screen reader; a11y notes are from code + the README keyboard check, not assistive tech\" \u2014 so the automated/keyboard portion is met and disclosed, but a real screen-reader/assistive-technology pass was not performed.",
+      "OPEN: an actual assistive-technology walkthrough remains owed (same human-test gap family as R817).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R881",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-13: no development log, raw error, task id or schema jargon in ordinary content \u2014 \"step-P6\"/\"still owed\"/\"internal preview\" and the typed parking line are removed and guarded by the SNAKE_CASE regex + banned-words list across loading/empty/partial/error/normal states (S11, S14); the visual review's blocking \"step-P6\" item is fixed.",
+      "OPEN: the PDF must pass the same content review.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R882",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "UX-14: the scheduled area is shown with \"Site fit not verified\" before any caveat and nothing is called feasible/preferred/optimal/verified (FirstBuildingOptions/BuildingOptionCard; first-building-options.test.tsx S6 negative assertions; the benchmark fixture even states \"none is preferred or a default\").",
+      "A conditional gain (29 units) is tagged Conditional and an unavailable alternative reads \"Not known\", never a computed feasible outcome.",
+      "OPEN: the PDF comparison must meet UX-14.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R885",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "States covered on the screen: normal (synthetic_all_answers_available), the partial benchmark, no geometry (lot_conditions_unconfirmed), failed/stale fetch, another lot, and 10ft/16ft building-option states (S8-S10, S13, S15; results-panel.test.tsx).",
+      "Expected values come from the committed fixtures and the independent reference case, not the screen's own output.",
+      "OPEN: the contract's remaining states (an existing building's missing zoning floor area, add-on off/on, approval-dependent option, overlapping gains, short vs long report) need their own underlying results first.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R886",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Correctness tests read independently-established values from the reference case real-lot.json (results.flag-on.spec.ts), not a second copy of the program's own output (G4 CHECK 2 verified the provenance).",
+      "This slice asserts semantics (no wholesale screenshot-baseline updates), so \"never update every baseline to pass\" is not at risk here.",
+      "OPEN: when image baselines are introduced (PDF pages) they must be visually reviewed before approval.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R888",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Producer/reviewer separation held: five builders produced, and four independent reviewers (code-reviewer G3, qa-engineer G4, visual-quality-reviewer, human-journey-reviewer) \u2014 none the producer \u2014 reviewed both rounds, with the FAILs and fixes kept in M5-T149-G3G4.md; I am the fifth independent reviewer (directive-compliance-verifier).",
+      "No producer checklist is recorded as independent review; G2 is the producer self-check recorded by the orchestrator, not labelled independent.",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R890",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Nothing is called perfect/fully verified/complete/production ready; the evidence map and review record list cosmetic known-limits (320px 3px headline clip, right-column whitespace, \"Applies\" weight) and the AI-only basis, saying what the evidence supports.",
+      "The producer report and gate records avoid completion/verification narratives.",
+      "OPEN: nothing for this task.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R894",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The website comparison uses ONE wording per situation \u2014 COMPARISON_NOT_KNOWN = \"Not known\" for every unavailable cell, never 0, never an empty cell (first-building-options.ts line 177-184; BuildingOptionsComparison), with concise columns and no crowded headings (S7).",
+      "This applies the owner's \"one wording\" rule (originally raised for the PDF) to the website's comparison (ruling V11(3)).",
+      "OPEN: the eleven-option, three-column enumeration itself is the PDF's option pages (this website comparison covers the method's worked/not-worked buildings).",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     },
     {
      "id": "D-090-R895",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The word \"achieved\" appears in NO rendered website source \u2014 only in code comments/the legacy presented-results key/tests (grep over components/architect + lib/architect); the building option reads \"Building option: Site fit not verified\" then \"Scheduled area: 20,150 sq ft\" BEFORE any caveat (FirstBuildingOptions.tsx:105-111; AnswerCard.BuildingOptionCard; presented-results.ts ResultKind has no \"achieved\").",
+      "first-building-options.test.tsx S6 asserts the section's lowercased text does not contain \"achieved\" or \"unused\", and throws if the fixture is vacuous; G4 mutation 4 (\"Scheduled area\" -> \"Achieved\") was caught. The web uses the sanctioned wording \"Site fit not verified\" (ruling V5) for the owner's \"site fit unverified\".",
+      "OPEN: the PDF side of R895 is PDF work.",
+      "Verifier's carry-forward condition met at 8503883c: the task's allowed-path files are identical to those verified at db7824e7 (content identity f0241992), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (8 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer, G4 one independent qa-engineer, the visual quality by one visual-quality-reviewer and the walkthrough by one human-journey-reviewer; the same four in both rounds (the visual review and the walkthrough FAILED in the first round and PASSED after the correction); producer frontend-engineer is neither). DCV report: project-control/reports/M5-T149-DCV.md."
+     ],
+     "reviewed_sha": "8503883c985c2bca361c8be7bc3f8dc1165f4c87"
     }
-   ]
+   ],
+   "verified_at": "2026-10-10T04:56:55+00:00"
   }
  ]
 }
