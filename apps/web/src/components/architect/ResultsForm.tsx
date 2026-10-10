@@ -42,6 +42,9 @@ export const DENSITY_STATEMENT_HELPER =
 
 export const SHOW_RESULTS_LABEL = "Show results";
 
+/** Restores the inputs to their starting choices (standard residence, no height, no statement). */
+export const RESET_LABEL = "Reset inputs";
+
 export interface ResultsFormValues {
   program: ResultsRequestBody["housing_program"];
   /** The raw field text, empty at the start (ruling R3). Parsed by the parent; never coerced. */
@@ -54,6 +57,9 @@ export interface ResultsFormProps {
   values: ResultsFormValues;
   onChange: (next: ResultsFormValues) => void;
   onSubmit: () => void;
+  /** Restore the inputs to their starting choices (M5-T149 part C). The parent owns the starting
+   * values; this never asks the server and never clears an already-shown result. */
+  onReset: () => void;
   /** Whether a request is in flight: the button stays pressable (a newer press supersedes the
    * older request, ruling R2) but announces the busy state to assistive tech. */
   busy: boolean;
@@ -61,7 +67,7 @@ export interface ResultsFormProps {
   heightError: string | null;
 }
 
-export function ResultsForm({ values, onChange, onSubmit, busy, heightError }: ResultsFormProps) {
+export function ResultsForm({ values, onChange, onSubmit, onReset, busy, heightError }: ResultsFormProps) {
   return (
     <form
       className="results-form card"
@@ -130,9 +136,14 @@ export function ResultsForm({ values, onChange, onSubmit, busy, heightError }: R
         </p>
       </div>
 
-      <button type="submit" className="primary-button" data-testid="results-show" aria-busy={busy}>
-        {SHOW_RESULTS_LABEL}
-      </button>
+      <div className="results-form-actions">
+        <button type="submit" className="primary-button" data-testid="results-show" aria-busy={busy}>
+          {SHOW_RESULTS_LABEL}
+        </button>
+        <button type="button" className="secondary-button" data-testid="results-reset" onClick={onReset}>
+          {RESET_LABEL}
+        </button>
+      </div>
     </form>
   );
 }

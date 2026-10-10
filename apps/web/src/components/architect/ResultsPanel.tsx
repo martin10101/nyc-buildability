@@ -269,6 +269,14 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
     setHeightError(previous => (previous === null ? previous : null));
   }, []);
 
+  // Restore the inputs to their starting choices (M5-T149 part C). It never asks the server and
+  // never clears an already-shown result; if a result is shown, the normal stale line appears
+  // because the inputs no longer match the inputs that result was asked for.
+  const reset = useCallback(() => {
+    setValues(INITIAL_VALUES);
+    setHeightError(null);
+  }, []);
+
   const showingDocument = !busy && outcome?.kind === "success";
   const stale = showingDocument && askedWith !== null && !sameInputs(values, askedWith);
   const failure = !busy && outcome !== null ? resultsFailureNotice(outcome) : null;
@@ -283,6 +291,7 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
         values={values}
         onChange={onChange}
         onSubmit={submit}
+        onReset={reset}
         busy={busy}
         heightError={heightError}
       />

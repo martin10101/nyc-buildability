@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { jsonResponse } from "@/test-support/fixtures";
@@ -503,5 +505,40 @@ describe("ResultsPanel — M5-T142: a new result and each failure are announced 
     await waitFor(() => expect(announcer().textContent).toBe(""));
     second.resolve(jsonResponse({ state: "inputs_unavailable", message: "x" }, 503));
     await waitFor(() => expect(announcer().textContent).toBe(title));
+  });
+});
+
+/** Colour literals in a CSS file, after stripping comments and `var(...)` / `color-mix(...)`
+ * references. An empty result means every colour comes from a token (M5-T149 part C). */
+function colourLiterals(css: string): string[] {
+  const stripped = css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/var\([^)]*\)/g, "");
+  return stripped.match(/#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?)\(/g) ?? [];
+}
+
+describe("ResultsPanel — M5-T149 part C: reset and tokens", () => {
+  it("Reset restores the starting inputs and clears a field error, asking the server nothing", () => {
+    const fetchImpl = vi.fn(async () => jsonResponse(loadResultsFixture(JOURNEY), 200));
+    render(<ResultsPanel bbl={BBL} fetchImpl={fetchImpl as unknown as typeof fetch} />);
+    // Change every input and refuse a height, so there is something to reset and an error to clear.
+    fireEvent.change(screen.getByTestId("results-housing-program"), { target: { value: "qualifying_senior_housing" } });
+    fireEvent.change(screen.getByTestId("results-floor-to-floor"), { target: { value: "0" } });
+    fireEvent.click(screen.getByTestId("results-density-statement"));
+    fireEvent.click(screen.getByTestId("results-show")); // 0 is refused: an error, and no call
+    expect(screen.getByTestId("results-floor-to-floor-error")).toBeInTheDocument();
+    expect(fetchImpl).not.toHaveBeenCalled();
+    // Reset: the inputs return to their starting choices, the error clears, and still no call.
+    fireEvent.click(screen.getByTestId("results-reset"));
+    expect(screen.getByTestId<HTMLSelectElement>("results-housing-program").value).toBe("standard_residence");
+    expect(screen.getByTestId<HTMLInputElement>("results-floor-to-floor").value).toBe("");
+    expect(screen.getByTestId<HTMLInputElement>("results-density-statement").checked).toBe(false);
+    expect(screen.queryByTestId("results-floor-to-floor-error")).toBeNull();
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it("results-panel.css carries no colour literal (every colour comes from a presentation token)", () => {
+    const css = readFileSync(resolve(process.cwd(), "src/components/architect/results-panel.css"), "utf8");
+    expect(colourLiterals(css)).toEqual([]);
   });
 });
