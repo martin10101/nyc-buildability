@@ -1,13 +1,16 @@
 import { describe, expect, it } from "vitest";
 import type { Results } from "@/lib/architect/three-answers";
 import {
+  buildingOptionsComparisonView,
   feet,
   firstBuildingOptionsView,
   percent,
   sqft,
+  storeyText,
   twoDp,
 } from "@/lib/architect/first-building-options";
 import { loadResultsFixture, loadResultsFixtures } from "@/test-support/results-fixtures";
+import { twoBuildingsDocument } from "@/test-support/results-two-buildings";
 
 /**
  * The view model for the first-building-options blocks (results contract 1.4.0). Pure functions over
@@ -159,5 +162,50 @@ describe("firstBuildingOptionsView (contract 1.4.0)", () => {
     expect(doc.draft).toBe(true);
     expect(firstBuildingOptionsView(doc, false)?.draftHidden).toBe(true);
     expect(firstBuildingOptionsView(doc, true)?.draftHidden).toBe(false);
+  });
+
+  it("carries a comparison on the benchmark (B worked, A not worked) and none on a single building", () => {
+    const journey = loadResultsFixture(JOURNEY);
+    const view = firstBuildingOptionsView(journey, true);
+    expect(view?.comparison?.columns.length).toBe(2);
+    // the single-building benchmark fixture carries no comparison.
+    expect(firstBuildingOptionsView(loadResultsFixture(BENCHMARK), true)?.comparison).toBeNull();
+  });
+});
+
+describe("buildingOptionsComparisonView (contract 1.4.0, row R894)", () => {
+  it("returns null for fewer than two buildings, a view for two or more", () => {
+    // one worked building, no not-worked -> no comparison.
+    expect(buildingOptionsComparisonView(loadResultsFixture(BENCHMARK))).toBeNull();
+    expect(buildingOptionsComparisonView(loadResultsFixture(COVERAGE_AVAILABLE))).toBeNull();
+    // benchmark: one worked plus one not worked -> a comparison of two.
+    expect(buildingOptionsComparisonView(loadResultsFixture(JOURNEY))?.columns).toHaveLength(2);
+    // synthetic document: two worked -> a comparison of two.
+    expect(buildingOptionsComparisonView(twoBuildingsDocument())?.columns).toHaveLength(2);
+  });
+
+  it("orders columns by building id and reads each worked building's metrics from the document", () => {
+    const doc = twoBuildingsDocument();
+    const byId = Object.fromEntries((doc.building_alternatives ?? []).map(a => [a.building, a]));
+    const view = buildingOptionsComparisonView(doc);
+    const columns = view?.columns ?? [];
+    expect(columns.map(c => c.building)).toEqual(["A", "B"]);
+    for (const column of columns) {
+      if (column.kind !== "worked") throw new Error("both buildings should be worked");
+      const source = byId[column.building];
+      expect(column.label).toBe(source.label);
+      expect(column.storeys).toBe(storeyText(source.storey_count));
+      expect(column.height).toBe(feet(source.height_ft));
+      expect(column.scheduledArea).toBe(sqft(source.total_floor_area_sqft));
+      expect(column.planPerStorey).toBe(sqft(source.footprint_area_sqft));
+    }
+  });
+
+  it("a not-worked column carries only its reason — no numeric metric field (never 0)", () => {
+    const view = buildingOptionsComparisonView(loadResultsFixture(JOURNEY));
+    const notWorked = (view?.columns ?? []).find(c => c.kind === "not_worked");
+    if (!notWorked || notWorked.kind !== "not_worked") throw new Error("expected a not-worked column");
+    expect(Object.keys(notWorked).sort()).toEqual(["building", "kind", "label", "reason"]);
+    expect(notWorked.reason.length).toBeGreaterThan(0);
   });
 });
