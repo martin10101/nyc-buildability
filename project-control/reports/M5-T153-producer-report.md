@@ -173,4 +173,40 @@ the orchestrator's to run per ruling X10).
 - `node --test scripts/tests/print-report-pdf.test.mjs` → EXIT 0; 4/4 (unchanged script).
 - root `python3 tools/modularity_check.py --check` → EXIT 0 (no file of mine flagged).
 
+## Rework 2 (reset to integrated head 475404f114333da71fc564b29faebcc781b9dc8b; the orchestrator ran
+the browser suite — evidence `e2e-1-report-results.log`, `print-int2/`; scenarios S8, S9 + the report
+drawings/title)
+
+- **C1 — the results browser test follows the one-line wording.** `results.flag-on.spec.ts` lines
+  116–117 still expected the old card pair; the compact card now reads the one-line phrase. Changed to
+  `toContainText("Scheduled floor area: 20,150 sq ft; site fit unverified")` and asserted the old pair
+  is absent (`not.toContainText("Scheduled area:")`, `not.toContainText("Site fit not verified")`).
+- **C2 — the recorded address when no address was typed.** The real request (`report-request.txt`)
+  carried no address because the workspace opened by lot number has no typed label. New
+  `reportAddress(typedLabel, recordedAddress)` in `report-api.ts` (typed label wins, else the recorded
+  address, each through `sanitizeReportAddress`, else null). `DashboardTools` builds the recorded
+  address from the profile it already holds (`profile.identity.address.normalized_address` + borough)
+  and passes `reportAddress(address?.label, recordedAddress)` to both the Results panel and the report
+  tool. Unit tests (report-api.test.ts): typed label; recorded address only; neither.
+- **C3 — the printed-report test requires the drawings and the address title.**
+  `report-print.flag-on.spec.ts` now also asserts: the report `h1` title contains the routed profile
+  fixture's recorded address (`normalized_address`); the report holds its drawings — total SVGs ≥ 3
+  and a drawing on the decision-summary page, the site-and-context page and the scenario sheet (found
+  by heading within each `.report-page`). A report printed without its drawings or address title now
+  fails. Marked [DEPENDS ON M5-T151 / M5-T152].
+- **Not fixed (out of scope, flagged).** The report-print run's other failure — "no visible text below
+  its minimum print size" with ten `7.5pt` strings — is a REAL defect in the report's own CSS
+  (`report.html` declares `font-size: 7.5pt` for conditions / not-checked / open-item text, below the
+  8 pt minimum of page-types.md). My font check is correct and deliberately catches it; the fix is in
+  the report generator (`services/api/app/drawings/report/`, M5-T151), not this task. I did NOT weaken
+  the check.
+
+### Rework 2 checks (apps/web, direct exit codes)
+
+- `npm run lint` → EXIT 0 (same 2 pre-existing warnings, untouched files).
+- `npm run typecheck` → EXIT 0.
+- `npx vitest run src/components/architect src/lib` → EXIT 0; 112 files, 2290 tests passed.
+- `node --test scripts/tests/print-report-pdf.test.mjs` → EXIT 0; 4/4.
+- root `python3 tools/modularity_check.py --check` → EXIT 0.
+
 END-OF-REPORT

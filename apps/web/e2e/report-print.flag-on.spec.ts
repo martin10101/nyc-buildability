@@ -132,6 +132,33 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
     // None of the words the owner forbids for a result (ruling X5 / X11).
     expect(bodyText).not.toMatch(FORBIDDEN);
 
+    // C3: the report title is the address the profile carries (the routed profile fixture's recorded
+    // address, sent by the website as ?address= — rework 2 C2), not the block-and-lot.
+    // [DEPENDS ON M5-T151: the address on the title.]
+    const recordedAddress = profileFixture.identity.address?.normalized_address ?? "";
+    expect(recordedAddress.length, "the routed profile fixture carries a recorded address").toBeGreaterThan(0);
+    const title = (await printPage.locator("h1").first().textContent()) ?? "";
+    expect(title, "the report title is the property's address").toContain(recordedAddress);
+
+    // C3: the report holds its drawings — a site plan on the decision summary and the site page, and
+    // the floor-stack section on the scenario sheet. A report printed WITHOUT its drawings fails.
+    // [DEPENDS ON M5-T152: the report-frame drawings reaching the report.]
+    const drawings = await printPage.evaluate(() => {
+      const pages = Array.from(document.querySelectorAll(".report-page"));
+      const pageWith = (re: RegExp) => pages.find((p) => re.test(p.textContent ?? ""));
+      const hasSvg = (p: Element | undefined) => !!(p && p.querySelector("svg"));
+      return {
+        total: document.querySelectorAll("svg").length,
+        decision: hasSvg(pageWith(/decision summary/i)),
+        site: hasSvg(pageWith(/site and context/i)),
+        scenario: hasSvg(pageWith(/scenario/i)),
+      };
+    });
+    expect(drawings.total, "the report holds its drawings (two site plans and a floor stack)").toBeGreaterThanOrEqual(3);
+    expect(drawings.decision, "the decision summary carries a drawing").toBe(true);
+    expect(drawings.site, "the site and context page carries a drawing").toBe(true);
+    expect(drawings.scenario, "the scenario sheet carries the floor-stack drawing").toBe(true);
+
     // No visible text below 7 pt inside a drawing (SVG), or below 8 pt elsewhere. SVG text is scaled
     // by its drawing's transform, so the on-screen size is multiplied by the drawing's scale.
     const tooSmall = await printPage.evaluate(() => {

@@ -87,6 +87,20 @@ export function sanitizeReportAddress(raw: string | null | undefined): string | 
   return cleaned.length > 0 ? cleaned : null;
 }
 
+/**
+ * The street address to send with the report (scenario S9 / rework 2 C2): the typed address label
+ * the website shows when the property was confirmed by address, else the property's RECORDED address
+ * (the identity's normalized address and borough) from the profile the website already holds, else
+ * nothing. Each candidate goes through the same sanitizer; the first that yields a usable value
+ * wins. The workspace opened by lot number has no typed label, so the recorded address is used.
+ */
+export function reportAddress(
+  typedLabel: string | null | undefined,
+  recordedAddress: string | null | undefined,
+): string | null {
+  return sanitizeReportAddress(typedLabel) ?? sanitizeReportAddress(recordedAddress);
+}
+
 /** The plain message shown when the gating declines the report but sends no message of its own. */
 const DEFAULT_REFUSED_MESSAGE = "The report could not be prepared for this property right now.";
 

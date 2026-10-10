@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { fetchReport, sanitizeReportAddress, type ReportRequestBody } from "@/lib/report-api";
+import { fetchReport, reportAddress, sanitizeReportAddress, type ReportRequestBody } from "@/lib/report-api";
 
 /**
  * M5-T153 scenario S4 [WIRING]: the report client POSTs the SAME body the results form sends to the
@@ -142,5 +142,18 @@ describe("fetchReport — the optional street address query parameter (S9)", () 
     expect(sanitizeReportAddress("   ")).toBeNull();
     expect(sanitizeReportAddress(undefined)).toBeNull();
     expect(sanitizeReportAddress("=@%")).toBeNull();
+  });
+
+  it("reportAddress prefers the typed label, falls back to the recorded address, else null (C2)", () => {
+    // typed label present: it wins even when a recorded address exists.
+    expect(reportAddress("215-16 Northern Boulevard, Queens", "140 CARDER ROAD, Manhattan")).toBe(
+      "215-16 Northern Boulevard, Queens",
+    );
+    // no typed label (workspace opened by lot number): the recorded address is used.
+    expect(reportAddress(null, "140 CARDER ROAD, Manhattan")).toBe("140 CARDER ROAD, Manhattan");
+    expect(reportAddress("   ", "140 CARDER ROAD, Manhattan")).toBe("140 CARDER ROAD, Manhattan");
+    // neither: nothing is sent.
+    expect(reportAddress(null, null)).toBeNull();
+    expect(reportAddress(undefined, "")).toBeNull();
   });
 });

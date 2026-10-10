@@ -19,6 +19,7 @@ import { EvidenceWorkspace } from "../EvidenceWorkspace";
 import { ScenarioWorkspace } from "../ScenarioWorkspace";
 import { ReportView } from "../ReportView";
 import { ReportPreview } from "../report/ReportPreview";
+import { reportAddress } from "@/lib/report-api";
 import { ProposalEditor } from "../ProposalEditor";
 import { MaxEnvelopePanel } from "../MaxEnvelopePanel";
 import { CapturedRecord } from "../EvidenceRecord";
@@ -67,6 +68,13 @@ export function DashboardTools(props: DashboardToolsProps) {
   const { tool, profile, scenario, evaluation, returnedScenario, returnedEvaluation, condo, address, label, selection, onSelectEvidence, onInspect, onOpen, surveyEnabled } = props;
   const unusedFloorAreaSectionEnabled = props.unusedFloorAreaSectionEnabled ?? false;
   const bbl = profile.identity.bbl;
+  // The street address to send with the report (M5-T153 rework 2, C2): the typed address label when
+  // the property was confirmed by address, else the property's recorded address from the profile the
+  // dashboard already holds (so the workspace opened by lot number still carries an address).
+  const recordedAddress = profile.identity.address
+    ? [profile.identity.address.normalized_address, profile.identity.address.borough].filter(Boolean).join(", ")
+    : null;
+  const reportStreetAddress = reportAddress(address?.label, recordedAddress) ?? undefined;
   const associationMismatch = !!((returnedScenario && returnedScenario.evaluated_input.bbl !== bbl)
     || (returnedEvaluation && returnedEvaluation.evaluated_input.bbl !== bbl));
   switch (tool) {
@@ -95,13 +103,13 @@ export function DashboardTools(props: DashboardToolsProps) {
     case "parity": return props.parityUiEnabled ? <ParityPanel bbl={bbl}/> : <PlannedView label={TOOL_LABELS.parity}/>;
     // M5-T140 (ruling R1): the results panel, behind a default-off website switch. A deep link or
     // tool open with the switch off gets the plain not-available view (no fetch when off, R2).
-    case "results": return props.resultsUiEnabled ? <ResultsPanel bbl={bbl} address={address?.label}/> : <PlannedView label={TOOL_LABELS.results}/>;
+    case "results": return props.resultsUiEnabled ? <ResultsPanel bbl={bbl} address={reportStreetAddress}/> : <PlannedView label={TOOL_LABELS.results}/>;
     case "scenarios": return scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/> : <section className="card"><h2>Scenario results unavailable</h2><p>{condo.withholdAllowances ? "Computed allowances are withheld until the legal analysis site is resolved." : "No matching, usable scenario was supplied."}</p>{returnedScenario ? <CapturedRecord value={returnedScenario} label="Returned scenario record · not a site allowance"/> : null}</section>;
     // M5-T153 (scenario S4): with results switched on, the report tool opens the program's report
     // for printing (the SAME inputs the results form sends). With results switched off, ReportView
     // is unchanged.
     case "report": return props.resultsUiEnabled
-      ? <ReportPreview bbl={bbl} withInputs address={address?.label}/>
+      ? <ReportPreview bbl={bbl} withInputs address={reportStreetAddress}/>
       : <ReportView profile={profile} scenario={returnedScenario} evaluation={returnedEvaluation} label={label} condoDecision={condo} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>;
     // D-01 (plan §7): the proposal editor and envelope panel are set aside behind a
     // default-off server flag; a deep link or tool open gets the plain not-available view.
