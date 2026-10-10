@@ -1,6 +1,6 @@
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import type { Results } from "@/lib/architect/three-answers";
+import { displayQuantity, quantityText, type Results } from "@/lib/architect/three-answers";
 import { loadResultsFixture } from "@/test-support/results-fixtures";
 import { ThreeAnswersPanel } from "../ThreeAnswersPanel";
 
@@ -125,11 +125,18 @@ describe("journey cards leg: 215-16 Northern recorded-data (D-090-R137)", () => 
     expect(reason.textContent ?? "").not.toMatch(/\d/);
   });
 
-  it("the single building-option card points to the list, never the machine field name", () => {
+  it("the building-option card reads the scheduled area, never 'Not available' or a machine field (V11 (2))", () => {
     const { doc } = journey();
+    const alternative = (doc.building_alternatives ?? [])[0];
+    if (!alternative) throw new Error("fixture changed: the journey must list a building");
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const card = screen.getByTestId("answer-building_option");
-    expect(card.textContent ?? "").toContain("Not available");
+    expect(within(card).getByTestId("answer-scheduled-area").textContent).toBe(
+      quantityText(displayQuantity(alternative.total_floor_area_sqft, "square_feet")),
+    );
+    expect(within(card).getByTestId("answer-site-fit").textContent).toBe("Site fit not verified");
+    expect(card.textContent ?? "").not.toContain("Not available");
+    expect(card.textContent ?? "").not.toContain("shown below");
     expect(card.textContent ?? "").not.toMatch(SNAKE_CASE);
   });
 

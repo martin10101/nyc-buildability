@@ -25,23 +25,35 @@ const NOT_KNOWN = "Not known";
  * confirmed (ruling L3; R229/R267/R269). Plain text, normal weight, never a colour-only signal. */
 const CONDITIONAL_MARKER = "Conditional";
 
+/** The building-option card's title of the figure, and the standing honesty line that leads it
+ * before any caveat (ruling V11 (2); R895 "the distinction should be clear before the reader reaches
+ * the caveats"). Fixed labels, never a document value. */
+const SCHEDULED_AREA_LABEL = "Scheduled area";
+export const SITE_FIT_NOT_VERIFIED = "Site fit not verified";
+
+/** One lookup from a result id ("floor_area_allowance.max_residential_floor_area",
+ * "building_alternative.B") to the shared conditions it refers to, by name ("Condition 1"). */
+export type ConditionNames = (resultId: string) => readonly string[];
+
 /**
- * One of the three answers, in the presentation contract's reading order (§4 "label → value and
- * unit, or unavailable state → material exception → details action"; M5-T149 part A). The FACE is
- * deliberately short: the answer's title, its headline value (or its "Not known"/"Not available"
- * state with the kind of gap), the one marker that qualifies the figure ('Conditional'), at most one
- * exception, and a Details button. The derivation — the other value rows, the condition texts, the
- * withheld values, the rule sections and the measurement basis — opens on demand in ResultDetails
- * (focus moves in; Escape returns to the button). A not-available answer shows only its one line and
- * its kind-of-gap line: no number, no exception, no details.
+ * One of the three answers, in the presentation contract's reading order (§4; M5-T149 part A, ruling
+ * V11). The FACE is short: the title, the headline value (or its "Not known"/"Not available" state
+ * with its short gap tag), the 'Conditional' marker, at most one exception, and a Details button. The
+ * derivation opens on demand in ResultDetails — the other value rows, each result's OWN exceptions,
+ * the shared conditions referred to BY NAME (never repeated in full — ruling V11 (5)), the rule
+ * sections and the measurement basis. A withheld value reads one wording: "Not known", the reason,
+ * then what would settle it (ruling V11 (3)).
  */
 export function AnswerCard({
   answerKey,
   view,
+  conditionNames,
   children,
 }: {
   answerKey: AnswerKey;
   view: AnswerView;
+  /** The shared conditions each value refers to, by name (ruling V11 (5)). */
+  conditionNames: ConditionNames;
   /** Extra detail shown only while the answer itself is shown (remaining area, shortfall, notes). */
   children?: ReactNode;
 }) {
@@ -63,6 +75,10 @@ export function AnswerCard({
   }
   const headlineConditions =
     view.headline.kind === "value" ? view.headline.shown.conditions : [];
+  const headlineRefs =
+    view.headline.kind === "value" && headlineConditions.length > 0
+      ? conditionNames(`${answerKey}.${view.headline.shown.value.key}`)
+      : [];
   const shownValues: AnswerValue[] =
     view.headline.kind === "value"
       ? [view.headline.shown.value, ...view.rows.map(row => row.value)]
@@ -91,12 +107,7 @@ export function AnswerCard({
       )}
       {hasDetail ? (
         <ResultDetails name={title}>
-          {headlineConditions.length > 0 ? (
-            <div className="ta-conditional" data-testid="answer-headline-conditions">
-              <p className="ta-conditional-note">This figure applies when:</p>
-              <ConditionLines conditions={headlineConditions} />
-            </div>
-          ) : null}
+          {headlineRefs.length > 0 ? <ConditionRefs names={headlineRefs} /> : null}
           {view.rows.length > 0 ? (
             <dl className="ta-rows">
               {view.rows.map((row, index) => (
@@ -106,7 +117,10 @@ export function AnswerCard({
                     {quantityText(displayQuantity(row.value.value, row.value.unit))}
                     <ExceptionTag label={row.value.exception_label} />
                     {row.conditions.length > 0 ? (
-                      <ConditionBlock conditions={row.conditions} />
+                      <span className="ta-conditional" data-testid="answer-conditional">
+                        <ConditionalMarker />
+                        <ConditionRefs names={conditionNames(`${answerKey}.${row.value.key}`)} />
+                      </span>
                     ) : null}
                   </dd>
                 </div>
@@ -149,9 +163,72 @@ export function AnswerCard({
   );
 }
 
-/** A withheld value: its reason, never a number (R556, R570), then — when the document carries
- * one — the plain-words kind of gap (missing information or work still owed; R258, ruling R6).
- * As a headline (no dt) or a row. */
+/** The building-option card as the SCHEDULED area (ruling V11 (2); R895): when a building is listed
+ * it reads "Scheduled area: 20,150 sq ft" with "Site fit not verified" ahead of any caveat, and
+ * never "Not available"/"shown below"; when none is listed it reads "Not known" with the document's
+ * reason and what would settle it (one wording — ruling V11 (3)). The area is read from the listed
+ * building through Part B's view model; the standing lines are fixed labels. */
+export type BuildingOptionCardView =
+  | { kind: "not_reviewed"; text: string }
+  | { kind: "scheduled"; scheduledArea: string; conditionNames: readonly string[] }
+  | { kind: "not_known"; reason: string; gapTag: string | null; resolvedBy: string | null };
+
+export function BuildingOptionCard({ view }: { view: BuildingOptionCardView }) {
+  const title = ANSWER_TITLES.building_option;
+  if (view.kind === "not_reviewed") {
+    return (
+      <section className="ta-answer" data-testid="answer-building_option">
+        <h3 className="ta-answer-title">{title}</h3>
+        <p className="ta-not-available" data-testid="answer-not-available">
+          {view.text}
+        </p>
+      </section>
+    );
+  }
+  if (view.kind === "not_known") {
+    return (
+      <section className="ta-answer" data-testid="answer-building_option">
+        <h3 className="ta-answer-title">{title}</h3>
+        <p className="ta-not-available" data-testid="answer-not-known">
+          {NOT_KNOWN} — {view.reason}
+        </p>
+        {view.gapTag !== null ? (
+          <p className="ta-gap-kind" data-testid="answer-gap-kind">
+            {view.gapTag}
+          </p>
+        ) : null}
+        {view.resolvedBy !== null ? (
+          <p className="ta-resolver" data-testid="answer-resolver">
+            What would settle it: {view.resolvedBy}
+          </p>
+        ) : null}
+      </section>
+    );
+  }
+  return (
+    <section className="ta-answer" data-testid="answer-building_option">
+      <h3 className="ta-answer-title">{title}</h3>
+      <p className="ta-headline" data-testid="answer-headline">
+        <span className="ta-headline-label">{SCHEDULED_AREA_LABEL}</span>{" "}
+        <span className="ta-scheduled-area" data-testid="answer-scheduled-area">
+          {view.scheduledArea}
+        </span>
+      </p>
+      <p className="ta-site-fit" data-testid="answer-site-fit">
+        {SITE_FIT_NOT_VERIFIED}
+      </p>
+      {view.conditionNames.length > 0 ? (
+        <ResultDetails name={title}>
+          <ConditionRefs names={view.conditionNames} />
+        </ResultDetails>
+      ) : null}
+    </section>
+  );
+}
+
+/** A withheld value: one wording (ruling V11 (3)) — "Not known", the reason, the short gap tag when
+ * a property fact is missing, then what would settle it. NEVER a number (R556, R570). As a headline
+ * (no dt) or a row. */
 function WithheldLine({
   entry,
   testid,
@@ -170,13 +247,17 @@ function WithheldLine({
           {entry.gapKindLine}
         </span>
       ) : null}
+      {entry.resolvedBy !== null ? (
+        <span className="ta-resolver" data-testid="answer-resolver">
+          What would settle it: {entry.resolvedBy}
+        </span>
+      ) : null}
     </>
   );
 }
 
-/** The fixed 'Conditional' marker shown beside a conditional figure (ruling L1/L3), in normal
- * weight: the figure is told apart by the WORD, never by colour alone. The condition texts
- * themselves are stated once at the top (shared conditions) and in the answer's details. */
+/** The fixed 'Conditional' marker beside a conditional figure (ruling L1/L3), normal weight: told
+ * apart by the WORD, never by colour alone. The condition texts are stated once at the top. */
 function ConditionalMarker() {
   return (
     <>
@@ -188,27 +269,14 @@ function ConditionalMarker() {
   );
 }
 
-/** One "If <assumption>" line per condition, read from the document (ruling L1). */
-function ConditionLines({ conditions }: { conditions: readonly string[] }) {
+/** Refers to the shared conditions BY NAME (ruling V11 (5)): "Applies: Condition 1, Condition 2" —
+ * never the full text again. Nothing is drawn when the value refers to no condition. */
+function ConditionRefs({ names }: { names: readonly string[] }) {
+  if (names.length === 0) return null;
   return (
-    <ul className="ta-conditions">
-      {conditions.map((condition, index) => (
-        <li className="ta-condition" data-testid="answer-condition" key={`${index}-${condition}`}>
-          {condition}
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/** A conditional value's marker and its condition lines together (used for a non-headline row). */
-function ConditionBlock({ conditions }: { conditions: readonly string[] }) {
-  if (conditions.length === 0) return null;
-  return (
-    <div className="ta-conditional" data-testid="answer-conditional">
-      <ConditionalMarker />
-      <ConditionLines conditions={conditions} />
-    </div>
+    <span className="ta-condition-refs" data-testid="answer-condition-refs">
+      Applies: {names.join(", ")}
+    </span>
   );
 }
 
@@ -300,16 +368,10 @@ export function ShortfallBlock({ view }: { view: ShortfallView }) {
 }
 
 /**
- * The building option's draft notes beside the heights (results contract 1.2.0, D-090-R132):
- * each is a DRAFT reading of the captured zoning text, shown openly under a fixed heading that
- * marks it pending qualified review — never a compliance statement. Rendered as a child of the
- * building-option card's details, so it appears only while that card shows its heights; an empty
- * list draws nothing.
- *
- * The note text and the "Based on …" line cite ZR sections (e.g. "ZR 23-432"), which is also a
- * building-option value's `zoning_resolution` source. The panel guard
- * (three-answers-panel.test.tsx) requires every such citation to live only inside the
- * `answer-section` citation surface it strips, so these two visible lines carry that testid.
+ * The building option's draft notes (results contract 1.2.0, D-090-R132): each a DRAFT reading of
+ * the captured zoning text, under a fixed heading marking it pending qualified review — never a
+ * compliance statement. An empty list draws nothing. The note text and "Based on …" line cite ZR
+ * sections, so they carry the `answer-section` testid the panel guard strips.
  */
 export function BuildingOptionNotes({ notes }: { notes: readonly BuildingOptionNoteView[] }) {
   if (notes.length === 0) return null;

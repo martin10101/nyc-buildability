@@ -146,6 +146,52 @@
   font-weight: 600;
 }
 
+.ta-open-items-group {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--pt-color-divider);
+}
+
+.ta-shared-conditions-group:first-child + .ta-open-items-group {
+  margin-top: var(--space-3);
+}
+
+.ta-open-items-heading {
+  margin: 0;
+  font-size: var(--pt-type-body-size);
+  font-weight: 600;
+}
+
+.ta-open-items-list {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ta-open-item {
+  margin: 0 0 var(--space-2);
+}
+
+.ta-open-item:last-child {
+  margin-bottom: 0;
+}
+
+.ta-open-item-affects {
+  display: block;
+  font-weight: 600;
+}
+
+.ta-open-item-settle {
+  display: block;
+  color: var(--pt-color-supporting);
+}
+
+.ta-open-items-more {
+  margin: var(--space-2) 0 0;
+  color: var(--pt-color-supporting);
+  font-weight: 600;
+}
+
 /* ---- The two-column layout (presentation contract §3; M5-T149 orchestrator addition) ----
    The window content is a size container (set by Part C's floating window). Below 1000 px the two
    regions stack in the same reading order; at 1000 px and up they sit side by side, the answers in
@@ -355,6 +401,26 @@
   margin: 0;
   font-weight: 600;
   color: var(--pt-color-ink);
+}
+
+/* ---- The building-option card as the scheduled area (ruling V11 (2); R895) ----
+   The scheduled figure leads, with "Site fit not verified" plainly beside it before any caveat; the
+   figure is never called achieved. "What would settle it" is a plain supporting line. */
+.ta-scheduled-area {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.ta-site-fit {
+  margin: var(--space-1) 0 0;
+  font-weight: 600;
+  color: var(--pt-color-supporting);
+}
+
+.ta-resolver {
+  display: block;
+  margin-top: var(--space-1);
+  color: var(--pt-color-supporting);
 }
 
 .ta-shortfall {

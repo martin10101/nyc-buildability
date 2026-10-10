@@ -98,3 +98,62 @@ Part C owns the Results window, the form and the browser tests.
   `FirstBuildingOptions.tsx`, outside Part A's files.
 
 No file outside Part A's scope was changed. No server was started; ports 3000/3001/8000 untouched.
+
+## Correction after the reviews (ruling V11; rebuilt on the integrated head f81a1ec3)
+
+The visual review FAILED on one blocking item and the walkthrough on two. Part A's share of V11:
+
+- **(2) the building-option answer is the scheduled area.** When the document lists a building the
+  card reads "Scheduled area: 20,150 sq ft" with "Site fit not verified" (the honesty line leads,
+  R895), taken from the listed building through Part B's view model `first-building-options.ts`
+  (`alternatives[0].totalFloorArea`); never "Not available", never "shown below". With no worked
+  building it reads "Not known" with the document's reason and what would settle it. `BuildingOptionCard`
+  in AnswerCard.tsx; the view is built in ThreeAnswersPanel from `firstBuildingOptionsView`.
+- **(3) one wording per situation.** `GAP_KIND_LINES` (three-answers.ts) drops "Not built yet: … still
+  owed"; `work_owed` now shows no second phrase and `missing_information` shows the short tag "Needs
+  property information". A withheld value reads "Not known", the reason, then "What would settle it: …"
+  (new `resolvedBy` on `WithheldValueView`).
+- **(4) no developer words in the heading.** `DRAFT_PREVIEW_TAG` → "rules not professionally reviewed"
+  (the "internal preview" dev framing is gone; the ADR-007 standing note stays).
+- **(5) conditions by name.** Details no longer repeats the full "If …" text; it shows
+  "Applies: Condition 1, Condition 2" (ConditionRefs), numbered to match the shared-conditions block
+  through the notices adapter. The building-option card refers the same way.
+- **(6) what needs resolving.** A new `openItemsView` (three-answers.ts) groups the document's own
+  withheld reasons and resolvers; SharedConditions.tsx shows at most three, each naming what it affects
+  and what would settle it (capped through the notices adapter).
+- **(7) balance and reading order.** LEFT column: identity, context strip, conditions + open items, the
+  three answers, then Part B's building options and comparison. RIGHT column: the scope detail and the
+  assumed conditions, open by default. 44:56 grid, test id `three-answers-left` kept.
+
+Not Part A: the form fold and focus-to-results (V11 (1), Part C); the server's "step-P6 method" wording
+and the ".00" on whole square feet (V11 (4) server side); the stale-identity guard and the estimate's
+measurement-basis test (V11 (10)/(11)); the comparison's frozen row labels (V11 (8)); the typed parking
+line (V11 (9), ResultsPanel, Part C).
+
+### Checks (final state; direct exit codes)
+
+- `npm run lint` → EXIT 0 (same 2 pre-existing warnings, untouched files).
+- `npm run typecheck` → EXIT 0.
+- `npx vitest run src/components/architect src/lib` → EXIT 1; Tests 2258 passed, **1 failed**. The one
+  failure is Part C's `results-panel.test.tsx` › "renders the journey document through the three-answers
+  cards" (line 98): it still asserts the full condition text inside the card and the building-option
+  card reading "Not available" — both are exactly what V11 (5)/(2) remove. That file is Part C's and is
+  being corrected in the same round; this out-of-scope test update is ROUTED TO THE ORCHESTRATOR (not
+  edited here — V7). Every Part A test (the four answers tests and three-answers.test.ts) and every
+  Part B test pass.
+- root `python3 tools/modularity_check.py --check` → EXIT 0. root
+  `python3 scripts/lanes/check_lane_paths.py --coverage` → EXIT 0 (9811 files).
+
+### Mutation proofs (one per V11 item; scratch copy outside the repo, deleted after)
+
+- (2) building-option card never scheduled → caught by three-answers-panel.test.tsx "at 10 ft reads
+  'Scheduled area' …".
+- (3) restore the "still owed" gap phrase → caught by three-answers.test.ts "V11 (3): … work owed gets
+  no second phrase".
+- (4) heading back to "internal preview …" → caught by three-answers.test.ts "(4) the draft heading
+  note drops the dev framing".
+- (5) refer to conditions by internal id "C1" → caught by three-answers-panel.test.tsx "refers to the
+  shared conditions by name …".
+- (6) openItemsView returns nothing → caught by three-answers.test.ts "(6) openItemsView collects …".
+- (7) move the building options to the right column → caught by three-answers-panel.test.tsx
+  "left = identity + answers + building options; right = the scope …".

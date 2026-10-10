@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   BUILDING_OPTIONS_BELOW_REASON,
+  DRAFT_PREVIEW_TAG,
   GAP_KIND_LINES,
   NOT_AVAILABLE,
   RULES_NOT_REVIEWED_REASON,
@@ -9,6 +10,7 @@ import {
   displayQuantity,
   gapKindLine,
   notAvailableText,
+  openItemsView,
   quantityText,
   remainingFloorAreaView,
   shortfallView,
@@ -187,7 +189,9 @@ describe("answerView — the draft gate and the headline", () => {
         key: "legal_unit_limit_standard",
         label: "Legal dwelling-unit limit",
         reason: "There is no evidence of a special density area, so it is not known.",
-        gapKindLine: "Not built yet: this part of the program is still owed.",
+        // work_owed carries no gap tag now (ruling V11 (3)); what would settle it is read through.
+        gapKindLine: null,
+        resolvedBy: "Sourced evidence of the special density area",
       },
     ]);
     // The withheld key never appears among the shown values (R570).
@@ -313,11 +317,12 @@ describe("the conditions of a value as a per-line list (M5-T142, ruling L1)", ()
 });
 
 describe("gapKindLine — the kind of gap in plain words (R258, ruling R6)", () => {
-  it("S5: names the two kinds in the fixed words, in ONE place", () => {
-    expect(gapKindLine("work_owed")).toBe("Not built yet: this part of the program is still owed.");
-    expect(gapKindLine("missing_information")).toBe("Missing information about this property.");
-    expect(GAP_KIND_LINES.work_owed).toBe("Not built yet: this part of the program is still owed.");
-    expect(GAP_KIND_LINES.missing_information).toBe("Missing information about this property.");
+  it("V11 (3): a missing property fact gets the short tag; work owed gets no second phrase", () => {
+    expect(gapKindLine("missing_information")).toBe("Needs property information");
+    expect(GAP_KIND_LINES.missing_information).toBe("Needs property information");
+    // No "Not worked" / "still owed" / "Not built yet" anywhere now (owner rows R894; ruling V11 (3)).
+    expect(gapKindLine("work_owed")).toBeNull();
+    expect(GAP_KIND_LINES.work_owed).toBeUndefined();
   });
 
   it("shows NO kind line and never a machine word when the gap_kind is absent, null or unknown", () => {
@@ -351,7 +356,9 @@ describe("gapKindLine — the kind of gap in plain words (R258, ruling R6)", () 
     };
     const view = answerView(probe, "floor_area_allowance", true);
     if (view.kind !== "available") throw new Error("expected an available view");
-    expect(view.withheld[0].gapKindLine).toBe("Missing information about this property.");
+    expect(view.withheld[0].gapKindLine).toBe("Needs property information");
+    // what would settle it is read from the document's resolver (ruling V11 (3)).
+    expect(view.withheld[0].resolvedBy).toBe("Recording the fact");
   });
 
   it("a building option on a lot with worked alternatives points to the list, with no gap-kind line (override)", () => {
@@ -434,5 +441,35 @@ describe("supplements, strip and street-width lines", () => {
       "ZR 23-432",
       "ZR 23-433",
     ]);
+  });
+});
+
+describe("ruling V11: the heading note and the open-items list", () => {
+  it("(4) the draft heading note drops the dev framing, keeping only the review standing note", () => {
+    expect(DRAFT_PREVIEW_TAG).toBe("rules not professionally reviewed");
+    expect(DRAFT_PREVIEW_TAG).not.toContain("internal preview");
+  });
+
+  it("(6) openItemsView collects the document's withheld results with their resolvers", () => {
+    const doc = loadResultsFixture("recorded_215_16_northern_journey");
+    const items = openItemsView(doc);
+    // The benchmark carries several withheld envelope values, a withheld coverage block and a
+    // not-worked building — each with a resolver; the list is non-empty.
+    expect(items.length).toBeGreaterThan(0);
+    for (const item of items) {
+      expect(item.affects.length).toBeGreaterThan(0);
+      expect(item.settledBy.length).toBeGreaterThan(0); // an item names what would settle it
+    }
+    // What it affects comes straight from a withheld value's label (never typed).
+    const env = doc.answers.permitted_envelope;
+    if (env.status !== "available" || !env.value_states) throw new Error("fixture changed");
+    const coverageState = env.value_states.max_lot_coverage;
+    if (!coverageState || coverageState.way !== "withheld") throw new Error("fixture changed");
+    expect(items.some(item => item.affects === coverageState.label)).toBe(true);
+  });
+
+  it("(6) an item with no resolver is omitted, and duplicates are collapsed", () => {
+    const doc = loadResultsFixture("synthetic_all_answers_available"); // no withheld values
+    expect(openItemsView(doc)).toEqual([]);
   });
 });

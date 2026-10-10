@@ -77,13 +77,14 @@ export const ANSWER_TITLES: Readonly<Record<AnswerKey, string>> = {
 export const NOT_AVAILABLE = "Not available";
 
 /**
- * The two kinds of gap in plain words, keyed by the document's `gap_kind` (D-090-R258,
- * ruling R6). The ONE place these words live. A `gap_kind` that is absent, null or unknown
- * to the website shows NO kind line and never a machine word.
+ * The kind-of-gap tag in plain words, keyed by the document's `gap_kind` (D-090-R258, ruling R6;
+ * ruling V11 (3) "one wording per situation"). The ONE place this word lives. Only a MISSING FACT
+ * about the property carries the short tag "Needs property information"; work still owed carries no
+ * second phrase at all — the owner's rows R894/R894 remove "Not worked", "still owed" and "Not built
+ * yet". A `gap_kind` that is absent, null or not this one shows NO tag and never a machine word.
  */
 export const GAP_KIND_LINES: Readonly<Record<string, string>> = {
-  missing_information: "Missing information about this property.",
-  work_owed: "Not built yet: this part of the program is still owed.",
+  missing_information: "Needs property information",
 };
 
 /** The plain-words gap-kind line for a document `gap_kind`, or null when it is absent, null or
@@ -95,8 +96,9 @@ export function gapKindLine(gapKind: GapKind | string | null | undefined): strin
 /** Reason shown for an available answer computed from rules that are not reviewed yet. */
 export const RULES_NOT_REVIEWED_REASON = "the rules for this answer are not reviewed yet";
 
-/** Heading tag on a lane-flag surface that shows draft numbers (never an architect surface). */
-export const DRAFT_PREVIEW_TAG = "internal preview, rules not reviewed";
+/** Standing note in the heading of a draft document: the rules are not professionally reviewed
+ * (ADR-007; ruling V11 (4) drops the old "internal preview" dev framing). */
+export const DRAFT_PREVIEW_TAG = "rules not professionally reviewed";
 
 /** Reason shown if an available answer arrives without any value (the contract forbids it). */
 export const NO_VALUE_REASON = "no value was returned for this answer";
@@ -210,9 +212,11 @@ export interface WithheldValueView {
   key: string;
   label: string;
   reason: string;
-  /** Which kind of gap this is, in plain words (D-090-R258, ruling R6), after the reason; null
-   * when the document carries no gap_kind the website knows. */
+  /** The short kind-of-gap tag in plain words (D-090-R258, ruling R6/V11); null when the document
+   * carries no gap_kind the website tags. */
   gapKindLine: string | null;
+  /** What would settle it, read from the document's `resolved_by` (ruling V11 (3)); null if absent. */
+  resolvedBy: string | null;
 }
 
 /** A shown value and, when its way is conditional, each condition on its own line. */
@@ -353,6 +357,7 @@ export function answerView(
         label: state.label,
         reason: state.reason,
         gapKindLine: gapKindLine(state.gap_kind),
+        resolvedBy: state.resolved_by ?? null,
       });
     }
   }
@@ -376,6 +381,7 @@ export function answerView(
         label: headlineState.label,
         reason: headlineState.reason,
         gapKindLine: gapKindLine(headlineState.gap_kind),
+        resolvedBy: headlineState.resolved_by ?? null,
       },
     };
     headlineKeyShown = headlineKey;
@@ -679,4 +685,54 @@ export function buildingOptionNotesView(results: ThreeAnswersResults): BuildingO
       zrSections: note.zr_sections,
       snapshotIds: note.snapshot_ids,
     }));
+}
+
+// ---- What needs resolving (presentation contract §2 item 6; ruling V11 (6)) ----
+// A short, prioritised list of the document's open items, grouped from its OWN reasons and
+// resolvers — never typed here (ruling V2). Each item names what it affects and what would settle
+// it. The caller (SharedConditions) shows at most three through the notices adapter's cap.
+
+/** One open item: what it affects, the document's reason, and what would settle it. */
+export interface OpenItem {
+  /** The result this affects, read from the document (its label). */
+  affects: string;
+  /** The document's reason it is not settled. */
+  reason: string;
+  /** What would settle it, read from the document's resolver. */
+  settledBy: string;
+}
+
+/**
+ * The document's open items, in document order: every withheld value of the three answers, a
+ * withheld coverage-by-portion block, and every building the method did not work — each carrying a
+ * resolver. An item with no resolver is omitted (nothing would settle it is not an action). Deduped
+ * by what it affects and what settles it, so the same gap is not listed twice. Every string is read
+ * from the document.
+ */
+export function openItemsView(results: ThreeAnswersResults): OpenItem[] {
+  const items: OpenItem[] = [];
+  const seen = new Set<string>();
+  const add = (affects: string, reason: string, settledBy: string | null | undefined): void => {
+    if (settledBy == null || settledBy === "") return;
+    const keyed = `${affects}\u0000${settledBy}`;
+    if (seen.has(keyed)) return;
+    seen.add(keyed);
+    items.push({ affects, reason, settledBy });
+  };
+  for (const key of ANSWER_KEYS) {
+    const answer = results.answers[key];
+    if (answer.status !== "available" || !answer.value_states) continue;
+    const states = answer.value_states as Record<string, ValueState>;
+    for (const state of Object.values(states)) {
+      if (state.way === "withheld") add(state.label, state.reason, state.resolved_by);
+    }
+  }
+  const coverage = results.coverage_by_portion;
+  if (coverage && coverage.status === "withheld") {
+    add(coverage.label, coverage.reason, coverage.resolved_by);
+  }
+  for (const entry of results.buildings_not_worked ?? []) {
+    add(entry.label, entry.reason, entry.resolved_by);
+  }
+  return items;
 }
