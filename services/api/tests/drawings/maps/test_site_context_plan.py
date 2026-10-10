@@ -24,6 +24,7 @@ from .context_support import (
     summary_note_leaks,
     summary_too_big,
     texts_by_role,
+    wide_too_big,
     with_layer_unavailable,
 )
 from .maps_support import overlapping_labels
@@ -70,6 +71,54 @@ def test_s2_streets_are_named_with_their_mapped_widths():
     widths = set(texts_by_role(d.svg, "street_width"))
     assert "100 ft mapped width" in widths
     assert "60 ft mapped width" in widths
+
+
+def test_t155_c1_subject_fill_reads_above_the_existing_building():
+    """The subject's coral fill is drawn AFTER the grey neighbour buildings (so it
+    reads as the subject, not a grey building); the existing building on the
+    subject lot is a DASHED OUTLINE with its own legend entry (T155-C1)."""
+    d = _render()
+    assert isinstance(d, Drawing)
+    assert "existing_building" in d.kinds_drawn
+    assert "Existing building (city records)" in texts_by_role(d.svg, "legend")
+    subject_fill = d.svg.find('fill="#FDE9D0"')            # the subject coral fill (scene, first)
+    grey_before = d.svg.rfind('fill="#E0E0E0"', 0, subject_fill)  # a grey building before it
+    assert subject_fill >= 0 and grey_before >= 0          # subject fill is drawn ABOVE the greys
+
+
+def test_t155_fix2_street_areas_only_where_a_named_street_runs():
+    """Every drawn street area has a street centre line running through it; a gap
+    no centre line crosses (an outer-corner pocket) is left neutral white."""
+    from shapely.geometry import LineString
+    from shapely.geometry import Polygon as SP
+
+    from app.drawings.maps.adapter import load_map_context
+    from app.drawings.maps.layout import REPORT_PLAN, REPORT_PLAN_MARGIN
+    from app.drawings.maps.site_context_plan import (
+        GAP_NAMED_MIN_PT,
+        TITLE_BAND_PT,
+        _data_region,
+        _street_lines_screen,
+        fit_view,
+        frontage_rotation,
+        site_context_view,
+        viewport,
+    )
+
+    from .context_support import street_area_polys
+    ctx = load_map_context(DOC)
+    view = site_context_view(ctx.subject_lot, ctx.streets)
+    alpha, _n, _s = frontage_rotation(ctx.subject_lot, ctx.streets)
+    fr = fit_view(view, REPORT_PLAN, REPORT_PLAN_MARGIN, alpha=alpha, top_band=TITLE_BAND_PT)
+    rect = viewport(REPORT_PLAN)
+    lines = [LineString(p) for _nm, p in _street_lines_screen(ctx.streets, fr, rect,
+                                                              _data_region(ctx, fr))]
+    polys = street_area_polys(_render().svg)
+    assert polys
+    for ring in polys:
+        gap = SP(ring)
+        assert any(gap.intersection(ln).length >= GAP_NAMED_MIN_PT for ln in lines), \
+            "a street area is drawn where no named centre line runs"
 
 
 def test_s2_has_north_arrow_scale_bar_legend_title_and_subtitle():
@@ -156,13 +205,13 @@ def test_s7_no_law_is_drawn():
     assert isinstance(d, Drawing)
     assert not (set(d.kinds_drawn) & LAW_KINDS)
     assert set(d.kinds_drawn) <= {
-        "street_area", "subject_lot", "neighbour_lot", "building_footprint"}
+        "street_area", "subject_lot", "neighbour_lot", "building_footprint", "existing_building"}
 
 
 # --------------------------------------------------------------------------- #
 # S8 - deterministic.
 # --------------------------------------------------------------------------- #
-@pytest.mark.parametrize("frame", ["report", "sheet", "summary"])
+@pytest.mark.parametrize("frame", ["report", "sheet", "summary", "wide"])
 def test_s8_same_input_gives_byte_identical_svg(frame):
     first = _render(frame)
     assert isinstance(first, Drawing)
@@ -187,3 +236,20 @@ def test_summary_frame_is_compact_clean_and_captionable():
     assert "NORTHERN BOULEVARD" in set(texts_by_role(d.svg, "street"))  # the frontage street
     assert texts_by_role(d.svg, "street_width") == []  # no width line on the thumbnail
     assert summary_note_leaks(d) == []                 # notes are short plain sentences
+
+
+# --------------------------------------------------------------------------- #
+# Wide frame (rework 4): a landscape strip for the location page.
+# --------------------------------------------------------------------------- #
+def test_wide_frame_is_a_landscape_strip():
+    d = _render("wide")
+    assert isinstance(d, Drawing)
+    assert not wide_too_big(d.svg)                     # at most 182 mm by 105 mm
+    assert labels_below(d.svg, 7.0) == []
+    assert overlapping_labels(d.svg) == []
+    assert texts_by_role(d.svg, "title") == []         # no title or subtitle inside
+    assert forbidden_tokens(d.svg) == []
+    assert "Lot 70" in texts_by_role(d.svg, "lot_number")
+    assert "NORTHERN BOULEVARD" in set(texts_by_role(d.svg, "street"))
+    assert texts_by_role(d.svg, "legend")              # a compact legend is allowed
+    assert summary_note_leaks(d) == []

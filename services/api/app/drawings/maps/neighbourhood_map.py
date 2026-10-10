@@ -19,6 +19,8 @@ from .site_context_plan import (
     SUMMARY_PLAN,
     SUMMARY_PLAN_MARGIN,
     TITLE_BAND_PT,
+    WIDE_PLAN,
+    WIDE_PLAN_MARGIN,
     caption_notes,
     compose_context,
     draw_neighbourhood_scene,
@@ -47,6 +49,12 @@ def draw_neighbourhood_map(context: MapContext, *, frame: str = "sheet") -> Draw
         sheet = draw_neighbourhood_scene(context, fr, rect, SUMMARY_PLAN, summary=True)
         return compose_context(drawing, "Neighbourhood", sheet, fr, summary_notes(None),
                                mode="summary")
+    if frame == "wide":
+        fr = fit_view(window, WIDE_PLAN, WIDE_PLAN_MARGIN, alpha=0.0, top_band=0.0)
+        rect = viewport(WIDE_PLAN, FRAME_INSET)
+        sheet = draw_neighbourhood_scene(context, fr, rect, WIDE_PLAN, with_title=False)
+        return compose_context(drawing, "Neighbourhood", sheet, fr, summary_notes(None),
+                               mode="wide")
     report = frame == "report"
     region, margin = (REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN)
     fr = fit_view(window, region, margin, alpha=0.0, top_band=TITLE_BAND_PT)  # north-up

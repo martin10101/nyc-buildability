@@ -172,6 +172,12 @@ STYLE_TABLE: tuple[ShapeStyle, ...] = (
     # so a mid-grey solid line reads as roads at the ~2,000 ft scale.
     ShapeStyle("street_centreline", "Street", LINE, None, "#AAB4BC", 1.0, (),
                None, "C-ROAD-CNTR", True, 8),
+    # The EXISTING building on the SUBJECT lot is drawn as a dashed outline only
+    # (M5-T155 T155-C1), so the subject's coral fill reads above it and the
+    # reader sees it is an existing structure (city records), distinct from the
+    # "no proposed building placed yet" line. Other lots' buildings stay grey.
+    ShapeStyle("existing_building", "Existing building (city records)", LINE, None, "#8A8A8A",
+               0.5, (3.0, 2.0), None, "A-BLDG-EXST", True, 9),
     # Text - drawing notes (the DXF annotation layer).
     ShapeStyle("note", "Note", TEXT, None, "#111111", 0.25, (),
                None, "A-ANNO-NOTE", False, 7),

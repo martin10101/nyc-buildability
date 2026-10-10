@@ -15,6 +15,7 @@ from app.drawings.maps import (
     Unavailable,
     render_block_map,
     render_neighbourhood_map,
+    render_site_context_plan,
 )
 
 from .context_support import (
@@ -22,13 +23,16 @@ from .context_support import (
     forbidden_tokens,
     label_problems,
     labels_below,
+    labels_overlapping_marker,
     note_labels,
     recorded_document,
     report_too_big,
     street_area_polys,
+    street_labels_crossing_other_streets,
     summary_note_leaks,
     summary_too_big,
     texts_by_role,
+    wide_too_big,
     with_layer_unavailable,
 )
 from .maps_support import overlapping_labels
@@ -36,6 +40,9 @@ from .maps_support import overlapping_labels
 ENV = {"LANE_E_ENABLED": "1"}
 DOC = recorded_document()
 RENDERERS = {"block_map": render_block_map, "neighbourhood_map": render_neighbourhood_map}
+# the S4 label-cleanliness checks run on every frame of ALL three drawings
+ALL_RENDERERS = {**RENDERERS, "site_context_plan": render_site_context_plan}
+ALL_FRAMES = ["report", "summary", "wide"]
 
 
 # --------------------------------------------------------------------------- #
@@ -47,8 +54,10 @@ def test_s3_block_marks_only_the_subject_and_names_the_streets():
     assert "subject_lot" in d.kinds_drawn and "neighbour_lot" in d.kinds_drawn
     assert "street_area" in d.kinds_drawn
     assert {"NORTHERN BOULEVARD", "215 PLACE", "215 STREET"} <= set(texts_by_role(d.svg, "street"))
-    # the close-up labels ONLY the subject lot
-    assert set(texts_by_role(d.svg, "lot_number")) == {"Lot 70"}
+    # the close-up marks the subject (coral) and labels NO neighbour; "Lot 70"
+    # is only drawn if it fits on the lot without crossing a street (else the
+    # coral marker stands alone, like the competitor close-up).
+    assert set(texts_by_role(d.svg, "lot_number")) <= {"Lot 70"}
     assert label_problems(d.svg, DOC) == []
 
 
@@ -156,7 +165,7 @@ def test_s6_neighbourhood_still_draws_when_tax_lots_or_buildings_are_missing():
 # S8 - deterministic.
 # --------------------------------------------------------------------------- #
 @pytest.mark.parametrize("name", list(RENDERERS))
-@pytest.mark.parametrize("frame", ["report", "sheet", "summary"])
+@pytest.mark.parametrize("frame", ["report", "sheet", "summary", "wide"])
 def test_s8_same_input_gives_byte_identical_svg(name, frame):
     first = RENDERERS[name](DOC, frame=frame, env=ENV)
     assert isinstance(first, Drawing)
@@ -178,8 +187,51 @@ def test_summary_frame_is_compact_clean_and_captionable(name):
     assert texts_by_role(d.svg, "title") == []
     assert texts_by_role(d.svg, "legend") == []
     assert forbidden_tokens(d.svg) == []
-    assert {"NORTHERN BOULEVARD"} <= set(texts_by_role(d.svg, "street"))
+    assert texts_by_role(d.svg, "street")  # the main streets are named (some drop on a thumbnail)
     assert summary_note_leaks(d) == []
+
+
+# --------------------------------------------------------------------------- #
+# Wide frame (rework 4): a landscape strip so two maps stack on the location page.
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name", list(RENDERERS))
+def test_wide_frame_is_a_landscape_strip(name):
+    d = RENDERERS[name](DOC, frame="wide", env=ENV)
+    assert isinstance(d, Drawing)
+    assert not wide_too_big(d.svg)
+    assert labels_below(d.svg, 7.0) == []
+    assert overlapping_labels(d.svg) == []
+    assert texts_by_role(d.svg, "title") == []
+    assert forbidden_tokens(d.svg) == []
+    assert {"NORTHERN BOULEVARD"} <= set(texts_by_role(d.svg, "street"))
+    assert texts_by_role(d.svg, "legend")  # a compact legend is allowed
+    assert summary_note_leaks(d) == []
+
+
+def test_block_wide_labels_the_subject_and_confines_street_areas():
+    from shapely.geometry import Polygon as SP
+
+    from app.drawings.maps.adapter import load_map_context
+    from app.drawings.maps.site_context_plan import (
+        WIDE_PLAN,
+        WIDE_PLAN_MARGIN,
+        fit_view,
+        frontage_rotation,
+    )
+    d = render_block_map(DOC, frame="wide", env=ENV)
+    assert "subject_lot" in d.kinds_drawn  # the subject is marked (coral)
+    assert set(texts_by_role(d.svg, "lot_number")) <= {"Lot 70"}  # no neighbour labelled
+    ctx = load_map_context(DOC)
+    window = ctx.context_window.box
+    alpha, _n, _s = frontage_rotation(ctx.subject_lot, ctx.streets)
+    fr = fit_view(window, WIDE_PLAN, WIDE_PLAN_MARGIN, alpha=alpha, top_band=0.0)
+    corners = [(window[0], window[1]), (window[2], window[1]),
+               (window[2], window[3]), (window[0], window[3])]
+    cw = SP([fr.px(c) for c in corners]).buffer(0.75)
+    polys = street_area_polys(d.svg)
+    assert polys
+    for ring in polys:
+        assert cw.contains(SP(ring)), "a wide street area lies outside the data window"
 
 
 def test_block_summary_street_areas_stay_inside_the_data_window():
@@ -203,3 +255,27 @@ def test_block_summary_street_areas_stay_inside_the_data_window():
     assert polys
     for ring in polys:
         assert cw.contains(SP(ring)), "a summary street area lies outside the data window"
+
+
+# --------------------------------------------------------------------------- #
+# S4 extension (M5-T155 corrections, T156-C2): in EVERY frame of EVERY drawing,
+# no label crosses the subject marker or runs along another street's line.
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("name", list(ALL_RENDERERS))
+@pytest.mark.parametrize("frame", ALL_FRAMES)
+def test_no_label_overlaps_the_subject_marker(name, frame):
+    d = ALL_RENDERERS[name](DOC, frame=frame, env=ENV)
+    assert isinstance(d, Drawing)
+    assert labels_overlapping_marker(d.svg) == []
+
+
+@pytest.mark.parametrize("name", list(ALL_RENDERERS))
+@pytest.mark.parametrize("frame", ALL_FRAMES)
+def test_no_label_runs_along_another_streets_centre_line(name, frame):
+    # only the neighbourhood draws the centre lines, so the on-paper check runs
+    # there (the block/site draw streets as areas - the production code keeps
+    # their labels off other streets via place(avoid_lines=...)).
+    d = ALL_RENDERERS[name](DOC, frame=frame, env=ENV)
+    assert isinstance(d, Drawing)
+    if "street_centreline" in d.kinds_drawn:
+        assert street_labels_crossing_other_streets(d.svg, DOC) == []

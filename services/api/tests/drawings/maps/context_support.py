@@ -376,6 +376,12 @@ def summary_too_big(svg: str) -> bool:
     return float(root.get("width")) > 249.5 or float(root.get("height")) > 204.1
 
 
+def wide_too_big(svg: str) -> bool:
+    """True if the wide frame exceeds 182 mm by 105 mm (515.91 pt by 297.64 pt)."""
+    root = ET.fromstring(svg)
+    return float(root.get("width")) > 515.95 or float(root.get("height")) > 297.7
+
+
 # Source names / dates / dataset ids that the SUMMARY notes must NOT carry (the
 # report composes those from the provenance; the summary notes are plain).
 SOURCE_TOKENS = ("MapPLUTO", "Digital City Map", "Building footprints", "Open Data", "OTI",
@@ -404,6 +410,93 @@ def street_area_polys(svg: str) -> list[list[tuple[float, float]]]:
             if len(pts) >= 3:
                 out.append([(float(x), float(y)) for x, y in pts])
     return out
+
+
+def _label_boxes(svg: str):
+    """(role, text, Box) for every single-line drawn label."""
+    from app.drawings.kit.labels import text_box
+    out = []
+    for el in parse(svg).iter(f"{SVG_NS}text"):
+        if el.findall(f"{SVG_NS}tspan"):
+            continue
+        text = el.text or ""
+        m = re.match(r"rotate\((-?[\d.]+)", el.get("transform") or "")
+        box = text_box(float(el.get("x")), float(el.get("y")), text, float(el.get("font-size")),
+                       el.get("text-anchor", "start"), float(m.group(1)) if m else 0.0)
+        out.append((el.get("data-role"), text, box))
+    return out
+
+
+def subject_marker_box(svg: str):
+    """Bounding box of the drawn subject-lot FILL (the coral marker)."""
+    from app.drawings.kit.labels import Box
+    for p in parse(svg).iter(f"{SVG_NS}path"):
+        if p.get("data-source") == "/map_context/subject_lot/outline" \
+                and not (p.get("fill") or "").startswith("url("):
+            pts = [(float(x), float(y)) for x, y in _SVG_POINT.findall(p.get("d") or "")]
+            if pts:
+                xs = [q[0] for q in pts]
+                ys = [q[1] for q in pts]
+                return Box(min(xs), min(ys), max(xs), max(ys))
+    return None
+
+
+def labels_overlapping_marker(svg: str) -> list[str]:
+    """Labels that overlap the subject marker, EXCLUDING the subject's own labels
+    (its 'Lot <n>' and the 'Subject lot' mark, which belong on/beside it)."""
+    marker = subject_marker_box(svg)
+    if marker is None:
+        return []
+    bad = []
+    for role, text, box in _label_boxes(svg):
+        # the subject's own labels (mark, 'Lot <n>', edge dimensions) and the
+        # header may sit on/beside it; the marker box is the lot's axis-aligned
+        # bbox, so a dimension just outside a rotated edge falls in a bbox corner.
+        if role in ("subject_mark", "lot_number", "dimension", "title"):
+            continue
+        if box.overlaps(marker, pad=0.0):
+            bad.append(f"{role}:{text!r}")
+    return bad
+
+
+def street_centrelines(svg: str, doc: dict):
+    """(street_name, screen polyline) for every drawn street centre line, mapping
+    the data-source entry index back to the street name in ``doc``."""
+    entries = doc["map_context"]["streets"].get("entries", [])
+    out = []
+    for p in parse(svg).iter(f"{SVG_NS}path"):
+        src = p.get("data-source") or ""
+        m = re.match(r"/map_context/streets/entries/(\d+)/paths", src)
+        if not m:
+            continue
+        name = entries[int(m.group(1))]["name"]
+        pts = [(float(x), float(y)) for x, y in _SVG_POINT.findall(p.get("d") or "")]
+        if len(pts) >= 2:
+            out.append((name, pts))
+    return out
+
+
+def street_labels_crossing_other_streets(svg: str, doc: dict) -> list[str]:
+    """Street-name/width labels whose box RUNS ALONG a DIFFERENT street's centre
+    line (a perpendicular crossing at an intersection is allowed)."""
+    from app.drawings.maps.context_scene import box_crosses_lines
+    lines = street_centrelines(svg, doc)
+    bad = []
+    for role, text, box in _label_boxes(svg):
+        if role not in ("street", "street_width", "subject_mark"):
+            continue
+        own = None if role == "subject_mark" else _street_name_for(text, doc)
+        limit = 2.0 if role == "subject_mark" else 3.0 * 9.5
+        if box_crosses_lines(box, lines, own, pad=0.5, max_len=limit):
+            bad.append(f"{role}:{text!r}")
+    return bad
+
+
+def _street_name_for(label_text: str, doc: dict) -> str | None:
+    for e in doc["map_context"]["streets"].get("entries", []):
+        if e["name"].upper() == label_text.strip():
+            return e["name"]
+    return None
 
 
 def labels_below(svg: str, min_pt: float) -> list[tuple[str, float]]:
