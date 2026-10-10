@@ -1,0 +1,26 @@
+{
+  "task_id": "M5-T152",
+  "producer_agent": "geospatial-engineer",
+  "report_file": "project-control/reports/M5-T152-producer-report.md",
+  "submitted_at": "2026-10-10T11:11:08.565129+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T152-evidence-map.json",
+  "content_manifest_sha256": "2c2bf0cdabbe7bd2447818c1ee7dfd07ebdf367070a1096e784f5e18712a2ef8",
+  "reviewed_sha": "88afbb475953f07e2b2011190a03f990b4e26da8",
+  "applicable_requirements": [
+    "D-090-R795",
+    "D-090-R893",
+    "D-090-R896",
+    "D-090-R912",
+    "D-090-R913",
+    "D-090-R914",
+    "D-090-R915",
+    "D-090-R920",
+    "D-090-R921",
+    "D-090-R922",
+    "D-090-R923",
+    "D-090-R924",
+    "D-090-R927"
+  ],
+  "updated_at": "2026-10-10T11:11:09.599887+00:00"
+}

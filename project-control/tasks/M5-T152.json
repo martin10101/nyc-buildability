@@ -128,15 +128,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "The frontage data may not reach the geometry block on every path: where it does not, streets stays empty and the path is named.",
     "Snapshot regeneration can hide a drawing regression: each regenerated snapshot is listed and looked at."
   ],
   "blockers": [],
   "created_at": "2026-10-10T07:36:30.903766+00:00",
-  "updated_at": "2026-10-10T11:11:06.793692+00:00",
+  "updated_at": "2026-10-10T11:11:16.450558+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",

@@ -126,15 +126,15 @@
     "human-journey-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "The report route is built in parallel (M5-T151): the preview is tested against the route's interface (ruling X9 d) with stubbed responses whose shape matches the real route, and end to end by the orchestrator after integration.",
     "Printing from a frame must not allow scripts in the frame."
   ],
   "blockers": [],
   "created_at": "2026-10-10T07:36:32.862987+00:00",
-  "updated_at": "2026-10-10T11:11:07.068691+00:00",
+  "updated_at": "2026-10-10T11:11:17.284831+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
