@@ -138,3 +138,16 @@ the full text "none of these conditions, which were not checked" (stated once). 
 `npm run typecheck` EXIT 0; `npx vitest run src/components/architect src/lib` EXIT 0 (110 files, 2263
 tests). The S12 test itself is unchanged; its 1440/390 failure cause — my tall folded card — is
 fixed by the compact line above (Part A's V12 reorder having landed at this head).
+
+Follow-up (S12 at 390 x 844; diagnostic head `13c8bd16`): S12 passed at 1440 but still failed at 390
+— the JS-centred window was 690 px (top 77) on an 844 px screen and the summary wrapped to ~119 px,
+so the first answer's headline sat below the window's bottom edge. (a) In floating-workspace-window.css
+a `@media (max-width: 700px)` rule overrides the JS inline frame so a non-maximized window fills the
+screen height (top 8, height `calc(100dvh - 16px)`, `!important` to beat the inline style); desktop is
+untouched, other windows only gain full height on phones. A jsdom test asserts that CSS rule exists.
+(b) At narrow container widths the inputs summary hides its "Inputs used:" label from view (kept for
+screen readers via the region's accessible name) and compacts the "Change inputs" button, so the
+summary is about one line and the button stays beside the text where it fits. Together the first
+answer's headline lands inside the 844 px screen. `npm run lint` EXIT 0; `npm run typecheck` EXIT 0;
+`npx vitest run src/components/architect src/lib` EXIT 0 (110 files, 2264 tests). Playwright not run
+(V6); the orchestrator runs the browser suite.

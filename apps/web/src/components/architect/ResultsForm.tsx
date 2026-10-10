@@ -98,7 +98,8 @@ export function ResultsForm({ values, onChange, onSubmit, onReset, busy, heightE
     return (
       <section className="results-inputs-summary" aria-label="Inputs used" data-testid="results-inputs-summary">
         <p className="results-summary-line" data-testid="results-summary-line">
-          Inputs used: {summarizeInputs(values)}
+          <span className="results-summary-eyebrow">Inputs used: </span>
+          {summarizeInputs(values)}
         </p>
         <button type="button" className="secondary-button" data-testid="results-change-inputs" onClick={onChangeInputs}>
           {CHANGE_INPUTS_LABEL}

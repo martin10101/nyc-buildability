@@ -212,6 +212,20 @@
   white-space: nowrap;
   border: 0;
 }
+/* M5-T149 part C (S12 at 390 px): on a narrow viewport (700 px and below) a floating tool window
+   fills the screen's height instead of the JS centred ~690 px frame, so the first answer reaches the
+   first screen. The JS writes the frame as an inline top/height, so this overrides it with
+   !important; it is scoped to narrow viewports only, so desktop behaviour is unchanged. The 8 px
+   gutter (the frame's minimum) is kept. A maximized window is already full height, so it is left
+   alone. */
+@media (max-width: 700px) {
+  .architect-shell .workspace-window:not(.workspace-window--maximized) {
+    top: 8px !important;
+    height: calc(100dvh - 16px) !important;
+    max-height: calc(100dvh - 16px) !important;
+  }
+}
+
 @media (max-width: 640px) {
   .architect-shell .workspace-window { border-radius: 8px 8px 4px 4px; }
   .architect-shell .workspace-window__header { flex-wrap: wrap; padding: 4px 6px; }
