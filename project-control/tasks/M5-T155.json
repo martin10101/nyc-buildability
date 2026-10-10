@@ -29,7 +29,8 @@
     "services/api/app/drawings/maps/neighbourhood_map.py",
     "services/api/app/drawings/kit/styles.py",
     "services/api/tests/drawings/maps",
-    "project-control/reports/M5-T155-producer-report.md"
+    "project-control/reports/M5-T155-producer-report.md",
+    "services/api/app/drawings/maps/context_scene.py"
   ],
   "forbidden_paths": [
     "services/api/requirements*",
@@ -146,6 +147,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-10T22:19:47+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, after the G3 review and before the correction round] added services/api/app/drawings/maps/context_scene.py to the allowed paths. The code review (G3, PASS) advised moving the shared view-frame, projection and label-placement helpers out of site_context_plan.py (719 code lines, two modularity warnings), and the visual review's corrections would grow that file further. The new module takes those helpers; the public imports stay. No other path, gate, reviewer, scenario or bound row changed."
     }
   ]
 }
