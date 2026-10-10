@@ -2,6 +2,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Results } from "@/lib/architect/three-answers";
 import {
+  APARTMENT_SIZE_BASIS_NOTE,
   feet,
   firstBuildingOptionsView,
   percent,
@@ -105,6 +106,15 @@ describe("PART B: the building-option section on the results screen (contract 1.
       .getAllByTestId("building-alternative-not-checked-item")
       .map(element => element.textContent);
     expect(items).toEqual(buildingB.not_checked);
+    // the shared conditions are referred to BY NAME, never repeated in full (ruling V11 (5)).
+    const applies = within(block).getByTestId("option-applies").textContent ?? "";
+    expect(applies).toContain("Applies:");
+    expect(applies).toMatch(/Condition \d/);
+    const way = buildingB.way;
+    if (way.way === "conditional") {
+      // the full "If …" condition text does NOT appear under the building option (it is in the card).
+      expect(block.textContent ?? "").not.toContain(way.conditions[0].assumption);
+    }
     // the word "achieved" appears nowhere (row R895); and no "unused" / "no allowance left unused".
     const sectionText = optionsSection().textContent ?? "";
     expect(sectionText.toLowerCase()).not.toContain("achieved");
@@ -145,6 +155,20 @@ describe("PART B: the building-option section on the results screen (contract 1.
         `Not known — ${entry.reason}`,
       );
     });
+    // ONE WORDING PER SITUATION (ruling V11 (3)): a missing property fact (building A) carries the
+    // short tag; a building the method cannot yet work (building B, work owed) carries NO tag, and no
+    // second phrase ("Not built yet", "still owed") reaches the screen.
+    expect(benchmarkA?.gap_kind).toBe("missing_information");
+    expect(within(blocks[0]).getByTestId("building-not-worked-tag").textContent).toBe(
+      "Needs property information",
+    );
+    expect(within(blocks[1]).queryByTestId("building-not-worked-tag")).toBeNull();
+    // no not-worked block carries a second kind phrase (scoped to the blocks: the coverage block
+    // below legitimately keeps its own gap line, which is a different result).
+    for (const block of blocks) {
+      expect(block.textContent ?? "").not.toContain("Not built yet: this part of the program is still owed.");
+      expect(block.textContent ?? "").not.toContain("Missing information about this property.");
+    }
   });
 
   it("S5: shows the building's preliminary capacity estimate as preliminary assumptions", () => {
@@ -166,9 +190,10 @@ describe("PART B: the building-option section on the results screen (contract 1.
     const share = within(estimateBlock).getByTestId("capacity-estimate-share").textContent ?? "";
     expect(share).toContain(twoDp(estimate.share_low));
     expect(share).toContain(twoDp(estimate.share_high));
-    expect(within(estimateBlock).getByTestId("capacity-estimate-size").textContent ?? "").toContain(
-      sqft(estimate.apartment_size_sqft),
-    );
+    const size = within(estimateBlock).getByTestId("capacity-estimate-size").textContent ?? "";
+    expect(size).toContain(sqft(estimate.apartment_size_sqft));
+    // the measurement-basis words are the shared wording tied to the contract (ruling V11 (11)).
+    expect(size).toContain(APARTMENT_SIZE_BASIS_NOTE);
     expect(
       within(estimateBlock).getByTestId("capacity-estimate-assumptions").textContent ?? "",
     ).toContain("Preliminary assumptions");

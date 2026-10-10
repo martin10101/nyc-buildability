@@ -6,7 +6,7 @@ import type {
   FirstBuildingOptionsView,
   FloorRowView,
 } from "@/lib/architect/first-building-options";
-import { storeyText } from "@/lib/architect/first-building-options";
+import { APARTMENT_SIZE_BASIS_NOTE, storeyText } from "@/lib/architect/first-building-options";
 import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
 import { BuildingOptionsComparison } from "./BuildingOptionsComparison";
 import "./building-options.css";
@@ -81,9 +81,11 @@ function NotWorkedBlock({ view }: { view: BuildingNotWorkedView }) {
       <p className="ta-withheld-reason" data-testid="building-not-worked-reason">
         {NOT_KNOWN} — {view.reason}
       </p>
-      {view.gapKindLine !== null ? (
-        <p className="ta-gap-kind" data-testid="building-not-worked-gap-kind">
-          {view.gapKindLine}
+      {/* One wording per situation (ruling V11 (3)): a missing property fact carries a short tag; a
+          building the method cannot yet work carries none — no "Not worked" / "still owed" line. */}
+      {view.propertyInfoTag !== null ? (
+        <p className="ta-property-info-tag" data-testid="building-not-worked-tag">
+          {view.propertyInfoTag}
         </p>
       ) : null}
       <p className="ta-option-resolved" data-testid="building-not-worked-resolved">
@@ -116,7 +118,7 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
           {view.fitNote}
         </p>
       ) : null}
-      {view.isConditional ? <ConditionList conditions={view.conditions} /> : null}
+      {view.isConditional ? <AppliesConditions refs={view.conditionRefs} /> : null}
       {view.isWithheld && view.withheldReason !== null ? (
         <p className="ta-withheld-reason" data-testid="building-alternative-withheld">
           {NOT_KNOWN} — {view.withheldReason}
@@ -209,7 +211,7 @@ function CapacityBlock({ view }: { view: CapacityView }) {
             Residential share: {view.shareLow} to {view.shareHigh}
           </li>
           <li data-testid="capacity-estimate-size">
-            Apartment size: {view.apartmentSize} (on the HPD measurement basis)
+            Apartment size: {view.apartmentSize} ({APARTMENT_SIZE_BASIS_NOTE})
           </li>
         </ul>
       </div>
@@ -265,6 +267,24 @@ function CoverageBlock({ view }: { view: CoverageView }) {
       {view.conditions.length > 0 ? <ConditionList conditions={view.conditions} /> : null}
       <RuleSections sections={view.zrSections} />
     </section>
+  );
+}
+
+/** Under the building option the shared conditions are referred to BY NAME (ruling V11 (5)): the
+ * "Conditional" marker, then "Applies: Condition 1, Condition 2" in the shared-conditions card's
+ * order. The full "If …" text is stated once in that card, never repeated here. */
+function AppliesConditions({ refs }: { refs: readonly string[] }) {
+  return (
+    <div className="ta-conditional" data-testid="option-conditional">
+      <span className="ta-conditional-marker" data-testid="option-conditional-marker">
+        {CONDITIONAL_MARKER}
+      </span>
+      {refs.length > 0 ? (
+        <span className="ta-applies" data-testid="option-applies">
+          Applies: {refs.join(", ")}
+        </span>
+      ) : null}
+    </div>
   );
 }
 

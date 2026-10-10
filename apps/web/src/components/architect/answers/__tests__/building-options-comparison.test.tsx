@@ -129,6 +129,25 @@ describe("PART B: the option comparison (scenario S7)", () => {
     expect(screen.getAllByTestId("comparison-summary")).toHaveLength(2);
   });
 
+  it("keeps the row labels in view when the table scrolls sideways (ruling V11 (8): a sticky column)", () => {
+    renderComparison(loadResultsFixture(JOURNEY));
+    // every metric row header, and the corner cell, carry the sticky-first-column class.
+    const rowHeads = screen.getAllByTestId("comparison-row-head");
+    expect(rowHeads).toHaveLength(5);
+    for (const head of rowHeads) expect(head.className).toContain("bo-compare-rowhead");
+    const corner = within(screen.getByTestId("comparison-table")).getByText("Measure");
+    expect(corner.className).toContain("bo-compare-rowhead");
+    // the CSS makes that column sticky, with its background from a shared token (not a literal).
+    const css = readFileSync(
+      resolve(process.cwd(), "src/components/architect/answers", "building-options.css"),
+      "utf8",
+    );
+    const stickyRule = css.slice(css.indexOf(".bo-compare-rowhead"));
+    expect(stickyRule).toMatch(/position:\s*sticky/);
+    expect(stickyRule).toMatch(/left:\s*0/);
+    expect(stickyRule).toMatch(/background:\s*var\(--pt-color-/);
+  });
+
   it("builds no comparison for a single building (a comparison of one is no comparison)", () => {
     // the committed benchmark fixture carries only building B and no not-worked building.
     const single = loadResultsFixture(BENCHMARK);

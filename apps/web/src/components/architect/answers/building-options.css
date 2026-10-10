@@ -70,6 +70,25 @@
   color: var(--pt-color-supporting);
 }
 
+/* "Applies: Condition 1, Condition 2" — the shared conditions referred to by name (ruling V11 (5)),
+   beside the "Conditional" marker; the full text is stated once in the shared-conditions card. */
+.ta-applies {
+  margin-left: var(--pt-space-8);
+  color: var(--pt-color-supporting);
+}
+
+/* The short tag a missing-property-fact carries on a not-worked building (ruling V11 (3)); a quiet
+   outlined chip, the state told by the words, not by colour. */
+.ta-property-info-tag {
+  display: inline-block;
+  margin: var(--pt-space-4) 0 0;
+  padding: 0 var(--pt-space-8);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  color: var(--pt-color-supporting);
+  font-size: var(--pt-type-compact-size);
+}
+
 /* N4: the floor table scrolls INSIDE this box on narrow screens, so the page never scrolls sideways.
    The box is a keyboard-reachable, named region (role + aria-label + tabindex in the component). */
 .ta-floor-schedule-scroll {
@@ -320,4 +339,13 @@
 
 .bo-compare-corner {
   color: var(--pt-color-supporting);
+}
+
+/* The row-label column stays in view when the table scrolls sideways (ruling V11 (8)): a sticky
+   first column, its background a shared token so scrolled cells never show through it. */
+.bo-compare-rowhead {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--pt-color-surface);
 }

@@ -76,7 +76,7 @@ export function BuildingOptionsComparison({ view }: { view: BuildingOptionsCompa
           </caption>
           <thead>
             <tr>
-              <th scope="col" className="bo-compare-corner">
+              <th scope="col" className="bo-compare-corner bo-compare-rowhead">
                 Measure
               </th>
               {view.columns.map((column, index) => (
@@ -89,7 +89,9 @@ export function BuildingOptionsComparison({ view }: { view: BuildingOptionsCompa
           <tbody>
             {METRIC_ROWS.map(row => (
               <tr key={row.id} data-testid="comparison-row">
-                <th scope="row">{row.label}</th>
+                <th scope="row" className="bo-compare-rowhead" data-testid="comparison-row-head">
+                  {row.label}
+                </th>
                 {view.columns.map((column, index) => (
                   <td key={`${column.building}-${index}`} data-testid="comparison-cell">
                     {row.cell(column)}

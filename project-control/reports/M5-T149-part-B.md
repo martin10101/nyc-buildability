@@ -113,3 +113,65 @@ building-options.css. Shared classes used by FirstBuildingOptions but defined OU
 (part A); they apply because ThreeAnswersPanel imports three-answers.css.
 
 No STOP. No file outside my scope changed.
+
+---
+
+## Correction after the reviews (ruling V11 items (3), (5), (8), (11))
+
+Reset to the integrated head `f81a1ec3312353b36593c2927761e616c9a8564f`; `git status --porcelain`
+empty before work. The visual-quality and walkthrough reviews FAILED; this round applies my four V11
+items. Items (1),(2),(4),(6),(7),(9),(10) belong to the other builders/server.
+
+- **(3) One wording in the not-worked blocks.** A not-worked building now reads: label, "Not known —
+  {document reason}", then "What would let it be worked: {document resolver}". The generic gap-kind
+  line is gone; a missing property fact carries only the short tag "Needs property information"
+  (gap_kind `missing_information`); a building the method cannot yet work (gap_kind `work_owed`)
+  carries no tag and no second phrase ("Not built yet"/"still owed"). The view field
+  `gapKindLine` became `propertyInfoTag`. The comparison keeps its single "Not known" (unchanged).
+  The coverage block, a different result, keeps its own gap line (out of this item's scope).
+- **(5) Conditions by name under the building option.** The full "If …" text is no longer repeated
+  under a worked building; it now shows the "Conditional" marker + "Applies: Condition 1, Condition
+  2". The names and order come from the M5-T148 notices adapter (`collectConditions`) — the SAME
+  first-appearance order and "Condition N" numbering Part A's shared-conditions card uses. The full
+  text is stated once in that card.
+- **(8) Comparison row labels stay in view.** The comparison table's first column (metric row
+  headers + the corner cell) is a sticky column (`position: sticky; left: 0`) with its background
+  from `--pt-color-surface`, so row context survives horizontal scroll. Class `bo-compare-rowhead`.
+- **(11) Measurement-basis words tied to the contract.** The words beside the apartment size are the
+  exported constant `APARTMENT_SIZE_BASIS_NOTE = "on the HPD measurement basis"`; a test reads
+  `packages/contracts/schemas/v1/results.schema.json` (read only) and asserts every
+  `apartment_size_sqft` description contains those words, so the UI phrase is the contract's wording.
+
+### Checks (direct exit codes)
+
+- `npm run typecheck` → EXIT 0.
+- `npm run lint` → EXIT 0 (same 2 pre-existing warnings, not my files).
+- `npx vitest run src/components/architect src/lib` → EXIT 0; Test Files 110 passed (110), Tests
+  2260 passed (2260).
+- `python3 tools/modularity_check.py --check` → EXIT 0 (failures 0; no file of mine flagged).
+- `python3 scripts/lanes/check_lane_paths.py --coverage` → EXIT 0 (9811 files).
+
+Browser/layout tests NOT run (ruling V6). No server; ports 3000/3001/8000 untouched.
+
+### Mutation proofs (scratch worktree copy outside the repo, node_modules symlinked; deleted after)
+
+- (3) `propertyInfoTag` always set (work-owed would wrongly show the tag) → CAUGHT by
+  `first-building-options.test.tsx › S6: with no building worked (16 ft)…` (`expected <p
+  class="ta-property-info-tag"> to be null`).
+- (5) the condition name map returns the full text instead of "Condition N" → CAUGHT by
+  `first-building-options.test.ts › maps building B's floor schedule, totals and estimate…`
+  (`expected 'If the recorded lot area…' to match /^Condition \d+$/`).
+- (8) `position: sticky` → `position: static` in building-options.css → CAUGHT by
+  `building-options-comparison.test.tsx › keeps the row labels in view when the table scrolls
+  sideways (ruling V11 (8): a sticky column)`.
+- (11) `APARTMENT_SIZE_BASIS_NOTE` → "on the DOB measurement basis" (not in the schema) → CAUGHT by
+  `first-building-options.test.ts › the shown measurement-basis words appear in the results schema's
+  apartment-size description`.
+
+### Files changed (7 code/test + this report)
+
+`FirstBuildingOptions.tsx`, `BuildingOptionsComparison.tsx`, `building-options.css`,
+`first-building-options.ts`, and the tests `first-building-options.test.tsx`,
+`building-options-comparison.test.tsx`, `lib/architect/__tests__/first-building-options.test.ts`.
+Not changed this round: `building-option-notes.test.tsx` and `results-two-buildings.ts` (in my file
+list, no change needed). No STOP. No file outside my scope changed.
