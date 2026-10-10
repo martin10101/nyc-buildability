@@ -110,4 +110,9 @@ a {{ color: {action}; }}
 .estimate-line {{ margin: 2mm 0 3mm; }}
 .coverage {{ margin-top: 4mm; }}
 .coverage-line {{ font-size: 9pt; margin: 0 0 1mm; }}
+/* Page type 2 opens with the 'Where is the lot?' sheet; the 'What constrains the
+   design?' sheet follows on its own printed page (ruling Y10). The location maps
+   are full-report-width, so each figure stacks. */
+.constraints-sheet {{ break-before: page; }}
+.location-figures figure {{ break-inside: avoid; margin: 3mm 0; }}
 """.strip()

@@ -166,6 +166,40 @@ test.describe("M5-T153 — the printed report opens from the Results window and 
     expect(drawings.site, "the site and context page carries a drawing").toBe(true);
     expect(drawings.scenario, "the scenario sheet carries the floor-stack drawing").toBe(true);
 
+    // M5-T156: the Site and context page OPENS with the "Where is the lot?" location sheet, holding
+    // the neighbourhood map and the block close-up, each captioned with its sources and dates. The
+    // harness binds the recorded window pack, so the surroundings are shown. The report carries no
+    // street photograph (no raster image, no photo wording on the location sheet). [DEPENDS ON M5-T156.]
+    const location = await printPage.evaluate(() => {
+      const pages = Array.from(document.querySelectorAll(".report-page"));
+      const site = pages.find((p) => /site and context/i.test(p.textContent ?? ""));
+      const text = site?.textContent ?? "";
+      const where = text.indexOf("Where is the lot?");
+      const constrains = text.indexOf("What constrains the design?");
+      const sheet = site?.querySelector(".location-sheet") ?? null;
+      const captions = Array.from(site?.querySelectorAll<HTMLElement>("figcaption") ?? []).map(
+        (c) => c.textContent ?? "",
+      );
+      const sheetText = (sheet?.textContent ?? "").toLowerCase();
+      return {
+        hasQuestion: where >= 0,
+        whereBeforeConstraints: where >= 0 && constrains >= 0 && where < constrains,
+        locationSvgs: sheet ? sheet.querySelectorAll("svg").length : 0,
+        captionWithDate: captions.some((c) => /last edited/i.test(c)),
+        images: document.querySelectorAll("img").length,
+        photoWords: ["photo", "street view", "aerial"].filter((w) => sheetText.includes(w)),
+      };
+    });
+    expect(location.hasQuestion, "the Site and context page opens with 'Where is the lot?'").toBe(true);
+    expect(location.whereBeforeConstraints, "the location sheet opens page type 2").toBe(true);
+    expect(
+      location.locationSvgs,
+      "the location sheet holds the neighbourhood map and the block close-up",
+    ).toBeGreaterThanOrEqual(2);
+    expect(location.captionWithDate, "a location caption names its source's last-edited date").toBe(true);
+    expect(location.images, "the report carries no photograph (no raster image)").toBe(0);
+    expect(location.photoWords, "no photo wording on the location sheet").toEqual([]);
+
     // No visible text below 7 pt inside a drawing (SVG), or below 8 pt elsewhere. SVG text is scaled
     // by its drawing's transform, so the on-screen size is multiplied by the drawing's scale.
     const tooSmall = await printPage.evaluate(() => {

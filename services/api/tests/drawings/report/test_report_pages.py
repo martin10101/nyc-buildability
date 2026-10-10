@@ -538,37 +538,38 @@ def test_vc2_no_long_document_sentence_printed_twice() -> None:
 
 
 # =========================================================================== Q3
-class _FakeMap:
-    def __init__(self) -> None:
-        self.svg = '<svg viewBox="0 0 120 90"></svg>'
-        self.caption = "Zoning map"
-        self.notes = ()
-        self.attribution = "DCP"
+def _benchmark_map_context() -> dict:
+    """The recorded 215-16 Northern WINDOW map document (M5-T154), built through the
+    real connectors from recorded bytes - its subject outline matches the benchmark
+    results lot outline, so the one-outline check (Y5) passes."""
+    from app.api.v1.report_context import recorded_pack_provider
+
+    pack = (
+        Path(__file__).resolve().parents[2] / "fixtures" / "benchmark_215_16_northern_window"
+    )
+    return recorded_pack_provider(pack)("4073340070", "q3")
 
 
-def _fake_map_render(_doc, *, frame: str = "report", env=None):
-    return _FakeMap()
-
-
-def test_q3_coverage_and_maps_with_and_without_a_map_document(monkeypatch) -> None:
+def test_q3_coverage_and_maps_with_and_without_a_map_document() -> None:
     doc = benchmark()
     from app.drawings.report import coverage
 
-    # without a map document: context maps are Not yet, and no maps section.
+    # without a map document: context maps are Not yet, and the location sheet prints
+    # one short line (never a blank sheet, S6) - no Context-maps section.
     without = build_report_html(doc)
     groups_without = dict(coverage.coverage_groups(doc, maps_present=False))
     assert "Context maps" in groups_without["Not yet"]
     assert "Context maps" not in visible_text(without[without.index('id="site-and-context"'):])
 
     # with a map document whose maps render: context maps are In this report, and shown.
-    monkeypatch.setattr("app.drawings.maps.render_location_map", _fake_map_render, raising=False)
-    monkeypatch.setattr("app.drawings.maps.render_zoning_map", _fake_map_render, raising=False)
-    with_maps = build_report_html(doc, map_context={"map_context": {"zoning_districts": {}}})
+    with_maps = build_report_html(doc, map_context=_benchmark_map_context(), env=_LANE_E)
     groups_with = dict(coverage.coverage_groups(doc, maps_present=True))
     assert "Context maps" in groups_with["In this report"]
     start = with_maps.index('id="site-and-context"')
     site = with_maps[start:with_maps.index('id="option-comparison"')]
-    assert "Context maps" in visible_text(site) and "<svg" in site
+    assert "<svg" in site
+    text = visible_text(with_maps)
+    assert "Context maps" in text  # in the coverage inventory
 
 
 # =============================================== drawing frame (ruling X9); run once integrated

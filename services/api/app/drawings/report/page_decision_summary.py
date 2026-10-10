@@ -102,8 +102,14 @@ def _answers_table(results: Mapping) -> raw:
     )
 
 
-def _summary_block(results: Mapping, env) -> raw:
+def _summary_block(results: Mapping, env, site_context_plan) -> raw:
     answers = el("div", _answers_table(results), class_="summary-answers")
+    # When the surroundings are available, page type 1's small site figure becomes
+    # the report frame of the site context plan (ruling Y10). It is the full report
+    # width, so it stacks below the answers rather than sitting beside them.
+    if site_context_plan is not None and site_context_plan.is_drawing:
+        plan = figure(site_context_plan, site_context_plan.caption or "")
+        return el("div", answers, plan)
     site_plan = drawings_embed.embed_summary_site_plan(results, env=env)
     if site_plan.is_drawing:
         plan = figure(
@@ -158,13 +164,14 @@ def _coverage_block(results: Mapping, maps_present: bool) -> raw:
     return el("div", el("h3", "What this report covers"), *lines, class_="coverage")
 
 
-def render(results: Mapping, ident: Mapping, *, maps_present: bool = False, env=None) -> str:
+def render(results: Mapping, ident: Mapping, *, maps_present: bool = False,
+           site_context_plan=None, env=None) -> str:
     worked = readers.worked_buildings(results)
     children = [
         _property_heading(ident),
         el("p", labels.STANDING_LABEL, class_="standing-label"),
         el("h2", QUESTION),
-        _summary_block(results, env),
+        _summary_block(results, env, site_context_plan),
     ]
     estimate = _apartment_estimate(worked)
     if estimate is not None:

@@ -25,8 +25,10 @@ __all__ = [
     "label_meta_statement",
     "lot_area_basis",
     "named_value",
+    "not_placed_reason",
     "not_worked_buildings",
     "open_items",
+    "results_lot_outline",
     "present_values",
     "provenance",
     "recorded_lot_area_text",
@@ -432,6 +434,40 @@ def apartment_estimate_text(estimate: object) -> str | None:
 def geometry_available(results: Mapping) -> bool:
     geometry = results.get("geometry")
     return isinstance(geometry, Mapping) and geometry.get("status") == "available"
+
+
+def results_lot_outline(results: Mapping) -> list | None:
+    """The lot-outline rings from ``/geometry/lot_outline`` (the results document's
+    own local-feet outline), or ``None`` when the document carries none. Used by
+    the one-outline check (ruling Y5), never retyped or drawn directly."""
+    geometry = results.get("geometry")
+    if not isinstance(geometry, Mapping):
+        return None
+    rings = geometry.get("lot_outline")
+    return rings if isinstance(rings, list) and rings else None
+
+
+def not_placed_reason(results: Mapping) -> str | None:
+    """The document's OWN reason that no building is placed on the plan, read from
+    ``/geometry/floor_plates/reason`` (ruling Y8, D-090 R939). Any sentence that
+    names an internal document field is dropped so only plain words reach the
+    reader (ruling X6); ``None`` once a floor plate is placed or when the document
+    carries no reason."""
+    import re
+
+    geometry = results.get("geometry")
+    if not isinstance(geometry, Mapping):
+        return None
+    plates = geometry.get("floor_plates")
+    if not isinstance(plates, Mapping) or plates.get("status") == "available":
+        return None
+    reason = plates.get("reason")
+    if not reason:
+        return None
+    sentences = re.split(r"(?<=[.])\s+", str(reason).strip())
+    kept = [s for s in sentences if not re.search(r"\b[a-z]+_[a-z]+\b", s)]
+    text = " ".join(kept).strip()
+    return text or None
 
 
 _INPUT_NAMES = {

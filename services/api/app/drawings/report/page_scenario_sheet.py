@@ -85,6 +85,11 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
         children.append(
             el("p", "This building is below the minimum base height.", class_="limitation")
         )
+    placed = readers.not_placed_reason(results)
+    if placed:
+        # The document's OWN reason that no building is placed on the plan (ruling
+        # Y8); no footprint, building outline or 3D view is drawn.
+        children.append(short_line(f"No building is placed on this plan yet: {placed}"))
     children.append(
         figure(
             stack,

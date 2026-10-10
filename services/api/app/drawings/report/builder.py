@@ -17,6 +17,7 @@ from . import (
     page_assumptions,
     page_decision_summary,
     page_evidence,
+    page_location,
     page_option_comparison,
     page_scenario_sheet,
     page_site_context,
@@ -57,26 +58,27 @@ def build_report_html(
     header_line = readers.identity_header_line(ident)
     footer_line = _footer_line(ident)
 
-    site_plan = drawings_embed.embed_kit_drawing(
-        "render_site_plan", results, env=env,
-        not_available_line="The site plan is not available for this report.",
-    )
-    # Context maps are shown ONLY when a map document is given AND the maps render
-    # (Q3); otherwise there is no maps section (no empty sheet, F3) and the coverage
-    # block reports them as not yet in the report. The route builds no map document.
-    location_map = (
-        drawings_embed.embed_map("render_location_map", map_context, env=env)
-        if isinstance(map_context, Mapping) else None
-    )
-    zoning_map = (
-        drawings_embed.embed_map("render_zoning_map", map_context, env=env)
-        if isinstance(map_context, Mapping) else None
-    )
-    maps = [m for m in (zoning_map, location_map) if m is not None and m.is_drawing]
-    maps_present = bool(maps)
+    # The lot among its surroundings is shown ONLY when the map document's subject
+    # outline equals the results lot outline (ruling Y5, the one-outline check);
+    # otherwise today's lot-only plan is kept and one limitation line is printed.
+    # Two outlines are never drawn together (S2).
+    surroundings = page_location.resolve(map_context, results, env=env)
+    if surroundings.available and surroundings.site_plan is not None:
+        site_plan = surroundings.site_plan  # the map-based site plan among its surroundings
+    else:
+        site_plan = drawings_embed.embed_kit_drawing(
+            "render_site_plan", results, env=env,
+            not_available_line="The site plan is not available for this report.",
+        )
+    # 'Context maps' moves to what the report covers only when the maps are printed
+    # (ruling Y10 / S5); otherwise the coverage block reports them as not yet.
+    maps_present = surroundings.available
+    summary_plan = surroundings.site_plan if surroundings.available else None
     pages = [
-        page_decision_summary.render(results, ident, maps_present=maps_present, env=env),
-        page_site_context.render(results, ident, site_plan=site_plan, maps=maps, env=env),
+        page_decision_summary.render(results, ident, maps_present=maps_present,
+                                     site_context_plan=summary_plan, env=env),
+        page_site_context.render(results, ident, site_plan=site_plan,
+                                 surroundings=surroundings, env=env),
         page_option_comparison.render(results, ident, env=env),
         page_scenario_sheet.render(results, ident, env=env),
         page_assumptions.render(results, ident, env=env),

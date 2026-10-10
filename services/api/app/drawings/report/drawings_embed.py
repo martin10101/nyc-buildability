@@ -151,11 +151,65 @@ def embed_floor_stack(alternative: Mapping, *, env=None) -> Embedded:
     return _call(kit, "render_floor_stack", alternative, env, _FLOOR_STACK_UNAVAILABLE)
 
 
+_MAP_UNAVAILABLE = "This map is not shown here."
+
+
+def _layer_edit_date(map_context: Mapping, attribution_source: str) -> str | None:
+    """The source's last-edited date for a layer, read from the map document's own
+    provenance: ``/map_context/<layer>/attribution`` ->
+    ``map_context[<layer>]["provenance"]["source_data_last_edited"]`` (ruling Y7).
+    No dataset version number or id is read (those are code-like, ruling X6)."""
+    parts = attribution_source.strip("/").split("/")
+    if len(parts) < 3 or parts[0] != "map_context":
+        return None
+    mc = map_context.get("map_context")
+    layer = mc.get(parts[1]) if isinstance(mc, Mapping) else None
+    prov = layer.get("provenance") if isinstance(layer, Mapping) else None
+    date = prov.get("source_data_last_edited") if isinstance(prov, Mapping) else None
+    return str(date) if date else None
+
+
+def _map_caption(result: object, map_context: Mapping) -> str | None:
+    """Compose the map/plan caption from the drawing's own note labels and the map
+    document's provenance (ruling Y7): each source named in plain words, with its
+    last-edited date appended from the provenance. No URL, field name, code word or
+    version number appears (the note texts carry none; only the plain date is
+    added)."""
+    parts: list[str] = []
+    for label in getattr(result, "labels", ()) or ():
+        if getattr(label, "role", None) != "note":
+            continue
+        text = str(getattr(label, "text", "")).strip()
+        if not text:
+            continue
+        source = str(getattr(label, "source", ""))
+        if source.endswith("/attribution"):
+            date = _layer_edit_date(map_context, source)
+            if date:
+                core = text[:-1] if text.endswith(".") else text
+                text = f"{core} (last edited {date})."
+        parts.append(text if text.endswith((".", ":")) else text + ".")
+    return " ".join(parts) or None
+
+
 def embed_map(fn_name: str, map_context: Mapping, *, env=None) -> Embedded:
-    """A location or zoning map at the report frame."""
+    """A site-context, block or neighbourhood map at the report frame, captioned
+    with its sources and their dates in plain words (ruling Y7). An Unavailable or
+    a missing keyword/function prints one short line, never an error (S6)."""
     from app.drawings import maps
 
-    return _call(maps, fn_name, map_context, env, "This map is not shown here.")
+    fn = getattr(maps, fn_name, None)
+    if fn is None or not _frame_supported(fn):
+        return Embedded(short_line=_MAP_UNAVAILABLE)
+    try:
+        result = fn(map_context, frame="report", env=env)
+    except Exception:  # noqa: BLE001 - any kit failure means no map, never an error page
+        return Embedded(short_line=_MAP_UNAVAILABLE)
+    svg = getattr(result, "svg", None)
+    if svg is None:
+        reason = getattr(result, "reason", None)
+        return Embedded(short_line=str(reason) if reason else _MAP_UNAVAILABLE)
+    return Embedded(svg=size_svg_to_points(svg), caption=_map_caption(result, map_context))
 
 
 def allowance_bar_chart_svg(
