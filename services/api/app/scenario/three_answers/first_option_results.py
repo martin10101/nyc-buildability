@@ -129,12 +129,22 @@ _LABEL_B = "Building B: the fewest storeys reaching the minimum base height"
 # work owed - no property fact is missing; the program simply has not built the fuller massing.
 _B_BOUND_RESOLVED = (
     "Working a taller building (more storeys, a smaller plan on each) or another building shape "
-    "the step-P6 method does not yet cover."
+    "the program's method for a first building does not yet cover."
 )
 _B_MAXBASE_RESOLVED = (
     "Working the storeys above the base height and their setback, a method the program has not "
     "built yet."
 )
+
+
+def _sqft(value: float) -> str:
+    """Square feet in plain words (ruling V11 (4)): a whole number without decimals
+    (10,075 sq ft; 8,060 sq ft), a fraction kept to two decimals (6,716.67 sq ft). The ONE
+    square-foot formatter for this module's reasons."""
+    rounded = round(value)
+    if abs(value - rounded) < 0.005:
+        return f"{rounded:,} sq ft"
+    return f"{value:,.2f} sq ft"
 
 
 @dataclass(frozen=True)
@@ -376,8 +386,8 @@ def _building_a_not_worked(
     storeys = math.floor(inp.allowance_sqft / footprint + 1e-9)
     if storeys < 1:
         reason = (
-            f"Not worked: one full-footprint storey of {footprint:,.2f} sq ft already passes the "
-            f"floor-area allowance of {inp.allowance_sqft:,.2f} sq ft, so the widest-footprint "
+            f"Not worked: one full-footprint storey of {_sqft(footprint)} already passes the "
+            f"floor-area allowance of {_sqft(inp.allowance_sqft)}, so the widest-footprint "
             "method works no storey here."
         )
     else:
@@ -422,9 +432,9 @@ def _building_b_not_worked(
     reason = (
         f"Not worked: at a floor-to-floor height of {inp.floor_to_floor_ft:g} ft the fewest "
         f"storeys reaching the {inp.min_base_ft:g} ft minimum base height are {storey_count} "
-        f"storeys, each needing a plan of {plan:,.2f} sq ft. That is more than the bound of "
-        f"{bound:,.0f} sq ft - 80 percent of the recorded lot area of "
-        f"{inp.recorded_lot_area_sqft:,.0f} sq ft, the lowest coverage ratio that can apply."
+        f"storeys, each needing a plan of {_sqft(plan)}. That is more than the bound of "
+        f"{_sqft(bound)} - 80 percent of the recorded lot area of "
+        f"{_sqft(inp.recorded_lot_area_sqft)}, the lowest coverage ratio that can apply."
     )
     return _not_worked("B", _LABEL_B, reason, _METHOD_LIMIT, _B_BOUND_RESOLVED)
 
@@ -486,9 +496,9 @@ def _fit_note(inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str | 
         return None
     bound, plan = fit
     return (
-        f"The plan of {plan:,.2f} sq ft fits the lot coverage even at the lowest applicable ratio: "
-        f"80 percent of the recorded lot area ({inp.recorded_lot_area_sqft:,.0f} sq ft) is "
-        f"{bound:,.0f} sq ft, at least the plan. This checks the plan against coverage only; where "
+        f"The plan of {_sqft(plan)} fits the lot coverage even at the lowest applicable ratio: "
+        f"80 percent of the recorded lot area ({_sqft(inp.recorded_lot_area_sqft)}) is "
+        f"{_sqft(bound)}, at least the plan. This checks the plan against coverage only; where "
         "the building sits on the lot and the other items listed as not checked are not worked."
     )
 

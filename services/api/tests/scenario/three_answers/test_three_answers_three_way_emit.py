@@ -1775,11 +1775,12 @@ def test_w14_s25_sixteen_ft_no_building_worked_both_reasons_given():
     b = _not_worked(doc, "B")
     assert b["gap_kind"] == "work_owed"
     storeys = math.ceil(30.0 / 16.0)  # 2
-    plan = _BENCH_ALLOWANCE / storeys  # 10,075.00
+    plan = _BENCH_ALLOWANCE / storeys  # 10,075 (a whole number of sq ft)
     bound = _LOWEST_RATIO * _BENCH_RECORDED  # 8,060
     assert f"{storeys} storeys" in b["reason"]
-    assert f"{plan:,.2f} sq ft" in b["reason"]  # 10,075.00
-    assert f"{bound:,.0f} sq ft" in b["reason"]  # 8,060
+    # V11 (4): whole square feet without '.00'
+    assert f"{round(plan):,} sq ft" in b["reason"] and "10,075.00" not in b["reason"]  # 10,075
+    assert f"{round(bound):,} sq ft" in b["reason"]  # 8,060
     assert "80 percent of the recorded lot area" in b["reason"]
     assert "footprint" not in b["reason"]  # the bound is named truly, never "the footprint"
     bo = doc["answers"]["building_option"]
@@ -1906,3 +1907,36 @@ def test_w14c_allowance_not_shown_building_option_states_only_what_is_true():
     floor_plates = doc["geometry"]["floor_plates"]
     assert "this program does not work a single building option" in floor_plates["reason"]
     assert "minimum base height" not in floor_plates["reason"]
+
+
+# ===================================== V11 (4) / M5-T150 S7: plain words in the not-worked reasons
+_INTERNAL_METHOD_NAMES = ("step-p6", "step p6")
+_WHOLE_SQFT_WITH_DECIMALS = re.compile(r"\d\.00 sq ft")
+
+
+def test_v11_4_no_internal_method_name_and_whole_square_feet_without_decimals_through_emitter():
+    """V11 (4) / S7 through the emitter, by walking EVERY string of the document at 10, 14, 16 and
+    25 ft: no reason names an internal method ('step-P6'), and whole square feet are written without
+    '.00' (e.g. '10,075 sq ft', '8,060 sq ft'); fractions keep two decimals ('6,716.67 sq ft')."""
+    saw_fraction = False
+    for f2f in (10, 14, 16, 25):
+        for text in _all_strings(_benchmark_emit_at(f2f)):
+            low = text.lower()
+            for name in _INTERNAL_METHOD_NAMES:
+                assert name not in low, (f2f, name, text)
+            assert not _WHOLE_SQFT_WITH_DECIMALS.search(text), (f2f, text)
+            if "6,716.67 sq ft" in text:
+                saw_fraction = True
+    assert saw_fraction  # the fraction case is exercised (building B's fit note at 10/14 ft)
+
+
+def test_v11_4_building_b_not_worked_reason_uses_plain_words_and_plain_numbers():
+    """V11 (4): at 16 ft building B's not-worked reason names the bound as whole square feet without
+    '.00' ('10,075 sq ft', '8,060 sq ft') and its resolver names no internal method ('step-P6')."""
+    doc = _benchmark_emit_at(16)
+    b = next(e for e in doc["buildings_not_worked"] if e["building"] == "B")
+    assert "10,075 sq ft" in b["reason"] and "10,075.00" not in b["reason"]
+    assert "8,060 sq ft" in b["reason"] and "8,060.00" not in b["reason"]
+    assert "step-p6" not in b["reason"].lower()
+    assert "step-p6" not in b["resolved_by"].lower()
+    assert "the program's method for a first building" in b["resolved_by"]

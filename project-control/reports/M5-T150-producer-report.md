@@ -50,3 +50,58 @@ REQUESTED STATUS: awaiting_gate.
 END-OF-REPORT
 
 ```
+
+## Correction after the reviews (ruling V11 (4): plain words in the not-worked reasons)
+
+Producer: rules-engineer (an AI agent). Base (reset HEAD): `f81a1ec3312353b36593c2927761e616c9a8564f`.
+
+This task's share of V11 is item (4): the server's reasons. Two changes in
+`first_option_results.py`, nothing else:
+
+1. NO INTERNAL METHOD NAME. The only emitted text that named an internal method was building B's
+   not-worked resolver (`_B_BOUND_RESOLVED`): "... another building shape **the step-P6 method**
+   does not yet cover." -> "... another building shape **the program's method for a first building**
+   does not yet cover." (The other "step-P6"/"method" occurrences are code comments and docstrings,
+   never emitted; "this method" in the reasons is allowed by V11 (4).)
+2. WHOLE SQUARE FEET WITHOUT '.00'. Added ONE formatter `_sqft(value)` to the module: a whole number
+   without decimals ("10,075 sq ft", "8,060 sq ft"), a fraction kept to two decimals
+   ("6,716.67 sq ft"). Routed every square-foot figure in the module's reasons through it -
+   building B's not-worked reason (which printed "10,075.00 sq ft" at 16 ft -> now "10,075 sq ft"),
+   building A's edge-case reason, and building B's fit note (already a fraction, byte-identical).
+
+The benchmark document is NOT regenerated: at its 10 ft height building B is WORKED (its fit note is
+byte-identical through the one formatter) and building A's not-worked reason carries no square-foot
+figure, so no ".00" or "step-P6" ever appeared there. The ".00"/"step-P6" only arose at 16/25 ft
+(building B not worked), which are live-route/emitter test states, not the committed document. No
+snapshot changed. The review register does NOT fingerprint `first_option_results.py` in any calc
+entry's `code_modules`, so its code identity is unchanged and no resync is needed
+(`render_review_register.py --check` PASSES).
+
+TESTS (S7, walking every string at 10, 14, 16, 25 ft):
+- emitter: `test_three_answers_three_way_emit.py::test_v11_4_no_internal_method_name_and_whole_square_feet_without_decimals_through_emitter`
+  (no "step-P6"; no `\d.00 sq ft`; the "6,716.67 sq ft" fraction case is exercised) and
+  `::test_v11_4_building_b_not_worked_reason_uses_plain_words_and_plain_numbers`.
+- live route: `test_results_read_api.py::test_v11_4_live_route_plain_words_and_whole_square_feet_without_decimals`
+  (default 10 ft and 14/16/25 ft).
+- updated the prior `test_w14_s25_...` assertion from `"10,075.00 sq ft"` to `"10,075 sq ft"` (+ a
+  `"10,075.00" not in` guard) - moved to the new truth, not weakened.
+
+MUTATION PROOFS (scratch script OUTSIDE the repository, `scratchpad/mutate_v11_4.py`, one per aspect
+of item (4), reverted):
+- the internal method name "step-P6" restored in building B's resolver -> caught by
+  `test_v11_4_building_b_not_worked_reason_uses_plain_words_and_plain_numbers` (and the emitter walk).
+- the "10,075.00 sq ft" format restored in building B's reason -> caught by
+  `test_v11_4_no_internal_method_name_and_whole_square_feet_without_decimals_through_emitter`.
+
+CHECKS, each with its DIRECT exit code. From `services/api` (the lanes venv, PYTHONDONTWRITEBYTECODE=1):
+- `python -m ruff check .` -> All checks passed! (exit 0)
+- `python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/api tests/journey
+  tests/drawings tests/cad` -> 3007 passed, 8 skipped (exit 0).
+From the root:
+- `python services/api/app/rules/review_register/render_review_register.py --check` -> register
+  check PASSED (exit 0; first_option_results.py is not fingerprinted there).
+- `python .github/scripts/validate_contracts.py` -> Checked 23 schema file(s); 0 failure(s) (exit 0).
+- `python3 tools/modularity_check.py --check` -> failures 0 (exit 0; no warning on
+  first_option_results.py).
+
+END-OF-REPORT
