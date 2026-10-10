@@ -476,6 +476,18 @@ def street_centrelines(svg: str, doc: dict):
     return out
 
 
+def subject_leader(svg: str):
+    """The screen-space (start, end) of the 'Subject lot' leader, or None when
+    no leader is drawn (the label was placed with no clear short leader)."""
+    for p in parse(svg).iter(f"{SVG_NS}path"):
+        if p.get("data-role") != "leader":
+            continue
+        pts = [(float(x), float(y)) for x, y in _SVG_POINT.findall(p.get("d") or "")]
+        if len(pts) >= 2:
+            return pts[0], pts[-1]
+    return None
+
+
 def street_labels_crossing_other_streets(svg: str, doc: dict) -> list[str]:
     """Street-name/width labels whose box RUNS ALONG a DIFFERENT street's centre
     line (a perpendicular crossing at an intersection is allowed)."""

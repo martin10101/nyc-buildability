@@ -23,7 +23,6 @@ from .site_context_plan import (
     SUMMARY_PLAN_MARGIN,
     TITLE_BAND_PT,
     WIDE_PLAN,
-    WIDE_PLAN_MARGIN,
     bordering_street_names,
     caption_notes,
     compose_context,
@@ -67,7 +66,8 @@ def draw_block_map(context: MapContext, *, frame: str = "sheet") -> Drawing | Un
         return compose_context(drawing, "Block close-up", sheet, fr, summary_notes(frontage_name),
                                mode="summary")
     if frame == "wide":
-        fr = fit_view(window, WIDE_PLAN, WIDE_PLAN_MARGIN, alpha=alpha, top_band=0.0)
+        # fill the frame with the data window (binding dimension reaches the edge)
+        fr = fit_view(window, WIDE_PLAN, FRAME_INSET, alpha=alpha, top_band=0.0, fill=True)
         rect = viewport(WIDE_PLAN, FRAME_INSET)
         sheet = draw_block_scene(context, fr, rect, WIDE_PLAN, title=None, with_edges=False,
                                  with_widths=False, label_focus=False)

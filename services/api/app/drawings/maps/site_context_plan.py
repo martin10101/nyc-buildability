@@ -41,7 +41,6 @@ from .context_scene import (
     ViewFrame,
     box_crosses_lines,
     caption_notes,
-    clearance,
     compose_context,
     draw_clipped_area,
     draw_clipped_outline,
@@ -58,6 +57,7 @@ from .context_scene import (
     readable_angle,
     screen_dir,
     seg_foot,
+    segment_crosses_lines,
     summary_notes,
     viewport,
 )
@@ -115,6 +115,7 @@ FRONTAGE_STREET_MAX_FT = 90.0  # a street this far outward names a frontage edge
 EDGE_MIN_LABEL_FT = 6.0        # shorter edges are left undimensioned
 STREET_LABEL_MIN_RUN_PT = 26.0  # a street piece shorter than this (on screen) is not labelled
 GAP_NAMED_MIN_PT = 14.0        # a gap is a street only if a centre line runs this far through it
+MARKER_LEADER_MAX_PT = 42.0    # the 'Subject lot' leader is at most 15 mm long, crosses no street
 SITE_SUMMARY_BORDER_FT = 90.0   # streets this close to the lot border it (site summary)
 BLOCK_SUMMARY_BORDER_FT = 230.0  # streets this close border the subject's block (block summary)
 
@@ -503,43 +504,38 @@ def _mark_subject(sheet: Sheet, subject: SubjectLot, fr: ViewFrame, rect: _Box,
     if not with_label:
         sheet.reserve(_grow(marker_box, 3.0))
         return
-    # Pick the CLEAR spot (box clear of labels, inside the frame, not running
-    # along a street) with the SHORTEST leader; if none is clear, the spot with
-    # the most clearance. Placed before the street names, which then keep off the
-    # reserved marker+label region (so no street name crosses the leader).
-    lines_only = [ln for _n, ln in named_lines]
-    best_clear, best_any = None, None
+    # Place the label in open space WITHIN 15 mm of the marker, closest first,
+    # with a leader that crosses NO street line; if none exists, draw no label
+    # (the legend already explains the coral marker).
     for ring in range(2, 13):
-        radius = ring * size
+        radius = ring * (size * 0.8)
+        if radius > MARKER_LEADER_MAX_PT:
+            break
         for ang in range(0, 360, 15):
             rad = math.radians(ang)
             x, y = cx + radius * math.cos(rad), cy + radius * math.sin(rad)
+            lx, ly = x, y - size * 0.3  # the leader's label end
+            if math.hypot(lx - cx, ly - cy) > MARKER_LEADER_MAX_PT:
+                continue
             box = text_box(x, y, "Subject lot", size, "middle", 0.0)
             if not (box.x0 >= rect[0] and box.y0 >= rect[1]
                     and box.x1 <= rect[2] and box.y1 <= rect[3]):
                 continue
             if any(box.overlaps(o) for o in sheet.boxes):
                 continue
-            clr = clearance((x, y), None, lines_only)
-            if best_any is None or clr > best_any[0]:
-                best_any = (clr, x, y, box)
-            if not box_crosses_lines(box, named_lines, None, 0.5, max_len=2.0):
-                if best_clear is None or radius < best_clear[0]:
-                    best_clear = (radius, x, y, box)
-        if best_clear is not None:
-            break  # the closest ring with a clear spot wins
-    chosen = best_clear[1:] if best_clear is not None else (best_any[1:] if best_any else None)
-    if chosen is None:
-        sheet.reserve(_grow(marker_box, 3.0))
-        return
-    x, y, box = chosen
-    sheet.label([(x, y, 0.0)], "Subject lot", size=size, source=None, role="subject_mark",
-                anchor="middle")
-    sheet.parts.append(element("path", [
-        ("d", polyline_data([(cx, cy), (x, y - size * 0.3)])), ("fill", "none"),
-        ("stroke", "#C8500A"), ("stroke-width", 0.5), ("data-role", "leader")]))
-    sheet.reserve(Box(min(marker_box.x0, box.x0) - 1.0, min(marker_box.y0, box.y0) - 1.0,
-                      max(marker_box.x1, box.x1) + 1.0, max(marker_box.y1, box.y1) + 1.0))
+            if box_crosses_lines(box, named_lines, None, 0.5, max_len=2.0):
+                continue
+            if segment_crosses_lines((cx, cy), (lx, ly), named_lines):
+                continue
+            sheet.label([(x, y, 0.0)], "Subject lot", size=size, source=None,
+                        role="subject_mark", anchor="middle")
+            sheet.parts.append(element("path", [
+                ("d", polyline_data([(cx, cy), (lx, ly)])), ("fill", "none"),
+                ("stroke", "#C8500A"), ("stroke-width", 0.5), ("data-role", "leader")]))
+            sheet.reserve(Box(min(marker_box.x0, box.x0) - 1.0, min(marker_box.y0, box.y0) - 1.0,
+                              max(marker_box.x1, box.x1) + 1.0, max(marker_box.y1, box.y1) + 1.0))
+            return
+    sheet.reserve(_grow(marker_box, 3.0))
 
 
 def unavailable_layer(name: str, layer: object, source: str) -> Unavailable | None:

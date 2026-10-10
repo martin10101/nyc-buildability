@@ -87,6 +87,7 @@ __all__ = [
     "readable_angle",
     "screen_dir",
     "seg_foot",
+    "segment_crosses_lines",
     "summary_notes",
     "viewport",
     "polyline_len",
@@ -142,10 +143,14 @@ class ViewFrame:
 
 def fit_view(
     window: _Box, region: _Box, margin: float, *, alpha: float = 0.0, top_band: float = 0.0,
+    fill: bool = False,
 ) -> ViewFrame:
     """Fit ``window`` (its four corners, rotated by ``alpha``) into ``region`` at
-    the largest STANDARD architectural/engineering scale that fits, so the scale
-    bar states a real 1 in = S ft scale. ``top_band`` reserves title height."""
+    a STANDARD architectural/engineering scale, so the scale bar states a real
+    1 in = S ft scale. Normally the LARGEST standard scale that fits; with
+    ``fill`` the standard scale that FILLS the binding dimension (the window
+    reaches the frame edge, the viewport clipping the slight overflow and the
+    empty rotation corners). ``top_band`` reserves title height."""
     cos, sin = math.cos(alpha), math.sin(alpha)
     corners = [(window[0], window[1]), (window[2], window[1]),
                (window[2], window[3]), (window[0], window[3])]
@@ -159,8 +164,12 @@ def fit_view(
     avail_w = (region[2] - region[0]) - 2 * margin
     avail_h = (region[3] - region[1]) - 2 * margin - top_band
     fit = min(avail_w / width, avail_h / height)
-    k = next((POINTS_PER_INCH / s for s in STANDARD_SCALES_FT_PER_IN
-              if POINTS_PER_INCH / s <= fit), None)
+    candidates = [POINTS_PER_INCH / s for s in STANDARD_SCALES_FT_PER_IN]
+    if fill:  # smallest standard scale that still reaches the frame (fills it)
+        bigger = [c for c in candidates if c >= fit]
+        k = min(bigger) if bigger else max(candidates)
+    else:
+        k = next((c for c in candidates if c <= fit), None)
     if k is None:
         raise MapInputError("view_too_large", "the view does not fit the largest standard scale",
                             location="/map_context")
@@ -251,6 +260,23 @@ def _seg_len_in_rect(a: Point, b: Point, x0, y0, x1, y1) -> float:
                     return 0.0
                 t1 = min(t1, r)
     return math.hypot(dx, dy) * (t1 - t0) if t1 > t0 else 0.0
+
+
+def _seg_cross(a: Point, b: Point, c: Point, d: Point) -> bool:
+    """A proper crossing of segments ab and cd (interiors meet)."""
+    def ccw(p, q, r):
+        return (r[1] - p[1]) * (q[0] - p[0]) - (q[1] - p[1]) * (r[0] - p[0])
+    return (ccw(c, d, a) > 0) != (ccw(c, d, b) > 0) and (ccw(a, b, c) > 0) != (ccw(a, b, d) > 0)
+
+
+def segment_crosses_lines(a: Point, b: Point, named_lines) -> bool:
+    """Whether the leader segment ab crosses ANY street centre line (used so the
+    'Subject lot' leader never crosses a street)."""
+    for _name, line in named_lines:
+        for c, d in zip(line, line[1:], strict=False):
+            if _seg_cross(a, b, c, d):
+                return True
+    return False
 
 
 def box_crosses_lines(box: Box, named_lines, own: str | None, pad: float = 0.0,

@@ -28,7 +28,9 @@ from .context_support import (
     recorded_document,
     report_too_big,
     street_area_polys,
+    street_centrelines,
     street_labels_crossing_other_streets,
+    subject_leader,
     summary_note_leaks,
     summary_too_big,
     texts_by_role,
@@ -66,7 +68,10 @@ def test_s3_neighbourhood_shows_the_street_network_with_the_lot_marked():
     assert isinstance(d, Drawing)
     assert "street_centreline" in d.kinds_drawn and "subject_lot" in d.kinds_drawn
     assert {"NORTHERN BOULEVARD", "215 PLACE", "215 STREET"} <= set(texts_by_role(d.svg, "street"))
-    assert "Subject lot" in texts_by_role(d.svg, "subject_mark")
+    # the lot is marked in coral (subject_lot above); a 'Subject lot' text is
+    # drawn only when a short leader clear of every street fits, else the coral
+    # marker stands alone (the legend explains it) - M5-T155 polish.
+    assert set(texts_by_role(d.svg, "subject_mark")) <= {"Subject lot"}
     assert label_problems(d.svg, DOC) == []
 
 
@@ -213,8 +218,8 @@ def test_block_wide_labels_the_subject_and_confines_street_areas():
 
     from app.drawings.maps.adapter import load_map_context
     from app.drawings.maps.site_context_plan import (
+        FRAME_INSET,
         WIDE_PLAN,
-        WIDE_PLAN_MARGIN,
         fit_view,
         frontage_rotation,
     )
@@ -224,7 +229,10 @@ def test_block_wide_labels_the_subject_and_confines_street_areas():
     ctx = load_map_context(DOC)
     window = ctx.context_window.box
     alpha, _n, _s = frontage_rotation(ctx.subject_lot, ctx.streets)
-    fr = fit_view(window, WIDE_PLAN, WIDE_PLAN_MARGIN, alpha=alpha, top_band=0.0)
+    # the wide frame fills the frame with the data window (fill=True): the data
+    # window now extends past the viewport, so street areas (clipped to the
+    # viewport) stay well inside the projected window.
+    fr = fit_view(window, WIDE_PLAN, FRAME_INSET, alpha=alpha, top_band=0.0, fill=True)
     corners = [(window[0], window[1]), (window[2], window[1]),
                (window[2], window[3]), (window[0], window[3])]
     cw = SP([fr.px(c) for c in corners]).buffer(0.75)
@@ -267,6 +275,28 @@ def test_no_label_overlaps_the_subject_marker(name, frame):
     d = ALL_RENDERERS[name](DOC, frame=frame, env=ENV)
     assert isinstance(d, Drawing)
     assert labels_overlapping_marker(d.svg) == []
+
+
+# --------------------------------------------------------------------------- #
+# M5-T155 polish: the 'Subject lot' leader (when drawn) sits close to the marker
+# and crosses no street line, in EVERY neighbourhood frame on the real pack.
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("frame", ["report", "sheet", "summary", "wide"])
+def test_subject_leader_is_short_and_crosses_no_street(frame):
+    from app.drawings.maps.context_scene import segment_crosses_lines
+
+    d = render_neighbourhood_map(DOC, frame=frame, env=ENV)
+    assert isinstance(d, Drawing)
+    leader = subject_leader(d.svg)
+    if leader is None:  # no clear short leader found -> no label drawn (allowed)
+        return
+    (ax, ay), (bx, by) = leader
+    lines = street_centrelines(d.svg, DOC)
+    assert not segment_crosses_lines((ax, ay), (bx, by), lines), \
+        "the subject-lot leader crosses a street line"
+    pt_per_mm = 72.0 / 25.4
+    length_mm = ((bx - ax) ** 2 + (by - ay) ** 2) ** 0.5 / pt_per_mm
+    assert length_mm <= 15.0, f"the subject-lot leader is {length_mm:.1f} mm (> 15 mm)"
 
 
 @pytest.mark.parametrize("name", list(ALL_RENDERERS))
