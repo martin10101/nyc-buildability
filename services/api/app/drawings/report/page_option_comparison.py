@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import drawings_embed, formatting, options, readers
+from . import drawings_embed, formatting, labels, options, readers
 from .components import label_chip, short_line
 from .html import el, escape, raw, table
 
@@ -77,7 +77,8 @@ def _buildings(results: Mapping) -> object:
     for building in worked:
         name = f"Building {building['building']}" if building.get("building") else "Worked building"
         area = building.get("scheduled_display")
-        detail = f"scheduled {area} sq ft" if area else "scheduled area not available"
+        # Every mention of a scheduled building uses the one phrase (D6).
+        detail = labels.scheduled_floor_area_line(area) if area else "scheduled area not available"
         items.append(
             el("li", raw(f"<strong>{escape(name)}:</strong> {escape(detail)} "),
                label_chip(building["status_label"]))

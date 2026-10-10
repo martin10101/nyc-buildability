@@ -12,6 +12,7 @@ presentation, not law); every figure on it is read from the document.
 from __future__ import annotations
 
 import inspect
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from xml.sax.saxutils import escape as _xml_escape
@@ -23,8 +24,34 @@ __all__ = [
     "embed_kit_drawing",
     "embed_map",
     "embed_summary_site_plan",
+    "size_svg_to_points",
     "summary_frame_available",
 ]
+
+_VIEWBOX = re.compile(r'viewBox="([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)"')
+
+
+def size_svg_to_points(svg: str) -> str:
+    """Set the embedded SVG's displayed ``width``/``height`` in POINTS equal to
+    its viewBox size, so a browser prints it at its designed size (ruling D1).
+
+    The kit's SVGs carry UNITLESS ``width``/``height`` whose numbers are points,
+    but a browser reads a unitless length as CSS px (1px = 0.75pt), so the drawing
+    would print at 0.75 of its size and its labels would fall below 7 pt. Stamping
+    ``width="<w>pt" height="<h>pt"`` (the viewBox width/height) fixes the scale and
+    is never shrunk by the report's CSS."""
+    match = _VIEWBOX.search(svg)
+    if not match:
+        return svg
+    width, height = match.group(3), match.group(4)
+
+    def rewrite(open_tag: re.Match) -> str:
+        tag = open_tag.group(0)
+        tag = re.sub(r'\swidth="[^"]*"', "", tag)
+        tag = re.sub(r'\sheight="[^"]*"', "", tag)
+        return tag[:-1] + f' width="{width}pt" height="{height}pt">'
+
+    return re.sub(r"<svg\b[^>]*>", rewrite, svg, count=1)
 
 
 @dataclass(frozen=True)
@@ -51,8 +78,9 @@ def _frame_supported(fn: object) -> bool:
 
 def _from_result(result: object) -> Embedded:
     if hasattr(result, "svg"):
+        svg = getattr(result, "svg", None)
         return Embedded(
-            svg=getattr(result, "svg", None),
+            svg=size_svg_to_points(svg) if svg else svg,
             caption=getattr(result, "caption", None),
             notes=tuple(getattr(result, "notes", ()) or ()),
             attribution=getattr(result, "attribution", None),
@@ -143,9 +171,10 @@ def allowance_bar_chart_svg(
     if scale <= 0:
         return None
     # Give the value labels room so they are never cut (A6): a short track with a
-    # wide right margin for the figure.
+    # wide right margin for the figure. The viewBox width (500) stays inside the
+    # A4 content box when printed at its designed point size (500 pt = 176 mm).
     track = 220.0
-    width_total = 520
+    width_total = 500
     rows = []
     y = 6
     allowance_text = f"{allowance_display} sq ft" if allowance_display else ""
@@ -159,9 +188,10 @@ def allowance_bar_chart_svg(
         y += 22
     height = y + 4
     body = "".join(rows)
+    # viewBox units are points; stamped width/height in pt print it at true size (D1).
     return (
         f'<svg class="bar-chart" viewBox="0 0 {width_total} {height}" '
-        f'role="img" width="{width_total}" height="{height}">{body}</svg>'
+        f'role="img" width="{width_total}pt" height="{height}pt">{body}</svg>'
     )
 
 
@@ -169,8 +199,9 @@ def _bar(y: int, track: float, name: str, value_text: str, value: float, scale: 
     width = max(1.0, track * (value / scale))
     name_s = _xml_escape(name)
     value_s = _xml_escape(value_text)
+    # font-size in viewBox units (points): at least 7 so it prints legibly (D2).
     return (
-        f'<text x="0" y="{y + 9}">{name_s}</text>'
+        f'<text x="0" y="{y + 9}" font-size="8">{name_s}</text>'
         f'<rect x="150" y="{y}" width="{width:.1f}" height="12" fill="#18577A"></rect>'
-        f'<text x="{150 + width + 5:.1f}" y="{y + 9}">{value_s}</text>'
+        f'<text x="{150 + width + 5:.1f}" y="{y + 9}" font-size="8">{value_s}</text>'
     )

@@ -104,12 +104,16 @@ def zoning_line(results: Mapping) -> str | None:
 
 
 def identity_header_line(ident: Mapping) -> str:
-    """One compact line for the running header: address (when known) and the
-    borough/block/lot display."""
+    """One compact line for the running header, joined with ' · ' (D5). When
+    the address already carries the borough, it is not repeated from the display
+    (``"215-16 Northern Boulevard, Queens · block 7334, lot 70"``)."""
     display = ident.get("display")
     address = ident.get("address")
+    borough = ident.get("borough")
+    if address and display and borough and str(display).startswith(str(borough)):
+        display = str(display)[len(str(borough)):].lstrip(" ,")
     parts = [str(part) for part in (address, display) if part]
-    return " - ".join(parts) if parts else "Selected tax lot"
+    return " · ".join(parts) if parts else "Selected tax lot"
 
 
 def answer_block(results: Mapping, name: str) -> Mapping:

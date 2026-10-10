@@ -159,3 +159,15 @@ Base `475404f114333da71fc564b29faebcc781b9dc8b`. What changed, by finding:
 - A9 an unavailable drawing's line names it ("The site plan is not available for this report.").
 - A10 this report's Rework 1 and Rework 2 sections.
 Checks (rework 2): ruff 0; pytest 170 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html. No STOP: every changed file is inside the task's allowed paths.
+
+## Rework 3 (whole browser suite; every drawing printed at 0.75 size)
+
+Base `8b82814f3cb1462941c427dffb373546f4f1f239`. Cause confirmed: the kit's SVGs carry UNITLESS `width`/`height` (points), which a browser reads as CSS px (1px = 0.75pt), so drawings printed at 0.75 of size and their labels fell to 5.6-6.8 pt.
+- D1 every embedded drawing (kit drawings and the report's own bar chart) is stamped `width="<w>pt" height="<h>pt"` from its viewBox (`drawings_embed.size_svg_to_points`), so it prints at its designed size; the stylesheet sets no size on an svg and never shrinks one. Benchmark viewBoxes (512x422, 238x224, 360x376 pt; bar chart 500 wide) all fit the 182 mm content box.
+- D2 a test checks every embedded SVG's displayed pt size equals its viewBox and every SVG text font size (viewBox units) is >= 7, and the CSS sizes no svg.
+- D3 page budget: with true sizes the benchmark site page holds the lot-area basis, the 512x422 pt plan and the constraints table within one A4 sheet (~250 mm < 269 mm content height); the figure stays whole (break-inside: avoid) and the constraints table flows after it, so if content grows the table continues to a second sheet with no near-empty sheet.
+- D5 the running header joins with " · " and does not repeat the borough ("215-16 Northern Boulevard, Queens · block 7334, lot 70").
+- D6 every mention of a scheduled building uses the one phrase "Scheduled floor area: N sq ft; site fit unverified" (the worked-and-not-worked list included); a test enforces it.
+- D7 the site plan has its own block with space above (figure margin-top), so the top street name no longer touches a line above.
+- D8 the tax-map-outline caption is stated once, below the drawing: the report's redundant line above is removed; the single caption is the kit's own "Lot outline: Approximate - tax map" inside the SVG. NOTE: making that caption text the report's own would require editing the kit SVG (`services/api/app/drawings/kit/**`, M5-T152's scope); flagged for the orchestrator.
+Checks (rework 3): ruff 0; pytest 173 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html.

@@ -18,7 +18,6 @@ from .html import el, table
 __all__ = ["render"]
 
 QUESTION = "What constrains the design?"
-SITE_PLAN_LINE = "The site plan shows the tax-map outline (approximate; not a survey)."
 
 
 def _lot_area_basis(results: Mapping) -> object:
@@ -29,7 +28,8 @@ def _lot_area_basis(results: Mapping) -> object:
         children.append(el("p", f"The floor-area allowance holds {body}"))
     else:
         children.append(short_line("The recorded lot area is not available for this property."))
-    children.append(el("p", SITE_PLAN_LINE, class_="figure-note"))
+    # The tax-map-outline caption is stated ONCE, below the drawing (D8); no line
+    # is repeated above it here.
     return el("div", *children)
 
 
@@ -78,7 +78,10 @@ def _constraint_rows(results: Mapping, item_number: dict) -> list[list[object]]:
 def _site_outline(results: Mapping, site_plan: Embedded) -> object:
     if not readers.geometry_available(results):
         return short_line("The lot outline is not available for this property.")
-    # One caption only; the tax-map-outline line is stated once above (F4/F5).
+    # The drawing is in its own block with space above (D7). ONE caption for the
+    # tax-map-outline fact, below the drawing: the report adds none, so the single
+    # caption is the kit's own "Lot outline: Approximate - tax map" inside the SVG
+    # (D8). No line is repeated above the drawing.
     return figure(site_plan, "")
 
 

@@ -87,19 +87,19 @@ th {{ font-size: 8pt; color: {ink}; }}
 td.num, th.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
 tr {{ break-inside: avoid; }}
 caption {{ text-align: left; font-weight: 600; font-size: 8.5pt; break-after: avoid; }}
-figure {{ margin: 0 0 3mm; break-inside: avoid; }}
-figure svg {{ max-width: 182mm; max-height: 150mm; height: auto; }}
+/* Figures carry space above (D7) and keep together; drawings are embedded at
+   their designed point size and are NEVER scaled by this stylesheet (D1): this
+   stylesheet sets no size on an svg at all. */
+figure {{ margin: 4mm 0 3mm; break-inside: avoid; }}
 figcaption {{ font-size: 8pt; color: {supporting}; margin-top: 1.2mm; }}
 .figure-note {{ font-size: 8pt; color: {supporting}; margin: 1mm 0 0; }}
 .short-line {{ font-size: 9pt; color: {supporting}; font-style: italic; margin: 2mm 0 3mm; }}
 a {{ color: {action}; }}
-.bar-chart text {{ font-size: 7pt; }}
 .key-table td, .key-table th {{ font-size: 8pt; }}
 .nowrap {{ white-space: nowrap; }}
 .summary {{ display: flex; gap: 6mm; align-items: flex-start; }}
 .summary-answers {{ flex: 1 1 auto; }}
 .summary-figure {{ flex: 0 0 auto; }}
-.summary-figure svg {{ max-width: 85mm; max-height: 85mm; height: auto; }}
 .answers-table td {{ vertical-align: top; }}
 .answers-table .answer-figure {{ font-weight: 700; font-size: 11pt; white-space: nowrap; }}
 .reason-row td {{

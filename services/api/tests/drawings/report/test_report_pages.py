@@ -233,7 +233,12 @@ def test_s7_lot_area_basis_quoted_with_result() -> None:
                 "is confirmed")
     assert expected in text
     assert "10,387.99" in text and "disagree" in text
-    assert "The site plan shows the tax-map outline (approximate; not a survey)." in text
+    # the basis names the tax-map outline in the document's own words.
+    assert "tax-map outline" in text
+    # D8: the drawing's own caption (one, below) names the tax-map basis; no line above repeats it.
+    drawn = visible_text(build_report_html(doc, env=_LANE_E))
+    assert "Approximate — tax map" in drawn
+    assert "The site plan shows the tax-map outline (approximate; not a survey)." not in drawn
 
 
 # =========================================================================== F4
@@ -413,6 +418,43 @@ def test_a9_unavailable_drawing_line_names_the_drawing() -> None:
     text = visible_text(build_report_html(benchmark()))
     assert "The site plan is not available for this report." in text
     assert "This drawing is not shown here." not in text
+
+
+# =========================================================================== D1 / D2
+def test_d1_d2_drawings_embedded_at_designed_point_size() -> None:
+    html = build_report_html(benchmark(), env=_LANE_E)
+    svgs = re.findall(r"<svg\b[^>]*>", html)
+    assert len(svgs) >= 3
+    for tag in svgs:
+        vb = re.search(r'viewBox="[-\d.]+ [-\d.]+ ([-\d.]+) ([-\d.]+)"', tag)
+        w = re.search(r'width="([-\d.]+)pt"', tag)
+        h = re.search(r'height="([-\d.]+)pt"', tag)
+        assert vb and w and h, f"svg not sized in pt from viewBox: {tag[:80]}"
+        assert abs(float(w.group(1)) - float(vb.group(1))) < 0.01
+        assert abs(float(h.group(1)) - float(vb.group(2))) < 0.01
+    # every SVG text font size (in viewBox units) is at least 7.
+    for size in re.findall(r'<text[^>]*font-size="([0-9.]+)"', html):
+        assert float(size) >= 7, f"svg text font size {size} < 7"
+    # the report CSS never sizes an svg (in %, or at all).
+    css = layout.report_css("H", "F")
+    assert not re.search(r"svg[^{}]*\{[^}]*(?:max-)?width", css)
+
+
+# =========================================================================== D5
+def test_d5_running_header_join_no_repeated_borough() -> None:
+    ident = readers.identity(benchmark(), address="215-16 Northern Boulevard, Queens")
+    line = readers.identity_header_line(ident)
+    assert line == "215-16 Northern Boulevard, Queens · block 7334, lot 70"
+    assert " - " not in line and line.count("Queens") == 1
+
+
+# =========================================================================== D6
+def test_d6_every_scheduled_building_uses_one_phrase() -> None:
+    doc = benchmark()
+    text = visible_text(build_report_html(doc, env=_LANE_E))
+    area = readers.worked_buildings(doc)[0]["scheduled_display"]
+    assert f"Scheduled floor area: {area} sq ft; site fit unverified" in text
+    assert f"scheduled {area} sq ft" not in text  # no abbreviated mention
 
 
 # =============================================== drawing frame (ruling X9); run once integrated
