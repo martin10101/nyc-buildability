@@ -178,29 +178,31 @@ def test_s5_eleven_options_shared_limitations_once() -> None:
     assert [r["ordinal"] for r in rows] == list(range(1, 12))
     assert [r["name"] for r in rows] == [name for _ordinal, name in options.ELEVEN_OPTIONS]
     assert len({r["status_label"] for r in rows}) > 1
-    assert len({r["allowance"] for r in rows}) > 1
+    assert len({r["allowance_area"] for r in rows}) > 1
     text = visible_text(build_report_html(doc))
     for limitation in options.shared_limitations(doc):
         assert text.count(limitation["sentence"]) == 1, limitation["sentence"]
-    assert "Building A - not worked" in text
+    assert "Building A – not worked" in text  # en dash (A6)
 
 
 def test_f7_columns_chart_and_units() -> None:
     doc = benchmark()
     html = build_report_html(doc, env=_LANE_E)
     text = visible_text(html)
-    # F7 columns present.
     for header in ("Floor-area allowance", "Scheduled building", "Limitation"):
         assert header in text
-    # F7: the chart renders building B, no stale "no scheduled building" message.
     assert "No scheduled building is available to chart yet." not in text
     assert 'class="bar-chart"' in html
-    # F7: no doubled unit anywhere.
     assert "sq ft sq ft" not in text and "FAR FAR" not in text
-    # option 1 shows allowance + scheduled line; options 2/3 show None scheduled.
-    assert "20,150 sq ft (FAR 2.0)" in text
-    assert "24,180 sq ft (FAR 2.4)" in text
+    # A6: allowance area and FAR are kept apart (each on its own line).
+    assert "20,150 sq ft" in text and "FAR 2.0" in text
+    assert "24,180 sq ft" in text and "FAR 2.4" in text
     assert "None scheduled" in text
+    # A6: the Limitation column cells carry the number only (no "Limitation 2" in a cell).
+    comparison = html[html.index('id="option-comparison"'):html.index('id="scenario-B"')]
+    assert "Limitation 2" not in visible_text(
+        comparison[comparison.index("<tbody"):comparison.index("</table>")]
+    )
 
 
 # =========================================================================== S6
@@ -333,20 +335,30 @@ def test_s11_escaping() -> None:
     assert "&lt;script&gt;" in html
 
 
-# =========================================================================== F8
+# =========================================================================== F8 / A3
 def test_f8_open_items_short_effect_and_full_reason() -> None:
     html = build_report_html(benchmark())
     text = visible_text(html)
     assert "Effect on the answer" in text
-    # a short structural effect for the unit limit:
     assert "No legal apartment limit is shown." in text
-    # the rear yard and street wall are both listed as open items:
     assert "rear yard is not known beyond the corner area" in text
-    # the full document reason is still carried (beneath, smaller type).
     assert "class=\"reason-row\"" in html
 
 
-# =========================================================================== F10
+def test_a3_not_checked_items_have_no_redundant_detail() -> None:
+    # Only items whose full reason differs from the title/effect get a reason row.
+    doc = benchmark()
+    expected = sum(
+        1 for item in readers.open_items(doc)
+        if item.get("reason") and item["reason"] not in (item["effect"], item["title"])
+    )
+    html = build_report_html(doc)
+    assert html.count('class="reason-row"') == expected
+    # the not-checked items (street wall, placement, parking) contribute no reason row.
+    assert expected < len(readers.open_items(doc))
+
+
+# =========================================================================== F10 / A8
 def test_f10_coverage_three_states_and_further_sections() -> None:
     text = visible_text(build_report_html(benchmark()))
     assert "In this report" in text and "Partly in this report" in text
@@ -355,6 +367,9 @@ def test_f10_coverage_three_states_and_further_sections() -> None:
     for further in ("Comparable sales nearby", "Financial analysis inputs", "Context maps",
                     "Tax abatement eligibility"):
         assert further in text
+    # A8: context maps carry their own state and note.
+    assert "Not yet in this report" in text
+    assert "Map data is not yet fetched for the report." in text
 
 
 # =========================================================================== F11
@@ -363,13 +378,41 @@ def test_f11_evidence_inputs_label_key_and_nowrap() -> None:
     text = visible_text(html)
     assert "Inputs and their sources" in text
     assert "Recorded lot area" in text and "Zoning district" in text
-    # envelope law sections present (not only ZR 23-22).
-    assert "Section 23-432" in text
+    assert "Lot frontage" in text  # A7: the document's label, not "Front lot line"
+    assert "Lot within 100 ft of the street-line intersection" in text  # A7
+    # envelope law sections present (not only 23-22); the number never breaks (A7).
+    assert "23-432" in text
+    assert '<span class="nowrap">23-432</span>' in html
     # the owner's exact R783 wording and the "Not used in this report." note.
     assert "Supported by completed checks and evidence. Not used in this report." in text
     assert "Prepared but subject to confirmation or revision." in text
     assert 'class="nowrap"' in html
     assert "the figures below are read from the result" not in text
+
+
+# =========================================================================== A2
+def test_a2_no_non_drawing_text_below_8pt() -> None:
+    css = layout.report_css("H", "F")
+    for block in css.split("}"):
+        for match in re.finditer(r"font-size:\s*([\d.]+)pt", block):
+            size = float(match.group(1))
+            if size < 8:
+                assert "bar-chart" in block, f"non-drawing rule sets {size}pt: {block.strip()!r}"
+
+
+# =========================================================================== A5
+def test_a5_zoning_line_not_a_joined_fragment() -> None:
+    text = visible_text(build_report_html(benchmark()))
+    assert "Zoning district R6B · Commercial overlay C2-2" in text
+    assert "District R6B; A commercial overlay" not in text
+
+
+# =========================================================================== A9
+def test_a9_unavailable_drawing_line_names_the_drawing() -> None:
+    # Drawings off (no LANE_E): the site-plan line names the site plan, not a generic drawing.
+    text = visible_text(build_report_html(benchmark()))
+    assert "The site plan is not available for this report." in text
+    assert "This drawing is not shown here." not in text
 
 
 # =============================================== drawing frame (ruling X9); run once integrated

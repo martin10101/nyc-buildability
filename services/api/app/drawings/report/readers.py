@@ -32,6 +32,7 @@ __all__ = [
     "recorded_lot_area_text",
     "withheld_values",
     "worked_buildings",
+    "zoning_line",
 ]
 
 ANSWER_NAMES = ("floor_area_allowance", "permitted_envelope", "building_option")
@@ -74,11 +75,32 @@ def identity(results: Mapping, *, address: str | None = None) -> dict:
         "bbl": lot.get("bbl"),
         "district": district,
         "overlay_present": bool(overlay_present) if overlay_present is not None else None,
-        "overlay_statement": _assumption_statement(results, "overlay_present"),
+        "zoning_line": zoning_line(results),
         "lot_selection": results.get("lot_selection_statement"),
         "revision": results.get("revision"),
         "computed_at": results.get("computed_at"),
     }
+
+
+def zoning_line(results: Mapping) -> str | None:
+    """The zoning as a compact line from the document's structured values:
+    ``"Zoning district R6B · Commercial overlay C2-2"``. Never a joined
+    fragment of two document sentences (A5)."""
+    import re
+
+    parts = []
+    district = _assumption_value(results, "zoning_district")
+    if district:
+        parts.append(f"Zoning district {district}")
+    if _assumption_value(results, "overlay_present"):
+        statement = _assumption_statement(results, "overlay_present") or ""
+        match = re.search(r"\(([A-Z0-9-]+)\)", statement)
+        parts.append(f"Commercial overlay {match.group(1)}" if match else "Commercial overlay")
+    special = _assumption_statement(results, "special_district_present")
+    if _assumption_value(results, "special_district_present"):
+        match = re.search(r"\(([A-Z0-9-]+)\)", special or "")
+        parts.append(f"Special district {match.group(1)}" if match else "Special purpose district")
+    return " · ".join(parts) if parts else None
 
 
 def identity_header_line(ident: Mapping) -> str:
@@ -196,9 +218,7 @@ def not_worked_buildings(results: Mapping) -> list[dict]:
                 "label": building.get("label"),
                 "reason": building.get("reason"),
                 "resolved_by": building.get("resolved_by"),
-                "status_label": labels.label_for_answer_status(
-                    "not_available", building.get("gap_kind")
-                ),
+                "status_label": labels.label_for_gap_kind(building.get("gap_kind")),
             }
         )
     return rows
@@ -405,10 +425,11 @@ _INPUT_NAMES = {
     "special_district_present": "Special purpose district",
     "special_density_area": "Special density area",
     "lot_type": "Lot type",
-    "lot_front_ft": "Front lot line",
+    "lot_front_ft": "Lot frontage",
     "lot_depth_ft": "Lot depth",
-    "within_100_ft_of_street_line_intersection": "Within 100 ft of the corner",
-    "street_line_intersection_angle_degrees": "Street-line angle",
+    "within_100_ft_of_street_line_intersection":
+        "Lot within 100 ft of the street-line intersection",
+    "street_line_intersection_angle_degrees": "Street-line intersection angle",
     "housing_program": "Housing program",
     "floor_to_floor_ft": "Floor-to-floor height",
 }

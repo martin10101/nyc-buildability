@@ -34,16 +34,17 @@ NINE_CONTENTS = (
     ("I", "The downloadable report"),
 )
 
-# The six further sections the owner kept in scope, plus context maps (F10). Read
-# from the section map: none is built into the report yet.
+# The six further sections the owner kept in scope, plus context maps (F10/A8).
+# Read from the section map: none is built into the report yet. Each row carries
+# its own state and note.
 FURTHER_SECTIONS = (
-    ("Comparable sales nearby", "A workspace tool only; not in this report."),
-    ("Block description", "Not built."),
-    ("Parking, loading and bicycle parking", "Not computed; listed as not checked."),
-    ("Aerial and street photographs", "Needs a licensed imagery source."),
-    ("Tax abatement eligibility", "Not computed."),
-    ("Financial analysis inputs", "Held by the owner."),
-    ("Context maps", "Not included in this report."),
+    ("Comparable sales nearby", NOT_YET, "A workspace tool only; not in this report."),
+    ("Block description", NOT_YET, "Not built."),
+    ("Parking, loading and bicycle parking", NOT_YET, "Not computed; listed as not checked."),
+    ("Aerial and street photographs", NOT_YET, "Needs a licensed imagery source."),
+    ("Tax abatement eligibility", NOT_YET, "Not computed."),
+    ("Financial analysis inputs", NOT_YET, "Held by the owner."),
+    ("Context maps", "Not yet in this report", "Map data is not yet fetched for the report."),
 )
 
 
@@ -73,8 +74,10 @@ def _open_items(results: Mapping) -> object:
                el("td", item.get("resolves") or "Not stated"),
                el("td", label_chip(item["status_label"])))
         )
-        if item.get("reason") and item["reason"] != item["effect"]:
-            rows.append(el("tr", el("td", item["reason"], colspan="5"), class_="reason-row"))
+        reason = item.get("reason")
+        # Omit the detail line when it only repeats the item's name or effect (A3).
+        if reason and reason not in (item["effect"], item["title"]):
+            rows.append(el("tr", el("td", reason, colspan="5"), class_="reason-row"))
     return el(
         "table",
         el("caption", "Open items for this property"),
@@ -111,8 +114,8 @@ def _coverage_rows(results: Mapping) -> list[list[object]]:
     for letter, name in NINE_CONTENTS:
         state, note = states[letter]
         rows.append([f"{letter}. {name}", state, note])
-    for name, note in FURTHER_SECTIONS:
-        rows.append([name, NOT_YET, note])
+    for name, state, note in FURTHER_SECTIONS:
+        rows.append([name, state, note])
     return rows
 
 

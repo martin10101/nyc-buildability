@@ -802,6 +802,11 @@ def build_app():
     os.environ[LANE_FLAG_ENV_VARS["A"]] = "1"
     results_inputs_provider = harness_results_inputs_provider()
     app.dependency_overrides[get_results_study_inputs_provider] = lambda: results_inputs_provider
+    # M5-T151 rework 2 (A1): turn the drawing kit ON for this harness process only (the kit is
+    # flag-gated by LANE_E_ENABLED and otherwise answers Unavailable), so the report route embeds
+    # the server-made site plan, summary plan and floor-stack SVGs the way the orchestrator prints
+    # them. Production sets no flag, so the kit stays off there. Set the SAME way as the flags above.
+    os.environ[LANE_FLAG_ENV_VARS["E"]] = "1"
     # M5-T151: the report route (POST /api/v1/properties/{bbl}/report, mounted in app.main) is
     # served through the SAME real flow with NO extra seam. It delegates to the results route's
     # post_results, so it reuses INTERNAL_RESULTS_ENABLED (set above) and this same

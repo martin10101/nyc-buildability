@@ -15,6 +15,7 @@ __all__ = [
     "readable_rule_title",
     "readable_source_title",
     "readable_zr_reference",
+    "zr_section_number",
 ]
 
 LAW_SITE_TITLE = "New York City Zoning Resolution (official text)"
@@ -77,8 +78,13 @@ def readable_source_title(kind: object, ref: object) -> str:
     return "Recorded source"
 
 
+def zr_section_number(section: object) -> str:
+    """``"ZR 23-22"`` -> ``"23-22"`` (the bare section number)."""
+    text = str(section or "").strip()
+    return text[2:].strip() if text.upper().startswith("ZR") else text
+
+
 def readable_zr_reference(section: object) -> str:
     """``"ZR 23-22"`` -> ``"New York City Zoning Resolution, Section 23-22"``."""
-    text = str(section or "").strip()
-    number = text[2:].strip() if text.upper().startswith("ZR") else text
+    number = zr_section_number(section)
     return f"New York City Zoning Resolution, Section {number}" if number else LAW_SITE_TITLE

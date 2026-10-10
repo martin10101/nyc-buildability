@@ -22,6 +22,7 @@ __all__ = [
     "UNRESOLVED",
     "VERIFIED",
     "label_for_answer_status",
+    "label_for_gap_kind",
     "label_for_value_state",
     "label_for_way",
     "scheduled_floor_area_line",
@@ -106,6 +107,12 @@ def _from_way_token(way: object, gap_kind: object) -> str:
     if way == "withheld":
         return UNRESOLVED if gap_kind == "missing_information" else PENDING_VERIFICATION
     return PENDING_VERIFICATION
+
+
+def label_for_gap_kind(gap_kind: object) -> str:
+    """Label for a withheld result keyed on its gap kind (ruling X4): missing
+    information is Unresolved; anything else (work owed) is Pending verification."""
+    return UNRESOLVED if gap_kind == "missing_information" else PENDING_VERIFICATION
 
 
 def label_for_answer_status(status: object, reason_kind: object) -> str:

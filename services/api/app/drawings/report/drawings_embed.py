@@ -72,11 +72,19 @@ def _call(module, fn_name: str, arg, env, missing_line: str, *, frame: str = "re
     return _from_result(result)
 
 
-def embed_kit_drawing(fn_name: str, results: Mapping, *, env=None) -> Embedded:
-    """A drawing-kit drawing (site plan, massing) at the report frame."""
+_SITE_PLAN_UNAVAILABLE = "The site plan is not available for this report."
+_FLOOR_STACK_UNAVAILABLE = "The floor-stack section is not available for this report."
+
+
+def embed_kit_drawing(
+    fn_name: str, results: Mapping, *, env=None, not_available_line: str | None = None
+) -> Embedded:
+    """A drawing-kit drawing (site plan, massing) at the report frame. When it is
+    unavailable the short line names the drawing (A9)."""
     from app.drawings import kit
 
-    return _call(kit, fn_name, results, env, "This drawing is not shown here.")
+    return _call(kit, fn_name, results, env,
+                 not_available_line or "This drawing is not available for this report.")
 
 
 def summary_frame_available(results: Mapping, *, env=None) -> bool:
@@ -100,21 +108,17 @@ def embed_summary_site_plan(results: Mapping, *, env=None) -> Embedded:
     """A compact (<= 85 mm) site plan for the decision summary, only when the
     summary frame exists; otherwise a short line pointing to the site page (F3)."""
     if not summary_frame_available(results, env=env):
-        return Embedded(short_line="A site plan is shown on the Site and context page.")
+        return Embedded(short_line=_SITE_PLAN_UNAVAILABLE)
     from app.drawings import kit
 
-    return _call(kit, "render_site_plan", results, env,
-                 "A site plan is shown on the Site and context page.", frame="summary")
+    return _call(kit, "render_site_plan", results, env, _SITE_PLAN_UNAVAILABLE, frame="summary")
 
 
 def embed_floor_stack(alternative: Mapping, *, env=None) -> Embedded:
     """The floor-stack section for one worked building (``render_floor_stack``)."""
     from app.drawings import kit
 
-    return _call(
-        kit, "render_floor_stack", alternative, env,
-        "The floor-stack section is not shown here.",
-    )
+    return _call(kit, "render_floor_stack", alternative, env, _FLOOR_STACK_UNAVAILABLE)
 
 
 def embed_map(fn_name: str, map_context: Mapping, *, env=None) -> Embedded:
@@ -138,10 +142,12 @@ def allowance_bar_chart_svg(
     scale = max([allowance_value, *[b["scheduled_value"] for b in bars]])
     if scale <= 0:
         return None
-    track = 300.0
+    # Give the value labels room so they are never cut (A6): a short track with a
+    # wide right margin for the figure.
+    track = 220.0
+    width_total = 520
     rows = []
     y = 6
-    # The allowance reference line, full scale.
     allowance_text = f"{allowance_display} sq ft" if allowance_display else ""
     rows.append(_bar(y, track, "Floor-area allowance", allowance_text, allowance_value, scale))
     y += 22
@@ -154,8 +160,8 @@ def allowance_bar_chart_svg(
     height = y + 4
     body = "".join(rows)
     return (
-        f'<svg class="bar-chart" viewBox="0 0 460 {height}" '
-        f'role="img" width="460" height="{height}">{body}</svg>'
+        f'<svg class="bar-chart" viewBox="0 0 {width_total} {height}" '
+        f'role="img" width="{width_total}" height="{height}">{body}</svg>'
     )
 
 
@@ -165,6 +171,6 @@ def _bar(y: int, track: float, name: str, value_text: str, value: float, scale: 
     value_s = _xml_escape(value_text)
     return (
         f'<text x="0" y="{y + 9}">{name_s}</text>'
-        f'<rect x="140" y="{y}" width="{width:.1f}" height="12" fill="#18577A"></rect>'
-        f'<text x="{140 + width + 4:.1f}" y="{y + 9}">{value_s}</text>'
+        f'<rect x="150" y="{y}" width="{width:.1f}" height="12" fill="#18577A"></rect>'
+        f'<text x="{150 + width + 5:.1f}" y="{y + 9}">{value_s}</text>'
     )

@@ -24,8 +24,14 @@ _LAW_URL = "https://zoningresolution.planning.nyc.gov/"
 def _law_links(zr_sections) -> object:
     parts = []
     for section in zr_sections or []:
-        text = sources.readable_zr_reference(section)
-        parts.append(f'<a href="{escape_attr(_LAW_URL)}">{escape(text)}</a>')
+        number = sources.zr_section_number(section)
+        # The section number never breaks across a line (A7).
+        if number:
+            label = (f'New York City Zoning Resolution, Section '
+                     f'<span class="nowrap">{escape(number)}</span>')
+        else:
+            label = escape(sources.LAW_SITE_TITLE)
+        parts.append(f'<a href="{escape_attr(_LAW_URL)}">{label}</a>')
     return raw("; ".join(parts)) if parts else "See the official Zoning Resolution"
 
 

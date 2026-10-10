@@ -103,7 +103,7 @@ a {{ color: {action}; }}
 .answers-table td {{ vertical-align: top; }}
 .answers-table .answer-figure {{ font-weight: 700; font-size: 11pt; white-space: nowrap; }}
 .reason-row td {{
-  font-size: 7.5pt; color: {supporting}; border-bottom: 0.3pt solid {divider};
+  font-size: 8pt; color: {supporting}; border-bottom: 0.3pt solid {divider};
   padding-top: 0; padding-bottom: 1.6mm;
 }}
 .open-number {{ white-space: nowrap; }}

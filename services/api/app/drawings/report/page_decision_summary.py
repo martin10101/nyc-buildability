@@ -24,16 +24,11 @@ def _property_heading(ident: Mapping) -> raw:
     address = ident.get("address")
     title = address or display or "Selected tax lot"
     lines = [el("p", "Decision summary", class_="type-name"), el("h1", title)]
-    sub = []
     if address and display:
-        sub.append(display)
-    district = ident.get("district")
-    if district:
-        sub.append(f"District {district}")
-    if ident.get("overlay_statement"):
-        sub.append(ident["overlay_statement"])
-    if sub:
-        lines.append(el("p", "; ".join(str(s) for s in sub), class_="identity-line"))
+        lines.append(el("p", display, class_="identity-line"))
+    zoning = ident.get("zoning_line")
+    if zoning:
+        lines.append(el("p", zoning, class_="identity-line"))
     if ident.get("lot_selection"):
         lines.append(el("p", ident["lot_selection"], class_="identity-line"))
     return el("div", *lines)

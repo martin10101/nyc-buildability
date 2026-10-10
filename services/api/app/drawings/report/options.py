@@ -67,33 +67,25 @@ def _addon_gain(results: Mapping, addon_id: str) -> Mapping | None:
     return None
 
 
-def _qualifying(fa_present: list[dict]) -> tuple[str | None, str | None]:
-    area = far = None
-    label = None
+def _qualifying(fa_present: list[dict]) -> tuple[str | None, str | None, str | None]:
+    """The qualifying-housing allowance area, FAR and label (A6: area and FAR are
+    kept apart so each stays on its own line)."""
+    area = far = label = None
     for row in fa_present:
         if "qualifying" not in str(row.get("key") or ""):
             continue
         if row.get("unit") == "square_feet":
             area, label = row.get("display"), row.get("status_label")
         elif row.get("unit") == "ratio":
-            far = row.get("display")
-    text = None
-    if area:
-        text = f"{area} (FAR {far})" if far else area
-    return text, label
+            far = f"FAR {row.get('display')}"
+    return area, far, label
 
 
-def _standard(worked: list[dict]) -> tuple[str | None, str | None, str | None]:
-    """Allowance text, scheduled text and label for option 1."""
-    if not worked:
-        return None, None, None
-    building = worked[0]
-    allowance = building.get("scheduled_display")
-    scheduled = (
-        labels.scheduled_floor_area_line(allowance) if allowance
-        else "Scheduled building not available"
-    )
-    return building.get("scheduled_display"), scheduled, building.get("status_label")
+def _named(fa_present: list[dict], key: str) -> dict | None:
+    for row in fa_present:
+        if row.get("key") == key:
+            return row
+    return None
 
 
 def _limitation_sentence(results: Mapping, ordinal: int) -> str:
@@ -115,8 +107,9 @@ def _limitation_sentence(results: Mapping, ordinal: int) -> str:
 def _rows_and_limits(results: Mapping) -> tuple[list[dict], list[dict]]:
     worked = readers.worked_buildings(results)
     fa_present = readers.present_values(readers.answer_block(results, "floor_area_allowance"))
-    std_allow, std_sched, std_label = _standard(worked)
-    qual_text, qual_label = _qualifying(fa_present)
+    std_area_row = _named(fa_present, "max_residential_floor_area")
+    std_far_row = _named(fa_present, "max_residential_far")
+    qual_area, qual_far, qual_label = _qualifying(fa_present)
 
     sentences: list[str] = []
 
@@ -127,30 +120,25 @@ def _rows_and_limits(results: Mapping) -> tuple[list[dict], list[dict]]:
 
     rows: list[dict] = []
     for ordinal, name in ELEVEN_OPTIONS:
-        if ordinal == 1 and std_allow:
-            allowance = f"{std_allow} sq ft (FAR {_far(fa_present, 'max_residential_far')})"
-            scheduled, label = std_sched, std_label
-        elif ordinal in (2, 3) and qual_text:
-            far = _far(fa_present, "max_residential_far_qualifying_affordable_or_senior")
-            allowance = qual_text if "FAR" in qual_text else f"{qual_text} (FAR {far})"
+        if ordinal == 1 and worked and std_area_row:
+            area = std_area_row.get("display")
+            far = (f"FAR {std_far_row['display']}"
+                   if std_far_row and std_far_row.get("display") else None)
+            scheduled = labels.scheduled_floor_area_line(worked[0].get("scheduled_display"))
+            label = worked[0].get("status_label")
+        elif ordinal in (2, 3) and qual_area:
+            area, far = qual_area, qual_far
             scheduled, label = "None scheduled", qual_label or labels.CONDITIONAL
         else:
-            allowance, scheduled = _NOT_PRODUCED, "None scheduled"
-            label = labels.PENDING_VERIFICATION
+            area, far = _NOT_PRODUCED, None
+            scheduled, label = "None scheduled", labels.PENDING_VERIFICATION
         limitation = number_for(_limitation_sentence(results, ordinal))
         rows.append({
-            "ordinal": ordinal, "name": name, "allowance": allowance,
+            "ordinal": ordinal, "name": name, "allowance_area": area, "allowance_far": far,
             "scheduled": scheduled, "status_label": label, "limitation": limitation,
         })
     limits = [{"number": i + 1, "sentence": s} for i, s in enumerate(sentences)]
     return rows, limits
-
-
-def _far(fa_present: list[dict], key: str) -> str:
-    for row in fa_present:
-        if row.get("key") == key and row.get("display"):
-            return row["display"]
-    return ""
 
 
 def option_rows(results: Mapping) -> list[dict]:

@@ -127,3 +127,35 @@ result word, "Verified" appears exactly once (the label-key definition row).
   integration tests are skipped with a reason until then.
 
 No STOP condition was hit: every file changed is inside the task's allowed paths.
+
+## Rework 1 (orchestrator printed every page; twelve findings)
+
+Integrated head base. What changed, by finding:
+- F1 running header/footer written LITERALLY into the `@page` margin boxes (`string-set`/`string()` removed; Chromium ignores them).
+- F2 the route accepts an optional `address` query parameter (<=120 chars, address charset, else ignored); shown as the title with borough/block/lot beneath.
+- F3 the decision summary and the site page each fit one sheet; the empty context-maps section/sheet removed (the coverage inventory reports maps).
+- F4 stale "shown when the drawing is available" captions removed; one caption per drawing.
+- F5 the lot-area basis reads with the result it conditions ("The floor-area allowance holds if …"), the document's own words.
+- F6 one row per constraint; the two coverage rows merged (by-portion rule + withheld, one Unresolved label); states named, never bare "Not shown".
+- F7 the comparison chart reader fixed; doubled unit removed; columns Option / Floor-area allowance / Scheduled building / Status / Limitation; numbered shared limitations from the document's reasons (developer wording replaced).
+- F8 open items carry a short structural effect with the full reason beneath in smaller type.
+- F9 the label-basis assumption moved to the evidence provenance.
+- F10 the coverage inventory uses three states and adds the six further sections plus context maps.
+- F11 the evidence page: inputs table, envelope law sections, no-wrap figures, R783 label definitions; dropped "read from the result".
+- F12 content kept within compact budgets; the orchestrator confirms page fit on print.
+Checks (rework 1): ruff 0; pytest 149 passed / 2 skipped; modularity 0; lane 0. Mutations: "achieved" -> S3; shared limitation twice -> S5.
+
+## Rework 2 (printed from the real route on the preview; browser test; ten findings)
+
+Base `475404f114333da71fc564b29faebcc781b9dc8b`. What changed, by finding:
+- A1 the e2e harness (`apps/web/e2e/harness/fixture_api.py`) turns on `LANE_E_ENABLED` for its process only, so the drawing kit renders on the real route; proven by a route test.
+- A2 no non-drawing CSS rule sets a font below 8 pt (the open-item detail row raised 7.5 pt -> 8 pt); a CSS test enforces it.
+- A3 an open item's detail line is omitted when it only repeats the item's name (the not-checked items).
+- A4 the compact `frame="summary"` site plan now draws on the decision summary (M5-T152 added it); the fallback line goes when the drawing is present.
+- A5 the zoning identity line is "Zoning district R6B · Commercial overlay C2-2" from the scope assumptions' structured values, never a joined fragment.
+- A6 the bar-chart value labels have room; Building B uses the full scheduled line; "Building A – not worked" uses an en dash with the X4 label from its gap kind (Unresolved); the Limitation column shows only the number; the allowance keeps the area on one line with the FAR on a second.
+- A7 the evidence inputs use the document's own labels ("Lot frontage", "Lot within 100 ft of the street-line intersection"); the law-link section number never breaks.
+- A8 context maps read "Not yet in this report", note "Map data is not yet fetched for the report."
+- A9 an unavailable drawing's line names it ("The site plan is not available for this report.").
+- A10 this report's Rework 1 and Rework 2 sections.
+Checks (rework 2): ruff 0; pytest 170 passed / 0 skipped; modularity 0; lane 0. Benchmark report (LANE_E on) at /tmp/agent-a8199ae6bc0f48296-report.html. No STOP: every changed file is inside the task's allowed paths.

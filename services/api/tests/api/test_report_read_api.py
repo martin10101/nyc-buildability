@@ -95,6 +95,18 @@ def test_flag_on_returns_html_report(enabled) -> None:
     assert "X-Correlation-ID" in response.headers
 
 
+def test_a1_drawings_render_on_the_route_under_the_drawing_flag(enabled, monkeypatch) -> None:
+    # A1: the harness turns on LANE_E_ENABLED; then the report route embeds the
+    # server-made site plan, the summary plan and the floor-stack SVGs.
+    monkeypatch.setenv("LANE_E_ENABLED", "1")
+    body = _post(_app()).text
+    assert body.count("<svg") >= 3
+    decision = body[body.index('id="decision-summary"'):body.index('id="site-and-context"')]
+    site = body[body.index('id="site-and-context"'):body.index('id="option-comparison"')]
+    scenario = body[body.index('id="scenario-B"'):]
+    assert "<svg" in decision and "<svg" in site and "<svg" in scenario
+
+
 def test_address_query_param_is_the_title(enabled) -> None:
     response = _post(_app(), params={"address": "215-16 Northern Boulevard, Queens"})
     assert response.status_code == 200

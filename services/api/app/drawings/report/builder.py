@@ -57,7 +57,10 @@ def build_report_html(
     header_line = readers.identity_header_line(ident)
     footer_line = _footer_line(ident)
 
-    site_plan = drawings_embed.embed_kit_drawing("render_site_plan", results, env=env)
+    site_plan = drawings_embed.embed_kit_drawing(
+        "render_site_plan", results, env=env,
+        not_available_line="The site plan is not available for this report.",
+    )
     # Context maps are not shown in the report on this path (no map document is
     # built), so there is no maps section and no maps sheet (F3); the coverage
     # inventory reports them as not in the report.

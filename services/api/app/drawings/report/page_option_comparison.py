@@ -47,14 +47,24 @@ def _chart(results: Mapping, worked: list[dict]) -> object:
     )
 
 
+def _allowance_cell(row: dict) -> object:
+    area = escape(row.get("allowance_area") or "")
+    far = row.get("allowance_far")
+    markup = f'<span class="nowrap">{area}</span>'
+    if far:
+        markup += f'<br><span class="nowrap">{escape(far)}</span>'
+    return raw(markup)
+
+
 def _option_rows(results: Mapping) -> list[list[object]]:
     return [
         [
             f"{row['ordinal']}. {row['name']}",
-            row["allowance"],
-            row["scheduled"],
+            _allowance_cell(row),
+            raw(f'<span class="nowrap">{escape(row["scheduled"])}</span>')
+            if row["scheduled"] == "None scheduled" else row["scheduled"],
             label_chip(row["status_label"]),
-            f"Limitation {row['limitation']}",
+            raw(f'<span class="nowrap">{row["limitation"]}</span>'),
         ]
         for row in options.option_rows(results)
     ]
@@ -76,7 +86,7 @@ def _buildings(results: Mapping) -> object:
         name = f"Building {building['building']}" if building.get("building") else "Building"
         items.append(
             el("li",
-               raw(f"<strong>{escape(name)} - not worked:</strong> the square-foot footprint "
+               raw(f"<strong>{escape(name)} – not worked:</strong> the square-foot footprint "
                    "is withheld (see Limitation 1) "),
                label_chip(building["status_label"]))
         )
