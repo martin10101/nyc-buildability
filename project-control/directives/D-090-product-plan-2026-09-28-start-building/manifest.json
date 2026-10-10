@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-10T00:00:09+00:00",
+ "updated_at": "2026-10-10T07:25:55+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -920,10 +920,44 @@
   "D-090-R896",
   "D-090-R897",
   "D-090-R898",
-  "D-090-R899"
+  "D-090-R899",
+  "D-090-R900",
+  "D-090-R901",
+  "D-090-R902",
+  "D-090-R903",
+  "D-090-R904",
+  "D-090-R905",
+  "D-090-R906",
+  "D-090-R907",
+  "D-090-R908",
+  "D-090-R909",
+  "D-090-R910",
+  "D-090-R911",
+  "D-090-R912",
+  "D-090-R913",
+  "D-090-R914",
+  "D-090-R915",
+  "D-090-R916",
+  "D-090-R917",
+  "D-090-R918",
+  "D-090-R919",
+  "D-090-R920",
+  "D-090-R921",
+  "D-090-R922",
+  "D-090-R923",
+  "D-090-R924",
+  "D-090-R925",
+  "D-090-R926",
+  "D-090-R927",
+  "D-090-R928",
+  "D-090-R929",
+  "D-090-R930",
+  "D-090-R931",
+  "D-090-R932",
+  "D-090-R933"
  ],
- "requirements_id_digest_sha256": "f31113ebdb803a0187e5092ed61d63be4ad3d089062ff1452d94c446a7405dcd",
- "requirements_content_digest_sha256": "59a3752d3d2c60ed2f4d858295f914b12d14cdf97faa3811e8f157f63d2e5304",
+ "requirements_id_digest_sha256": "b9c6f38d9fb21a16b4432583280bf245f6acca6a819676377281dc6bba6dac86",
+ "requirements_content_digest_sha256": "906b07971468b536476e52daa024bcf4bb15d569d71856c5d8e046d7039c4cbd",
  "sources": [
   {
    "file": "source-001.md",
@@ -1563,6 +1597,14 @@
    "recorded_at": "2026-10-09T23:56:46+00:00",
    "content_digest_sha256": "df30f980f58c5a63b79811033f89e7a3913069d2921040f254dd64391e642192",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-081-amendment.md",
+   "kind": "amendment",
+   "sequence": 81,
+   "recorded_at": "2026-10-10T07:25:55+00:00",
+   "content_digest_sha256": "40fa31b6ee36e3696a48e68583bfbf8185e0acbd5dce75ed1e4b910a715dbd74",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1644,7 +1686,8 @@
   "source-077-amendment.md",
   "source-078-amendment.md",
   "source-079-amendment.md",
-  "source-080-amendment.md"
+  "source-080-amendment.md",
+  "source-081-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2496,6 +2539,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T149 (the architect-facing results slice (presentation contract step 3)) to R256, R267, R526, R543, R544, R556, R570, R641, R700, R804, R805, R807, R809, R810, R811, R812, R813, R816, R817, R819, R820, R821, R822, R823, R824, R825, R826, R827, R828, R829, R830, R831, R832, R833, R856, R859, R869, R870, R871, R872, R873, R874, R875, R876, R877, R881, R882, R885, R886, R888, R890, R894, R895 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 013RaGmC, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-10T07:25:55+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-081 (session 01TpXJN7: the owner's report-design correction, seven numbered parts) and requirements D-090-R900 to R933, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
