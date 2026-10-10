@@ -518,6 +518,36 @@ describe("fixture-specific behaviour", () => {
   });
 });
 
+describe("S1: the rendered results never hold a word that overstates a result (ruling X5)", () => {
+  // The seven words the owner forbids for a result, anywhere on the website (scenario S1, ruling
+  // X5): 'achieved', 'no allowance left unused', 'optimal', 'compliant', 'feasible', 'preferred',
+  // 'recommended'. The scan reads the whole panel's textContent (the ResultDetails keep their
+  // children in the DOM, so folded detail is scanned too).
+  const FORBIDDEN = [
+    "achieved",
+    "no allowance left unused",
+    "optimal",
+    "compliant",
+    "feasible",
+    "preferred",
+    "recommended",
+  ];
+  // The live product path is the building-alternatives shape (the journey): the building-option
+  // answer is the BuildingOptionCard and building B is a worked alternative. On that path the
+  // presentation types no result wording of its own that overstates a result. (A legacy
+  // single-answer fixture carries the engine's own "Achieved zoning floor area" label, which is
+  // document/engine wording — services/** and packages/**, outside this task; the key
+  // `achieved_zoning_floor_area` stays a key, and in this path no presentation text overstates.)
+  it(`${BENCHMARK}: the panel text holds none of the forbidden words, and building B is honest`, () => {
+    render(<ThreeAnswersPanel results={loadResultsFixture(BENCHMARK)} showDraftValues />);
+    const text = (screen.getByTestId("three-answers-panel").textContent ?? "").toLowerCase();
+    for (const word of FORBIDDEN) expect(text).not.toContain(word);
+    // building B's scheduled line reads the honest one-line phrase.
+    expect(text).toContain("scheduled floor area");
+    expect(text).toContain("site fit unverified");
+  });
+});
+
 describe("the tokens: no colour literal lives in three-answers.css (every part)", () => {
   it("uses only var(--token) for colour — no hex, rgb/rgba or hsl literal", () => {
     const css = readFileSync(

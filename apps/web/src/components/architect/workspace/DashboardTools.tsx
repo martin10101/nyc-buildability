@@ -18,6 +18,7 @@ import { ParcelStudyPanel } from "../ParcelStudyPanel";
 import { EvidenceWorkspace } from "../EvidenceWorkspace";
 import { ScenarioWorkspace } from "../ScenarioWorkspace";
 import { ReportView } from "../ReportView";
+import { ReportPreview } from "../report/ReportPreview";
 import { ProposalEditor } from "../ProposalEditor";
 import { MaxEnvelopePanel } from "../MaxEnvelopePanel";
 import { CapturedRecord } from "../EvidenceRecord";
@@ -96,7 +97,12 @@ export function DashboardTools(props: DashboardToolsProps) {
     // tool open with the switch off gets the plain not-available view (no fetch when off, R2).
     case "results": return props.resultsUiEnabled ? <ResultsPanel bbl={bbl}/> : <PlannedView label={TOOL_LABELS.results}/>;
     case "scenarios": return scenario ? <ScenarioWorkspace document={scenario} evaluation={evaluation} bbl={bbl} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/> : <section className="card"><h2>Scenario results unavailable</h2><p>{condo.withholdAllowances ? "Computed allowances are withheld until the legal analysis site is resolved." : "No matching, usable scenario was supplied."}</p>{returnedScenario ? <CapturedRecord value={returnedScenario} label="Returned scenario record · not a site allowance"/> : null}</section>;
-    case "report": return <ReportView profile={profile} scenario={returnedScenario} evaluation={returnedEvaluation} label={label} condoDecision={condo} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>;
+    // M5-T153 (scenario S4): with results switched on, the report tool opens the program's report
+    // for printing (the SAME inputs the results form sends). With results switched off, ReportView
+    // is unchanged.
+    case "report": return props.resultsUiEnabled
+      ? <ReportPreview bbl={bbl} withInputs/>
+      : <ReportView profile={profile} scenario={returnedScenario} evaluation={returnedEvaluation} label={label} condoDecision={condo} unusedFloorAreaSectionEnabled={unusedFloorAreaSectionEnabled}/>;
     // D-01 (plan §7): the proposal editor and envelope panel are set aside behind a
     // default-off server flag; a deep link or tool open gets the plain not-available view.
     case "proposal":

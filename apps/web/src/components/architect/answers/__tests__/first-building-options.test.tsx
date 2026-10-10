@@ -1,4 +1,4 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Results } from "@/lib/architect/three-answers";
 import {
@@ -10,6 +10,7 @@ import {
   twoDp,
   type FirstBuildingOptionsView,
 } from "@/lib/architect/first-building-options";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { loadResultsFixture } from "@/test-support/results-fixtures";
 import { FirstBuildingOptions } from "../FirstBuildingOptions";
 
@@ -84,19 +85,18 @@ describe("PART B: the building-option section on the results screen (contract 1.
     });
   });
 
-  it("S6: the building option is SCHEDULED, site fit not verified — never 'achieved', never 'unused'", () => {
+  it("S1/S6: building B reads the report's one-line scheduled phrase — never 'achieved', never 'unused'", () => {
     const doc = loadResultsFixture(BENCHMARK);
     const buildingB = firstAlternative(doc);
     renderDoc(doc);
     const block = within(optionsSection()).getAllByTestId("building-alternative")[0];
-    // the site-fit distinction FIRST: "Building option: Site fit not verified".
-    expect(within(block).getByTestId("building-alternative-site-fit").textContent).toBe(
-      "Building option: Site fit not verified",
-    );
-    // the value is the SCHEDULED area, read from the document ("20,150 sq ft").
+    // the answer AND its limitation on ONE line, the same phrase the report uses (ruling X5, S1):
+    // "Scheduled floor area: 20,150 sq ft; site fit unverified", the figure read from the document.
     expect(within(block).getByTestId("building-alternative-scheduled").textContent).toBe(
-      `Scheduled area: ${sqft(buildingB.total_floor_area_sqft)}`,
+      scheduledFloorAreaLine(sqft(buildingB.total_floor_area_sqft)),
     );
+    // the old two-line "Building option: Site fit not verified" is gone; there is no site-fit line.
+    expect(within(block).queryByTestId("building-alternative-site-fit")).toBeNull();
     // storeys and height stay in the summary, but NOT any "total floor area" or "unused" figure.
     const summary = within(block).getByTestId("building-alternative-summary").textContent ?? "";
     expect(summary).toContain(`${buildingB.storey_count} storeys`);
@@ -142,7 +142,7 @@ describe("PART B: the building-option section on the results screen (contract 1.
     // no worked alternative, so no scheduled area and no lead about worked shapes.
     expect(within(section).queryAllByTestId("building-alternative")).toHaveLength(0);
     expect(within(section).queryAllByTestId("building-alternative-scheduled")).toHaveLength(0);
-    expect(section.textContent ?? "").not.toContain("Scheduled area:");
+    expect(section.textContent ?? "").not.toContain("Scheduled floor area:");
     expect(within(section).getByTestId("first-building-options-lead").textContent ?? "").not.toContain(
       "worked from the floor-area allowance",
     );
@@ -272,6 +272,28 @@ describe("PART B: the building-option section on the results screen (contract 1.
     const table = within(scroll).getByTestId("floor-schedule");
     expect(scroll.contains(table)).toBe(true);
     expect(within(table).getByText("Running total")).toBeInTheDocument();
+  });
+
+  it("S3: the floor schedule opens from a disclosure with an accessible name, reached by keyboard", () => {
+    const doc = loadResultsFixture(BENCHMARK); // building B is worked, so a floor table renders
+    renderDoc(doc);
+    const block = within(optionsSection()).getAllByTestId("building-alternative")[0];
+    // The answer and its limitation lead the block; the floor schedule is supporting detail behind a
+    // disclosure (ruling R928 "expandable supporting detail", scenario S3), with an accessible name.
+    const button = within(block).getByTestId("answer-details-button");
+    const region = within(block).getByTestId("answer-details-region");
+    expect(region.getAttribute("aria-label") ?? "").toContain("conditions and floor schedule");
+    // Closed first: the region is hidden, but the schedule stays in the DOM so search/AT reach it.
+    expect(region).toHaveAttribute("hidden");
+    expect(within(block).getByTestId("floor-schedule")).toBeInTheDocument();
+    // The answer line itself stays visible (never hidden behind the disclosure).
+    expect(within(block).getByTestId("building-alternative-scheduled")).toBeInTheDocument();
+    // A keyboard user reaches the button and opens it; focus moves into the region.
+    button.focus();
+    expect(document.activeElement).toBe(button);
+    fireEvent.click(button);
+    expect(region).not.toHaveAttribute("hidden");
+    expect(document.activeElement).toBe(region);
   });
 
   it("the benchmark (building B plus building A not worked) shows one comparison, no developer word", () => {

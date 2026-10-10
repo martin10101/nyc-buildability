@@ -25,9 +25,9 @@ const NOT_KNOWN = "Not known";
  * confirmed (ruling L3; R229/R267/R269). Plain text, normal weight, never a colour-only signal. */
 const CONDITIONAL_MARKER = "Conditional";
 
-/** The building-option card's title of the figure, and the standing honesty line that leads it
- * before any caveat (ruling V11 (2); R895 "the distinction should be clear before the reader reaches
- * the caveats"). Fixed labels, never a document value. */
+/** The building-option card's compact label for the scheduled figure, and the standing honesty line
+ * beside it (ruling V11 (2); R895). The card is the compact ANSWER; building B's authoritative block
+ * (FirstBuildingOptions) carries the report's exact one-line phrase (scenario S1). Fixed labels. */
 const SCHEDULED_AREA_LABEL = "Scheduled area";
 export const SITE_FIT_NOT_VERIFIED = "Site fit not verified";
 

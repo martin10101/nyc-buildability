@@ -30,6 +30,21 @@ export type ResultKind = "allowance" | "envelope" | "scheduled" | "estimate";
 /** Shown beside a scheduled option's area — the option is never called "achieved" (ruling V5). */
 export const SITE_FIT_NOT_VERIFIED = "Site fit not verified";
 
+/** The report's own suffix for a scheduled option whose placement and site fit are not established
+ * (D-090 source-081, ruling X5): "site fit unverified" — lowercase, as it reads inside the one-line
+ * phrase. Distinct from SITE_FIT_NOT_VERIFIED, which stands alone as a note elsewhere. */
+export const SITE_FIT_UNVERIFIED = "site fit unverified";
+
+/**
+ * The ONE-LINE scheduled phrase the report and the website share (ruling X5; scenario S1):
+ * "Scheduled floor area: N sq ft; site fit unverified", where the figure is already formatted by
+ * the metric adapter (e.g. "20,150 sq ft"). Never "achieved", never "no allowance left unused".
+ * The figure is READ from the document; this helper only joins it to the fixed wording (ruling X7).
+ */
+export function scheduledFloorAreaLine(areaText: string): string {
+  return `Scheduled floor area: ${areaText}; ${SITE_FIT_UNVERIFIED}`;
+}
+
 /** A result's value for reading: a formatted value (or range), or the not-known state with no digit. */
 export type PresentedValue =
   | { kind: "value"; text: string }

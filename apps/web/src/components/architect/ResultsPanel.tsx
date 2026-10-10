@@ -26,6 +26,7 @@ import {
 } from "./ResultsForm";
 import { FailureNoticeCard } from "./workspace/DashboardFailureNotice";
 import { referenceRow, type DashboardFailureNoticeModel } from "./workspace/dashboard-failure";
+import { ReportPreview } from "./report/ReportPreview";
 import "./results-panel.css";
 
 const RETRY_SAFE = "The property you entered is fine. Trying again is safe.";
@@ -311,6 +312,13 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
     pendingFormFocus.current = true;
   }, []);
 
+  // The report action sends the SAME inputs the results form sends (scenario S4). Built from the
+  // current form values; a refused height yields no body, so the report cannot be created until the
+  // field is fixed. When these inputs change after a report has loaded, ReportPreview marks the
+  // shown report out of date and disables printing until it is reloaded.
+  const currentRequest = buildRequest(values);
+  const reportBody = currentRequest.ok ? currentRequest.body : null;
+
   const showingDocument = !busy && outcome?.kind === "success";
   // Ruling V11 (10): a document whose identity names a different lot than the one requested is not
   // shown. The lot is READ from the document's scope (identity adapter); an unidentified document is
@@ -383,6 +391,8 @@ export function ResultsPanel({ bbl, fetchImpl }: ResultsPanelProps) {
           </div>
         )
       ) : null}
+
+      <ReportPreview bbl={bbl} request={reportBody} fetchImpl={fetchImpl} />
     </section>
   );
 }

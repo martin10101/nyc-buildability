@@ -7,8 +7,9 @@ import type {
   FloorRowView,
 } from "@/lib/architect/first-building-options";
 import { APARTMENT_SIZE_BASIS_NOTE, storeyText } from "@/lib/architect/first-building-options";
-import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
+import { scheduledFloorAreaLine } from "@/lib/architect/presented-results";
 import { BuildingOptionsComparison } from "./BuildingOptionsComparison";
+import { ResultDetails } from "./ResultDetails";
 import "./building-options.css";
 
 /**
@@ -38,7 +39,7 @@ const NOT_KNOWN = "Not known";
  * (ruling W15): a lead about worked shapes ONLY when at least one building is worked; otherwise a
  * plain statement that no shape was worked, so the not-worked reasons below carry the explanation. */
 const LEAD_WORKED =
-  "Draft building shapes worked from the floor-area allowance. None is preferred, and none is checked against where it would sit on the lot.";
+  "Draft building shapes worked from the floor-area allowance. None is ranked ahead of the others, and none is checked against where it would sit on the lot.";
 const LEAD_NONE_WORKED =
   "No building shape could be worked for this lot at these inputs. For each building of the method, why:";
 
@@ -101,14 +102,11 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
       <h4 className="ta-option-label" data-testid="building-alternative-label">
         {view.label}
       </h4>
-      {/* The site-fit distinction FIRST, before any caveat (row R895): a floor schedule whose
-          placement and site fit are not established is never "achieved". */}
-      <p className="ta-option-site-fit" data-testid="building-alternative-site-fit">
-        Building option: {SITE_FIT_NOT_VERIFIED}
-      </p>
-      {/* The value: the scheduled area, read from the document; never "no allowance left unused". */}
+      {/* The answer AND its limitation on ONE line, the same phrase the report uses (ruling X5,
+          scenario S1): "Scheduled floor area: 20,150 sq ft; site fit unverified". The figure is read
+          from the document; never "achieved", never "no allowance left unused" (row R895). */}
       <p className="ta-option-scheduled" data-testid="building-alternative-scheduled">
-        Scheduled area: {view.totalFloorArea}
+        {scheduledFloorAreaLine(view.totalFloorArea)}
       </p>
       <p className="ta-option-summary" data-testid="building-alternative-summary">
         {storeyText(view.storeyCount)} · {view.height}
@@ -118,24 +116,31 @@ function AlternativeBlock({ view }: { view: BuildingAlternativeView }) {
           {view.fitNote}
         </p>
       ) : null}
-      {view.isConditional ? <AppliesConditions refs={view.conditionRefs} /> : null}
       {view.isWithheld && view.withheldReason !== null ? (
         <p className="ta-withheld-reason" data-testid="building-alternative-withheld">
           {NOT_KNOWN} — {view.withheldReason}
         </p>
       ) : null}
-      <FloorScheduleTable rows={view.floorSchedule} />
-      <div className="ta-option-not-checked" data-testid="building-alternative-not-checked">
-        <p className="ta-option-not-checked-heading">Not checked for this option:</p>
-        <ul className="ta-option-not-checked-list">
-          {view.notChecked.map((item, index) => (
-            <li key={`${index}-${item}`} data-testid="building-alternative-not-checked-item">
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <CapacityBlock view={view.capacity} />
+      {/* Supporting detail opens from a disclosure (ruling R928 "expandable supporting detail",
+          scenario S3): the conditions this shape rests on, its floor schedule, what was not checked
+          and its preliminary capacity estimate. The first view keeps the answer and its limitation;
+          the detail stays in the DOM (ResultDetails uses the `hidden` attribute) so assistive tech
+          and in-page search still reach it. The disclosure carries an accessible name. */}
+      <ResultDetails name={`${view.label} — conditions and floor schedule`}>
+        {view.isConditional ? <AppliesConditions refs={view.conditionRefs} /> : null}
+        <FloorScheduleTable rows={view.floorSchedule} />
+        <div className="ta-option-not-checked" data-testid="building-alternative-not-checked">
+          <p className="ta-option-not-checked-heading">Not checked for this option:</p>
+          <ul className="ta-option-not-checked-list">
+            {view.notChecked.map((item, index) => (
+              <li key={`${index}-${item}`} data-testid="building-alternative-not-checked-item">
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <CapacityBlock view={view.capacity} />
+      </ResultDetails>
     </section>
   );
 }

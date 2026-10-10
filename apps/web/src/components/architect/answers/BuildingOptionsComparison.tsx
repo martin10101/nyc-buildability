@@ -22,7 +22,7 @@ import { SITE_FIT_NOT_VERIFIED } from "@/lib/architect/presented-results";
 
 /** The lead: the buildings are shown together, and none is preferred (question A2 open, row R894). */
 const COMPARISON_LEAD =
-  "The method's buildings, side by side on the same measures. None is preferred, and none is checked against where it would sit on the lot.";
+  "The method's buildings, side by side on the same measures. None is ranked ahead of the others, and none is checked against where it would sit on the lot.";
 
 /** The comparison's metric rows, in one fixed order with one unit each — the SAME rows for every
  * building (row R894). A not-worked building reads the one not-known wording in each cell. */
