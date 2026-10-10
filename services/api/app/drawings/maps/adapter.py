@@ -26,13 +26,19 @@ from .errors import MapInputError
 from .model import (
     BuildingFootprint,
     BuildingLayer,
+    ContextWindow,
     LayerUnavailable,
+    Line,
     MapContext,
     MapNote,
+    NeighbourLot,
     Point,
     Polygon,
     Ring,
+    StreetLayer,
+    StreetLine,
     SubjectLot,
+    TaxLotLayer,
     ZoningDistrict,
     ZoningLayer,
 )
@@ -72,6 +78,9 @@ def load_map_context(doc: Mapping) -> MapContext:
         subject_lot=_subject_lot(context["subject_lot"]),
         zoning=_zoning(context["zoning_districts"]),
         buildings=_buildings(context["building_footprints"]),
+        context_window=_context_window(context.get("context_window")),
+        tax_lots=_tax_lots(context.get("tax_lots")),
+        streets=_streets(context.get("streets")),
     )
 
 
@@ -133,6 +142,113 @@ def _entries(raw: Sequence, base: str) -> Sequence:
         raise MapInputError("too_many_features", f"more than {MAX_MAP_FEATURES}",
                             location=f"{base}/entries")
     return raw
+
+
+def _context_window(raw: object) -> ContextWindow | None:
+    """The optional 1.1.0 ``context_window`` (ruling Y2 a): a finite, in-range,
+    non-empty box in EPSG:2263. Absent -> ``None`` (a 1.0.0 document)."""
+    if raw is None:
+        return None
+    return _window(raw, "/map_context/context_window")
+
+
+def _window(raw: object, base: str) -> ContextWindow:
+    if not isinstance(raw, Mapping):
+        raise MapInputError("missing_block", "expected a window object", location=base)
+    xmin = _finite(raw["xmin"], f"{base}/xmin")
+    ymin = _finite(raw["ymin"], f"{base}/ymin")
+    xmax = _finite(raw["xmax"], f"{base}/xmax")
+    ymax = _finite(raw["ymax"], f"{base}/ymax")
+    for name, value in (("xmin", xmin), ("ymin", ymin), ("xmax", xmax), ("ymax", ymax)):
+        if abs(value) > MAX_ABS_COORD_FT:
+            raise MapInputError("coordinate_out_of_range", "window beyond the supported extent",
+                                location=f"{base}/{name}")
+    if xmax <= xmin or ymax <= ymin:
+        raise MapInputError("window_empty", "window has no positive extent", location=base)
+    return ContextWindow(xmin, ymin, xmax, ymax, base)
+
+
+def _tax_lots(raw: object) -> TaxLotLayer | LayerUnavailable | None:
+    """The optional 1.1.0 ``tax_lots`` layer (ruling Y2 b). Absent -> ``None``."""
+    if raw is None:
+        return None
+    base = "/map_context/tax_lots"
+    if not isinstance(raw, Mapping):
+        raise MapInputError("missing_block", "expected a tax_lots object", location=base)
+    layer = raw
+    if layer["status"] == "not_available":
+        return _unavailable("tax_lots", layer, base)
+    entries = _entries(layer["entries"], base)
+    lots = tuple(_neighbour_lot(entry, f"{base}/entries/{i}") for i, entry in enumerate(entries))
+    return TaxLotLayer(
+        lots=lots,
+        attribution=_note(layer["attribution"], f"{base}/attribution"),
+        source=base,
+    )
+
+
+def _neighbour_lot(raw: Mapping, location: str) -> NeighbourLot:
+    bbl = raw.get("bbl")
+    address = raw.get("address")
+    return NeighbourLot(
+        bbl=_text(bbl, f"{location}/bbl") if bbl is not None else None,
+        bbl_source=f"{location}/bbl" if bbl is not None else None,
+        address=_text(address, f"{location}/address") if address is not None else None,
+        address_source=f"{location}/address" if address is not None else None,
+        outline=_polygon(raw["outline"], f"{location}/outline"),
+        source=location,
+    )
+
+
+def _streets(raw: object) -> StreetLayer | LayerUnavailable | None:
+    """The optional 1.1.0 ``streets`` layer (ruling Y2 c). Absent -> ``None``."""
+    if raw is None:
+        return None
+    base = "/map_context/streets"
+    if not isinstance(raw, Mapping):
+        raise MapInputError("missing_block", "expected a streets object", location=base)
+    layer = raw
+    if layer["status"] == "not_available":
+        return _unavailable("streets", layer, base)
+    entries = _entries(layer["entries"], base)
+    streets = tuple(_street_line(entry, f"{base}/entries/{i}") for i, entry in enumerate(entries))
+    return StreetLayer(
+        window=_window(layer["window"], f"{base}/window"),
+        streets=streets,
+        attribution=_note(layer["attribution"], f"{base}/attribution"),
+        source=base,
+    )
+
+
+def _street_line(raw: Mapping, location: str) -> StreetLine:
+    width_text = raw.get("width_text")
+    mapped = raw.get("mapped_width_ft")
+    paths = raw["paths"]
+    if not isinstance(paths, Sequence) or isinstance(paths, str | bytes) or not paths:
+        raise MapInputError("street_no_paths", "a street carries no path",
+                            location=f"{location}/paths")
+    return StreetLine(
+        name=_text(raw["name"], f"{location}/name"),
+        name_source=f"{location}/name",
+        width_text=_text(width_text, f"{location}/width_text") if width_text is not None else None,
+        width_source=f"{location}/width_text" if width_text is not None else None,
+        mapped_width_ft=_finite(mapped, f"{location}/mapped_width_ft") if mapped is not None
+        else None,
+        mapped_width_source=f"{location}/mapped_width_ft" if mapped is not None else None,
+        paths=tuple(_line(p, f"{location}/paths/{i}") for i, p in enumerate(paths)),
+        source=location,
+    )
+
+
+def _line(raw: Sequence, location: str) -> Line:
+    """A polyline (NOT a closed ring): at least two in-range, finite points."""
+    if len(raw) > MAX_RING_POINTS:
+        raise MapInputError("line_too_large", f"more than {MAX_RING_POINTS} points",
+                            location=location)
+    line = tuple(_point(p, f"{location}/{i}") for i, p in enumerate(raw))
+    if len(line) < 2:
+        raise MapInputError("line_too_short", "fewer than 2 points", location=location)
+    return line
 
 
 def _unavailable(layer: str, raw: Mapping, base: str) -> LayerUnavailable:
