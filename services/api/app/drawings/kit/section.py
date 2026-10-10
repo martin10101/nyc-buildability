@@ -9,9 +9,11 @@ document carries one (the building alternative carries none, so it is not drawn)
 the section is drawn from the schedule with no placement on the lot - it is an illustrative
 schedule drawing, not a site plan: nothing here sits the building on the lot.
 
-Report frame only (the report's scenario sheet): no notes column; sized for A4 (at most 182 mm wide
-by 150 mm high); every label at least 7 pt at that size. Gated behind the Lane E flag like the
-other renderers.
+The storey bands are a QUIET NEUTRAL from the shared presentation tokens (``COLOR['selected']``),
+not a use colour: the section shows a schedule, not a use, so no colour literal and no use tint is
+spent on it. Report frame only (the report's scenario sheet): no notes column; sized for A4 (at most
+182 mm wide by 150 mm high); every label at least 7 pt at that size. Gated behind the Lane E flag
+like the other renderers.
 """
 
 from __future__ import annotations
@@ -20,8 +22,9 @@ from collections.abc import Mapping
 
 from .errors import DrawingInputError
 from .model import Drawing, Unavailable
+from .presentation_tokens import COLOR
 from .sheet import Sheet
-from .styles import TYPOGRAPHY, style_for
+from .styles import TYPOGRAPHY
 from .svg import element, num, polyline_data, svg_document, text_element
 
 __all__ = ["REPORT_MAX_H_PT", "REPORT_MAX_W_PT", "draw_floor_stack"]
@@ -35,9 +38,17 @@ _CANVAS_W = 360.0
 _STACK_X0 = 150.0  # left edge of the storey bands
 _STACK_W = 150.0  # band width (a section is not to scale horizontally)
 _AXIS_X = _STACK_X0 - 8.0  # the height-axis labels sit left of the stack
-_STACK_TOP = 26.0  # top of the drawing's stack region
+_STACK_TOP = 44.0  # top of the stack region; leaves room above for the minimum-base label
 _STACK_H = 300.0  # the stack fills this many points in height
 _CAPTION_GAP = 18.0
+
+# Shared tokens (no colour literal): a quiet neutral band, a medium outline, a dark grade line, a
+# quiet reference colour for the minimum-base line, a faint axis tick.
+_BAND_FILL = COLOR["selected"]
+_BAND_STROKE = COLOR["supporting"]
+_GRADE_STROKE = COLOR["ink"]
+_REFERENCE_STROKE = COLOR["action"]
+_AXIS_STROKE = COLOR["divider"]
 
 _CAPTION = "Drawn from the floor schedule; no placement on the lot."
 
@@ -75,14 +86,12 @@ def draw_floor_stack(alternative: Mapping) -> Drawing | Unavailable:
         return grade_y - ft * k
 
     sheet = Sheet()
-    style = style_for("residential")
     size = TYPOGRAPHY.label_pt  # 8 pt >= 7 pt at the printed size
 
     # Grade line.
-    sheet.use_kind("lot_line")
     sheet.parts.append(element("path", [
         ("d", polyline_data([(_AXIS_X - 2.0, grade_y), (_STACK_X0 + _STACK_W + 2.0, grade_y)])),
-        ("fill", "none"), ("stroke", style_for("lot_line").outline), ("stroke-width", 1.0)]))
+        ("fill", "none"), ("stroke", _GRADE_STROKE), ("stroke-width", 1.0)]))
     sheet.label([(_STACK_X0 + _STACK_W + 6.0, grade_y + size * 0.35, 0.0)], "Grade", size=size,
                 source=None, role="floor_stack_grade")
 
@@ -91,10 +100,11 @@ def draw_floor_stack(alternative: Mapping) -> Drawing | Unavailable:
         top_ft = float(row["top_ft"])
         ff = float(row["floor_to_floor_ft"])
         y_top, y_bot = y_of(top_ft), y_of(top_ft - ff)
-        sheet.area(
-            f"M{num(_STACK_X0)} {num(y_top)} L{num(_STACK_X0 + _STACK_W)} {num(y_top)} "
-            f"L{num(_STACK_X0 + _STACK_W)} {num(y_bot)} L{num(_STACK_X0)} {num(y_bot)} Z",
-            "residential", [("data-storey", storey)], fill=style.fill)
+        sheet.parts.append(element("path", [
+            ("d", f"M{num(_STACK_X0)} {num(y_top)} L{num(_STACK_X0 + _STACK_W)} {num(y_top)} "
+                  f"L{num(_STACK_X0 + _STACK_W)} {num(y_bot)} L{num(_STACK_X0)} {num(y_bot)} Z"),
+            ("fill", _BAND_FILL), ("fill-rule", "evenodd"), ("stroke", _BAND_STROKE),
+            ("stroke-width", 0.75), ("data-storey", storey)]))
         # The storey number and its floor-to-floor height, inside the band or to its right.
         mid = (y_top + y_bot) / 2.0 + size * 0.35
         sheet.label(
@@ -106,25 +116,27 @@ def draw_floor_stack(alternative: Mapping) -> Drawing | Unavailable:
              (_STACK_X0 + _STACK_W / 2.0, mid, 0.0)],
             _num_ft(ff), size=size, source=f"/floor_schedule/floor_to_floor_ft/{storey}",
             role="floor_stack_ff", anchor="middle")
-        # The top height of the storey, on the left height axis.
+        # The top height of the storey, on the left height axis (clear of the stack and any line).
         sheet.parts.append(element("path", [
             ("d", polyline_data([(_AXIS_X - 2.0, y_top), (_STACK_X0, y_top)])),
-            ("fill", "none"), ("stroke", "#666666"), ("stroke-width", 0.4)]))
+            ("fill", "none"), ("stroke", _AXIS_STROKE), ("stroke-width", 0.4)]))
         sheet.label([(_AXIS_X - 4.0, y_top + size * 0.35, 0.0)], _num_ft(top_ft), size=size,
                     source=f"/floor_schedule/top_ft/{storey}", role="floor_stack_top",
                     anchor="end")
 
     # The minimum base height line: drawn only where the document gives it - a 'to_min_base'
-    # building reaches the minimum base height at its building height (the top of its last storey,
-    # a schedule figure). No maximum height line: the alternative carries none, so none is drawn.
+    # building reaches the minimum base height at its building height (the top of its last storey, a
+    # schedule figure). It starts clear of the left height-axis labels, and its label reads in full
+    # ABOVE the line (clear of the line and of the top-height label). No maximum height line: the
+    # alternative carries none, so none is drawn.
     if alternative.get("fill_rule") == "to_min_base":
         y = y_of(max_top)
         sheet.parts.append(element("path", [
-            ("d", polyline_data([(_STACK_X0 - 14.0, y), (_STACK_X0 + _STACK_W + 2.0, y)])),
-            ("fill", "none"), ("stroke", "#D55E00"), ("stroke-width", 1.0),
+            ("d", polyline_data([(_STACK_X0 - 6.0, y), (_STACK_X0 + _STACK_W + 2.0, y)])),
+            ("fill", "none"), ("stroke", _REFERENCE_STROKE), ("stroke-width", 1.0),
             ("stroke-dasharray", "4.00 2.00")]))
-        sheet.label([(_STACK_X0 + _STACK_W + 6.0, y - 2.0, 0.0)], "Minimum base height",
-                    size=size, source=None, role="floor_stack_min_base")
+        sheet.label([(_STACK_X0, y - 7.0, 0.0)], "Minimum base height", size=size,
+                    source=None, role="floor_stack_min_base")
 
     caption_y = grade_y + _CAPTION_GAP
     sheet.parts.append(text_element(_STACK_X0 - 14.0, caption_y, _CAPTION,
