@@ -1,1 +1,53 @@
-placeholder: written by the producer of M5-T156
+M5-T156 PRODUCER REPORT — "The report shows where the lot is". I am an AI agent (backend-engineer producer).
+
+WORKTREE: /root/project/nyc-buildability/.claude/worktrees/agent-a73319db7ea2b332b
+COMMIT: dcc23402c172243f3b274f6fc8d61e45998a4162  PARENT: 17ebd08a933e9affc23bcfd197a4c7dd2f44ddaf (the contract head). `git status --porcelain` empty.
+NOTE on the report file: per the active harness instruction ("Do NOT Write report/summary/findings/analysis .md files; return findings directly as your final message"), I did NOT create project-control/reports/M5-T156-producer-report.md. This return is the producer report — save it verbatim to that path if the ledger needs it.
+
+FILES CHANGED (15; all within allowed paths):
+- services/api/app/drawings/report/page_location.py (NEW): the one-outline check (Y5, cyclic+reversal vertex match, 0.01 ft) and the "Where is the lot?" sheet (neighbourhood + block, or one short line; no photo, Y9).
+- builder.py: resolves surroundings; picks the map-based site plan vs the lot-only plan; sets maps_present; feeds page 1 the site context plan.
+- page_site_context.py: page type 2 opens with the location sheet, then "What constrains the design?" with the site plan among its surroundings and the Y8 not-placed line (old Context-maps section removed).
+- page_decision_summary.py: page 1's figure becomes the site context plan report frame when available (Y10).
+- page_scenario_sheet.py: adds the Y8 not-placed line.
+- drawings_embed.py: embed_map composes the caption from the maps' note labels + each layer's provenance last-edited date (Y7).
+- readers.py: results_lot_outline + not_placed_reason (reads /geometry/floor_plates/reason, drops any internal-field sentence, X6).
+- layout.py: page break between the two sheets; location-figure spacing.
+- api/v1/report_read.py: route asks get_report_map_context_provider for the same BBL; a provider error never fails the report (S7).
+- apps/web/e2e/harness/fixture_api.py: report route bound to recorded_pack_provider(benchmark_215_16_northern_window).
+- apps/web/e2e/report-print.flag-on.spec.ts: adds location-sheet assertions (title order, >=2 location SVGs, a dated caption, no image, no photo words); no existing assertion weakened.
+- docs/design/ARCHITECT_PRESENTATION_CONTRACT.md: dated change entry 2026-10-10, D-090 R936–R940, plus page-type rows 1/2 amended.
+- tests: new test_location_sheet.py (S1–S6, S8, S9 + mutation-catch tests), filled test_report_read_context.py (S7), Q3 in test_report_pages.py rewritten to the new flow.
+
+SHEET ORDER (benchmark, 6 page types / 13 printed A4 pages): 1 Decision summary — "What can I potentially build?" (answers table; the site context plan flows to its 2nd printed page with the estimate/open items/coverage). 2 Site and context — opens with "Where is the lot?" (Neighbourhood map, then Block close-up, each captioned with sources+dates), then "What constrains the design?" (site plan among its surroundings, the not-placed line, constraints). 3 Option comparison. 4 Scenario sheet (not-placed line + floor stack). 5 Assumptions and open items. 6 Calculations and evidence. The location sheet lives inside page type 2; the page-type count stays six.
+
+IMAGES LOOKED AT (headless chromium print-to-pdf from file://, no server; scratch): 
+- page-01.png: decision summary — property, three answers (Conditional), clean; site figure pushed to page 2.
+- page-02.png: site context plan (subject Lot 70 among neighbours + street areas), caption naming all three sources with "last edited" dates, estimate, open items, "In this report: … Context maps".
+- page-03.png: "Where is the lot?" Neighbourhood map, north-up, subject marked, scale bar, caption with DCM source + date.
+- page-04.png: Block close-up with lots/buildings/streets and a sources+dates caption (dense labels — M5-T155 rework territory, not judged here).
+- page-05.png: "What constrains the design?" — lot-area basis, site plan among surroundings, the line "No building is placed on this plan yet: …", constraints table.
+- page-07.png: option comparison unchanged (eleven options, bar chart).
+- page-08.png: scenario Building B — carries the not-placed line and the Illustrative floor stack.
+Composition reads correctly; the location sheet gives the "where is he" reference the owner asked for.
+
+CHECKS (via /root/project/lanes-runtime/venv/bin/python, PYTHONDONTWRITEBYTECODE=1):
+- services/api `python -m ruff check .` → exit 0 (All checks passed).
+- services/api `python -m pytest -q -p no:cacheprovider tests/drawings tests/api tests/contracts tests/journey` → 2798 passed, 6 skipped, exit 0 (174 s).
+- root `python3 tools/modularity_check.py --check` → exit 0 (784 files, 0 failures; none of my files flagged; page_location.py 149 lines).
+- root `python3 scripts/lanes/check_lane_paths.py --coverage` → exit 0 (LANE COVERAGE PASS, 9948 files).
+
+MUTATIONS (scratch copy outside the repo, reverted/removed after):
+1. Outline-check tolerance 0.01 → 1.0 ft: CAUGHT by tests/drawings/report/test_location_sheet.py::test_s2_moved_outline_drops_the_surroundings AND ::test_s2_tolerance_is_one_hundredth_of_a_foot (both FAIL; a 0.5-ft interior-vertex move wrongly matches).
+2. A caption's source date removed (_layer_edit_date → None): CAUGHT by tests/drawings/report/test_location_sheet.py::test_s1_captions_name_sources_and_their_dates (FAIL: no caption carries "last edited").
+Both pass on the unmutated sources.
+
+STOP/BLOCKERS: none — no file outside allowed paths needed to change. No server started; ports 3000/3001/8000 untouched; nothing labelled Verified.
+
+OBSERVATIONS for review (not defects I can fix in scope):
+- The not-placed line reads "No building is placed on this plan yet: No floor plate is drawn: no placement on the lot is worked for any building." — faithful to Y8's template + the document's own first sentence (the second sentence, which names internal fields, is dropped per X6). Slightly doubled phrasing.
+- Visible "BBL 4073340070" labels and a "NYC Open Data 5zhs-2jue" dataset id appear inside the M5-T155 drawings / M5-T154 attribution (report_context.py, both forbidden paths). Surfaced faithfully; the brief's note says judge page composition, not the drawings' insides, and M5-T155 is being reworked.
+- Page type 1 is sparse on its first printed page because the report-frame site context plan (≈180×145 mm, the only frame M5-T155 exposes) breaks to the next page; faithful to Y10 ("page 1's figure becomes the report frame of the site context plan").
+
+Requested status: awaiting_gate.
+END-OF-REPORT
