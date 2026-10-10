@@ -17,8 +17,23 @@ from app.drawings.kit.presentation_tokens import COLOR
 __all__ = ["report_css"]
 
 
-def report_css() -> str:
-    """The complete print stylesheet as one string."""
+def _css_string(text: str) -> str:
+    """Escape a value for use inside a CSS ``content: "..."`` string: backslash,
+    double quote and newlines."""
+    return (
+        str(text)
+        .replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", " ")
+        .replace("\r", " ")
+    )
+
+
+def report_css(header_left: str, footer_left: str) -> str:
+    """The complete print stylesheet as one string. The running identity and
+    footer are written LITERALLY into the ``@page`` margin boxes (Chromium does
+    not support ``string-set``/``string()``), so both a browser and a server
+    converter print them (F1)."""
     ink = COLOR["ink"]
     supporting = COLOR["supporting"]
     divider = COLOR["divider"]
@@ -26,13 +41,15 @@ def report_css() -> str:
     action = COLOR["action"]
     caution_ink = COLOR["caution-ink"]
     caution_surface = COLOR["caution-surface"]
+    header = _css_string(header_left)
+    footer = _css_string(footer_left)
     return f"""
 @page {{
   size: A4 portrait;
   margin: 14mm;
-  @top-left {{ content: string(running-identity); font-size: 8pt; color: {supporting}; }}
+  @top-left {{ content: "{header}"; font-size: 8pt; color: {supporting}; }}
   @top-right {{ content: "Preliminary zoning results"; font-size: 8pt; color: {supporting}; }}
-  @bottom-left {{ content: string(running-footer); font-size: 8pt; color: {supporting}; }}
+  @bottom-left {{ content: "{footer}"; font-size: 8pt; color: {supporting}; }}
   @bottom-right {{
     content: "Page " counter(page) " of " counter(pages);
     font-size: 8pt; color: {supporting};
@@ -40,11 +57,6 @@ def report_css() -> str:
 }}
 html {{ font-family: Arial, Helvetica, sans-serif; color: {ink}; }}
 body {{ margin: 0; font-size: 9.5pt; line-height: 1.4; background: {surface}; }}
-.page-string-identity {{ string-set: running-identity content(); }}
-.page-string-footer {{ string-set: running-footer content(); }}
-.page-string-identity, .page-string-footer {{
-  position: absolute; left: -10000px; top: 0; height: 0; overflow: hidden;
-}}
 .report-page {{ break-before: page; }}
 .report-page:first-of-type {{ break-before: auto; }}
 h1 {{ font-size: 22pt; line-height: 1.2; margin: 0 0 4mm; }}
@@ -52,6 +64,7 @@ h2 {{ font-size: 13pt; line-height: 1.3; margin: 0 0 2mm; break-after: avoid; }}
 h3 {{ font-size: 11pt; line-height: 1.3; margin: 4mm 0 1.5mm; break-after: avoid; }}
 p {{ margin: 0 0 2mm; }}
 .reader-question {{ color: {supporting}; font-size: 10pt; margin: 0 0 4mm; }}
+.type-name {{ color: {supporting}; font-size: 8.5pt; letter-spacing: 0.3pt; margin: 0 0 0.5mm; }}
 .identity-line {{ color: {supporting}; font-size: 9pt; margin: 0 0 1mm; }}
 .standing-label {{
   font-size: 8.5pt; color: {caution_ink}; background: {caution_surface};
@@ -82,4 +95,17 @@ figcaption {{ font-size: 8pt; color: {supporting}; margin-top: 1.2mm; }}
 a {{ color: {action}; }}
 .bar-chart text {{ font-size: 7pt; }}
 .key-table td, .key-table th {{ font-size: 8pt; }}
+.nowrap {{ white-space: nowrap; }}
+.summary {{ display: flex; gap: 6mm; align-items: flex-start; }}
+.summary-answers {{ flex: 1 1 auto; }}
+.summary-figure {{ flex: 0 0 auto; }}
+.summary-figure svg {{ max-width: 85mm; max-height: 85mm; height: auto; }}
+.answers-table td {{ vertical-align: top; }}
+.answers-table .answer-figure {{ font-weight: 700; font-size: 11pt; white-space: nowrap; }}
+.reason-row td {{
+  font-size: 7.5pt; color: {supporting}; border-bottom: 0.3pt solid {divider};
+  padding-top: 0; padding-bottom: 1.6mm;
+}}
+.open-number {{ white-space: nowrap; }}
+.estimate-line {{ margin: 2mm 0 3mm; }}
 """.strip()

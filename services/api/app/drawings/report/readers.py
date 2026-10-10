@@ -16,15 +16,20 @@ __all__ = [
     "answer_block",
     "apartment_estimate_text",
     "assumptions",
+    "category_for_key",
+    "decision_open_items",
     "geometry_available",
     "identity",
     "identity_header_line",
+    "input_rows",
+    "label_meta_statement",
     "lot_area_basis",
     "named_value",
     "not_worked_buildings",
     "open_items",
     "present_values",
     "provenance",
+    "recorded_lot_area_text",
     "withheld_values",
     "worked_buildings",
 ]
@@ -113,6 +118,7 @@ def present_values(block: Mapping) -> list[dict]:
             {
                 "key": key,
                 "label": value.get("label"),
+                "value": value.get("value"),
                 "display": formatting.format_measure(value.get("value"), value.get("unit")),
                 "unit": value.get("unit"),
                 "zr_sections": list(value.get("zr_sections", []) or []),
@@ -198,13 +204,27 @@ def not_worked_buildings(results: Mapping) -> list[dict]:
     return rows
 
 
+# The label-meta assumption is moved to the evidence page's provenance (F9).
+_LABEL_META_KEY = "site_measurement_rank"
+
+
 def assumptions(results: Mapping) -> list[str]:
-    """The shared assumptions as their document statements, in document order."""
+    """The shared assumptions as their document statements, each once, in document
+    order. The label-meta assumption (how the weakest input sets the label) is
+    excluded here and shown on the evidence page instead (F9)."""
     out: list[str] = []
     for item in _scope(results).get("assumptions", []) or []:
-        if isinstance(item, Mapping) and item.get("statement"):
+        if not isinstance(item, Mapping) or item.get("key") == _LABEL_META_KEY:
+            continue
+        if item.get("statement"):
             out.append(str(item["statement"]))
     return out
+
+
+def label_meta_statement(results: Mapping) -> str | None:
+    """The 'results carry the label of their weakest input' statement, for the
+    evidence page's provenance (F9)."""
+    return _assumption_statement(results, _LABEL_META_KEY)
 
 
 def _coverage_block(results: Mapping) -> Mapping:
@@ -212,37 +232,118 @@ def _coverage_block(results: Mapping) -> Mapping:
     return block if isinstance(block, Mapping) else {}
 
 
+# Short, structural effect text per open-item category (F8) and the order they
+# appear in, by effect on the main answers.
+_EFFECTS = {
+    "lot_area": "The floor-area figures depend on it; the recorded area and the tax-map outline "
+                "disagree.",
+    "coverage": "The square-foot coverage figure is withheld.",
+    "rear_yard": "The rear yard is not known beyond the corner area.",
+    "placement": "Where the building sits on the lot is not worked out.",
+    "legal_unit_limit": "No legal apartment limit is shown.",
+    "setback": "The setback above the base is not worked out.",
+    "street_wall": "The street wall is not checked.",
+    "parking": "Parking, loading and bicycle requirements are not checked.",
+}
+_ORDER = ["lot_area", "coverage", "rear_yard", "placement", "legal_unit_limit",
+          "setback", "street_wall", "parking"]
+_CHECK_WORD = "A check not yet made against an independently worked example."
+
+
+def category_for_key(key: str) -> str | None:
+    """The open-item category for a withheld value key (public helper used by the
+    site page to key its 'see item N' references)."""
+    return _category(key)
+
+
+def _category(key: str) -> str | None:
+    key = str(key or "")
+    if "legal_unit_limit" in key:
+        return "legal_unit_limit"
+    if "lot_coverage" in key or key == "coverage_by_portion":
+        return "coverage"
+    if "rear_yard" in key:
+        return "rear_yard"
+    if "setback" in key:
+        return "setback"
+    return None
+
+
+def _not_checked_category(text: str) -> str | None:
+    low = str(text or "").lower()
+    if "street wall" in low:
+        return "street_wall"
+    if "where the plan sits" in low or "placement" in low:
+        return "placement"
+    if "parking" in low or "loading" in low or "bicycle" in low:
+        return "parking"
+    return None
+
+
 def open_items(results: Mapping) -> list[dict]:
-    """Every open item in the document: a withheld value of any answer, a withheld
-    coverage figure, and an unavailable answer. In document order; the decision
-    summary takes the first three. This order is presentation, not a legal
-    ranking."""
-    items: list[dict] = []
-    seen: set[tuple] = set()
+    """Every open item, numbered and ordered by effect on the main answers (F8):
+    the lot-area condition, the withheld values (unit limits combined, coverage,
+    rear yard, setback) and the worked building's not-checked items (placement,
+    street wall, parking). Each carries a short structural effect and the full
+    document reason. The order is presentation, not a legal ranking."""
+    by_category: dict[str, dict] = {}
 
-    def add(title, effect, resolves, status_label, zr_sections):
-        marker = (str(title), str(effect))
-        if title and effect and marker not in seen:
-            seen.add(marker)
-            items.append(
-                {
-                    "title": title,
-                    "effect": effect,
-                    "resolves": resolves,
-                    "status_label": status_label,
-                    "zr_sections": list(zr_sections or []),
-                }
-            )
+    def put(category, title, reason, resolves, label):
+        if category in by_category or not category:
+            return
+        by_category[category] = {
+            "category": category,
+            "title": title,
+            "effect": _EFFECTS.get(category, ""),
+            "reason": reason,
+            "resolves": resolves,
+            "status_label": label,
+        }
 
+    basis = lot_area_basis(results)
+    if basis:
+        put("lot_area", "Recorded lot area", basis,
+            "A survey or deed that confirms the lot area.", labels.CONDITIONAL)
     for name in ANSWER_NAMES:
         for row in withheld_values(answer_block(results, name)):
-            add(row["label"], row["reason"], row["resolved_by"], row["status_label"],
-                row["zr_sections"])
+            category = _category(row["key"])
+            title = "Legal apartment limit" if category == "legal_unit_limit" else row["label"]
+            put(category, title, row["reason"], row["resolved_by"], row["status_label"])
     coverage = _coverage_block(results)
     if coverage.get("status") == "withheld":
-        add(coverage.get("label"), coverage.get("reason"), coverage.get("resolved_by"),
-            labels.label_for_value_state(coverage), coverage.get("zr_sections"))
-    return items
+        put("coverage", coverage.get("label") or "Maximum lot coverage", coverage.get("reason"),
+            coverage.get("resolved_by"), labels.label_for_value_state(coverage))
+    for building in worked_buildings(results):
+        for text in building.get("not_checked", []) or []:
+            category = _not_checked_category(text)
+            put(category, str(text), str(text), _CHECK_WORD, labels.PENDING_VERIFICATION)
+
+    ordered = [by_category[c] for c in _ORDER if c in by_category]
+    ordered += [v for c, v in by_category.items() if c not in _ORDER]
+    for number, item in enumerate(ordered, start=1):
+        item["number"] = number
+    return ordered
+
+
+def decision_open_items(results: Mapping) -> list[dict]:
+    """The three most important open items for the decision summary (F3): a
+    condition of the allowance (the recorded lot area), what limits the scheduled
+    building (site fit), then the apartment limit. Falls back to the first items
+    when a category is absent."""
+    items = open_items(results)
+    by_cat = {item["category"]: item for item in items}
+    picks: list[dict] = []
+    for preferred in (["lot_area"], ["rear_yard", "placement"], ["legal_unit_limit"]):
+        for category in preferred:
+            if category in by_cat and by_cat[category] not in picks:
+                picks.append(by_cat[category])
+                break
+    for item in items:
+        if len(picks) >= 3:
+            break
+        if item not in picks:
+            picks.append(item)
+    return picks[:3]
 
 
 def named_value(block: Mapping, key: str) -> dict | None:
@@ -296,6 +397,74 @@ def apartment_estimate_text(estimate: object) -> str | None:
 def geometry_available(results: Mapping) -> bool:
     geometry = results.get("geometry")
     return isinstance(geometry, Mapping) and geometry.get("status") == "available"
+
+
+_INPUT_NAMES = {
+    "zoning_district": "Zoning district",
+    "overlay_present": "Commercial overlay",
+    "special_district_present": "Special purpose district",
+    "special_density_area": "Special density area",
+    "lot_type": "Lot type",
+    "lot_front_ft": "Front lot line",
+    "lot_depth_ft": "Lot depth",
+    "within_100_ft_of_street_line_intersection": "Within 100 ft of the corner",
+    "street_line_intersection_angle_degrees": "Street-line angle",
+    "housing_program": "Housing program",
+    "floor_to_floor_ft": "Floor-to-floor height",
+}
+_BASIS_NAMES = {
+    "city_records": "City records",
+    "approximate_tax_map": "Approximate tax map",
+    "default": "Default",
+    "assumed": "Assumed",
+}
+
+
+def _input_value_text(value: object, unit: object) -> str:
+    if isinstance(value, bool):
+        return "Yes" if value else "No"
+    if isinstance(value, (int, float)):
+        return formatting.format_measure(value, unit) or ""
+    text = str(value)
+    return text.replace("_", " ").capitalize() if "_" in text else text
+
+
+def recorded_lot_area_text(results: Mapping) -> str | None:
+    """The recorded lot-area figure, read from the document's own condition
+    sentence (never retyped)."""
+    basis = lot_area_basis(results)
+    if not basis:
+        return None
+    import re
+
+    match = re.search(r"recorded lot area of ([\d,]+) sq ft", basis)
+    return f"{match.group(1)} sq ft" if match else None
+
+
+def input_rows(results: Mapping) -> list[dict]:
+    """Inputs for the evidence page: name, value (readable), basis. The recorded
+    lot area comes first (from the document's own condition sentence); the rest
+    come from the scope assumptions in a readable form (F11)."""
+    rows: list[dict] = []
+    area = recorded_lot_area_text(results)
+    if area:
+        rows.append({"name": "Recorded lot area", "value": area, "basis": "City tax-lot record"})
+    assumptions_by_key = {}
+    for item in _scope(results).get("assumptions", []) or []:
+        if isinstance(item, Mapping) and item.get("key"):
+            assumptions_by_key[item["key"]] = item
+    for key, name in _INPUT_NAMES.items():
+        item = assumptions_by_key.get(key)
+        if not item:
+            continue
+        rows.append(
+            {
+                "name": name,
+                "value": _input_value_text(item.get("value"), item.get("unit")),
+                "basis": _BASIS_NAMES.get(item.get("basis"), str(item.get("basis") or "").title()),
+            }
+        )
+    return rows
 
 
 def provenance(results: Mapping) -> dict:

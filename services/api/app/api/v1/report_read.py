@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, Response
@@ -44,6 +45,22 @@ __all__ = ["router"]
 logger = logging.getLogger("app.api.v1.report_read")
 
 router = APIRouter(prefix="/api/v1", tags=["report_read"])
+
+# A caller-supplied display address for the report title (F2): the website sends
+# the confirmed address, which is not in the results document. It is accepted only
+# when short and made of ordinary address characters; anything else is ignored
+# (the report then titles itself with the borough/block/lot).
+_ADDRESS_MAX = 120
+_ADDRESS_ALLOWED = re.compile(r"^[A-Za-z0-9 \-.,'#/&]+$")
+
+
+def _clean_address(raw: str | None) -> str | None:
+    if not raw:
+        return None
+    trimmed = raw.strip()
+    if not trimmed or len(trimmed) > _ADDRESS_MAX or not _ADDRESS_ALLOWED.match(trimmed):
+        return None
+    return trimmed
 
 
 @router.post("/properties/{bbl}/report", include_in_schema=False)
@@ -62,9 +79,10 @@ async def post_report(
         return results_response
 
     correlation_id = results_response.headers.get("X-Correlation-ID")
+    address = _clean_address(request.query_params.get("address"))
     try:
         document = json.loads(bytes(results_response.body))
-        html = build_report_html(document)
+        html = build_report_html(document, identity={"address": address})
     except Exception:
         logger.error("report_v1 render_failed correlation_id=%s", correlation_id)
         # Reuse the results route's typed internal-error refusal shape.

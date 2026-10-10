@@ -46,15 +46,18 @@ SIX_LABELS = (
     UNRESOLVED,
 )
 
-#: One plain-language definition per label, for the status-label key on the
-#: evidence page. This is the ONLY place the word "Verified" is used.
+#: One definition per label for the status-label key on the evidence page, word
+#: for word from D-090 row R783. This is the ONLY place the word "Verified" is
+#: used; its row says it is not used in this report (F11).
 SIX_LABEL_DEFINITIONS = (
-    (VERIFIED, "Checked against an independently worked example and confirmed. Not used yet."),
-    (PROVISIONAL, "A settled figure from the current draft rules; not independently confirmed."),
-    (ILLUSTRATIVE, "A drawing from the schedule only, with no placement on the lot."),
-    (CONDITIONAL, "Holds only if a stated assumption is confirmed."),
-    (PENDING_VERIFICATION, "Awaiting a rule, a check or a calculation not made yet."),
-    (UNRESOLVED, "Missing information the program needs; the value is withheld."),
+    (VERIFIED, "Supported by completed checks and evidence. Not used in this report."),
+    (PROVISIONAL, "Prepared but subject to confirmation or revision."),
+    (ILLUSTRATIVE, "Included to demonstrate a possible arrangement or test case."),
+    (CONDITIONAL, "Dependent on stated assumptions or future checks."),
+    (PENDING_VERIFICATION, "Awaiting a specific review, measurement, approval, or calculation."),
+    (UNRESOLVED,
+     "Not capable of supporting a conclusion because necessary information or checks are "
+     "unavailable."),
 )
 
 #: The standing label (ADR-007, rows R164 and R165). Shown once, compactly.

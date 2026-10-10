@@ -1,10 +1,9 @@
-"""Page type 5 - Assumptions and open items (page-types.md row 5).
+"""Page type 5 - Assumptions and open items (page-types.md row 5; rework F8-F10).
 
-The reader's question: What remains unresolved, and what would resolve it? The
-page leads with the shared assumptions, each once and numbered; then the open
-items (item, effect on the answer, what would resolve it, label); then the
-report's coverage of the promised sections (the nine contents A to I), each "In
-this report" or "Not yet in the program".
+The page title is the reader's question. It leads with the shared assumptions
+(each once), then the open items with a short structural effect and the full
+reason beneath in smaller type, then the report's coverage of the promised
+sections with three honest states.
 """
 
 from __future__ import annotations
@@ -20,6 +19,7 @@ __all__ = ["render"]
 QUESTION = "What remains unresolved, and what would resolve it?"
 
 IN_REPORT = "In this report"
+PARTLY = "Partly in this report"
 NOT_YET = "Not yet in the program"
 
 NINE_CONTENTS = (
@@ -34,43 +34,17 @@ NINE_CONTENTS = (
     ("I", "The downloadable report"),
 )
 
-
-def _has_floor_schedule(worked: list[dict]) -> bool:
-    return any(b.get("floor_schedule") for b in worked)
-
-
-def _has_capacity(worked: list[dict]) -> bool:
-    return any(b.get("capacity_estimate") for b in worked)
-
-
-def _has_legal_unit_limit(results: Mapping) -> bool:
-    block = readers.answer_block(results, "floor_area_allowance")
-    for value in readers.present_values(block):
-        if "unit_limit" in str(value.get("key") or ""):
-            return True
-    return False
-
-
-def _coverage_rows(results: Mapping, maps_present: bool) -> list[list[object]]:
-    worked = readers.worked_buildings(results)
-    states = {
-        "A": IN_REPORT,
-        "B": IN_REPORT if readers.present_values(
-            readers.answer_block(results, "floor_area_allowance")
-        ) else NOT_YET,
-        "C": IN_REPORT,
-        "D": IN_REPORT if _has_floor_schedule(worked) else NOT_YET,
-        "E": IN_REPORT if (readers.geometry_available(results) or maps_present) else NOT_YET,
-        "F": IN_REPORT if _has_legal_unit_limit(results) else NOT_YET,
-        "G": IN_REPORT if _has_capacity(worked) else NOT_YET,
-        "H": IN_REPORT,
-        "I": IN_REPORT,
-    }
-    rows: list[list[object]] = []
-    for letter, name in NINE_CONTENTS:
-        state = states[letter]
-        rows.append([f"{letter}. {name}", state])
-    return rows
+# The six further sections the owner kept in scope, plus context maps (F10). Read
+# from the section map: none is built into the report yet.
+FURTHER_SECTIONS = (
+    ("Comparable sales nearby", "A workspace tool only; not in this report."),
+    ("Block description", "Not built."),
+    ("Parking, loading and bicycle parking", "Not computed; listed as not checked."),
+    ("Aerial and street photographs", "Needs a licensed imagery source."),
+    ("Tax abatement eligibility", "Not computed."),
+    ("Financial analysis inputs", "Held by the owner."),
+    ("Context maps", "Not included in this report."),
+)
 
 
 def _assumptions(results: Mapping) -> object:
@@ -81,33 +55,79 @@ def _assumptions(results: Mapping) -> object:
 
 
 def _open_items(results: Mapping) -> object:
-    rows = readers.open_items(results)
-    if not rows:
+    items = readers.open_items(results)
+    if not items:
         return short_line("No open items are recorded for this property.")
-    table_rows = [
-        [row["title"], row["effect"], row.get("resolves") or "Not stated",
-         label_chip(row["status_label"])]
-        for row in rows
-    ]
-    return table(
-        ["Open item", "Effect on the answer", "What would resolve it", "Status"],
-        table_rows,
-        caption="Open items for this property",
+    header = el(
+        "thead",
+        el("tr", el("th", "#"), el("th", "Item"), el("th", "Effect on the answer"),
+           el("th", "What would resolve it"), el("th", "Status")),
+    )
+    rows: list[object] = []
+    for item in items:
+        rows.append(
+            el("tr",
+               el("td", item["number"], class_="open-number"),
+               el("td", item["title"]),
+               el("td", item["effect"]),
+               el("td", item.get("resolves") or "Not stated"),
+               el("td", label_chip(item["status_label"])))
+        )
+        if item.get("reason") and item["reason"] != item["effect"]:
+            rows.append(el("tr", el("td", item["reason"], colspan="5"), class_="reason-row"))
+    return el(
+        "table",
+        el("caption", "Open items for this property"),
+        header,
+        el("tbody", *rows),
     )
 
 
-def render(results: Mapping, ident: Mapping, *, maps_present: bool = False, env=None) -> str:
+def _coverage_rows(results: Mapping) -> list[list[object]]:
+    worked = readers.worked_buildings(results)
+    n_worked = len(worked)
+    has_schedule = any(b.get("floor_schedule") for b in worked)
+    has_capacity = any(b.get("capacity_estimate") for b in worked)
+    c_state = ((PARTLY, f"{n_worked} of 11 options worked") if n_worked
+               else (NOT_YET, "No option worked"))
+    d_state = ((PARTLY, "the worked building only") if has_schedule
+               else (NOT_YET, "No worked building"))
+    e_state = (
+        (PARTLY, "lot outline and floor stack; the envelope is not drawn")
+        if readers.geometry_available(results) else (NOT_YET, "No lot outline")
+    )
+    states = {
+        "A": (IN_REPORT, ""),
+        "B": (IN_REPORT, ""),
+        "C": c_state,
+        "D": d_state,
+        "E": e_state,
+        "F": (NOT_YET, "The legal unit limit is withheld"),
+        "G": (PARTLY, "the worked building only") if has_capacity else (NOT_YET, "No estimate"),
+        "H": (IN_REPORT, ""),
+        "I": (IN_REPORT, ""),
+    }
+    rows: list[list[object]] = []
+    for letter, name in NINE_CONTENTS:
+        state, note = states[letter]
+        rows.append([f"{letter}. {name}", state, note])
+    for name, note in FURTHER_SECTIONS:
+        rows.append([name, NOT_YET, note])
+    return rows
+
+
+def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     children = [
-        el("h2", "Assumptions and open items"),
-        el("p", QUESTION, class_="reader-question"),
+        el("p", "Assumptions and open items", class_="type-name"),
+        el("h2", QUESTION),
         el("h3", "Shared assumptions"),
         _assumptions(results),
         el("h3", "Open items"),
         _open_items(results),
         el("h3", "Coverage of the promised sections"),
         table(
-            ["Section", "State"],
-            _coverage_rows(results, maps_present),
+            ["Section", "State", "Note"],
+            _coverage_rows(results),
             caption="What this report covers",
         ),
     ]

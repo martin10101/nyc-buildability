@@ -71,8 +71,8 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
         head_bits.append(f"{view['storey_count']} storeys; {view['height_display']}.")
     stack = drawings_embed.embed_floor_stack(raw_building, env=env)
     children = [
-        el("h2", f"Scenario sheet - {name}"),
-        el("p", QUESTION, class_="reader-question"),
+        el("p", f"Scenario sheet - {name}", class_="type-name"),
+        el("h2", QUESTION),
         el(
             "p",
             raw(f'<span class="answer-value">{scheduled}</span>'),
@@ -85,13 +85,12 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
         children.append(
             el("p", "This building is below the minimum base height.", class_="limitation")
         )
-    children.append(figure(stack, "Floor-stack section shown when the drawing is available."))
     children.append(
-        el(
-            "p",
-            "Floor-stack section is Illustrative: it is drawn from the schedule only, "
+        figure(
+            stack,
+            "Floor-stack section (Illustrative): drawn from the schedule only, "
             "with no placement on the lot.",
-            class_="figure-note",
+            line_when_absent="The floor-stack section is not shown here.",
         )
     )
     if view.get("label"):
@@ -118,8 +117,8 @@ def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     views = readers.worked_buildings(results)
     if not views:
         empty = [
-            el("h2", "Scenario sheet"),
-            el("p", QUESTION, class_="reader-question"),
+            el("p", "Scenario sheet", class_="type-name"),
+            el("h2", QUESTION),
             short_line("No building option has been worked for this property yet."),
         ]
         return str(el("section", *empty, class_="report-page", id="scenario-none"))

@@ -22,6 +22,8 @@ __all__ = [
     "embed_floor_stack",
     "embed_kit_drawing",
     "embed_map",
+    "embed_summary_site_plan",
+    "summary_frame_available",
 ]
 
 
@@ -59,12 +61,12 @@ def _from_result(result: object) -> Embedded:
     return Embedded(short_line=str(reason) if reason else "This drawing is not shown here.")
 
 
-def _call(module, fn_name: str, arg, env, missing_line: str) -> Embedded:
+def _call(module, fn_name: str, arg, env, missing_line: str, *, frame: str = "report") -> Embedded:
     fn = getattr(module, fn_name, None)
     if fn is None or not _frame_supported(fn):
         return Embedded(short_line=missing_line)
     try:
-        result = fn(arg, frame="report", env=env)
+        result = fn(arg, frame=frame, env=env)
     except Exception:  # noqa: BLE001 - any kit failure means no drawing, never an error page
         return Embedded(short_line=missing_line)
     return _from_result(result)
@@ -75,6 +77,34 @@ def embed_kit_drawing(fn_name: str, results: Mapping, *, env=None) -> Embedded:
     from app.drawings import kit
 
     return _call(kit, fn_name, results, env, "This drawing is not shown here.")
+
+
+def summary_frame_available(results: Mapping, *, env=None) -> bool:
+    """True once M5-T152's compact ``frame="summary"`` site plan is distinct from
+    the full ``frame="sheet"`` output. Until then the two are identical, so the
+    decision summary falls back to no drawing (F3)."""
+    from app.drawings import kit
+
+    fn = getattr(kit, "render_site_plan", None)
+    if fn is None or not _frame_supported(fn):
+        return False
+    try:
+        summary = fn(results, frame="summary", env=env)
+        sheet = fn(results, frame="sheet", env=env)
+    except Exception:  # noqa: BLE001
+        return False
+    return getattr(summary, "svg", None) not in (None, getattr(sheet, "svg", None))
+
+
+def embed_summary_site_plan(results: Mapping, *, env=None) -> Embedded:
+    """A compact (<= 85 mm) site plan for the decision summary, only when the
+    summary frame exists; otherwise a short line pointing to the site page (F3)."""
+    if not summary_frame_available(results, env=env):
+        return Embedded(short_line="A site plan is shown on the Site and context page.")
+    from app.drawings import kit
+
+    return _call(kit, "render_site_plan", results, env,
+                 "A site plan is shown on the Site and context page.", frame="summary")
 
 
 def embed_floor_stack(alternative: Mapping, *, env=None) -> Embedded:

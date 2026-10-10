@@ -22,7 +22,6 @@ from . import (
     page_site_context,
     readers,
 )
-from .drawings_embed import Embedded
 from .html import escape
 
 __all__ = ["build_report_html"]
@@ -40,16 +39,10 @@ def _identity(results: Mapping, identity: Mapping | None) -> dict:
 def _footer_line(ident: Mapping) -> str:
     bits = []
     if ident.get("revision") is not None:
-        bits.append(f"Revision {ident['revision']}")
+        bits.append(f"Results revision {ident['revision']}")
     if ident.get("computed_at"):
         bits.append(f"computed {str(ident['computed_at']).split('T', 1)[0]}")
-    return ", ".join(bits) if bits else "Preliminary zoning results"
-
-
-def _map(fn_name: str, map_context: Mapping | None, env) -> Embedded:
-    if not isinstance(map_context, Mapping):
-        return Embedded(short_line="Context maps are not included in this report.")
-    return drawings_embed.embed_map(fn_name, map_context, env=env)
+    return " · ".join(bits) if bits else "Preliminary zoning results"
 
 
 def build_report_html(
@@ -65,35 +58,27 @@ def build_report_html(
     footer_line = _footer_line(ident)
 
     site_plan = drawings_embed.embed_kit_drawing("render_site_plan", results, env=env)
-    location_map = _map("render_location_map", map_context, env)
-    zoning_map = _map("render_zoning_map", map_context, env)
-    maps_present = location_map.is_drawing or zoning_map.is_drawing
-
+    # Context maps are not shown in the report on this path (no map document is
+    # built), so there is no maps section and no maps sheet (F3); the coverage
+    # inventory reports them as not in the report.
     pages = [
-        page_decision_summary.render(results, ident, map_context=map_context, env=env),
-        page_site_context.render(
-            results, ident, site_plan=site_plan,
-            location_map=location_map, zoning_map=zoning_map, env=env,
-        ),
+        page_decision_summary.render(results, ident, env=env),
+        page_site_context.render(results, ident, site_plan=site_plan, env=env),
         page_option_comparison.render(results, ident, env=env),
         page_scenario_sheet.render(results, ident, env=env),
-        page_assumptions.render(results, ident, maps_present=maps_present, env=env),
+        page_assumptions.render(results, ident, env=env),
         page_evidence.render(results, ident, map_context=map_context, env=env),
     ]
 
-    title = ident.get("display") or ident.get("address") or "Preliminary zoning results"
-    body = (
-        f'<div class="page-string-identity">{escape(header_line)}</div>'
-        f'<div class="page-string-footer">{escape(footer_line)}</div>'
-        + "".join(pages)
-    )
+    title = ident.get("address") or ident.get("display") or "Preliminary zoning results"
+    body = "".join(pages)
     return (
         "<!doctype html>\n"
         '<html lang="en">\n<head>\n'
         '<meta charset="utf-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         f"<title>{escape(title)}</title>\n"
-        f"<style>{layout.report_css()}</style>\n"
+        f"<style>{layout.report_css(header_line, footer_line)}</style>\n"
         "</head>\n"
         f"<body>\n{body}\n</body>\n</html>\n"
     )

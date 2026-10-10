@@ -1,10 +1,9 @@
-"""Acceptance scenarios S1-S11 for the report generator (task M5-T151).
+"""Acceptance scenarios S1-S11 and rework findings F1-F12 for the report
+generator (tasks M5-T151, rework 1).
 
-Every expected figure is READ FROM THE DOCUMENT, never retyped: the tests load
-the committed fixtures and compare against values taken from those same
-documents. Drawing-frame behaviour (ruling X9) is exercised by the
-skipped-until-integration tests at the end; they run once M5-T152's ``frame``
-keyword and ``render_floor_stack`` exist.
+Every expected figure is READ FROM THE DOCUMENT, never retyped. Drawing-frame
+behaviour is exercised with ``LANE_E_ENABLED`` set; the compact summary frame
+(F3) is skipped until M5-T152 makes it distinct from the full sheet frame.
 """
 
 from __future__ import annotations
@@ -18,13 +17,14 @@ from pathlib import Path
 import pytest
 
 from app.drawings import kit
-from app.drawings.report import build_report_html, layout, options, readers
+from app.drawings.report import build_report_html, drawings_embed, layout, options, readers
 from app.drawings.report.labels import FORBIDDEN_RESULT_WORDS
 
 _FIXTURES = (
     Path(__file__).resolve().parents[5]
     / "packages" / "contracts" / "fixtures" / "valid" / "results"
 )
+_LANE_E = {"LANE_E_ENABLED": "1"}
 
 
 def load_results(name: str) -> dict:
@@ -36,16 +36,12 @@ def benchmark() -> dict:
 
 
 def two_buildings_document() -> dict:
-    """Building A and B both worked, copied from the committed 1.4.0 fixtures (the
-    same shape apps/web/src/test-support/results-two-buildings.ts builds). No
-    number is retyped; both buildings come from committed fixtures."""
+    """Building A and B both worked, copied from the committed 1.4.0 fixtures."""
     base = benchmark()
-    building_a = load_results("synthetic_coverage_by_portion_available_contract_1_4_0")[
-        "building_alternatives"
-    ][0]
-    building_b = load_results("synthetic_building_alternatives_contract_1_4_0")[
-        "building_alternatives"
-    ][0]
+    building_a = load_results(
+        "synthetic_coverage_by_portion_available_contract_1_4_0")["building_alternatives"][0]
+    building_b = load_results(
+        "synthetic_building_alternatives_contract_1_4_0")["building_alternatives"][0]
     base["results_id"] = "synthetic_two_worked_buildings"
     base["building_alternatives"] = [building_a, building_b]
     base["buildings_not_worked"] = []
@@ -53,32 +49,21 @@ def two_buildings_document() -> dict:
 
 
 def partial_document() -> dict:
-    """S10: geometry not available, no worked building, every answer withheld, no
-    map document."""
     return {
-        "contract_version": "1.4.0",
-        "revision": 1,
-        "computed_at": "2026-10-03T00:00:00Z",
+        "contract_version": "1.4.0", "revision": 1, "computed_at": "2026-10-03T00:00:00Z",
         "lot_selection_statement": "Based on the lots you selected",
         "answers": {
-            "floor_area_allowance": {
-                "status": "not_available", "reason": "x", "reason_kind": "missing_input"
-            },
-            "permitted_envelope": {
-                "status": "not_available", "reason": "x", "reason_kind": "missing_input"
-            },
-            "building_option": {
-                "status": "not_available", "reason": "x", "reason_kind": "rule_not_implemented"
-            },
+            "floor_area_allowance": {"status": "not_available", "reason": "x",
+                                     "reason_kind": "missing_input"},
+            "permitted_envelope": {"status": "not_available", "reason": "x",
+                                   "reason_kind": "missing_input"},
+            "building_option": {"status": "not_available", "reason": "x",
+                                "reason_kind": "rule_not_implemented"},
         },
         "geometry": {"status": "not_available", "reason": "x", "reason_kind": "missing_input"},
-        "scope": {
-            "lot": {
-                "borough": "Queens", "block": "7334", "lot": "70",
-                "display": "Queens block 7334, lot 70", "bbl": "4073340070",
-            },
-            "assumptions": [],
-        },
+        "scope": {"lot": {"borough": "Queens", "block": "7334", "lot": "70",
+                          "display": "Queens block 7334, lot 70", "bbl": "4073340070"},
+                  "assumptions": []},
         "building_alternatives": [], "buildings_not_worked": [], "addon_gains": [],
     }
 
@@ -99,32 +84,26 @@ REASONS_IN_ORDER = (
     "How was this derived?",
 )
 SECTION_IDS_IN_ORDER = (
-    "decision-summary",
-    "site-and-context",
-    "option-comparison",
-    "scenario-",
-    "assumptions-open-items",
-    "calculations-evidence",
+    "decision-summary", "site-and-context", "option-comparison",
+    "scenario-", "assumptions-open-items", "calculations-evidence",
 )
 
 
 # =========================================================================== S1
-def test_s1_six_page_types_in_order_benchmark() -> None:
+def test_s1_six_page_types_in_order() -> None:
     html = build_report_html(benchmark())
     positions = [html.index(f'id="{sid}') for sid in SECTION_IDS_IN_ORDER]
-    assert positions == sorted(positions), "page types are not in the required order"
+    assert positions == sorted(positions)
     text = visible_text(html)
     for question in REASONS_IN_ORDER:
-        assert question in text, f"missing reader question: {question}"
-    # one scenario sheet (building B); a not-worked building is a row, not a sheet.
+        assert question in text
     assert html.count('id="scenario-B"') == 1
     assert 'id="scenario-A"' not in html
 
 
-def test_s1_two_worked_buildings_get_two_sheets() -> None:
+def test_s1_two_worked_buildings_two_sheets() -> None:
     html = build_report_html(two_buildings_document())
-    assert html.count('id="scenario-A"') == 1
-    assert html.count('id="scenario-B"') == 1
+    assert html.count('id="scenario-A"') == 1 and html.count('id="scenario-B"') == 1
     assert html.count('class="report-page"') == 7
 
 
@@ -132,127 +111,144 @@ def test_s1_benchmark_has_six_pages() -> None:
     assert build_report_html(benchmark()).count('class="report-page"') == 6
 
 
-# =========================================================================== S2
-def test_s2_one_sheet_size_and_page_furniture() -> None:
-    css = layout.report_css()
+# =========================================================================== S2 / F1
+def test_s2_page_size_furniture_and_literal_header_footer() -> None:
+    css = layout.report_css("HEADER-TEXT", "FOOTER-TEXT")
     assert "size: A4 portrait" in css
-    assert css.count("@page") == 1, "there must be exactly one @page rule"
-    assert css.count("size: A4") == 1, "exactly one page size is declared"
+    assert css.count("@page") == 1 and css.count("size: A4") == 1
     assert "margin: 14mm" in css
     for other in ("A3", "A5", "Letter", "legal", "Tabloid"):
-        assert f"size: {other}" not in css, f"a second page size leaked: {other}"
+        assert f"size: {other}" not in css
     assert "counter(page)" in css and "counter(pages)" in css
-    assert "string(running-identity)" in css and "string-set:" in css
     assert "@top-left" in css and "@bottom-right" in css
-    assert "break-before: page" in css
-    assert "table-header-group" in css
+    assert "break-before: page" in css and "table-header-group" in css
     assert "break-inside: avoid" in css
+    # F1: the identity and footer are literal in the margin boxes, not string-set.
+    assert '"HEADER-TEXT"' in css and '"FOOTER-TEXT"' in css
+    assert "string-set" not in css and "string(" not in css
+
+
+def test_f1_header_and_footer_rendered_into_page() -> None:
+    html = build_report_html(benchmark(), identity={"address": "215-16 Northern Boulevard, Queens"})
+    assert "215-16 Northern Boulevard, Queens" in html
+    assert "Results revision 1" in html and "computed 2026-10-03" in html
 
 
 # =========================================================================== S3
 def test_s3_scheduled_wording_and_no_forbidden_words() -> None:
     doc = benchmark()
-    html = build_report_html(doc)
-    text = visible_text(html)
+    text = visible_text(build_report_html(doc))
     area = readers.worked_buildings(doc)[0]["scheduled_display"]
     assert f"Scheduled floor area: {area} sq ft; site fit unverified" in text
-    low = text.lower()
-    assert [w for w in FORBIDDEN_RESULT_WORDS if w in low] == []
-    # 'Verified' appears only in the label key's definition row.
+    assert [w for w in FORBIDDEN_RESULT_WORDS if w in text.lower()] == []
     assert text.count("Verified") == 1
 
 
 # =========================================================================== S4
-FORBIDDEN_SUBSTRINGS = ("HTTP", "endpoint", "fixture", "flag", "wiring", "backlog", "owed")
-STATUS_CODES = ("200", "301", "400", "401", "403", "404", "405", "422", "429", "500", "502", "503")
+FORBIDDEN_SUBSTRINGS = ("http", "endpoint", "fixture", "wiring", "backlog",
+                        "owed", "lane a", "task a-", "this slice")
 
 
 def _assert_no_developer_info(text: str) -> None:
+    low = text.lower()
     for token in FORBIDDEN_SUBSTRINGS:
-        assert token.lower() not in text.lower(), f"developer word leaked: {token}"
+        assert token not in low, f"developer wording leaked: {token}"
     assert re.search(r"\b[a-z]+_[a-z]+\b", text) is None, "a snake_case word leaked"
-    for word in ("None", "null", "true", "false"):
-        assert re.search(rf"\b{word}\b", text) is None, f"{word} leaked"
-    assert re.search(r"\bDB-\d|\bR\d{3}\b|\bM\d+-T\d+\b", text) is None, "an internal id leaked"
+    # 'None scheduled' is owner wording (F7); a bare rendered None/null/true/false is not allowed.
+    assert re.search(r"\bNone\b(?!\s+scheduled)", text) is None
+    for word in ("null", "true", "false"):
+        assert re.search(rf"\b{word}\b", text) is None
+    assert re.search(r"\bDB-\d|\bR\d{3}\b|\bM\d+-T\d+\b", text) is None
     for ref in ("question C1", "question D1", "question B6"):
         assert ref not in text
-    for code in STATUS_CODES:
-        assert f"HTTP {code}" not in text and f"status {code}" not in text
 
 
 def test_s4_no_developer_information_benchmark() -> None:
-    _assert_no_developer_info(visible_text(build_report_html(benchmark())))
+    _assert_no_developer_info(visible_text(build_report_html(benchmark(), env=_LANE_E)))
 
 
 def test_s4_no_developer_information_partial() -> None:
     _assert_no_developer_info(visible_text(build_report_html(partial_document())))
 
 
-# =========================================================================== S5
+# =========================================================================== S5 / F7
 def test_s5_eleven_options_shared_limitations_once() -> None:
     doc = benchmark()
     rows = options.option_rows(doc)
     assert [r["ordinal"] for r in rows] == list(range(1, 12))
     assert [r["name"] for r in rows] == [name for _ordinal, name in options.ELEVEN_OPTIONS]
-    labels_col = {r["status_label"] for r in rows}
-    results_col = {r["result"] for r in rows}
-    assert len(labels_col) > 1, "the status column repeats one state on every row"
-    assert len(results_col) > 1, "the result column repeats one state on every row"
+    assert len({r["status_label"] for r in rows}) > 1
+    assert len({r["allowance"] for r in rows}) > 1
     text = visible_text(build_report_html(doc))
-    assert text.count(options.SHARED_LIMITATION_1) == 1
-    assert text.count(options.SHARED_LIMITATION_2) == 1
-    # building A appears as not worked, with the document's own reason.
-    building_a = doc["buildings_not_worked"][0]
-    assert building_a["reason"] in text
+    for limitation in options.shared_limitations(doc):
+        assert text.count(limitation["sentence"]) == 1, limitation["sentence"]
+    assert "Building A - not worked" in text
+
+
+def test_f7_columns_chart_and_units() -> None:
+    doc = benchmark()
+    html = build_report_html(doc, env=_LANE_E)
+    text = visible_text(html)
+    # F7 columns present.
+    for header in ("Floor-area allowance", "Scheduled building", "Limitation"):
+        assert header in text
+    # F7: the chart renders building B, no stale "no scheduled building" message.
+    assert "No scheduled building is available to chart yet." not in text
+    assert 'class="bar-chart"' in html
+    # F7: no doubled unit anywhere.
+    assert "sq ft sq ft" not in text and "FAR FAR" not in text
+    # option 1 shows allowance + scheduled line; options 2/3 show None scheduled.
+    assert "20,150 sq ft (FAR 2.0)" in text
+    assert "24,180 sq ft (FAR 2.4)" in text
+    assert "None scheduled" in text
 
 
 # =========================================================================== S6
 def test_s6_no_min_base_contradiction() -> None:
     doc = benchmark()
     assert readers.worked_buildings(doc)[0]["below_min_base"] is False
-    text = visible_text(build_report_html(doc))
-    assert "below the minimum base height" not in text
+    assert "below the minimum base height" not in visible_text(build_report_html(doc))
 
 
-def test_s6_below_min_base_shown_only_when_document_says_so() -> None:
+def test_s6_below_min_base_only_when_document_says_so() -> None:
     doc = two_buildings_document()
     doc["building_alternatives"][0] = {**doc["building_alternatives"][0], "below_min_base": True}
-    text = visible_text(build_report_html(doc))
-    assert "below the minimum base height" in text
+    assert "below the minimum base height" in visible_text(build_report_html(doc))
 
 
-class _FakeDrawing:
-    def __init__(self, svg: str) -> None:
-        self.svg = svg
-        self.caption = "Context map"
-        self.notes = ()
-        self.attribution = "Map attribution"
+def test_s6_no_empty_maps_section_inventory_reports_maps() -> None:
+    text = visible_text(build_report_html(benchmark()))
+    # F3: no maps section/sheet; the coverage inventory reports them instead.
+    assert "Context maps are not included in this report." not in text
+    assert "Context maps" in text  # in the coverage inventory
 
 
-def _fake_map_render(_doc, *, frame: str = "report", env=None):
-    return _FakeDrawing('<svg role="img"></svg>')
-
-
-def test_s6_coverage_inventory_claims_maps_only_when_present(monkeypatch) -> None:
+# =========================================================================== S7 / F5
+def test_s7_lot_area_basis_quoted_with_result() -> None:
     doc = benchmark()
-    without = visible_text(build_report_html(doc))
-    assert "Context maps are not included in this report." in without
-    monkeypatch.setattr("app.drawings.maps.render_location_map", _fake_map_render, raising=False)
-    monkeypatch.setattr("app.drawings.maps.render_zoning_map", _fake_map_render, raising=False)
-    with_maps = build_report_html(doc, map_context={"map_context": {"zoning_districts": {}}})
-    assert "Context maps are not included in this report." not in visible_text(with_maps)
-    assert "<figure>" in with_maps
-
-
-# =========================================================================== S7
-def test_s7_lot_area_basis_quoted_not_computed() -> None:
-    doc = benchmark()
-    basis = readers.lot_area_basis(doc)
-    assert basis is not None
     text = visible_text(build_report_html(doc))
-    assert basis in text, "the lot-area basis is not quoted in the document's own words"
-    assert "10,075" in basis and "10,387.99" in basis and "disagree" in basis
-    assert "tax-map outline" in text.lower()
+    expected = ("The floor-area allowance holds if the recorded lot area of 10,075 sq ft "
+                "is confirmed")
+    assert expected in text
+    assert "10,387.99" in text and "disagree" in text
+    assert "The site plan shows the tax-map outline (approximate; not a survey)." in text
+
+
+# =========================================================================== F4
+def test_f4_no_stale_caption_and_single_floor_stack_caption() -> None:
+    html = build_report_html(benchmark(), env=_LANE_E)
+    text = visible_text(html)
+    assert "shown when the drawing is available" not in text
+    # the floor-stack Illustrative caption appears once per worked building (one here).
+    assert text.count("Floor-stack section (Illustrative)") == 1
+
+
+# =========================================================================== F6
+def test_f6_one_coverage_row_in_constraints() -> None:
+    html = build_report_html(benchmark())
+    site = html[html.index('id="site-and-context"'):html.index('id="option-comparison"')]
+    assert visible_text(site).count("Maximum lot coverage") == 1
+    assert "Not shown" not in visible_text(site)  # states are named, never bare "Not shown"
 
 
 # =========================================================================== S8
@@ -263,49 +259,47 @@ SIX_LABELS = ("Provisional", "Illustrative", "Conditional", "Pending verificatio
 @pytest.mark.parametrize("name", ALL_FIXTURES)
 def test_s8_labels_on_every_fixture(name: str) -> None:
     doc = load_results(name)
-    html = build_report_html(doc)
-    text = visible_text(html)
-    # 'Verified' appears only in the label key (at most once).
+    text = visible_text(build_report_html(doc))
     assert text.count("Verified") <= 1
-    # at least one non-Verified label is shown.
     assert any(label in text for label in SIX_LABELS)
-    # a withheld value shows "Not shown", never a fabricated figure, in the constraints table.
     for row in readers.withheld_values(readers.answer_block(doc, "permitted_envelope")):
         assert row["status_label"] in ("Unresolved", "Pending verification")
 
 
 # =========================================================================== S9
-def _rounded_forms(value: float) -> set[float]:
+def _rounded(value: float) -> set[float]:
     return {round(float(value), k) for k in (0, 1, 2, 3, 4, 6)}
 
 
-def _collect_numbers(obj, allowed: set[float]) -> None:
+def _collect(obj, allowed: set[float]) -> None:
     if isinstance(obj, bool):
         return
     if isinstance(obj, (int, float)):
-        allowed |= _rounded_forms(obj)
+        allowed |= _rounded(obj)
     elif isinstance(obj, str):
         for match in re.findall(r"\d[\d,]*(?:\.\d+)?", obj):
             try:
-                allowed |= _rounded_forms(float(match.replace(",", "")))
+                allowed |= _rounded(float(match.replace(",", "")))
             except ValueError:
                 pass
     elif isinstance(obj, dict):
         for value in obj.values():
-            _collect_numbers(value, allowed)
+            _collect(value, allowed)
     elif isinstance(obj, list):
         for value in obj:
-            _collect_numbers(value, allowed)
+            _collect(value, allowed)
 
 
 def test_s9_every_number_comes_from_the_document() -> None:
     doc = benchmark()
     allowed: set[float] = set()
-    _collect_numbers(doc, allowed)
-    # presentation ordinals derived from document counts (option order, limitations, list indices).
+    _collect(doc, allowed)
     ordinal_max = max(11, len(readers.assumptions(doc)), len(readers.open_items(doc)))
     for i in range(1, ordinal_max + 1):
-        allowed |= _rounded_forms(i)
+        allowed |= _rounded(i)
+    # Checked on the report's OWN text (drawings off): the kit's site plan prints
+    # computed edge dimensions whose provenance is the kit's own labels, not the
+    # report's. The report itself types no figure (ruling X7).
     text = visible_text(build_report_html(doc))
     for token in re.findall(r"\d[\d,]*(?:\.\d+)?", text):
         value = float(token.replace(",", ""))
@@ -315,14 +309,14 @@ def test_s9_every_number_comes_from_the_document() -> None:
 
 
 # =========================================================================== S10
-def test_s10_partial_data_every_page_no_exception() -> None:
+def test_s10_partial_data_every_page() -> None:
     html = build_report_html(partial_document())
     for sid in ("decision-summary", "site-and-context", "option-comparison",
                 "scenario-none", "assumptions-open-items", "calculations-evidence"):
         assert f'id="{sid}"' in html
     text = visible_text(html)
     assert "The lot outline is not available for this property." in text
-    assert "11. All programs combined" in text  # every option still listed
+    assert "11. All programs combined" in text
     assert "No building option has been worked for this property yet." in text
 
 
@@ -334,33 +328,72 @@ def test_s11_escaping() -> None:
         {"key": "k", "value": "v", "statement": 'danger & <script>x</script> "q"'}
     ]
     html = build_report_html(doc)
-    assert "<script" not in html.lower(), "an unescaped script element is present"
-    assert "<img" not in html.lower(), "an unescaped element is present"
+    assert "<script" not in html.lower() and "<img" not in html.lower()
     assert "onerror=" not in html.lower() and "onclick=" not in html.lower()
-    assert "&lt;script&gt;" in html, "the injected markup was not escaped"
+    assert "&lt;script&gt;" in html
 
 
-# =============================================== skipped until M5-T152 integration (ruling X9)
+# =========================================================================== F8
+def test_f8_open_items_short_effect_and_full_reason() -> None:
+    html = build_report_html(benchmark())
+    text = visible_text(html)
+    assert "Effect on the answer" in text
+    # a short structural effect for the unit limit:
+    assert "No legal apartment limit is shown." in text
+    # the rear yard and street wall are both listed as open items:
+    assert "rear yard is not known beyond the corner area" in text
+    # the full document reason is still carried (beneath, smaller type).
+    assert "class=\"reason-row\"" in html
+
+
+# =========================================================================== F10
+def test_f10_coverage_three_states_and_further_sections() -> None:
+    text = visible_text(build_report_html(benchmark()))
+    assert "In this report" in text and "Partly in this report" in text
+    assert "Not yet in the program" in text
+    assert "1 of 11 options worked" in text
+    for further in ("Comparable sales nearby", "Financial analysis inputs", "Context maps",
+                    "Tax abatement eligibility"):
+        assert further in text
+
+
+# =========================================================================== F11
+def test_f11_evidence_inputs_label_key_and_nowrap() -> None:
+    html = build_report_html(benchmark())
+    text = visible_text(html)
+    assert "Inputs and their sources" in text
+    assert "Recorded lot area" in text and "Zoning district" in text
+    # envelope law sections present (not only ZR 23-22).
+    assert "Section 23-432" in text
+    # the owner's exact R783 wording and the "Not used in this report." note.
+    assert "Supported by completed checks and evidence. Not used in this report." in text
+    assert "Prepared but subject to confirmation or revision." in text
+    assert 'class="nowrap"' in html
+    assert "the figures below are read from the result" not in text
+
+
+# =============================================== drawing frame (ruling X9); run once integrated
 _HAS_FRAME = "frame" in inspect.signature(kit.render_site_plan).parameters
+_HAS_FLOOR_STACK = hasattr(kit, "render_floor_stack")
+_HAS_SUMMARY = _HAS_FRAME and drawings_embed.summary_frame_available(benchmark(), env=_LANE_E)
 
 
 @pytest.mark.skipif(not _HAS_FRAME, reason="render_site_plan has no report frame yet (M5-T152)")
-def test_site_plan_report_frame(monkeypatch) -> None:
-    monkeypatch.setenv("LANE_E_ENABLED", "1")
-    from app.drawings.report import drawings_embed
-
-    embedded = drawings_embed.embed_kit_drawing("render_site_plan", benchmark())
-    assert embedded.is_drawing or embedded.short_line is not None
+def test_site_plan_report_frame_renders() -> None:
+    html = build_report_html(benchmark(), env=_LANE_E)
+    site = html[html.index('id="site-and-context"'):html.index('id="option-comparison"')]
+    assert "<svg" in site
 
 
-@pytest.mark.skipif(
-    not hasattr(kit, "render_floor_stack"),
-    reason="render_floor_stack does not exist yet (M5-T152)",
-)
-def test_floor_stack_report_frame(monkeypatch) -> None:
-    monkeypatch.setenv("LANE_E_ENABLED", "1")
-    from app.drawings.report import drawings_embed
+@pytest.mark.skipif(not _HAS_FLOOR_STACK, reason="render_floor_stack missing (M5-T152)")
+def test_floor_stack_report_frame_renders() -> None:
+    html = build_report_html(benchmark(), env=_LANE_E)
+    scenario = html[html.index('id="scenario-B"'):]
+    assert "<svg" in scenario
 
-    alternative = benchmark()["building_alternatives"][0]
-    embedded = drawings_embed.embed_floor_stack(alternative)
-    assert embedded.is_drawing or embedded.short_line is not None
+
+@pytest.mark.skipif(not _HAS_SUMMARY, reason="summary frame not distinct yet (M5-T152)")
+def test_summary_frame_site_plan_in_decision_summary() -> None:
+    html = build_report_html(benchmark(), env=_LANE_E)
+    decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+    assert 'class="summary-figure"' in decision

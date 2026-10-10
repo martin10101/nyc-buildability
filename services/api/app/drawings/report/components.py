@@ -48,12 +48,15 @@ def short_line(text: object) -> raw:
     return el("p", text, class_="short-line")
 
 
-def figure(embedded: Embedded, fallback_caption: str) -> raw:
+def figure(embedded: Embedded, caption_when_drawn: str, *, line_when_absent: str | None = None,
+           figure_class: str | None = None) -> raw:
+    """A drawing with ONE caption when it is drawn, or a single short line when it
+    is not (never a stale 'shown when available' caption on a drawing that is
+    present) (F4)."""
     if embedded.is_drawing:
-        caption = embedded.caption or fallback_caption
-        return el(
-            "figure",
-            raw(embedded.svg or ""),
-            el("figcaption", caption),
-        )
-    return short_line(embedded.short_line or fallback_caption)
+        caption = embedded.caption or caption_when_drawn
+        children: list[object] = [raw(embedded.svg or "")]
+        if caption:
+            children.append(el("figcaption", caption))
+        return el("figure", *children, class_=figure_class)
+    return short_line(embedded.short_line or line_when_absent or caption_when_drawn)

@@ -52,9 +52,9 @@ def enabled(monkeypatch):
     return monkeypatch
 
 
-def _post(app, bbl=NORTHERN_BBL, body=None):
+def _post(app, bbl=NORTHERN_BBL, body=None, params=None):
     body = {"housing_program": "standard_residence"} if body is None else body
-    return TestClient(app).post(f"/api/v1/properties/{bbl}/report", json=body)
+    return TestClient(app).post(f"/api/v1/properties/{bbl}/report", json=body, params=params)
 
 
 # --------------------------------------------------------------------------- flags off
@@ -93,6 +93,27 @@ def test_flag_on_returns_html_report(enabled) -> None:
         assert f'id="{sid}"' in body
     assert "Scheduled floor area: 20,150 sq ft; site fit unverified" in body
     assert "X-Correlation-ID" in response.headers
+
+
+def test_address_query_param_is_the_title(enabled) -> None:
+    response = _post(_app(), params={"address": "215-16 Northern Boulevard, Queens"})
+    assert response.status_code == 200
+    assert "215-16 Northern Boulevard, Queens" in response.text
+    # the borough/block/lot display appears beneath the title.
+    assert "Queens block 7334, lot 70" in response.text
+
+
+def test_address_absent_title_is_borough_block_lot(enabled) -> None:
+    response = _post(_app())
+    assert response.status_code == 200
+    assert "Queens block 7334, lot 70" in response.text
+
+
+@pytest.mark.parametrize("bad", ["x" * 121, "<script>", "a\tb", "a;b"])
+def test_bad_address_is_ignored(enabled, bad) -> None:
+    response = _post(_app(), params={"address": bad})
+    assert response.status_code == 200
+    assert bad not in response.text
 
 
 def test_nothing_cached_across_requests(enabled) -> None:
