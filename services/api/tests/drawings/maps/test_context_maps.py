@@ -25,6 +25,7 @@ from .context_support import (
     note_labels,
     recorded_document,
     report_too_big,
+    street_area_polys,
     texts_by_role,
     with_layer_unavailable,
 )
@@ -71,6 +72,32 @@ def test_s3_each_street_is_named_once():
         d = RENDERERS[name](DOC, frame="report", env=ENV)
         streets = texts_by_role(d.svg, "street")
         assert len(streets) == len(set(streets)), f"{name} repeats a street name"
+
+
+def test_block_street_areas_stay_inside_the_data_window():
+    """Every drawn street area lies inside the context window (the box the lots
+    and buildings were fetched for): no street is drawn where no data exists."""
+    from shapely.geometry import Polygon as SP
+
+    from app.drawings.maps.adapter import load_map_context
+    from app.drawings.maps.layout import REPORT_PLAN, REPORT_PLAN_MARGIN
+    from app.drawings.maps.site_context_plan import (
+        TITLE_BAND_PT,
+        fit_view,
+        frontage_rotation,
+    )
+    ctx = load_map_context(DOC)
+    window = ctx.context_window.box
+    alpha, _name, _src = frontage_rotation(ctx.subject_lot, ctx.streets)
+    fr = fit_view(window, REPORT_PLAN, REPORT_PLAN_MARGIN, alpha=alpha, top_band=TITLE_BAND_PT)
+    corners = [(window[0], window[1]), (window[2], window[1]),
+               (window[2], window[3]), (window[0], window[3])]
+    cw_screen = SP([fr.px(c) for c in corners]).buffer(0.75)  # small tolerance for 2dp rounding
+    d = render_block_map(DOC, frame="report", env=ENV)
+    polys = street_area_polys(d.svg)
+    assert polys, "the block close-up draws no street areas"
+    for ring in polys:
+        assert cw_screen.contains(SP(ring)), "a street area lies outside the data window"
 
 
 # --------------------------------------------------------------------------- #

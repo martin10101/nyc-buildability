@@ -25,6 +25,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -367,6 +368,25 @@ def note_labels(drawing) -> list:
 def report_too_big(svg: str) -> bool:
     root = ET.fromstring(svg)
     return float(root.get("width")) > 515.9 or float(root.get("height")) > 425.2
+
+
+_SVG_POINT = re.compile(r"[ML](-?[\d.]+) (-?[\d.]+)")
+
+
+def street_area_polys(svg: str) -> list[list[tuple[float, float]]]:
+    """The screen-space exterior rings of every drawn STREET-AREA fill (the fill
+    path carrying a '#gap-' data-source; the hatch overlay fill='url(...)' is
+    skipped)."""
+    out = []
+    for el in parse(svg).iter(f"{SVG_NS}path"):
+        src = el.get("data-source") or ""
+        if "#gap-" not in src or (el.get("fill") or "").startswith("url("):
+            continue
+        for part in (el.get("d") or "").split("Z"):
+            pts = _SVG_POINT.findall(part)
+            if len(pts) >= 3:
+                out.append([(float(x), float(y)) for x, y in pts])
+    return out
 
 
 def labels_below(svg: str, min_pt: float) -> list[tuple[str, float]]:

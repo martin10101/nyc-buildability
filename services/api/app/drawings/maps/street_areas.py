@@ -248,12 +248,19 @@ def clip_polygon_to_rect(rings: Rings, rect: Rect) -> list[Rings]:
     return [_rings_of(p) for p in _polygon_pieces(clipped)]
 
 
-def gaps_in_rect(rect: Rect, lot_rings: Iterable[Rings], min_area: float) -> list[Rings]:
+def gaps_in_rect(rect: Rect, lot_rings: Iterable[Rings], min_area: float,
+                 data_region: Rings | None = None) -> list[Rings]:
     """The street space inside ``rect``: the rectangle minus the union of the lot
     polygons (each clipped to the rect), pieces under ``min_area`` (in the
-    coordinate units squared) dropped. Even coverage over the WHOLE viewport, so
-    the street hatching is continuous. Deterministically ordered."""
+    coordinate units squared) dropped. When ``data_region`` is given (the window
+    the lots and buildings were fetched for), the gaps are confined to it - NO
+    street is ever drawn where no data was fetched. Deterministically ordered."""
     frame = box(*rect)
+    if data_region is not None:
+        region = make_valid(ShapelyPolygon(data_region[0], list(data_region[1:])))
+        frame = frame.intersection(region)
+    if frame.is_empty:
+        return []
     covered = []
     for rings in lot_rings:
         piece = make_valid(ShapelyPolygon(rings[0], list(rings[1:]))).intersection(frame)
@@ -267,10 +274,18 @@ def gaps_in_rect(rect: Rect, lot_rings: Iterable[Rings], min_area: float) -> lis
     return out
 
 
-def clip_polyline_to_rect(polyline: Iterable[Point], rect: Rect) -> list[Line]:
-    """Clip a polyline to ``rect``; returns the in-rect pieces, ordered."""
+def clip_polyline_to_rect(polyline: Iterable[Point], rect: Rect,
+                          data_region: Rings | None = None) -> list[Line]:
+    """Clip a polyline to ``rect`` (and, when given, to ``data_region`` - the
+    window the data was fetched for); returns the in-region pieces, ordered."""
     line = LineString([tuple(p) for p in polyline])
-    clipped = line.intersection(box(*rect))
+    region = box(*rect)
+    if data_region is not None:
+        region = region.intersection(make_valid(ShapelyPolygon(data_region[0],
+                                                               list(data_region[1:]))))
+    if region.is_empty:
+        return []
+    clipped = line.intersection(region)
     if clipped.is_empty:
         return []
     if clipped.geom_type == "LineString":

@@ -341,21 +341,33 @@ def _lot_bbox_touches(polygon: Polygon, fr: ViewFrame, rect: _Box) -> bool:
     return not (max(xs) < rect[0] or min(xs) > rect[2] or max(ys) < rect[1] or min(ys) > rect[3])
 
 
-def _draw_street_areas(sheet: Sheet, lots: Sequence[Polygon], fr: ViewFrame, rect: _Box) -> None:
+def _draw_street_areas(sheet: Sheet, lots: Sequence[Polygon], fr: ViewFrame, rect: _Box,
+                       data_region) -> None:
     proj = [[fr.px(p) for p in ring] for lot in lots for ring in [lot.exterior]]  # exteriors only
     lot_rings = [[tuple(ring)] for ring in proj]
     min_area = MIN_STREET_AREA_SQFT * fr.k * fr.k
-    for i, piece in enumerate(gaps_in_rect(rect, lot_rings, min_area)):
+    for i, piece in enumerate(gaps_in_rect(rect, lot_rings, min_area, data_region)):
         sheet.area(path_data(piece), "street_area",
                    [("data-source", f"/map_context/tax_lots#gap-{i}")])
 
 
+def _data_region(context: MapContext, fr: ViewFrame):
+    """The context window (the box the lots and buildings were fetched for),
+    projected to screen rings, so no street is drawn outside it. ``None`` when
+    the document carries no context window."""
+    cw = context.context_window
+    if cw is None:
+        return None
+    corners = [(cw.xmin, cw.ymin), (cw.xmax, cw.ymin), (cw.xmax, cw.ymax), (cw.xmin, cw.ymax)]
+    return [tuple(fr.px(c) for c in corners)]
+
+
 def _label_streets(sheet: Sheet, streets: StreetLayer, fr: ViewFrame, rect: _Box, size: float,
-                   *, with_width: bool) -> None:
+                   *, with_width: bool, data_region=None) -> None:
     best: dict[str, tuple] = {}
     for street in streets.streets:
         for path in street.paths:
-            for piece in clip_polyline_to_rect([fr.px(p) for p in path], rect):
+            for piece in clip_polyline_to_rect([fr.px(p) for p in path], rect, data_region):
                 length = _poly_len(piece)
                 if length >= STREET_LABEL_MIN_RUN_PT and (
                         street.name not in best or length > best[street.name][0]):
@@ -476,9 +488,9 @@ def draw_title(sheet: Sheet, title: str, subtitle: str | None, subtitle_source: 
 # --------------------------------------------------------------------------- #
 def _draw_lots_and_buildings(sheet: Sheet, context: MapContext, fr: ViewFrame, rect: _Box) -> None:
     lots = context.tax_lots.lots if isinstance(context.tax_lots, TaxLotLayer) else ()
-    # street space first (even coverage over the whole viewport)
+    # street space first, confined to the data window (no street where no data)
     all_lots = [context.subject_lot.outline, *(lot.outline for lot in lots)]
-    _draw_street_areas(sheet, all_lots, fr, rect)
+    _draw_street_areas(sheet, all_lots, fr, rect, _data_region(context, fr))
     # the subject fill, then the neighbours as thin light outlines
     _draw_clipped_area(sheet, _proj(context.subject_lot.outline, fr), "subject_lot",
                        context.subject_lot.outline.source, rect)
@@ -504,9 +516,11 @@ def draw_block_scene(
     (and, when ``label_focus``, its edge-sharing neighbours)."""
     assert isinstance(context.streets, StreetLayer)
     sheet = Sheet()
+    data_region = _data_region(context, fr)
     _draw_lots_and_buildings(sheet, context, fr, rect)
     size = TYPOGRAPHY.label_pt + 1.0
-    _label_streets(sheet, context.streets, fr, rect, size, with_width=with_widths)
+    _label_streets(sheet, context.streets, fr, rect, size, with_width=with_widths,
+                   data_region=data_region)
     # the subject label first (most prominent), then the immediate neighbours
     subj = context.subject_lot
     _focus_lot_label(sheet, subj.outline, fr, _lot_number(subj.bbl), subj.bbl_source, None, None,
@@ -536,7 +550,8 @@ def draw_neighbourhood_scene(context: MapContext, fr: ViewFrame, rect: _Box, reg
                 sheet.line(polyline_data(list(piece)), "street_centreline",
                            [("data-source", f"{street.source}/paths")])
                 pieces_by_name.setdefault(street.name, []).append((street, piece))
-    _mark_subject(sheet, context.subject_lot, fr, rect, TYPOGRAPHY.label_pt)
+    all_lines = [piece for runs in pieces_by_name.values() for _s, piece in runs]
+    _mark_subject(sheet, context.subject_lot, fr, rect, TYPOGRAPHY.label_pt, all_lines)
     _label_network(sheet, pieces_by_name, rect, TYPOGRAPHY.label_pt + 1.0)
     draw_frame(sheet, rect)
     draw_title(sheet, "Neighbourhood", subtitle_from_bbl(context.subject_lot.bbl),
@@ -601,19 +616,34 @@ def _clearance(p: Point, own, all_lines) -> float:
 
 
 def _mark_subject(sheet: Sheet, subject: SubjectLot, fr: ViewFrame, rect: _Box,
-                  size: float) -> None:
+                  size: float, avoid_lines) -> None:
     _draw_clipped_area(sheet, _proj(subject.outline, fr), "subject_lot",
                        subject.outline.source, rect)
     _restroke_subject(sheet, subject, fr, rect)
     cx, cy = fr.px(geo.centroid(subject.outline.exterior))
+    # candidates ringing the marker, ranked by clearance from the street lines, so
+    # the 'Subject lot' label lands on open land - never on a street line.
     cands = []
-    for ring in range(1, 8):
-        radius = ring * (size + 4.0)
-        for ang in range(0, 360, 45):
+    for ring in range(2, 10):
+        radius = ring * (size + 2.0)
+        for ang in range(0, 360, 30):
             rad = math.radians(ang)
-            cands.append((cx + radius * math.cos(rad), cy + radius * math.sin(rad), 0.0))
-    _place(sheet, cands, "Subject lot", size=size, source=None, role="subject_mark",
-           anchor="middle", rect=rect)
+            p = (cx + radius * math.cos(rad), cy + radius * math.sin(rad))
+            cands.append((_clearance(p, None, avoid_lines), p))
+    cands.sort(key=lambda c: (-round(c[0], 2), round(c[1][0], 2), round(c[1][1], 2)))
+    for need_clear in (size * 0.8, size * 0.4, 0.0):
+        for clear, (x, y) in cands:
+            if clear < need_clear:
+                continue
+            box = text_box(x, y, "Subject lot", size, "middle", 0.0)
+            if not _box_in_rect(box, rect) or any(box.overlaps(o) for o in sheet.boxes):
+                continue
+            sheet.label([(x, y, 0.0)], "Subject lot", size=size, source=None,
+                        role="subject_mark", anchor="middle")
+            sheet.parts.append(element("path", [
+                ("d", polyline_data([(cx, cy), (x, y - size * 0.3)])), ("fill", "none"),
+                ("stroke", "#C8500A"), ("stroke-width", 0.5), ("data-role", "leader")]))
+            return
 
 
 # --------------------------------------------------------------------------- #
