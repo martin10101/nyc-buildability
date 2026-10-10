@@ -57,6 +57,55 @@
   /* Warning banner */
   --banner-internal-bg: #fff4d6;
   --banner-internal-border: #e3c96b;
+
+  /* BEGIN GENERATED presentation tokens (M5-T148) — source: docs/design/presentation-tokens.json
+     generator: apps/web/scripts/presentation-tokens.mjs. Do not edit by hand. */
+  --pt-space-4: 4px;
+  --pt-space-8: 8px;
+  --pt-space-12: 12px;
+  --pt-space-16: 16px;
+  --pt-space-24: 24px;
+  --pt-space-32: 32px;
+  --pt-space-48: 48px;
+  --pt-color-ink: #182B3A;
+  --pt-color-supporting: #52616C;
+  --pt-color-action: #18577A;
+  --pt-color-page: #F2F5F6;
+  --pt-color-surface: #FFFFFF;
+  --pt-color-divider: #D8E0E5;
+  --pt-color-selected: #EEF4F7;
+  --pt-color-caution-ink: #795318;
+  --pt-color-caution-surface: #FBF4E7;
+  --pt-control-height: 44px;
+  --pt-control-radius: 6px;
+  --pt-radius-panel: 8px;
+  --pt-font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --pt-type-property-title-size: 28px;
+  --pt-type-property-title-line: 1.2;
+  --pt-type-property-title-weight: 700;
+  --pt-type-headline-value-size: 40px;
+  --pt-type-headline-value-line: 1.1;
+  --pt-type-headline-value-weight: 700;
+  --pt-type-section-title-size: 18px;
+  --pt-type-section-title-line: 1.3;
+  --pt-type-section-title-weight: 600;
+  --pt-type-body-size: 16px;
+  --pt-type-body-line: 1.5;
+  --pt-type-body-weight: 400;
+  --pt-type-compact-size: 14px;
+  --pt-type-compact-line: 1.35;
+  --pt-type-compact-weight: 400;
+  --pt-type-source-note-size: 13px;
+  --pt-type-source-note-line: 1.4;
+  --pt-type-source-note-weight: 400;
+  --pt-type-drawing-label-size: 14px;
+  --pt-type-drawing-label-line: 1.2;
+  --pt-type-drawing-label-weight: 400;
+  --pt-status-conditional-ink: #795318;
+  --pt-status-conditional-surface: #FBF4E7;
+  --pt-status-not-known-ink: #52616C;
+  --pt-status-not-known-surface: #F2F5F6;
+  /* END GENERATED presentation tokens */
 }
 
 * {
