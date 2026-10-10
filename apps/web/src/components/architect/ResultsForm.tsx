@@ -92,12 +92,14 @@ export interface ResultsFormProps {
 
 export function ResultsForm({ values, onChange, onSubmit, onReset, busy, heightError, folded, onChangeInputs }: ResultsFormProps) {
   if (folded) {
-    // Once results are shown, the form collapses to a one-line summary of the inputs used, with a
-    // control to reopen it with the inputs kept (ruling V11 (1)). The results themselves show below.
+    // Once results are shown, the form collapses to ONE compact line — "Inputs used: …" with the
+    // "Change inputs" control on the same line — so the answers reach the first screen (rulings
+    // V11 (1), V12). No card, no heading, minimal vertical padding. The results show below.
     return (
-      <section className="results-inputs-summary card" aria-label="Inputs used" data-testid="results-inputs-summary">
-        <p className="architect-eyebrow">Inputs used</p>
-        <p className="results-summary-line" data-testid="results-summary-line">{summarizeInputs(values)}</p>
+      <section className="results-inputs-summary" aria-label="Inputs used" data-testid="results-inputs-summary">
+        <p className="results-summary-line" data-testid="results-summary-line">
+          Inputs used: {summarizeInputs(values)}
+        </p>
         <button type="button" className="secondary-button" data-testid="results-change-inputs" onClick={onChangeInputs}>
           {CHANGE_INPUTS_LABEL}
         </button>

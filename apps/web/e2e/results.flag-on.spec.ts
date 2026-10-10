@@ -100,7 +100,12 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     // conditions, and NOWHERE called the property's maximum.
     const envelope = dialog.getByTestId("answer-permitted_envelope");
     for (const feet of HEIGHTS) await expect(envelope).toContainText(`${feet} ft`);
-    await expect(envelope).toContainText("none of these conditions, which were not checked");
+    // Ruling V11 (5): the card refers to the shared condition BY NAME ("Condition 2"); the full text
+    // ("none of these conditions, which were not checked") is stated once in the shared-conditions block.
+    await expect(envelope).toContainText("Condition 2");
+    await expect(dialog.getByTestId("shared-conditions")).toContainText(
+      "none of these conditions, which were not checked",
+    );
     // Coverage and the rear yard read "not known".
     await expect(envelope).toContainText("Not known");
 

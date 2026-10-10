@@ -101,12 +101,16 @@
   gap: var(--pt-space-16);
 }
 
-/* The folded inputs summary shown once results are visible (ruling V11 (1)): one wrapping line of
- * the inputs used, with a "Change inputs" control. Colours and spacing from the tokens. */
+/* The folded inputs summary shown once results are visible (rulings V11 (1), V12): ONE compact line
+ * — "Inputs used: …" with the "Change inputs" control on the same line, wrapping only on a narrow
+ * window. No card and minimal vertical padding, so the answers reach the first screen after Show
+ * results. Colours and spacing from the tokens. */
 .results-inputs-summary {
   display: flex;
-  flex-direction: column;
-  gap: var(--pt-space-8);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--pt-space-8) var(--pt-space-12);
+  padding: var(--pt-space-4) 0;
 }
 
 .results-summary-line {
@@ -116,6 +120,5 @@
 }
 
 .results-inputs-summary .secondary-button {
-  align-self: flex-start;
   min-height: var(--pt-control-height);
 }

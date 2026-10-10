@@ -126,3 +126,15 @@ the new truth — the allowance card now asserts "Condition 1" (referred to by n
 `shared-conditions` block asserts the condition's full text "recorded lot area of 10,075 sq ft"
 (stated once). Every other assertion kept. Base `9ff46ee5`. `npm run lint` EXIT 0; `npm run typecheck`
 EXIT 0 (the earlier cross-part ThreeAnswersPanel `gapKindLine` error is resolved at this head).
+
+Follow-up after the whole browser suite at `da1fea97` (part A's V12 reorder): two of my assertions
+still failed. (1) The folded inputs summary was a tall card (heading + line + button ≈ 180 px) that
+pushed the floor-area headline below the window edge at 1440 and 390 (S12). It is now ONE compact
+line — "Inputs used: Standard residence · Starting height" with "Change inputs" on the same line
+(wrapping only on a narrow window), no card, minimal vertical padding; its accessible name and the
+focus move to the results heading are kept. (2) `results.flag-on.spec.ts` envelope assertion moved to
+ruling V11 (5): the card asserts "Condition 2" (by name) and the `shared-conditions` block asserts
+the full text "none of these conditions, which were not checked" (stated once). `npm run lint` EXIT 0;
+`npm run typecheck` EXIT 0; `npx vitest run src/components/architect src/lib` EXIT 0 (110 files, 2263
+tests). The S12 test itself is unchanged; its 1440/390 failure cause — my tall folded card — is
+fixed by the compact line above (Part A's V12 reorder having landed at this head).
