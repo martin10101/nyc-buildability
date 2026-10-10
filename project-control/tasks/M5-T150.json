@@ -30,7 +30,8 @@
     "services/api/tests/cad/snapshots",
     "services/api/app/rules/review_register",
     "docs/zoning-rule-review",
-    "project-control/reports/M5-T150-producer-report.md"
+    "project-control/reports/M5-T150-producer-report.md",
+    "services/api/app/scenario/three_answers/first_option_results.py"
   ],
   "forbidden_paths": [
     "apps/**",
@@ -74,6 +75,12 @@
       "case": "Layers that scale the lot shape",
       "input": "the footprint and envelope layers",
       "expected": "a layer that would scale the lot shape into a footprint or an envelope is not drawn unless a placement is worked (ruling W5 of wave 19); where it was drawn before, it is now withheld with its reason, and the change is listed."
+    },
+    {
+      "id": "S7",
+      "case": "Plain words in the not-worked reasons",
+      "input": "the not-worked reasons at 16 and 25 ft, and building A's",
+      "expected": "no internal method name ('step-P6'); whole square feet without '.00' (10,075 sq ft), fractions kept (6,716.67 sq ft) (V11 (4))."
     }
   ],
   "required_gates": [
@@ -119,7 +126,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-10T00:00:05.811338+00:00",
-  "path_notes": "ONE builder (geospatial-engineer). The register is resynced inside this task if a calculation entry's code identity changes. A builder who finds the outline is not available on a path STOPS and reports which paths have it.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 20 (they govern; later over earlier). V1: three tasks on ONE branch, reviewed at ONE head, merged as ONE pull request: M5-T148 (shared presentation), M5-T149 (the website slice, after M5-T148) and M5-T150 (the parcel's own outline; server only, beside M5-T148). Order: M5-T148 parts A and B and M5-T150 side by side (three builders, disjoint files); integrate; then M5-T149 parts A, B and C side by side (three builders); then the orchestrator builds the website, runs the browser tests (stopping the owner's preview for the run and restarting it), takes the pictures and starts the reviews. V2: the website types no number, label, condition or reason; the presentation adapters only format numbers and group what the document says; they decide no law and recalculate nothing (D-090 R855). V3: the screen's statuses stay as the owner decided (row R641: 'Preliminary zoning results'; settled, conditional, not known); the owner's question C2 (the PDF's six labels on the screen) is open; 'Verified' is never shown. V4: the font token equals the application's existing font stack (`apps/web/src/app/layout.tsx`); no font changes in this wave. V5: a floor schedule whose placement and site fit are not established is never called 'achieved' (row R895): it is the 'scheduled area', with 'site fit not verified' beside it, before any caveat; the option comparison uses ONE wording per situation (row R894). V6: builders never start Next, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests. V7: a builder who finds that a file outside its part must change STOPS and reports. V8: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere. V9: the estimate on the benchmark lot is 17.27 to 21.59 apartments (from the document); the planning draft's '22.20' was wrong.",
+  "path_notes": "ONE builder (geospatial-engineer). The register is resynced inside this task if a calculation entry's code identity changes. A builder who finds the outline is not available on a path STOPS and reports which paths have it.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 20 (they govern; later over earlier). V1: three tasks on ONE branch, reviewed at ONE head, merged as ONE pull request: M5-T148 (shared presentation), M5-T149 (the website slice, after M5-T148) and M5-T150 (the parcel's own outline; server only, beside M5-T148). Order: M5-T148 parts A and B and M5-T150 side by side (three builders, disjoint files); integrate; then M5-T149 parts A, B and C side by side (three builders); then the orchestrator builds the website, runs the browser tests (stopping the owner's preview for the run and restarting it), takes the pictures and starts the reviews. V2: the website types no number, label, condition or reason; the presentation adapters only format numbers and group what the document says; they decide no law and recalculate nothing (D-090 R855). V3: the screen's statuses stay as the owner decided (row R641: 'Preliminary zoning results'; settled, conditional, not known); the owner's question C2 (the PDF's six labels on the screen) is open; 'Verified' is never shown. V4: the font token equals the application's existing font stack (`apps/web/src/app/layout.tsx`); no font changes in this wave. V5: a floor schedule whose placement and site fit are not established is never called 'achieved' (row R895): it is the 'scheduled area', with 'site fit not verified' beside it, before any caveat; the option comparison uses ONE wording per situation (row R894). V6: builders never start Next, Playwright or any server, and never touch ports 3000, 3001 or 8000 (the owner's preview); the orchestrator runs the browser tests. V7: a builder who finds that a file outside its part must change STOPS and reports. V8: nothing is called feasible, compliant, verified, optimal or preferred; a withheld value shows no number anywhere. V9: the estimate on the benchmark lot is 17.27 to 21.59 apartments (from the document); the planning draft's '22.20' was wrong.\n\nCORRECTION AFTER THE REVIEWS (orchestrator, 2026-10-10; the visual-quality review FAILED on one blocking item and the walkthrough FAILED on two; G3 and G4 passed with notes). V11 (shared with M5-T149; this task's share is item (4), the server's reasons), one round: (1) FIRST SCREEN (walkthrough B1, visual note a): once results are shown, the form folds into a one-line summary of the inputs used with a 'Change inputs' control, and focus moves to the results heading; at 1440 and at 390 px the property's identity and the three answers' headline values are in the first screen after 'Show results'. (2) THE BUILDING-OPTION ANSWER (walkthrough B2, N5): when a building is listed, its card shows 'Scheduled area: 20,150 sq ft' with 'site fit not verified' from the document's listed building, never 'Not available' and never 'shown below'; when none is listed, 'Not known' with the document's reason. (3) ONE WORDING PER SITUATION (walkthrough N1; the owner's row R894): a result with no value reads 'Not known', then the document's reason, then what would settle it; no second or third phrase for the same situation ('Not worked', 'still owed', 'Not built yet'); a missing fact about the property may carry the short tag 'Needs property information'. (4) NO DEVELOPER WORDS (walkthrough N2; visual blocking item): no 'internal preview' in the heading (keep 'rules not professionally reviewed'); the server's reasons name no internal method ('step-P6 method') and write whole square feet without '.00'. (5) CONDITIONS BY NAME (visual note c): the shared conditions are stated once; under the building option and inside Details they are referred to by name ('Applies: Condition 1, Condition 2'), never repeated in full; Details shows only the result's own exceptions. (6) WHAT NEEDS RESOLVING (walkthrough N6; contract section 2 item 6): a short list of at most three open items, each with what it affects and what would settle it, grouped from the document's own reasons and resolvers. (7) BALANCE AND READING ORDER (visual note d; walkthrough N3): left column: identity, context strip, conditions and open items, the three answers, then the building options and the comparison; right column: the details region and the assumed conditions, which stay OPEN by default (owner rule R119), never folded. (8) THE COMPARISON keeps its row labels in view when its table scrolls sideways (walkthrough N4). (9) THE TYPED PARKING LINE in ResultsPanel is removed (a condition typed in the website; the document's not_checked list carries it). (10) ANOTHER LOT (G4 note): the results surface uses the identity adapter, and a document for another lot is not shown; a test proves it. (11) THE MEASUREMENT-BASIS WORDS of the estimate are tied to the contract's text by a test (G4 note; DB-215 b).",
   "documented_test_commands": [
     "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/scenario/three_answers tests/api tests/drawings tests/cad tests/journey",
     "python services/api/app/rules/review_register/render_review_register.py --check"
@@ -132,6 +139,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-10T02:23:18+00:00",
+      "actor": "orchestrator",
+      "change": "[ORCH-CORRECTED 2026-10-10, after the visual-quality review FAILED on the server's 'step-P6 method' wording] ruling V11 item (4) and scenario S7; one path added: services/api/app/scenario/three_answers/first_option_results.py (the not-worked reasons)."
     }
   ]
 }
