@@ -211,20 +211,30 @@ describe("S1 — the identity line comes first, and the two-column composition (
     expect(identity.textContent ?? "").not.toMatch(SNAKE_CASE);
   });
 
-  it("left = identity + answers + building options; right = the scope, in that order", () => {
+  it("orders the left column: identity, strip, the three answers, building options, then conditions (V12)", () => {
     const doc = loadResultsFixture(BENCHMARK);
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const left = screen.getByTestId("three-answers-left");
     const right = screen.getByTestId("three-answers-right");
     expect(left.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(within(left).getByTestId("three-answers-identity")).toBeInTheDocument();
-    for (const key of ANSWER_KEYS) {
-      expect(within(left).getByTestId(`answer-${key}`)).toBeInTheDocument();
+    // The contract's reading order (§2): the answers lead the first screen, the shared conditions and
+    // open items come last in the left column; the scope detail stays in the right column.
+    const sequence = [
+      within(left).getByTestId("three-answers-identity"),
+      within(left).getByTestId("three-answers-status-strip"),
+      within(left).getByTestId("answer-floor_area_allowance"),
+      within(left).getByTestId("answer-permitted_envelope"),
+      within(left).getByTestId("answer-building_option"),
+      within(left).getByTestId("first-building-options"),
+      within(left).getByTestId("shared-conditions"),
+    ];
+    for (let index = 1; index < sequence.length; index += 1) {
+      const relation = sequence[index - 1].compareDocumentPosition(sequence[index]);
+      expect(relation & Node.DOCUMENT_POSITION_FOLLOWING, `item ${index} must follow ${index - 1}`).toBeTruthy();
     }
-    // Part B's building options and comparison are in the LEFT column (ruling V11 (7)).
-    expect(within(left).getByTestId("first-building-options")).toBeInTheDocument();
     // the assumed conditions / scope detail are in the RIGHT column.
     expect(within(right).getByTestId("three-answers-scope")).toBeInTheDocument();
+    expect(within(right).queryByTestId("first-building-options")).toBeNull();
   });
 
   it("renders no identity line for a document that carries no scope", () => {

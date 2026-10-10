@@ -157,3 +157,22 @@ line (V11 (9), ResultsPanel, Part C).
 - (6) openItemsView returns nothing → caught by three-answers.test.ts "(6) openItemsView collects …".
 - (7) move the building options to the right column → caught by three-answers-panel.test.tsx
   "left = identity + answers + building options; right = the scope …".
+
+## V12 — the left column in the contract's reading order (rebuilt on the integrated head 9ff46ee5)
+
+The browser run showed V11 (7) pushed the answers out of the first screen (S12 failed at 1440 and
+390 px), because the shared conditions and open items sat before the answers. Ruling V12 reorders the
+left column; only ThreeAnswersPanel.tsx and three-answers.css changed (plus the panel test). The left
+column is now: identity, context strip, the three answers, Part B's building options and comparison,
+then "What needs resolving" and the shared conditions stated once (the answers still refer to them by
+name). The right column is unchanged: the scope detail and the assumed conditions, open by default.
+The 44:56 grid and the `three-answers-left` test id are kept; below 1000 px the same order in one
+column. The integrated base already carried the orchestrator's rename of Part B's `gapKindLine` to
+`propertyInfoTag` on the not-worked view, which the building-option card reads. The panel test's
+layout case now asserts the DOM order identity → strip → the three answers → building options →
+shared conditions (strengthened, not weakened).
+
+Checks (final): `npm run lint` EXIT 0; `npm run typecheck` EXIT 0; `npx vitest run src/components/architect
+src/lib` EXIT 0 — Test Files 110 passed, Tests 2263 passed (Part C's results-panel.test.tsx now passes
+on the integrated base). Root `modularity_check --check` EXIT 0; `check_lane_paths --coverage` EXIT 0
+(9811 files).

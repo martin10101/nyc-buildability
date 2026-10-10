@@ -108,8 +108,10 @@
    "Condition 1", "Condition 2" (plain words, never an internal id). At most three show; the rest
    sit behind a count. The surface only sets the block apart; the state is told by the words. */
 
+/* Stated once at the foot of the left column (ruling V12), after the answers and building options;
+   the answers refer to these by name above. */
 .ta-shared-conditions {
-  margin: 0 0 var(--pt-space-16);
+  margin: var(--space-4) 0 0;
   padding: var(--space-3) var(--space-4);
   border: 1px solid var(--pt-color-divider);
   border-radius: var(--pt-radius-panel);

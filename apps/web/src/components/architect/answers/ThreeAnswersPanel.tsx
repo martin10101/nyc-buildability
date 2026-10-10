@@ -49,11 +49,12 @@ export interface ThreeAnswersPanelProps {
 const IDENTITY_KEYS = ["housing_program", "floor_to_floor_ft"] as const;
 
 /**
- * The architect-facing results slice (presentation contract step 3; M5-T149 part A, ruling V11). In
- * the contract's reading order: identity first; one short context strip; the shared conditions and
- * the open items once; the three answers; then the building options and the comparison — all in the
- * left column. The detailed scope and the assumed conditions sit in the right column, open by
- * default. It renders one `results` document and fetches nothing; Part C wires the live request.
+ * The architect-facing results slice (presentation contract step 3; M5-T149 part A, rulings V11/V12).
+ * The left column follows the contract's reading order (§2): identity, one short context strip, the
+ * three answers, the building options and the comparison, then what needs resolving and the shared
+ * conditions stated once (the answers refer to them by name) — so the answers lead the first screen.
+ * The right column holds the detailed scope and the assumed conditions, open by default (R119). It
+ * renders one `results` document and fetches nothing; Part C wires the live request.
  */
 export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAnswersPanelProps) {
   const headingId = useId();
@@ -75,7 +76,6 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
         <div className="ta-left" data-testid="three-answers-left">
           {results.scope ? <IdentityLine scope={results.scope} /> : null}
           <ResultsStatusStrip results={results} />
-          <SharedConditions results={results} />
           <div className="ta-answers">
             <AnswerCard
               answerKey="floor_area_allowance"
@@ -103,6 +103,7 @@ export function ThreeAnswersPanel({ results, showDraftValues = false }: ThreeAns
             )}
           </div>
           {firstOptions ? <FirstBuildingOptions view={firstOptions} /> : null}
+          <SharedConditions results={results} />
         </div>
         <div className="ta-right" data-testid="three-answers-right">
           {scope ? <ScopeSummary view={scope} /> : null}
