@@ -45,6 +45,24 @@ export const SHOW_RESULTS_LABEL = "Show results";
 /** Restores the inputs to their starting choices (standard residence, no height, no statement). */
 export const RESET_LABEL = "Reset inputs";
 
+/** Reopens the folded form with the inputs kept (M5-T149 part C, ruling V11 (1)). */
+export const CHANGE_INPUTS_LABEL = "Change inputs";
+
+/**
+ * A one-line summary of the inputs a shown result was asked for (ruling V11 (1)): the program; the
+ * floor-to-floor height, or "Starting height" when it was left empty; and the density statement
+ * only when it was made. Read from the form values; it holds no server value.
+ */
+export function summarizeInputs(values: ResultsFormValues): string {
+  const program =
+    HOUSING_PROGRAM_OPTIONS.find(option => option.value === values.program)?.label ?? values.program;
+  const height =
+    values.heightText.trim() === "" ? "Starting height" : `${values.heightText.trim()} ft floor-to-floor`;
+  const parts = [program, height];
+  if (values.densityStatement === true) parts.push("Lot stated not in a special density area");
+  return parts.join(" · ");
+}
+
 export interface ResultsFormValues {
   program: ResultsRequestBody["housing_program"];
   /** The raw field text, empty at the start (ruling R3). Parsed by the parent; never coerced. */
@@ -65,9 +83,27 @@ export interface ResultsFormProps {
   busy: boolean;
   /** The form's own message for a refused height (ruling R4), or null when the field is fine. */
   heightError: string | null;
+  /** Once results are shown, the form folds into a one-line summary of the inputs used, with a
+   * "Change inputs" control (ruling V11 (1)). Before the first result it is false. */
+  folded: boolean;
+  /** Reopen the folded form, keeping the inputs (ruling V11 (1)). */
+  onChangeInputs: () => void;
 }
 
-export function ResultsForm({ values, onChange, onSubmit, onReset, busy, heightError }: ResultsFormProps) {
+export function ResultsForm({ values, onChange, onSubmit, onReset, busy, heightError, folded, onChangeInputs }: ResultsFormProps) {
+  if (folded) {
+    // Once results are shown, the form collapses to a one-line summary of the inputs used, with a
+    // control to reopen it with the inputs kept (ruling V11 (1)). The results themselves show below.
+    return (
+      <section className="results-inputs-summary card" aria-label="Inputs used" data-testid="results-inputs-summary">
+        <p className="architect-eyebrow">Inputs used</p>
+        <p className="results-summary-line" data-testid="results-summary-line">{summarizeInputs(values)}</p>
+        <button type="button" className="secondary-button" data-testid="results-change-inputs" onClick={onChangeInputs}>
+          {CHANGE_INPUTS_LABEL}
+        </button>
+      </section>
+    );
+  }
   return (
     <form
       className="results-form card"

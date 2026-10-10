@@ -70,3 +70,53 @@ Only that file changed (plus this section). Both fixes follow ruling V10.
 Checks (apps/web, direct exit codes): `npm run lint` EXIT 0 (same two pre-existing warnings, none
 mine); `npm run typecheck` EXIT 0. Playwright NOT run (ruling V6; ports untouched) — the orchestrator
 runs the spec. Commit parent is the integrated head `02af2245e19fafb87f306597ae919dbeb0a858a2`.
+
+## Correction after the reviews (2026-10-10; ruling V11 items (1), (9), (10); scenarios S12, S15)
+
+The visual-quality review failed on one blocking item and the walkthrough on two. Part C's share of
+V11, rebased onto the integrated head `553c09fee` (parts A and B present):
+
+- (1) FIRST SCREEN: once a result is shown, `ResultsForm` folds to a one-line summary of the inputs
+  used — the program; the floor-to-floor height, or "Starting height" when left empty; and the
+  density statement only when made — with a "Change inputs" button that reopens the form with the
+  inputs kept. Focus moves to the results heading (`.ta-panel-title`, focus only; announcements
+  unchanged). Before the first result the form shows as today. Reopening moves focus into the form.
+- (9) The typed parking line (and its `PARKING_LINE` export) is removed from `ResultsPanel`; the
+  concern now reaches the reader from the listed building's own `not_checked` list in the document
+  ("Parking, loading and bicycle requirements"). The S13 vitest test points at the document's list.
+- (10) ANOTHER LOT: the panel uses the identity adapter (`result-identity.ts`, read only). A success
+  document whose scope names a different lot than the requested BBL is NOT shown; the panel shows
+  "These results are for another property" with an "Ask again for this property" button. New test
+  added (S15). An unidentified document (no scope) is shown as-is, never guessed to be another lot.
+- LAYOUT S12 (`results-layout.flag-on.spec.ts`): at 1440x900 and 390x844, after Show results the
+  identity line and the floor-area allowance's headline value are in the viewport and focus is on the
+  results heading. The 1440 grid-share, six-width, 200%-zoom and keyboard measures are kept.
+
+Cross-part e2e alignment (my file `results.flag-on.spec.ts`, run only at the integrated head):
+Change-inputs clicks inserted before each post-fold form interaction (V11 (1)); the building-option
+card assertions aligned to V11 (2) — "Scheduled area"/"Site fit not verified" when a building is
+listed (default run), "Not known" when none is listed (16 ft). W-2 in `results-panel.test.tsx`
+updated to the V11 truth (conditions referred to by name "Condition N"; the full assumption text once
+in the panel; the scheduled-area card), per the orchestrator's note.
+
+Checks (direct exit codes): `npm run lint` EXIT 0 (same two pre-existing warnings, none mine);
+`npx vitest run src/components/architect src/lib` EXIT 0, Test Files 110 passed (110), Tests 2263
+passed (2263) — with parts A and B present; root `python3 tools/modularity_check.py --check` EXIT 0;
+`python3 scripts/lanes/check_lane_paths.py --coverage` EXIT 0 (9811 files). Playwright NOT run
+(ruling V6); the orchestrator runs the two e2e specs.
+
+`npm run typecheck` EXIT 2 — ONE remaining error, NOT in a Part C file and outside my scope:
+`apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx(158,35): Property 'gapKindLine' does
+not exist on type 'BuildingNotWorkedView'`. Part A's `ThreeAnswersPanel` reads `notWorked.gapKindLine`
+but Part B's `BuildingNotWorkedView` (first-building-options.ts) carries `propertyInfoTag`, not
+`gapKindLine` — a Part A/B integration mismatch present in `553c09fee` independent of my commit (my
+files do not touch those). My own typecheck error (ResultsPanel passing the panel's narrowed
+`ThreeAnswersResults` to the identity adapter) is fixed by widening to `Results` for the adapter call.
+BLOCKER for the wave's typecheck: Part A must change `notWorked.gapKindLine` to `notWorked.propertyInfoTag`.
+
+Mutations (scratch backup outside the repo, one test run each, restored byte-identical):
+- (1) `formFolded = false` → CAUGHT by "V11(1)/S12: once results show, the form folds…" (vitest EXIT 1).
+- (9) a typed parking `<p data-testid="results-parking">` re-added → CAUGHT by
+  "S13/V11(9): no typed parking line…" (vitest EXIT 1).
+- (10) `forAnotherLot = false` → CAUGHT by "V11(10)/S15: a results document for another lot is not
+  shown…" (vitest EXIT 1).

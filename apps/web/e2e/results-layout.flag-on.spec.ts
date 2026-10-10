@@ -187,4 +187,26 @@ test.describe("M5-T149 results layout — flag-on, the real results route", () =
     await expect(dialog).toBeHidden();
     await expect(opener).toBeFocused();
   });
+
+  // Ruling V11 (1) / scenario S12: after Show results the form folds to a one-line summary and focus
+  // moves to the results heading, so the property's identity and the first answer's headline value
+  // are in the first screen at both a desktop and a phone size — without scrolling.
+  for (const { width, height } of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    test(`S12: at ${width} x ${height} the identity and the floor-area headline are in the first screen, focus on the heading`, async ({
+      page,
+    }) => {
+      await page.setViewportSize({ width, height });
+      const dialog = await openResults(page);
+      // Focus is on the results heading (the ThreeAnswersPanel title), focus only.
+      await expect(dialog.locator(".ta-panel-title")).toBeFocused();
+      // The identity line and the floor-area allowance's headline value are inside the viewport.
+      await expect(dialog.getByTestId("three-answers-identity")).toBeInViewport();
+      await expect(
+        dialog.getByTestId("answer-floor_area_allowance").getByTestId("answer-headline-number").first(),
+      ).toBeInViewport();
+    });
+  }
 });
