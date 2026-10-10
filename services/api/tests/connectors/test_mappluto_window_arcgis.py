@@ -1,14 +1,17 @@
-"""M5-T154 S1/S2: the MapPLUTO neighbouring-lot WINDOW connector.
+"""M5-T154 S1/S2/S6: the MapPLUTO neighbouring-lot WINDOW connector + pack integrity.
 
 Offline replay of the recorded 215-16 Northern window pack through the real connector; no
 network. S1 proves the window returns each neighbour once with its BBL and verbatim EPSG:2263
 outline, the subject excluded, and the request URL byte-identical to the MANIFEST and free of any
 owner-name field. S2 proves a wrong CRS, an ArcGIS error object, a paging fault and a malformed
-ring are each refused with the connector's typed error and no partial result.
+ring are each refused with the connector's typed error and no partial result. S6 proves the pack's
+MANIFEST/README/.gitattributes integrity (the three recordings hash to their pinned SHA-256).
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 from datetime import UTC, datetime
 from random import Random
 
@@ -20,6 +23,7 @@ from tests.spatial._northern_window_replay import (
     BBL,
     ENV_400,
     WINDOW_LOTS_FILE,
+    WINDOW_PACK,
     recorded_url,
     replay_window_lots,
     window_digest,
@@ -27,6 +31,10 @@ from tests.spatial._northern_window_replay import (
 from tests.spatial._northern_window_replay import (
     transport as replay_transport,
 )
+
+_MANIFEST = json.loads((WINDOW_PACK / "MANIFEST.json").read_text("utf-8"))
+_ENTRIES = {entry["file"]: entry for entry in _MANIFEST["files"]}
+_NOT_RECORDINGS = {"MANIFEST.json", "README.md", ".gitattributes"}
 
 _CLOCK = datetime(2026, 10, 10, 19, 5, 57, tzinfo=UTC)
 
@@ -132,3 +140,38 @@ def test_malformed_ring_is_refused_whole():
             '"geometry":{"rings":[[[0,0],[1,0],["x","y"],[0,0]]]}}]}')
     with pytest.raises(mw.MalformedGeometryError):
         _fetch_with_query_body(body)
+
+
+# ---------------------------------------------------------------------------
+# S6 - recorded window pack integrity
+# ---------------------------------------------------------------------------
+
+
+def test_manifest_lists_exactly_the_recorded_files():
+    on_disk = {p.name for p in WINDOW_PACK.iterdir()} - _NOT_RECORDINGS
+    assert on_disk == set(_ENTRIES)
+    assert len(_MANIFEST["files"]) == len(_ENTRIES)
+    assert _MANIFEST["bbl"] == BBL
+    # the three window data recordings, nothing else
+    assert on_disk == {
+        "mappluto_window_lots_4073340070_plus400ft.json",
+        "building_footprints_window_4073340070_plus400ft.json",
+        "dcm_street_centerline_window_4073340070_plus1000ft.json",
+    }
+
+
+@pytest.mark.parametrize("name", sorted(_ENTRIES))
+def test_file_bytes_match_manifest_sha256(name):
+    entry = _ENTRIES[name]
+    body = (WINDOW_PACK / name).read_bytes()
+    assert len(body) == entry["bytes"]
+    assert hashlib.sha256(body).hexdigest() == entry["sha256"]
+    assert entry["http_status"] == 200
+    assert entry["url"].startswith("https://")
+
+
+def test_pack_has_readme_and_byte_exact_gitattributes():
+    assert (WINDOW_PACK / "README.md").is_file()
+    gitattributes = WINDOW_PACK / ".gitattributes"
+    assert gitattributes.is_file()
+    assert "* -text" in gitattributes.read_text("utf-8")

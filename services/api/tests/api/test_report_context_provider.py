@@ -8,6 +8,10 @@ entry point returns the same document as the direct build.
 
 from __future__ import annotations
 
+import json
+
+import pytest
+
 from app.api.v1 import report_context as rc
 from app.connectors import mappluto_window_arcgis as mw
 from app.contracts.map_context import build_report_map_context
@@ -55,14 +59,32 @@ def _direct_document() -> dict:
 
 
 def test_flag_off_returns_none_and_makes_no_connector_call(monkeypatch):
+    # A COUNTING spy on every fetcher proves ZERO calls while the switch is off
+    # (a raising double would be swallowed by _assemble and prove nothing); the
+    # spies return valid replayed values, so only the call COUNT can fail.
     monkeypatch.delenv(_ENV, raising=False)
+    calls = {"lot": 0, "window": 0, "footprints": 0, "streets": 0}
 
-    def _boom(*_args, **_kwargs):
-        raise AssertionError("no connector call may happen while the flag is off")
+    def _lot(bbl, cid):
+        calls["lot"] += 1
+        return replay_subject_lot()
 
-    monkeypatch.setattr(rc, "_LIVE_FETCHERS", _replay_fetchers(
-        fetch_lot=_boom, fetch_window=_boom, fetch_footprints=_boom, fetch_streets=_boom))
+    def _window(env, subject_bbl, cid):
+        calls["window"] += 1
+        return replay_window_lots(subject_bbl=subject_bbl)
+
+    def _footprints(env, cid):
+        calls["footprints"] += 1
+        return replay_footprints()
+
+    def _streets(env, cid):
+        calls["streets"] += 1
+        return replay_streets()
+
+    monkeypatch.setattr(rc, "_LIVE_FETCHERS", rc.ReportMapFetchers(
+        fetch_lot=_lot, fetch_window=_window, fetch_footprints=_footprints, fetch_streets=_streets))
     assert rc.default_report_map_context_provider(BBL, "s5-off") is None
+    assert calls == {"lot": 0, "window": 0, "footprints": 0, "streets": 0}, calls
 
 
 def test_flag_on_with_replayed_fetchers_returns_the_document(monkeypatch):
@@ -122,3 +144,22 @@ def test_recorded_pack_provider_returns_the_same_document():
     assert harness_doc is not None
     validate_map_context_document(harness_doc)
     assert harness_doc == _direct_document()
+
+
+# ---------------------------------------------------------------------------
+# G5 A1 - the recorded-pack loader never reads outside its pack folder
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("escaping", ["../escape.json", "sub/deep.json", "/etc/passwd"])
+def test_recorded_pack_loader_refuses_a_path_escaping_the_pack(tmp_path, escaping):
+    pack = tmp_path / "win"
+    pack.mkdir()
+    base = tmp_path / "base"
+    base.mkdir()
+    (pack / "MANIFEST.json").write_text(
+        json.dumps({"files": [{"file": escaping, "url": "https://example.invalid/q",
+                               "retrieved_at": "2026-10-10T19:05:57Z"}]}),
+        encoding="utf-8")
+    with pytest.raises(ValueError):
+        rc.recorded_pack_provider(pack, base_pack_dir=base)

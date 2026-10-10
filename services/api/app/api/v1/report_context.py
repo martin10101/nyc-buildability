@@ -294,11 +294,26 @@ _BASE_PACK_NAME = "benchmark_215_16_northern"
 _REPLAY_CLOCK = datetime(2026, 10, 10, 19, 5, 57, tzinfo=UTC)
 
 
+def _resolve_inside(folder: Path, name: object) -> Path:
+    """Resolve a MANIFEST ``file`` entry against its pack ``folder`` and REFUSE
+    any path that escapes the folder (``..`` traversal or an absolute path), so a
+    hostile or broken MANIFEST can never make the loader read a file outside its
+    own pack (G5 A1). The file must also be a plain name, not a nested path."""
+    if not isinstance(name, str) or not name or "/" in name or "\\" in name:
+        raise ValueError(f"MANIFEST file entry must be a plain file name, got {name!r}")
+    resolved = (folder / name).resolve()
+    if not resolved.is_relative_to(folder.resolve()):
+        raise ValueError(f"MANIFEST file entry {name!r} escapes its pack folder {folder}")
+    return resolved
+
+
 def _pack_url_map(pack_dir: Path, base_pack_dir: Path | None) -> dict[str, tuple[Path, str]]:
     """URL -> (file path, retrieved_at) from the window pack PLUS the base pack it
     extends (per-BBL subject geometry + each layer's metadata). The window pack
-    overrides the base on a URL collision. Only the ``app`` package and the pack
-    folders (plain files) are needed - no test module is imported."""
+    overrides the base on a URL collision. Every resolved file path is proven to
+    stay inside its own pack folder (:func:`_resolve_inside`). Only the ``app``
+    package and the pack folders (plain files) are needed - no test module is
+    imported."""
     base = base_pack_dir if base_pack_dir is not None else pack_dir.parent / _BASE_PACK_NAME
     url_map: dict[str, tuple[Path, str]] = {}
     for folder in (base, pack_dir):
@@ -306,7 +321,8 @@ def _pack_url_map(pack_dir: Path, base_pack_dir: Path | None) -> dict[str, tuple
         if not manifest.exists():
             continue
         for entry in json.loads(manifest.read_text("utf-8")).get("files", []):
-            url_map[entry["url"]] = (folder / entry["file"], entry.get("retrieved_at", ""))
+            path = _resolve_inside(folder, entry.get("file"))
+            url_map[entry["url"]] = (path, entry.get("retrieved_at", ""))
     return url_map
 
 
