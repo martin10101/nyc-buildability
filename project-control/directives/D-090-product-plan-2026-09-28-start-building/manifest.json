@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-10T18:36:53+00:00",
+ "updated_at": "2026-10-10T18:42:30+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -960,10 +960,11 @@
   "D-090-R936",
   "D-090-R937",
   "D-090-R938",
-  "D-090-R939"
+  "D-090-R939",
+  "D-090-R940"
  ],
- "requirements_id_digest_sha256": "e13f96956ebf81507c6c29fbecbaf729a4164a919b8c253814ace10e65e0bce6",
- "requirements_content_digest_sha256": "cbf091996291f7d7909f9596e62ae22732e8414763770b7fe4616f80346e73f8",
+ "requirements_id_digest_sha256": "ca491ca235905ad55997233ef7e553d5fa98a7674b6564a181204d6b482de6a6",
+ "requirements_content_digest_sha256": "0a17ce93ac055f625000e9da1ccde178d7a78a87af025aef71144b59336f59fc",
  "sources": [
   {
    "file": "source-001.md",
@@ -1619,6 +1620,14 @@
    "recorded_at": "2026-10-10T18:36:53+00:00",
    "content_digest_sha256": "7604c8f4d5f618318ad5cb9c7640d18e4f6a4f3004109c4b5550d39abd817dda",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-083-amendment.md",
+   "kind": "amendment",
+   "sequence": 83,
+   "recorded_at": "2026-10-10T18:42:30+00:00",
+   "content_digest_sha256": "2a6675af06e9bc9ee455b9d5c454237b1603faa17790085e80a0f6f82fd4badd",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1702,7 +1711,8 @@
   "source-079-amendment.md",
   "source-080-amendment.md",
   "source-081-amendment.md",
-  "source-082-amendment.md"
+  "source-082-amendment.md",
+  "source-083-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -2587,6 +2597,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-082 (session 01TpXJN7: the owner's correction of the report's site drawing and the brief's format) and requirements D-090-R934 to R939, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-10T18:42:30+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-083 (session 01TpXJN7: the owner's answer to question E1 (street photos)) and requirements D-090-R940 to R940, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

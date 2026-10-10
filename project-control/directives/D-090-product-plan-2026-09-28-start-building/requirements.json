@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 939,
+ "requirement_count": 940,
  "producer": "orchestrator",
- "updated_at": "2026-10-10T18:36:53+00:00",
+ "updated_at": "2026-10-10T18:42:30+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -31604,6 +31604,40 @@
    "dependencies": [],
    "required_harness": "The report task's tests on the scenario drawing, and an independent visual review of the printed pages.",
    "required_evidence": "The printed report pages and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R940",
+   "text": "'Eventually I will add it': answer to question E1: the owner will open a paid Google Maps account later. Until then the report's location page has no street photo and says nothing that implies one; the page is laid out so a street photo can be added later without redesigning it. Before any street-photo work, Google's terms for printing its photos in a report are checked. Opening the account stays the owner's own action.",
+   "source_ref": "source-083-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-10"
+   },
+   "dependencies": [
+    "D-090-R937",
+    "D-090-R938"
+   ],
+   "required_harness": "The location page's layout and its tests (no street photo, no placeholder that implies one); the terms check before any street-photo task.",
+   "required_evidence": "The printed location page and the task packet.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
