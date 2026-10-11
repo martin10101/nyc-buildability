@@ -145,3 +145,41 @@ Note: page 2's maps underscale in my chrome CLI (pt rendered as px); they render
 
 CHECKS (lanes venv, direct exit codes): ruff check . exit 0; pytest -q tests/drawings tests/api tests/contracts tests/journey 2848 passed/6 skipped exit 0; modularity_check.py --check exit 0; check_lane_paths.py --coverage PASS exit 0.
 END-OF-REPORT
+
+
+---
+
+CORRECTION 2 RETURN (saved unchanged by the orchestrator):
+
+M5-T156 CORRECTION 2 complete. I am an AI agent (backend-engineer).
+
+COMMIT: a51f15e214cf26781bfee5048a2af61a8e0858e4  PARENT: 5afb188dee715a5b31d9ab58e3d975c88532bcaf. Clean tree. No report file written.
+
+ROOT CAUSE/FIX: page 1's decision row was 889 px (>688), so Chromium shrank the whole body ~77%. Fix: .summary-answers flex 1 1 auto + min-width 0; .answer-figure no longer nowrap (cells wrap); figure stays 88 mm. Now the row fits 182 mm.
+
+OVERFLOW: before docW=889, n=176 overflowing elements; after docW=688, n=0 (overflow.cjs via Playwright).
+BODY WORD HEIGHT: before 8.2; after 10.05 (9.5 pt prints at true size). Page 2's two wide maps now print at full width.
+
+PAGES (10, true size; no element wider than the paper; no fragment):
+1 Decision summary 81%. 2 Where is the lot? - two co-equal wide maps 92%. 3 What constrains the design? - site plan (now wide frame, fits one page) + full constraints table 92%. 4 Option comparison 82%. 5 Scenario - floor stack 67%. 6 Scenario tail - schedule+estimate 36%. 7 Shared assumptions 34%. 8 Open-items table 78%. 9 Calculations and evidence 88%. 10 Status-label key 46%. Pages 6/7 are content-complete short sub-sections (no bare fragment); the near-empty orphaned-table pages are gone.
+
+CHECKS (lanes venv, direct exit codes): ruff 0; pytest -q tests/drawings tests/api tests/contracts tests/journey 2853 passed/6 skipped exit 0; modularity 0; lane coverage PASS 0; overflow.cjs n=0.
+END-OF-REPORT
+
+
+---
+
+CORRECTION 3 RETURN (saved unchanged by the orchestrator):
+
+M5-T156 CORRECTION 3 complete. I am an AI agent (backend-engineer).
+
+COMMIT: 25a946b9ee643e83825de5f0e45f79208f82dce5  PARENT: a0534db89f4d8ab15c368d5178de6fa2556751c8. Clean tree. No report file written.
+
+FIXES: (1) The no-split rule is now by estimated printed HEIGHT (<=70 mm), not row count. The tall open-items table (a note under most rows) breaks between rows with its header repeated; an item and its note never separate (reason row never starts a page); so the shared assumptions and the first four open items share one page and the rest flow (4/4, >=3 each side). (2) render_floor_stack has no smaller frame, so the tall floor-stack figure now sits BESIDE the "Why it has this shape" and "What was not checked" text (schedule full-width below), and the scenario sheet fits one page.
+
+PAGE COUNT 9 (was 10). Fill per page: 1 81%, 2 92%, 3 92%, 4 82%, 5 scenario 81% (one page), 6 assumptions+first open items 80%, 7 open-items tail 41%, 8 evidence 88%, 9 status-key 46%. No bare fragment; the two weak pages the brief flagged are gone.
+
+OVERFLOW: overflow.cjs n=0 (docW=688).
+
+CHECKS (lanes venv, direct exit codes): ruff 0; pytest -q tests/drawings tests/api tests/contracts tests/journey 2853 passed/6 skipped exit 0; modularity 0; lane coverage PASS 0.
+END-OF-REPORT
