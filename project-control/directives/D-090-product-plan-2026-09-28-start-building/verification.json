@@ -7664,30 +7664,49 @@
     "D-090-R584"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237",
+   "reviewed_manifest_sha256": "febee0f897ff96c8069bfc82944973c1a4f306f5092eb1de9d29c03d2908a637",
    "requirements": [
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "unit_limit_text.shown_legal_unit_limits reads only readers.present_values (which excludes way==\"withheld\" / non-mappings); an absent or \"malformed\" block yields answer_block()->{} and no shown value (verified by test_malformed_or_absent_allowance_block_is_not_shown, which I ran green).",
+      "\"conditional\" is set only when value_states[key].way==\"conditional\"; a missing or other state gives way=None -> conditional False (readers line 90-91), so a shown limit without a recorded state is never called conditional (test_no_value_states_entry_is_shown_plainly / _non_conditional pass).",
+      "legal_unit_limit_item names each withheld program as \"not known\" and uses NO_LIMIT_SENTENCE only when nothing is shown; the benchmark fixture confirms affordable/senior way==\"withheld\", standard way==\"conditional\".",
+      "Nothing stays open for this row.",
+      "Verifier's carry-forward condition met at b01f09c3: the task's allowed-path files are identical to those verified at b11e327b (content identity febee0f8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T162-DCV.md."
+     ],
+     "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237"
     },
     {
      "id": "D-090-R569",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The diff touches only the \"Legal apartment limit\" open item and coverage entry \"F\" (Legal unit limits); coverage \"G\" (the preliminary apartment estimate: \"the worked building only\"/\"no estimate\") is byte-unchanged in coverage.py, so legal limit and estimate keep separate labels and places.",
+      "The G3 before/after HTML diff (reproduced in the review) shows exactly 5 changed regions, none of them the estimate line or any figure.",
+      "Each legal dwelling-unit limit is named by its own program (standard residences / qualifying affordable / qualifying senior); neither appears under the estimate's name.",
+      "Page-1 answer-table row for the legal unit limit stays open (report redesign P-3, DB-239) \u2014 not this task's scope.",
+      "Verifier's carry-forward condition met at b01f09c3: the task's allowed-path files are identical to those verified at b11e327b (content identity febee0f8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T162-DCV.md."
+     ],
+     "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237"
     },
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "git diff 4b791266..b11e327b touches only the 5 report code/test files + the producer report + ledger files; no flag, config, render.yaml, .github or .claude path is touched (all in forbidden_paths).",
+      "The change is report wording built from the results document; no production switch is flipped and no hidden feature is emitted or displayed.",
+      "This is a prose change only, so the existing activation restrictions are preserved intact.",
+      "Nothing stays open for this row.",
+      "Verifier's carry-forward condition met at b01f09c3: the task's allowed-path files are identical to those verified at b11e327b (content identity febee0f8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T162-DCV.md."
+     ],
+     "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T10:33:52+00:00"
   }
  ]
 }

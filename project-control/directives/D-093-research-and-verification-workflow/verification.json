@@ -1057,18 +1057,25 @@
     "D-093-R007"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237",
+   "reviewed_manifest_sha256": "febee0f897ff96c8069bfc82944973c1a4f306f5092eb1de9d29c03d2908a637",
    "requirements": [
     {
      "id": "D-093-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "No property number changes: readers.py and coverage.py diffs alter only text, no numeral; the derivation figure 29 and floor-area values live in the untouched scenario engine (forbidden_paths services/api/app/scenario/) and the unchanged fixture.",
+      "Unresolved inputs stay unresolved: affordable and senior remain \"not known\", standard stays conditional; the test asserts \"29\" is absent from the effect text (shown only on the derivation table).",
+      "No approval boundary is changed; research_record_check reports NB-05 status answered_from_primary_source, code_current True, review_state current.",
+      "I opened NB-05's cited primary excerpts (ZR 12-10 special density areas = Manhattan Core + Special Downtown Brooklyn; ZR 23-52(a)(2) senior = no factor, (b) factor 680; MapPLUTO Queens lot 70 R6B) \u2014 they corroborate the shown-conditional / withheld structure; nothing stays open.",
+      "Verifier's carry-forward condition met at b01f09c3: the task's allowed-path files are identical to those verified at b11e327b (content identity febee0f8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T162-DCV.md."
+     ],
+     "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T10:33:52+00:00"
   }
  ]
 }
