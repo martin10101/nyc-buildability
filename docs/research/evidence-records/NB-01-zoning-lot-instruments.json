@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-01",
  "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
- "revision": 1,
+ "revision": 2,
  "last_changed": "2026-10-11",
  "question": {
   "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
@@ -22,7 +22,7 @@
    "page": null,
    "document_date": "index rows good through 2022-02-28 / 2022-03-31",
    "retrieved": "2026-10-10",
-   "excerpt": "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133, indexed against lots 1, 70; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134, indexed against lots 1, 70; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661, indexed against lots 1, 70",
+   "excerpt": "document 2022020201551001 indexed against lots 1, 70 (partial_lot E, easement N, air_rights N); document 2022020201551002 indexed against lots 1, 70 (partial_lot E, easement N, air_rights N); document 2022031600431001 indexed against lots 1, 70 (partial_lot E, easement N, air_rights N)",
    "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_keydocs.json",
    "sha256": "4c47cae83a7dc30105bb58566ab0f20e3e149488354880a71bb2bd0e23e85450"
   },
@@ -36,7 +36,7 @@
    "page": null,
    "document_date": "as recorded",
    "retrieved": "2026-10-10",
-   "excerpt": "2016081000837001 CERT dated 2016-08-04 recorded 2016-08-11 (lot 1); 2016081000837002 ZONE dated 2016-08-09 recorded 2016-08-11 (lot 1); 2018013000919001 DEED dated 2018-01-18 recorded 2018-01-31 (lot 70); dataset maximum good-through date 2026-09-30",
+   "excerpt": "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661; 2016081000837001 CERT dated 2016-08-04 recorded 2016-08-11 (lot 1); 2016081000837002 ZONE dated 2016-08-09 recorded 2016-08-11 (lot 1); 2018013000919001 DEED dated 2018-01-18 recorded 2018-01-31 (lot 70); dataset maximum good-through date 2026-09-30",
    "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_master_all.json",
    "sha256": "cae876e4907aefcc743dac475a561204820ccdcbd232b177c8295fb8fbdec681"
   },
@@ -154,7 +154,7 @@
  "conclusion": {
   "research_status": "access_blocked",
   "observed_facts": [
-   "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133, indexed against lots 1, 70; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134, indexed against lots 1, 70; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661, indexed against lots 1, 70",
+   "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133, indexed against lots 1, 70; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134, indexed against lots 1, 70; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661, indexed against lots 1, 70 (lots from E1; type, dates and CRFN from E2)",
    "CERT = \"CERTIFICATE\"; ZONE = \"ZONING LOT DESCRIPTION\"; DECL = \"DECLARATION\"",
    "DOB job 421803891 text: \"ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.\"",
    "DOB job 421158801 (2015): \"APPLICATION SUBMITTED TO SUBDIVIDE EXISTING ONE (1) TAX LOT INTO (2) TAX LOTS.\""
@@ -236,7 +236,23 @@
  },
  "review": {
   "producer": "orchestrator",
-  "agent_reviews": [],
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: re-fetched the ACRIS Legals rows of 2022031600431001 (lots 1 and 70) and the Master facts; status access_blocked and kind index_entry honest.",
+     "F1 REQUIRED: E1's excerpt gave the type, dates and CRFN, which live in the Master dataset (E2), not the Legals dataset; corrected in revision 2."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
   "professional_review": null
  },
  "freshness": {

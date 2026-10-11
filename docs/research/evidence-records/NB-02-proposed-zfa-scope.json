@@ -234,7 +234,24 @@
  },
  "review": {
   "producer": "orchestrator",
-  "agent_reviews": [],
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/profile/existing_floor_area/resolve.py": "7765d4e73f0f67fe7201eb943fa62b2877e70c3c2ce547e67fcba55332ea1807",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+     "services/api/app/profile/parity/unused_floor_area.py": "64ff6bdd84c53fef888512b80bba47ea4c81b36a0b07a28dc05fcb00df52ca4d"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: DOB 440608941 re-fetched live (proposed 39,934; construction 45,388); searched_not_found honest; the PW1 quote is marked as not re-read by the orchestrator.",
+     "F3 advisory: the certificate-of-occupancy excerpt is a truncated raw snippet; its saved copy matches."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
   "professional_review": null
  },
  "freshness": {

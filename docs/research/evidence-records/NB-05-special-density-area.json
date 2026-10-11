@@ -166,7 +166,23 @@
  },
  "review": {
   "producer": "orchestrator",
-  "agent_reviews": [],
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/scenario/three_answers/engine_conditions.py": "643137bb1a1dffd833a34c4bf81cd2af4b494dfe9f5b863c683d16755404addb",
+     "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: worked independently before reading the record: not a special density area (Queens CD 11; no special district); factor 680; 20,150 / 680 = 29.63, 29 units; 29.75 gives 30, 29.7485 gives 29; senior housing no factor; a Manhattan CD 9 lot stays under 680. The record matches on every point.",
+     "Program behaviour today (no statement gives 'inside one', limit withheld) and after DB-231 described correctly."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
   "professional_review": null
  },
  "freshness": {

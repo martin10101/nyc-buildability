@@ -236,7 +236,21 @@
  },
  "review": {
   "producer": "orchestrator",
-  "agent_reviews": [],
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: ZR 23-344 (b) and (c)(3) and the 12-10 short-dimension, rear and side lot line definitions re-fetched live, verbatim; agrees with the conditional no-rear-yard reading; (b) alone decides a lot no deeper than 100 ft, (c) bites only beyond 100 ft."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
   "professional_review": null
  },
  "freshness": {

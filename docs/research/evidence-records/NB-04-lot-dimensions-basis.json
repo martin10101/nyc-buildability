@@ -265,7 +265,22 @@
  },
  "review": {
   "producer": "orchestrator",
-  "agent_reviews": [],
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
+     "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: conflicting_evidence honest; conflicts real (10,075 against 10,387.99 sq ft; 100.76 against 103.88 ft; 2017-03-22 against 2017-04-07); recorded area for zoning, GIS for display, consistent with the code."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
   "professional_review": null
  },
  "freshness": {
