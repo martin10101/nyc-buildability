@@ -1,0 +1,42 @@
+{
+ "task_id": "M0-T194",
+ "material_commits": [
+  "c5326454 (orchestrator: the before-set manifest (115 files pinned by sha256; metrics run twice))",
+  "2098b043 (orchestrator: manifest wording per G3 advisories A1-A3 [ORCH-CORRECTED]; no image or metric change)"
+ ],
+ "claim_seam_head": "aac892fcde5dc035848af9bf99f7cea0bc8edec2",
+ "files_changed": [
+  "project-control/reports/D-094-visual-proof-before.md"
+ ],
+ "what_did_not_change": "No product, test, contract, record or instruction file; the preview was never stopped; images stay outside git.",
+ "known_limits": [
+  "The before set fixes the state only; it checks no correctness or design quality.",
+  "The website capture uses the owner's test preview (recorded lot, switches on for the preview only); production is untouched."
+ ],
+ "checks_at_material_head": [
+  "metrics_before.py run twice on the same PDF and HTML: byte-identical outputs; PDF 364/193/291/338/245/719/296/346/201 = 2,993 words; 25 pdfinfo -url lines (24 links, page 8); 0 internal item/issue links; repeats 3 distinct / 7 PDF printings / 8 HTML printings",
+  "report.html byte-identical to session-2026-10-11c/print-main23/report.html (cmp)",
+  "G3 reviewer recomputed 20 sha256s across every file kind: 20/20 match; 115 files listed 1:1; all nine pages and every width viewed",
+  "CI run 38170691051 at 2098b043 (the manifest's final material head, reviewed by the G3 delta attestation): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R056": [
+   "Every exported page is rendered at readable size: page-1..9.png (colour) and grey-1..9.png (grey) at 110 dpi, pinned in the manifest; the G3 reviewer viewed all nine colour pages and three grey pages."
+  ],
+  "D-094-R057": [
+   "The website is captured at 320, 390, 768, 1,024, 1,440 and 1,920 px: a viewport shot, the whole Results panel as scrolled strips and the report preview at each width, pinned in the manifest."
+  ],
+  "D-094-R069": [
+   "The same nine pages the reviewer's audit read are frozen as the before set (report HTML byte-identical to the print the owner received at main b4704161)."
+  ],
+  "D-094-R072": [
+   "The before word counts per PDF page and per report section are recorded (2,993 PDF words; HTML per-section counts) as the budget later tasks are measured against."
+  ],
+  "D-094-R077": [
+   "The before repeat count is recorded with the script: 3 distinct sentences of 8+ words printed 7 times in the PDF, each sentence listed."
+  ],
+  "D-094-R083": [
+   "This is the before half (H0) of the before-and-after proof: every page and every website width, with re-runnable commands and sha256s; the after halves are taken by each page-changing task."
+  ]
+ }
+}
