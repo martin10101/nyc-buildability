@@ -105,7 +105,10 @@
     "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
     "docs/RESEARCH_REQUESTS.md",
     "docs/DISCOVERY_BACKLOG.md",
-    "project-control/reports/M5-T158-producer-report.md"
+    "project-control/reports/M5-T158-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx"
   ],
   "forbidden_paths": [
     "services/api/app/rules/rulesets/",
@@ -252,6 +255,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; part A builder dispatched (connector, classifier, fixtures, seam); part B after M5-T157"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T06:47:31+00:00",
+      "actor": "orchestrator",
+      "change": "Added three consumer test files that pin the pre-DB-232 benchmark output (the committed three-way fixture through the engine entry; the live route against the committed first-option blocks; the panel's shared-condition count). The builder found them, left them unedited (out of scope) and reported the one-line remedy for each. No row binding changes."
     }
   ]
 }
