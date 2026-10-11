@@ -84,7 +84,7 @@ require independent completeness and final verification (producer ≠ verifier),
 
 After a planned handoff (the last session finished its handoff; nothing keeps running), read `docs/SESSION_HANDOFF.md` and
 every file it names, then start its exact next action: no reconcile checks, tests or READY TO RESUME round (owner, D-094
-R109-R113). After a crash or forced stop:
+R109-R113); do not begin untracked work. After a crash or forced stop:
 
 1. Run `python tools/project_control.py status` and read `docs/SESSION_HANDOFF.md`.
 2. Read the `project-control/` active task files, unresolved blockers, and latest checkpoint.
