@@ -251,6 +251,20 @@
      "F1 REQUIRED: E1's excerpt gave the type, dates and CRFN, which live in the Master dataset (E2), not the Legals dataset; corrected in revision 2."
     ],
     "report": "project-control/reports/M0-T190-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11T02:13Z",
+    "reviewed_revision": 2,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 delta at 882ffd43: E1 (ACRIS Legals) now quotes only the lots and flags, E2 (ACRIS Master) the type, dates and CRFN; both equal their saved copies; nothing else in NB-01's meaning changed; F1 closed."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
    }
   ],
   "professional_review": null
