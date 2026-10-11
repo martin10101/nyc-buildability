@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T09:31:14+00:00",
+ "updated_at": "2026-10-11T15:52:06+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -89,10 +89,28 @@
   "D-094-R065",
   "D-094-R066",
   "D-094-R067",
-  "D-094-R068"
+  "D-094-R068",
+  "D-094-R069",
+  "D-094-R070",
+  "D-094-R071",
+  "D-094-R072",
+  "D-094-R073",
+  "D-094-R074",
+  "D-094-R075",
+  "D-094-R076",
+  "D-094-R077",
+  "D-094-R078",
+  "D-094-R079",
+  "D-094-R080",
+  "D-094-R081",
+  "D-094-R082",
+  "D-094-R083",
+  "D-094-R084",
+  "D-094-R085",
+  "D-094-R086"
  ],
- "requirements_id_digest_sha256": "f74274df853fb37780d8e2f07a4fbd5d5d09264e112d5974829b6b0222b20c4f",
- "requirements_content_digest_sha256": "54edc0bdc7305c18137dbf9d66df17f72e5ce392307e6f211ab7868ce0b12d8f",
+ "requirements_id_digest_sha256": "448366ba7231bd26dfcc2f56f9a2963fe65a8cfb6dd36be43c6fac1b8b7d6fbe",
+ "requirements_content_digest_sha256": "e3113b576df5a69e8e2813678876f11fd4ba32479af9afea1b5daa8953376536",
  "sources": [
   {
    "file": "source-001.md",
@@ -100,9 +118,19 @@
    "sequence": 1,
    "recorded_at": "2026-10-11T04:50:28+00:00",
    "content_digest_sha256": "2713f603eec07f8d50123b24aab366de87c341ee0926650063441c3d8c09c7ad"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-10-11T15:52:06+00:00",
+   "content_digest_sha256": "bf42a09aa906179ae963e5fa380e896a4ba69988dc700be9fc81168a4151c020",
+   "amends": "source-001.md"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [
@@ -168,6 +196,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T162 (report wording follows the shown legal unit limit (after M5-T157)) to R057, R058 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T15:52:06+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-002 (the outside reviewer's audit of the report printed after wave 23) and requirements D-094-R069 to R086, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
