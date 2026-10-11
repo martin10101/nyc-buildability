@@ -4,7 +4,7 @@ Orchestrator evidence, 2026-10-11 (session 0dfe2ecc). H0 of the D-094 before-and
 
 ## What was captured, at which revision
 
-- **Product revision:** main `b47041611747eaf0d310c4bf9eddc46907819061` (the preview's recorded revision; the task's contract head `fc96fd9c` on `task/wave24-report-v3` differs from main only in directive files, the owner's question-and-answer log and ledger files, so the product is the same).
+- **Product revision:** main `b47041611747eaf0d310c4bf9eddc46907819061` (the preview's recorded revision; the task's contract head `fc96fd9c` on `task/wave24-report-v3` differs from main only in directive files, the owner's question-and-answer log, ledger files and the seam-1 placeholders (eight `docs/zoning-law-library/` documents and the test placeholder `services/api/tests/contracts/test_results_contract_1_5_0.py`); none of these is read by the running product, so the product is the same) [ORCH-CORRECTED per M0-T194 G3 A1].
 - **How:** the owner's test preview on the build server (website on 127.0.0.1:3001 with the results and rule switches on for the preview only; the test harness answering for one recorded lot, 215-16 Northern Boulevard, BBL 4073340070, with the recorded city-register zoning-lot index; no production setting touched, nothing deployed). The preview was running at main before the capture and was not stopped (status after: `RUNNING (revision b47041611747eaf0d310c4bf9eddc46907819061)`).
 - **Report request:** POST http://127.0.0.1:8000/api/v1/properties/4073340070/report?address=215-16%20NORTHERN%20BOULEVARD%2C%20Queens / status 200 / body {"housing_program":"standard_residence"}
 - **Report HTML:** byte-identical to the print of 2026-10-11 10:56 UTC (`session-2026-10-11c/print-main23/report.html`, `cmp` equal).
@@ -15,9 +15,9 @@ Orchestrator evidence, 2026-10-11 (session 0dfe2ecc). H0 of the D-094 before-and
 WEB_DIR=/root/project/w-wave20/apps/web OUT_DIR=<folder> node capture_before.mjs      # website: six widths, strips, report preview, report.html
 cd <checkout>/apps/web && node scripts/print-report-pdf.mjs <folder>/report.html <folder>/report.pdf
 pdftoppm -r 110 -png report.pdf page; pdftoppm -r 110 -png -gray report.pdf grey
-python3 metrics_before.py report.pdf report.html before-set   # run twice; outputs metrics-run1.json, metrics-run2.json
+python3 metrics_before.py report.pdf report.html before-set > metrics-run1.json   # [ORCH-CORRECTED per G3 A2] then again into metrics-run2.json; cmp the two
 ```
-Both scripts are kept beside the images (sha256 below). The Results window is a fixed-size panel that scrolls inside, so the website is captured as scrolled strips of the panel (each step = the visible height minus 40 px of overlap, top to end) rather than one long page.
+Both scripts are kept beside the images (sha256 below). Before the capture, the preview must be running at the product revision [ORCH-CORRECTED per G3 A3]: `bash /root/project/lanes-runtime/owner-docs/session-2026-10-11c/preview_acris.sh status` (if it is not running: `... preview_acris.sh build <checkout>` then `... preview_acris.sh start <checkout>`; it serves the recorded lot BBL 4073340070 with the recorded zoning-lot index through `preview_harness_acris.py`, and the capture opens `/property/workspace?ruleeval=on&bbl=4073340070`). The Results window is a fixed-size panel that scrolls inside, so the website is captured as scrolled strips of the panel (each step = the visible height minus 40 px of overlap, top to end) rather than one long page.
 
 ## Metrics (G-9)
 
