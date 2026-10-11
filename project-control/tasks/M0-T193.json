@@ -123,21 +123,21 @@
     "G2",
     "G3"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "product-design-director",
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The auto-mode classifier may block the CLAUDE.md or .claude writes: capture/cite the directive and retry once, never bypass.",
     "D-094 rows bound here are verified as recorded in the contract (the rule), not as built pages; the page tasks bind them again for the build."
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:05.424160+00:00",
-  "updated_at": "2026-10-11T19:45:05.880956+00:00",
+  "updated_at": "2026-10-11T19:45:30.694004+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -207,5 +207,14 @@
     "python3 tools/validate_directive_compliance.py --check",
     "python3 tools/context_budget_check.py"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T19:45:30.693897+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the orchestrator writes the contract change"
+    }
+  ]
 }

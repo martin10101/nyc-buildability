@@ -104,20 +104,20 @@
     "G1",
     "G2"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The ZR site's big pages 504; use the documented fallback (direct GET, browser user agent, sha256-pinned) and disclose it.",
     "'street setback line' may not be a 12-10 defined term: report it, never invent a capture."
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:07.827947+00:00",
-  "updated_at": "2026-10-11T19:45:08.266771+00:00",
+  "updated_at": "2026-10-11T19:45:30.976050+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -137,5 +137,14 @@
     "python services/api/scripts/sync_zr_snapshots.py --check",
     "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T19:45:30.975967+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one researcher dispatched"
+    }
+  ]
 }
