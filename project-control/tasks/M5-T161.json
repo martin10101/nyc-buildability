@@ -83,14 +83,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 80,
   "risks": [
     "If the real route still withholds the limit at the first press, the product (not the test) disagrees with M5-T157's design: the builder stops and reports; no product file may change in this task.",
     "Ports 3000, 3001 and 8000 hold the owner's preview; the orchestrator stops it before the builder's browser run and restarts it afterwards."
   ],
   "blockers": [],
   "created_at": "2026-10-11T08:46:28.502690+00:00",
-  "updated_at": "2026-10-11T08:46:31.729664+00:00",
+  "updated_at": "2026-10-11T09:02:05.186952+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -130,6 +130,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-11T09:02:05.186851+00:00",
+      "agent": "frontend-engineer",
+      "percent": 80,
+      "status": "claimed",
+      "message": "builder commit 9b8d1df9 integrated as f2f76654 (2 files, LF digests equal); reviews G3 and G4 dispatched"
     }
   ]
 }
