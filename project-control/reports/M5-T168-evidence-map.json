@@ -1,0 +1,28 @@
+{
+ "task_id": "M5-T168",
+ "material_commits": [
+  "5a8228c1 (builder (cherry-pick of dbac3fef): respect-gitignore = false in [tool.ruff]; F841 and E501 fixed in the coverage renderer with no behaviour change)"
+ ],
+ "claim_seam_head": "aac892fcde5dc035848af9bf99f7cea0bc8edec2",
+ "files_changed": [
+  "project-control/reports/M5-T168-producer-report.md",
+  "services/api/app/rules/coverage/render_coverage_matrix.py",
+  "services/api/pyproject.toml"
+ ],
+ "what_did_not_change": ".gitignore is byte-unchanged; the rendered coverage matrix is byte-identical (sha256 42120957...); no other source, test or config file.",
+ "known_limits": [
+  "ruff no longer defers file discovery to .gitignore inside services/api; it relies on its built-in excludes (venv, build, dist, caches); today this adds exactly one linted file (the renderer).",
+  "A narrower .ignore-file alternative (G3 advisory) was not tried; recorded for a later touch if needed."
+ ],
+ "checks_at_material_head": [
+  "builder: ruff --show-files lists the renderer and ruff check passes (exit 0); git-archive copy passes; tests/rules 1114 passed; S4 ignored set identical; mutation: without the setting the renderer is not listed",
+  "orchestrator at 5a8228c1: ruff 0; pytest tests/rules + law links 1136 passed; modularity 0",
+  "G3 and G4 reproduced S1-S5 independently (703 -> 704 files, the one added file is the renderer; rendered output byte-identical; CI-pinned ruff 0.13.0)",
+  "CI run 38172084908 at 5a8228c1 (the reviewed head): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-090-R639": [
+   "The api CI job's first step (cd services/api && ruff check .) now reads the tracked file services/api/app/rules/coverage/render_coverage_matrix.py, which it skipped before (DB-240), so CI green covers it; its two findings are fixed with byte-identical output (G3 and G4 PASS)."
+  ]
+ }
+}

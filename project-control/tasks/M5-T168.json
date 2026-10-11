@@ -74,13 +74,13 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "Narrowing the ignore pattern could un-ignore tool output elsewhere; S4 guards it with artefacts present."
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:12.076481+00:00",
-  "updated_at": "2026-10-11T19:45:31.583952+00:00",
+  "updated_at": "2026-10-11T20:48:34.950720+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -104,6 +104,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; builder dispatched when a builder slot is free"
+    },
+    {
+      "at": "2026-10-11T20:48:34.950599+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; G3 and G4 PASS at 5a8228c1; review record and evidence map written"
     }
   ]
 }
