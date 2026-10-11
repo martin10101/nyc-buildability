@@ -77,408 +77,682 @@
     "D-093-R074"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85",
+   "reviewed_manifest_sha256": "a3c06721eb0c3e4d72991a9760a92c4c33e73be933247120eac02c0aca986681",
    "requirements": [
     {
      "id": "D-093-R003",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition \"Standing restrictions: handoff section 5.\" The task honoured every standing restriction: no services/apps/packages change, no settings/agents change, PR 241 not merged, no unattended merge, ports 3000/3001/8000 untouched.",
+      "docs/SESSION_HANDOFF.md seq 156 section 5 re-states the standing restrictions (Tier D stops, expansion hold, production switches off, no model: on dispatch, at most 3 builders/4 reviewers, builders never touch the preview ports).",
+      "Diff c8f06029..762ec5eb touches only governance/docs/tools/hook/data paths, consistent with those restrictions. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R006",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation to \"Update the existing project instructions, research procedure, session handoff and verification checks.\" All four updated: CLAUDE.md principle 21 + the always-loaded rule .claude/rules/research-and-verification.md (instructions); the procedure docs/RESEARCH_AND_VERIFICATION.md.",
+      "Session handoff updated to seq 156; the verification check is tools/research_record_check.py wired into .github/workflows/ci.yml (two new control-plane steps) with tests.",
+      "Each is an edit to a file already used, not a parallel copy. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition \"Preserve our existing approval boundaries and unresolved property numbers.\" `git diff --name-only c8f06029..762ec5eb` under services/apps/packages = 0 files; labels.py / engine_conditions.py / coverage.py untouched.",
+      "No report number changed: the five NB records keep every figure conditional (NB-01 zoning_lot_unconfirmed, NB-02 \"Not confirmed\", NB-04 recorded area with basis named) and none requests a Verified label (promotion.requested_label = null in all five).",
+      "ADR-007 approval/activation path is unchanged; the C1 gate keeps Verified unreachable. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R008",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Harness \"The next session must recover these requirements ... Verify this using a fresh session and a context-recovery check.\" project-control/reports/M0-T190-verification-sessions.md records a disposable fresh (startup) session that found the rule, handoff seq 156 and the NB records without the conversation.",
+      "A compaction + after-compaction disposable session recovered the rule's first bullet verbatim, the rule/procedure files, handoff seq 156 and the records folder from context only (section 2).",
+      "Transcripts exist under ~/.claude/projects/-root-project-w-rv/ and were independently opened by G4. Open: hook-line delivery on resume/fork is unproven in print mode and is honestly marked (section 6).",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R010",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation \"Record genuine questions in our existing owner questionnaire and continue everything that is already authorized.\" /root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md carries A1,A2,C1,C2,D1,F1,B1-B3; F1's 2026-10-11 update consolidates the still-missing Northern Boulevard documents into one list.",
+      "Every question has a \"Meanwhile\" line so authorized work continues (e.g. F1 \"nothing waits for this\"; the next-wave DB-231/230/232 proceed per handoff section 4).",
+      "Questions are both in chat and in the file per the owner's rule. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R011",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence \"Complete the installation and verification\u2014not just a promise to remember.\" The installation is physically present (rule, procedure, records, check, hook line, CI, handoff) and the verification ran: research_record_check.py --check exits 0 over 5 records.",
+      "project-control/reports/M0-T190-producer-report.md gives concrete commits (51f50cec.. 6f6d3a90), a file list, and self-check command outputs, not a promise.",
+      "Five gate records (G1 delta, G3, G5, G4) PASS with reproduced commands. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R012",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation to implement the workflow so ordinary source checks \"belong in this project.\" docs/RESEARCH_REQUESTS.md line 34 (D-093 note) states ordinary source checks are done by the project's own researchers as evidence records, and a law-meaning question is never sent to the owner.",
+      "The always-loaded rule + procedure + record format + CI check institutionalise this. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R013",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Return \"Return concrete changed files and evidence that the next session can load them.\" The producer report lists each changed file with line counts and commit SHAs; all outputs are tracked in git on task/research-verification-rules.",
+      "The next session loads them via CLAUDE.md principle 21 + the always-loaded rule (confirmed loaded in the fresh-session transcript, section 1 of verification-sessions). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R014",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition \"Preserve existing merge, activation and professional-review requirements... does not authorize changing unresolved property numbers or enabling hidden features.\" No product/settings/agents file changed; no feature flag or production switch added (none appear in the diff).",
+      "ADR-007 professional-review-advisory posture is preserved in the procedure (section 1 and section 8: the check \"certifies nothing\"); no record is called professionally verified.",
+      "Unresolved property numbers stay unresolved (NB records conditional). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R015",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation to identify repo root, branch/worktree, installed version, instruction files, handoff, research records, design requirements and questionnaire. docs/RESEARCH_AND_VERIFICATION.md section 1 records repo /root/project/nyc-buildability, origin martin10101/nyc-buildability, Claude Code 2.1.288, and a full path-mapping table.",
+      "It records the observed instruction-loading set and states \"no claudeMdExcludes setting exists in project, local or user settings\" (conflicts/disabled-loading inspected). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R016",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation \"Extend the canonical files already used.\" Every output edits a pre-existing file (CLAUDE.md, .claude/rules/, .claude/hooks/directive_reminder.py, docs/, the existing RESEARCH_REQUESTS.md, the existing SESSION_HANDOFF.md, the existing OWNER_QUESTIONS.md).",
+      "The procedure (section 1) maps each brief \"fallback\" path to the canonical file actually in use. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R017",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: a short mandatory CLAUDE.md pointer to the rule, protocol and handoff. CLAUDE.md line 37 principle 21 points to .claude/rules/research-and-verification.md (always loaded), docs/RESEARCH_AND_VERIFICATION.md, docs/research/evidence-records/ and docs/SESSION_HANDOFF.md.",
+      "It is one concise mandatory principle, consistent with keeping instructions short. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R018",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: always-loaded rule at .claude/rules/research-and-verification.md with no path-scoped frontmatter. The file begins \"# Research and verification \u2014 required project workflow\" with no `---` frontmatter block.",
+      "tools/context_budget_check.py lists it in the eager (auto-loaded) set (~614 tok), and the fresh-session transcript's \"instructions loaded\" entry includes it \u2014 confirming it loads unconditionally. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R019",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: a detailed procedure with evidence requirements, search procedure, review and completion checks. docs/RESEARCH_AND_VERIFICATION.md has sections 1-11 covering trigger (2), record parts (3), missing-fact search (4), freshness (5), independent review (6), tests (7), the enforced/procedural split (8), continuity (9), presentation (10) and the completion report (11).",
+      "The brief's fallback docs/governance/ path is explicitly remapped to docs/ (section 1, \"the brief's fallback docs/governance/ does not exist\"). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R020",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: research index and topic/case records with sources, conclusions, conflicts, review status and affected implementation. docs/research/evidence-records/ holds NB-01..05 (JSON records) and a README.md format spec; the index docs/RESEARCH_REQUESTS.md RQ-009 (line 492) links all five records with status labels.",
+      "docs/DISCOVERY_BACKLOG.md DB-230/231/232 each name their evidence record (NB-03/NB-05/NB-01, \"read it before building\"). Each record carries evidence, conclusion, conflicts, review and implementation links. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R021",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: current work state in the handoff (branch/commit, next work, unresolved items, approvals, links) and the path mapping recorded once. docs/SESSION_HANDOFF.md seq 156 section 1 lists branches/worktrees/commits; section 4 the exact next action; section 5 blockers/holds/decisions.",
+      "The \"Path mapping (once; detail in the procedure, section 1)\" line records the mapping once in the handoff with repo-relative references. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R022",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: owner questions in the existing OWNER_QUESTIONS.md as consolidated document requests and genuine decisions. The file holds F1 (a consolidated list of the three document groups still missing) and genuine preference questions (A1/A2/C1/C2/D1/B1-B3).",
+      "It never asks the owner which legal interpretation is correct; F1 asks only to send documents or grant permission for a records request. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R023",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: use repo-relative links for shared instructions; keep private owner material private and do not publish it. docs/RESEARCH_AND_VERIFICATION.md section 1 \"Access requirement\" states the questionnaire and session notes live only on the build server and \"are never published to make a clone self-contained.\"",
+      "CLAUDE.md principle 21, the rule and the README use repository-relative links. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R024",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: keep permanent instructions short; do not paste the full report, all sources or the entire history into startup context. The rule is 17 lines; CLAUDE.md principle 21 is one entry; no property report, source dump or transcript is in the eager set.",
+      "tools/context_budget_check.py enforces the handoff 8,000-tok budget and bans duplicate/ retired boards; the eager list contains only the five compact instruction files. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R025",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: if AGENTS.md is canonical, preserve it and avoid conflicting policy copies. AGENTS.md now carries a \"Research and verification (D-093)\" section that is \"a pointer, not a copy\" to the rule and procedure.",
+      "The procedure (section 1) records that Claude Code does not load AGENTS.md (it is the Codex brief; CLAUDE.md is canonical), so no conflicting duplicate policy is created. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R026",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation to install the section-2 compact rule adapting only path references. A programmatic bullet-by-bullet comparison shows all 12 bullets byte-identical to the brief except added parenthetical references; the \"diffs\" after stripping parentheticals are whitespace artifacts only.",
+      "The added parentheticals are path/location references (SESSION_HANDOFF.md, RESEARCH_AND_VERIFICATION.md, evidence-records/, RESEARCH_REQUESTS.md, OWNER_QUESTIONS.md, ARCHITECT_PRESENTATION_CONTRACT.md, and \"the session notes the handoff names\").",
+      "One extra line was added at the top (line 3: \"Owner directive D-093 (2026-10-11). Always loaded: no `paths:` frontmatter. Only the path references are adapted from the owner's text.\"). I judge this an acceptable provenance/authority note (CLAUDE.md principle 2); it does not alter the 12 substantive bullets or weaken any obligation. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R027",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: use the installed version's supported project-instruction mechanism and track shared rules in version control; personal memory or an uncommitted worktree does not establish availability. All policy files are committed (procedure section 1 marks each \"in git: yes\").",
+      "The procedure section 9 \"Accounts\" and verification-sessions section 6 state nothing lives in account memory and other worktrees get the policy only after they contain the commit. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R029",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Harness: new, resumed and compacted sessions recover the policy and task state. The rule is an always-loaded instruction file; the fresh (startup) transcript loads it (section 1), and the after-compaction session recovered it from context (section 2).",
+      "verification-sessions section 3 shows the SessionStart source probe log firing startup, resume, fork and clear; resume and fork answered correctly from the retained rule.",
+      "Open: hook-line DELIVERY on resume/fork is \"not proven\" in print mode (honestly recorded); the instruction file still loads regardless of the hook.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R030",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: list active worktrees still on an older version; do not reset/overwrite their work. docs/SESSION_HANDOFF.md section 1 lists worktree /root/project/w-wave20 \"detached at main c8f06029 ... It gets the D-093 files only when moved to a main that contains them.\"",
+      "No reset/overwrite of that worktree is implied; the move is left to the orchestrator. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R031",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: changing accounts must not depend on the previous account's memory; do not log the owner out or switch accounts to test. docs/RESEARCH_AND_VERIFICATION.md section 9 \"Accounts\" states the policy lives in git, not memory.",
+      "verification-sessions section 6 records that another account was \"not tried, by the owner's instruction.\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R032",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: reviewer/worker launch instructions pass the policy and evidence references; no new agent framework. docs/RESEARCH_AND_VERIFICATION.md section 6 \"Dispatch clause\" gives the verbatim brief line carrying the rule, procedure and affected record paths.",
+      "AGENTS.md now carries the pointer; verification-sessions section 4 shows subagent transcripts load the main checkout's CLAUDE.md and rules. No new framework was added. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R033",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: extend the existing SessionStart hook rather than duplicate it; keep it fast and limited to policy identity, handoff location and relevant state. The diff to .claude/hooks/directive_reminder.py adds a bounded _research_line() to the existing hook.",
+      "The research line names the rule by sha256 digest, the procedure, the records folder and the sanitized handoff first line (all bounded by RESEARCH_CAP=600 / HANDOFF_CAP=140); 22 hook tests pass. No duplicate hook was created. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R034",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: preserve unrelated settings; do not claim coverage for an untested session type. `git diff c8f06029..762ec5eb -- .claude/settings.json .claude/agents/` is empty.",
+      "verification-sessions section 6 names the untested types (interactive terminal, cloud/remote, another machine/Windows, another account) and marks resume/fork hook delivery \"not proven.\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R035",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: a startup hook supplies context, is not proof research happened, and if hooks are disabled the instruction-file route must be verified. The hook docstring and docs/RESEARCH_AND_VERIFICATION.md section 9 both state \"a hook supplies context; it is not proof ... If hooks are disabled the instruction files still load; that is the route to rely on.\"",
+      "A missing rule file yields a visible WARNING (still exit 0), confirmed by the hook test. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R036",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: checkpoint decisions as they occur, using the existing mechanism; do not dump transcripts. docs/RESEARCH_AND_VERIFICATION.md section 9 \"Checkpoint as decisions happen\" directs dated CHECKPOINT/STATE lines to the session notes \"not only at the end.\"",
+      "The rule's bullet 10 points to \"checkpoint during long work (the session notes the handoff names).\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R037",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: trigger the procedure when a change affects an official fact, legal interpretation, calculation input, result or label; routine styling is exempt. docs/RESEARCH_AND_VERIFICATION.md section 2 states exactly this trigger and exemption.",
+      "The rule bullet 2 mirrors it (\"Before changing feasibility facts, rule applicability, calculations or verification labels ...\"). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R038",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: a record with question/scope and primary evidence (authority, title, URL, id, page, dates, excerpt, source field), source material saved. README format table requires question.{text,property,lot_scope,site_scope,time_scope} and a non-empty evidence[] with authority/title/url/reference/page/document_date/retrieved/excerpt/saved_copy/sha256.",
+      "NB-05 shows four evidence entries with live ZR 12-10 / 23-52 excerpts, URLs, dates and MapPLUTO source fields; research_record_check.py --check validates all five and exits 0. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R039",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: meaning and applicability (definitions, parent provisions, exceptions, overlays, exclusions), explaining which apply and why, not stopping at the first paragraph. README requires meaning_and_applicability.{provisions_read,exceptions_considered,reading,applies}.",
+      "NB-05 lists provisions_read (ZR 12-10 both definitions, 23-52 opening + (a)(1)-(3) + (b), 11-25) and four exceptions_considered with a reasoned \"reading.\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R040",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: measurement/accounting basis with units and whether each quantity is deed, survey, tax map, approved plan, filing attribute, administrative record or GIS, existing/ proposed and building/site, with double-count risk. README enumerates the basis vocabulary and requires double_count_risk.",
+      "NB-04 records the recorded area (10,075 sq ft, printed_tax_map/filing_attribute) vs GIS (10,387.99 sq ft) with the conflict named; NB-05 records the 680 factor basis \"law\" and the dividend double-count risk. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R041",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: conclusion and status separating observed fact from interpretation, recording conflicts/conditions and what settles them, distinguishing AI review from professional. README requires conclusion.{research_status,observed_facts,interpretation,conflicts, conditions,settled_by}.",
+      "NB-05 separates observed_facts from a one-line interpretation, lists conditions and settled_by, and professional_review is null; the check prints \"not a professional verification\" on every line. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R042",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: implementation link with affected functions/fields, worked example, regression cases, reviewer findings and the reviewed revision so review status cannot be inherited. README requires implementation.{affected_outputs,code_paths,code_identity,worked_example, regression_cases,dependency_assessment} and review with reviewed_revision/reviewed_code_identity.",
+      "NB-05 records affected_outputs (dwelling_units.legal_limit, engine_condition.special_density_area), code_identity hashes equal to the current files, a worked example (20,150/680=29.63\u219229) and a G1 review stamped reviewed_revision 1 with the reviewed code identity. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R043",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: reuse existing fields/terms; do not build a second evidence platform or expand records into essays. docs/RESEARCH_AND_VERIFICATION.md section 3 reuses the six report labels, the screen's settled/conditional/not-known, the register verdicts and D-052 terms, and says \"Keep records short; link the long material.\"",
+      "The records are single JSON files under the existing docs/research tree; no new platform was built. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R044",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "External fact / obligation: check the applicable rule/data version under the freshness policy; if live verification is unavailable, state the snapshot date and limitation, never silently relabel. docs/RESEARCH_AND_VERIFICATION.md section 5 requires method \"snapshot\" with the snapshot date and limitation.",
+      "NB-05 freshness records method \"snapshot\", snapshot_date 2026-10-07 and a limitation naming the 12-10/23-52 capture dates and the PLUTO 26v2 retrieval. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R045",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: search relevant permitted official sources, following references; these are routes to consider, not a duty to query every agency. docs/RESEARCH_AND_VERIFICATION.md section 4.1 lists form instructions, data dictionaries, tax-map history, recorded-document indexes, approved plans and legal definitions as routes chosen by the question.",
+      "NB-01/NB-02 searches name the specific ACRIS index/DOB routes attempted. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R046",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: distinguish not-researched / searched-but-not-found / access-blocked / conflicting-evidence / interpretation-awaiting-review; an index entry does not establish a document's contents. README conclusion.research_status enumerates exactly these six values.",
+      "The five records actually use five distinct statuses (NB-01 access_blocked, NB-02 searched_not_found, NB-03 interpretation_awaiting_review, NB-04 conflicting_evidence, NB-05 answered_from_primary_source); NB-01 states an index entry does not establish the instrument. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R047",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: record the source/query, result, exact missing document, affected outputs and next retrieval step; respect access controls; consolidate a blocker rather than retry a denial. README requires searches[].{source,query,result,missing_item,affected_outputs,next_step}.",
+      "NB-01 (access_blocked) names the blocked instrument and next step; OWNER_QUESTIONS.md F1 consolidates the blocked documents into one request instead of retrying. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R048",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: ask the owner only for documents, access or a real project preference; never ask the owner to choose which legal area/interpretation is correct to unblock a calculation. OWNER_QUESTIONS.md F1 asks only to send documents or permit a records request; A1/A2/C1/C2/D1 are presentation/label preferences.",
+      "docs/RESEARCH_REQUESTS.md line 34 states a law-meaning question \"is never sent to the owner to decide: it is recorded as a labelled draft reading with its law link (ADR-007).\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R049",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: continue work that does not depend on the missing item. OWNER_QUESTIONS.md gives every open question a \"Meanwhile\" line, and docs/SESSION_HANDOFF.md section 4 lists the next authorized wave (DB-231/230/232) proceeding now.",
+      "The rule bullet 9 states \"Continue unaffected authorized work.\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R050",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: evaluate the source interpretation independently of the implementation; the reviewer opens the decisive sources, considers exception and counterexample, and works the result before reading the code; repeating the builder's explanation is not independent. docs/RESEARCH_AND_VERIFICATION.md section 6 states this and the \"pending if unavailable\" rule.",
+      "The G1 record (M0-T190-reviews.md, data-contract-verifier) shows the reviewer fetched ZR 23-52/12-10 and PLUTO live and wrote its own 29-unit answer, boundary arithmetic and a Manhattan-CD9 counterexample \"before reading NB-05 or code.\" Open: future reviews must carry their own current reviewed_revision (the format enforces this).",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R051",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Harness: test meaningful boundaries, not a copy of the formula; a synthetic fixture is never relabelled as a verified real-site result. docs/RESEARCH_AND_VERIFICATION.md section 7 lists the boundary classes and the no-formula-copy / no-synthetic-relabel rules.",
+      "tools/test_research_record_check.py (29 tests, all pass) exercises applicable-vs-inapplicable status, stale review, reviewer==producer and the Verified-while-C1-open refusal; NB-05's worked example states expected values from the law text, not a program run. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R052",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Harness: add the smallest check so a result cannot be marked verified when its evidence record is absent, stale or unresolved; no invented verified:true treated as proof. tools/research_record_check.py implements promotion_refusals with a hard-coded OWNER_C1_ANSWERED=False gate and derived staleness; no verified boolean field exists.",
+      "I ran `python3 tools/research_record_check.py --check` (exit 0) and `python3 tools/test_research_record_check.py` (29 tests OK); the check refuses a Verified request for dwelling_units.legal_limit with named reasons (access_blocked, open conditions, stale/absent review, C1 open). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R053",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: if the workflow supports enforced checks, integrate there and document the scope; otherwise implement available checks and state what remains procedural. .github/workflows/ci.yml adds two steps in the existing control-plane job (research_record_check.py --check and test_research_record_check.py).",
+      "docs/RESEARCH_AND_VERIFICATION.md section 8 documents the enforced-vs-procedural split explicitly (\"Enforced by the check\" / \"Not enforced; still procedural\"). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R054",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: keep draft/conditional work possible; no project-wide stop for one unresolved property. docs/RESEARCH_AND_VERIFICATION.md section 8 states \"Every other label stays available, so draft and conditional work continues\" and code drift \"does not fail the build.\"",
+      "I confirmed research_record_check.py --check exits 0 with a stale/unresolved record present (the drift prints a NOTE, never an error). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R055",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: keep the internal evidence structure out of the architect's main flow; reuse the clean PDF/website design. docs/research/evidence-records/README.md states \"These records are internal working evidence. They never appear in the architect's main screen or the PDF summary.\"",
+      "docs/RESEARCH_AND_VERIFICATION.md section 10 defers to the presentation contract and keeps records/searches in the evidence pages only. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R056",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: locate the Northern Boulevard handoff and evidence ZIP, treat it as input to verify against its sources, not a replacement; if absent, request once and continue. The task inputs include docs/research/owner-research/2026-10-10-215-16-northern-research-handoff.md and the evidence pack.",
+      "docs/RESEARCH_REQUESTS.md RQ-009 marks the owner research \"ANSWERED 2026-10-10 (owner's research AI); key facts re-checked by the orchestrator,\" and G1 re-verified every decisive source live. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R057",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: which recorded instruments establish the current zoning lot, and what is known only from index entries. NB-01-zoning-lot-instruments.json (status access_blocked) reads the 2022/ 2016 ACRIS index entries and DOB job text, and concludes the zoning lot is unconfirmed because \"an index entry and a filing description do not establish what the instruments say.\"",
+      "G1 confirmed the index facts live and required F1 (moving type/date/CRFN from the Legals to the Master evidence), applied as NB-01 revision 2. Open: the recorded instruments themselves are access-blocked and listed for the owner in OWNER_QUESTIONS.md F1.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R058",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: does the proposed zoning floor area already include retained lot 1 area. NB-02-proposed-zfa-scope.json (searched_not_found) records the permitted 39,934 sq ft of DOB job 440608941 and finds the question not established because the filled PW1/ZD1 has not been read.",
+      "The double-count risk (subtracting lot 1's 9,100 sq ft twice) is stated, not asserted; remaining capacity stays \"Not confirmed.\" Open: the approved ZD1/PW1 schedule is access-blocked (F1).",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R059",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: short-block rear-yard applicability and how neighbouring line classifications affect the alternative. NB-03-rear-yard-short-block.json (interpretation_awaiting_review) reads ZR 23-344(b) and (c)(3) and 12-10, finds the Northern Blvd blockfront (200.01 ft tax / 203.13 ft GIS, both < 230) a short dimension, so no rear yard within 100 ft under (b) for a ~100-ft lot.",
+      "The ~0.03 ft depth margin is flagged survey-dependent; the (c)(3) side-lot-line path is conditioned on the neighbours' tax lines being their zoning-lot lines. Open: the operative street line/depth await a survey or the approved ZD1.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R060",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: which dimensions come from printed tax-map labels vs GIS and what the survey must settle. NB-04-lot-dimensions-basis.json (conflicting_evidence) records printed/PLUTO/DOB 100.76 ft frontage and 10,075 sq ft against the wider GIS outline (103.88 ft / 10,387.99 sq ft, 3.11%).",
+      "It keeps the GIS outline for display only and the recorded area for zoning, and names the 2017 Buckley survey as the settling evidence. Open: no deed/survey area has been read (F1).",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R061",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: can the special-density geography be resolved while the dwelling-unit inputs stay conditional. NB-05-special-density-area.json (answered_from_primary_source) resolves \"not in a special density area\" from ZR 12-10 (Manhattan Core = CDs 1-8; Special Downtown Brooklyn District) and MapPLUTO (Queens, SPDist1 null), while the unit limit stays conditional on the zoning lot (NB-01) and lot area (NB-04).",
+      "The dependency_assessment records DB-231 (derive the flag for every lot, no address-specific exception). Open: the dwelling-unit count stays conditional until the zoning lot and area settle.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R062",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: preserve the existing report numbers until official-document review supports a change. No services/apps/packages file changed; the five records keep every figure conditional and change no shown number.",
+      "docs/SESSION_HANDOFF.md section 5 restates \"The report's numbers stay until the official documents support a change (D-093).\" Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R064",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition: use disposable/read-only sessions; never clear or terminate the owner's active session. verification-sessions section 3 states every session \"was disposable, in print mode (claude -p), limited to the tools Read, Grep and Glob ... none wrote a file. The owner's running session was not touched, and no account was changed.\"",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R065",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Persistence): actual file paths, diff/commit or PR, and confirmation shared files are tracked on the intended branch. All outputs are committed on task/research-verification-rules (frozen head 762ec5eb), and PR 487 exists.",
+      "I independently re-hashed the 33 restored data/ files against source-manifest.json: 33 match, 0 mismatch (the only two non-present manifest entries are law HTML captures kept in the snapshot folder, not the data pack). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R066",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Instruction loading): installed version and observed loaded files, with exclusions/ overrides identified. verification-sessions section 1 quotes Claude Code 2.1.288's \"instructions loaded\" entry listing CLAUDE.md and the four unconditional rules incl. research-and-verification.md.",
+      "It records that AGENTS.md is not loaded by Claude Code and no claudeMdExcludes/override exists. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R067",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Fresh session): a session without this conversation finds the policy, handoff and evidence record, with the actual prompt/result recorded. verification-sessions section 2 records the fresh-session prompt and result (it quoted the rule's first bullet, handoff seq 156, NB-01 and NB-02 statuses and the Verified conditions).",
+      "G4 spot-read p1-fresh.json and confirmed it is byte-for-byte the quoted result. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R068",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Context recovery): a disposable compaction/resume test recovers the policy and task state; untested session types are marked honestly. verification-sessions section 2 shows the after-compaction session recovering the rule's first bullet, the rule/procedure files, handoff seq 156 and the records folder from context only.",
+      "Section 6 names the untested types (interactive terminal, cloud/remote, another machine/Windows, another account). Open: resume/fork hook-line delivery is honestly marked \"not proven\" in print mode.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R069",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Evidence check): a deliberately incomplete record is refused promotion; a complete one passes the structural check without being called professionally verified. verification-sessions section 5 shows the Verified refusal with named reasons and a Conditional request not refused.",
+      "The G4 R069 proof (reproduced in a scratch copy) shows an incomplete record exiting 1 with named reasons and a complete record passing --check (exit 0) while a Verified request is refused only by the C1 gate, with \"not a professional verification\" in the output. I re-ran the 29 unit tests (OK). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R070",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Practical review): one Northern Boulevard question traced source \u2192 interpretation \u2192 code \u2192 expected behaviour. NB-05 traces ZR 12-10/23-52 + MapPLUTO \u2192 \"not a special density area\" \u2192 engine_conditions.py/r6b_dwelling_units.rule.json (with code_identity) \u2192 worked example 20,150/680 = 29 units with boundary cases.",
+      "The G1 review independently reproduced the trace and the DB-231 dependency assessment. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R071",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence (Handoff): the next action, remaining dependencies and required owner documents are in the canonical handoff/questionnaire. docs/SESSION_HANDOFF.md section 4 gives the exact next action and the DB-231/230/232 dependency order; section 5 the blockers.",
+      "OWNER_QUESTIONS.md F1 lists the required owner documents (the 2022/2016 ACRIS documents, the DOB 440608941 approved plans, the 2017 survey and 2018 deed). Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R073",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "External fact: Anthropic documentation checked 2026-10-10; confirm compatibility with the installed version. docs/RESEARCH_AND_VERIFICATION.md section 1 and verification-sessions record the installed Claude Code 2.1.288 and its observed SessionStart/instruction-loading behaviour.",
+      "Compatibility was confirmed against the installed version, not assumed from the docs. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     },
     {
      "id": "D-093-R074",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Authorization (\"No dont move just take of the tkoen restrictions\"). tools/context_budget.json changes eager_token_budget 10000 \u2192 null with a _comment_eager citing D-093-R074 and the owner's exact words; the live `context_budget_check.py` prints the eager total ~10652 tok with \"(no cap: owner D-093-R074)\" and still enforces the 8,000-tok handoff budget and the duplicate/retired/ historical checks (20 tests OK).",
+      "Nothing was moved: PROGRAM_KNOWLEDGE.md and docs/WORKING_KNOWLEDGE.md update the cap note in place (\"nothing was moved, question B1 stays open\"); no instruction text was relocated. Nothing stays open.",
+      "Verifier's carry-forward condition met at 9003add6: the task's allowed-path files are identical to those verified at 762ec5eb (content identity a3c06721), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (independent: G1 data-contract-verifier, G3 code-reviewer, G4 qa-engineer, G5 security-reviewer; G2 is the producer's self-check, recorded by the orchestrator). DCV report: project-control/reports/M0-T190-DCV.md."
+     ],
+     "reviewed_sha": "9003add648d9f275cd95dae7a8add07b62917a85"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T02:41:41+00:00"
   }
  ]
 }
