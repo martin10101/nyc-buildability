@@ -259,6 +259,14 @@ class StructuralErrors(Base):
         }]
         self.assertKeyError(rec, "access_blocked")
 
+    def test_property_as_string_is_valid_and_empty_is_not(self):
+        # [ORCH] the committed records name the property as one string (README); empty is refused.
+        rec = self.record()
+        rec["question"]["property"] = "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70)"
+        self.assertEqual(rrc.validate_record(rec, self.path_for(rec), self.root), [])
+        rec["question"]["property"] = "  "
+        self.assertKeyError(rec, "question.property")
+
     def test_reviewer_equals_producer(self):
         # MUTATION TARGET 3 (reviewer==producer): an agent review by the producer is invalid.
         rec = self.record()

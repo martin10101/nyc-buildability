@@ -194,8 +194,9 @@ def _validate_question(q, err, req_str, req_enum):
         return
     req_str(q, "text", "'question.text'")
     prop = q.get("property")
-    if not (prop == "not property-specific" or isinstance(prop, dict)):
-        err("key 'question.property' must be an object or the string 'not property-specific'.")
+    if not ((isinstance(prop, str) and prop.strip()) or (isinstance(prop, dict) and prop)):
+        err("key 'question.property' must be a non-empty string (the address and borough/block/lot, "
+            "or 'not property-specific') or a non-empty object.")
     req_enum(q, "lot_scope", LOT_SCOPES, "'question.lot_scope'")
     req_enum(q, "site_scope", SITE_SCOPES, "'question.site_scope'")
     req_enum(q, "time_scope", TIME_SCOPES, "'question.time_scope'")

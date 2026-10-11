@@ -68,6 +68,10 @@ For each affected question, create or update one concise record in `docs/researc
    page, document or effective date, retrieval date, and the relevant excerpt or source field.
    Save permitted source material where the project already keeps it (law text in the snapshot
    folder; property sources in the property's evidence pack) and record its path and SHA-256.
+   The repository's `.gitignore` ignores every folder named `data/`: add an evidence pack's
+   `data/` files with `git add -f` and confirm with `git status --ignored` that nothing the record
+   cites is left out (the Northern Boulevard pack lost its `data/` folder this way until
+   2026-10-11).
 3. **Meaning and applicability** (`meaning_and_applicability`): definitions, parent provisions,
    exceptions, overlays and special districts, exclusions and field instructions actually opened;
    which apply and why. Do not stop at the first matching paragraph.
