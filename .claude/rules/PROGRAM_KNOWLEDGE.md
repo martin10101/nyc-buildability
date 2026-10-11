@@ -82,6 +82,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   commits; verify sha256 with LF-normalization (checkout CRLF smudges raw digests).
 - api producers/pre-gate: `cd services/api && python -m ruff check .` is the api CI job's
   FIRST step — a lint miss costs a CI round. Bash tool `cd` PERSISTS cwd — cd back.
+- A subagent inherits its PARENT session's start-time instruction snapshot, not the files on disk: a
+  rule merged mid-session reaches helpers only through the brief (M0-T191; D-093 dispatch clause).
 - Reviewers read-only, may land in PRIMARY checkout: pin HEAD in prompt (worktree-landed
   reviewers verify via .git plumbing), forbid writes, HOLD commits till the wave returns.
 - Shared checkout with the companion session: heads-up before commits both ways; peer sticks
