@@ -92,14 +92,14 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "ready",
+  "progress_percent": 5,
   "risks": [
     "The screen statuses stay until question C2 is answered."
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:44.523757+00:00",
-  "updated_at": "2026-10-11T20:43:44.920996+00:00",
+  "updated_at": "2026-10-11T20:43:48.089738+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
