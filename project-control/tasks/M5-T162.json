@@ -17,6 +17,7 @@
   "outputs": [
     "services/api/app/drawings/report/readers.py",
     "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/unit_limit_text.py",
     "services/api/tests/drawings/report/test_report_pages.py",
     "services/api/tests/drawings/report/test_report_unit_limit_text.py",
     "project-control/reports/M5-T162-producer-report.md"
@@ -27,6 +28,7 @@
   "allowed_paths": [
     "services/api/app/drawings/report/readers.py",
     "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/unit_limit_text.py",
     "services/api/tests/drawings/report/test_report_pages.py",
     "services/api/tests/drawings/report/test_report_unit_limit_text.py",
     "project-control/reports/M5-T162-producer-report.md"
@@ -138,6 +140,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T09:58:50+00:00",
+      "actor": "orchestrator",
+      "change": "Added services/api/app/drawings/report/unit_limit_text.py. The orchestrator's pre-review read of the builder commit found that 'shown as a conditional ceiling' was said for every shown limit without reading the limit's own state (no default stands for a fact); the correct fix brings readers.py to 619 source lines, over the 600 modularity warn line, and the builder stopped as instructed rather than trim documentation. The legal dwelling-unit limit helpers move to this new module (readers.py keeps thin wiring). No row binding, scenario or other path changes."
     }
   ]
 }
