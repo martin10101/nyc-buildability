@@ -364,6 +364,32 @@
      "Live confirmation 2026-10-11: official Legals still indexes ZONE 2022020201551002 against lots 1 and 70 (all E) and returns the 7 lot-70 docs; Master metadata confirms document_amt='Principal debt or obligation' (omitted) and recorded_borough (unused), and good_through_date means 'index up to date through'. Disclosed DECL-only / former-lot-ZONE gaps are honest bounded negatives (ADVISORY-1)."
     ],
     "report": "project-control/reports/M5-T158-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 4,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+     "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
+     "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
+     "services/api/app/api/v1/study_inputs.py": "ebc38eeab6b1892d24040ef6e6d39d890bb5db9fb46cd373803a1c59ba5ef733",
+     "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
+     "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
+     "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
+     "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
+     "services/api/app/drawings/report/readers.py": "91f607aaca9d99bab66be4b0112ff94d90a945622785df95416846f7bfb783a1",
+     "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 delta at 2767f6a1: all 11 code_paths' LF sha256 recomputed and equal rev-4 code_identity (zoning_lot_item.py 88e1916a after the docstring-only ORCH correction 20801603; readers.py 91f607aa unchanged); research_status unchanged access_blocked.",
+     "Page-1 zoning-lot sentence, figures, bases, ceiling 29 Conditional and the rear-yard open check (23-344(b)/(c)(3), no conclusion) are unchanged from 4617c720 and remain faithful to NB-01/NB-03/NB-04 and the contract. The rework split only moved the non-key result text to the body token; every key figure is still read from the document's own value field, none recomputed.",
+     "G-6 decision unchanged: readers.py stays in code_paths (facade + open-items ordering realizing report.zoning_lot_warning); zoning_lot_item.py carries detection and the page-1 sentence.",
+     "S18 (narrowed by orchestrator scope correction 485b8ecb to this task's texts + the whole of page 1): met — the page-1 fallback caption now says 'city map outline (not surveyed)'; the remaining 'tax-map outline'/'Approximate tax map' texts live outside this task's paths or in the shared basis-rank display name and are owed by the GIS-wording sweep DB-245 (M5-T167)."
+    ],
+    "report": "project-control/reports/M5-T165-reviews.md"
    }
   ],
   "professional_review": null
