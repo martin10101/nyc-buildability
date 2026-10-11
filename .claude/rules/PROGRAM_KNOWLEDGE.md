@@ -94,6 +94,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - CI's lane-path check runs on every PR and enforces `lane-*` branches: a cross-lane `[ORCH-CORRECTED]` commit fails
   the control-plane job (#387 b70b869f). Put the correction on its own `task/` PR, merge it first, then
   rebuild the lane branch = reviewed head + one base merge (remerge-diff 0, patch-id unchanged, blobs same).
+- Report print WITHOUT the owner's preview (no server, no port): TestClient POST /report with the test providers
+  (benchmark_provider(with_zoning_lot=True), recorded_pack_provider(window pack)), then apps/web/scripts/
+  print-report-pdf.mjs on the HTML file; builders can check their own pages this way (wave 24).
 
 ## Key files / commands
 
