@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T01:35:36+00:00",
  "created_at": "2026-10-11T01:35:36+00:00",
- "updated_at": "2026-10-11T01:35:37+00:00",
+ "updated_at": "2026-10-11T01:38:58+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c8f060296942bb7658849ea2c9ec8a06077b06ca",
  "capture_head_sha": null,
@@ -98,7 +98,7 @@
   "D-093-R074"
  ],
  "requirements_id_digest_sha256": "796fbc274a4b27b8369acb868957ba593209329e867785bcdcff3ba6c7fe87fc",
- "requirements_content_digest_sha256": "63a214aa0294367a9f221c20ec8de8605bb09d94f36460de4f4480e51222f125",
+ "requirements_content_digest_sha256": "b1cb2879b3c6d3979b945e2d8de5fe0e8f75d007fdb94c0df992e7bee84a2bb3",
  "sources": [
   {
    "file": "source-001.md",
@@ -121,7 +121,9 @@
  ],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [],
+ "affected_tasks": [
+  "M0-T190"
+ ],
  "affected_prs": [],
  "affected_branches": [
   "task/research-verification-rules"
@@ -147,6 +149,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-002 (session 01TpXJN7: the owner's answer on the always-loaded size cap) and requirements D-093-R074 to R074, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T01:38:58+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T190 (research and verification workflow installed) to R003, R006, R007, R008, R010, R011, R012, R013, R014, R015, R016, R017, R018, R019, R020, R021, R022, R023, R024, R025, R026, R027, R029, R030, R031, R032, R033, R034, R035, R036, R037, R038, R039, R040, R041, R042, R043, R044, R045, R046, R047, R048, R049, R050, R051, R052, R053, R054, R055, R056, R057, R058, R059, R060, R061, R062, R064, R065, R066, R067, R068, R069, R070, R071, R073, R074 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 74,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T01:35:37+00:00",
+ "updated_at": "2026-10-11T01:38:58+00:00",
  "requirements": [
   {
    "id": "D-093-R001",
@@ -76,7 +76,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -169,7 +170,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -200,7 +202,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -231,7 +234,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -293,7 +297,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -324,7 +329,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -355,7 +361,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -386,7 +393,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -417,7 +425,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -448,7 +457,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -479,7 +489,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -510,7 +521,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -541,7 +553,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -572,7 +585,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -603,7 +617,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -634,7 +649,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -665,7 +681,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -696,7 +713,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -727,7 +745,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -758,7 +777,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -789,7 +809,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -820,7 +841,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -882,7 +904,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -913,7 +936,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -944,7 +968,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -975,7 +1000,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1006,7 +1032,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1037,7 +1064,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1068,7 +1096,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1099,7 +1128,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1130,7 +1160,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1161,7 +1192,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1192,7 +1224,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1223,7 +1256,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1254,7 +1288,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1285,7 +1320,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1316,7 +1352,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1347,7 +1384,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1378,7 +1416,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1409,7 +1448,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1440,7 +1480,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1471,7 +1512,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1502,7 +1544,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1533,7 +1576,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1564,7 +1608,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1595,7 +1640,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1626,7 +1672,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1657,7 +1704,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1688,7 +1736,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1719,7 +1768,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1750,7 +1800,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1781,7 +1832,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1812,7 +1864,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1843,7 +1896,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1874,7 +1928,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1905,7 +1960,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1967,7 +2023,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -1998,7 +2055,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2029,7 +2087,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2060,7 +2119,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2091,7 +2151,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2122,7 +2183,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2153,7 +2215,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2184,7 +2247,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2246,7 +2310,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
@@ -2277,7 +2342,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T190"
     ],
     "task_types": [],
     "milestones": [],
