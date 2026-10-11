@@ -84,6 +84,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   FIRST step — a lint miss costs a CI round. Bash tool `cd` PERSISTS cwd — cd back.
 - A subagent inherits its PARENT session's start-time instruction snapshot, not the files on disk: a
   rule merged mid-session reaches helpers only through the brief (M0-T191; D-093 dispatch clause).
+- Owner handoff = NOTHING keeps running (D-090-R941): save each helper's unfinished work into the session
+  folder (`git diff --binary`), stop it, record where it is; overrides the skill's let-helpers-finish line.
 - Reviewers read-only, may land in PRIMARY checkout: pin HEAD in prompt (worktree-landed
   reviewers verify via .git plumbing), forbid writes, HOLD commits till the wave returns.
 - Shared checkout with the companion session: heads-up before commits both ways; peer sticks

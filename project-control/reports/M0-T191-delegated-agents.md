@@ -4,7 +4,7 @@ Recorded 2026-10-11 by the orchestrator (session 01TpXJN7, transcript `33a4b56e-
 
 ## What was observed
 
-The D-093 files reached the main checkout at 02:58:28 UTC (fast-forward to main `9e107bf3`; `CLAUDE.md` 14,562 bytes with principle 21; the new rule `.claude/rules/research-and-verification.md`).
+The D-093 files reached the main checkout at 02:58:28 UTC (fast-forward to main `9e107bf3`; `CLAUDE.md` 14,562 characters (14,609 bytes) with principle 21 [ORCH-CORRECTED per G3 advisory 2026-10-11 03:12]; the new rule `.claude/rules/research-and-verification.md`).
 
 | Session | Started | Loaded instruction files (characters as the transcript records them) |
 |---|---|---|
