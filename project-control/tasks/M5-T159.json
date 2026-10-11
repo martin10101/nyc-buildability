@@ -88,15 +88,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "Internal 'see item N' links and the full link-destination check of the exported PDF are later work (report v3, P-3/P-7); this task covers the law links only.",
     "Wave-23 builders change readers.py and the report-page tests; this task must not touch them."
   ],
   "blockers": [],
   "created_at": "2026-10-11T05:24:09.886355+00:00",
-  "updated_at": "2026-10-11T06:14:36.478863+00:00",
+  "updated_at": "2026-10-11T06:14:46.392001+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
