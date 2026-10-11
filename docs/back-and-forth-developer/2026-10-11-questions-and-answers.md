@@ -363,6 +363,12 @@ to build).
   Yes changes), run the program on each lot, and compare with what the architect actually filed and built. Can we get
   everything from the city's websites, including permit filings?
 - **Developer (ANSWERED; OPEN question J4):** yes, a strong and scalable test.
+  - How it would work, in four steps: (1) find buildings actually filed and built recently in the city's public
+    permit data; those filed after the 2024 City of Yes changes are the most valuable because they follow today's
+    rules; (2) pick a spread of about 20-30: different districts, residential and mixed with shops, corner,
+    mid-block and odd-shaped lots; (3) run the program on each lot and compare its floor area, height and apartment
+    limit with what the architect filed and built; (4) give every difference a written cause.
+  - What the filings give: address, lot number, kind of job (new building), filing date and status.
   - The city publishes permit filings as open data (an older system and the newer DOB NOW, updated daily), plus
     certificates of occupancy; the older filings carry the proposed zoning floor area (the app already reads it); the
     newer filings dataset has about 95 columns, which must be confirmed one by one (floor area, height, stories,
@@ -371,6 +377,9 @@ to build).
     numbers, not drawings.
   - A real building is evidence of what one architect did, not proof of the maximum: buildings often stop below the
     maximum, use bonuses or special permits, merge lots, or were filed under the old rules. So the test is: the
-    program's legal maximum should never be below what was legally built, and every difference gets a stated cause.
+    program's legal maximum should never be below what was legally built (if it is, the program or our reading is
+    wrong), and every other difference gets a stated cause (for example: used the affordable-housing bonus; merged
+    with the lot next door; special permit; built below the maximum).
+  - The set becomes a growing check that is run again every time a rule changes.
   - Recommendation: a research task with the reading-only helpers (about 20-30 recent new buildings); the owner's own
     projects (J2) still add what public data cannot show (why choices were made, examiner objections).
