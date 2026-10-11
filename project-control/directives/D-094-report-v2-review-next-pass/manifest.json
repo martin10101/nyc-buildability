@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T04:50:28+00:00",
+ "updated_at": "2026-10-11T04:53:05+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -92,7 +92,7 @@
   "D-094-R068"
  ],
  "requirements_id_digest_sha256": "f74274df853fb37780d8e2f07a4fbd5d5d09264e112d5974829b6b0222b20c4f",
- "requirements_content_digest_sha256": "22dd20b4d5e347a301ce60504d764d50a490be26a87f857e2e604ce540a5dbe6",
+ "requirements_content_digest_sha256": "9bf1bc611716e91555a7523e57552f26f3b9ff85f3cc6e8856ee8ae337e07e6c",
  "sources": [
   {
    "file": "source-001.md",
@@ -105,7 +105,9 @@
  "amendments": [],
  "supersedes": [],
  "superseded_by": null,
- "affected_tasks": [],
+ "affected_tasks": [
+  "M5-T157"
+ ],
  "affected_prs": [],
  "affected_branches": [
   "task/wave23-density-zoning-lot"
@@ -125,6 +127,12 @@
    "actor": "orchestrator",
    "action": "captured",
    "note": "Captured before acting, by script from this session's transcript; nothing retyped. frozen_baseline_sha = main 67a4b844. Rows pending, bound to the sentinel D-094-BOOTSTRAP until tasks are contracted."
+  },
+  {
+   "at": "2026-10-11T04:53:05+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Scope correction of claimed task M5-T157 before any review of its new rows: bound it also to R033, R034, R035 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7 (transcript 72bfc3c3), claude-opus-5-5."
   }
  ]
 }

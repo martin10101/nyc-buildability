@@ -79,6 +79,12 @@
         "D-093-R034",
         "D-093-R068"
       ]
+    },
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R941"
+      ]
     }
   ],
   "directive_regime_version": "1.0",
@@ -96,6 +102,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; the orchestrator writes the correction"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T04:53:04+00:00",
+      "actor": "orchestrator",
+      "change": "Bound D-090-R941 (owner 2026-10-11 04:23 UTC, source-084: at a handoff nothing keeps running) to this session-continuity correction: one more PROGRAM_KNOWLEDGE pointer in an allowed path; no new path. Also the G3 advisory of 2026-10-11 03:12 (record line 7 says bytes where it means characters) is applied in the same delta."
     }
   ]
 }

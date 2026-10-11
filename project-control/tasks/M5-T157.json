@@ -238,6 +238,14 @@
         "D-093-R061",
         "D-093-R064"
       ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R033",
+        "D-094-R034",
+        "D-094-R035"
+      ]
     }
   ],
   "directive_regime_version": "1.0",
@@ -257,6 +265,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched from the work order draft"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T04:53:05+00:00",
+      "actor": "orchestrator",
+      "change": "Bound D-094-R033 (ZR 12-10 special density areas, external fact), R034 (resolve the special-density geography through the rule and evidence process; implementation limits recorded separately) and R035 (this does not establish the legal unit limit; the conditional 29-unit example is never promoted) from the owner's forwarded report-v2 review (D-094 source-001). They restate this task's objective (DB-231, record NB-05); no new path, no new scenario. Bound before the builder is re-dispatched."
     }
   ]
 }
