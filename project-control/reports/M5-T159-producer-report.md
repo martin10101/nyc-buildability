@@ -95,3 +95,40 @@ Reverted the mutation; `grep MUTATION` finds nothing; the 21 tests pass again.
   `<span class="nowrap">23-432</span>` label is preserved; only the href changed.
 
 ## Nothing needed outside scope.
+
+## Addendum — test made fixture-derived after M5-T157 integration (G3 rework)
+
+At integrated head `2bbfed94`, M5-T157 changed the shared benchmark fixture
+(outside this task's scope): a new shown value in `floor_area_allowance` ("Legal
+dwelling-unit limit ... 20,150 ÷ 680 = 29.63") cites `ZR 23-52`, `ZR 23-52(b)` and
+`ZR 11-25`. The evidence page now renders 12 law hrefs (23-22 ×4, 23-52 ×2, 23-432
+×6); `11-25` is captured only on the wrong host (`zr.planning.nyc.gov/entityprint/
+pdf/node/18433`), so it correctly prints as plain text with no link. **Production
+code is unchanged and correct.** Only `test_report_law_links.py` was too rigid: S1
+and S6 hard-coded `len(hrefs)==10` and the `{23-22, 23-432}` set.
+
+Fix (test file only): S1 and S6 now derive expectations from the fixture + capture
+files and never depend on how many values the fixture shows (M5-T158 part B will
+change it again). For every section the page renders: a section whose capture
+records an official section-page `request_url` gets exactly one link equal to that
+URL (last path segment == section); a section with no such capture prints as plain
+text (no `</span></a>`); no href is the homepage; `Counter(hrefs)` equals the
+derived expected links. A new explicit test `test_s1_known_sections_link_or_print_
+plain_from_captures` asserts 23-22, 23-52 (incl. from `23-52(b)`) and 23-432 link
+to their section pages and 11-25 is plain text — each URL read from the capture
+files, none typed. The oracle `_capture_section_url(page)` scans the capture dir
+and selects the capture's own `request_url` on the official host ending at that
+section; it uses local parsers, not `law_links`/`sources`.
+
+Self-checks at `2bbfed94` (lanes venv):
+- `python -m ruff check .` → `All checks passed!` (exit 0)
+- `pytest -q tests/drawings/report tests/rules` → `1204 passed` (exit 0)
+- new file alone → `22 passed` (exit 0)
+
+Mutation proof (repeat): forced `url = ".../"` (homepage) for the `23-22` section in
+`page_evidence._law_links`; `test_s1_every_rendered_section_links_to_its_capture_
+or_prints_plain`, `test_s1_known_sections_link_or_print_plain_from_captures`,
+`test_s4_every_rendered_href_passes_the_allowlist` and
+`test_s6_only_link_targets_change_labels_and_text_stay` all FAILED (4 failed, 18
+passed); reverted; `grep MUTATION` finds nothing; 22 pass again. Only
+`test_report_law_links.py` is modified in this rework.

@@ -2,15 +2,19 @@
 Zoning Resolution section URL from the repository's own captures - never the
 homepage, never a guessed URL. Scenarios S1-S6 of the packet.
 
-Expected URLs are read from the law-capture files (the snapshot ``request_url``),
-NOT from a program run. The evidence page is built through the real report builder
-on the committed benchmark results fixture; its hrefs are parsed from the output.
+Expected URLs are read from the law-capture files (the snapshot ``request_url``)
+and from whatever sections the fixture actually makes the page render - NOT from
+hard-coded counts or URL strings. Other wave-23 tasks (M5-T157, M5-T158) change
+the shared benchmark fixture, so nothing here may depend on how many values it
+shows. The evidence page is built through the real report builder; its hrefs are
+parsed from the output.
 """
 
 from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 from pathlib import Path
 
 import pytest
@@ -28,13 +32,17 @@ _CAPTURE_DIR = _REPO / "services" / "api" / "app" / "_zr_snapshots" / "v1"
 _HOMEPAGE = "https://zoningresolution.planning.nyc.gov/"
 _HOST = "https://zoningresolution.planning.nyc.gov"
 
+# Local parsers (independent of the module under test) so the oracle never derives
+# its expectations from law_links / sources.
+_PAGE_RE = re.compile(r"\d{1,3}-\d{1,4}")
+
 
 def _benchmark() -> dict:
     return json.loads(_FIXTURE.read_text("utf-8"))
 
 
 def _capture_request_url(snapshot_id: str) -> str:
-    """The ``source.request_url`` recorded by a capture file - the expected link."""
+    """The ``source.request_url`` recorded by one capture file."""
     data = json.loads((_CAPTURE_DIR / f"{snapshot_id}.snapshot.json").read_text("utf-8"))
     return data["source"]["request_url"]
 
@@ -52,41 +60,96 @@ def _last_segment(url: str) -> str:
     return url.split("#", 1)[0].rstrip("/").rsplit("/", 1)[-1]
 
 
-def _rendered_pages(results: dict, block_name: str) -> list[str]:
-    """The section pages the evidence page actually renders for a block (only the
-    non-withheld values are shown - exactly what the page iterates)."""
-    pages: list[str] = []
-    for row in readers.present_values(readers.answer_block(results, block_name)):
-        for section in row.get("zr_sections", []):
-            pages.append(sources.zr_section_page_number(section))
-    return pages
+def _visible_of(citation: object) -> str:
+    """The visible section text, sub-paragraph kept (e.g. ``"ZR 23-52(b)"`` ->
+    ``"23-52(b)"``)."""
+    text = str(citation or "").strip()
+    return text[2:].strip() if text.upper().startswith("ZR") else text
+
+
+def _page_of(visible: str) -> str:
+    """The bare section page of a visible number (sub-paragraph dropped)."""
+    match = _PAGE_RE.match(visible)
+    return match.group(0) if match else ""
+
+
+def _rendered_citations(results: dict) -> list[str]:
+    """Every section citation the evidence page actually renders, in document order:
+    the two figure blocks' non-withheld values - exactly what the page iterates."""
+    citations: list[str] = []
+    for block in ("floor_area_allowance", "permitted_envelope"):
+        for row in readers.present_values(readers.answer_block(results, block)):
+            citations.extend(row.get("zr_sections", []))
+    return citations
+
+
+def _capture_section_url(page: str) -> str | None:
+    """INDEPENDENT oracle: scan the capture files and return the official
+    section-PAGE URL a capture records for ``page`` (its own ``request_url`` on the
+    official host, ending at that section), or ``None`` when no capture records one -
+    in which case the section must print as plain text. No URL is typed here."""
+    if not page:
+        return None
+    for path in sorted(_CAPTURE_DIR.glob("*.snapshot.json")):
+        url = json.loads(path.read_text("utf-8")).get("source", {}).get("request_url", "")
+        if (
+            url.startswith(_HOST + "/article-")
+            and "?" not in url
+            and "@" not in url
+            and _last_segment(url) == page
+        ):
+            return url
+    return None
 
 
 # ----------------------------------------------------------------- S1
-def test_s1_every_href_is_the_exact_section_and_never_the_homepage() -> None:
+def test_s1_every_rendered_section_links_to_its_capture_or_prints_plain() -> None:
+    """S1: every law href is the exact captured section URL whose last path segment
+    equals the cited section; a section with no capture prints as plain text; no href
+    is the homepage. Derived from the fixture + captures, independent of counts."""
     results = _benchmark()
     evidence = _evidence_html(results)
+    citations = _rendered_citations(results)
+    assert citations, "the benchmark evidence page must cite at least one section"
+
+    expected_links: list[str] = []
+    for citation in citations:
+        visible = _visible_of(citation)
+        page = _page_of(visible)
+        url = _capture_section_url(page)
+        label = (f'New York City Zoning Resolution, Section '
+                 f'<span class="nowrap">{visible}</span>')
+        if url:
+            assert url != _HOMEPAGE
+            assert _last_segment(url) == page          # last path segment == section
+            assert f'<a href="{url}">{label}</a>' in evidence  # exactly this link form
+            expected_links.append(url)
+        else:
+            assert label in evidence                   # printed ...
+            assert f'{label}</a>' not in evidence       # ... as plain text, no link
+
     hrefs = _law_hrefs(evidence)
+    assert _HOMEPAGE not in hrefs
+    # No extra or missing links: the hrefs are exactly the valid captured sections.
+    assert Counter(hrefs) == Counter(expected_links)
 
-    # The pages the page renders (benchmark: 23-22 x4, 23-432 x6).
-    rendered = _rendered_pages(results, "floor_area_allowance") + _rendered_pages(
-        results, "permitted_envelope")
-    assert rendered, "the benchmark evidence page must cite at least one section"
-    assert len(hrefs) == len(rendered)
 
-    expected_by_page = {
-        "23-22": _capture_request_url("zr-23-22"),
-        "23-432": _capture_request_url("zr-23-432"),
-    }
-    for href in hrefs:
-        assert href != _HOMEPAGE
-        # every href is an official article/chapter/section URL ...
-        assert href.startswith(_HOST + "/article-")
-        page = _last_segment(href)
-        # ... whose last path segment equals a cited section number ...
-        assert page in rendered
-        # ... and equals the URL the capture itself records.
-        assert href == expected_by_page[page]
+def test_s1_known_sections_link_or_print_plain_from_captures() -> None:
+    """The specific sections the orchestrator named: 23-22, 23-52 (incl. from
+    23-52(b)) and 23-432 link to their section pages; 11-25 (captured only on the
+    wrong host) is plain text. Every expected URL is read from the capture files."""
+    evidence = _evidence_html(_benchmark())
+    for page, visible in (("23-22", "23-22"), ("23-52", "23-52"),
+                          ("23-52", "23-52(b)"), ("23-432", "23-432")):
+        url = _capture_section_url(page)
+        assert url is not None and _last_segment(url) == page
+        label = (f'New York City Zoning Resolution, Section '
+                 f'<span class="nowrap">{visible}</span>')
+        assert f'<a href="{url}">{label}</a>' in evidence
+
+    assert _capture_section_url("11-25") is None  # only a wrong-host capture exists
+    assert '<span class="nowrap">11-25</span>' in evidence
+    assert '11-25</span></a>' not in evidence     # plain text, never linked
 
 
 def test_s1_index_never_maps_a_section_to_the_homepage() -> None:
@@ -197,20 +260,24 @@ def test_s5_twelve_ten_links_to_the_section_with_an_anchor_only_if_captured() ->
 
 # ----------------------------------------------------------------- S6
 def test_s6_only_link_targets_change_labels_and_text_stay() -> None:
-    evidence = _evidence_html(_benchmark())
-    # The visible law labels are unchanged (same wording as before this task) ...
-    assert ('New York City Zoning Resolution, Section '
-            '<span class="nowrap">23-22</span>') in evidence
-    assert ('New York City Zoning Resolution, Section '
-            '<span class="nowrap">23-432</span>') in evidence
-    # ... only the href targets moved off the homepage onto the exact sections.
-    hrefs = _law_hrefs(evidence)
-    assert len(hrefs) == 10  # 23-22 x4 + 23-432 x6, as the planner measured
+    """S6: only the link targets change - every rendered section's visible label is
+    intact and the hrefs are exactly the captured section URLs, never the homepage.
+    Derived from the fixture + captures, so it survives later fixture changes."""
+    results = _benchmark()
+    evidence = _evidence_html(results)
+    citations = _rendered_citations(results)
+
+    # Visible labels intact (no figure, label or other text moved).
+    for citation in citations:
+        assert (f'New York City Zoning Resolution, Section '
+                f'<span class="nowrap">{_visible_of(citation)}</span>') in evidence
+
+    pages = {_page_of(_visible_of(citation)) for citation in citations}
+    expected = {url for url in (_capture_section_url(page) for page in pages) if url}
+    hrefs = set(_law_hrefs(evidence))
+    assert hrefs == expected
     assert _HOMEPAGE not in hrefs
-    assert set(hrefs) == {
-        _capture_request_url("zr-23-22"),
-        _capture_request_url("zr-23-432"),
-    }
+    assert expected, "at least one rendered section must link to a captured URL"
 
 
 def test_s6_homepage_constant_is_gone_from_page_evidence() -> None:
