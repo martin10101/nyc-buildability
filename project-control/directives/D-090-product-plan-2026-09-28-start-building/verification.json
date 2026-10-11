@@ -7006,30 +7006,49 @@
     "D-090-R937"
    ],
    "producer": "geospatial-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "88bc99b88faad409f32c650cdf9ca21606d8ec94",
+   "reviewed_manifest_sha256": "34461f6c43c78eba07c85c565a0c561aa9fcc9283eff88974075ef044ba13ed2",
    "requirements": [
     {
      "id": "D-090-R843",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share is the DATA a site plan needs for adjoining context; I built the 1.1.0 map document from the recorded pack via app.api.v1.report_context.recorded_pack_provider and saw contract_version \"1.1.0\" with tax_lots (status available, 200 neighbour entries, subject 4073340070 absent), building_footprints (available), streets (available) and context_window {xmin 1048388.63, ymin 215910.44, xmax 1049311.58, ymax 216831.10} = subject bbox +/-400 ft.",
+      "Each layer carries source and date in provenance (tax_lots source_id nyc-dcp-mappluto-arcgis, source_data_last_edited 2026-09-09; streets nyc-dcp-dcm-street-centerline-arcgis, 2025-12-01; footprints nyc-oti-building-footprints-arcgis, 2026-09-27) and the measurement basis is EPSG:2263 US survey feet (map_context crs/units/measurement); a refused layer becomes layer_unavailable with its reason and the provider never raises (test_a_refusing_fetcher_makes_only_that_layer_unavailable passed), so a drawing can state the limitation.",
+      "The printed pages (print-w22g page 3) show the data drawn: lot outline, neighbouring lots, existing building footprints, street names with mapped widths (NORTHERN BOULEVARD 100 ft / 215 STREET, 215 PLACE, 216 STREET 60 ft), edge-length dimensions (103.88/99.98/99.98/101.71 ft), a north arrow, a real scale bar, a legend, and a captioned source/date/\"nothing is surveyed\" measurement basis.",
+      "Stays open for the rest: the drawn-plan content is M5-T155 (drawings) and M5-T156 (report), whose verification rows for R843 are still pending (verifier \"\"); yards/setbacks are deliberately not drawn (ruling Y6, engine work not done) and are shown as \"Not known\"/\"Not worked out yet\" \u2014 that engine work remains owed and the row stays open in the registry for the sibling tasks.",
+      "Verifier's carry-forward condition met at 88bc99b8: the task's allowed-path files are identical to those verified at 7adc476e (content identity 34461f6c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 one independent data-contract-verifier; G3 one independent code-reviewer; G4 one independent qa-engineer; G5 one independent security-reviewer; delta reviews by the same four at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T154-DCV.md."
+     ],
+     "reviewed_sha": "88bc99b88faad409f32c650cdf9ca21606d8ec94"
     },
     {
      "id": "D-090-R936",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share is fetching and recording the surroundings; I independently re-derived with shapely that lot 4073340001 shares 99.9765 ft with the subject (within 0.01 ft of the 99.98 ft line), lot 4073340011 shares 101.709 ft and lot 4073340061 shares 2.2244 ft, and that streets are named with mapped widths Northern Boulevard 100, 215 Place 60, 215 Street 60 \u2014 matching S7.",
+      "The connector requests no personal field: OUT_FIELDS = (OBJECTID, BBL, Block, Lot, Address, Version) in app/connectors/mappluto_window_arcgis.py:109, and the recorded MapPLUTO window (201 features) has attribute keys exactly {Address, BBL, Block, Lot, OBJECTID, Version} with zero OwnerName hits.",
+      "The printed site plan (page 3) and block close-up (page 2) render the lot among its surroundings: streets drawn as streets with names and mapped widths, the Northern Boulevard x 215 Place corner, neighbouring lots and existing buildings, with the sheet named (\"What constrains the design?\" / \"Where is the lot?\") \u2014 not an isolated outline.",
+      "Stays open for the rest: naming and rendering the site drawing for the reader is M5-T155/M5-T156 work; their R936 verification rows are still pending (verifier \"\").",
+      "Verifier's carry-forward condition met at 88bc99b8: the task's allowed-path files are identical to those verified at 7adc476e (content identity 34461f6c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 one independent data-contract-verifier; G3 one independent code-reviewer; G4 one independent qa-engineer; G5 one independent security-reviewer; delta reviews by the same four at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T154-DCV.md."
+     ],
+     "reviewed_sha": "88bc99b88faad409f32c650cdf9ca21606d8ec94"
     },
     {
      "id": "D-090-R937",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task's share is the two windows and their provenance; I confirmed the streets window = subject bbox +/-1,000 ft {xmin 1047788.63, ymin 215310.44, xmax 1049911.58, ymax 217431.10} and the lots/footprints context_window = +/-400 ft, each layer carrying source_id and source_data_last_edited.",
+      "The printed location sheet (page 2) renders a neighbourhood map with the subject lot marked and a 0-1,000 ft scale bar, and a block close-up with a 0-400 ft scale bar, each captioned with its source and last-edited date in plain words (DCM \"edited 1 Dec 2025\", MapPLUTO \"edited 9 Sep 2026\", footprints \"edited 27 Sep 2026\") and no URL, field name or code word \u2014 the context maps of DB-222.",
+      "The requirement is satisfied at neighbourhood scale (\"city or neighbourhood scale\"); a separate city-overview map is not produced (ruling Y10 uses neighbourhood + block), which is within the row's \"or\".",
+      "Stays open for the rest: the location-page rendering is M5-T156 work and M5-T155's drawings; their R937 verification rows are still pending (verifier \"\").",
+      "Verifier's carry-forward condition met at 88bc99b8: the task's allowed-path files are identical to those verified at 7adc476e (content identity 34461f6c), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 one independent data-contract-verifier; G3 one independent code-reviewer; G4 one independent qa-engineer; G5 one independent security-reviewer; delta reviews by the same four at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T154-DCV.md."
+     ],
+     "reviewed_sha": "88bc99b88faad409f32c650cdf9ca21606d8ec94"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T00:41:59+00:00"
   },
   {
    "directive_id": "D-090",
