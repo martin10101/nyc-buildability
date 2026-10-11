@@ -134,7 +134,8 @@
     "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
     "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
     "docs/research/evidence-records/NB-05-special-density-area.json",
-    "project-control/reports/M5-T157-producer-report.md"
+    "project-control/reports/M5-T157-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py"
   ],
   "forbidden_paths": [
     "services/api/app/rules/rulesets/",
@@ -272,6 +273,11 @@
       "at": "2026-10-11T04:53:05+00:00",
       "actor": "orchestrator",
       "change": "Bound D-094-R033 (ZR 12-10 special density areas, external fact), R034 (resolve the special-density geography through the rule and evidence process; implementation limits recorded separately) and R035 (this does not establish the legal unit limit; the conditional 29-unit example is never promoted) from the owner's forwarded report-v2 review (D-094 source-001). They restate this task's objective (DB-231, record NB-05); no new path, no new scenario. Bound before the builder is re-dispatched."
+    },
+    {
+      "at": "2026-10-11T05:29:21+00:00",
+      "actor": "orchestrator",
+      "change": "Added services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py: a direct consumer of the changed behaviour (it runs the benchmark through run_engine_and_result_ways); two of its tests assert the old withheld unit limit and fail. The builder found it, did not edit it (out of scope), and reported the exact remedy. No row binding changes."
     }
   ]
 }
