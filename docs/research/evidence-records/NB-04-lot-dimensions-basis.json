@@ -1,1 +1,280 @@
-{"schema": "placeholder (M0-T190)"}
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-04",
+ "title": "215-16 Northern Boulevard: which dimensions are printed, recorded or GIS, and what the 2017 survey settles",
+ "revision": 1,
+ "last_changed": "2026-10-11",
+ "question": {
+  "text": "Which dimensions of lot 70 come from printed tax-map labels, administrative records and GIS, and what must the named 2017 survey settle?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
+  "lot_scope": "tax_lot",
+  "site_scope": "whole_site",
+  "time_scope": "current_law"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "tax_map",
+   "authority": "NYC Department of Finance (Digital Tax Map library)",
+   "title": "Tax map of block 7334, effective 2017-03-22",
+   "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420170322143246",
+   "reference": "map 40733420170322143246",
+   "page": null,
+   "document_date": "effective 2017-03-22",
+   "retrieved": "2026-10-10",
+   "excerpt": "lot 70 labelled 100.76 ft on Northern Boulevard and 100 ft deep; lot 1 labelled 99.25 by 100 ft (the owner research's reading of page 1; the orchestrator re-fetched this map on 2026-10-10 and found it byte-identical) (official file not kept in the repository; its SHA-256 b734d49b88df8de0d13ba0c79bff3ac5032752af4ec6050385f6694187a01e24 is listed in docs/research/owner-research/2026-10-10-215-16-northern-evidence/source-manifest.json)",
+   "saved_copy": null,
+   "sha256": null
+  },
+  {
+   "id": "E2",
+   "kind": "tax_map",
+   "authority": "NYC Department of Finance (Digital Tax Map library)",
+   "title": "Tax map of block 7334, effective 2021-07-29 (flagged current)",
+   "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420210729120533",
+   "reference": "map 40733420210729120533",
+   "page": null,
+   "document_date": "effective 2021-07-29",
+   "retrieved": "2026-10-10",
+   "excerpt": "the same 100.76 by 100 ft labels for lot 70 and 99.25 by 100 ft for lot 1; an ALLEY label across the southern part of the northern lots (owner research's reading; map re-fetched byte-identical 2026-10-10) (official file not kept in the repository; its SHA-256 cefd083d936cbd0a4e41e6763ed19e554a5726706c19bd5c0606695b9a6fce0c is listed in docs/research/owner-research/2026-10-10-215-16-northern-evidence/source-manifest.json)",
+   "saved_copy": null,
+   "sha256": null
+  },
+  {
+   "id": "E3",
+   "kind": "dataset_record",
+   "authority": "NYC Department of City Planning (PLUTO 26v2 via NYC Open Data)",
+   "title": "PLUTO rows for block 7334",
+   "url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?borough=QN&block=7334&%24select=borough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Coverlay1%2Cspdist1%2Csplitzone%2Clotarea%2Clotfront%2Clotdepth%2Cbbl%2Cappbbl%2Cappdate%2Cversion&%24limit=1000",
+   "reference": "PLUTO 26v2",
+   "page": null,
+   "document_date": "26v2",
+   "retrieved": "2026-10-10",
+   "excerpt": "lot 70: lotarea 10075, lotfront 100.7600000, lotdepth 100.0000000, appdate 2017-04-07; lot 1: lotarea 9925, lotfront 99.2500000",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/pluto.json",
+   "sha256": "0bab4cedd1617419744b967d547b5db435c57deda4840b429a0549a840604d05"
+  },
+  {
+   "id": "E4",
+   "kind": "gis_geometry",
+   "authority": "NYC Department of City Planning (MapPLUTO 26v2) - derived by the owner research",
+   "title": "Lot 70 outline measurements (EPSG:2263, US survey feet)",
+   "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BoroCode%3D4+AND+Block%3D7334&outFields=OBJECTID%2CBoroCode%2CBorough%2CBBL%2CBlock%2CLot%2CAddress%2CZoneDist1%2CZoneDist2%2COverlay1%2CSPDist1%2CSplitZone%2CLotArea%2CLotFront%2CLotDepth%2CVersion%2CShape__Area%2CShape__Length%2CAPPBBL%2CAPPDate&outSR=2263&f=json",
+   "reference": "MapPLUTO 26v2",
+   "page": null,
+   "document_date": "26v2",
+   "retrieved": "2026-10-10",
+   "excerpt": "lot 70 area 10387.99 sq ft; north edge 103.87921 ft (not a survey)",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/geometry-calculations.json",
+   "sha256": "31f1d4bfee60640727d74248b33da446e491d9871c571726f43a5e3907ad2762"
+  },
+  {
+   "id": "E5",
+   "kind": "dataset_record",
+   "authority": "NYC Department of Finance (Digital Tax Map change history)",
+   "title": "Tax-map change history, block 7334, transaction 76338",
+   "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/9/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+   "reference": "transaction 76338, object 40104",
+   "page": null,
+   "document_date": "change date 2017-03-22",
+   "retrieved": "2026-10-10",
+   "excerpt": "Lot Apportionment; Auth_for_Change: \"Recorded deeds CRFN# 2005000015416, 01/07/2005  Survey by Christopher M. Buckley, 2/21/2017\"",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_9.json",
+   "sha256": "9835ba0399a9177a9ba8e44d169a7658386ddbd28931571237bc0e2ceb4578af"
+  },
+  {
+   "id": "E6",
+   "kind": "filing_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB Job Application Filings)",
+   "title": "DOB BIS job 440655961 (builders pavement plan)",
+   "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4623241",
+   "reference": "job 440655961 doc 01",
+   "page": null,
+   "document_date": "filed 12/11/2020; signed off 07/22/2026",
+   "retrieved": "2026-10-10",
+   "excerpt": "job_description \"BPP FOR 200.76' TOTAL FRONTAGE - CORNER LOT, FRONTAGE ON 215 PLACE:100', FRONTAGE ON NORTHERN BLVD:100.76' - FILED IN CONJUNCTION WITH NB #121329641. NO CHANGE IN USE, EGRESS, OR OCCUPANCY.\"",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4623241.json",
+   "sha256": "4d1b0bf11c0796f5e42f97a82e49911202352e9e73e6ebf0e080801971579c8f"
+  },
+  {
+   "id": "E7",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: lot area",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-lot-area)",
+   "page": null,
+   "document_date": "last amended 1964-02-20",
+   "retrieved": "2026-10-07",
+   "excerpt": "\"Lot area\" is the area of a #zoning lot#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-lot-area.snapshot.json",
+   "sha256": "c579b8dc916e3f3080226ef85b96318d0145dfe3b970e2596117ef1ad400241f"
+  }
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": [
+   "ZR 12-10 'lot area' (E7)",
+   "the owner's measurement rule of 2026-10-06: an outline's area is a drawing measure, never used in a zoning calculation (docs/measurement-basis/)"
+  ],
+  "exceptions_considered": [
+   "Printed tax-map dimensions and graphic coordinates are different kinds of evidence; neither is a survey.",
+   "100.76 x 100 = 10,076, not 10,075: the descriptors are not an exact rectangle."
+  ],
+  "reading": "No deed or survey area has been read. The printed tax maps, PLUTO and the DOB pavement-plan text agree on a 100.76 ft frontage; the GIS outline is wider. The program uses PLUTO's recorded area for zoning figures with its basis named, and keeps the GIS outline for drawing only.",
+  "applies": "conditional"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {
+    "name": "lot 70 frontage",
+    "value": "100.76",
+    "units": "ft",
+    "basis": "printed_tax_map",
+    "scope": "existing; tax lot"
+   },
+   {
+    "name": "lot 70 depth",
+    "value": "100",
+    "units": "ft",
+    "basis": "printed_tax_map",
+    "scope": "existing; tax lot"
+   },
+   {
+    "name": "lot 70 area",
+    "value": "10075",
+    "units": "sq ft",
+    "basis": "administrative_record",
+    "scope": "existing; tax lot"
+   },
+   {
+    "name": "lot 70 area",
+    "value": "10387.99",
+    "units": "sq ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; tax lot outline"
+   },
+   {
+    "name": "lot 70 north edge",
+    "value": "103.87921",
+    "units": "ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; tax lot outline"
+   },
+   {
+    "name": "Northern Boulevard frontage",
+    "value": "100.76",
+    "units": "ft",
+    "basis": "filing_attribute",
+    "scope": "existing; DOB 440655961 description"
+   }
+  ],
+  "double_count_risk": "Mixing bases: a GIS-derived footprint (about 10,310 sq ft) applied to a recorded-area lot."
+ },
+ "conclusion": {
+  "research_status": "conflicting_evidence",
+  "observed_facts": [
+   "Tax maps 2017 and 2021: lot 70 labelled 100.76 by 100 ft.",
+   "PLUTO 26v2: lot 70 area 10075 sq ft, frontage 100.7600000, depth 100.0000000.",
+   "MapPLUTO 26v2 outline: 10387.99 sq ft; north edge 103.87921 ft.",
+   "DOF transaction 76338 (2017-03-22): \"Recorded deeds CRFN# 2005000015416, 01/07/2005  Survey by Christopher M. Buckley, 2/21/2017\"."
+  ],
+  "interpretation": "",
+  "conflicts": [
+   "Area 10075 sq ft (recorded) against 10387.99 sq ft (GIS): 312.99 sq ft, about 3.11%.",
+   "Frontage 100.76 ft (printed, PLUTO, DOB text) against 103.87921 ft (GIS).",
+   "Apportionment date 2017-03-22 (tax-map history) against PLUTO appdate 2017-04-07."
+  ],
+  "conditions": [
+   "Zoning figures use the recorded area 10,075 sq ft with its basis named; the footprint by portion stays withheld (questionnaire A1, choice 1 meanwhile)."
+  ],
+  "settled_by": [
+   "the Christopher M. Buckley survey of 2017-02-21 named in DOF transaction 76338",
+   "the 2018 deed 2018013000919001 with its Schedule A",
+   "a certified street-line record"
+  ]
+ },
+ "searches": [
+  {
+   "source": "DOF, the owner, the surveyor",
+   "query": "Christopher M. Buckley survey dated 2017-02-21",
+   "result": "not_found",
+   "missing_item": "the survey itself (not published online)",
+   "affected_outputs": [
+    "lot_area",
+    "lot_coverage.allowed_footprint"
+   ],
+   "next_step": "ask the owner for the survey or authority to request it (questionnaire F1)"
+  },
+  {
+   "source": "ACRIS document images",
+   "query": "deed 2018013000919001",
+   "result": "access_blocked",
+   "missing_item": "the deed's legal description",
+   "affected_outputs": [
+    "lot_area"
+   ],
+   "next_step": "owner saves it in a browser (questionnaire F1)"
+  },
+  {
+   "source": "DCP City Map alteration maps",
+   "query": "alterations at the site",
+   "result": "found",
+   "missing_item": "",
+   "affected_outputs": [],
+   "next_step": ""
+  },
+  {
+   "source": "DOF block-boundary change table",
+   "query": "block 7334",
+   "result": "not_found",
+   "missing_item": "a recorded boundary change",
+   "affected_outputs": [
+    "lot_area"
+   ],
+   "next_step": "the certified street-line record in settled_by"
+  }
+ ],
+ "implementation": {
+  "affected_outputs": [
+   "lot_area",
+   "lot_coverage.allowed_footprint",
+   "floor_area.allowance",
+   "drawing.site_plan_outline"
+  ],
+  "code_paths": [
+   "services/api/app/connectors/mappluto_geometry_arcgis.py",
+   "services/api/app/connectors/mappluto_lot_outline.py"
+  ],
+  "code_identity": {
+   "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
+   "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8"
+  },
+  "worked_example": {
+   "inputs": "Recorded area 10075 sq ft; GIS outline 10387.99 sq ft.",
+   "expected": "Zoning figures are worked on 10,075 sq ft and say so; the GIS area never enters a zoning calculation; the footprint by portion stays withheld until a survey or deed settles the area.",
+   "basis": "The owner's measurement rule of 2026-10-06 and questionnaire A1's meanwhile line.",
+   "prepared_by": "orchestrator (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; not professionally checked"
+  },
+  "regression_cases": [
+   "A GIS outline area never enters a zoning calculation (measurement-basis tests).",
+   "Area is never derived as frontage x depth (100.76 x 100 = 10,076, not 10,075)."
+  ],
+  "dependency_assessment": [
+   "Every lot whose recorded area and GIS outline disagree has the same two bases; the program already keeps them apart (measurement in EPSG:2263 via mappluto_geometry_arcgis.py; display only via mappluto_lot_outline.py). No change; the survey would settle this lot only."
+  ]
+ },
+ "review": {
+  "producer": "orchestrator",
+  "agent_reviews": [],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-10",
+  "method": "live_fetch",
+  "snapshot_date": null,
+  "limitation": "The tax maps and MapPLUTO outline were re-fetched by the orchestrator on 2026-10-10 (identical); no survey or deed was read."
+ },
+ "promotion": {
+  "requested_label": null
+ }
+}

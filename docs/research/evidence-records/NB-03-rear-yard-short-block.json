@@ -1,1 +1,251 @@
-{"schema": "placeholder (M0-T190)"}
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-03",
+ "title": "215-16 Northern Boulevard: rear yard along the short dimension of the block (ZR 23-344(b), (c)(3))",
+ "revision": 1,
+ "last_changed": "2026-10-11",
+ "question": {
+  "text": "Is a rear yard required on lot 70 (or on a zoning lot of lots 1 and 70) beyond the corner area, given ZR 23-344(b) and how the neighbouring lot lines are classified for 23-344(c)(3)?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
+  "lot_scope": "zoning_lot_unconfirmed",
+  "site_scope": "whole_site",
+  "time_scope": "current_law"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-344 Additional rear yard modifications, paragraph (b)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344",
+   "reference": "ZR 23-344 (zr-23-344)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-09-30",
+   "excerpt": "In the districts indicated, whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+   "sha256": "bab1ab29cbbde739bf9daa05190de66ddf4ee17e878e982087c17310368380f4"
+  },
+  {
+   "id": "E2",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: short dimension of a block",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-short-dimension-of-a-block)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "The “short dimension of a block” shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json",
+   "sha256": "bfffc4ec38e4cabbd642cd4a6dbf8b03136552b201d4ac65c5c42502ecd45ced"
+  },
+  {
+   "id": "E3",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: rear lot line",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-lot-line-rear)",
+   "page": null,
+   "document_date": "last amended 1961-12-15",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"rear lot line\" is any #lot line# of a #zoning lot# except a #front lot line#, which is parallel or within 45 degrees of being parallel to, and does not intersect, any #street line# bounding such #zoning lot#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-lot-line-rear.snapshot.json",
+   "sha256": "9ba36ae275cbb4c2a034bc6fc69ee7e98243b755892ae1eda2561d2c78dde3f2"
+  },
+  {
+   "id": "E4",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: side lot line",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-lot-line-side)",
+   "page": null,
+   "document_date": "last amended 1961-12-15",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"side lot line\" is any #lot line# which is not a #front lot line# or a #rear lot line#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-lot-line-side.snapshot.json",
+   "sha256": "ecc20e177242b0037da8141d6a54de20274c78305fb45d9c2707a5cfca5dd2af"
+  },
+  {
+   "id": "E5",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-344 paragraph (c)(3)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344",
+   "reference": "ZR 23-344 (zr-23-344)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-09-30",
+   "excerpt": "(3) In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+   "sha256": "bab1ab29cbbde739bf9daa05190de66ddf4ee17e878e982087c17310368380f4"
+  },
+  {
+   "id": "E6",
+   "kind": "tax_map",
+   "authority": "NYC Department of Finance (Digital Tax Map library)",
+   "title": "Tax map of block 7334, effective 2021-07-29 (flagged current)",
+   "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420210729120533",
+   "reference": "map 40733420210729120533",
+   "page": null,
+   "document_date": "effective 2021-07-29",
+   "retrieved": "2026-10-10",
+   "excerpt": "the same 100.76 by 100 ft labels for lot 70 and 99.25 by 100 ft for lot 1; an ALLEY label across the southern part of the northern lots (owner research's reading; map re-fetched byte-identical 2026-10-10) (official file not kept in the repository; its SHA-256 cefd083d936cbd0a4e41e6763ed19e554a5726706c19bd5c0606695b9a6fce0c is listed in docs/research/owner-research/2026-10-10-215-16-northern-evidence/source-manifest.json)",
+   "saved_copy": null,
+   "sha256": null
+  },
+  {
+   "id": "E7",
+   "kind": "gis_geometry",
+   "authority": "NYC Department of City Planning (MapPLUTO 26v2) - derived by the owner research",
+   "title": "Block 7334 parcel geometry and derived measurements (EPSG:2263, US survey feet)",
+   "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BoroCode%3D4+AND+Block%3D7334&outFields=OBJECTID%2CBoroCode%2CBorough%2CBBL%2CBlock%2CLot%2CAddress%2CZoneDist1%2CZoneDist2%2COverlay1%2CSPDist1%2CSplitZone%2CLotArea%2CLotFront%2CLotDepth%2CVersion%2CShape__Area%2CShape__Length%2CAPPBBL%2CAPPDate&outSR=2263&f=json",
+   "reference": "MapPLUTO 26v2, block 7334",
+   "page": null,
+   "document_date": "26v2",
+   "retrieved": "2026-10-10",
+   "excerpt": "combined Northern Boulevard frontage of lots 1 and 70: 203.12900 ft; maximum distance of lot 70 from the Northern Boulevard line: 99.97460 ft; lot 70 shares 101.70896 ft with lot 11 and 2.22445 ft with lot 61 (not a survey)",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/geometry-calculations.json",
+   "sha256": "31f1d4bfee60640727d74248b33da446e491d9871c571726f43a5e3907ad2762"
+  }
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": [
+   "ZR 23-344 (a), (b), (c)(1) to (3), (d) (E1, E5)",
+   "ZR 12-10 short dimension of a block (E2)",
+   "ZR 12-10 rear lot line (E3) and side lot line (E4)",
+   "ZR 23-342 rear yard requirements"
+  ],
+  "exceptions_considered": [
+   "23-344(a) is a point test (within 100 ft of the intersection of two street lines); it neither replaces nor defeats the street-line test of (b). The 144.60 ft GIS diagonal from the corner tests (a) only.",
+   "23-344(c) applies only to the portion of a side lot line beyond 100 ft of the street line it intersects.",
+   "23-344(d) applies if the confirmed layout has several rear lot lines.",
+   "The C2-2 overlay's residential/commercial rules (ZR 35-22, 35-50) were not read here.",
+   "A rear-yard exception waives no lot coverage, setback, window or open-space rule and no private right."
+  ],
+  "reading": "Block 7334's Northern Boulevard frontage between 215 Street and 215 Place measures 200.01 ft on the tax map and 203.13 ft in GIS; both are under 230 ft, so it is a short dimension of a block (E2). Lots 1 and 70 front it. Their depth is 100 ft on the tax map and at most 99.97 ft in GIS, so under (b) no rear yard would be required within 100 ft of the Northern Boulevard street line, which covers the lot. The margin at the far line is about 0.03 ft in GIS, inside the records' disagreement, so the survey decides it. Lots 11 and 61 front 215 Place and 215 Street; their north lines are neither front nor rear lines of those lots, so they are side lot lines (E3, E4), and under (c)(3) (R6 to R12) no rear yard would be required where the subject's rear lot line coincides with them. A labelled draft reading, not a DOB determination.",
+  "applies": "conditional"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {
+    "name": "Northern Boulevard block frontage (lots 1 and 70)",
+    "value": "200.01",
+    "units": "ft",
+    "basis": "printed_tax_map",
+    "scope": "existing; whole block frontage between the two streets"
+   },
+   {
+    "name": "Northern Boulevard block frontage (lots 1 and 70)",
+    "value": "203.12900",
+    "units": "ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; same frontage, MapPLUTO outline"
+   },
+   {
+    "name": "lot 70 depth",
+    "value": "100",
+    "units": "ft",
+    "basis": "printed_tax_map",
+    "scope": "existing; tax lot"
+   },
+   {
+    "name": "lot 70 maximum distance from the Northern Boulevard line",
+    "value": "99.97460",
+    "units": "ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; tax lot"
+   }
+  ],
+  "double_count_risk": "none identified; the line between lots 1 and 70 is internal (not a rear lot line) if they are one zoning lot, and external if lot 70 is its own zoning lot."
+ },
+ "conclusion": {
+  "research_status": "interpretation_awaiting_review",
+  "observed_facts": [
+   "ZR 12-10: the short dimension of a block is a block frontage where the dimension between any two bounding streets measures less than 230 feet.",
+   "ZR 23-344(b): no rear yard is required within 100 feet of the street line of the short dimension of a block where a front lot line of a zoning lot coincides with it.",
+   "Tax map (2017, 2021): lot 70 100.76 by 100 ft and lot 1 99.25 by 100 ft; frontages sum to 200.01 ft.",
+   "GIS: combined frontage 203.12900 ft; lot 70's maximum distance from the Northern line 99.97460 ft."
+  ],
+  "interpretation": "Conditional no-rear-yard reading under 23-344(b), with 23-344(c)(3) as an alternative along the neighbours' side lot lines; awaiting independent review; not a DOB determination.",
+  "conflicts": [
+   "Block frontage 200.01 ft (tax map) against 203.13 ft (GIS): both under 230 ft, so the same outcome.",
+   "Depth 100 ft (tax map) against 99.97 ft (GIS): about 0.03 ft from the 100 ft line."
+  ],
+  "conditions": [
+   "The zoning lot (NB-01) decides whether the line between lots 1 and 70 is internal.",
+   "The neighbours' tax-lot lines must also be their zoning-lot lines.",
+   "The operative street line and depth come from a survey or the approved ZD1."
+  ],
+  "settled_by": [
+   "the Christopher M. Buckley survey of 2017-02-21 or a later certified survey",
+   "the approved ZD1 (yard diagram) of NB 440608941"
+  ]
+ },
+ "searches": [
+  {
+   "source": "NYC Open Data BSA decisions (post-1998 and 1916-1997 indexes)",
+   "query": "block 7334, Queens",
+   "result": "not_found",
+   "missing_item": "any BSA decision on this block",
+   "affected_outputs": [
+    "rear_yard.required"
+   ],
+   "next_step": "none needed unless the approved plans cite one"
+  },
+  {
+   "source": "DOB BIS / DOB NOW",
+   "query": "approved ZD1 of NB 440608941",
+   "result": "access_blocked",
+   "missing_item": "the approved yard diagram",
+   "affected_outputs": [
+    "rear_yard.required"
+   ],
+   "next_step": "a records request for the approved plans (questionnaire F1)"
+  }
+ ],
+ "implementation": {
+  "affected_outputs": [
+   "rear_yard.required",
+   "rear_yard.open_item",
+   "building_option.placement"
+  ],
+  "code_paths": [
+   "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json"
+  ],
+  "code_identity": {
+   "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4"
+  },
+  "worked_example": {
+   "inputs": "R6B; front lot line on Northern Boulevard; block frontage 200.01 ft (tax map); lot depth 100 ft (tax map).",
+   "expected": "200.01 < 230, so the frontage is a short dimension of a block; no rear yard is required within 100 ft of the Northern Boulevard street line; with a 100 ft depth no part of the lot lies beyond it, so no rear yard is required under (b). Conditional on the zoning lot and the surveyed depth.",
+   "basis": "ZR 12-10 and ZR 23-344(b) as quoted in E1 and E2; arithmetic 200.01 < 230.",
+   "prepared_by": "orchestrator (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; not professionally checked"
+  },
+  "regression_cases": [
+   "Block frontage 229.99 ft: (b) applies; 230.00 ft: it does not ('less than 230 feet').",
+   "A lot outside 100 ft of the corner point still gets (b) when its front lot line is on a short block frontage.",
+   "The line between two tax lots of one zoning lot is not a rear lot line.",
+   "A neighbour's side lot line: (c)(3) no rear yard in R6 to R12; a neighbour's rear lot line: (c)(1) a 23-342 yard."
+  ],
+  "dependency_assessment": [
+   "r6b_rear_yard_corner_waiver encodes 23-344(a) only and records (b) to (d) as not encoded, so every lot whose front lot line lies on a short block frontage currently shows an open rear-yard item it may not have. 23-344 lists R1 to R12, so the gap is not R6B-only. The fix is a deterministic block-frontage measure and a neighbouring-line classification with labelled drafts (backlog DB-230), never an address-specific exception. Lots not on a short block frontage are unaffected."
+  ]
+ },
+ "review": {
+  "producer": "orchestrator",
+  "agent_reviews": [],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-10",
+  "method": "snapshot",
+  "snapshot_date": "2026-10-07",
+  "limitation": "Law text from the project's snapshots (23-344 captured 2026-09-30; the definitions 2026-10-07); the orchestrator re-fetched ZR 12-10 and 23-344 on 2026-10-10 and found the quoted words unchanged (VERIFICATION.md)."
+ },
+ "promotion": {
+  "requested_label": null
+ }
+}

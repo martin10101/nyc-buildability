@@ -21,6 +21,10 @@ checkout of these files).
 ## Must-read instructions for landing and for the successor
 - Root `CLAUDE.md` (operating rules, gates, authority; start-of-session routine).
 - `docs/SESSION_HANDOFF.md` (the living handoff itself).
+- `.claude/rules/research-and-verification.md` and `docs/RESEARCH_AND_VERIFICATION.md` (D-093). Every
+  handoff keeps a short "Research and verification" entry: the rule and procedure paths, the open
+  evidence records that block or condition the next work, and where the private questionnaire and
+  session notes are (paths in the procedure's section 1).
 - The active campaign record(s) under `project-control/campaigns/*.json` — see "state overrides
   prose" below.
 

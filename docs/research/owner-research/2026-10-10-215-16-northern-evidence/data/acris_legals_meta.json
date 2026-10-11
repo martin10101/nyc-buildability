@@ -1,0 +1,947 @@
+{
+  "id" : "8h5j-fqxa",
+  "name" : "ACRIS - Real Property Legals",
+  "assetType" : "filter",
+  "attribution" : "Department of Finance (DOF)",
+  "averageRating" : 0,
+  "category" : "City Government",
+  "createdAt" : 1379940927,
+  "description" : "Property Details for Real Property Related Documents Recorded in ACRIS",
+  "diciBackend" : false,
+  "displayType" : "table",
+  "downloadCount" : 36992,
+  "hideFromCatalog" : false,
+  "hideFromDataJson" : false,
+  "indexUpdatedAt" : 1547148401,
+  "locked" : false,
+  "modifyingViewUid" : "a366-musu",
+  "newBackend" : true,
+  "numberOfComments" : 0,
+  "oid" : 12986167,
+  "provenance" : "official",
+  "publicationAppendEnabled" : false,
+  "publicationDate" : 1440425022,
+  "publicationGroup" : 1099086,
+  "publicationStage" : "published",
+  "queryString" : "SELECT `document_id`, `record_type`, `borough`, `block`, `lot`, `easement`, `partial_lot`, `air_rights`, `subterranean_rights`, `property_type`, `street_number`, `street_name`, `unit`, `good_through_date` ORDER BY `good_through_date` DESC NULL LAST",
+  "rowClass" : "",
+  "rowsUpdatedAt" : 1791490061,
+  "rowsUpdatedBy" : "5fuc-pqz2",
+  "tableId" : 3940575,
+  "totalTimesRated" : 0,
+  "viewCount" : 78966,
+  "viewLastModified" : 1740778244,
+  "viewType" : "tabular",
+  "approvals" : [ {
+    "reviewedAt" : 1440425022,
+    "reviewedAutomatically" : true,
+    "state" : "approved",
+    "submissionId" : 1065396,
+    "submissionObject" : "public_audience_request",
+    "submissionOutcome" : "change_audience",
+    "submittedAt" : 1440425022,
+    "targetAudience" : "public",
+    "workflowId" : 2285,
+    "submissionDetails" : {
+      "permissionType" : "READ"
+    },
+    "submissionOutcomeApplication" : {
+      "failureCount" : 0,
+      "status" : "success"
+    },
+    "submitter" : {
+      "id" : "5fuc-pqz2",
+      "displayName" : "NYC OpenData"
+    }
+  } ],
+  "clientContext" : {
+    "clientContextVariables" : [ ],
+    "inheritedVariables" : { }
+  },
+  "columns" : [ {
+    "id" : 218988574,
+    "name" : "DOCUMENT ID",
+    "dataTypeName" : "text",
+    "description" : "Document Identifier",
+    "fieldName" : "document_id",
+    "position" : 1,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696130,
+    "width" : 131,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "FT_4990009008899",
+      "null" : "0",
+      "top" : [ {
+        "item" : "2019071500390001",
+        "count" : "12776"
+      }, {
+        "item" : "2019071500390002",
+        "count" : "12776"
+      }, {
+        "item" : "FT_2470000882047",
+        "count" : "8380"
+      }, {
+        "item" : "FT_3770009033177",
+        "count" : "6717"
+      }, {
+        "item" : "2003091600597004",
+        "count" : "6414"
+      }, {
+        "item" : "2003091600597003",
+        "count" : "6414"
+      }, {
+        "item" : "2003091600597002",
+        "count" : "6414"
+      }, {
+        "item" : "2014090400681007",
+        "count" : "6382"
+      }, {
+        "item" : "2014090400681006",
+        "count" : "6382"
+      }, {
+        "item" : "2014090400681011",
+        "count" : "6382"
+      }, {
+        "item" : "2014090400681010",
+        "count" : "6382"
+      }, {
+        "item" : "2014090400681008",
+        "count" : "6382"
+      }, {
+        "item" : "2014090400681012",
+        "count" : "6382"
+      }, {
+        "item" : "2014090400681009",
+        "count" : "6382"
+      }, {
+        "item" : "FT_3350001170435",
+        "count" : "5922"
+      }, {
+        "item" : "2014090400681001",
+        "count" : "4765"
+      }, {
+        "item" : "FT_3320009033232",
+        "count" : "4480"
+      }, {
+        "item" : "FT_3060009033206",
+        "count" : "4480"
+      }, {
+        "item" : "FT_3200009033220",
+        "count" : "4480"
+      }, {
+        "item" : "FT_3860009033186",
+        "count" : "4478"
+      } ],
+      "smallest" : "2002122000001001",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988575,
+    "name" : "RECORD TYPE",
+    "dataTypeName" : "text",
+    "description" : "L for Legals Record",
+    "fieldName" : "record_type",
+    "position" : 2,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696131,
+    "width" : 102,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "L",
+      "null" : "0",
+      "top" : [ {
+        "item" : "L",
+        "count" : "22797599"
+      } ],
+      "smallest" : "L",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988576,
+    "name" : "BOROUGH",
+    "dataTypeName" : "number",
+    "description" : "Borough Code:\n1 = Manhattan\n2 = Bronx\n3 = Brooklyn\n4 = Queens",
+    "fieldName" : "borough",
+    "position" : 3,
+    "renderTypeName" : "number",
+    "tableColumnId" : 13696132,
+    "width" : 79,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "5",
+      "null" : "0",
+      "top" : [ {
+        "item" : "3",
+        "count" : "7485400"
+      }, {
+        "item" : "4",
+        "count" : "7091589"
+      }, {
+        "item" : "1",
+        "count" : "5538560"
+      }, {
+        "item" : "2",
+        "count" : "2472744"
+      }, {
+        "item" : "5",
+        "count" : "209306"
+      } ],
+      "smallest" : "1",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : {
+      "precisionStyle" : "standard",
+      "noCommas" : "true",
+      "align" : "left"
+    }
+  }, {
+    "id" : 218988577,
+    "name" : "BLOCK",
+    "dataTypeName" : "number",
+    "description" : "Block number of instrument",
+    "fieldName" : "block",
+    "position" : 4,
+    "renderTypeName" : "number",
+    "tableColumnId" : 13696133,
+    "width" : 77,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "99999",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1027",
+        "count" : "203965"
+      }, {
+        "item" : "99999",
+        "count" : "157090"
+      }, {
+        "item" : "16",
+        "count" : "115632"
+      }, {
+        "item" : "1006",
+        "count" : "103121"
+      }, {
+        "item" : "3943",
+        "count" : "100248"
+      }, {
+        "item" : "1009",
+        "count" : "98553"
+      }, {
+        "item" : "3944",
+        "count" : "90647"
+      }, {
+        "item" : "3938",
+        "count" : "82218"
+      }, {
+        "item" : "3937",
+        "count" : "77174"
+      }, {
+        "item" : "1171",
+        "count" : "77146"
+      }, {
+        "item" : "1011",
+        "count" : "65216"
+      }, {
+        "item" : "54",
+        "count" : "57188"
+      }, {
+        "item" : "5066",
+        "count" : "57159"
+      }, {
+        "item" : "1010",
+        "count" : "48806"
+      }, {
+        "item" : "1047",
+        "count" : "47781"
+      }, {
+        "item" : "1040",
+        "count" : "41799"
+      }, {
+        "item" : "1833",
+        "count" : "39560"
+      }, {
+        "item" : "1515",
+        "count" : "37675"
+      }, {
+        "item" : "25",
+        "count" : "37291"
+      }, {
+        "item" : "3929",
+        "count" : "33999"
+      } ],
+      "smallest" : "0",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : {
+      "precisionStyle" : "standard",
+      "noCommas" : "true",
+      "align" : "left"
+    }
+  }, {
+    "id" : 218988578,
+    "name" : "LOT",
+    "dataTypeName" : "number",
+    "description" : "Lot number of instrument",
+    "fieldName" : "lot",
+    "position" : 5,
+    "renderTypeName" : "number",
+    "tableColumnId" : 13696134,
+    "width" : 76,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "9999",
+      "null" : "0",
+      "top" : [ {
+        "item" : "1",
+        "count" : "748298"
+      }, {
+        "item" : "37",
+        "count" : "277320"
+      }, {
+        "item" : "20",
+        "count" : "241944"
+      }, {
+        "item" : "12",
+        "count" : "241738"
+      }, {
+        "item" : "14",
+        "count" : "237144"
+      }, {
+        "item" : "16",
+        "count" : "234831"
+      }, {
+        "item" : "15",
+        "count" : "233229"
+      }, {
+        "item" : "18",
+        "count" : "232815"
+      }, {
+        "item" : "21",
+        "count" : "232712"
+      }, {
+        "item" : "23",
+        "count" : "232467"
+      }, {
+        "item" : "29",
+        "count" : "231555"
+      }, {
+        "item" : "17",
+        "count" : "230719"
+      }, {
+        "item" : "6",
+        "count" : "229702"
+      }, {
+        "item" : "25",
+        "count" : "228341"
+      }, {
+        "item" : "19",
+        "count" : "226830"
+      }, {
+        "item" : "22",
+        "count" : "226603"
+      }, {
+        "item" : "24",
+        "count" : "225408"
+      }, {
+        "item" : "7",
+        "count" : "224775"
+      }, {
+        "item" : "30",
+        "count" : "223234"
+      }, {
+        "item" : "26",
+        "count" : "221924"
+      } ],
+      "smallest" : "0",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : {
+      "precisionStyle" : "standard",
+      "noCommas" : "true",
+      "align" : "left"
+    }
+  }, {
+    "id" : 218988579,
+    "name" : "EASEMENT",
+    "dataTypeName" : "text",
+    "description" : "‘Y’ or ‘N’ field",
+    "fieldName" : "easement",
+    "position" : 6,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696135,
+    "width" : 95,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "Y",
+      "null" : "0",
+      "top" : [ {
+        "item" : "N",
+        "count" : "22760390"
+      }, {
+        "item" : "Y",
+        "count" : "37209"
+      } ],
+      "smallest" : "N",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988580,
+    "name" : "PARTIAL LOT",
+    "dataTypeName" : "text",
+    "description" : "P=partial E=entire",
+    "fieldName" : "partial_lot",
+    "position" : 7,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696136,
+    "width" : 110,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "P",
+      "null" : "0",
+      "top" : [ {
+        "item" : "E",
+        "count" : "22641125"
+      }, {
+        "item" : "P",
+        "count" : "156057"
+      }, {
+        "item" : "N",
+        "count" : "417"
+      } ],
+      "smallest" : "E",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988581,
+    "name" : "AIR RIGHTS",
+    "dataTypeName" : "text",
+    "description" : "‘Y’ or ‘N’ field",
+    "fieldName" : "air_rights",
+    "position" : 8,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696137,
+    "width" : 108,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "Y",
+      "null" : "0",
+      "top" : [ {
+        "item" : "N",
+        "count" : "22773690"
+      }, {
+        "item" : "Y",
+        "count" : "23909"
+      } ],
+      "smallest" : "N",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988582,
+    "name" : "SUBTERRANEAN RIGHTS",
+    "dataTypeName" : "text",
+    "description" : "‘Y’ or ‘N’ field",
+    "fieldName" : "subterranean_rights",
+    "position" : 9,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696138,
+    "width" : 156,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "Y",
+      "null" : "0",
+      "top" : [ {
+        "item" : "N",
+        "count" : "22788668"
+      }, {
+        "item" : "Y",
+        "count" : "8931"
+      } ],
+      "smallest" : "N",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988583,
+    "name" : "PROPERTY TYPE",
+    "dataTypeName" : "text",
+    "description" : "Code defined in property table",
+    "fieldName" : "property_type",
+    "position" : 10,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696139,
+    "width" : 120,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "VR",
+      "null" : "0",
+      "top" : [ {
+        "item" : "PA",
+        "count" : "10200840"
+      }, {
+        "item" : "SC",
+        "count" : "3514745"
+      }, {
+        "item" : "D1",
+        "count" : "2629895"
+      }, {
+        "item" : "D2",
+        "count" : "1484435"
+      }, {
+        "item" : "AP",
+        "count" : "769638"
+      }, {
+        "item" : "CR",
+        "count" : "650330"
+      }, {
+        "item" : "D3",
+        "count" : "485667"
+      }, {
+        "item" : "SP",
+        "count" : "439053"
+      }, {
+        "item" : "CC",
+        "count" : "363397"
+      }, {
+        "item" : "OT",
+        "count" : "361601"
+      }, {
+        "item" : "RP",
+        "count" : "264765"
+      }, {
+        "item" : "PS",
+        "count" : "211320"
+      }, {
+        "item" : "TS",
+        "count" : "195363"
+      }, {
+        "item" : "RG",
+        "count" : "180329"
+      }, {
+        "item" : "F1",
+        "count" : "166269"
+      }, {
+        "item" : "VR",
+        "count" : "121673"
+      }, {
+        "item" : "D4",
+        "count" : "121173"
+      }, {
+        "item" : "SR",
+        "count" : "88384"
+      }, {
+        "item" : "D6",
+        "count" : "82671"
+      }, {
+        "item" : "VN",
+        "count" : "72018"
+      } ],
+      "smallest" : "AP",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988584,
+    "name" : "STREET NUMBER",
+    "dataTypeName" : "text",
+    "description" : "Street Number for BBL",
+    "fieldName" : "street_number",
+    "position" : 11,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696140,
+    "width" : 121,
+    "cachedContents" : {
+      "non_null" : "16339717",
+      "largest" : "X0344",
+      "null" : "6457882",
+      "top" : [ {
+        "item" : "N/A",
+        "count" : "152398"
+      }, {
+        "item" : "200",
+        "count" : "131513"
+      }, {
+        "item" : "870",
+        "count" : "110847"
+      }, {
+        "item" : "102",
+        "count" : "91858"
+      }, {
+        "item" : "1",
+        "count" : "89340"
+      }, {
+        "item" : "1335",
+        "count" : "88134"
+      }, {
+        "item" : "25",
+        "count" : "81349"
+      }, {
+        "item" : "15",
+        "count" : "71667"
+      }, {
+        "item" : "350",
+        "count" : "62240"
+      }, {
+        "item" : "101",
+        "count" : "61672"
+      }, {
+        "item" : "100",
+        "count" : "61094"
+      }, {
+        "item" : "300",
+        "count" : "56595"
+      }, {
+        "item" : "250",
+        "count" : "56173"
+      }, {
+        "item" : "150",
+        "count" : "54755"
+      }, {
+        "item" : "50",
+        "count" : "52482"
+      }, {
+        "item" : "30",
+        "count" : "48313"
+      }, {
+        "item" : "160",
+        "count" : "46795"
+      }, {
+        "item" : "115",
+        "count" : "44680"
+      }, {
+        "item" : "301",
+        "count" : "44394"
+      }, {
+        "item" : "120",
+        "count" : "43724"
+      } ],
+      "smallest" : "`",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988585,
+    "name" : "STREET NAME",
+    "dataTypeName" : "text",
+    "description" : "Street Name for BBL",
+    "fieldName" : "street_name",
+    "position" : 12,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696141,
+    "width" : 174,
+    "cachedContents" : {
+      "non_null" : "16452196",
+      "largest" : "ZWICKY AVENUE",
+      "null" : "6345403",
+      "top" : [ {
+        "item" : "BROADWAY",
+        "count" : "161788"
+      }, {
+        "item" : "7 AVENUE",
+        "count" : "140697"
+      }, {
+        "item" : "WEST 57TH STREET",
+        "count" : "113064"
+      }, {
+        "item" : "5 AVENUE",
+        "count" : "101490"
+      }, {
+        "item" : "METROPOLITAN AVENUE",
+        "count" : "90730"
+      }, {
+        "item" : "3 AVENUE",
+        "count" : "66224"
+      }, {
+        "item" : "PARK AVENUE",
+        "count" : "64732"
+      }, {
+        "item" : "CENTRAL PARK WEST",
+        "count" : "63915"
+      }, {
+        "item" : "WEST END AVENUE",
+        "count" : "57835"
+      }, {
+        "item" : "2 AVENUE",
+        "count" : "54996"
+      }, {
+        "item" : "RIVERSIDE BOULEVARD",
+        "count" : "47246"
+      }, {
+        "item" : "COLLEGE POINT BLVD",
+        "count" : "46245"
+      }, {
+        "item" : "FRONT STREET",
+        "count" : "43322"
+      }, {
+        "item" : "UNIONPORT ROAD",
+        "count" : "42776"
+      }, {
+        "item" : "BROAD STREET",
+        "count" : "42702"
+      }, {
+        "item" : "6 AVENUE",
+        "count" : "42073"
+      }, {
+        "item" : "BEDFORD AVENUE",
+        "count" : "41977"
+      }, {
+        "item" : "AVENUE OF THE AMERICAS",
+        "count" : "41446"
+      }, {
+        "item" : "RECTOR PLACE",
+        "count" : "41421"
+      }, {
+        "item" : "PACIFIC STREET",
+        "count" : "40104"
+      } ],
+      "smallest" : "**********",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988586,
+    "name" : "UNIT",
+    "dataTypeName" : "text",
+    "description" : "Unit Number for BBL",
+    "fieldName" : "unit",
+    "position" : 13,
+    "renderTypeName" : "text",
+    "tableColumnId" : 13696142,
+    "width" : 115,
+    "cachedContents" : {
+      "non_null" : "5221098",
+      "largest" : "ZJC2",
+      "null" : "17576501",
+      "top" : [ {
+        "item" : "TIMES",
+        "count" : "131338"
+      }, {
+        "item" : "3A",
+        "count" : "57825"
+      }, {
+        "item" : "3B",
+        "count" : "55709"
+      }, {
+        "item" : "2A",
+        "count" : "54481"
+      }, {
+        "item" : "2B",
+        "count" : "52277"
+      }, {
+        "item" : "1",
+        "count" : "51373"
+      }, {
+        "item" : "4A",
+        "count" : "50536"
+      }, {
+        "item" : "2",
+        "count" : "50188"
+      }, {
+        "item" : "4B",
+        "count" : "48627"
+      }, {
+        "item" : "3",
+        "count" : "42450"
+      }, {
+        "item" : "5A",
+        "count" : "40496"
+      }, {
+        "item" : "1A",
+        "count" : "40424"
+      }, {
+        "item" : "5B",
+        "count" : "39091"
+      }, {
+        "item" : "4",
+        "count" : "39051"
+      }, {
+        "item" : "3C",
+        "count" : "38132"
+      }, {
+        "item" : "1B",
+        "count" : "35642"
+      }, {
+        "item" : "4C",
+        "count" : "34543"
+      }, {
+        "item" : "6A",
+        "count" : "34091"
+      }, {
+        "item" : "2C",
+        "count" : "33983"
+      }, {
+        "item" : "6B",
+        "count" : "32383"
+      } ],
+      "smallest" : "`",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : { }
+  }, {
+    "id" : 218988588,
+    "name" : "GOOD THROUGH DATE",
+    "dataTypeName" : "calendar_date",
+    "description" : "Date of latest recording or correction included with this extract",
+    "fieldName" : "good_through_date",
+    "position" : 14,
+    "renderTypeName" : "calendar_date",
+    "tableColumnId" : 13696144,
+    "width" : 189,
+    "cachedContents" : {
+      "non_null" : "22797599",
+      "largest" : "2026-09-30T00:00:00.000",
+      "null" : "0",
+      "top" : [ {
+        "item" : "2015-07-31T00:00:00.000",
+        "count" : "17458061"
+      }, {
+        "item" : "2016-07-31T00:00:00.000",
+        "count" : "84163"
+      }, {
+        "item" : "2022-03-31T00:00:00.000",
+        "count" : "70917"
+      }, {
+        "item" : "2021-06-30T00:00:00.000",
+        "count" : "55443"
+      }, {
+        "item" : "2021-03-31T00:00:00.000",
+        "count" : "55262"
+      }, {
+        "item" : "2022-07-31T00:00:00.000",
+        "count" : "55130"
+      }, {
+        "item" : "2022-06-30T00:00:00.000",
+        "count" : "54502"
+      }, {
+        "item" : "2021-08-31T00:00:00.000",
+        "count" : "54031"
+      }, {
+        "item" : "2022-04-30T00:00:00.000",
+        "count" : "53263"
+      }, {
+        "item" : "2022-01-31T00:00:00.000",
+        "count" : "52818"
+      }, {
+        "item" : "2020-02-29T00:00:00.000",
+        "count" : "52304"
+      }, {
+        "item" : "2015-09-30T00:00:00.000",
+        "count" : "51916"
+      }, {
+        "item" : "2019-08-31T00:00:00.000",
+        "count" : "51771"
+      }, {
+        "item" : "2022-02-28T00:00:00.000",
+        "count" : "51577"
+      }, {
+        "item" : "2021-07-31T00:00:00.000",
+        "count" : "50711"
+      }, {
+        "item" : "2019-10-31T00:00:00.000",
+        "count" : "50658"
+      }, {
+        "item" : "2017-08-31T00:00:00.000",
+        "count" : "50100"
+      }, {
+        "item" : "2017-03-31T00:00:00.000",
+        "count" : "49257"
+      }, {
+        "item" : "2021-10-31T00:00:00.000",
+        "count" : "49061"
+      }, {
+        "item" : "2016-08-31T00:00:00.000",
+        "count" : "48681"
+      } ],
+      "smallest" : "2015-07-31T00:00:00.000",
+      "count" : "22797599",
+      "cardinality" : "22797599"
+    },
+    "format" : {
+      "view" : "date",
+      "align" : "left"
+    }
+  } ],
+  "grants" : [ {
+    "inherited" : false,
+    "type" : "viewer",
+    "flags" : [ "public" ]
+  } ],
+  "metadata" : {
+    "rdfSubject" : "0",
+    "rdfClass" : "",
+    "attachments" : [ {
+      "filename" : "NYC_OpenData_ACRIS_Datasets.doc",
+      "assetId" : "",
+      "blobId" : "00DE4907-FCFA-4751-9DB7-DDD640888A52",
+      "name" : "NYC_OpenData_ACRIS_Datasets.doc"
+    }, {
+      "filename" : "ACRIS_Public_OpenData_Guide.doc",
+      "assetId" : "52f0dc3d-e5f7-4c09-b62d-837e19599491",
+      "blobId" : "",
+      "name" : "ACRIS_Public_OpenData_Guide.doc"
+    }, {
+      "filename" : "ACRIS_-_Real_Property_Legals_Data_Dictionary.xlsx",
+      "assetId" : "7aca22f9-5582-439f-ab80-3ea6c50cc68c",
+      "blobId" : "",
+      "name" : "ACRIS_-_Real_Property_Legals_Data_Dictionary.xlsx"
+    } ],
+    "custom_fields" : {
+      "Update" : {
+        "Automation" : "Yes",
+        "Date Made Public" : "9/23/2013",
+        "Update Frequency" : "Monthly"
+      },
+      "Dataset Information" : {
+        "Agency" : "Department of Finance (DOF)"
+      }
+    },
+    "availableDisplayTypes" : [ "table", "fatrow", "page" ],
+    "renderTypeConfig" : {
+      "visible" : {
+        "table" : true
+      }
+    }
+  },
+  "owner" : {
+    "id" : "5fuc-pqz2",
+    "displayName" : "NYC OpenData",
+    "profileImageUrlLarge" : "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium" : "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall" : "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName" : "NYC OpenData",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "query" : { },
+  "rights" : [ "read" ],
+  "tableAuthor" : {
+    "id" : "5fuc-pqz2",
+    "displayName" : "NYC OpenData",
+    "profileImageUrlLarge" : "/api/users/5fuc-pqz2/profile_images/LARGE",
+    "profileImageUrlMedium" : "/api/users/5fuc-pqz2/profile_images/THUMB",
+    "profileImageUrlSmall" : "/api/users/5fuc-pqz2/profile_images/TINY",
+    "screenName" : "NYC OpenData",
+    "type" : "interactive",
+    "flags" : [ "acceptedEula", "mayBeStoriesCoOwner" ]
+  },
+  "tags" : [ "dof", "acris land records" ],
+  "flags" : [ "calculatedView", "ownerMayBeContacted", "restorable", "restorePossibleForType", "soqlBasedView" ]
+}

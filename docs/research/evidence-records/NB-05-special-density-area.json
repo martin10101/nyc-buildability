@@ -1,1 +1,181 @@
-{"schema": "placeholder (M0-T190)"}
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-05",
+ "title": "215-16 Northern Boulevard: special density area resolved; the dwelling-unit limit stays conditional",
+ "revision": 1,
+ "last_changed": "2026-10-11",
+ "question": {
+  "text": "Is lot 70 in a special density area (ZR 23-52(a)(1)), and which inputs to the dwelling-unit limit stay conditional?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
+  "lot_scope": "zoning_lot_unconfirmed",
+  "site_scope": "whole_site",
+  "time_scope": "current_law"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: special density areas",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-special-density-areas)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "“Special density areas” shall refer to special geographies where unique density regulations apply to #residential# #developments# or #enlargements#. #Special density areas# shall include:\n\n(a) the #Manhattan Core#; and\n\n(b) the #Special Downtown Brooklyn District#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-special-density-areas.snapshot.json",
+   "sha256": "0f02aadab5e36ac256c9dc02b8d0761825ca3f5ddc1f1608e4226f61e1e3f59d"
+  },
+  {
+   "id": "E2",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: Manhattan Core",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-manhattan-core)",
+   "page": null,
+   "document_date": "no last-amended stamp recorded in the snapshot (see its notes)",
+   "retrieved": "2026-10-07",
+   "excerpt": "The \"Manhattan Core\" is the area within Manhattan Community Districts 1, 2, 3, 4, 5, 6, 7 and 8.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-manhattan-core.snapshot.json",
+   "sha256": "b6d44716b0afb1461be1eee4b0f3d37e2b027b8d37f11df6c7b1674e31908f8b"
+  },
+  {
+   "id": "E3",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-52 Maximum number of dwelling units",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+   "reference": "ZR 23-52 (zr-23-52)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-09-30",
+   "excerpt": "23-52 Maximum Number of Dwelling Units\n\nR1 R2 R3 R4 R5 R6 R7 R8 R9 R10 R11 R12\n\nIn the districts indicated, for #buildings# containing #multiple dwelling residences#, the maximum number of #dwelling units# permitted shall be determined by dividing the maximum #residential# #floor area# permitted on the #zoning lot# by the applicable #dwelling unit# factor. The applicable #dwelling unit# factor shall be as follows:\n\n(a) For the following types of # multiple dwelling residences#, there shall be no applicable #dwelling unit# factor:\n\n(1) #developments# or #enlargements# of #residences# in #special density areas#;\n\n(2) #qualifying senior housing#; or\n\n(3) #conversions# of any non-#residential# #building#, or portion thereof, to #residences# in the #special density areas#, or outside of #special density areas#, #conversions# of #community facility# #buildings#, or portions of #buildings# containing #community facilities#, to #residences#.\n\n(b) For all other types of # multiple dwelling residences#, the applicable #dwelling unit# factor shall be 680. Fractions equal to or greater than three-quarters resulting from this calculation shall be considered to be one #dwelling unit#.\n\nIn addition, for #zoning lots# with #residential uses# that have different #dwelling unit# factor applicability, for the purposes of calculating the maximum number of #dwelling units# permitted within #buildings#, or portions thereof, that are subject to a #dwelling unit# factor, the calculation shall exclude the #floor area# not subject to a #dwelling unit# factor before dividing by the #dwelling unit# factor. Where #floor area# in a #building# is shared by multiple #residential uses#, the #floor area# for such shared portion shall be attributed to each #residential use# proportionately, based on the percentage each #residential use# occupies of the total #floor area# of the #zoning lot#, less any shared #floor area#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+   "sha256": "619a1ee8d3e08059b0513f164a45276afe5962f1308e59db5ed1e78fb87461d0"
+  },
+  {
+   "id": "E4",
+   "kind": "gis_geometry",
+   "authority": "NYC Department of City Planning (MapPLUTO 26v2 feature service)",
+   "title": "MapPLUTO attributes for block 7334 lot 70",
+   "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BoroCode%3D4+AND+Block%3D7334&outFields=OBJECTID%2CBoroCode%2CBorough%2CBBL%2CBlock%2CLot%2CAddress%2CZoneDist1%2CZoneDist2%2COverlay1%2CSPDist1%2CSplitZone%2CLotArea%2CLotFront%2CLotDepth%2CVersion%2CShape__Area%2CShape__Length%2CAPPBBL%2CAPPDate&outSR=2263&f=json",
+   "reference": "MapPLUTO 26v2, BBL 4073340070",
+   "page": null,
+   "document_date": "26v2",
+   "retrieved": "2026-10-10",
+   "excerpt": "BoroCode 4, Borough QN, ZoneDist1 R6B, Overlay1 C2-2, SPDist1 null (field requested; null = no special purpose district recorded)",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/mappluto.json",
+   "sha256": "24355a87e4e3596a7112046794a64d9a8a5068e2d02fd5f89e94c44d8e401ce8"
+  }
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": [
+   "ZR 12-10 special density areas (E1)",
+   "ZR 12-10 Manhattan Core (E2)",
+   "ZR 23-52 opening paragraph, (a)(1) to (3) and (b) (E3)",
+   "ZR 11-25 suffix inheritance (cited by r6b_dwelling_units)"
+  ],
+  "exceptions_considered": [
+   "23-52(a)(2) qualifying senior housing has no factor: a scenario input, not a lot fact.",
+   "23-52(a)(3) conversions: not this scenario.",
+   "Qualifying affordable housing is not automatically exempt; the rule sends it to review.",
+   "23-52(b): fractions of three-quarters or more count as one unit."
+  ],
+  "reading": "The lot is in Queens (MapPLUTO Borough QN, BoroCode 4), so it is outside the Manhattan Core, which is Manhattan Community Districts 1 to 8 (E2). MapPLUTO records no special purpose district on the lot (SPDist1 null), so it is outside the Special Downtown Brooklyn District. It is therefore not in a special density area (E1), and for an ordinary multiple-dwelling scenario the factor 680 applies (E3). The limit itself is the maximum residential floor area on the zoning lot divided by 680, a fraction of 0.75 or more counting as one; it stays conditional on the zoning lot (NB-01), the lot area basis (NB-04) and the housing programme.",
+  "applies": "yes"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {
+    "name": "maximum residential floor area (lot 70 alone; the program's figure)",
+    "value": "20150",
+    "units": "sq ft",
+    "basis": "derived",
+    "scope": "proposed; whole zoning lot if lot 70 alone is the zoning lot"
+   },
+   {
+    "name": "dwelling unit factor",
+    "value": "680",
+    "units": "sq ft per unit",
+    "basis": "law",
+    "scope": "ordinary multiple dwellings"
+   }
+  ],
+  "double_count_risk": "Using the NB's proposed total, construction area or the GIS area as the dividend; the dividend is the maximum residential floor area permitted on the zoning lot."
+ },
+ "conclusion": {
+  "research_status": "answered_from_primary_source",
+  "observed_facts": [
+   "ZR 12-10 lists two special density areas: (a) the Manhattan Core and (b) the Special Downtown Brooklyn District.",
+   "ZR 12-10: the Manhattan Core is Manhattan Community Districts 1 to 8.",
+   "MapPLUTO 26v2, lot 70: Borough QN, ZoneDist1 R6B, Overlay1 C2-2, SPDist1 null.",
+   "ZR 23-52(b): factor 680; fractions equal to or greater than three-quarters count as one dwelling unit."
+  ],
+  "interpretation": "Not in a special density area: the definition applied to recorded geography.",
+  "conflicts": [],
+  "conditions": [
+   "The dwelling-unit limit depends on the zoning lot (NB-01) and its lot area (NB-04).",
+   "It depends on the housing programme (no factor for qualifying senior housing)."
+  ],
+  "settled_by": [
+   "the geography: settled by E1, E2 and E4",
+   "the count: the zoning-lot instruments (NB-01) and the lot area (NB-04)"
+  ]
+ },
+ "searches": [
+  {
+   "source": "Project law snapshots and PLUTO 26v2",
+   "query": "ZR 12-10, 23-52; lot 70's borough and special district",
+   "result": "found",
+   "missing_item": "",
+   "affected_outputs": [],
+   "next_step": ""
+  }
+ ],
+ "implementation": {
+  "affected_outputs": [
+   "dwelling_units.legal_limit",
+   "engine_condition.special_density_area"
+  ],
+  "code_paths": [
+   "services/api/app/scenario/three_answers/engine_conditions.py",
+   "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json"
+  ],
+  "code_identity": {
+   "services/api/app/scenario/three_answers/engine_conditions.py": "643137bb1a1dffd833a34c4bf81cd2af4b494dfe9f5b863c683d16755404addb",
+   "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02"
+  },
+  "worked_example": {
+   "inputs": "Lot 70 alone taken as the zoning lot (conditional); maximum residential floor area 20,150 sq ft (the program's figure); ordinary multiple dwellings; not in a special density area.",
+   "expected": "20,150 / 680 = 29.63...; the fraction 0.63 is under 0.75, so 29 units. Boundaries: 20,230 / 680 = 29.75 gives 30; 20,229 / 680 = 29.7485 gives 29; 20,400 / 680 = 30 exactly.",
+   "basis": "ZR 23-52(b) as quoted in E3; arithmetic.",
+   "prepared_by": "orchestrator (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; not professionally checked"
+  },
+  "regression_cases": [
+   "Queens lot with no special district: not in a special density area, from the record.",
+   "Manhattan Community District 1 to 8: in one (Manhattan Core); Manhattan Community District 9 to 12: not by the Manhattan Core.",
+   "A lot in the Special Downtown Brooklyn District: in one.",
+   "Special district not read: not known, and the limit withheld; never read as 'no'.",
+   "Rounding: 29.75 gives 30; 29.7485 gives 29.",
+   "Qualifying senior housing: no factor, no limit."
+  ],
+  "dependency_assessment": [
+   "Today engine_conditions.special_density() takes only a user's statement; with no statement the engine is given 'inside one', the dwelling-unit rule is not applicable and the limit is withheld. That is safe but no longer necessary where the borough and special district are recorded. Backlog DB-231 derives the flag from the record for every lot (outside Manhattan Community Districts 1 to 8 and outside the Special Downtown Brooklyn District: not in one; special district not read: still withheld). No address-specific exception. The limit then shows as Conditional on the zoning lot."
+  ]
+ },
+ "review": {
+  "producer": "orchestrator",
+  "agent_reviews": [],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-10",
+  "method": "snapshot",
+  "snapshot_date": "2026-10-07",
+  "limitation": "ZR 12-10 definitions captured 2026-10-07 and ZR 23-52 on 2026-09-30; the owner research read the same 12-10 definition live on 2026-10-10. PLUTO 26v2 retrieved 2026-10-10."
+ },
+ "promotion": {
+  "requested_label": null
+ }
+}
