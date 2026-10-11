@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-093",
  "version": 1,
- "requirement_count": 74,
+ "requirement_count": 75,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T05:27:04+00:00",
+ "updated_at": "2026-10-11T07:43:01+00:00",
  "requirements": [
   {
    "id": "D-093-R001",
@@ -2372,6 +2372,39 @@
    ],
    "required_harness": "tools/test_context_budget_check.py updated; the context-budget CI job passes with the eager total above 10,000; no instruction text moved.",
    "required_evidence": "The task diff and the CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R075",
+   "text": "'I logged it why cant u fix it permanently?': fix the research-record check permanently: tools/research_record_check.py must choose the review that governs a record's review state independently of how its date is written (date-only or date-and-time), so a same-day date-only entry can never make a newer review read as older; the review for the highest reviewed revision governs, ties broken by the parsed time and then by order; the check also rejects review dates that are neither a date nor a date-and-time in UTC. The fix comes with tests (the NB-01 case: a date-only revision-3 entry after a timed revision-2 entry reads current) and backlog DB-238 is updated when the fix is merged. No workaround stamping is needed afterwards.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-093-R052"
+   ],
+   "required_harness": "tools/test_research_record_check.py gains the mixed-date-format cases; python3 tools/research_record_check.py --check passes on every record; the control-plane CI job passes.",
+   "required_evidence": "The task diff, the test run and the CI run.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
