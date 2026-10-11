@@ -1,0 +1,53 @@
+{
+  "snapshot_id": "zr-12-10-street",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - street",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-11T19:58:08Z",
+    "http_status": 200,
+    "response_bytes": 1287409,
+    "raw_html_sha256": "8eb066d190f0270a20008973576a19e65f579e46d68b51e5fb361a07515bb33c",
+    "portal_node_id": "18523",
+    "defined_term": "street",
+    "defined_term_node_id": "21676",
+    "last_amended_machine_readable": "2011-02-02T12:00:00Z",
+    "last_amended_display": "2/2/2011",
+    "section_last_amended": "2011-02-02",
+    "section_last_amended_source_text": "Last Amended 2/2/2011 (ZR 12-10 term 'street', /node/21676)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523, data-section-number=\"12-10\", title \"DEFINITIONS\") shows Last Amended 3/26/2026, which is the date of the most-recently-amended term on the page (‘street, wide’); the operative provenance for THIS term is its own per-term Last Amended stamp (2/2/2011, /node/21676) recorded above. The whole §12-10 page fetched for this capture (2026-10-11, raw_html_sha256 8eb066d190f0270a20008973576a19e65f579e46d68b51e5fb361a07515bb33c, 1287409 bytes) is NOT byte-identical to the page pinned by the 2026-10-07 §12-10 term captures (3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc, 1316758 bytes); the page changed between those dates, but this term's per-term Last Amended stamp is unchanged, so the captured definition text is the same operative text.",
+    "capture_method": "M5-T163 in-task capture 2026-10-11 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned HTTP 504 so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel; this is the documented fallback (DB-167). The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined term only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-11T19:58:51Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-11 at 2026-10-11T19:58:51Z - the documented DB-167 behaviour. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used; the term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article id=\"term-street\", its definition__definition body) and self-checked for word-completeness against the raw HTML bytes (whitespace normalised; defined terms bold-italic <strong><em> written #term#). THIS term's definition contains NO ordered list (no <ol>), so there are NO list-position labels in this capture: any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture. The DB-167 F1 label-confirmation gap (whole-page PDF 504) therefore does not affect any text here.",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "A \"street\" is:\n\n(a) a way established on the City Map; or\n\n(b) a way designed or intended for general public use, connecting two ways established on the City Map, that:\n\n(1) performs the functions usually associated with a way established on the City Map;\n\n(2) is at least 50 feet in width throughout its entire length; and\n\n(3) is covenanted by its owner to remain open and unobstructed throughout the life of any #building# or #use# that depends thereon to satisfy any requirement of this Resolution; or\n\n(c) any other open area intended for general public use and providing a principal means of approach for vehicles or pedestrians from a way established on the City Map to a #building or other structure#, that:\n\n(1) performs the functions usually associated with a way established on the City Map;\n\n(2) is at least 50 feet in width throughout its entire length;\n\n(3) is approved by the City Planning Commission as a \"street\" to satisfy any requirement of this Resolution; and\n\n(4) is covenanted by its owner to remain open and unobstructed throughout the life of any #building# or #use# that depends thereon to satisfy any requirement of this Resolution; or\n\n(d) any other public way that on December 15, 1961, was performing the functions usually associated with a way established on the City Map; or\n\n(e) a #covered pedestrian space# that directly links two parallel or substantially parallel ways established on the City Map, for which a #floor area# bonus may be awarded or was awarded pursuant to a prior definition of such amenity, that may, by certification of the City Planning Commission, be deemed to be a #street#, provided the Commission finds that:\n\n(1) no portion of such space is located within 50 feet of the intersection of two ways established on the City Map;\n\n(2) such space is unobstructed for a minimum width of 15 feet and a minimum height of 15 feet, except for enclosures at the entrances;\n\n(3) such space is located at an elevation no more than five feet above or below #curb level#; and\n\n(4) the space functions as a #street# providing access to another #street#, shops and other #uses#, and that such access is graphically and visually evident to the pedestrian.\n\nAll provisions of this Resolution shall continue to be applicable to such space without being modified, varied or affected by the qualification of such space as a #street#.\n\nThe City Planning Commission may prescribe appropriate conditions and safeguards to achieve public utilization of the #street#.\n\nFor purposes of paragraphs (a), (b), (c) and (d) of this definition, a #private road#, or a driveway that serves only to give vehicular access to an #accessory# parking or loading facility, or to allow vehicles to take on or discharge passengers at the entrance to a #building#, shall not be considered a #street#.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph of the defined term's definition body. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. The definition has no ordered-list markup (no <ol>); any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined term 'street') for the ZR 12-10 block-boundary and street-width definitions that NB-03 (rear yard, short dimension of a block) and NB-06 (street-wall/wide-narrow) name as needed (task M5-T163, D-094). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523; sha256 and byte count pinned). The whole-page print/PDF completeness channel returned HTTP 504 (the documented DB-167 fallback), so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel. This term's definition contains no ordered list, so no list-position label is used anywhere in it; any parenthesised (a)/(b)/(1) is literal source text.",
+    "The whole §12-10 page fetched here (2026-10-11) is not byte-identical to the 2026-10-07 §12-10 captures (page bytes 1316758 -> 1287409; raw_html_sha256 3c719702...b5bc -> 8eb066d1...b33c); this term's per-term Last Amended stamp (2/2/2011) is unchanged, so the operative definition text is the same.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "7135283ce81d4d482a85086b466c709b53494d069ef4e4ede78f91b33685cce8"
+}

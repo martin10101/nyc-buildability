@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-03",
  "title": "215-16 Northern Boulevard: rear yard along the short dimension of the block (ZR 23-344(b), (c)(3))",
- "revision": 1,
+ "revision": 2,
  "last_changed": "2026-10-11",
  "question": {
   "text": "Is a rear yard required on lot 70 (or on a zoning lot of lots 1 and 70) beyond the corner area, given ZR 23-344(b) and how the neighbouring lot lines are classified for 23-344(c)(3)?",
@@ -109,6 +109,104 @@
    "excerpt": "combined Northern Boulevard frontage of lots 1 and 70: 203.12900 ft; maximum distance of lot 70 from the Northern Boulevard line: 99.97460 ft; lot 70 shares 101.70896 ft with lot 11 and 2.22445 ft with lot 61 (not a survey)",
    "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/geometry-calculations.json",
    "sha256": "31f1d4bfee60640727d74248b33da446e491d9871c571726f43a5e3907ad2762"
+  },
+  {
+   "id": "E8",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street)",
+   "page": null,
+   "document_date": "last amended 2011-02-02",
+   "retrieved": "2026-10-11",
+   "excerpt": "A \"street\" is: (a) a way established on the City Map; or (b) a way designed or intended for general public use, connecting two ways established on the City Map ... is at least 50 feet in width throughout its entire length ... (d) any other public way that on December 15, 1961, was performing the functions usually associated with a way established on the City Map; or (e) a #covered pedestrian space# ... For purposes of paragraphs (a), (b), (c) and (d) of this definition, a #private road#, or a driveway that serves only to give vehicular access to an #accessory# parking or loading facility ... shall not be considered a #street#. [full verbatim in the saved capture]",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json",
+   "sha256": "08966adc7880b61f268d17c4008ec50b1dd41307e179cf0ab76146f0545ceb5e"
+  },
+  {
+   "id": "E9",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street setback line",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street-setback-line)",
+   "page": null,
+   "document_date": "last amended 1985-09-19",
+   "retrieved": "2026-10-11",
+   "excerpt": "A \"street setback line\" is a line shown on the City Map in the Borough of Staten Island, or in Community District 10 in the Borough of Queens. A #street setback line# shall not be located within a mapped #street# area. A #street setback line# supersedes the #street line# in the application of #yard#, height and setback, and #court# regulations.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+   "sha256": "56bffca7faf13e5a44fc440ae3ade7994b8b5bae7ae0e7aa069fa05853c548bc"
+  },
+  {
+   "id": "E10",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: block (which features bound a block)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-block)",
+   "page": null,
+   "document_date": "last amended 1961-12-15",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"block\" is a tract of land bounded by: (a) #streets#; (b) #public parks#; (c) railroad rights-of-way, when located at or above ground level but not including sidings or spurs in the same ownership as the #zoning lot#; (d) airport boundaries; (e) pierhead lines (or shore lines where no pierhead lines have been established); or (f) corporate boundary lines of New York City.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-block.snapshot.json",
+   "sha256": "86a9a693f4cb29a706fbb21a4bd5ff92e7441e238ae1329d881441cb56d46153"
+  },
+  {
+   "id": "E11",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-363(c) Along the short dimension of the block (shared short-dimension test)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-363",
+   "reference": "ZR 23-363 (zr-23-363)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "(c) Along the short dimension of the block  In the districts indicated, whenever a #front lot line# of an #interior# or #through lot# coincides with the #street line# of the #short dimension of a block#, the maximum #lot coverage# for such #zoning lot#, or portion thereof, shall be 100 percent within 100 feet of such #street line#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-363.snapshot.json",
+   "sha256": "c321fd51065aab80f3078dff36280833d75d968587f1176ab613e51891e73e67"
+  },
+  {
+   "id": "E12",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street, wide (amended 2026-03-26)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street-wide)",
+   "page": null,
+   "document_date": "last amended 2026-03-26",
+   "retrieved": "2026-10-11",
+   "excerpt": "A \"wide street\" is any #street# 75 feet or more in width. In C5-3, C6-4 or C6-6 Districts, when a #front lot line# of a #zoning lot# adjoins a portion of a #street# whose average width is 75 feet or more and whose minimum width is 65 feet, such portion of a #street# may be considered a #wide street#; or when a #front lot line# adjoins a portion of a #street# 70 feet or more in width, which is between two portions of a #street# 75 feet or more in width, and which portion is less than 700 feet in length, such portion may be considered a #wide street# ... In Community District 7 in the Borough of Manhattan, the roadways of Broadway between West 94th and West 97th Streets and in Community District 3 in the Borough of Manhattan, the roadways of Allen Street between Rivington and Delancey Streets, which are separated by mapped #public park# shall each be considered a #wide street#. [full verbatim in the saved capture]",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street-wide.snapshot.json",
+   "sha256": "f14bfee5eaade6f26fb41fa42923f42f16a6313ce31d8bad71a860438063ef24"
+  },
+  {
+   "id": "E13",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street, narrow",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street-narrow)",
+   "page": null,
+   "document_date": "last amended 1961-12-15",
+   "retrieved": "2026-10-11",
+   "excerpt": "A \"narrow street\" is any #street# less than 75 feet wide.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+   "sha256": "881180c7b08169d30f6ae40724d9d8c079acc9de18067b6e1b7a9d019e600e16"
+  },
+  {
+   "id": "E14",
+   "kind": "dataset_record",
+   "authority": "NYC Department of City Planning (PLUTO data dictionary via NYC Open Data dataset metadata)",
+   "title": "PLUTO/MapPLUTO LotFront and LotDepth field definitions (official data dictionary)",
+   "url": "https://data.cityofnewyork.us/api/views/64uk-42ks.json",
+   "reference": "PLUTO dataset 64uk-42ks column metadata; columns lotfront, lotdepth, lotarea",
+   "page": null,
+   "document_date": "dataset metadata as retrieved",
+   "retrieved": "2026-10-11",
+   "excerpt": "lotfront: \"The tax lot's frontage measured in feet. NOTE: It appears that if a lot fronts on more than one street, the PTS building address often determines which side of the lot used for calculating lot frontage.\"  lotdepth: \"The tax lot's depth measured in feet.\"  lotarea: \"... If the tax lot is not an irregularly shaped lot ... the Department of Finance calculates the LOT AREA by multiplying the LOT FRONTAGE by the LOT DEPTH. If the tax lot is irregularly shaped, DOF calculates the LOT AREA from the Digital Tax Map.\"",
+   "saved_copy": null,
+   "sha256": null
   }
  ],
  "meaning_and_applicability": {
@@ -116,16 +214,24 @@
    "ZR 23-344 (a), (b), (c)(1) to (3), (d) (E1, E5)",
    "ZR 12-10 short dimension of a block (E2)",
    "ZR 12-10 rear lot line (E3) and side lot line (E4)",
-   "ZR 23-342 rear yard requirements"
+   "ZR 12-10 street (E8) and street setback line (E9)",
+   "ZR 12-10 block - the six feature types that bound a block (E10)",
+   "ZR 12-10 street, wide (E12, amended 2026-03-26) and street, narrow (E13)",
+   "ZR 23-363 (c) Along the short dimension of the block - the same short-dimension-of-a-block test for lot coverage (E11)",
+   "ZR 23-342 rear yard requirements",
+   "PLUTO/MapPLUTO LotFront and LotDepth data-dictionary definitions (E14)"
   ],
   "exceptions_considered": [
    "23-344(a) is a point test (within 100 ft of the intersection of two street lines); it neither replaces nor defeats the street-line test of (b). The 144.60 ft GIS diagonal from the corner tests (a) only.",
    "23-344(c) applies only to the portion of a side lot line beyond 100 ft of the street line it intersects.",
    "23-344(d) applies if the confirmed layout has several rear lot lines.",
    "The C2-2 overlay's residential/commercial rules (ZR 35-22, 35-50) were not read here.",
-   "A rear-yard exception waives no lot coverage, setback, window or open-space rule and no private right."
+   "A rear-yard exception waives no lot coverage, setback, window or open-space rule and no private right.",
+   "gap (c) ALLEY: a block is bounded only by #streets#, #public parks#, railroad rights-of-way at/above grade, airport boundaries, pierhead/shore lines, or NYC corporate boundary lines (12-10 'block', E10). A tax-map 'ALLEY' label (E6) is a Department of Finance notation, not one of those feature types unless the alley is itself a #street# (12-10 'street', E8: a way established on the City Map, or a qualifying public way); it does not by itself bound the block for the short-dimension measure.",
+   "gap (d) irregular blocks: 12-10 'short dimension of a block' (E2) measures 'the dimension between any two #streets# bounding the #block#'; 23-363(a) supplies an irregular-ANGLE rule for lot DEPTH only ('measured at the midpoint of such irregularly angled #lot line#'), not for a block frontage. No explicit method for choosing/measuring the frontage of a non-rectangular block was found (searches).",
+   "gap (e) district boundary: 23-344(c)(3) and (d)(3) as read key on the SUBJECT being R6 through R12 and on the ADJOINING lot's lot-line type (side vs rear), not on the adjoining zoning lot's district. Whether any 'Special Provisions Applying Along District Boundaries' changes the rear yard because the same-block neighbours are R4B was not confirmed from the primary source (searches)."
   ],
-  "reading": "Block 7334's Northern Boulevard frontage between 215 Street and 215 Place measures 200.01 ft on the tax map and 203.13 ft in GIS; both are under 230 ft, so it is a short dimension of a block (E2). Lots 1 and 70 front it. Their depth is 100 ft on the tax map and at most 99.97 ft in GIS, so under (b) no rear yard would be required within 100 ft of the Northern Boulevard street line, which covers the lot. The margin at the far line is about 0.03 ft in GIS, inside the records' disagreement, so the survey decides it. Lots 11 and 61 front 215 Place and 215 Street; their north lines are neither front nor rear lines of those lots, so they are side lot lines (E3, E4), and under (c)(3) (R6 to R12) no rear yard would be required where the subject's rear lot line coincides with them. A labelled draft reading, not a DOB determination.",
+  "reading": "Block 7334's Northern Boulevard frontage between 215 Street and 215 Place measures 200.01 ft on the tax map and 203.13 ft in GIS; both are under 230 ft, so it is a short dimension of a block (E2). gap (b): the \"short dimension of a block\" is ONE determination of the block (block frontage < 230 ft between two #streets# bounding the #block#, E2/E10); the same fact is consumed by 23-344(b) (no rear yard within 100 ft of that street line, E1) AND by 23-363(c) (100 percent lot coverage within 100 ft of that street line, E11) - it is measured once, not twice, and never once per street name. Lots 1 and 70 front that frontage; under (b) no rear yard would be required within 100 ft of the Northern Boulevard street line, which covers the lot. gap (a): how far the lot reaches from that line is in conflict - 100 ft (tax-map depth label, printed_tax_map), 99.97 ft (GIS, measured to the lot's own frontage edge) and about 101.06 ft (derived, measured to the mapped street line taken as the centreline offset by half the mapped width); no basis is chosen here, so whether the far edge lies within or beyond 100 ft of the operative street line is left for a survey or the approved ZD1. Lots 11 and 61 front 215 Place and 215 Street; their north lines are neither front nor rear lines of those lots, so they are side lot lines (E3, E4), and under (c)(3) (R6 to R12) no rear yard would be required where the subject's rear lot line coincides with them. gap (e): those neighbouring lots are in R4B (PLUTO), but 23-344(c)(3) keys on the subject R6B district and the neighbour's lot-line type, not the neighbour's district. A labelled draft reading, not a DOB determination.",
   "applies": "conditional"
  },
  "measurement_basis": {
@@ -149,39 +255,75 @@
     "value": "100",
     "units": "ft",
     "basis": "printed_tax_map",
-    "scope": "existing; tax lot"
+    "scope": "existing; tax lot; tax-map depth label (gap (a) conflict)"
    },
    {
     "name": "lot 70 maximum distance from the Northern Boulevard line",
     "value": "99.97460",
     "units": "ft (US survey)",
     "basis": "gis",
-    "scope": "existing; tax lot"
+    "scope": "existing; tax lot; measured to the lot's own frontage edge (gap (a) conflict)"
+   },
+   {
+    "name": "lot 70 reach from the Northern Boulevard street line",
+    "value": "101.06",
+    "units": "ft",
+    "basis": "derived",
+    "scope": "existing; derived in docs/reference-cases/R6B/provenance/return-independent-hand-calculation-11.md line 97, measuring the lot's south edge to the mapped street line; assumption at line 92: the street line is taken as the centreline offset by half the mapped width, with the lot edges ~1-2 ft from those offsets (gap (a) conflict)"
+   },
+   {
+    "name": "PLUTO/MapPLUTO LotFront (corner lot)",
+    "value": "100.76",
+    "units": "ft",
+    "basis": "administrative_record",
+    "scope": "existing; tax lot; a DOF-maintained tax-lot attribute (data dictionary, E14), reporting ONE side's frontage - on a corner lot the side is often the one of the PTS building address (here 215-16 Northern Boulevard), not the sum of both frontages and not a survey. NB-04 records the same 100.76 value."
+   },
+   {
+    "name": "PLUTO/MapPLUTO LotDepth",
+    "value": "100",
+    "units": "ft",
+    "basis": "administrative_record",
+    "scope": "existing; tax lot; the tax lot's depth as a DOF-maintained attribute (data dictionary, E14); not a survey. NB-04 records the same 100 value."
    }
   ],
-  "double_count_risk": "none identified; the line between lots 1 and 70 is internal (not a rear lot line) if they are one zoning lot, and external if lot 70 is its own zoning lot."
+  "double_count_risk": "none identified; the line between lots 1 and 70 is internal (not a rear lot line) if they are one zoning lot, and external if lot 70 is its own zoning lot. PLUTO LotFront reports only one frontage on a corner lot (E14) and must never be used as the block frontage for the short-dimension measure; the short dimension of a block is a single measurement consumed by both 23-344(b) and 23-363(c) (never added twice)."
  },
  "conclusion": {
   "research_status": "interpretation_awaiting_review",
   "observed_facts": [
    "ZR 12-10: the short dimension of a block is a block frontage where the dimension between any two bounding streets measures less than 230 feet.",
+   "ZR 12-10 'block' (E10): a block is bounded only by #streets#, #public parks#, railroad rights-of-way at or above grade, airport boundaries, pierhead/shore lines, or NYC corporate boundary lines.",
+   "ZR 12-10 'street' (E8) and 'street setback line' (E9) are both defined terms; a #street setback line# exists only on the City Map in Staten Island or Queens Community District 10 and, where it exists, supersedes the #street line# for yard/height/setback/court rules.",
    "ZR 23-344(b): no rear yard is required within 100 feet of the street line of the short dimension of a block where a front lot line of a zoning lot coincides with it.",
-   "Tax map (2017, 2021): lot 70 100.76 by 100 ft and lot 1 99.25 by 100 ft; frontages sum to 200.01 ft.",
-   "GIS: combined frontage 203.12900 ft; lot 70's maximum distance from the Northern line 99.97460 ft."
+   "ZR 23-363(c): within 100 feet of the street line of the short dimension of a block, the maximum lot coverage is 100 percent - the same short-dimension-of-a-block test as 23-344(b).",
+   "Tax map (2017, 2021): lot 70 100.76 by 100 ft and lot 1 99.25 by 100 ft; frontages sum to 200.01 ft; an 'ALLEY' label runs across the southern part of the northern lots.",
+   "GIS: combined frontage 203.12900 ft; lot 70's maximum distance from the Northern line 99.97460 ft; the independent hand calculation derives about 101.06 ft from the Northern Boulevard street line to the lot's far edge (line 97, under the line-offset assumption at line 92).",
+   "PLUTO data dictionary (E14): LotFront is the tax lot's frontage in feet and, where a lot fronts more than one street, the side is often set by the PTS building address; LotDepth is the tax lot's depth in feet; DOF computes LotArea as LotFront x LotDepth for a regular lot and from the Digital Tax Map for an irregular lot.",
+   "PLUTO: every other lot on block 7334 (the 215 Place and 215 Street frontages) is zoned R4B; the subject lots 1 and 70 are R6B with a C2-2 overlay."
   ],
   "interpretation": "Conditional no-rear-yard reading under 23-344(b), with 23-344(c)(3) as an alternative along the neighbours' side lot lines; awaiting independent review; not a DOB determination.",
   "conflicts": [
    "Block frontage 200.01 ft (tax map) against 203.13 ft (GIS): both under 230 ft, so the same outcome.",
-   "Depth 100 ft (tax map) against 99.97 ft (GIS): about 0.03 ft from the 100 ft line."
+   "gap (a) lot 70 depth: 100 ft (tax-map label, printed_tax_map) against 99.97 ft (GIS, to the lot's own edge) against about 101.06 ft (derived, to the mapped street line; hand calculation line 97, assumption line 92). The three differ by about 1 ft, which straddles the 100 ft line in 23-344(b); no basis is chosen - a survey or the approved ZD1 settles it."
   ],
   "conditions": [
    "The zoning lot (NB-01) decides whether the line between lots 1 and 70 is internal.",
-   "The neighbours' tax-lot lines must also be their zoning-lot lines.",
-   "The operative street line and depth come from a survey or the approved ZD1."
+   "The neighbours' tax-lot lines must also be their zoning-lot lines (never equate a tax lot with a zoning lot).",
+   "The operative street line and depth come from a survey or the approved ZD1.",
+   "gap (a) 2026-10-11 - the lot-70 depth conflict (100 printed_tax_map / 99.97 gis / ~101.06 derived) is shown, no basis chosen. Source: E6 tax map, E7 GIS, docs/reference-cases/R6B/provenance/return-independent-hand-calculation-11.md lines 92, 97. Next step: the Christopher M. Buckley survey (2017-02-21) or the approved ZD1 of NB 440608941 (stays open).",
+   "gap (b) 2026-10-11 - the short dimension of a block is ONE measurement (block frontage < 230 ft between two bounding #streets#) consumed by both 23-344(b) and 23-363(c); measure once, not two. Source: E1, E2, E10, E11. Next step: the rear-yard/lot-coverage engine computes it once (M5-T167) (stays open until encoded).",
+   "gap (c) 2026-10-11 - captured 12-10 'street' (E8) and 'street setback line' (E9); a block is bounded only by the six 12-10 'block' feature types (E10), so a tax-map 'ALLEY' label (E6) does not bound the block for (b) unless the alley is a mapped #street#. Source: E6, E8, E9, E10. Next step: confirm from the City Map whether the ALLEY is a mapped #street# and whether any #street setback line# applies in this Queens location (M5-T167/M5-T176) (stays open).",
+   "gap (d) 2026-10-11 - no explicit method was found for choosing/measuring the block frontage on an irregular (non-rectangular) block beyond '(the dimension between any two #streets# bounding the #block#'; 23-363(a) gives an irregular-ANGLE depth rule for lot depth only. Source: E2, E10, search below. Next step: an independent reader (M5-T176) / a qualified zoning professional / DCP guidance (stays open).",
+   "gap (e) 2026-10-11 - the neighbours are R4B (PLUTO); 23-344(c)(3)/(d)(3) as read key on the subject R6-R12 district and the neighbour's lot-line type, not the neighbour's district; a 'Special Provisions Applying Along District Boundaries' section exists in the ZR but no residence-district provision changing this rear yard because the neighbours are R4B was confirmed from the primary source. Source: E5, PLUTO, search below. Next step: an independent reader (M5-T176) opens the current district-boundary provisions (stays open).",
+   "gap (f) 2026-10-11 - recorded (not fixed): the review-register entry docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md (revision 2, 2026-10-08) and the rule's own 'limitations' field reflect ONLY 23-344(a); they do not yet reflect (b) short dimension or (c)(3)/(d)(3) side-lot-line waivers. Source: the register page, the rule 'limitations' field. Next step: the register and rule update is owed to the rear-yard engine task (M5-T167) / backlog DB-230, outside this task's allowed paths (stays open).",
+   "gap (g) 2026-10-11 - this record carries no independent worked example for the gap answers; the independent worked example is owed from M5-T176. Source: the packet. Next step: M5-T176 supplies and an independent reviewer checks it before any result promotion (stays open).",
+   "gap (h) 2026-10-11 - PLUTO/MapPLUTO LotFront and LotDepth are DOF-maintained tax-lot attributes (nine bases: administrative_record), not a survey; on a corner lot LotFront reports ONE side's frontage, often the PTS building-address side. Source: E14 data dictionary. Next step: confirm from the data dictionary's 'PTS building address' rule that LotFront 100.76 on this corner lot is the Northern Boulevard frontage (the DOB pavement plan, NB-04 E6, says so) (residual)."
   ],
   "settled_by": [
    "the Christopher M. Buckley survey of 2017-02-21 or a later certified survey",
-   "the approved ZD1 (yard diagram) of NB 440608941"
+   "the approved ZD1 (yard diagram) of NB 440608941",
+   "the City Map (whether the tax-map ALLEY is a mapped #street#; whether a #street setback line# applies)",
+   "an independent reading of any 'Special Provisions Applying Along District Boundaries' and a worked example (M5-T176)"
   ]
  },
  "searches": [
@@ -204,6 +346,38 @@
     "rear_yard.required"
    ],
    "next_step": "a records request for the approved plans (questionnaire F1)"
+  },
+  {
+   "source": "ZR 12-10 'short dimension of a block' (E2), 'block' (E10); ZR 23-344/23-363 (E1,E11); a DCP-guidance search",
+   "query": "an explicit method for choosing and measuring the block frontage on an irregular (non-rectangular) block",
+   "result": "not_found",
+   "missing_item": "any official method beyond 'the dimension between any two #streets# bounding the #block#' for a non-rectangular block; 23-363(a)'s irregular-angle rule covers lot DEPTH only",
+   "affected_outputs": [
+    "rear_yard.required",
+    "lot_coverage.allowed_footprint"
+   ],
+   "next_step": "an independent reader (M5-T176) or a qualified zoning professional; capture DCP guidance if one exists"
+  },
+  {
+   "source": "ZR rear-yard chain 23-34..23-344 (E1,E5); a ZR-portal web search for 'Special Provisions Applying Along District Boundaries'",
+   "query": "a provision that changes the rear yard for an R6B zoning lot because its same-block neighbours are in a lower-density (R4B) district",
+   "result": "not_found",
+   "missing_item": "confirmation from the primary source whether any 'Special Provisions Applying Along District Boundaries' modifies a rear yard for an R6B zoning lot whose same-block neighbours are R4B",
+   "affected_outputs": [
+    "rear_yard.required"
+   ],
+   "next_step": "an independent reader (M5-T176) opens and, if relevant, captures the current district-boundary provisions; 23-344(c)(3)/(d)(3) as read do not key on the neighbour's district"
+  },
+  {
+   "source": "NYC Open Data PLUTO dataset 64uk-42ks column metadata (DCP data dictionary) (E14)",
+   "query": "the meaning and measurement basis of LotFront and LotDepth on a corner lot",
+   "result": "found",
+   "missing_item": "",
+   "affected_outputs": [
+    "rear_yard.required",
+    "building_option.placement"
+   ],
+   "next_step": "confirm from the dictionary's 'PTS building address' rule that LotFront 100.76 on this corner lot is the Northern Boulevard frontage (NB-04 E6 DOB pavement plan says so)"
   }
  ],
  "implementation": {
@@ -219,23 +393,27 @@
    "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4"
   },
   "worked_example": {
-   "inputs": "R6B; front lot line on Northern Boulevard; block frontage 200.01 ft (tax map); lot depth 100 ft (tax map).",
-   "expected": "200.01 < 230, so the frontage is a short dimension of a block; no rear yard is required within 100 ft of the Northern Boulevard street line; with a 100 ft depth no part of the lot lies beyond it, so no rear yard is required under (b). Conditional on the zoning lot and the surveyed depth.",
-   "basis": "ZR 12-10 and ZR 23-344(b) as quoted in E1 and E2; arithmetic 200.01 < 230.",
-   "prepared_by": "orchestrator (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; not professionally checked"
+   "inputs": "R6B; front lot line on Northern Boulevard; block frontage 200.01 ft (printed_tax_map) / 203.13 ft (gis); lot depth 100 ft (printed_tax_map) / 99.97 ft (gis) / ~101.06 ft (derived).",
+   "expected": "200.01 < 230 and 203.13 < 230, so the frontage is a short dimension of a block; under 23-344(b) no rear yard is required within 100 ft of the Northern Boulevard street line, and under 23-363(c) the maximum lot coverage is 100 percent within that same 100 ft - one short-dimension measurement feeds both. Whether the lot's far edge lies within 100 ft of the operative street line is UNRESOLVED (depth 100 / 99.97 / ~101.06; no basis chosen). Conditional on the zoning lot and the surveyed depth.",
+   "basis": "ZR 12-10 and ZR 23-344(b)/23-363(c) as quoted in E1, E2, E10, E11; arithmetic 200.01 < 230. No independent worked example is supplied here; M5-T176 supplies one and an independent reviewer checks it before any promotion.",
+   "prepared_by": "official-source-researcher (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; a labelled unreviewed draft (ADR-007); not professionally checked; the independent worked example is owed from M5-T176 (gap g)."
   },
   "regression_cases": [
-   "Block frontage 229.99 ft: (b) applies; 230.00 ft: it does not ('less than 230 feet').",
+   "Block frontage 229.99 ft: (b) and 23-363(c) apply; 230.00 ft: they do not ('less than 230 feet').",
    "A lot outside 100 ft of the corner point still gets (b) when its front lot line is on a short block frontage.",
    "The line between two tax lots of one zoning lot is not a rear lot line.",
-   "A neighbour's side lot line: (c)(3) no rear yard in R6 to R12; a neighbour's rear lot line: (c)(1) a 23-342 yard."
+   "A neighbour's side lot line: (c)(3) no rear yard in R6 to R12; a neighbour's rear lot line: (c)(1) a 23-342 yard.",
+   "The short dimension of a block is one measurement; 23-344(b) and 23-363(c) consume the same fact and must not measure it twice or once per street name.",
+   "A tax-map ALLEY label does not bound a block for (b) unless the alley is a mapped #street# (12-10 'block'/'street')."
   ],
   "dependency_assessment": [
-   "r6b_rear_yard_corner_waiver encodes 23-344(a) only and records (b) to (d) as not encoded, so every lot whose front lot line lies on a short block frontage currently shows an open rear-yard item it may not have. 23-344 lists R1 to R12, so the gap is not R6B-only. The fix is a deterministic block-frontage measure and a neighbouring-line classification with labelled drafts (backlog DB-230), never an address-specific exception. Lots not on a short block frontage are unaffected."
+   "r6b_rear_yard_corner_waiver encodes 23-344(a) only and records (b) to (d) as not encoded, so every lot whose front lot line lies on a short block frontage currently shows an open rear-yard item it may not have. 23-344 lists R1 to R12, so the gap is not R6B-only. The fix is a deterministic block-frontage measure and a neighbouring-line classification with labelled drafts (backlog DB-230), never an address-specific exception. Lots not on a short block frontage are unaffected.",
+   "gap (b): the same 'short dimension of a block' determination feeds 23-344(b) (rear yard) and 23-363(c) (100% lot coverage); a future engine must compute it once and reuse it across both outputs, never per street name.",
+   "gap (f) recorded, not fixed: the review-register entry (docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md, revision 2, 2026-10-08) and the rule's 'limitations' field both reflect only 23-344(a); they do not yet reflect (b)/(c)(3)/(d)(3). Updating them is owed to M5-T167 / DB-230 and is outside this task's allowed paths."
   ]
  },
  "review": {
-  "producer": "orchestrator",
+  "producer": "official-source-researcher",
   "agent_reviews": [
    {
     "reviewer": "data-contract-verifier",
@@ -254,10 +432,10 @@
   "professional_review": null
  },
  "freshness": {
-  "checked_on": "2026-10-10",
-  "method": "snapshot",
-  "snapshot_date": "2026-10-07",
-  "limitation": "Law text from the project's snapshots (23-344 captured 2026-09-30; the definitions 2026-10-07); the orchestrator re-fetched ZR 12-10 and 23-344 on 2026-10-10 and found the quoted words unchanged (VERIFICATION.md)."
+  "checked_on": "2026-10-11",
+  "method": "live_fetch",
+  "snapshot_date": null,
+  "limitation": "ZR 12-10 'street', 'street setback line', 'street, wide' (amended 2026-03-26) and 'street, narrow' were live-fetched from the official portal on 2026-10-11 (whole-page print/PDF node 18523 returned HTTP 504, the documented DB-167 fallback; the canonical HTML node 18523 was used, sha256 8eb066d190f0270a20008973576a19e65f579e46d68b51e5fb361a07515bb33c, 1287409 bytes, pinned in each capture). That page is NOT byte-identical to the 2026-10-07 §12-10 captures (then 3c7197...b5bc / 1316758 bytes), but each cited term's per-term Last Amended stamp is unchanged. ZR 23-344 (2026-09-30), the 12-10 short-dimension / rear / side lot line / block definitions and 23-363 (2026-10-07) are from the repository snapshots; the tax map and GIS from the owner pack retrieved 2026-10-10 (not re-fetched today); the PLUTO data dictionary from the Open Data dataset metadata on 2026-10-11. A labelled unreviewed draft (ADR-007); not professionally verified."
  },
  "promotion": {
   "requested_label": null
