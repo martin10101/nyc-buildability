@@ -2,9 +2,10 @@
 
 Four kinds of content and nothing else, plus the contract's named furniture:
 
-1. the results in large type, each with its assumption line, and the allowance
-   phrase beside the headline (R029, R055);
-2. one site graphic (the existing compact summary frame, wrapper unchanged);
+1. the results in large type - only the KEY FIGURE of each answer at the headline
+   size, the rest of the result at the body token - each with its assumption line
+   and the allowance phrase beside the headline (R029, R055);
+2. one site graphic (the compact close frame, wrapper unchanged);
 3. the legal ceiling beside the apartment estimate, side by side and distinct, with
    the distinction line read from the presentation tokens; the estimate links to its
    full calculation on the scenario sheet (R071, R078);
@@ -70,9 +71,17 @@ def _property_heading(results: Mapping, ident: Mapping) -> raw:
     return el("div", *lines)
 
 
-def _answer_cell(figure_text: str | None, basis: str | None, extra: str | None = None) -> raw:
-    value = figure_text if figure_text is not None else "Not available"
+def _answer_cell(key_figure: str | None, detail: str | None = None,
+                 basis: str | None = None, extra: str | None = None) -> raw:
+    """One answer's cell. Only the KEY FIGURE (a short value read from the document)
+    sits at the headline size; the rest of the result (``detail``), the assumption
+    line (``basis``) and the allowance phrase (``extra``) sit at the body / assumption
+    tokens, so a long result never becomes a word-by-word tower in the narrow Result
+    column (visual G3 rework 1). No font drops below its token."""
+    value = key_figure if key_figure is not None else "Not available"
     children: list[object] = [el("div", value, class_="answer-figure")]
+    if detail:
+        children.append(el("div", detail, class_="answer-detail"))
     if basis:
         children.append(el("div", basis, class_="identity-line"))
     if extra:
@@ -94,16 +103,20 @@ def _floor_area_basis(results: Mapping, ident: Mapping, far_disp: str | None) ->
 
 
 def _answers_table(results: Mapping, ident: Mapping) -> raw:
+    # The KEY FIGURE of each answer is a single value read from the document's own
+    # value fields (never recomputed, never a sentence cut up by a pattern); the rest of
+    # the result is the body detail line (visual G3 rework 1).
     fa = readers.answer_block(results, "floor_area_allowance")
     far = readers.named_value(fa, "max_residential_far")
     area = readers.named_value(fa, "max_residential_floor_area")
-    allowance_text = None
+    allowance_key = None
+    allowance_detail = None
     allowance_label = labels.PENDING_VERIFICATION
     allowance_phrase = None
     if area is not None:
-        allowance_text = area["display"]
+        allowance_key = area["display"]
         if far and far.get("display"):
-            allowance_text = f"{allowance_text} (FAR {far['display']})"
+            allowance_detail = f"FAR {far['display']}"
         allowance_label = area["status_label"]
         if readers.zoning_lot_basis(results) is not None:
             allowance_phrase = _ALLOWANCE_PHRASE.format(allowance=area["display"])
@@ -113,14 +126,15 @@ def _answers_table(results: Mapping, ident: Mapping) -> raw:
     min_base = readers.named_value(envelope_block, "min_base_height")
     max_base = readers.named_value(envelope_block, "max_base_height")
     max_building = readers.named_value(envelope_block, "max_building_height")
-    envelope_text = None
+    envelope_key = None
+    envelope_detail = None
     envelope_label = labels.PENDING_VERIFICATION
     if max_building is not None:
-        parts = []
+        # key figure: the building's maximum height (one value field); detail: the base
+        # range it rises from.
+        envelope_key = f"Up to {max_building['display']}"
         if min_base and max_base:
-            parts.append(f"Base {min_base['display']} to {max_base['display']}")
-        parts.append(f"building up to {max_building['display']}")
-        envelope_text = "; ".join(parts)
+            envelope_detail = f"Base {min_base['display']} to {max_base['display']}"
         envelope_label = max_building["status_label"]
     district = ident.get("district")
     envelope_basis = f"{district} height limits" if district else "Height limits"
@@ -128,24 +142,29 @@ def _answers_table(results: Mapping, ident: Mapping) -> raw:
     worked = readers.worked_buildings(results)
     if worked:
         area_disp = worked[0].get("scheduled_display")
-        scheduled_text = (
-            labels.scheduled_floor_area_line(area_disp) if area_disp
-            else "Scheduled building not available"
-        )
+        # key figure: the scheduled floor area (one value field); detail: the fixed
+        # "Scheduled floor area: N sq ft; site fit unverified" wording (X5), kept whole.
+        if area_disp:
+            scheduled_key = f"{area_disp} sq ft"
+            scheduled_detail = labels.scheduled_floor_area_line(area_disp)
+        else:
+            scheduled_key, scheduled_detail = None, "Scheduled building not available"
         scheduled_basis = None
         if worked[0].get("storey_count") and worked[0].get("height_display"):
             scheduled_basis = f"{worked[0]['storey_count']} storeys; {worked[0]['height_display']}"
         scheduled_label = worked[0]["status_label"]
     else:
-        scheduled_text, scheduled_basis, scheduled_label = (
-            "No building option worked yet", None, labels.PENDING_VERIFICATION
+        scheduled_key, scheduled_detail, scheduled_basis, scheduled_label = (
+            None, "No building option worked yet", None, labels.PENDING_VERIFICATION
         )
 
+    allowance_cell = _answer_cell(allowance_key, allowance_detail, fa_basis, allowance_phrase)
     rows = [
-        ("Floor-area allowance", _answer_cell(allowance_text, fa_basis, allowance_phrase),
-         allowance_label),
-        ("Permitted envelope", _answer_cell(envelope_text, envelope_basis), envelope_label),
-        ("Scheduled building", _answer_cell(scheduled_text, scheduled_basis), scheduled_label),
+        ("Floor-area allowance", allowance_cell, allowance_label),
+        ("Permitted envelope",
+         _answer_cell(envelope_key, envelope_detail, envelope_basis), envelope_label),
+        ("Scheduled building",
+         _answer_cell(scheduled_key, scheduled_detail, scheduled_basis), scheduled_label),
     ]
     body = [
         el("tr", el("th", name), el("td", cell), el("td", label_chip(label)))
@@ -162,8 +181,8 @@ def _answers_table(results: Mapping, ident: Mapping) -> raw:
 def _summary_block(results: Mapping, ident: Mapping, env, site_context_plan) -> raw:
     answers = el("div", _answers_table(results, ident), class_="summary-answers")
     # When the surroundings are available, page type 1's small site figure is the
-    # COMPACT summary frame of the site context plan (ruling Y10), beside the answers
-    # as in wave 21 so the decision summary fits its first printed page.
+    # compact close frame of the site context plan (ruling Y10; M5-T166 rework 1),
+    # beside the answers as in wave 21 so the decision summary fits its first printed page.
     if site_context_plan is not None and site_context_plan.is_drawing:
         # Page 1's thumbnail carries a SHORT caption that fits its column; the full
         # sources-and-dates caption is on the site plan of the 'What constrains the
@@ -177,7 +196,7 @@ def _summary_block(results: Mapping, ident: Mapping, env, site_context_plan) -> 
     if site_plan.is_drawing:
         plan = figure(
             site_plan,
-            "Site plan: the lot's approximate tax-map outline (city records).",
+            "Site plan: the lot's city map outline (not surveyed).",
             figure_class="summary-figure",
         )
         return el("div", answers, plan, class_="summary")

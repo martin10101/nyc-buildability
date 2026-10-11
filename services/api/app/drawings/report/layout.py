@@ -3,9 +3,10 @@
 
 The one stylesheet the report document carries. It reads colour AND the print type
 scale from the shared presentation tokens (``app.drawings.kit.presentation_tokens``),
-so the report, the drawing kit and the website stay one system. No print size is
-hard-coded here: every ``pt`` is interpolated from a ``TYPE`` token (D-094 R047,
-R048). It sets A4 portrait with 14 mm margins and no other sheet size, the running
+so the report, the drawing kit and the website stay one system. Every FONT SIZE is
+read from a ``TYPE`` token (D-094 R047, R048); the remaining literal ``pt`` values are
+borders, line weights and letter spacing (contract section 6), not type sizes. It sets
+A4 portrait with 14 mm margins and no other sheet size, the running
 identity and "Page X of Y" in reserved page-margin boxes, a page break before each
 page type, repeating table headers, rows that do not split, and the type scale.
 """
@@ -69,7 +70,7 @@ html {{ font-family: Arial, Helvetica, sans-serif; color: {ink}; }}
 body {{ margin: 0; font-size: {_BODY_PT}pt; line-height: 1.4; background: {surface}; }}
 .report-page {{ break-before: page; }}
 .report-page:first-of-type {{ break-before: auto; }}
-h1 {{ font-size: {_TITLE_PT}pt; line-height: 1.2; margin: 0 0 4mm; }}
+h1 {{ font-size: {_TITLE_PT}pt; line-height: 1.2; margin: 0 0 3mm; }}
 h2 {{ font-size: {_SECTION_PT}pt; line-height: 1.3; margin: 0 0 2mm; break-after: avoid; }}
 h3 {{ font-size: {_SECTION_PT}pt; line-height: 1.3; margin: 4mm 0 1.5mm; break-after: avoid; }}
 p {{ margin: 0 0 2mm; }}
@@ -80,7 +81,7 @@ p {{ margin: 0 0 2mm; }}
 .identity-line {{ color: {supporting}; font-size: {_COMPACT_PT}pt; margin: 0 0 1mm; }}
 .standing-label {{
   font-size: {_NOTE_PT}pt; color: {caution_ink}; background: {caution_surface};
-  border-left: 2pt solid {caution_ink}; padding: 2mm 3mm; margin: 0 0 4mm;
+  border-left: 2pt solid {caution_ink}; padding: 1.6mm 3mm; margin: 0 0 2.5mm;
 }}
 .answer {{ margin: 0 0 3mm; padding: 0 0 2mm; border-bottom: 0.4pt solid {divider}; }}
 .answer-value {{ font-size: {_SECTION_PT}pt; font-weight: 700; }}
@@ -121,19 +122,28 @@ a {{ color: {action}; }}
 .summary-answers {{ flex: 1 1 auto; min-width: 0; }}
 .summary-figure {{ flex: 0 0 88mm; }}
 .summary-figure figcaption {{ white-space: normal; }}
-.answers-table td {{ vertical-align: top; overflow-wrap: break-word; }}
+.answers-table td, .answers-table th {{ vertical-align: top; overflow-wrap: break-word;
+  padding-top: 1mm; padding-bottom: 1mm; }}
+.answers-table .identity-line, .answers-table .answer-detail {{ line-height: 1.3; }}
 /* The page-1 results print in large type (the headline value scale); fonts are never
    shrunk to fit a page count (D-094 R047, R048) - a larger scale may add a page. */
-.answers-table .answer-figure {{ font-weight: 700; font-size: {_HEADLINE_PT}pt; }}
+.answers-table .answer-figure {{ font-weight: 700; font-size: {_HEADLINE_PT}pt; line-height: 1.1; }}
+/* The rest of each result (the body detail) sits below the key figure at the body size,
+   so a long result never prints at the headline size (visual G3 rework 1). */
+.answer-detail {{ font-size: {_BODY_PT}pt; margin: 0.5mm 0 0; }}
 .allowance-phrase {{ font-size: {_COMPACT_PT}pt; color: {supporting}; margin: 1mm 0 0; }}
 /* The legal ceiling sits BESIDE the apartment estimate, side by side and distinct,
    with the distinction line below (D-094 R071, R078). */
-.ceiling-estimate {{ margin: 4mm 0 3mm; }}
+.ceiling-estimate {{ margin: 3mm 0 2mm; }}
 .ceiling-estimate-pair {{ display: flex; gap: 8mm; align-items: flex-start; }}
 .ceiling, .estimate {{ flex: 1 1 0; min-width: 0; }}
-.distinction {{ font-size: {_COMPACT_PT}pt; color: {supporting}; margin: 2mm 0 0; }}
-.uncertainties {{ margin-top: 4mm; }}
-.scope-line {{ font-size: {_COMPACT_PT}pt; color: {supporting}; margin: 3mm 0 0; }}
+.distinction {{ font-size: {_COMPACT_PT}pt; color: {supporting}; margin: 1.5mm 0 0; }}
+/* The uncertainties list stays together (heading + its items) so it never splits
+   across a page break into a lone item (visual G3 rework 1). */
+.uncertainties {{ margin-top: 2mm; break-inside: avoid; }}
+.uncertainties h3 {{ margin-top: 0; }}
+.uncertainties ul {{ margin: 1mm 0 0; padding-left: 6mm; }}
+.scope-line {{ font-size: {_COMPACT_PT}pt; color: {supporting}; margin: 2mm 0 0; }}
 .scope-note {{ font-size: {_COMPACT_PT}pt; margin: 0 0 3mm; }}
 .reason-row td {{
   font-size: {_NOTE_PT}pt; color: {supporting}; border-bottom: 0.3pt solid {divider};

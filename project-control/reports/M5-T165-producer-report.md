@@ -164,3 +164,76 @@ behaviour); the G1 reviewer decides.
   rear yard an Unresolved open check.
 - PDF page counts / printed point sizes are checked by eye in H2 (not by this builder); the
   larger type scale may add a page (fonts were not shrunk).
+
+## Rework 1 (visual G3 of 2026-10-11; base 7ab4bda5)
+
+Addressed the visual G3 FAIL on page 1 (plus the G3/G4 in-scope advisories). Only
+`page_decision_summary.py`, `layout.py` and `test_report_page_one.py` changed. I printed the
+benchmark report in-process (`make_after_report.py` with the map-context pack, so M5-T166's close
+frame renders), converted to PDF (`print-report-pdf.mjs`) and rendered the pages (`pdftoppm`) to
+check by eye; no server, no ports.
+
+**What changed and why**
+1. **Key figure only at the headline size (REQUIRED #1).** `_answer_cell` now takes a short
+   `key_figure` (headline 30 pt) plus a body-size `detail`, and `_answers_table` reads the key
+   figure from the document's own value fields: Floor-area allowance = `max_residential_floor_area`
+   display ("20,150 sq ft"), detail "FAR 2.0"; Permitted envelope = "Up to " + `max_building_height`
+   display ("Up to 55 ft"), detail "Base 30 ft to 45 ft"; Scheduled building = `scheduled_display`
+   + " sq ft" ("20,150 sq ft"), detail the whole fixed X5 wording "Scheduled floor area: N sq ft;
+   site fit unverified". No figure is recomputed and no sentence is cut up by a pattern. New
+   `.answer-detail` CSS at the body token. The 30 pt sentence-towers are gone.
+2. **Status column clear of the figure (REQUIRED #2).** With short key figures the Result column no
+   longer blows out the table width, so the answers table and the 88 mm figure sit side by side
+   within the printable width and every "Conditional" badge prints in full. `.summary-answers`
+   (flex 1 1 auto; min-width 0) and `.summary-figure` (flex 0 0 88mm) are unchanged (S14 /
+   test_correction2). A CSS-level test guards the fit.
+3. **Decision summary fits page 1 (REQUIRED #3).** Headline `line-height: 1.1`, tighter block
+   margins (standing label, ceiling-estimate, uncertainties, scope line, h1), tighter answers-table
+   row padding and uncertainty-list margins, and `break-inside: avoid` on the uncertainties so the
+   list never splits. All four kinds of content and all named furniture (including the scope line)
+   now print on page 1; the page count fell from 11 to 10 (the spill page is gone). No font was
+   shrunk below its token.
+4. **Fallback caption + docstrings (CORRECTIONS #4/#5).** The page-1 fallback site-plan caption is
+   now "Site plan: the lot's city map outline (not surveyed)." (a GIS outline is never "tax map").
+   The module docstring/comment say "compact close frame" (M5-T166 rework 1). The layout.py
+   docstring now says every FONT SIZE is read from a TYPE token (borders, line weights and letter
+   spacing stay literal). Left alone per the rework: readers.py `_BASIS_NAMES['approximate_tax_map']`,
+   test_s7's site-page "tax-map outline" assertion, and all engine text (the DB-245 GIS sweep under
+   the narrowed S18).
+
+**Page-1 / page-2 description (my own print, 10 pages total).** Page 1 holds, top to bottom: the
+identity (Decision summary; Queens block 7334, lot 70; Zoning district R6B · Commercial overlay
+C2-2; the register index-entry sentence "…recorded 2022-02-08 against lots 1 and 70"); the standing
+label; "What can I potentially build?"; the three-row answers table with each key figure at 30 pt
+(20,150 sq ft; Up to 55 ft; 20,150 sq ft), its body detail, its assumption line, the allowance
+phrase, and the Status badge "Conditional" fully visible; the compact close frame (Lot 70 among its
+neighbours, north arrow, scale bar, "The lot among its neighbours (city map; not surveyed).");
+"Legal ceiling 29" (Conditional) beside "Estimate 17-22" (Provisional, links to #estimate-B) with
+the distinction line; "What is still uncertain" with Zoning lot (Conditional), Recorded lot area
+(Conditional), Rear yard · ZR 23-344 (Unresolved); and the scope line. Page 2 begins the next page
+type, "Site and context" — nothing from the decision summary spills.
+
+**New tests.** `test_rework1_headline_holds_only_a_key_figure_not_a_sentence` (every `.answer-figure`
+is ≤4 words with no clause separator; the fixed scheduled wording is a body detail) and
+`test_rework1_answers_table_and_figure_fit_printable_width` (figure flex basis + gap < 182 mm
+printable; answers can shrink). S1 (page-1 items) and S7 (page 1 ≤200 words, total ≤2448) still hold.
+
+**Word counts (no-map benchmark, as tests measure).** Page 1 = 192 words (≤200); total = 2318 words
+(≤2448). (The site-and-context section's count moved with M5-T166's rework at this head, not mine.)
+
+**Checks (direct exit codes, lanes venv).** `ruff check .` = 0 (All passed). `pytest -q tests/drawings
+tests/cad tests/journey tests/api tests/scenario/three_answers/test_result_ways.py` = 0 (3015 passed,
+6 skipped). `node presentation-tokens.mjs --check` = 0; `node --test presentation-tokens.test.mjs` = 0
+(10/10). `research_record_check.py --check` = 0 (NB-01 code_current=True; unchanged this rework).
+`modularity_check.py --check` = 0.
+
+**Mutation proofs (restored byte-identical, re-verified green).** (A) envelope key figure set back to
+the whole sentence "Base 30 ft to 45 ft; building up to 55 ft" →
+`test_rework1_headline_holds_only_a_key_figure_not_a_sentence` FAILED (11 words ≤ 4). (B)
+`.summary-figure` widened to `flex: 0 0 200mm` → `test_rework1_answers_table_and_figure_fit_printable_width`
+FAILED (200 + 6 ≥ 182). Both restored → green.
+
+**What I could not check.** The live website/preview and real browser (no server/ports); printed
+point sizes are by eye. NB-01 unchanged this rework (no code path touched); review_state stays stale
+pending G1. Every unresolved input stays unresolved (zoning lot Conditional, lot area Conditional,
+rear yard an Unresolved open check).

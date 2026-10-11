@@ -133,6 +133,43 @@ def test_s3_headline_is_28_to_32_pt_and_every_print_size_comes_from_tokens() -> 
         assert match.group(1) in allowed, f"font-size {match.group(1)}pt is not a TYPE token"
 
 
+# ============================================================= visual G3 rework 1
+def test_rework1_headline_holds_only_a_key_figure_not_a_sentence() -> None:
+    # Only the KEY FIGURE of each answer sits at the 30 pt headline size - a short value read
+    # from the document, never a whole sentence (a sentence wrapped into a word-by-word tower in
+    # the narrow Result column, the visual G3 defect). The rest of the result is the body detail.
+    page = _page_one_html(benchmark())
+    figures = re.findall(r'<div class="answer-figure">([^<]*)</div>', page)
+    assert figures, "page 1 has no answer figures"
+    for figure_text in figures:
+        words = figure_text.split()
+        assert 0 < len(words) <= 4, f"headline is not a short key figure: {figure_text!r}"
+        assert ";" not in figure_text, f"headline carries a sentence clause: {figure_text!r}"
+    # the longer result text lives in the body-size detail line, not the headline.
+    details = re.findall(r'<div class="answer-detail">([^<]*)</div>', page)
+    assert any(";" in d for d in details), "the fixed scheduled wording should be a body detail"
+
+
+def test_rework1_answers_table_and_figure_fit_printable_width() -> None:
+    # The answers table and the site figure fit side by side within the printable width
+    # (A4 210mm - 2x14mm margins = 182mm), so the Status column is never clipped by the figure
+    # (the visual G3 defect printed "Conditi"). The figure is a bounded flex column; it plus the
+    # gap must leave room for the answers column, which can shrink (min-width 0) so the table
+    # never overflows under the figure.
+    css = layout.report_css("H", "F")
+    fig = re.search(r"\.summary-figure\s*\{[^}]*flex:\s*0 0 (\d+)mm", css)
+    assert fig is not None, "the site figure is not a bounded flex column"
+    gap = re.search(r"\.summary\s*\{[^}]*gap:\s*(\d+)mm", css)
+    assert gap is not None, "the summary row has no gap"
+    printable_mm = 210 - 2 * 14
+    assert int(fig.group(1)) + int(gap.group(1)) < printable_mm, (
+        "the figure column leaves no room for the answers table within the printable width"
+    )
+    assert re.search(r"\.summary-answers\s*\{[^}]*min-width:\s*0", css), (
+        "the answers column cannot shrink, so the table would overflow under the figure"
+    )
+
+
 # =========================================================================== S4
 def test_s4_ceiling_and_estimate_sit_in_one_block_with_the_token_line() -> None:
     # the token distinction line equals the contract's quoted line (byte-for-byte).
