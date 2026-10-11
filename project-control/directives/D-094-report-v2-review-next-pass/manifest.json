@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T18:33:39+00:00",
+ "updated_at": "2026-10-11T19:08:40+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -129,10 +129,13 @@
   "D-094-R105",
   "D-094-R106",
   "D-094-R107",
-  "D-094-R108"
+  "D-094-R108",
+  "D-094-R109",
+  "D-094-R110",
+  "D-094-R111"
  ],
- "requirements_id_digest_sha256": "47753248ecaa9392f5fd1dbd115c8aff9e8e82dd14095bba55de66033962fb1e",
- "requirements_content_digest_sha256": "051bf713e98b78fc35604b35afaa48d6eab9990c6141329a760651a36c34165d",
+ "requirements_id_digest_sha256": "617bb0673b94b8ecb0cfc7ee8cdd4021687e4bcc252cc762f5698bb65fb3b76f",
+ "requirements_content_digest_sha256": "29beee610a4c452bdc38cc3cd14a6062978a1cd3f24f2ca1a4b57380807ff2b7",
  "sources": [
   {
    "file": "source-001.md",
@@ -180,6 +183,14 @@
    "recorded_at": "2026-10-11T18:33:39+00:00",
    "content_digest_sha256": "a00f53304fb1b7f58680ee41a80ee8e4242ac156a722a32be169b56dd01362fa",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-007-amendment.md",
+   "kind": "amendment",
+   "sequence": 7,
+   "recorded_at": "2026-10-11T19:08:40+00:00",
+   "content_digest_sha256": "e2852b665abde4c5c18ddbd76a11d76a8fffa1eb44c242fed27a345e532a7707",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -187,7 +198,8 @@
   "source-003-amendment.md",
   "source-004-amendment.md",
   "source-005-amendment.md",
-  "source-006-amendment.md"
+  "source-006-amendment.md",
+  "source-007-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -284,6 +296,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-006 (the owner's instruction to add the log to GitHub) and requirements D-094-R108 to R108, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T19:08:40+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-007 (the owner's instruction on resuming after a handoff) and requirements D-094-R109 to R111, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

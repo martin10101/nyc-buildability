@@ -399,3 +399,15 @@ to build).
     confirmed before building the check.
   - **Recommendation (J5):** (1) switch on the two existing checks after review and the owner's approval; (2) add the
     variance and special-permit check; (3) later, read the recorded documents themselves.
+
+## 17. "How do we make the start of the next session quicker and cheaper? Nothing changes between sessions."
+
+- **Owner:** after a handoff nothing changes: the owner clears the session and pastes the handoff text, so the checks
+  and tests the new session runs first are a waste of time; the new session should jump in where the last one left off.
+- **Developer (ANSWERED; recorded as D-094 rows R109 to R111):**
+  - Agreed. After a planned handoff the next session starts the next step at once: no re-checks, no re-reading.
+  - The checks stay only after a crash or a forced stop, when the last session could not finish its handoff.
+  - The bigger cost was reading: this session read the whole plan file (about 1,500 lines) before starting. Next
+    time the handoff names only the lines the next step needs, and the text the owner pastes is short.
+  - The project's instruction file and the handoff routine still say "check first"; a small change brings them in
+    line with the owner's instruction.
