@@ -77,14 +77,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "A reading of law is an unreviewed draft (ADR-007); the record certifies nothing.",
     "Street widths follow the D-052 policy; an unresolved width keeps the dependent reading unresolved."
   ],
   "blockers": [],
   "created_at": "2026-10-11T05:27:03.867480+00:00",
-  "updated_at": "2026-10-11T05:28:15.391472+00:00",
+  "updated_at": "2026-10-11T06:00:51.063453+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -114,6 +114,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one researcher dispatched"
+    },
+    {
+      "at": "2026-10-11T06:00:51.063356+00:00",
+      "agent": "official-source-researcher",
+      "percent": 90,
+      "status": "claimed",
+      "message": "record written and corrected; G1 PASS (round 1 with one correction, delta PASS at b544a4b3); review record and evidence map written"
     }
   ]
 }

@@ -1,0 +1,34 @@
+{
+ "task_id": "M5-T160",
+ "material_commits": [
+  "2bbfed94 (researcher: NB-06 revision 1, README row, producer report)",
+  "b544a4b3 (researcher: NB-06 revision 2 (G1 required correction and two advisories))",
+  "b9a8310c (orchestrator: the G1 delta review entry copied into the record)"
+ ],
+ "claim_seam_head": "c8215a33d0cd7e6c1ae60721843f39bfc4867126",
+ "files_changed": [
+  "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+  "docs/research/evidence-records/README.md",
+  "project-control/reports/M5-T160-producer-report.md"
+ ],
+ "what_did_not_change": "No code, rule, result, report figure, label or other record; RESEARCH_REQUESTS.md and the backlog are not edited by this task.",
+ "known_limits": [
+  "A reading of law is an unreviewed draft (ADR-007); the record certifies nothing and is not a DOB determination.",
+  "Open: ZR 12-10 'street, narrow'/'street, wide' text not captured; the prevailing street wall frontage fact; the operative street-line position (survey or approved plan)."
+ ],
+ "checks_at_material_head": [
+  "python3 tools/research_record_check.py --check: PASS (NB-06 review_state current, no label requested)",
+  "G1 round 1 at 2bbfed94 (PASS with one required correction) and delta at b544a4b3 (PASS, agrees)"
+ ],
+ "requirements": {
+  "D-093-R038": [
+   "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json is one concise research_record/v1 record (question and scope, 16 evidence items with saved copies and SHA-256, provisions read, exceptions considered, measurement basis, observed facts apart from interpretation, conditions, searches with next steps, implementation outputs, review, freshness, promotion null); research_record_check passes."
+  ],
+  "D-093-R050": [
+   "An independent data-contract-verifier opened the captures, worked Q1-Q3 itself before reading the interpretation, found one required correction (the 35-631(b) fallback and the defined-term gloss), and confirmed revision 2 in a delta review; its entry is in review.agent_reviews (reports/M5-T160-reviews.md)."
+  ],
+  "D-094-R043": [
+   "This task's share of the spatial example: the constraints a placed footprint must respect on this lot are researched (street wall 35-631(b): 70% of each frontage within 8 ft, to the 30 ft minimum base height; no setback at or below the 45 ft maximum base height; no side yard required, 23-335(b) and 34-232), with what stays unresolved; the placement itself is later work (D-094 plan P-6.1 to P-6.3)."
+  ]
+ }
+}
