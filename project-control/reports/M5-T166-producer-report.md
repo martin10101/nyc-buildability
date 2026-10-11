@@ -208,3 +208,63 @@ graphic, and no standing test caps the with-maps page-1 section. I did not take 
    basis label by design; this mutation proves the stronger "never a bare number" invariant.)
 
 No snapshot `.svg` file changed in this rework.
+
+## Rework 2 (visual G3 finding 5: no dimension label crosses a drawn line on the close frame)
+
+Base reset to `7ab4bda5d1d997183d06988f7fae4b3bfd850e91` (rework 1 + the NB-04 G1 rev-2 entry +
+M5-T165's page 1). The visual-quality reviewer passed M5-T166 with one REQUIRED correction: a
+dimension label (the 215-Place edge) was crossed near its top by a neighbouring lot's boundary line.
+
+**Root cause.** `draw_edge_dimensions` placed each label by moving it straight OUT from its edge with
+no line avoidance, and `place()`'s street guard allows a perpendicular crossing. So a neighbour
+boundary could cut across a label.
+
+**Fix.** The close-frame dimension placement now avoids the DRAWN lot boundaries:
+- `site_context_plan.dimension_avoid_lines(context, fr, rect)` returns every neighbour lot outline
+  projected and clipped to the viewport EXACTLY as `draw_clipped_outline` draws it; `draw_block_scene`
+  passes it to `draw_edge_dimensions` (close path). The subject's own outline is excluded there (a
+  dimension legitimately sits against the edge it measures); the test still checks against it.
+- `draw_edge_dimensions` now searches a 2-D candidate grid — outward lanes × along-edge shifts —
+  ordered by least displacement, and rejects any candidate whose label box is touched by a line in
+  `avoid_lines` (`cross_max_len=0.0`, strict: no perpendicular crossing allowed either). It keeps the
+  full basis words ("…, map outline, not surveyed") and the >= 8.5 pt size, and raises
+  `DimensionPlacementError` (fails, never shrinks) if no clear spot exists. `DrawnDimension` now
+  carries the placed `label_box` so a caller/test can prove the label crosses no drawn line but its own.
+
+All four dimensions still draw (99.98 / 103.88 / 99.98 / 101.71 ft), each clear of every drawn lot
+boundary (neighbour and subject), verified geometrically and by my own print (below). The surprise:
+the specific collision did NOT reproduce at this head's benchmark geometry once the avoid set used the
+actual CLIPPED drawn outlines — my first attempts used UN-clipped rings (phantom cross-street lots)
+and wrongly reported infeasibility; the clipped set (24 polylines) leaves a clear spot for all four.
+
+**My own print** (`make_after_report.py` -> HTML; `print-report-pdf.mjs` -> PDF; `pdftoppm` 200/400/600 dpi;
+no server, ports untouched). Close frame on PDF page 4. The top "103.88 ft, map outline, not surveyed"
+sits above the subject, clear. Both vertical "99.98 ft, map outline, not surveyed" labels sit in the
+thin corridors beside the subject's left/right edges, each clear of Lot 1 / the 215-Place side — the
+215-Place label (finding 5) no longer crosses a boundary. The bottom "101.71 ft, map outline, not
+surveyed" sits below the subject, clear of the lot boundaries (it passes near a building footprint
+edge in inter-token whitespace; buildings are light fills, not boundary lines, and were not the
+finding). North arrow, scale bar, "No building placed" legend entry all present and legible.
+
+**Tests added** (`test_site_context_close_frame.py`):
+- `test_s2_no_dimension_label_crosses_a_drawn_line`: on the benchmark close frame, every dimension's
+  `label_box` is clear of every drawn lot boundary (neighbour + subject), checked with
+  `box_crosses_lines(max_len=0.0)`.
+- `test_s2_a_forced_collision_fails_closed`: a made-up frame with a boundary line laid across every
+  lane raises `DimensionPlacementError` (fail closed, never a silent crossing).
+
+**NB-04.** `implementation.code_identity` for `close_frame_dimensions.py` updated to the new LF sha256
+`e25fa02627f9ab4e849fcb55195adb16e5a85e225da6d4d12a958fe541e9e4b8`; `research_status`
+(conflicting_evidence) and the `review` block are UNCHANGED (the G1 reviewer re-stamps the review).
+The record check reads code_current=True, review_state=stale (expected pending the re-stamp), exit 0.
+
+**Checks (direct exit codes; lanes venv):**
+- `ruff check .` (services/api) -> exit 0.
+- `pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/scenario/three_answers/test_result_ways.py` -> exit 0, **1797 passed, 6 skipped**.
+- `research_record_check.py --check` -> exit 0. `modularity_check.py --check` -> exit 0 (failures 0).
+- e2e/browser not run; the PDF was printed via puppeteer (its own headless Chromium), ports 3000/3001/8000 untouched.
+
+**Mutation proof (reverted; close-frame tests green after):** forcing each label onto the edge line
+(single on-edge candidate) made `test_s2_no_dimension_label_crosses_a_drawn_line` FAIL — the strict
+guard refuses the on-line placement (`DimensionPlacementError`), so the test does not pass. Restored;
+`close_frame_dimensions.py` re-hashes to the identity recorded in NB-04.

@@ -25,7 +25,7 @@ import math
 from dataclasses import dataclass
 
 from app.drawings.kit import geometry as geo
-from app.drawings.kit.labels import format_feet
+from app.drawings.kit.labels import Box, format_feet
 from app.drawings.kit.sheet import Sheet
 from app.drawings.kit.styles import style_for
 from app.drawings.kit.svg import element, num
@@ -53,6 +53,8 @@ MIN_LABELLED_EDGE_FT = 6.0     # a shorter edge is left undimensioned (never a b
 DIMENSION_MIN_PT = 8.5         # dimension labels print at least 8.5 pt (contract section 6)
 _WITNESS_OFFSET_PT = 12.0      # the dimension line sits this far outside the edge
 _LABEL_STEP_PT = 2.0           # extra outward clearance tried per candidate
+_LANE_STEPS = 10               # candidate positions outward (a wider lane clears a near line)
+_ALONG_STEPS = 6               # candidate shifts along the edge, each way, when the lane is blocked
 
 
 class DimensionPlacementError(RuntimeError):
@@ -65,7 +67,8 @@ class DimensionPlacementError(RuntimeError):
 class DrawnDimension:
     """One drawn edge dimension. ``a_px``/``b_px`` are the edge's two projected
     vertices - the witness lines are anchored there, so the dimension measures the
-    edge it is drawn against (S1)."""
+    edge it is drawn against (S1). ``label_box`` is the placed label's bounds, so a
+    caller can prove the label crosses no drawn line but its own (rework 2)."""
 
     edge_index: int
     length_ft: float
@@ -73,6 +76,7 @@ class DrawnDimension:
     basis: str
     a_px: Point
     b_px: Point
+    label_box: Box
 
 
 def _dimension_line(a: Point, b: Point, edge_index: int, kind: str) -> str:
@@ -113,12 +117,25 @@ def draw_edge_dimensions(
         text = f"{format_feet(length)}, {basis}"
         ang = readable_angle(math.degrees(math.atan2(pb[1] - pa[1], pb[0] - pa[0])))
         mx, my = (dim_a[0] + dim_b[0]) / 2.0, (dim_a[1] + dim_b[1]) / 2.0
-        cands = [(mx + n[0] * (3.0 + j * (size + _LABEL_STEP_PT)),
-                  my + n[1] * (3.0 + j * (size + _LABEL_STEP_PT)), ang)
-                 for j in range(7)]
+        # Candidates move the label OUTWARD (a wider lane) and, when needed, ALONG the
+        # edge, so it can dodge a neighbour boundary that brackets the lane while still
+        # naming the edge it measures; ordered by least total displacement so the label
+        # stays as centred and close to its edge as a clear spot allows (rework 2).
+        elen = math.hypot(pb[0] - pa[0], pb[1] - pa[1]) or 1.0
+        ux, uy = (pb[0] - pa[0]) / elen, (pb[1] - pa[1]) / elen
+        step = size + _LABEL_STEP_PT
+        grid = [(3.0 + j * step, al * step)
+                for j in range(_LANE_STEPS) for al in range(-_ALONG_STEPS, _ALONG_STEPS + 1)]
+        grid.sort(key=lambda oa: (oa[0] - 3.0) + abs(oa[1]))
+        cands = [(mx + n[0] * out + ux * al, my + n[1] * out + uy * al, ang)
+                 for out, al in grid]
+        # cross_max_len=0.0 rejects a candidate whose box is touched by ANY line in
+        # avoid_lines (the drawn lot boundaries and streets, NOT the dimension's own
+        # witness/dimension lines, which are drawn below): a label may never cross a
+        # drawn line other than its own (presentation contract section 6; rework 2).
         box = place(sheet, cands, text, size=size, source=f"edge:{outline.source}/0#{i}",
                     role="dimension", anchor="middle", rect=rect, pad=2.0,
-                    avoid_lines=avoid_lines, own=None)
+                    avoid_lines=avoid_lines, own=None, cross_max_len=0.0)
         if box is None:
             raise DimensionPlacementError(
                 f"edge {i} dimension {text!r} does not fit at {size} pt without a collision")
@@ -126,5 +143,5 @@ def draw_edge_dimensions(
         sheet.parts.append(_dimension_line(pa, dim_a, i, "witness"))
         sheet.parts.append(_dimension_line(pb, dim_b, i, "witness"))
         sheet.parts.append(_dimension_line(dim_a, dim_b, i, "dimension"))
-        drawn.append(DrawnDimension(i, length, text, basis, pa, pb))
+        drawn.append(DrawnDimension(i, length, text, basis, pa, pb, box))
     return drawn

@@ -137,6 +137,55 @@ def test_an_edge_too_short_to_label_is_left_undimensioned() -> None:
     assert 4 not in {d.edge_index for d in dims}  # the 2.22 ft edge carries no dimension
 
 
+def _drawn_boundary_lines(ctx, fr, rect):
+    """Every DRAWN lot boundary on the close frame - the neighbour outlines plus the
+    subject outline, clipped to the viewport exactly as the scene draws them. These
+    are the lines a dimension label may not cross (its own witness and dimension
+    lines are drawn separately and are the only lines it may cross; rework 2 / G3 F5)."""
+    from app.drawings.maps.context_scene import project_polygon
+    from app.drawings.maps.site_context_plan import dimension_avoid_lines
+    from app.drawings.maps.street_areas import clip_polygon_to_rect
+
+    lines = list(dimension_avoid_lines(ctx, fr, rect))  # the drawn neighbour outlines
+    for poly in clip_polygon_to_rect(
+        [tuple(r) for r in project_polygon(ctx.subject_lot.outline, fr)], rect
+    ):
+        lines.append(("subject", list(poly)))
+    return lines
+
+
+def test_s2_no_dimension_label_crosses_a_drawn_line() -> None:
+    # Visual G3 finding 5 / S2: on the benchmark close frame no dimension label's box
+    # is crossed by any drawn lot boundary (neighbour or subject). The label is placed
+    # with the SAME avoid set the scene uses (the drawn neighbour outlines); the check
+    # is against every drawn boundary, so a label never collides with a line but its own.
+    from app.drawings.maps.context_scene import box_crosses_lines
+    from app.drawings.maps.site_context_plan import dimension_avoid_lines
+
+    ctx, fr, rect = _close_fr()
+    dims = draw_edge_dimensions(
+        Sheet(), ctx.subject_lot.outline, fr, rect, avoid_lines=dimension_avoid_lines(ctx, fr, rect)
+    )
+    assert len(dims) == 4
+    drawn = _drawn_boundary_lines(ctx, fr, rect)
+    for d in dims:
+        assert not box_crosses_lines(d.label_box, drawn, None, pad=0.5, max_len=0.0), (
+            f"edge {d.edge_index} label {d.text!r} crosses a drawn boundary line"
+        )
+
+
+def test_s2_a_forced_collision_fails_closed() -> None:
+    # A made-up frame built to collide: boundary lines laid across every lane of the
+    # viewport so no candidate box is clear. The build FAILS (never a silent crossing
+    # or a shrunk label); the real benchmark above has clear spots.
+    ctx, fr, rect = _close_fr()
+    x0, y0, x1, y1 = rect
+    blocking = [("block", [(x0, float(y)), (x1, float(y))])
+                for y in range(int(y0), int(y1) + 1, 3)]  # a line every 3 pt, spanning the frame
+    with pytest.raises(DimensionPlacementError):
+        draw_edge_dimensions(Sheet(), ctx.subject_lot.outline, fr, rect, avoid_lines=blocking)
+
+
 # =========================================================================== S4
 def test_s4_close_frame_contents() -> None:
     d = render_site_context_plan(DOC, frame="close", env=ENV)

@@ -79,7 +79,12 @@ from .model import (
     TaxLotLayer,
     Unavailable,
 )
-from .street_areas import MIN_STREET_AREA_SQFT, clip_polyline_to_rect, gaps_in_rect
+from .street_areas import (
+    MIN_STREET_AREA_SQFT,
+    clip_polygon_to_rect,
+    clip_polyline_to_rect,
+    gaps_in_rect,
+)
 
 # Re-export the shared toolkit so block_map / neighbourhood_map / the tests keep
 # importing these names from site_context_plan (compatibility facade).
@@ -96,6 +101,7 @@ __all__ = [
     "bordering_street_names",
     "caption_notes",
     "compose_context",
+    "dimension_avoid_lines",
     "draw_block_scene",
     "draw_neighbourhood_scene",
     "draw_site_context_plan",
@@ -259,6 +265,25 @@ def _street_lines_screen(streets: StreetLayer, fr: ViewFrame, rect: _Box, data_r
         for path in street.paths:
             for piece in clip_polyline_to_rect([fr.px(p) for p in path], rect, data_region):
                 out.append((street.name, piece))
+    return out
+
+
+def dimension_avoid_lines(context: MapContext, fr: ViewFrame, rect: _Box):
+    """The DRAWN lot-boundary polylines a dimension label must not cross on the close
+    frame (rework 2): every neighbour lot whose bbox touches the view, projected and
+    clipped to the viewport EXACTLY as ``draw_clipped_outline`` draws it, each as
+    ('boundary', polyline). The subject lot is omitted: a dimension sits against the
+    very edge it measures, and its own witness/dimension lines (drawn separately) are
+    the only lines its label may cross (presentation contract section 6; visual G3
+    finding 5). Shared with the close-frame test, so what is enforced is checked."""
+    lots = context.tax_lots.lots if isinstance(context.tax_lots, TaxLotLayer) else ()
+    out = []
+    for lot in lots:
+        if not lot_bbox_touches(lot.outline, fr, rect):
+            continue
+        rings = [tuple(r) for r in project_polygon(lot.outline, fr)]
+        for poly in clip_polygon_to_rect(rings, rect):
+            out.append(("boundary", list(poly)))
     return out
 
 
@@ -448,9 +473,11 @@ def draw_block_scene(
     if with_edges and dimension_style == "close":
         # A dimension is anchored to the edge it measures and sits in the lane just
         # outside it, so it may run parallel to that edge's own fronting street; it is
-        # placed first and the street names then avoid its boxes.
+        # placed first and the street names then avoid its boxes. Its label is kept
+        # clear of every drawn lot boundary and street line (rework 2, visual G3 F5).
         draw_edge_dimensions(sheet, subj.outline, fr, rect,
-                             size=max(DIMENSION_MIN_PT, min_label_pt))
+                             size=max(DIMENSION_MIN_PT, min_label_pt),
+                             avoid_lines=street_lines + dimension_avoid_lines(context, fr, rect))
     size = max(TYPOGRAPHY.label_pt + 1.0, min_label_pt)
     _label_streets(sheet, context.streets, fr, rect, size, with_width=with_widths,
                    data_region=data_region, only=street_filter, street_lines=street_lines,
