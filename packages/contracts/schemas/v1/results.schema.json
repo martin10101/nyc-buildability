@@ -37,8 +37,8 @@
   "properties": {
     "contract_version": {
       "type": "string",
-      "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0"],
-      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. 1.3.0 (M5-T128, work order docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 0 'How a result may appear', decision D5; D-090-R229/R255/R258/R268) lets ONE value inside an answer carry which of the three ways it appears in. It adds (a) the OPTIONAL 'value_states' object on each AVAILABLE answer (floor_area_allowance, permitted_envelope and the building option): a map keyed by the answer value's key, each entry declaring the value's way - 'settled' (no condition), 'conditional' (one or more named conditions, each with its kind, the assumption in words and what would settle it) or 'withheld' (no number; its label, reason, which of the two gap kinds it is, what would resolve it, and the law section where one applies); and (b) the OPTIONAL 'resolved_by' and 'gap_kind' fields on a whole-answer 'not available' object, so a withheld whole answer can also say what would resolve it and which gap kind it is. value_states and the not-available resolution fields are OPTIONAL and additive: a document carrying ANY of them declares 1.3.0 (the version-binding allOf below), and a document declaring 1.3.0 carries a value_states map on every available answer (the forward-binding allOf below), each entry present stating one way; this schema cannot require that map to be non-empty or that it hold an entry for every shown value, so stating the way of every shown value, so none is settled by silence, is the emitter's rule, refused by the validator of the engine that emits this version, not by this schema; a document carrying none of them may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 / 1.1.0 / 1.2.0 instance stays valid byte-for-byte. The remaining-floor-area line is UNCHANGED (it keeps the shared not_available shape). 1.4.0 (M5-T146, task 1 of the first-building-option wiring; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R650; work order rulings W1-W5; DB-196/DB-210) adds, as OPTIONAL additive top-level blocks bound by a version allOf (the 1.1.0/1.2.0/1.3.0 precedent): (a) 'building_alternatives' - a LIST of worked first-building alternatives, none preferred or default (ruling W3, DB-210(b) still with the owner); each entry carries its fill rule, floor-schedule rows, storey count, height, totals, its way ('settled'/'conditional'/'withheld', reusing the 1.3.0 value_state vocabulary) with its conditions, what was NOT checked (ruling W5), and its own preliminary capacity estimate (label exactly 'Preliminary capacity estimate' or 'Not known', D-090-R543); and (b) 'coverage_by_portion' - the corner/interior coverage ratios of ZR 23-362, the 100 ft corner-lot distance of ZR 12-10, the two measured portion areas and the footprint figure, shown only where the recorded and outline lot areas AGREE and WITHHELD (no number) where they disagree (ruling W1, R257/R239). A withheld result carries NO number (R556/R570). (c) 'buildings_not_worked' (ruling W14, the walkthrough correction F1) - a LIST naming, for each building of the step-P6 method that is NOT listed in building_alternatives, why it was not worked (each entry {building, label, reason, gap_kind, resolved_by}, no number field); a building is in exactly one of the two lists, so the document always says why a building is not shown and the single building_option block never states a false reason. building_option, unit_estimate, floor_stack, floor_by_floor, the max_lot_coverage value and geometry KEEP their shape and benchmark content. Both 1.4.0 blocks are OPTIONAL and additive: a document carrying EITHER declares contract_version 1.4.0 (the version-binding allOf below), and because 1.4.0 is a strict superset of 1.3.0 a 1.4.0 document still carries a value_states map on every available answer (the 1.3.0 forward-binding allOf); a document carrying neither may declare any earlier version, so every valid 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 instance stays valid byte-for-byte. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
+      "enum": ["1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0"],
+      "description": "CLOSED enum of published results contract versions. 1.0.0 = M5-T125 initial shape (D-090 Wave 0). 1.1.0 (D-090-R108) adds the OPTIONAL top-level 'scope' object (purpose: put the scope beside the numbers - the headline cards and exported drawings visibly carry the 'Tax-lot-only estimate' label, identify the lot, and disclose the assumed corner conditions, while whole-site and remaining capacity stay unconfirmed). scope is OPTIONAL and may be absent or null; a document carrying a NON-NULL scope object declares 1.1.0 (the version-binding allOf below), while a document with an absent or null scope may declare 1.0.0 or 1.1.0, so every valid 1.0.0 instance stays valid unchanged. 1.2.0 (D-090-R132) adds the OPTIONAL 'notes' array on the building-option answer only (purpose: carry the engine's COMPUTED minimum-base-height note into the results document so it can be shown beside the heights instead of being dropped before the document; DB-119). notes is OPTIONAL and may be absent, null or empty; a document whose building-option answer carries a NON-EMPTY notes array declares 1.2.0 (the version-binding allOf below), while a document with an absent, null or empty notes array may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 and 1.1.0 instance stays valid byte-for-byte. 1.3.0 (M5-T128, work order docs/plans/R6B_RESULTS_CONNECTION_WORK_ORDER_2026-10-06.md section 0 'How a result may appear', decision D5; D-090-R229/R255/R258/R268) lets ONE value inside an answer carry which of the three ways it appears in. It adds (a) the OPTIONAL 'value_states' object on each AVAILABLE answer (floor_area_allowance, permitted_envelope and the building option): a map keyed by the answer value's key, each entry declaring the value's way - 'settled' (no condition), 'conditional' (one or more named conditions, each with its kind, the assumption in words and what would settle it) or 'withheld' (no number; its label, reason, which of the two gap kinds it is, what would resolve it, and the law section where one applies); and (b) the OPTIONAL 'resolved_by' and 'gap_kind' fields on a whole-answer 'not available' object, so a withheld whole answer can also say what would resolve it and which gap kind it is. value_states and the not-available resolution fields are OPTIONAL and additive: a document carrying ANY of them declares 1.3.0 (the version-binding allOf below), and a document declaring 1.3.0 carries a value_states map on every available answer (the forward-binding allOf below), each entry present stating one way; this schema cannot require that map to be non-empty or that it hold an entry for every shown value, so stating the way of every shown value, so none is settled by silence, is the emitter's rule, refused by the validator of the engine that emits this version, not by this schema; a document carrying none of them may declare 1.0.0, 1.1.0 or 1.2.0, so every valid 1.0.0 / 1.1.0 / 1.2.0 instance stays valid byte-for-byte. The remaining-floor-area line is UNCHANGED (it keeps the shared not_available shape). 1.4.0 (M5-T146, task 1 of the first-building-option wiring; D-090-R509/R526/R540/R541/R543/R544/R556/R570/R650; work order rulings W1-W5; DB-196/DB-210) adds, as OPTIONAL additive top-level blocks bound by a version allOf (the 1.1.0/1.2.0/1.3.0 precedent): (a) 'building_alternatives' - a LIST of worked first-building alternatives, none preferred or default (ruling W3, DB-210(b) still with the owner); each entry carries its fill rule, floor-schedule rows, storey count, height, totals, its way ('settled'/'conditional'/'withheld', reusing the 1.3.0 value_state vocabulary) with its conditions, what was NOT checked (ruling W5), and its own preliminary capacity estimate (label exactly 'Preliminary capacity estimate' or 'Not known', D-090-R543); and (b) 'coverage_by_portion' - the corner/interior coverage ratios of ZR 23-362, the 100 ft corner-lot distance of ZR 12-10, the two measured portion areas and the footprint figure, shown only where the recorded and outline lot areas AGREE and WITHHELD (no number) where they disagree (ruling W1, R257/R239). A withheld result carries NO number (R556/R570). (c) 'buildings_not_worked' (ruling W14, the walkthrough correction F1) - a LIST naming, for each building of the step-P6 method that is NOT listed in building_alternatives, why it was not worked (each entry {building, label, reason, gap_kind, resolved_by}, no number field); a building is in exactly one of the two lists, so the document always says why a building is not shown and the single building_option block never states a false reason. building_option, unit_estimate, floor_stack, floor_by_floor, the max_lot_coverage value and geometry KEEP their shape and benchmark content. Both 1.4.0 blocks are OPTIONAL and additive: a document carrying EITHER declares contract_version 1.4.0 (the version-binding allOf below), and because 1.4.0 is a strict superset of 1.3.0 a 1.4.0 document still carries a value_states map on every available answer (the 1.3.0 forward-binding allOf); a document carrying neither may declare any earlier version, so every valid 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 instance stays valid byte-for-byte. 1.5.0 (M5-T164, work order D-094; records NB-03/NB-04/NB-06) adds, as OPTIONAL additive blocks bound by a 1.5.0 version allOf (the 1.1.0-1.4.0 precedent): (a) the top-level 'rear_yard' block - the ZR 23-344 (a)/(b)/(c)(3) checks (each applies/not_applicable/not_known, with inputs on a quantity basis, conditions, text and ZR sections; a not_known check carries no number) and the combined rear-yard row; (b) the geometry 'constraint_lines' layer (the rear-yard 100-ft line, the corner area, the 8-ft street-wall band and the setback line, geometry only when established); (c) the top-level 'envelope_rows' (setback, street wall, side yard); (d) building_alternatives[].placement (an ILLUSTRATIVE placement, placed with an outline or withheld without one, carrying the plate measure and the G-14 conversion statement); (e) the optional floor_plates.entries[].building tag; (f) the top-level 'input_facts' (key, value, unit, basis on the nine QUANTITY_BASES, source title and date); and (g) building_alternatives[].area_allocation (an ILLUSTRATIVE one-share split of the residential floor area). Every 1.5.0 block is OPTIONAL and additive: a document carrying ANY of them declares 1.5.0 (the 1.5.0 reverse version-binding allOf), and because 1.5.0 is a strict superset of 1.4.0 a 1.5.0 document still carries the 1.3.0 value_states map on every available answer and may carry the 1.4.0 building blocks; a document carrying none may declare any earlier version, so every valid 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 / 1.4.0 instance stays valid byte-for-byte. The cross-key rules the schema cannot express (area_allocation.fitted true only when the building's placement is placed; apartment + other = total within the display rounding) run in app.contracts.results_way_rules for 1.5.0 as the value-state way rule does for 1.3.0/1.4.0. The enum is append-only (new versions are admitted only by an accepted contract task that appends to it); the emitter decides when to declare a higher version."
     },
     "results_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
     "study_id": { "$ref": "common.schema.json#/$defs/non_empty_string" },
@@ -241,6 +241,27 @@
         }
       ]
     },
+    "rear_yard": {
+      "description": "OPTIONAL additive rear-yard block (contract 1.5.0, M5-T164; records NB-03). The ZR 23-344 (a)/(b)/(c)(3) checks and the combined rear-yard row, each a labelled draft reading; a not_known check or row carries NO number. OPTIONAL and additive: absent or null leaves the contract version unconstrained, so every earlier instance stays valid byte-for-byte; a non-null rear_yard binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf below).",
+      "anyOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/rear_yard" }
+      ]
+    },
+    "envelope_rows": {
+      "description": "OPTIONAL additive envelope-rows block (contract 1.5.0, M5-T164; records NB-06). The setback, street-wall and side-yard rows, each with its state, its values (units only when stated), conditions, text and ZR sections; a not_known row carries NO number. OPTIONAL and additive: absent or null leaves the contract version unconstrained; a non-null array (even an empty one) binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf below).",
+      "anyOf": [
+        { "type": "null" },
+        { "type": "array", "items": { "$ref": "#/$defs/envelope_row" } }
+      ]
+    },
+    "input_facts": {
+      "description": "OPTIONAL additive input-facts block (contract 1.5.0, M5-T164; G-10). The facts behind the results, each with its key, numeric value, unit, quantity basis (the nine, closed enum equal to QUANTITY_BASES), source title and source date. OPTIONAL and additive: absent or null leaves the contract version unconstrained; a non-null array (even an empty one) binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf below).",
+      "anyOf": [
+        { "type": "null" },
+        { "type": "array", "items": { "$ref": "#/$defs/input_fact" } }
+      ]
+    },
     "_expected_failure": {
       "type": "string",
       "description": "FIXTURE-ONLY annotation stating the intended defect of an invalid fixture (packages/contracts README convention). Producers NEVER emit this key."
@@ -280,7 +301,7 @@
       "description": "Version binding (contract 1.1.0, D-090-R108; widened to the enum by D-090-R132/R137, DB-129): a document carrying a non-null scope object declares contract_version 1.1.0 OR 1.2.0, not const 1.1.0. 1.2.0 is a strict superset of 1.1.0 - the scope object is allowed AND the building-option notes array is allowed - so a single document may carry BOTH a non-null scope and a non-empty notes array and still declare a valid version (it resolves to 1.2.0). Before this widening the scope clause pinned const 1.1.0 while the notes clause (the allOf below) pins const 1.2.0, so a document carrying both was unsatisfiable: no single contract_version could satisfy both clauses (the scope emitter and the notes emitter each fire on the R6B 215-16 Northern path). An absent or null scope still leaves the version unconstrained, so every 1.0.0 instance stays valid. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either scope is null (or absent, since 'properties' is vacuous for an absent key), or contract_version is one of 1.1.0 / 1.2.0. The notes binding below is unchanged (a non-empty notes array still binds to const 1.2.0), so a document with both a scope and non-empty notes resolves to exactly 1.2.0, while a scope-only document stays valid at either 1.1.0 or 1.2.0.",
       "anyOf": [
         { "properties": { "scope": { "type": "null" } } },
-        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0", "1.3.0", "1.4.0"] } } }
+        { "properties": { "contract_version": { "enum": ["1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0"] } } }
       ]
     },
     {
@@ -304,7 +325,7 @@
             }
           }
         },
-        { "properties": { "contract_version": { "enum": ["1.2.0", "1.3.0", "1.4.0"] } } }
+        { "properties": { "contract_version": { "enum": ["1.2.0", "1.3.0", "1.4.0", "1.5.0"] } } }
       ]
     },
     {
@@ -339,7 +360,7 @@
             }
           }
         },
-        { "properties": { "contract_version": { "enum": ["1.3.0", "1.4.0"] } } }
+        { "properties": { "contract_version": { "enum": ["1.3.0", "1.4.0", "1.5.0"] } } }
       ]
     },
     {
@@ -384,7 +405,40 @@
             "buildings_not_worked": { "type": "null" }
           }
         },
-        { "properties": { "contract_version": { "const": "1.4.0" } } }
+        { "properties": { "contract_version": { "enum": ["1.4.0", "1.5.0"] } } }
+      ]
+    },
+    {
+      "description": "Version binding (contract 1.5.0, M5-T164): REVERSE direction. A document carrying ANY 1.5.0 field declares contract_version 1.5.0. The 1.5.0 fields are the top-level 'rear_yard', 'envelope_rows' and 'input_facts'; the geometry 'constraint_lines' layer; any building_alternatives[].placement or building_alternatives[].area_allocation; and any geometry.floor_plates.entries[].building tag. Expressed as anyOf (not if/then) so the stdlib and engine validators agree: either NONE of them is present (each null or absent - 'properties' is vacuous for an absent key, 'items' for a non-array), or contract_version is 1.5.0. An absent/null set leaves the version unconstrained, so every 1.0.0 / 1.1.0 / 1.2.0 / 1.3.0 / 1.4.0 instance stays valid byte-for-byte. There is no forward 1.5.0 clause: the 1.5.0 blocks are optional even for a 1.5.0 document, while the 1.3.0 forward clause above already binds a 1.5.0 document (a strict superset of 1.3.0) to carry a value_states map on every available answer. The 1.4.0 reverse clause above now admits 1.4.0 OR 1.5.0, so a 1.5.0 document may carry the 1.4.0 building blocks too.",
+      "anyOf": [
+        {
+          "properties": {
+            "rear_yard": { "type": "null" },
+            "envelope_rows": { "type": "null" },
+            "input_facts": { "type": "null" },
+            "geometry": {
+              "properties": {
+                "constraint_lines": { "type": "null" },
+                "floor_plates": {
+                  "properties": {
+                    "entries": {
+                      "items": { "properties": { "building": { "type": "null" } } }
+                    }
+                  }
+                }
+              }
+            },
+            "building_alternatives": {
+              "items": {
+                "properties": {
+                  "placement": { "type": "null" },
+                  "area_allocation": { "type": "null" }
+                }
+              }
+            }
+          }
+        },
+        { "properties": { "contract_version": { "const": "1.5.0" } } }
       ]
     }
   ],
@@ -543,7 +597,9 @@
         "way": { "$ref": "#/$defs/value_state", "description": "Which way this alternative appears - 'settled', 'conditional' (with its conditions) or 'withheld' - reusing the 1.3.0 value_state vocabulary. A worked alternative is settled or conditional; on the benchmark building B is conditional (ruling W2, R267). No alternative is ever called feasible or confirmed." },
         "not_checked": { "type": "array", "minItems": 1, "description": "What was NOT checked for this alternative, as plain text (ruling W5, D-090-R526/R548): the rear yard beyond the corner, where the plan sits on the lot, the street wall, parking/loading/bicycle requirements. 'The plan fits the coverage' is not 'the building fits the lot'.", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } },
         "capacity_estimate": { "$ref": "#/$defs/preliminary_capacity_estimate", "description": "This building's own preliminary capacity estimate, worked from its own floor area (ruling W4)." },
-        "fit_note": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "OPTIONAL plain-text note saying WHY the building fits the lot coverage even at the lowest applicable ratio (ruling W11 c): the lowest-ratio bound (the lowest ratio times the recorded lot area) appears ONLY here, in words, never as a footprint figure. The label stays a short name. Absent when there is no bound to state." }
+        "fit_note": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "OPTIONAL plain-text note saying WHY the building fits the lot coverage even at the lowest applicable ratio (ruling W11 c): the lowest-ratio bound (the lowest ratio times the recorded lot area) appears ONLY here, in words, never as a footprint figure. The label stays a short name. Absent when there is no bound to state." },
+        "placement": { "$ref": "#/$defs/building_placement", "description": "OPTIONAL (contract 1.5.0, M5-T164): this building's ILLUSTRATIVE placement on the lot - placed (with an outline) or withheld (no outline). A present placement binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf)." },
+        "area_allocation": { "$ref": "#/$defs/area_allocation", "description": "OPTIONAL (contract 1.5.0, M5-T164): this building's ILLUSTRATIVE area allocation - one share of the residential floor area split into apartment and other area. A present area_allocation binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf)." }
       }
     },
     "building_not_worked": {
@@ -1600,13 +1656,21 @@
                       "floor": { "type": "integer" },
                       "outline": { "$ref": "#/$defs/polygon" },
                       "gross_sf": { "type": "number", "minimum": 0 },
-                      "use": { "$ref": "#/$defs/floor_use" }
+                      "use": { "$ref": "#/$defs/floor_use" },
+                      "building": { "$ref": "common.schema.json#/$defs/non_empty_string", "description": "OPTIONAL (contract 1.5.0, M5-T164): which building alternative this plate belongs to - the short building identity (building_alternatives[].building). Absent on a plate not tagged by building; a tagged plate binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf)." }
                     }
                   }
                 }
               }
             },
             { "$ref": "#/$defs/not_available" }
+          ]
+        },
+        "constraint_lines": {
+          "description": "OPTIONAL additive constraint-geometry layer (contract 1.5.0, M5-T164; NB-03/NB-06): the rear-yard 100-ft line, the corner area, the 8-ft street-wall band and the setback line, each with its state, quantity basis and ZR sections, and geometry (a line or a polygon) ONLY when established. Absent or null on an earlier instance; a non-null array (even an empty one) binds contract_version to 1.5.0 (the 1.5.0 reverse version-binding allOf).",
+          "anyOf": [
+            { "type": "null" },
+            { "type": "array", "items": { "$ref": "#/$defs/constraint_line" } }
           ]
         }
       }
@@ -1623,6 +1687,262 @@
           "enum": ["discovered", "extracted_draft", "needs_review", "published"],
           "description": "Rule lifecycle status, the same vocabulary as rule_evaluation.schema.json rule_status. 'published' requires qualified-reviewer approval (CLAUDE.md principle 12; D-090-R010)."
         }
+      }
+    },
+    "quantity_basis": {
+      "type": "string",
+      "enum": ["law", "deed", "survey", "printed_tax_map", "approved_plan", "filing_attribute", "administrative_record", "gis", "derived"],
+      "description": "CLOSED enum of provenance bases for a quantity (contract 1.5.0, M5-T164). EXACTLY the nine QUANTITY_BASES of tools/research_record_check.py (and docs/research/evidence-records/README.md), in that order (G-10, D-094): law, deed, survey, printed_tax_map, approved_plan, filing_attribute, administrative_record, gis, derived. A basis outside the nine is rejected (S5); a test asserts this enum equals QUANTITY_BASES. Never call a tax-map value 'recorded' or a GIS outline a tax-map outline (G-10); this enum records which it is."
+    },
+    "illustrative_label": {
+      "type": "string",
+      "const": "Illustrative",
+      "description": "The fixed label an illustrative placement or area allocation carries (contract 1.5.0, M5-T164; owner six-label set, D-090 R779-R799). A placed footprint and the area illustration are DRAWING/ILLUSTRATION measures, never a legal determination: the label is byte-exact 'Illustrative'; any other label matches no branch and is rejected (S4)."
+    },
+    "area_measure": {
+      "type": "string",
+      "const": "residential_floor_area",
+      "description": "The measure a plate area and the area allocation apply, named in the preliminary estimate's own vocabulary (contract 1.5.0, M5-T164; G-14/R092). The preliminary apartment estimate divides the proposed building's RESIDENTIAL FLOOR AREA (services/api/app/scenario/three_answers/preliminary_apartment_estimate.py); the area illustration applies its one share to the SAME measure. Byte-exact; any other value is rejected."
+    },
+    "plate_conversion_statement": {
+      "type": "string",
+      "const": "plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked",
+      "description": "The fixed conversion statement carried WHEREVER the plate or the area illustration appears (data, drawing, caption, appendix) so the plate is never read as a physical floor plate without a stated conversion (contract 1.5.0, M5-T164; G-14). The worked plate is an area equal to zoning floor area per storey; the physical floor plate (gross-up, exclusions, wall thickness) is listed as not checked. Byte-exact; any other value is rejected."
+    },
+    "rear_yard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["checks", "combined"],
+      "description": "OPTIONAL additive rear-yard block (contract 1.5.0, M5-T164; records NB-03). Carries one CHECK per ZR 23-344 provision read ((a), (b) and (c)(3)), each a labelled draft reading never a DOB determination, and the COMBINED rear-yard row that summarises them. A not_known check or the combined row carries NO number anywhere. OPTIONAL and additive: absent or null leaves the contract version unconstrained; a non-null rear_yard binds contract_version to 1.5.0 (the reverse version-binding allOf above).",
+      "properties": {
+        "checks": {
+          "type": "array",
+          "minItems": 1,
+          "description": "One rear-yard check per provision read (ZR 23-344 (a), (b), (c)(3)).",
+          "items": { "$ref": "#/$defs/rear_yard_check" }
+        },
+        "combined": { "$ref": "#/$defs/rear_yard_combined" }
+      }
+    },
+    "rear_yard_check": {
+      "description": "One rear-yard provision check (contract 1.5.0, M5-T164; NB-03). oneOf by state: an 'applies'/'not_applicable' check may carry its measured inputs (each with a quantity basis) and the assumptions it rests on; a 'not_known' check carries NO inputs and NO number (it names only the text and the ZR sections). An entry mixing the two - a not_known check carrying inputs - matches no branch and is rejected (S3).",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provision", "state", "text", "zr_sections"],
+          "description": "A check that applies or does not apply: it may carry measured inputs and conditions.",
+          "properties": {
+            "provision": { "type": "string", "enum": ["23-344(a)", "23-344(b)", "23-344(c)(3)"] },
+            "state": { "type": "string", "enum": ["applies", "not_applicable"] },
+            "inputs": {
+              "type": "array",
+              "description": "The measured inputs the check read, each with its quantity basis (G-10).",
+              "items": { "$ref": "#/$defs/rear_yard_input" }
+            },
+            "conditions": {
+              "type": "array",
+              "description": "The assumptions the reading rests on (reuse value_condition).",
+              "items": { "$ref": "#/$defs/value_condition" }
+            },
+            "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provision", "state", "text", "zr_sections"],
+          "description": "A not_known check: it carries NO inputs and NO number (this branch has no 'inputs' property; additionalProperties false rejects one).",
+          "properties": {
+            "provision": { "type": "string", "enum": ["23-344(a)", "23-344(b)", "23-344(c)(3)"] },
+            "state": { "type": "string", "const": "not_known" },
+            "conditions": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/value_condition" }
+            },
+            "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+          }
+        }
+      ]
+    },
+    "rear_yard_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value", "unit", "basis"],
+      "description": "One measured input of a rear-yard check (contract 1.5.0, M5-T164): a name, a numeric value, its unit and its quantity basis (the nine, G-10).",
+      "properties": {
+        "name": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "value": { "type": "number" },
+        "unit": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "basis": { "$ref": "#/$defs/quantity_basis" }
+      }
+    },
+    "rear_yard_combined": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "way", "text", "zr_sections"],
+      "description": "The combined rear-yard ROW (contract 1.5.0, M5-T164; NB-03). It summarises the checks as one row: its state (applies / not_applicable / not_known), the way it appears (settled / conditional / withheld, the 1.3.0 vocabulary as a plain word), the conditions it rests on (reuse value_condition), the row text and its ZR sections. It carries NO number (a withheld or not_known row never carries one). yard_not_required has no conditions field; this row does.",
+      "properties": {
+        "state": { "type": "string", "enum": ["applies", "not_applicable", "not_known"] },
+        "way": { "type": "string", "enum": ["settled", "conditional", "withheld"] },
+        "conditions": {
+          "type": "array",
+          "description": "The assumptions the row rests on when it is conditional (reuse value_condition).",
+          "items": { "$ref": "#/$defs/value_condition" }
+        },
+        "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+      }
+    },
+    "envelope_row": {
+      "description": "One envelope row (contract 1.5.0, M5-T164; records NB-06): a setback, street-wall or side-yard row. oneOf by state: an 'applies'/'not_applicable' row may carry its values (each a magnitude, with a unit only when stated); a 'not_known' row carries NO values and NO number. Each row names the assumptions it rests on, its row text and its ZR sections.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "state", "text", "zr_sections"],
+          "description": "An envelope row that applies or does not apply: it may carry values.",
+          "properties": {
+            "kind": { "type": "string", "enum": ["setback", "street_wall", "side_yard"] },
+            "state": { "type": "string", "enum": ["applies", "not_applicable"] },
+            "values": {
+              "type": "array",
+              "description": "The row's values, each a magnitude with a unit only when stated.",
+              "items": { "$ref": "#/$defs/envelope_value" }
+            },
+            "conditions": { "type": "array", "items": { "$ref": "#/$defs/value_condition" } },
+            "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "state", "text", "zr_sections"],
+          "description": "A not_known envelope row: it carries NO values and NO number (this branch has no 'values' property; additionalProperties false rejects one).",
+          "properties": {
+            "kind": { "type": "string", "enum": ["setback", "street_wall", "side_yard"] },
+            "state": { "type": "string", "const": "not_known" },
+            "conditions": { "type": "array", "items": { "$ref": "#/$defs/value_condition" } },
+            "text": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+          }
+        }
+      ]
+    },
+    "envelope_value": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value"],
+      "description": "One value of an envelope row (contract 1.5.0, M5-T164): a name and a numeric magnitude, with a unit only when stated and, optionally, its quantity basis (G-10).",
+      "properties": {
+        "name": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "value": { "type": "number" },
+        "unit": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "basis": { "$ref": "#/$defs/quantity_basis" }
+      }
+    },
+    "constraint_line": {
+      "description": "One constraint line or area in the geometry layer (contract 1.5.0, M5-T164; NB-03/NB-06). oneOf by state: an 'established' item carries its geometry (a line or a polygon); a 'not_established' or 'not_known' item carries NO geometry (this branch has no 'geometry' property; additionalProperties false rejects one). Each item names its kind, state, quantity basis (G-10) and ZR sections. Geometry only when established.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "state", "basis", "zr_sections", "geometry"],
+          "description": "An established constraint line/area: it carries its geometry.",
+          "properties": {
+            "kind": { "type": "string", "enum": ["rear_yard_100ft_line", "corner_area", "street_wall_band", "setback_line"] },
+            "state": { "type": "string", "const": "established" },
+            "basis": { "$ref": "#/$defs/quantity_basis" },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } },
+            "geometry": { "oneOf": [ { "$ref": "#/$defs/line" }, { "$ref": "#/$defs/polygon" } ] }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "state", "basis", "zr_sections"],
+          "description": "A not_established or not_known constraint line/area: it carries NO geometry.",
+          "properties": {
+            "kind": { "type": "string", "enum": ["rear_yard_100ft_line", "corner_area", "street_wall_band", "setback_line"] },
+            "state": { "type": "string", "enum": ["not_established", "not_known"] },
+            "basis": { "$ref": "#/$defs/quantity_basis" },
+            "zr_sections": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/zr_section" } }
+          }
+        }
+      ]
+    },
+    "building_placement": {
+      "description": "An ILLUSTRATIVE placement of a worked building on the lot (contract 1.5.0, M5-T164; records NB-03/NB-06). oneOf by status: a 'placed' placement carries its illustrative footprint outline; a 'withheld' placement carries NO outline (this branch has no 'outline' property; additionalProperties false rejects one, S3). Both carry the fixed 'Illustrative' label, the method and quantity basis behind the placement, the plate's area measure and the fixed conversion statement (G-14), the assumptions it rests on, what WAS checked and what was NOT checked. Nothing here is called feasible, compliant or confirmed.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "label", "outline", "method", "basis", "measure", "conversion_statement"],
+          "description": "A placed placement: it carries the illustrative footprint outline.",
+          "properties": {
+            "status": { "type": "string", "const": "placed" },
+            "label": { "$ref": "#/$defs/illustrative_label" },
+            "outline": { "$ref": "#/$defs/polygon" },
+            "method": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "basis": { "$ref": "#/$defs/quantity_basis" },
+            "measure": { "$ref": "#/$defs/area_measure" },
+            "conversion_statement": { "$ref": "#/$defs/plate_conversion_statement" },
+            "conditions": { "type": "array", "items": { "$ref": "#/$defs/value_condition" } },
+            "checks": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } },
+            "not_checked": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "label", "method", "basis", "measure", "conversion_statement"],
+          "description": "A withheld placement: it carries NO outline.",
+          "properties": {
+            "status": { "type": "string", "const": "withheld" },
+            "label": { "$ref": "#/$defs/illustrative_label" },
+            "method": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+            "basis": { "$ref": "#/$defs/quantity_basis" },
+            "measure": { "$ref": "#/$defs/area_measure" },
+            "conversion_statement": { "$ref": "#/$defs/plate_conversion_statement" },
+            "conditions": { "type": "array", "items": { "$ref": "#/$defs/value_condition" } },
+            "checks": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } },
+            "not_checked": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/non_empty_string" } }
+          }
+        }
+      ]
+    },
+    "area_allocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["label", "share", "measure", "conversion_statement", "apartment_area_sqft", "other_area_sqft", "total_sqft", "fitted"],
+      "description": "An ILLUSTRATIVE area allocation for a worked building (contract 1.5.0, M5-T164; R091/R092/R094/R096, G-14). It applies ONE share (0.60 to 0.75) to the proposed building's RESIDENTIAL FLOOR AREA - the estimate's own measure (preliminary_apartment_estimate.py) - and splits a total into apartment area and other area, carrying the fixed conversion statement. 'fitted' is true only when the building's placement is placed (the way-layer rule in results_way_rules.py; the schema cannot cross-check two sibling keys). It carries NO zone geometry, NO unit count and NO room, core, stair or elevator position (additionalProperties false rejects any such key, S3).",
+      "properties": {
+        "label": { "$ref": "#/$defs/illustrative_label" },
+        "share": { "type": "number", "minimum": 0.60, "maximum": 0.75, "description": "The single share applied to the residential floor area (a preliminary assumption; 0.60 to 0.75)." },
+        "measure": { "$ref": "#/$defs/area_measure" },
+        "conversion_statement": { "$ref": "#/$defs/plate_conversion_statement" },
+        "apartment_area_sqft": { "type": "number", "minimum": 0, "description": "The apartment area, square feet. apartment + other = total within the display rounding (results_way_rules.py)." },
+        "other_area_sqft": { "type": "number", "minimum": 0, "description": "The other (non-apartment) area, square feet." },
+        "total_sqft": { "type": "number", "minimum": 0, "description": "The total area split, square feet." },
+        "fitted": { "type": "boolean", "description": "Whether the allocation's footprint zones inside the placed building footprint (true) or is shown only as the bar (false). True only when the placement status is placed (results_way_rules.py)." },
+        "conditions": { "type": "array", "items": { "$ref": "#/$defs/value_condition" } }
+      }
+    },
+    "input_fact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "value", "unit", "basis", "source_title", "source_date"],
+      "description": "One input fact behind the results (contract 1.5.0, M5-T164; G-10). A key, a numeric value, its unit, its quantity basis (the nine, closed enum equal to QUANTITY_BASES), and the title and date of the source it came from. Never call a tax-map value 'recorded' or a GIS outline a tax-map outline (G-10); the basis records which it is.",
+      "properties": {
+        "key": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "value": { "type": "number" },
+        "unit": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "basis": { "$ref": "#/$defs/quantity_basis" },
+        "source_title": { "$ref": "common.schema.json#/$defs/non_empty_string" },
+        "source_date": { "$ref": "common.schema.json#/$defs/non_empty_string" }
       }
     }
   }

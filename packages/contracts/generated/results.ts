@@ -75,6 +75,8 @@ export interface BuildingAlternative {
   not_checked: NonEmptyString[];
   capacity_estimate: PreliminaryCapacityEstimate;
   fit_note?: NonEmptyString;
+  placement?: BuildingPlacement;
+  area_allocation?: AreaAllocation;
 }
 export interface BuildingNotWorked {
   building: NonEmptyString;
@@ -368,13 +370,123 @@ export interface GeometryAvailable {
       outline: Polygon;
       gross_sf: number;
       use: FloorUse;
+      building?: NonEmptyString;
     }[];
   } | NotAvailable;
+  constraint_lines?: null | ConstraintLine[];
 }
 export interface RuleVersion {
   rule_id: NonEmptyString;
   version: NonEmptyString;
   status: "discovered" | "extracted_draft" | "needs_review" | "published";
+}
+export type QuantityBasis = "law" | "deed" | "survey" | "printed_tax_map" | "approved_plan" | "filing_attribute" | "administrative_record" | "gis" | "derived";
+export type IllustrativeLabel = "Illustrative";
+export type AreaMeasure = "residential_floor_area";
+export type PlateConversionStatement = "plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked";
+export interface RearYard {
+  checks: RearYardCheck[];
+  combined: RearYardCombined;
+}
+export type RearYardCheck = {
+  provision: "23-344(a)" | "23-344(b)" | "23-344(c)(3)";
+  state: "applies" | "not_applicable";
+  inputs?: RearYardInput[];
+  conditions?: ValueCondition[];
+  text: NonEmptyString;
+  zr_sections: ZrSection[];
+} | {
+  provision: "23-344(a)" | "23-344(b)" | "23-344(c)(3)";
+  state: "not_known";
+  conditions?: ValueCondition[];
+  text: NonEmptyString;
+  zr_sections: ZrSection[];
+};
+export interface RearYardInput {
+  name: NonEmptyString;
+  value: number;
+  unit: NonEmptyString;
+  basis: QuantityBasis;
+}
+export interface RearYardCombined {
+  state: "applies" | "not_applicable" | "not_known";
+  way: "settled" | "conditional" | "withheld";
+  conditions?: ValueCondition[];
+  text: NonEmptyString;
+  zr_sections: ZrSection[];
+}
+export type EnvelopeRow = {
+  kind: "setback" | "street_wall" | "side_yard";
+  state: "applies" | "not_applicable";
+  values?: EnvelopeValue[];
+  conditions?: ValueCondition[];
+  text: NonEmptyString;
+  zr_sections: ZrSection[];
+} | {
+  kind: "setback" | "street_wall" | "side_yard";
+  state: "not_known";
+  conditions?: ValueCondition[];
+  text: NonEmptyString;
+  zr_sections: ZrSection[];
+};
+export interface EnvelopeValue {
+  name: NonEmptyString;
+  value: number;
+  unit?: NonEmptyString;
+  basis?: QuantityBasis;
+}
+export type ConstraintLine = {
+  kind: "rear_yard_100ft_line" | "corner_area" | "street_wall_band" | "setback_line";
+  state: "established";
+  basis: QuantityBasis;
+  zr_sections: ZrSection[];
+  geometry: Line | Polygon;
+} | {
+  kind: "rear_yard_100ft_line" | "corner_area" | "street_wall_band" | "setback_line";
+  state: "not_established" | "not_known";
+  basis: QuantityBasis;
+  zr_sections: ZrSection[];
+};
+export type BuildingPlacement = {
+  status: "placed";
+  label: IllustrativeLabel;
+  outline: Polygon;
+  method: NonEmptyString;
+  basis: QuantityBasis;
+  measure: AreaMeasure;
+  conversion_statement: PlateConversionStatement;
+  conditions?: ValueCondition[];
+  checks?: NonEmptyString[];
+  not_checked?: NonEmptyString[];
+} | {
+  status: "withheld";
+  label: IllustrativeLabel;
+  method: NonEmptyString;
+  basis: QuantityBasis;
+  measure: AreaMeasure;
+  conversion_statement: PlateConversionStatement;
+  conditions?: ValueCondition[];
+  checks?: NonEmptyString[];
+  not_checked?: NonEmptyString[];
+};
+export interface AreaAllocation {
+  label: IllustrativeLabel;
+  share: number;
+  measure: AreaMeasure;
+  conversion_statement: PlateConversionStatement;
+  apartment_area_sqft: number;
+  other_area_sqft: number;
+  total_sqft: number;
+  fitted: boolean;
+  conditions?: ValueCondition[];
+}
+export interface InputFact {
+  key: NonEmptyString;
+  value: number;
+  unit: NonEmptyString;
+  basis: QuantityBasis;
+  source_title: NonEmptyString;
+  source_date: NonEmptyString;
 }
 export type MeasurementKnown = MeasurementSurveyEntered | MeasurementCityRecords | MeasurementApproximateTaxMap | MeasurementEntered | MeasurementAssumed;
 export interface MeasurementSurveyEntered {
@@ -402,7 +514,7 @@ export interface Goal {
   text: NonEmptyString | null;
 }
 export interface Results {
-  contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" | "1.4.0";
+  contract_version: "1.0.0" | "1.1.0" | "1.2.0" | "1.3.0" | "1.4.0" | "1.5.0";
   results_id: NonEmptyString;
   study_id: NonEmptyString;
   option_id: NonEmptyString;
@@ -442,5 +554,8 @@ export interface Results {
   building_alternatives?: null | BuildingAlternative[];
   coverage_by_portion?: null | CoverageByPortion;
   buildings_not_worked?: null | BuildingNotWorked[];
+  rear_yard?: null | RearYard;
+  envelope_rows?: null | EnvelopeRow[];
+  input_facts?: null | InputFact[];
   _expected_failure?: string;
 }

@@ -32,8 +32,16 @@ __all__ = [
 CONTRACT_VERSION_1_3_0 = "1.3.0"
 # Every version that carries the value_states way-layer. 1.4.0 (M5-T146) is a strict superset of
 # 1.3.0 - it keeps the same value_states on every available answer and only ADDS the first-building
-# -option blocks - so the same way-layer rule applies; below 1.3.0 the rule does nothing.
-CONTRACT_VERSIONS_WITH_WAY_LAYER = frozenset({"1.3.0", "1.4.0"})
+# -option blocks - so the same way-layer rule applies; below 1.3.0 the rule does nothing. 1.5.0
+# (M5-T164) is a strict superset of 1.4.0: it keeps the value_states way-layer AND adds the
+# area-allocation cross-key rules below (fitted-only-when-placed; apartment + other = total). A
+# 1.4.0 document carries no placement or area_allocation, so the area-allocation rules find nothing
+# there and 1.3.0 / 1.4.0 behaviour is unchanged.
+CONTRACT_VERSIONS_WITH_WAY_LAYER = frozenset({"1.3.0", "1.4.0", "1.5.0"})
+
+# apartment + other must equal total within the two-decimal display rounding (each figure is shown
+# to two decimals, so their sum can differ from a two-decimal total by at most 0.005 + 0.005).
+_AREA_ROUNDING_TOLERANCE = 0.01 + 1e-9
 
 # The three answers that may carry a value_states way-layer (results.schema.json
 # answers: floor_area_allowance, permitted_envelope and the building option).
@@ -92,7 +100,67 @@ def results_way_violations(document: Any) -> list[WayRuleViolation]:
         if not isinstance(answer, Mapping) or answer.get("status") != "available":
             continue  # a not-available answer carries no value_states
         violations.extend(_answer_violations(answer_name, answer))
+    # 1.5.0 (M5-T164): the area-allocation cross-key rules the schema cannot express. A 1.3.0 /
+    # 1.4.0 document carries no area_allocation, so this adds nothing there.
+    violations.extend(_building_alternative_violations(document))
     return violations
+
+
+def _building_alternative_violations(document: Mapping[str, Any]) -> list[WayRuleViolation]:
+    """Area-allocation way-layer breaches of a 1.5.0 document (M5-T164).
+
+    For each building alternative that carries an ``area_allocation``:
+
+    1. ``fitted`` may be true ONLY when that building's ``placement`` is status ``placed`` -
+       an allocation zones inside a footprint only when one is placed;
+    2. ``apartment_area_sqft`` + ``other_area_sqft`` must equal ``total_sqft`` within the
+       two-decimal display rounding - the split never invents or loses area.
+
+    A 1.3.0 / 1.4.0 document carries no ``area_allocation``, so this returns nothing there.
+    The shape of each field is already guaranteed by the schema run before this rule.
+    """
+    alternatives = document.get("building_alternatives")
+    if not isinstance(alternatives, Sequence) or isinstance(alternatives, (str, bytes)):
+        return []
+    out: list[WayRuleViolation] = []
+    for alt in alternatives:
+        if not isinstance(alt, Mapping):
+            continue
+        allocation = alt.get("area_allocation")
+        if not isinstance(allocation, Mapping):
+            continue
+        building = alt.get("building")
+        key = building if isinstance(building, str) else "?"
+        placement = alt.get("placement")
+        placed = isinstance(placement, Mapping) and placement.get("status") == "placed"
+        if allocation.get("fitted") is True and not placed:
+            out.append(
+                WayRuleViolation(
+                    "building_alternatives",
+                    key,
+                    "allocation_fitted_without_placement",
+                    f"building {key!r}: area_allocation.fitted is true but the building's "
+                    "placement is not 'placed' (an allocation zones inside a footprint only "
+                    "when one is placed)",
+                )
+            )
+        apartment = allocation.get("apartment_area_sqft")
+        other = allocation.get("other_area_sqft")
+        total = allocation.get("total_sqft")
+        if all(
+            isinstance(value, (int, float)) and not isinstance(value, bool)
+            for value in (apartment, other, total)
+        ) and abs((apartment + other) - total) > _AREA_ROUNDING_TOLERANCE:
+            out.append(
+                WayRuleViolation(
+                    "building_alternatives",
+                    key,
+                    "allocation_total_mismatch",
+                    f"building {key!r}: area_allocation apartment ({apartment}) + other ({other}) "
+                    f"does not equal total ({total}) within the display rounding",
+                )
+            )
+    return out
 
 
 def _shown_keys(answer: Mapping[str, Any]) -> list[str]:

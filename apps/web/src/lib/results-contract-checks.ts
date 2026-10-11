@@ -44,11 +44,32 @@ import type { ThreeAnswersResults } from "./architect/three-answers";
 export const RESULTS_CONTRACT_VERSION = "1.3.0";
 
 /** The results-contract versions the reader accepts: the three-way 1.3.0 layer and its strict
- * superset 1.4.0 (the additive first-building-options blocks, M5-T146/M5-T147). 1.4.0 is accepted so
- * the live panel renders the new blocks; because the blocks are OPTIONAL, every valid 1.3.0 document
- * stays valid byte-for-byte. Earlier versions (1.0.0–1.2.0) carry no value_states and are refused by
- * the value_states rules below, as before. */
-export const SUPPORTED_RESULTS_CONTRACT_VERSIONS = ["1.3.0", "1.4.0"] as const;
+ * supersets 1.4.0 (the additive first-building-options blocks, M5-T146/M5-T147) and 1.5.0 (the
+ * additive rear-yard / envelope / illustrative-placement / area-allocation blocks, M5-T164). Each
+ * higher version is accepted so the live panel renders the new blocks; because the blocks are
+ * OPTIONAL, every valid 1.3.0 / 1.4.0 document stays valid byte-for-byte. Earlier versions
+ * (1.0.0–1.2.0) carry no value_states and are refused by the value_states rules below, as before. */
+export const SUPPORTED_RESULTS_CONTRACT_VERSIONS = ["1.3.0", "1.4.0", "1.5.0"] as const;
+
+/** The two statuses an illustrative building placement may carry (schema building_placement; 1.5.0). */
+export const PLACEMENT_STATUSES = ["placed", "withheld"] as const;
+
+/** The fixed label an illustrative placement or area allocation carries (schema; 1.5.0, S4). */
+export const ILLUSTRATIVE_LABEL = "Illustrative";
+
+/** The measure an area allocation applies - the preliminary estimate's own measure (schema; 1.5.0). */
+export const AREA_ALLOCATION_MEASURE = "residential_floor_area";
+
+/** The fixed conversion statement carried wherever the plate/area illustration appears (schema; G-14). */
+export const AREA_ALLOCATION_CONVERSION_STATEMENT =
+  "plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked";
+
+/** The inclusive share range for an area allocation (schema; 1.5.0, S13). */
+export const AREA_ALLOCATION_SHARE_MIN = 0.6;
+export const AREA_ALLOCATION_SHARE_MAX = 0.75;
+
+/** apartment + other must equal total within the two-decimal display rounding (way-layer, 1.5.0). */
+const AREA_ROUNDING_TOLERANCE = 0.01 + 1e-9;
 
 /** The two methods a worked alternative may carry (schema building_alternative.fill_rule). */
 export const BUILDING_FILL_RULES = ["widest", "to_min_base"] as const;
@@ -303,8 +324,87 @@ function checkCapacityEstimate(problems: Problems, path: string, value: unknown)
   }
 }
 
-/** The building_alternatives list (schema, contract 1.4.0). Absent or null is accepted (additive);
- * when present each entry's shape is checked so a malformed alternative never reaches the panel. */
+/** A building's ILLUSTRATIVE placement (schema building_placement, contract 1.5.0). Checks the status,
+ * the fixed "Illustrative" label, and that an outline is present ONLY when the placement is placed.
+ * Returns the status so the area-allocation cross-check can read it. */
+function checkPlacement(problems: Problems, path: string, value: unknown): unknown {
+  const placement = checkObject(problems, path, value);
+  if (!placement) return undefined;
+  checkEnum(problems, `${path}.status`, placement.status, PLACEMENT_STATUSES);
+  if (placement.label !== ILLUSTRATIVE_LABEL) {
+    problems.add(`${path}.label`, `must be the string "${ILLUSTRATIVE_LABEL}"`);
+  }
+  // R: an outline is shown only when the placement is placed (S3).
+  if (placement.status === "placed") {
+    if (!Array.isArray(placement.outline)) {
+      problems.add(`${path}.outline`, "a placed placement must carry an outline");
+    }
+  } else if (placement.status === "withheld" && placement.outline !== undefined) {
+    problems.add(`${path}.outline`, "a withheld placement may never carry an outline");
+  }
+  return placement.status;
+}
+
+/** A building's ILLUSTRATIVE area allocation (schema area_allocation, contract 1.5.0). Checks the
+ * fixed label, the share range, the fixed measure and conversion statement, the three areas and the
+ * fitted flag, AND the two way-layer rules the schema cannot express: fitted is true only when the
+ * building's placement is placed, and apartment + other = total within the display rounding
+ * (results_way_rules.py; S13/S12). */
+function checkAreaAllocation(
+  problems: Problems,
+  path: string,
+  value: unknown,
+  placementStatus: unknown,
+): void {
+  const alloc = checkObject(problems, path, value);
+  if (!alloc) return;
+  if (alloc.label !== ILLUSTRATIVE_LABEL) {
+    problems.add(`${path}.label`, `must be the string "${ILLUSTRATIVE_LABEL}"`);
+  }
+  if (
+    !isJsonNumber(alloc.share) ||
+    alloc.share < AREA_ALLOCATION_SHARE_MIN ||
+    alloc.share > AREA_ALLOCATION_SHARE_MAX
+  ) {
+    problems.add(
+      `${path}.share`,
+      `must be a number between ${AREA_ALLOCATION_SHARE_MIN} and ${AREA_ALLOCATION_SHARE_MAX}`,
+    );
+  }
+  if (alloc.measure !== AREA_ALLOCATION_MEASURE) {
+    problems.add(`${path}.measure`, `must be the string "${AREA_ALLOCATION_MEASURE}"`);
+  }
+  if (alloc.conversion_statement !== AREA_ALLOCATION_CONVERSION_STATEMENT) {
+    problems.add(`${path}.conversion_statement`, "must be the fixed plate conversion statement");
+  }
+  for (const field of ["apartment_area_sqft", "other_area_sqft", "total_sqft"]) {
+    checkNumberField(problems, `${path}.${field}`, (alloc as Record<string, unknown>)[field]);
+  }
+  checkBoolean(problems, `${path}.fitted`, alloc.fitted);
+  // Way-layer (M5-T164): fitted may be true only when the building's placement is placed.
+  if (alloc.fitted === true && placementStatus !== "placed") {
+    problems.add(`${path}.fitted`, "may be true only when the building's placement is placed");
+  }
+  // Way-layer (M5-T164): apartment + other = total within the display rounding.
+  const apartment = alloc.apartment_area_sqft;
+  const other = alloc.other_area_sqft;
+  const total = alloc.total_sqft;
+  if (
+    isJsonNumber(apartment) &&
+    isJsonNumber(other) &&
+    isJsonNumber(total) &&
+    Math.abs(apartment + other - total) > AREA_ROUNDING_TOLERANCE
+  ) {
+    problems.add(
+      `${path}.total_sqft`,
+      "apartment + other must equal total within the display rounding",
+    );
+  }
+}
+
+/** The building_alternatives list (schema, contract 1.4.0; the 1.5.0 placement and area_allocation).
+ * Absent or null is accepted (additive); when present each entry's shape is checked so a malformed
+ * alternative never reaches the panel. */
 function checkBuildingAlternatives(problems: Problems, value: unknown): void {
   if (value === null || value === undefined) return;
   const list = checkBoundedArray(problems, "building_alternatives", value);
@@ -340,6 +440,16 @@ function checkBuildingAlternatives(problems: Problems, value: unknown): void {
       checkNonEmptyString(problems, `${path}.not_checked[${entryIndex}]`, entry),
     );
     checkCapacityEstimate(problems, `${path}.capacity_estimate`, alternative.capacity_estimate);
+    // The additive contract-1.5.0 per-building blocks (illustrative placement and area allocation;
+    // absent/null on a 1.3.0 / 1.4.0 alternative). The way-layer rules the schema cannot express are
+    // enforced here, mirroring results_way_rules.py (M5-T164).
+    let placementStatus: unknown;
+    if (alternative.placement !== undefined && alternative.placement !== null) {
+      placementStatus = checkPlacement(problems, `${path}.placement`, alternative.placement);
+    }
+    if (alternative.area_allocation !== undefined && alternative.area_allocation !== null) {
+      checkAreaAllocation(problems, `${path}.area_allocation`, alternative.area_allocation, placementStatus);
+    }
   });
 }
 
