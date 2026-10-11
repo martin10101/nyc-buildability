@@ -82,6 +82,10 @@ require independent completeness and final verification (producer ≠ verifier),
 
 ## Start-of-session routine
 
+After a planned handoff (the last session finished its handoff; nothing keeps running), read `docs/SESSION_HANDOFF.md` and
+every file it names, then start its exact next action: no reconcile checks, tests or READY TO RESUME round (owner, D-094
+R109-R113). After a crash or forced stop:
+
 1. Run `python tools/project_control.py status` and read `docs/SESSION_HANDOFF.md`.
 2. Read the `project-control/` active task files, unresolved blockers, and latest checkpoint.
 3. Reconcile repository reality (git, CI, worktrees) with recorded progress; surface conflicts rather than assuming.
@@ -106,7 +110,7 @@ not imports, precisely so they stay out of every session's base context.
 | Parallel / multi-agent execution | `.claude/ORCHESTRATION_POLICY.md` |
 | Code navigation (dependency/impact, who-consumes, traces) — selective, advisory | tools/code_graph/README.md |
 | Lean operating process (handoffs, control-PR batching, minimal unit events, concise code) — **M2-T016 onward** | `docs/LEAN_OPERATING_PROCESS.md` |
-| Architect-facing website, report, drawing or PDF work (read BEFORE implementing; its report page types of 2026-10-10 govern every page; carry its revision, evidence path, open question ids, next visible action into the handoff) | `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` |
+| Architect-facing website, report, drawing or PDF work (read BEFORE implementing; its report page types as changed 2026-10-11 (D-094: page 1 rebuilt, one locator plus a dimensioned close-up, the two-zone area illustration, one print type scale) govern every page; carry its revision, evidence path, open question ids, next visible action into the handoff) | `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` |
 
 Path-scoped rules in `.claude/rules/` auto-load when you touch their paths (project-control, apps/web,
 services/api, geospatial data, legal/rules, deployment, code architecture). The standard workflows are on-demand

@@ -106,9 +106,13 @@ clearly labeled `COPY INTO THE NEW SESSION` prompt.
 ## F. Successor prompt (generate with live values)
 
 Instruct the successor to: work from durable repository evidence, not assumptions about the old
-conversation; verify repo root, worktree, branch, HEAD, and the effective launch requirements
-before any change; read the repository's root instructions, the handoff, and the authoritative
-files it lists; run the profile's named status command(s) if any; reconcile the handoff against
-live Git and the authoritative records (they win over prose); detect stale/duplicated/completed
-work; report `READY TO RESUME` or `BLOCKED`; if ready, continue from the exact next action without
-repeating work or broadening scope; stop for anything requiring owner approval.
+conversation; read the repository's root instructions, the handoff, and the authoritative files it
+lists; then continue from the exact next action without repeating work or broadening scope; stop
+for anything requiring owner approval. After a planned handoff (finished, nothing running) the
+prompt carries NO resume checks and no `READY TO RESUME` round: the owner goes straight from one
+session to the next, and the prompt and handoff otherwise keep all their information (owner,
+D-094 R109-R113). Only when this handoff is written after a crash or forced stop, also instruct
+the successor to verify repo root, worktree, branch, HEAD and the launch requirements, run the
+profile's status command(s), reconcile the handoff against live Git and the authoritative records
+(they win over prose), detect stale/duplicated/completed work, and report `READY TO RESUME` or
+`BLOCKED` before acting.

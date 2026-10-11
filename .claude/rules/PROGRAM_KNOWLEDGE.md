@@ -137,7 +137,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   law link + say not-sure. Lane A merge yes/no is the orchestrator's call (R163).
 - D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
   packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
-  only verifies+launches; crash/forced turnover = the only fallback.
+  only launches (no resume checks, D-094 R109-R113; same full handoff and prompt); crash/forced
+  turnover = the only fallback, and the only case for the reconcile checks.
+- Read CI green at the EXACT head before every gate, accept, merge and handoff (D-090 R639): wave 23
+  accepted four tasks on a red, unread web-e2e; `gh run list` + the failed jobs' logs first.
 
 - Discoveries → `docs/DISCOVERY_BACKLOG.md` (D-069, NOT injected): append product/domain
   findings AT discovery; SWEEP OPEN/WATCH entries at every contract seam and replan; entries

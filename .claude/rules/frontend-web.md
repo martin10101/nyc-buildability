@@ -6,7 +6,7 @@ paths:
 
 The analyst experience is four crisp stages: **Property → Confirm → Compare → Evidence**. Full flow
 and UI rules: `docs/PRODUCT_FLOW_AND_AI_BOUNDARIES.md`. Design system: `docs/PREMIUM_PRODUCT_DESIGN_SYSTEM.md`.
-Architect-facing website, report or drawing presentation: read `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md`
+Architect-facing website, report or drawing presentation: read `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` (its change of 2026-10-11, D-094, governs; website and PDF show the same figures and the same area illustration)
 first; it wins over the design system on conflict.
 
 - Keep legal text and legal logic out of components. Consume the canonical contracts in
