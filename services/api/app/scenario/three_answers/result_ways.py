@@ -49,6 +49,7 @@ from .result_way_conditions import (
     street_reaches_within,
     streets_beyond,
     within,
+    zoning_lot_condition,
 )
 from .result_way_inputs import (
     BUILDING_OPTION_KEYS,
@@ -180,7 +181,12 @@ def _floor_area_way(inp: ResultWayInputs, blanket: Blanket | None, key: str) -> 
             resolved_by="A recorded lot area, or a survey or deed dimensions.",
             zr_sections=("ZR 23-22",),
         )
-    conditions = [c for c in (area_condition(inp), k20_condition(inp)) if c is not None]
+    # (DB-232) order per the work order: the area disagreement, then the property-specific
+    # zoning-lot condition (other_lots_named / not_read only), then the unchecked conditions.
+    conditions = [
+        c for c in (area_condition(inp), zoning_lot_condition(inp), k20_condition(inp))
+        if c is not None
+    ]
     return shown(conditions)
 
 
@@ -291,8 +297,10 @@ def _coverage_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
             ),
             zr_sections=zr,
         )
-    k20 = k20_condition(inp)
-    return shown([k20] if k20 is not None else [])
+    # (DB-232) coverage is a zoning-lot measure (the 30,000 sq ft large-lot test and the corner
+    # portion), so where it is shown it carries the property-specific zoning-lot condition too.
+    conditions = [c for c in (zoning_lot_condition(inp), k20_condition(inp)) if c is not None]
+    return shown(conditions)
 
 
 def _rear_yard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
@@ -333,8 +341,10 @@ def _rear_yard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayRecord:
     within_angle = within(corner.angle.value, REAR_YARD_WAIVER_MAX_ANGLE_135_DEG)
     if not within_point or not within_angle:
         return _rear_yard_outside_waiver(label, corner, within_point, within_angle, zr)
-    k20 = k20_condition(inp)
-    return shown([k20] if k20 is not None else [])
+    # (DB-232) the corner rear yard is a zoning-lot measure, so where it is shown it carries the
+    # property-specific zoning-lot condition too.
+    conditions = [c for c in (zoning_lot_condition(inp), k20_condition(inp)) if c is not None]
+    return shown(conditions)
 
 
 def _rear_yard_outside_waiver(
@@ -464,7 +474,10 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
         # condition names the zoning-lot scope: the city's special-density record is per TAX LOT,
         # while ZR 23-52 sets the limit on the ZONING LOT, so the figure holds only where this tax
         # lot is the whole zoning lot. The area and K20 conditions follow where they apply.
-        zoning_lot = _zoning_lot_condition()
+        # (DB-232) the unit limit carries ONE zoning-lot condition: the property-specific ACRIS
+        # condition REPLACES the always-present generic one in other_lots_named / not_read; in every
+        # other state the generic one (M5-T157) stays. Never two zoning-lot conditions.
+        zoning_lot = zoning_lot_condition(inp) or _zoning_lot_condition()
         rest = [c for c in (area_condition(inp), k20_condition(inp)) if c is not None]
         return Conditional(conditions=(zoning_lot, *rest))
     if density is DensityKnowledge.USER_STATEMENT_NOT_IN_ONE:
@@ -475,8 +488,12 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
                 "A sourced fact saying whether the lot is in a special density area"
             ),
         )
+        # (DB-232) the property-specific zoning-lot condition is added here too in the conditional
+        # states (this branch has no generic one); nothing is added otherwise.
+        property_zoning_lot = zoning_lot_condition(inp)
+        extra = (property_zoning_lot,) if property_zoning_lot is not None else ()
         rest = [c for c in (area_condition(inp), k20_condition(inp)) if c is not None]
-        return Conditional(conditions=(statement, *rest))
+        return Conditional(conditions=(statement, *extra, *rest))
     if density is DensityKnowledge.EVIDENCE_IN_ONE:
         return Withheld(
             label=label,

@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: apartment_estimate
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 9 (last changed 2026-10-10)
+- Revision: 10 (last changed 2026-10-11)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `64dc8306dcf1e7dd32135800359257baeeb7f2e758f25d04ff6f08c6ada5d1c1`
+- Combined code identity: `151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4`
 - Modules:
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70`)
   - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law
@@ -78,15 +78,15 @@ Planned, not built:
 
 ## Automated test result
 
-- Status: Not run
-- Code identity tested: `9b1a85a7dc90864bad1b4f796d69e55502d8c8370088995d190b23db98c38be2`
-- Commit tested: `42fc2ae11e6b90084972e7ca32816cc50b8a085a`
-- Date tested: 2026-10-10
+- Status: Passed
+- Code identity tested: `151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4`
+- Commit tested: `10e5c55d1a02f6f18a5c6a2bdc16f01b05751312`
+- Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-preliminary-apartment-estimate.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

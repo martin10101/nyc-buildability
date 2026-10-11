@@ -26,6 +26,8 @@ from .result_way_inputs import (
     MISSING_INFORMATION,
     WORK_ORDER_DISTRICT,
     WORK_OWED,
+    ZONING_LOT_NOT_READ,
+    ZONING_LOT_OTHER_LOTS_NAMED,
     AreaAgreement,
     Checked,
     Condition,
@@ -38,10 +40,12 @@ from .result_way_inputs import (
     Settled,
     WayRecord,
     Withheld,
+    ZoningLotCitation,
 )
 
 __all__ = [
     "Blanket",
+    "ZONING_LOT_INDEX_MARKER",
     "area_condition",
     "blanket_way",
     "blanket_withhold",
@@ -61,7 +65,15 @@ __all__ = [
     "street_reaches_within",
     "streets_beyond",
     "within",
+    "zoning_lot_condition",
 ]
+
+# A phrase that appears ONLY in the ACRIS zoning-lot-index condition (both the other-lots-named and
+# the could-not-be-read wordings), so a reader of the emitted document can tell it apart from the
+# always-present generic zoning-lot condition on the unit limit (M5-T157) and from every other
+# condition. Kept in ONE place; the drawings report (drawings/report/readers.py) matches the same
+# phrase, and a test holds the wording and the marker together so they cannot drift apart.
+ZONING_LOT_INDEX_MARKER = "register of recorded documents"
 
 
 # ---------------------------------------------------------------------------
@@ -202,6 +214,76 @@ def area_condition(inp: ResultWayInputs) -> Condition | None:
         settled_by=(
             "Comparing the recorded area with the tax-map outline's area, or a survey or deed "
             "dimensions"
+        ),
+    )
+
+
+def zoning_lot_condition(inp: ResultWayInputs) -> Condition | None:
+    """The PROPERTY-SPECIFIC zoning-lot assumption from the ACRIS recorded-document index (backlog
+    DB-232; record NB-01). Returned ONLY in the two conditional states; None in every other state
+    (not_checked / none_found / single_lot_only), so those add no condition.
+
+    It uses the existing ``unchecked_condition`` kind (no contract change) and NEVER
+    ``contradicted_record`` (the report takes the first contradicted_record as the lot-area
+    sentence). An index entry does not establish an instrument's contents (D-093): the wording says
+    the documents were not read and never concludes the zoning lot. The assumption always contains
+    :data:`ZONING_LOT_INDEX_MARKER` so the report can tell it apart from the generic zoning-lot
+    condition on the unit limit."""
+    cit = inp.zoning_lot
+    if cit.state == ZONING_LOT_OTHER_LOTS_NAMED:
+        return _other_lots_named_condition(cit)
+    if cit.state == ZONING_LOT_NOT_READ:
+        return _not_read_condition()
+    return None
+
+
+def _other_lots_named_condition(cit: ZoningLotCitation) -> Condition:
+    subject = cit.subject_lot_label or "this tax lot"
+    recorded = f" recorded on {cit.zone_recorded_date}" if cit.zone_recorded_date else ""
+    crfn = f" (City Register file {cit.zone_crfn})" if cit.zone_crfn else ""
+    if cit.has_declaration and cit.has_certificate:
+        reminder_phrase = "declaration and certificate"
+    elif cit.has_declaration:
+        reminder_phrase = "declaration"
+    elif cit.has_certificate:
+        reminder_phrase = "certificate"
+    else:
+        reminder_phrase = ""
+    filed = f" with the {reminder_phrase} filed with it," if reminder_phrase else ","
+    settled = (
+        f"Reading the recorded zoning lot description{crfn}{filed} and a title and "
+        "zoning-lot review."
+    )
+    if cit.other_same_block_phrase:
+        others = cit.other_same_block_phrase
+        assumption = (
+            f"If {subject} alone is the zoning lot. The city's register of recorded documents "
+            f"lists a zoning lot description{recorded} that is filed on this lot together with "
+            f"{others} on the same block, so the zoning lot may include {others}. The documents "
+            "themselves were not read."
+        )
+    else:
+        # Rule (d): a ZONE marked partial_lot P on the subject, with no other lot named - the
+        # description covers only part of this tax lot, so the lot-area basis is not confirmed.
+        assumption = (
+            f"If {subject} alone is the zoning lot. The city's register of recorded documents "
+            f"lists a zoning lot description{recorded} filed on only part of this lot, so whether "
+            "this whole tax lot is the zoning lot is not confirmed. The documents themselves were "
+            "not read."
+        )
+    return Condition(kind=KIND_UNCHECKED_CONDITION, assumption=assumption, settled_by=settled)
+
+
+def _not_read_condition() -> Condition:
+    return Condition(
+        kind=KIND_UNCHECKED_CONDITION,
+        assumption=(
+            "If this lot alone is the zoning lot. The city's register of recorded documents could "
+            "not be read, so whether a recorded zoning lot description names other lots is not "
+            "known."
+        ),
+        settled_by=(
+            "Reading the city's register of recorded documents, and a title and zoning-lot review."
         ),
     )
 

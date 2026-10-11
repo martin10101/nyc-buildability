@@ -2932,10 +2932,10 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/result_ways.py",
-          "sha256": "09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72"
+          "sha256": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3"
         }
       ],
-      "code_identity_sha256": "0af91c41bc97712f3892007a6f490146095256345c2e96dc3b1db406ed1778e1",
+      "code_identity_sha256": "abb6374448b76566c4691b516ff2218f2aa8e1388ea2a56b761e3d38fcc34a91",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The scenario step that multiplies the R6B standard floor area ratio (2.00, ZR 23-22) by the lot area to report the maximum residential floor area for the benchmark lot, and marks it available-conditional on the recorded-versus-outline lot-area conflict.",
@@ -2984,18 +2984,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "d46369705676eee33b1882f637c545cf444c4ae8",
+        "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
-        "tested_code_identity_sha256": "0af91c41bc97712f3892007a6f490146095256345c2e96dc3b1db406ed1778e1",
+        "tested_code_identity_sha256": "abb6374448b76566c4691b516ff2218f2aa8e1388ea2a56b761e3d38fcc34a91",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 4,
+      "revision": 5,
       "last_changed": "2026-10-11",
       "human_review": {
         "decision": null,
@@ -3086,7 +3086,7 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/result_ways.py",
-          "sha256": "09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72"
+          "sha256": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3"
         },
         {
           "path": "services/api/app/scenario/three_answers/geometry.py",
@@ -3101,7 +3101,7 @@
           "sha256": "8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83"
         }
       ],
-      "code_identity_sha256": "695bc88b1775ffa1cb81417c7e10e43f63a2df0a7def045ddc41a6caa18f2887",
+      "code_identity_sha256": "51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The by-portion lot coverage a corner lot takes: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. Reported through the emitter by how the recorded lot area and the tax-map outline area compare - available with its figures where they agree, withheld where they disagree (the benchmark lot), and withheld (the outline not available) where the lot's tax-map outline is missing.",
@@ -3152,18 +3152,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "d46369705676eee33b1882f637c545cf444c4ae8",
+        "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
-        "tested_code_identity_sha256": "695bc88b1775ffa1cb81417c7e10e43f63a2df0a7def045ddc41a6caa18f2887",
+        "tested_code_identity_sha256": "51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 8,
+      "revision": 9,
       "last_changed": "2026-10-11",
       "human_review": {
         "decision": null,
@@ -3259,14 +3259,14 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/result_ways.py",
-          "sha256": "09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72"
+          "sha256": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3"
         },
         {
           "path": "services/api/app/scenario/three_answers/first_building_options.py",
           "sha256": "f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62"
         }
       ],
-      "code_identity_sha256": "b0111af63eb197fe8894c722e060bd22d13f7c8da2bc2ec713bdf9be4424ff82",
+      "code_identity_sha256": "43a29dab2591d088fa513dcf34afdc031a3916e47e55ad5957ad4070c37b1eac",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The building-option floor stack: a footprint stacked floor by floor to a total floor area and a building height. The engine's compute_building_option method stacks one uniform widest plate to the height limit and caps at the floor-area allowance, with a partial top floor. The single building_option block is not shown; building B is reported as a worked alternative in building_alternatives (3 storeys of 6,716.67 sq ft at 30 ft, conditional) on every path where the floor-area allowance is shown, and building A is listed where the two lot areas agree.",
@@ -3343,18 +3343,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "d46369705676eee33b1882f637c545cf444c4ae8",
+        "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
-        "tested_code_identity_sha256": "b0111af63eb197fe8894c722e060bd22d13f7c8da2bc2ec713bdf9be4424ff82",
+        "tested_code_identity_sha256": "43a29dab2591d088fa513dcf34afdc031a3916e47e55ad5957ad4070c37b1eac",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 8,
+      "revision": 9,
       "last_changed": "2026-10-11",
       "human_review": {
         "decision": null,
@@ -3480,10 +3480,10 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/result_ways.py",
-          "sha256": "09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72"
+          "sha256": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3"
         }
       ],
-      "code_identity_sha256": "ec3a1792694fab76797f606be8b777c615100a8c02f578aa191511829d36db43",
+      "code_identity_sha256": "2cf335d7c8bdf9e921925f11fa490834ca0ed4d68d18142351fb569fe281561c",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The legal ceiling on dwelling units: the maximum residential floor area divided by the ZR 23-52(b) factor 680, with the fraction counted as one unit only at three-quarters or more. For the benchmark lot the record (Queens community district 411) places it OUTSIDE both special density areas (ZR 12-10 / 23-52(a)(1)), so the engine computes 20,150 / 680 = 29.63 -> 29 and the document shows it as a CONDITIONAL ceiling - never settled - with an always-present condition that the city's record is per tax lot while the limit is set on the zoning lot.",
@@ -3540,18 +3540,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "d46369705676eee33b1882f637c545cf444c4ae8",
+        "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
-        "tested_code_identity_sha256": "ec3a1792694fab76797f606be8b777c615100a8c02f578aa191511829d36db43",
+        "tested_code_identity_sha256": "2cf335d7c8bdf9e921925f11fa490834ca0ed4d68d18142351fb569fe281561c",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 4,
+      "revision": 5,
       "last_changed": "2026-10-11",
       "human_review": {
         "decision": null,
@@ -3643,14 +3643,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8"
+          "sha256": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "64dc8306dcf1e7dd32135800359257baeeb7f2e758f25d04ff6f08c6ada5d1c1",
+      "code_identity_sha256": "151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -3704,20 +3704,20 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Not run",
-        "tested_commit": "42fc2ae11e6b90084972e7ca32816cc50b8a085a",
-        "tested_on": "2026-10-10",
+        "status": "Passed",
+        "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
+        "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
-        "tested_code_identity_sha256": "9b1a85a7dc90864bad1b4f796d69e55502d8c8370088995d190b23db98c38be2",
+        "tested_code_identity_sha256": "151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 9,
-      "last_changed": "2026-10-10",
+      "revision": 10,
+      "last_changed": "2026-10-11",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3839,11 +3839,11 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/result_ways.py",
-          "sha256": "09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72"
+          "sha256": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3"
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8"
+          "sha256": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3862,7 +3862,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "1f610dfd27bb128d12b5f7f6755741dc90951266adeaa2f1e72e5c17cc614fa5",
+      "code_identity_sha256": "88d99e2bd064275baa0b05f42ffebb7cd42590cf66b3fca5b7aa9edd34a12680",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3954,18 +3954,18 @@
       ],
       "automated_tests": {
         "status": "Passed",
-        "tested_commit": "d46369705676eee33b1882f637c545cf444c4ae8",
+        "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
-        "tested_code_identity_sha256": "1f610dfd27bb128d12b5f7f6755741dc90951266adeaa2f1e72e5c17cc614fa5",
+        "tested_code_identity_sha256": "88d99e2bd064275baa0b05f42ffebb7cd42590cf66b3fca5b7aa9edd34a12680",
         "tested_test_file_sha256s": {
           "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 10,
+      "revision": 11,
       "last_changed": "2026-10-11",
       "human_review": {
         "decision": null,
@@ -4575,6 +4575,60 @@
       "event": "implementation_changed",
       "summary": "implementation_changed: result_ways.py changed (M5-T157, DB-231: the special density area is read from the city's record, ZR 12-10 - the legal dwelling-unit limit is shown as a conditional ceiling where the record places the lot outside both special density areas, withheld where it places it inside one or where the record and a statement disagree); the code module, combined code identity and the recorded automated-test run are resynced.",
       "by": "M5-T157 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 44,
+      "date": "2026-10-11",
+      "entry_id": "calc-floor-area-allowance",
+      "revision": 5,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
+      "by": "M5-T158 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 45,
+      "date": "2026-10-11",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 9,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
+      "by": "M5-T158 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 46,
+      "date": "2026-10-11",
+      "entry_id": "calc-building-option-floor-stack",
+      "revision": 9,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
+      "by": "M5-T158 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 47,
+      "date": "2026-10-11",
+      "entry_id": "calc-legal-dwelling-unit-limit",
+      "revision": 5,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
+      "by": "M5-T158 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 48,
+      "date": "2026-10-11",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 10,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
+      "by": "M5-T158 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 49,
+      "date": "2026-10-11",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 11,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
+      "by": "M5-T158 (backend-engineer, an AI agent)"
     }
   ],
   "coverage_gaps": [

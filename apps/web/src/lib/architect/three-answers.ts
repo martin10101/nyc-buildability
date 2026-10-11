@@ -567,6 +567,8 @@ const SCOPE_ASSUMPTION_KEY_LABELS: Readonly<Record<string, string>> = {
   lot_front_ft: "Lot frontage",
   lot_depth_ft: "Lot depth",
   site_measurement_rank: "Site measurement basis",
+  // backlog DB-232: the ACRIS recorded-document zoning-lot concern.
+  zoning_lot: "Zoning lot",
 };
 
 /** A machine assumption key in plain words. An unlisted key is de-underscored and sentence-cased

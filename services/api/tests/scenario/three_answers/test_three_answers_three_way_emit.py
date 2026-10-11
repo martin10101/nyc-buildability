@@ -25,9 +25,12 @@ from pathlib import Path
 
 import pytest
 
+from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
+from app.profile.zoning_lot_index import classify_zoning_lot_index
+from app.resilience.transport import TransportResponse
 from app.scenario.three_answers import (
     BuildingDefaults,
     ResultsContractError,
@@ -139,8 +142,38 @@ def _carriers():
     return profile, prepared, geometry
 
 
+_ACRIS_PACK = Path(__file__).resolve().parents[2] / "fixtures" / "benchmark_215_16_northern"
+_ACRIS_SUBJECT_IDS = sorted([
+    "2018013000919001", "2018013000919002", "2022020201551001", "2022020201551002",
+    "2022031600431001", "2024011000700001", "2024011000700002",
+])
+_ACRIS_ZDC_IDS = sorted(["2022020201551001", "2022020201551002", "2022031600431001"])
+
+
+def _benchmark_zoning_lot_index():
+    """The recorded benchmark's zoning-lot index (backlog DB-232): the ACRIS connector replayed
+    over the recorded pack (no network), then classified (OTHER_LOTS_NAMED, lot 1)."""
+    routes = {
+        _acris.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+        _acris.build_master_url(_ACRIS_SUBJECT_IDS, limit=1000, offset=0):
+            "acris_index_master_bnx9-e6tj_subject_docs.json",
+        _acris.build_legals_by_documents_url(_ACRIS_ZDC_IDS, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+        _acris.build_good_through_url(): "acris_index_legals_8h5j-fqxa_good_through.json",
+    }
+
+    def transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        return TransportResponse(200, (_ACRIS_PACK / routes[url]).read_text("utf-8"))
+
+    result = _acris.fetch_zoning_lot_index(
+        "4073340070", transport=transport, sleep=lambda _s: None, correlation_id="emit-acris",
+    )
+    return classify_zoning_lot_index(result)
+
+
 def _benchmark_adapter(mp, *, special_density_statement=None, profile_on=True, geometry_on=True,
-                       env=None):
+                       env=None, with_zoning_lot=True):
     def _blocked(*_a, **_k):
         raise AssertionError("network I/O attempted in a recorded-data test")
 
@@ -164,6 +197,8 @@ def _benchmark_adapter(mp, *, special_density_statement=None, profile_on=True, g
     )
     return run_engine_and_result_ways(
         inputs, evaluator_inputs=doc, special_density_statement=special_density_statement,
+        # DB-232: OTHER_LOTS_NAMED (lot 1) by default; None exercises the NOT_CHECKED path.
+        zoning_lot_index=_benchmark_zoning_lot_index() if with_zoning_lot else None,
         env=_LANE_ON if env is None else env,
     )
 
@@ -174,6 +209,19 @@ def benchmark():
     with pytest.MonkeyPatch.context() as mp:
         res = _benchmark_adapter(mp)
     return res
+
+
+def test_db232_not_checked_adds_no_scope_row_or_condition():
+    """DB-232: with no zoning-lot provider bound (NOT_CHECKED, the production default) the emitter
+    adds no zoning_lot scope row and no zoning-lot condition - the pre-wiring slice."""
+    with pytest.MonkeyPatch.context() as mp:
+        res = _benchmark_adapter(mp, with_zoning_lot=False)
+    doc = res.document
+    assert "zoning_lot" not in [a["key"] for a in doc["scope"]["assumptions"]]
+    fa = doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_floor_area"]
+    assert not any(
+        "register of recorded documents" in c["assumption"] for c in fa.get("conditions", [])
+    )
 
 
 # --------------------------------------------------------------------------- made-up emit path

@@ -15,7 +15,7 @@ $EXTMIN
 10
 0.000000
 20
--104.504908
+-108.193316
 30
 0.000000
 9
@@ -55,7 +55,7 @@ VPORT
 12
 61.473467
 22
-8.079276
+6.235072
 13
 0.000000
 23
@@ -81,7 +81,7 @@ VPORT
 37
 0.000000
 40
-247.685203
+251.742453
 41
 1.000000
 42
@@ -487,7 +487,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Based on the lots you selected - the app does not verify the zoning lot
+Zoning lot Not confirmed city_records The city's register of recorded documents lists a zoning lot description filed on this lot together with lot 1 on the same block (recorded February 8, 2022), so the zoning lot may include it; the documents were not read. This is not a title search; the app does not verify the zoning lot.
 0
 TEXT
 8
@@ -501,7 +501,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Remaining development capacity: Not confirmed
+Based on the lots you selected - the app does not verify the zoning lot
 0
 TEXT
 8
@@ -515,7 +515,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Needs verified zoning-lot boundaries and existing zoning floor area.
+Remaining development capacity: Not confirmed
 0
 TEXT
 8
@@ -529,7 +529,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Option opt-test - revision 1
+Needs verified zoning-lot boundaries and existing zoning floor area.
 0
 TEXT
 8
@@ -543,7 +543,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Results res-215-16-northern-journey - computed 2026-10-03T00:00:00Z
+Option opt-test - revision 1
 0
 TEXT
 8
@@ -557,7 +557,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Approximate - city tax map, not a survey (lot outline)
+Results res-215-16-northern-journey - computed 2026-10-03T00:00:00Z
 0
 TEXT
 8
@@ -571,7 +571,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-The corner rear-yard waiver does not cover the whole lot: the far corner is 144.60 ft from the point where the two street lines meet, beyond the rear-yard waiver area (the waiver covers the area within 100 ft of that point); the two street lines meet at 89.7 degrees, within the waiver's limit of 135 degrees. For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.
+Approximate - city tax map, not a survey (lot outline)
 0
 TEXT
 8
@@ -585,7 +585,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Setback lines need the ZR 23-433 setback depths, not encoded in this slice.
+The corner rear-yard waiver does not cover the whole lot: the far corner is 144.60 ft from the point where the two street lines meet, beyond the rear-yard waiver area (the waiver covers the area within 100 ft of that point); the two street lines meet at 89.7 degrees, within the waiver's limit of 135 degrees. For the part beyond the waiver area, whether a rear yard is required depends on this lot's exact lot lines and on which lot lines of the adjoining lots meet them. The program does not have those facts, so the rear yard is not known.
 0
 TEXT
 8
@@ -599,7 +599,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).
+Setback lines need the ZR 23-433 setback depths, not encoded in this slice.
 0
 TEXT
 8
@@ -613,7 +613,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-No floor plate is drawn: no placement on the lot is worked for any building. The first-building alternatives worked for this lot are listed in building_alternatives, and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.
+Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).
 0
 TEXT
 8
@@ -627,7 +627,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
+No floor plate is drawn: no placement on the lot is worked for any building. The first-building alternatives worked for this lot are listed in building_alternatives, and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.
 0
 TEXT
 8
@@ -641,7 +641,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Units: feet, 1 drawing unit = 1 ft (scale 1:1)
+Coordinates: local plane in feet, origin at a lot corner, axes parallel to the EPSG:2263 grid
 0
 TEXT
 8
@@ -650,6 +650,20 @@ A-ANNO-NOTE
 0.000000
 20
 -104.504908
+30
+0.000000
+40
+2.458939
+1
+Units: feet, 1 drawing unit = 1 ft (scale 1:1)
+0
+TEXT
+8
+A-ANNO-NOTE
+10
+0.000000
+20
+-108.193316
 30
 0.000000
 40

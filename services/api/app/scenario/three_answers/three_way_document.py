@@ -65,6 +65,10 @@ from .result_way_inputs import (
     UNIT_QUALIFYING_SENIOR_KEY,
     UNIT_STANDARD_KEY,
     WORK_OWED,
+    ZONING_LOT_NONE_FOUND,
+    ZONING_LOT_NOT_READ,
+    ZONING_LOT_OTHER_LOTS_NAMED,
+    ZONING_LOT_SINGLE_LOT_ONLY,
     AnswerWays,
     AreaAgreement,
     Conditional,
@@ -72,6 +76,7 @@ from .result_way_inputs import (
     ResultWay,
     ResultWays,
     Withheld,
+    ZoningLotCitation,
 )
 from .three_way_scope_lines import (
     _HOUSING_PROGRAM_DISPLAY,  # noqa: F401  re-export kept at this path (ruling B2)
@@ -82,6 +87,13 @@ from .three_way_scope_lines import (
     USER_SELECTED_HOUSING_PROGRAM_STATEMENT,
     _rewrite_scope_lines,
 )
+
+# The ACRIS zoning-lot scope row (backlog DB-232). Built here (this module already names the
+# decision module and the scope block) rather than in three_way_scope_lines.py, which the import
+# guard keeps free of the decision module. Emitted in every state except not_checked.
+ZONING_LOT_SCOPE_KEY = "zoning_lot"
+ZONING_LOT_SCOPE_VALUE = "Not confirmed"
+_NOT_A_TITLE_SEARCH = "This is not a title search; the app does not verify the zoning lot."
 
 __all__ = [
     "ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION",
@@ -710,6 +722,76 @@ def _reconcile_list_dependents(doc: dict) -> None:
 # ---------------------------------------------------------------------------
 # the one public transform
 # ---------------------------------------------------------------------------
+def _zoning_lot_scope_statement(cit: ZoningLotCitation) -> str:
+    """The state-specific plain-words scope statement. The value is always "Not confirmed"; the
+    detail for the conditional states lives in the figure condition, so this stays a concise
+    summary. Uses the bridge-rendered phrases, so no list is joined here."""
+    recorded = f" (recorded {cit.zone_recorded_date})" if cit.zone_recorded_date else ""
+    if cit.state == ZONING_LOT_OTHER_LOTS_NAMED:
+        if cit.other_same_block_phrase:
+            body = (
+                "The city's register of recorded documents lists a zoning lot description filed "
+                f"on this lot together with {cit.other_same_block_phrase} on the same "
+                f"block{recorded}, so the zoning lot may include it; the documents were not read."
+            )
+        else:
+            body = (
+                "The city's register of recorded documents lists a zoning lot description filed on "
+                f"only part of this lot{recorded}, so whether this whole tax lot is the zoning lot "
+                "is not confirmed; the documents were not read."
+            )
+        return f"{body} {_NOT_A_TITLE_SEARCH}"
+    if cit.state == ZONING_LOT_NOT_READ:
+        return (
+            "The city's register of recorded documents could not be read, so whether a recorded "
+            f"zoning lot description names other lots is not known. {_NOT_A_TITLE_SEARCH}"
+        )
+    if cit.state == ZONING_LOT_NONE_FOUND:
+        through = f", up to date through {cit.as_of_date}," if cit.as_of_date else ""
+        return (
+            f"The city's register of recorded documents{through} lists no zoning lot description "
+            f"filed on this lot together with other lots. {_NOT_A_TITLE_SEARCH}"
+        )
+    if cit.state == ZONING_LOT_SINGLE_LOT_ONLY:
+        single = (
+            f" (recorded {cit.single_lot_recorded_date})" if cit.single_lot_recorded_date else ""
+        )
+        body = (
+            "The city's register of recorded documents lists a zoning lot description filed on "
+            f"this lot alone{single}; it was not read."
+        )
+        if cit.other_block_phrase:
+            body += (
+                f" It is also filed on {cit.other_block_phrase}, on another block; check what it "
+                "covers."
+            )
+        return f"{body} {_NOT_A_TITLE_SEARCH}"
+    return _NOT_A_TITLE_SEARCH  # pragma: no cover - not_checked emits no row (guarded by caller)
+
+
+def _apply_zoning_lot_scope_row(doc: dict, zoning_lot: ZoningLotCitation | None) -> None:
+    """Append the ACRIS zoning-lot scope row (backlog DB-232) to the scope block, in every state
+    except not_checked. not_checked (no provider bound - the production default) appends nothing, so
+    the emitted document is byte-identical to the pre-wiring slice. Nothing else in the scope block
+    changes; the row is a schema-valid assumption (key zoning_lot, value 'Not confirmed', unit null,
+    basis city_records, the state statement)."""
+    if zoning_lot is None or not zoning_lot.shows_scope_row:
+        return
+    scope = doc.get("scope")
+    if not isinstance(scope, dict):
+        return
+    assumptions = scope.get("assumptions")
+    if not isinstance(assumptions, list):
+        return
+    assumptions.append({
+        "key": ZONING_LOT_SCOPE_KEY,
+        "value": ZONING_LOT_SCOPE_VALUE,
+        "unit": None,
+        "basis": "city_records",
+        "statement": _zoning_lot_scope_statement(zoning_lot),
+    })
+
+
 def emit_three_way_document(
     document: dict, ways: ResultWays, *,
     condition_sources: dict[str, Derived] | None = None,
@@ -717,6 +799,7 @@ def emit_three_way_document(
     corner_areas: CornerPortionAreas | None = None,
     lot_area: LotAreaFigures | None = None,
     lot_outline_available: bool | None = None,
+    zoning_lot: ZoningLotCitation | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
@@ -795,6 +878,10 @@ def emit_three_way_document(
     # (M5-T139) rewrite the two design-choice lines the user made. Both read the scope block.
     if condition_sources is not None or user_choices is not None:
         _rewrite_scope_lines(doc, condition_sources, user_choices)
+
+    # (DB-232) append the ACRIS zoning-lot scope row in every state except not_checked. not_checked
+    # appends nothing, so the document stays byte-identical to the pre-wiring slice.
+    _apply_zoning_lot_scope_row(doc, zoning_lot)
 
     # The first-building-option blocks (contract 1.4.0 additive; task M5-T146 PART B). Read from the
     # engine document and the decided ways, plus the caller's lot-area comparison and measured

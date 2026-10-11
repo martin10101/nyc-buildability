@@ -150,3 +150,156 @@ Ran with the lanes venv (`/root/project/lanes-runtime/venv`), `PYTHONPATH=servic
 ## Files needed outside scope
 
 None. Everything required for part A was inside the allowed paths.
+
+---
+
+# M5-T158 producer report - PART B (backend-engineer)
+
+Part B wires the ACRIS zoning-lot index (part A) into the result ways: a property-specific
+zoning-lot condition on every lot-area figure and building alternative when a recorded zoning lot
+description names another same-block lot or the index cannot be read (D-094 R029/R030), the scope
+row and the first report open item, and the review register. Built on the integrated head
+`10e5c55d1a02f6f18a5c6a2bdc16f01b05751312` (part A + M5-T157/DB-231 on the branch).
+
+- Worktree: `/root/project/nyc-buildability/.claude/worktrees/agent-ace22aa31f8767a1d`
+- Verified every work-order file:line against the CURRENT code first (M5-T157 had moved the
+  conditions: the generic always-present zoning-lot condition on the unit limit now lives in
+  `result_ways._zoning_lot_condition`, the scope lines are a transform in `three_way_scope_lines`).
+
+## Files changed (all inside part-B allowed_paths; no NB-01 / page_decision_summary / RESEARCH_REQUESTS / DISCOVERY_BACKLOG touched)
+
+Production:
+- `result_way_inputs.py` (+63) - new `ZoningLotCitation` (scenario-local projection, pre-rendered
+  phrases + states) + `zoning_lot` field on `ResultWayInputs` (default not_checked -> byte-identical).
+- `result_way_conditions.py` (+82) - `zoning_lot_condition(inp)` (OTHER_LOTS_NAMED / NOT_READ only;
+  `unchecked_condition` kind, never `contradicted_record`); `ZONING_LOT_INDEX_MARKER`.
+- `result_ways.py` (+31) - the condition threaded onto the four floor-area values, coverage and
+  rear yard (where shown); on the unit limit the property-specific one REPLACES M5-T157's generic
+  one in the two conditional states (never two).
+- `result_way_bridge.py` (+87) - `zoning_lot_citation()` (ZoningLotIndex -> citation; human dates,
+  lot phrases) + the `zoning_lot_index` param on `gather_result_ways`.
+- `result_way_engine_bridge.py` (+7) - `zoning_lot_index` threaded through both entries to
+  `gather_result_ways` and the citation to the emitter.
+- `three_way_document.py` (+87) - the `zoning_lot` scope row (every state except not_checked) +
+  the `zoning_lot` emit param. Building B reuses the floor-area conditions, so it carries the
+  condition automatically.
+- `drawings/report/readers.py` (+53) - `zoning_lot_basis()` + the "Zoning lot" open item (ordered
+  FIRST; `decision_open_items` prefers it).
+- `drawings/kit/scope.py` (+2) / `apps/web/.../three-answers.ts` (+2) - the `zoning_lot` scope-row
+  label (the kit fails closed on an unknown key).
+- `api/v1/results_read.py` (+1) - passes `inputs.zoning_lot_index` to the engine entry.
+- `review_register/register.json` (+89/-35) + rendered `docs/zoning-rule-review/**` + 6 evidence
+  logs - all six calc entries resynced (new revision, code identity, history event, test log).
+- `three_way_scope_lines.py` - reverted to no net change (the scope-row builder moved to
+  `three_way_document.py` to keep the import guard's leaf constraint).
+
+Tests / fixtures (regenerated once, after both tasks):
+- `packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json` -
+  regenerated (`UPDATE_JOURNEY_FIXTURE=1`): +34/-2 lines, the zoning-lot condition on 5 figures +
+  building B + the scope row; the generic unit-limit condition replaced by the property-specific
+  one; every number unchanged (20,150 / 24,180 / FAR 2.0 / 2.4 / unit limit 29).
+- `tests/cad/snapshots/results_dxf/...dxf`, `tests/drawings/kit/snapshots/...site_plan.svg` -
+  regenerated (`UPDATE_DXF_SNAPSHOTS=1`, `UPDATE_DRAWING_SNAPSHOTS=1`); only the new scope line.
+- `tests/journey/test_215_16_northern_journey.py`, `test_three_answers_three_way_emit.py`,
+  `test_report_pages.py`, web `journey-215-16-northern.test.tsx`, `three-answers.test.ts`,
+  `presented-notices.test.ts` - injected the benchmark index and added/updated assertions.
+
+## Changed expectations (file, old -> new, why)
+
+- journey fixture scope rows 12 -> 13 (`zoning_lot` row appended). Why: DB-232 scope row.
+- journey/emit: the benchmark now flows through the index (OTHER_LOTS_NAMED). floor-area / unit
+  limit / coverage(where shown) / rear-yard(where shown) / building B value_states gain the
+  zoning-lot condition. Why: D-094 R029/R030.
+- unit-limit condition: the generic "If this tax lot is the whole zoning lot..." (M5-T157) ->
+  property-specific "If lot 70 alone is the zoning lot... together with lot 1... file 2022000059134".
+  Exactly ONE zoning-lot condition. Why: orchestrator ruling (replace, never two).
+- web `three-answers.test.ts` / `presented-notices.test.ts`: shared conditions 2 -> 3 (the
+  zoning-lot condition is now shared across the lot-area figures, not local to the unit limit);
+  reference multiplicity `has(2)` -> `has(3)`. Why: it is on the floor-area figures AND the unit limit.
+- web `journey-215-16-northern.test.tsx`: assumptions 12 -> 13; the unit-limit row references the
+  zoning-lot condition by NAME (it is now shared) and the full wording is in the panel's shared list.
+- review register: 6 calc entries revision +1, code identity resynced, 6 history events (seq 44-49),
+  6 evidence logs rewritten; `render --check` PASSED.
+
+## Self-check outputs
+
+1. `cd services/api && python -m ruff check .` -> `All checks passed!` (exit 0).
+2. `python -m pytest -q -p no:cacheprovider tests/scenario tests/api tests/journey tests/drawings
+   tests/cad tests/rules tests/connectors tests/profile` -> `2 failed, 7002 passed, 8 skipped`.
+   The two failures are OUT-OF-SCOPE consumer tests that re-emit the committed journey fixture
+   without binding the benchmark index (see "Out-of-scope" below); every in-scope suite is green.
+   (Final re-run of the key suites after the mutation restores: `2887 passed`.)
+3. `render_review_register.py --check` -> `register check PASSED (no issues)` (exit 0).
+4. `python tools/research_record_check.py --check` -> `PASS` (exit 0); NB-01 unchanged (code_current
+   stays True - its listed code paths zoning_lot_history.py / existing_floor_area/scope.py are not
+   touched; the connector/classifier/result_way_conditions are added in NB-01 revision 3 by the
+   orchestrator).
+5. `python tools/modularity_check.py --check` -> `failures 0; warnings 32` (exit 0). result_ways.py
+   and three_way_document.py are above the WARN threshold (not the justify/hard threshold); the
+   additions are cohesive (one decider per result; the scope-row builder beside the emit). A split is
+   a larger refactor out of this task's scope - flagged for the code-review gate.
+6. `python scripts/lanes/check_lane_paths.py --coverage` -> `LANE COVERAGE PASS: 10083 file(s)`.
+7. Web (apps/web, Linux dev server; lockfile only, no new package): `npx --yes npm@11.18.0 ci` ->
+   314 packages; `npm run typecheck` -> exit 0; `npm run lint` -> 0 errors (2 pre-existing warnings
+   in untouched files); `npx vitest run` -> `1 failed | 2640 passed` (the 1 failure is the
+   out-of-scope `three-answers-panel.test.tsx`, see below). Ports 3000/3001/8000 never touched.
+
+## Mutation proofs (break -> failing test -> restore; all restored, final state green)
+
+1. Dropped `zoning_lot_condition(inp)` from `_floor_area_way` -> the journey guard failed
+   (`StopIteration`: no "register of recorded documents" condition on `max_residential_floor_area`).
+   Restored.
+2. Made `ZoningLotCitation.shows_scope_row` return True always -> `test_db232_not_checked_adds_no_
+   scope_row_or_condition` failed (the zoning_lot row appeared in the NOT_CHECKED document). Restored.
+3. Put "Zoning lot" second in `readers._ORDER` -> `test_db232_zoning_lot_open_item_is_first` failed
+   (`items[0]` was "Recorded lot area"). Restored.
+
+## NB-01 revision-3 notes (part-B additions; the orchestrator writes NB-01)
+
+- Add `result_way_conditions.py` (the `zoning_lot_condition` draft wording), `result_way_bridge.py`
+  (the ZoningLotIndex->citation projection), `result_ways.py`, `three_way_document.py` and
+  `drawings/report/readers.py` to the code_paths with their reviewed-head sha256 (recompute at the
+  reviewed head; I did not pin them because the files may change under review).
+- Regression cases -> tests (part B): OTHER_LOTS_NAMED benchmark end-to-end ->
+  `tests/journey/test_215_16_northern_journey.py` (condition on 20,150 naming lot 1 + CRFN
+  2022000059134; scope row; no 39,934 remainder) and
+  `test_three_answers_three_way_emit.py::test_w13_...`; NOT_CHECKED byte-identity ->
+  `test_db232_not_checked_adds_no_scope_row_or_condition`; the "Zoning lot" open item first ->
+  `test_report_pages.py::test_db232_zoning_lot_open_item_is_first`; shared-condition behaviour ->
+  web `three-answers.test.ts` / `presented-notices.test.ts`.
+- The condition uses the existing `unchecked_condition` kind (no contract change); the zoning lot is
+  never concluded; R032 (no remainder from 39,934) is asserted on the whole journey document.
+
+## Out-of-scope consumers that need the orchestrator (not in this packet's allowed_paths)
+
+Three tests re-use the committed journey fixture (now OTHER_LOTS_NAMED) but re-emit it WITHOUT
+binding the benchmark zoning-lot index, so they mismatch the fixture. Each needs a one-line fix of
+the same shape I applied in-scope (bind `_benchmark_zoning_lot_index()` / the acris provider, or
+update the shared-condition count 2 -> 3). They are NOT in allowed_paths, so I left them red and
+routed them here:
+
+1. `services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py::test_s12_entry_emits_
+   the_committed_three_way_fixture` - its `_emit_from_evidence` must pass
+   `zoning_lot_index=<benchmark index>` to `run_engine_and_result_ways_from_evidence`.
+2. `services/api/tests/api/test_results_read_api.py::test_m5t146_live_route_benchmark_matches_the_
+   committed_first_option_blocks` - its study-inputs provider override must bind
+   `acris_zoning_lot_index_provider(transport=<pack replay>)` (or the override's StudyInputs must
+   carry the classified benchmark index) so the live route reproduces the fixture.
+3. `apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx` ("lists each
+   distinct condition once as 'Condition N'") - the shared-condition count assertion `toHaveLength(2)`
+   at line ~254 (and its labels array) must become 3 (area, zoning-lot, K20).
+
+## What I could not verify / limitations
+
+- The page-1 summary wording (`page_decision_summary.py`) is a later redesign task and OUT of this
+  packet's scope (orchestrator instruction); not touched.
+- Multiple ZONE documents: the citation names the FIRST ZONE's CRFN/date (the module never picks a
+  "latest"); every named lot is still aggregated. The benchmark has one ZONE.
+- The live ACRIS binding stays behind `INTERNAL_ZONING_LOT_INDEX_ENABLED` (default OFF), so
+  production is NOT_CHECKED and byte-identical; the benchmark result in the fixture is produced by
+  injecting the recorded-pack index offline.
+
+## Files needed outside scope (part B)
+
+Only the three out-of-scope test files above (routed to the orchestrator). No production file was
+needed outside the packet's allowed_paths.

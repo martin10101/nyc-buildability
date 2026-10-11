@@ -42,8 +42,8 @@ describe("collectConditions (scenario S7)", () => {
     // Listed once: the ids and the texts are each distinct.
     expect(new Set(shared.map(c => c.id)).size).toBe(shared.length);
     expect(new Set(shared.map(c => c.text)).size).toBe(shared.length);
-    // M5-T157: the benchmark now carries three distinct conditions - the area and K20 conditions
-    // (across many results) and the legal unit limit's zoning-lot condition (on that result alone).
+    // The benchmark carries three distinct conditions - the area, the zoning-lot (DB-232) and the
+    // K20 conditions - each now shared across many results.
     expect(shared.length).toBe(3);
 
     // None lost: the shared set equals the document's distinct condition lines, computed here.
@@ -58,10 +58,11 @@ describe("collectConditions (scenario S7)", () => {
     }
 
     // Repeated under many results: more than one result refers to the conditions, and the
-    // conditions attach with different multiplicities (floor-area values carry two, heights one).
+    // conditions attach with different multiplicities (floor-area / unit-limit values carry three
+    // after DB-232 - area, zoning-lot and K20 - while the heights carry one, K20).
     expect(references.length).toBeGreaterThan(1);
     const sizes = new Set(references.map(ref => ref.conditionIds.length));
-    expect(sizes.has(2)).toBe(true);
+    expect(sizes.has(3)).toBe(true);
     expect(sizes.has(1)).toBe(true);
 
     // Every text reachable through references exists in the shared set (none orphaned).

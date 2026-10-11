@@ -52,6 +52,7 @@ from .three_way_document import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
+    from app.profile.zoning_lot_index import ZoningLotIndex
     from app.rules.registry import RuleRegistry
     from app.spatial.site_geometry.outline import PreparedOutline
     from app.spatial.site_geometry.results import SiteGeometry
@@ -132,6 +133,7 @@ def run_engine_and_result_ways(
     *,
     evaluator_inputs: Mapping[str, Any] | None,
     special_density_statement: bool | None = None,
+    zoning_lot_index: ZoningLotIndex | None = None,
     registry: RuleRegistry | None = None,
     env: Mapping[str, str] | None = None,
 ) -> EngineResultWays:
@@ -161,10 +163,12 @@ def run_engine_and_result_ways(
         geometry=inputs.site_geometry,
         housing_kind=inputs.housing_program,
         special_density_statement=special_density_statement,
+        zoning_lot_index=zoning_lot_index,
     )
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
+        zoning_lot=gathered.inputs.zoning_lot,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)
 
@@ -180,6 +184,7 @@ def run_engine_and_result_ways_from_evidence(
     prepared_outline: PreparedOutline | None,
     site_geometry: SiteGeometry | None,
     special_density_statement: bool | None = None,
+    zoning_lot_index: ZoningLotIndex | None = None,
     building_defaults: BuildingDefaults | None = None,
     user_choices: frozenset[str] | None = None,
     registry: RuleRegistry | None = None,
@@ -222,6 +227,7 @@ def run_engine_and_result_ways_from_evidence(
         geometry=site_geometry,
         housing_kind=housing_program,
         special_density_statement=special_density_statement,
+        zoning_lot_index=zoning_lot_index,
     )
     recorded = gathered.recorded
     reach = gathered.inputs.reach
@@ -267,5 +273,6 @@ def run_engine_and_result_ways_from_evidence(
         condition_sources=conditions, user_choices=user_choices,
         corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
         lot_outline_available=outline_ring is not None,
+        zoning_lot=gathered.inputs.zoning_lot,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

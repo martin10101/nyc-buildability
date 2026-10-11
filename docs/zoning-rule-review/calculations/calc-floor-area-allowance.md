@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: floor_area
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 4 (last changed 2026-10-11)
+- Revision: 5 (last changed 2026-10-11)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `0af91c41bc97712f3892007a6f490146095256345c2e96dc3b1db406ed1778e1`
+- Combined code identity: `abb6374448b76566c4691b516ff2218f2aa8e1388ea2a56b761e3d38fcc34a91`
 - Modules:
   - `services/api/app/scenario/three_answers/answers.py` (`1ebb4595a74df168c1318bc02216781234daf8b181309271bf4ef33644150ab7`)
-  - `services/api/app/scenario/three_answers/result_ways.py` (`09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72`)
+  - `services/api/app/scenario/three_answers/result_ways.py` (`ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3`)
 
 ## Law
 
@@ -79,8 +79,8 @@ Planned, not built:
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `0af91c41bc97712f3892007a6f490146095256345c2e96dc3b1db406ed1778e1`
-- Commit tested: `d46369705676eee33b1882f637c545cf444c4ae8`
+- Code identity tested: `abb6374448b76566c4691b516ff2218f2aa8e1388ea2a56b761e3d38fcc34a91`
+- Commit tested: `10e5c55d1a02f6f18a5c6a2bdc16f01b05751312`
 - Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
