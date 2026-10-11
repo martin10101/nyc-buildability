@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-01",
  "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
- "revision": 2,
+ "revision": 3,
  "last_changed": "2026-10-11",
  "question": {
   "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
@@ -16,8 +16,8 @@
    "id": "E1",
    "kind": "index_entry",
    "authority": "NYC Department of Finance, ACRIS (NYC Open Data: Real Property Legals)",
-   "title": "ACRIS index rows for the three 2022 instruments on block 7334",
-   "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=70",
+   "title": "ACRIS index rows for the three 2022 instruments on block 7334 (fetched by document id)",
+   "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?%24where=document_id%20in%28%272018013000919001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%29&%24limit=1000",
    "reference": "dataset 8h5j-fqxa; documents 2022020201551001, 2022020201551002, 2022031600431001",
    "page": null,
    "document_date": "index rows good through 2022-02-28 / 2022-03-31",
@@ -109,6 +109,48 @@
    "excerpt": "\"Lot area\" is the area of a #zoning lot#.",
    "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-lot-area.snapshot.json",
    "sha256": "c579b8dc916e3f3080226ef85b96318d0145dfe3b970e2596117ef1ad400241f"
+  },
+  {
+   "id": "E8",
+   "kind": "index_entry",
+   "authority": "NYC Department of Finance, ACRIS (NYC Open Data)",
+   "title": "ACRIS Legals rows for lot 70 (the connector's lot query)",
+   "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=70&$order=document_id&$limit=1000&$offset=0",
+   "reference": "dataset 8h5j-fqxa; captured with app.connectors.acris_index_soda.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0)",
+   "page": null,
+   "document_date": "index rows good through 2018-01-31, 2022-02-28, 2022-03-31, 2024-01-31",
+   "retrieved": "2026-10-11",
+   "excerpt": "document 2018013000919001 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2018013000919002 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2022020201551001 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2022020201551002 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2022031600431001 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2024011000700001 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2024011000700002 indexed against borough 4 block 7334 lot 70 (partial_lot E)",
+   "saved_copy": "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+   "sha256": "4340109ffeb1d593ad15c0a086742e730301dbbc4c8a5b6d31a51b308ffe637a"
+  },
+  {
+   "id": "E9",
+   "kind": "index_entry",
+   "authority": "NYC Department of Finance, ACRIS (NYC Open Data)",
+   "title": "ACRIS Legals rows for the ZONE, DECL and CERT documents (every lot each is indexed against)",
+   "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?$where=document_id%20in%28%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%29&$order=document_id,lot&$limit=1000&$offset=0",
+   "reference": "dataset 8h5j-fqxa; captured with app.connectors.acris_index_soda.build_legals_by_documents_url(['2022020201551001','2022020201551002','2022031600431001'], limit=1000, offset=0)",
+   "page": null,
+   "document_date": "index rows good through 2022-02-28, 2022-03-31",
+   "retrieved": "2026-10-11",
+   "excerpt": "document 2022020201551001 indexed against borough 4 block 7334 lot 1 (partial_lot E); document 2022020201551001 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2022020201551002 indexed against borough 4 block 7334 lot 1 (partial_lot E); document 2022020201551002 indexed against borough 4 block 7334 lot 70 (partial_lot E); document 2022031600431001 indexed against borough 4 block 7334 lot 1 (partial_lot E); document 2022031600431001 indexed against borough 4 block 7334 lot 70 (partial_lot E)",
+   "saved_copy": "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+   "sha256": "d8b5c868a1e16aafdc5905815cc2a86c120c6843af6327abdcc61f8cd100f158"
+  },
+  {
+   "id": "E10",
+   "kind": "dataset_record",
+   "authority": "NYC Open Data (Real Property Legals metadata)",
+   "title": "ACRIS Legals column description: partial_lot",
+   "url": "https://data.cityofnewyork.us/api/views/8h5j-fqxa.json",
+   "reference": "dataset 8h5j-fqxa, column partial_lot",
+   "page": null,
+   "document_date": "dataset metadata as retrieved",
+   "retrieved": "2026-10-10",
+   "excerpt": "PARTIAL LOT: P=partial E=entire",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_meta.json",
+   "sha256": "c4703f66671e1e04299097a0dc05aaf6d24a9298e57955be183e09c10837a486"
   }
  ],
  "meaning_and_applicability": {
@@ -157,9 +199,12 @@
    "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133, indexed against lots 1, 70; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134, indexed against lots 1, 70; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661, indexed against lots 1, 70 (lots from E1; type, dates and CRFN from E2)",
    "CERT = \"CERTIFICATE\"; ZONE = \"ZONING LOT DESCRIPTION\"; DECL = \"DECLARATION\"",
    "DOB job 421803891 text: \"ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.\"",
-   "DOB job 421158801 (2015): \"APPLICATION SUBMITTED TO SUBDIVIDE EXISTING ONE (1) TAX LOT INTO (2) TAX LOTS.\""
+   "DOB job 421158801 (2015): \"APPLICATION SUBMITTED TO SUBDIVIDE EXISTING ONE (1) TAX LOT INTO (2) TAX LOTS.\"",
+   "E1's saved copy was fetched by document id (the three 2022 instruments and one 2018 instrument), not by the lot query its URL showed before revision 3; the lot-1 rows come from that query.",
+   "The connector's lot query for lot 70 (E8) returns lot 70's rows only; the lots each ZONE, DECL and CERT document is indexed against come from the document-id query (E9).",
+   "partial_lot: P = partial, E = entire (E10); every benchmark row of the three 2022 instruments reads E."
   ],
-  "interpretation": "Likely one zoning lot of tax lots 1 and 70; not established until the instruments are read.",
+  "interpretation": "Likely one zoning lot of tax lots 1 and 70; not established until the instruments are read. The program applies a draft reading (rule DB232-R1, not reviewed, ADR-007): a ZONE (zoning lot description) indexed against lot 70 and another lot on the same block makes every lot-area figure and building alternative conditional on the zoning lot; DECL and CERT are listed as reminders only; the zoning lot is never concluded.",
   "conflicts": [],
   "conditions": [
    "Every lot-area-based figure the report gives for lot 70 assumes lot 70 alone is the zoning lot."
@@ -213,11 +258,27 @@
   ],
   "code_paths": [
    "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py",
-   "services/api/app/profile/existing_floor_area/scope.py"
+   "services/api/app/profile/existing_floor_area/scope.py",
+   "services/api/app/connectors/acris_index_soda.py",
+   "services/api/app/profile/zoning_lot_index.py",
+   "services/api/app/api/v1/study_inputs.py",
+   "services/api/app/scenario/three_answers/result_way_conditions.py",
+   "services/api/app/scenario/three_answers/result_way_bridge.py",
+   "services/api/app/scenario/three_answers/result_ways.py",
+   "services/api/app/scenario/three_answers/three_way_document.py",
+   "services/api/app/drawings/report/readers.py"
   ],
   "code_identity": {
    "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
-   "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6"
+   "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+   "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
+   "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
+   "services/api/app/api/v1/study_inputs.py": "ebc38eeab6b1892d24040ef6e6d39d890bb5db9fb46cd373803a1c59ba5ef733",
+   "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
+   "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
+   "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
+   "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
+   "services/api/app/drawings/report/readers.py": "4a515b689bb7a8305b4119900e024ccd294732f148848fc81b2a3eb1dfd8bf07"
   },
   "worked_example": {
    "inputs": "Tax lots 1 and 70; three 2022 instruments indexed against both; DOB 421803891's text.",
@@ -227,11 +288,20 @@
   },
   "regression_cases": [
    "An index entry naming two tax lots gives a warning, never a merged lot area (backlog DB-232).",
-   "A DOB filing whose text names a zoning lot has its floor-area figure set aside (services/api/app/profile/existing_floor_area/scope.py; tests in services/api/tests/profile/test_existing_floor_area_benchmark.py)."
+   "A DOB filing whose text names a zoning lot has its floor-area figure set aside (services/api/app/profile/existing_floor_area/scope.py; tests in services/api/tests/profile/test_existing_floor_area_benchmark.py).",
+   "ZONE on lot 70 and lot 1 (recorded replay): OTHER_LOTS_NAMED naming 4073340001; every lot-area figure and building B carry the condition; numbers unchanged (services/api/tests/profile/test_zoning_lot_index.py::test_benchmark_replay_names_lot_1_with_crfn; services/api/tests/journey/test_215_16_northern_journey.py).",
+   "ZONE on the subject alone (synthetic): SINGLE_LOT_ONLY, no new condition (test_single_lot_only_when_zone_names_this_lot_alone).",
+   "No ZONE, or deeds only: NONE_FOUND, 'not a title search', no condition (test_none_found_when_no_zone_document).",
+   "Index not reachable or malformed: NOT_READ, the condition is added, never 'none found' (connector failure-path tests; test_live_provider_maps_schema_drift_to_not_read).",
+   "ZONE on another block: listed for checking, no same-block warning (test_another_block_zone_is_not_a_same_block_warning; test_mixed_document_triggers_only_on_same_block_lots).",
+   "DECL or CERT only: reminder, no condition (test_decl_or_cert_only_is_reminder_only_no_condition); partial_lot P on a ZONE: conditional (test_partial_lot_p_on_a_zone_is_conditional).",
+   "No provider bound (production default): byte-identical output (test_db232_not_checked_adds_no_scope_row_or_condition; test_route_body_identical_whether_or_not_index_bound).",
+   "The report's first open item is 'Zoning lot' (services/api/tests/drawings/report/test_report_pages.py::test_db232_zoning_lot_open_item_is_first); no combined lot area and no remainder from the 39,934 sq ft DOB field anywhere (journey guard)."
   ],
   "dependency_assessment": [
    "Same assumption elsewhere: every lot-area-based output (floor-area allowance, coverage footprint, dwelling-unit limit, remaining capacity) takes the subject tax lot as the zoning lot. It is wrong only where a zoning lot spans several tax lots; no blanket change and no address-specific exception. Queued: DB-232 (a warning from the ACRIS index, labelled conditional).",
-   "zoning_lot_history.py is reminder-only and never concludes a zoning lot; existing_floor_area/scope.py already sets aside zoning-lot-scoped DOB figures. Both stay consistent with this record."
+   "zoning_lot_history.py is reminder-only and never concludes a zoning lot; existing_floor_area/scope.py already sets aside zoning-lot-scoped DOB figures. Both stay consistent with this record.",
+   "Since M5-T158 (DB-232) the program reads the ACRIS index (Legals and Master metadata only) through a fail-closed connector behind a default-off flag (INTERNAL_ZONING_LOT_INDEX_ENABLED); with the flag off the output is unchanged. With a reading, the five-state classifier drives one property-specific zoning-lot condition on every lot-area figure; the benchmark shows it from the recorded replay. Reading the instruments themselves stays owed (access_blocked)."
   ]
  },
  "review": {
@@ -270,7 +340,7 @@
   "professional_review": null
  },
  "freshness": {
-  "checked_on": "2026-10-10",
+  "checked_on": "2026-10-11",
   "method": "live_fetch",
   "snapshot_date": null,
   "limitation": "The ACRIS index is good through 2026-09-30; this is not a title certification."
