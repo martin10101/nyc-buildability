@@ -1,0 +1,127 @@
+{
+ "task_id": "M5-T157",
+ "material_commits": [
+  "9e19afac (builder: special density area read from the record (DB-231), tests, fixture, snapshots, register)",
+  "754def4e (builder: the engine-bridge consumer test (scope correction 2))",
+  "a6aff342 (orchestrator: NB-05 revision 2)",
+  "18e62ca4 (producer report (both builder returns unchanged))",
+  "dcd82851 (orchestrator: NB-05 revision-2 review entry (data-contract-verifier))"
+ ],
+ "claim_seam_head": "d46369705676eee33b1882f637c545cf444c4ae8",
+ "files_changed": [
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+  "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+  "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "docs/research/evidence-records/NB-05-special-density-area.json",
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+  "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+  "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+  "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+  "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+  "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T157-producer-report.md",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/engine_conditions.py",
+  "services/api/app/scenario/three_answers/result_way_bridge.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/result_way_facts.py",
+  "services/api/app/scenario/three_answers/result_way_inputs.py",
+  "services/api/app/scenario/three_answers/result_ways.py",
+  "services/api/app/scenario/three_answers/special_density_geography.py",
+  "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+  "services/api/tests/api/test_results_read_law_examples.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/journey/test_215_16_northern_journey.py",
+  "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+  "services/api/tests/scenario/three_answers/test_engine_conditions.py",
+  "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+  "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+  "services/api/tests/scenario/three_answers/test_result_way_facts.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+  "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+  "services/api/tests/scenario/three_answers/test_special_density_geography.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+ ],
+ "what_did_not_change": "No rule file under services/api/app/rules/rulesets/, no setting, no flag, no report page code; the apartment estimate is untouched.",
+ "known_limits": [
+  "The unit limit is a Conditional ceiling tied to the zoning lot (NB-01), never a confirmed entitlement; DB-232 (M5-T158) adds the property-specific zoning-lot condition in the same wave.",
+  "PLUTO Appendix A is not captured; the 'DB' token is corroborated by a live PLUTO query (G1), the open item stays in NB-05.",
+  "The report's page-1 wording (coverage.py, readers.py fixed strings) is a later redesign task (D-094 plan P-3)."
+ ],
+ "checks_at_material_head": [
+  "cd services/api && ruff check: All checks passed (0330d598)",
+  "All affected api folders at 0330d598: 7062 passed, 8 skipped (orchestrator run)",
+  "render_review_register.py --check: PASSED",
+  "research_record_check --check: PASS (NB-05 review_state current)",
+  "web: 5 changed test files 71 passed (G4); builder full vitest 128 files / 2641 passed"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "A special-district column that was not read, an unusable community district or a contradiction gives NOT KNOWN and the unit limit stays withheld; never 'no' or a default (special_density_geography.decide_special_density; test_special_district_columns_not_read_is_not_known, test_nothing_read_is_not_known)."
+  ],
+  "D-090-R240": [
+   "With no user statement and no readable record the limit stays withheld; a missing statement is never filled (result_way_bridge._density NOT_GIVEN; truth table)."
+  ],
+  "D-090-R241": [
+   "Expected unit values come from ZR 23-52 and reference-case rows (real-lot#L6 = 29, interior-lots#P5-units = 16), not from a saved program run (tests/api/test_results_read_law_examples.py header); regenerated fixtures are explained line by line in the producer report."
+  ],
+  "D-090-R255": [
+   "The geography now comes from the city's record; a user's statement never overrides it and a disagreement is withheld naming both sides (test_user_statement_never_overrides_the_record_s5)."
+  ],
+  "D-090-R392": [
+   "The legal unit limit is its own figure with ZR 23-52 rounding; the apartment estimate is untouched and separate (journey fixture: unit_estimate not_available; G3 check 3)."
+  ],
+  "D-090-R520": [
+   "The benchmark's standard unit limit reads 29 as a Conditional ceiling on the stated tax-lot assumption (journey fixture legal_unit_limit_standard way=conditional value 29.0); the qualifying limit stays withheld (not computed here)."
+  ],
+  "D-090-R569": [
+   "Legal limit and estimate are distinct outputs in the results document, scope line, SVG and DXF notes ('conditional ceiling on the zoning lot'); G3 found no wording that merges them."
+  ],
+  "D-090-R570": [
+   "States that withhold (in one, not known, disagreement) withhold everywhere: no number in the document, scope line, drawings or DXF (truth table; regenerated snapshots)."
+  ],
+  "D-090-R584": [
+   "No flag or production switch changed; config.py untouched by this task."
+  ],
+  "D-090-R588": [
+   "Scope unchanged: the full report and every option remain; this task adds a shown figure and removes none."
+  ],
+  "D-090-R689": [
+   "Reuses research record NB-05 (revision 1 from M0-T190) and its worked example; revision 2 maps the regression cases to tests."
+  ],
+  "D-090-R783": [
+   "The unit limit carries one status: Conditional (way 'conditional'); withheld states carry their withheld status; nothing is labelled Verified."
+  ],
+  "D-093-R050": [
+   "G1 (data-contract-verifier) opened the ZR 12-10 and 23-52 captures and the PLUTO dictionary, worked 20,150/680 and the boundaries before reading code, probed the official PLUTO dataset for the 'DB' token and checked the live record for BBL 4073340070; its entry is in NB-05 review.agent_reviews (revision 2, agrees)."
+  ],
+  "D-093-R051": [
+   "Boundaries tested: 0.75 rounding both sides (29.75 -> 30, 29.747 -> 29, 15.75 -> 16), every fold input state, all nine record x statement combinations, the engine/shown invariant; three mutation proofs by the builder and one by the G4 reviewer."
+  ],
+  "D-093-R061": [
+   "Answered yes for this property: the geography is resolved from the record (Queens cd 411, no special district: not in one) while the unit count stays Conditional on the zoning lot and lot area (NB-05 conditions; always-present zoning-lot condition)."
+  ],
+  "D-093-R064": [
+   "Reviews ran in read-only sessions with temporary worktrees or exports under /tmp; no owner session was cleared or terminated."
+  ],
+  "D-094-R033": [
+   "ZR 12-10 captures (special density areas e8029ab3..., Manhattan Core 2c04132a..., Special Downtown Brooklyn District ae66c93e...) are pinned in special_density_geography.py and enforced by test_each_law_capture_digest_matches_the_committed_snapshot; G1 checked the digests."
+  ],
+  "D-094-R034": [
+   "The source fact is resolved through the rule and evidence path: the program reads the record (decide_special_density) instead of a user declaration; a record that cannot be read is withheld as a limit not yet usable, distinct from a legal unknown; NB-05 revision 2."
+  ],
+  "D-094-R035": [
+   "The 29 figure is a Conditional ceiling with an always-present zoning-lot condition, never settled and never called an entitlement in any emitted text, scope line, SVG or DXF note (G3 check 3)."
+  ]
+ }
+}
