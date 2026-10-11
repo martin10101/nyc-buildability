@@ -114,8 +114,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "nyc.gov asset PDFs refuse non-browser fetches: record BLOCKED with the URL, never evade; cite by reference.",
     "Following cross-references can fan out across the whole ZR: bound the first pass to the R6B + C2-2 benchmark frontier and the eleven options, and record out-of-scope terminals explicitly.",
@@ -123,7 +123,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:14.195377+00:00",
-  "updated_at": "2026-10-11T19:45:31.891757+00:00",
+  "updated_at": "2026-10-11T21:21:12.083769+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -148,6 +148,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; read-only research helpers dispatched first"
+    },
+    {
+      "at": "2026-10-11T21:21:10.201592+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; G1 FAIL r1 then PASS after rework 1 at 12663e29; review record and evidence map written"
     }
   ]
 }

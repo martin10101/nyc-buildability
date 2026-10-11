@@ -1,0 +1,15 @@
+{
+  "task_id": "M3-T006",
+  "producer_agent": "legal-corpus-engineer",
+  "report_file": "project-control/reports/M3-T006-producer-report.md",
+  "submitted_at": "2026-10-11T21:21:10.461162+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M3-T006-evidence-map.json",
+  "content_manifest_sha256": "46bbd9c5b95f017ec95532f98ddba57673df98f674a50be3b4e9a0fe2c078163",
+  "reviewed_sha": "cb95092b6a5d55ef98faa704950685deb43a3d7d",
+  "applicable_requirements": [
+    "D-094-R102",
+    "D-094-R104"
+  ],
+  "updated_at": "2026-10-11T21:21:11.060041+00:00"
+}
