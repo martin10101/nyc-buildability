@@ -7131,66 +7131,118 @@
     "D-090-R940"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988",
+   "reviewed_manifest_sha256": "0b0d26ee7ea5f2851fa5701f669c30a683b2cadf048964f3a3a7dd0afcb05dd6",
    "requirements": [
     {
      "id": "D-090-R551",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The real website output /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-w22g/report.html contains zero `<img>` and zero SVG `<image>` elements (grep count 0 each): no Street View or any raster photograph is embedded in the saved report.",
+      "The only \"Aerial\"/\"photograph\" text is the scope line \"Not yet: \u2026 Aerial and street photographs\" (page-1.png and report.html); no Esri or other raster imagery is used anywhere in this report.",
+      "services/api/tests/drawings/report/test_location_sheet.py::test_s4_no_photo_no_empty_frame_no_photo_wording passed in my frozen-head run (91 passed) and asserts no photo/street-view/aerial wording and no `<img>` in the location sheet.",
+      "Stays open: the \"Esri imagery only within its agreement, with attribution\" and \"read both sets of terms before building\" clauses apply when imagery is actually added; none is added here, so that part of R551 stays open in the registry.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R843",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 3 \"What constrains the design?\" (print-w22g/page-3.png) draws the subject lot outline (coral \"Lot 70\") among adjoining lots (Lot 1/11/61), named streets as areas with mapped widths (NORTHERN BOULEVARD \"100 ft mapped width\", 215 STREET/215 PLACE/216 STREET \"60 ft mapped width\"), a grid-north arrow, a scale bar (0/100/200 ft), edge-length dimensions (103.88/99.98/99.98/101.71 ft) and a legend of only the drawn kinds.",
+      "The caption states the measurement basis and limitation: \"Sources: NYC City Planning, MapPLUTO (edited 9 Sep 2026); \u2026 Map geometry only; tax boundaries do not establish the legal zoning lot; nothing is surveyed.\"",
+      "The lot-only fallback with its limitation line is exercised by test_s6_without_map_data_one_line_never_blank and test_c4_constraints_falls_back_to_lot_only_when_a_layer_is_unavailable (both passed): missing context is stated, never a false complete map.",
+      "Stays open: drawn yards/setbacks are not on the plan (ruling Y6 \u2014 the engine computes no building position/yards/setbacks yet); they appear only textually in the constraints table, so that drawn element of R843 stays open across M5-T154/M5-T155/M5-T156.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R893",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "On page 3 the supporting notes sit in the figure caption (not a notes column) and the street names plus surrounding context are drawn inside the figure (streets, neighbours, existing buildings), matching the orchestrator's reading that the drawing kit now draws them.",
+      "No raw terms appear: a tag-stripped scan of print-w22g/report.html found no dataset id (5zhs), \"via NYC Open Data\", FeatureServer, OwnerName, OBJECTID, Street_NM, Streetwidth, ZONEDIST, EPSG, http, or any snake_case token in visible text.",
+      "The report prints at its stated size: pdfinfo reports 9 pages at 594.96 x 841.92 pts (A4), and my own run of print-w22e/overflow.cjs on report.html returned W=688, docW=688, n=0 \u2014 nothing wider than the printable width, so text is not shrunk.",
+      "Stays open: R893 is also bound to M5-T151/M5-T152; any further page-overload concerns on those report sections stay with them \u2014 M5-T156's site-plan share is satisfied.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R923",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The report now prints context maps (neighbourhood map + block close-up on page-2.png, site-context plan on page-1.png and page-3.png), so the scope-inventory claim is backed by real supported maps.",
+      "\"Context maps\" shows under \"In this report\" (page-1.png) only because maps are printed; test_s5_context_maps_moves_only_when_printed (passed) asserts it returns to \"Not yet\" when no maps are present, so the claim is never false.",
+      "This satisfies the owner's \"include useful supported maps or correct that claim\": useful supported context maps are now included and the claim is accurate.",
+      "Stays open: a zoning-district context map specifically is not printed (only location/context maps), so any zoning-map element of R923 stays open under its broader M5-T151/M5-T152 binding.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R936",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The site drawing is titled and shows the lot among its surroundings: page-3.png, the page-1.png compact figure and the page-2.png block close-up all draw named streets as streets (mapped widths 100/60 ft), the corner (Northern Blvd & 215 Place), neighbouring lots and existing building footprints \u2014 not an isolated outline.",
+      "test_page1_carries_the_summary_frame_site_plan and test_s1_location_sheet_opens_page_type_two passed, confirming the compact and full site-context plans sit on the right sheets.",
+      "I inspected the printed pages myself; the lot reads as a corner lot among its neighbours, answering the owner's \"a rectangle on an angle / no reference where he is.\"",
+      "Stays open: R936 is also bound to M5-T154 (map data) and M5-T155 (the drawings themselves); M5-T156's share is the report wiring/placement, which is satisfied.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R937",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 2 \"Where is the lot?\" (page-2.png) opens page type 2 with a neighbourhood map (north-up street network, subject lot marked, scale 0/500/1,000 ft) and a block close-up, each captioned.",
+      "The captions name sources and dates in plain words \u2014 \"NYC City Planning, MapPLUTO (edited 9 Sep 2026); NYC building footprints (edited 27 Sep 2026); NYC Digital City Map street centre lines (edited 1 Dec 2025)\"; test_s1_captions_name_sources_and_their_dates (passed) pins those three dates.",
+      "test_s1_location_sheet_opens_page_type_two (passed) asserts \"Where is the lot?\" precedes \"What constrains the design?\" and that the location sheet holds two figures/SVGs.",
+      "Stays open: the maps and their data come from M5-T155/M5-T154; M5-T156's share (the location sheet on page type 2 with captions) is satisfied. A city-overview-scale map is optional \u2014 the row's \"city OR neighbourhood scale\" is met by the neighbourhood map.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R938",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The report now has a property-location page (\"Where is the lot?\") plus coloured, labelled drawings at stated scales (scale bars on pages 1/2/3), which I inspected directly against the competitor sample's property-location page; it reads as a bespoke location feature, not a default template.",
+      "The independent visual-quality-reviewer recorded PASS at 6c8c9f7d after its corrections T155-C1/T156-C1/T156-C2 (project-control/reports/M5-T156-reviews.md); I confirmed those fixes on the printed pages (subject lot coral-filled above the existing-building dashed outline; two co-equal wide maps on page 2; 9 pages with no near-empty page).",
+      "Stays open: the \"building's shape shown on its lot\" element is NOT delivered \u2014 the building is not placed yet (honestly shown by the not-placed line), and the final \"looks like my competitors\" sign-off is a subjective judgement from an AI visual review only (the ten-second test with a real architect was NOT run), so that part of R938 stays open.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R939",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The engine does not place the building yet, so the report prints the fixed line \"No building is placed on this plan yet: the program does not yet work out where a building sits on the lot.\" on the site plan (page-3.png) and the scenario sheet (page-5.png), and labels the floor stack \"Floor-stack section (Illustrative): drawn from the schedule only, with no placement on the lot.\"",
+      "No proposed building footprint is drawn on the subject lot; test_s3_not_yet_placed_on_site_plan_and_scenario_sheet (passed) asserts the fixed sentence on both sheets and that the document's raw reason text is never spliced in.",
+      "Stays open: the primary obligation \u2014 a building footprint placed on the site plan \u2014 waits for the engine (backlog DB-227); the required fallback (say plainly it is not placed) is met, so M5-T156's share is satisfied.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     },
     {
      "id": "D-090-R940",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The location page carries no street photo and nothing implying one: zero raster images in report.html, no empty figure frame (test_s4 asserts location `<figure>` count == `<svg>` count), and street-photo wording appears nowhere except the scope \"Not yet\" list.",
+      "The figure grid is laid out to take a third figure later without a redesign (two co-equal wide maps stacked; test_location_page_layout_two_co_equal_wide_maps passed; the presentation-contract entry states \"The stack can take a third figure later without a redesign\").",
+      "Stays open: opening a paid Google account and checking Google's terms before any street-photo work are future owner/actions, not this task, so that part of the decision stays open in the registry.",
+      "Verifier's carry-forward condition met at 7a482956: the task's allowed-path files are identical to those verified at 7adc476e (content identity 0b0d26ee), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (7 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer backend-engineer is neither). DCV report: project-control/reports/M5-T156-DCV.md."
+     ],
+     "reviewed_sha": "7a4829563d29d5bfea985cf1d59dc88d80743988"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T00:42:02+00:00"
   }
  ]
 }
