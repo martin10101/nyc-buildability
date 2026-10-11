@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 104,
+ "requirement_count": 108,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T18:13:13+00:00",
+ "updated_at": "2026-10-11T18:33:39+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3260,6 +3260,136 @@
    "dependencies": [],
    "required_harness": "No more than 3 builders and no more than 8 helpers at once; every helper beyond 5 is read-only research.",
    "required_evidence": "Session notes and dispatch records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R105",
+   "text": "'Okay, your job now is to make one folder and call the folder back and forth question and answers, or in short, back and forth developer, something like that.': make one folder named for the back-and-forth (the owner's words: 'back and forth question and answers', in short 'back and forth developer').",
+   "source_ref": "source-005-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The folder exists and holds the log.",
+   "required_evidence": "The folder listing.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R106",
+   "text": "'I want you to, in short, put in the conversation over there, like what I asked, what you responded, what is already confirmed that the program is going to do, and so on.': the log records what the owner asked, what the developer answered, what is already confirmed that the program will do, and what is done and not done.",
+   "source_ref": "source-005-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R105"
+   ],
+   "required_harness": "The log holds each exchange with a status (done, recorded, to do, open, answered).",
+   "required_evidence": "The log file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R107",
+   "text": "'But if I give it again for a AI or architect to look over, he will understand exactly what's going on.' 'So the words can be shortened, the answers can be shortened, but still reveal the exact same thing that you and me have over here.' 'Don't miss out on anything from that.': wording may be shortened, but the log must reveal the same content as the conversation so another AI or an architect understands exactly what is going on; nothing may be left out.",
+   "source_ref": "source-005-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R105"
+   ],
+   "required_harness": "An independent read of the conversation against the log finds no missing point.",
+   "required_evidence": "The log file and this session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R108",
+   "text": "'Yes add to github': add the question-and-answer log to the GitHub repository (the owner was told the repository is public).",
+   "source_ref": "source-006-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R105"
+   ],
+   "required_harness": "The log is committed and pushed; no secret or private path in it.",
+   "required_evidence": "The commit and the pushed branch.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
