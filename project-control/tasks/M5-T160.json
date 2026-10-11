@@ -76,15 +76,15 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "A reading of law is an unreviewed draft (ADR-007); the record certifies nothing.",
     "Street widths follow the D-052 policy; an unresolved width keeps the dependent reading unresolved."
   ],
   "blockers": [],
   "created_at": "2026-10-11T05:27:03.867480+00:00",
-  "updated_at": "2026-10-11T06:00:51.063453+00:00",
+  "updated_at": "2026-10-11T06:00:52.910215+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
