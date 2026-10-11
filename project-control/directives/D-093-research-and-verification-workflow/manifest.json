@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T01:35:36+00:00",
  "created_at": "2026-10-11T01:35:36+00:00",
- "updated_at": "2026-10-11T07:43:01+00:00",
+ "updated_at": "2026-10-11T07:43:26+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c8f060296942bb7658849ea2c9ec8a06077b06ca",
  "capture_head_sha": null,
@@ -99,7 +99,7 @@
   "D-093-R075"
  ],
  "requirements_id_digest_sha256": "a9156a61278a20fde68a0efd42cbf434e58d2d56f502ea1a540cfdf2352133ed",
- "requirements_content_digest_sha256": "09c257acc3f45be4b262c552986deed45eee34cb303fe808c5788688180f1cf4",
+ "requirements_content_digest_sha256": "d6c314eeb4f4f5eb19d63879efc78773df6de3f4f86973009d5a36e8140e505e",
  "sources": [
   {
    "file": "source-001.md",
@@ -136,7 +136,8 @@
   "M0-T191",
   "M5-T157",
   "M5-T158",
-  "M5-T160"
+  "M5-T160",
+  "M0-T192"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -199,6 +200,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-003 (session 01TpXJN7, transcript 72bfc3c3: the owner's 'fix it permanently' correction) and requirements D-093-R075 to R075, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T07:43:26+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T192 (research-record check: governing review by revision and parsed time (D-093 R075)) to R075 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

@@ -1,0 +1,106 @@
+{
+  "task_id": "M0-T192",
+  "title": "D-093 R075: the research-record check chooses the governing review by revision and parsed time, so a same-day date-only entry never reads as older; malformed review dates are refused",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Fix tools/research_record_check.py so the review that governs a record's review state is the one for the highest reviewed revision, ties broken by the parsed UTC time (a date-only entry = start of its day) and then by order; refuse review dates in any other form; add tests for the mixed-format cases.",
+  "business_reason": "The check compared review dates as strings, so on NB-01 a date-only revision-3 review sorted before a timed revision-2 review and the record read stale; the owner asked for a permanent fix instead of a logged workaround (D-093 R075).",
+  "inputs": [
+    "tools/research_record_check.py",
+    "tools/test_research_record_check.py",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_AND_VERIFICATION.md"
+  ],
+  "outputs": [
+    "tools/research_record_check.py",
+    "tools/test_research_record_check.py",
+    "project-control/reports/M0-T192-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T190"
+  ],
+  "allowed_paths": [
+    "tools/research_record_check.py",
+    "tools/test_research_record_check.py",
+    "project-control/reports/M0-T192-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    ".github/",
+    ".claude/",
+    "docs/research/evidence-records/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "a record whose reviews are a revision-2 entry dated with a time ('2026-10-11T02:13Z') followed by a revision-3 entry dated '2026-10-11' (the NB-01 case), code unchanged",
+      "when": "the check derives the review state",
+      "then": "the revision-3 entry governs and the state is current"
+    },
+    {
+      "id": "S2",
+      "given": "two reviews of the same revision, one date-only and one with a time on the same day",
+      "when": "the check derives the review state",
+      "then": "the governing review is chosen by revision, then by the parsed time, then by order; a date-only entry counts as the start of its day"
+    },
+    {
+      "id": "S3",
+      "given": "a review whose date is neither YYYY-MM-DD nor a UTC date-and-time (e.g. '11/10/2026' or '2026-10-11 07:26')",
+      "when": "the check runs",
+      "then": "the record is refused with a message naming the review and the expected forms"
+    },
+    {
+      "id": "S4",
+      "given": "every committed record (NB-01 to NB-06)",
+      "when": "python3 tools/research_record_check.py --check runs",
+      "then": "it passes; NB-01, NB-05 and NB-06 read current"
+    },
+    {
+      "id": "S5",
+      "given": "the existing tests of the check",
+      "when": "the suite runs",
+      "then": "all pass unchanged except where a test pinned the old string comparison, which is explained"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A stricter date check could refuse an existing record; every committed record must still pass (S4).",
+    "Wave 23's other tasks hold review entries in NB-01, NB-05, NB-06: no record file is edited by this task."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T07:43:25.820617+00:00",
+  "updated_at": "2026-10-11T07:43:26.202222+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R075"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T07:43:25.820865+00:00",
+  "path_notes": "Owner correction D-093 R075 (session-2026-10-11b). Backlog DB-238 is updated by the orchestrator when the fix is merged. Lands in wave 23.",
+  "documented_test_commands": [
+    "python3 tools/test_research_record_check.py",
+    "python3 tools/research_record_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

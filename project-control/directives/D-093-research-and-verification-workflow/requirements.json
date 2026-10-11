@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 75,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T07:43:01+00:00",
+ "updated_at": "2026-10-11T07:43:26+00:00",
  "requirements": [
   {
    "id": "D-093-R001",
@@ -2392,7 +2392,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-093-BOOTSTRAP"
+     "D-093-BOOTSTRAP",
+     "M0-T192"
     ],
     "task_types": [],
     "milestones": [],
