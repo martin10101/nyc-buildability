@@ -437,7 +437,23 @@
  },
  "review": {
   "producer": "official-source-researcher",
-  "agent_reviews": [],
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 2,
+    "reviewed_code_identity": {},
+    "verdict": "agrees",
+    "findings": [
+     "F1(a) resolved: conditions[0] now names the 23-431(a) line-up as the 35-631(b) closing-clause fallback and states 35-631(a) does not apply to this R6B Queens site.",
+     "F1(b) resolved: the 'prevailing street wall frontage' gloss now follows the ZR 12-10 definition cited as new E16 (saved copy present; LF sha256 0bef4080...469f matches), added to provisions_read; the 15/25/>35-ft test is kept only as the 23-431(a) eligibility test.",
+     "F2 resolved: E15 excerpt and the DCM observed fact are relabelled a selection of lot 70's frontages (Northern Boulevard, 215 Place); 215 Street and 45 Road marked context-only, list non-exhaustive.",
+     "F3 resolved: exceptions_considered adds 35-631(c) (inapplicable; lot 70 ~10,075 sq ft per NB-04, under 40,000 sq ft and not whole-block) and 35-631(d) articulation-allowance notes, both quoting the capture.",
+     "No drift: only revision 1->2 and the four targeted fixes changed; all 16 evidence sha256 match; research_record_check.py --check exits 0; status interpretation_awaiting_review with no label requested."
+    ],
+    "report": "project-control/reports/M5-T160-reviews.md"
+   }
+  ],
   "professional_review": null
  },
  "freshness": {
