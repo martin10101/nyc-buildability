@@ -63,13 +63,13 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "None beyond wording; no code changes."
   ],
   "blockers": [],
   "created_at": "2026-10-11T03:04:32.988960+00:00",
-  "updated_at": "2026-10-11T03:04:39.931612+00:00",
+  "updated_at": "2026-10-11T05:03:01.602923+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -102,6 +102,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; the orchestrator writes the correction"
+    },
+    {
+      "at": "2026-10-11T05:03:01.602819+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; delta 1 (D-090-R941 pointer, advisory applied); G3 PASS at 67a4b844 and at c703a571; review record and evidence map written"
     }
   ],
   "scope_corrections": [
