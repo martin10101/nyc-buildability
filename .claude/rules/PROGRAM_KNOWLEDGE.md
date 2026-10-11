@@ -1,10 +1,10 @@
 # PROGRAM_KNOWLEDGE — compressed pointers (D-054 Tier 1; auto-injected every session)
 
 Hard-won program-wide knowledge as one-line pointers. APPEND when you discover something
-program-wide useful (any session, when discovered — not at session end). BUDGET: eager total
-(tools/context_budget_check.py) must stay under 10000 tok (owner-raised from 6000, D-067-R003)
-— compress or demote before adding; never raise the cap again without a new owner
-authorization. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
+program-wide useful (any session, when discovered — not at session end). SIZE: the eager total
+is reported by tools/context_budget_check.py but no longer capped (owner removed the 10000-tok
+cap, D-093-R074, 2026-10-11; nothing was moved, question B1 stays open) — keep pointers short
+anyway. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
 Pointers only — the ledger/registry stays authoritative; no secrets (public repo).
 
 ## Control-plane mechanics (proven arcs)

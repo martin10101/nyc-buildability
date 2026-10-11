@@ -1,0 +1,287 @@
+{
+ "task_id": "M0-T190",
+ "material_commits": [
+  "51f50cec (record format)",
+  "973df37d (orchestrator part: rule, CLAUDE.md, procedure, records, links, data files)",
+  "1b41c813 (handoff seq 156)",
+  "f86ab349 (builder: check, hook line, cap removal, CI steps)",
+  "7ec7c5ec ([ORCH] property string; procedure data/ note)",
+  "882ffd43 ([ORCH-CORRECTED per G1 F1] NB-01 revision 2; G1 reviews recorded)",
+  "6f6d3a90 (NB-01 delta review; verification-sessions record)",
+  "77da21dd (producer report; backlog sweep DB-235 and DB-236)"
+ ],
+ "claim_seam_head": "ae8f64b97a77ce9c2a16633fa2da43f7fa265ef9",
+ "files_changed": [
+  ".claude/hooks/directive_reminder.py",
+  ".claude/rules/PROGRAM_KNOWLEDGE.md",
+  ".claude/rules/research-and-verification.md",
+  ".claude/session-handoff-profile.md",
+  ".github/workflows/ci.yml",
+  "AGENTS.md",
+  "CLAUDE.md",
+  "docs/DISCOVERY_BACKLOG.md",
+  "docs/RESEARCH_AND_VERIFICATION.md",
+  "docs/RESEARCH_REQUESTS.md",
+  "docs/SESSION_HANDOFF.md",
+  "docs/WORKING_KNOWLEDGE.md",
+  "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+  "docs/research/evidence-records/NB-02-proposed-zfa-scope.json",
+  "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+  "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+  "docs/research/evidence-records/NB-05-special-density-area.json",
+  "docs/research/evidence-records/README.md",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/VERIFICATION.md",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/DCM_City_Map_Alterations_metadata.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/DCM_City_Map_Alterations_site.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/DCM_Digital_City_Map_site.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_codes.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_global_goodthrough.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_keydocs.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_lot1.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_lot70_primary.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_meta.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_master_all.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_references.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_references_reverse.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_remarks.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_f72e-3i4c_block7334.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_f72e-3i4c_block_contains7334.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_f72e-3i4c_metadata.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_yvxd-uipr_block7334.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_yvxd-uipr_metadata.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dcm_street_centerline_lot_envelope_4073340070.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_co_bs8b-p36w_bin_4157401.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4623241.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_co_pkdm-hqz6_bbl_4073340070.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_co_pkdm-hqz6_bin_4157401.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_jobs_lot1.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_jobs_w9ak-ipjd_bbl_4073340070.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_0.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_12.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_15.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_8.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_9.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/mappluto.json",
+  "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/pluto.json",
+  "project-control/reports/M0-T190-producer-report.md",
+  "project-control/reports/M0-T190-verification-sessions.md",
+  "tools/context_budget.json",
+  "tools/context_budget_check.py",
+  "tools/research_record_check.py",
+  "tools/test_context_budget_check.py",
+  "tools/test_directive_reminder.py",
+  "tools/test_research_record_check.py"
+ ],
+ "what_did_not_change": "No product code, report number, setting, permission, MCP policy, agent definition or gate.",
+ "known_limits": [
+  "The check validates structure and status; it certifies no legal reading.",
+  "Interactive, cloud and remote sessions, another machine and another account were not tested.",
+  "On resume and fork the hook fires but print mode records no hook text, so delivery of the hook line there is not proven.",
+  "The link from a shown result to its record is procedural until a task first lets a result carry Verified (after owner question C1).",
+  "No dedicated secret scanner ran on the 33 data files (manual pattern review, G5)."
+ ],
+ "checks_at_material_head": [
+  "CI at the material head 6f6d3a90: all 46 checks success (runs 38104515909, 38104516007, 38104515943 pull request; 38104484095 push), including control-plane with the two new research-record steps, context-budget and secret-scan; the later commits 77da21dd onward touch only the producer report, the backlog and project-control files. Reviewers' runs: record check PASS, 29 + 22 + 20 tests OK, context budget PASS, modularity 0, directive validator exit 0."
+ ],
+ "requirements": {
+  "D-093-R003": [
+   "No gate, merge rule, hold, production switch, setting or permission changed: git diff origin/main..HEAD -- .claude/settings.json .mcp.json .claude/agents is empty (G5 item 6); the handoff's section 5 standing list is carried unchanged in docs/SESSION_HANDOFF.md."
+  ],
+  "D-093-R006": [
+   "Extended, not duplicated: CLAUDE.md principle 21; docs/RESEARCH_AND_VERIFICATION.md (procedure); docs/SESSION_HANDOFF.md seq 156; tools/research_record_check.py and its CI steps; the existing SessionStart hook .claude/hooks/directive_reminder.py."
+  ],
+  "D-093-R007": [
+   "No product file changed: git diff --stat origin/main..HEAD -- services apps packages is empty (G1 step 5, S8). Report numbers unchanged; records keep every unresolved item unresolved (NB-01 access_blocked, NB-02 searched_not_found, NB-04 conflicting_evidence)."
+  ],
+  "D-093-R008": [
+   "project-control/reports/M0-T190-verification-sessions.md: disposable fresh, resumed, compacted, cleared and forked sessions found the rule, procedure, handoff and records without this conversation; prompts and results verbatim."
+  ],
+  "D-093-R010": [
+   "/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md: F1 updated 2026-10-11 with the consolidated document list and a request for files or permission (asked in chat in the same step); G1 records the owner's answer on the cap. The next wave (DB-231, DB-230, DB-232) is the handoff's next action."
+  ],
+  "D-093-R011": [
+   "Installed and verified in this task: committed files, CI steps, reviews G1/G3/G4/G5, verification sessions in project-control/reports/M0-T190-verification-sessions.md."
+  ],
+  "D-093-R012": [
+   "Rule, procedure, records, check, hook line and handoff entry are in git on this branch; the owner's research corrections now live in docs/research/evidence-records/ (NB-01 to NB-05) and DB-230 to DB-232 point to them."
+  ],
+  "D-093-R013": [
+   "project-control/reports/M0-T190-verification-sessions.md sections 1 and 2: the files loaded and the answers of the next sessions."
+  ],
+  "D-093-R014": [
+   "No merge, activation or professional-review requirement changed (G5 items 3 and 6); no report number changed (S8); OWNER_C1_ANSWERED = False keeps Verified refused (tools/research_record_check.py; G3 MUT1)."
+  ],
+  "D-093-R015": [
+   "docs/RESEARCH_AND_VERIFICATION.md section 1: repository, origin, Claude Code 2.1.288, instruction files, handoff, research records, design contract, private questionnaire; no parent CLAUDE.md, no claudeMdExcludes; AGENTS.md is the Codex brief and is not loaded by Claude Code."
+  ],
+  "D-093-R016": [
+   "Mapping in the procedure's section 1: docs/governance/ does not exist, so the procedure sits beside the other policies in docs/; records extend the research queue; the handoff and questionnaire already existed."
+  ],
+  "D-093-R017": [
+   "CLAUDE.md principle 21 names the rule, the procedure, the records and the handoff."
+  ],
+  "D-093-R018": [
+   ".claude/rules/research-and-verification.md has no frontmatter (G3 S5 spot check) and appears in the loaded-instructions list of every disposable session (project-control/reports/M0-T190-verification-sessions.md section 1)."
+  ],
+  "D-093-R019": [
+   "docs/RESEARCH_AND_VERIFICATION.md sections 2 to 11; routed from CLAUDE.md principle 21 and the rule."
+  ],
+  "D-093-R020": [
+   "docs/research/evidence-records/ (five records); docs/RESEARCH_REQUESTS.md RQ-009 links each with its status."
+  ],
+  "D-093-R021": [
+   "docs/SESSION_HANDOFF.md seq 156: READ FIRST carries the path mapping once, sections 1 to 5 the branch, next work, unresolved items and approvals; .claude/session-handoff-profile.md requires every handoff to keep the research entry."
+  ],
+  "D-093-R022": [
+   "OWNER_QUESTIONS.md F1 update (2026-10-11): the three consolidated document requests (zoning-lot instruments; approved plans of job 440608941 and the lot 1 jobs; the 2017 survey and 2018 deed)."
+  ],
+  "D-093-R023": [
+   "Shared instructions use repository-relative paths; the private questionnaire and session notes are named with their access requirement in the procedure's section 1 and are not in git."
+  ],
+  "D-093-R024": [
+   "The rule is 14 lines; no property report, source document or history in startup context; context_budget_check reports ~10,652 tokens eager."
+  ],
+  "D-093-R025": [
+   "AGENTS.md is not canonical (CLAUDE.md is); it now carries a pointer, not a copy; one rule file, one procedure."
+  ],
+  "D-093-R026": [
+   "Rule bullets equal the owner's section-2 text with only path references added in parentheses (compare D-093 source-001.md with the rule file)."
+  ],
+  "D-093-R027": [
+   "Project rule mechanism (.claude/rules, unconditional) and CLAUDE.md; tracked in git through task M0-T190 and pull request 487."
+  ],
+  "D-093-R029": [
+   "project-control/reports/M0-T190-verification-sessions.md sections 2 and 3: resume, compaction, clear and fork; instructions re-loaded after compaction; hook line recorded at start, compaction and clear."
+  ],
+  "D-093-R030": [
+   "Worktree listing against the candidate head: /root/project/lanes-runtime/owner-docs/session-2026-10-11a/worktrees-2026-10-11.txt (433 worktrees; only /root/project/w-rv contains the policy before the merge); none reset; the procedure section 9 says to check with git merge-base --is-ancestor."
+  ],
+  "D-093-R031": [
+   "The policy lives in git; the account memory is only an index that also loads; no account was changed (project-control/reports/M0-T190-verification-sessions.md section 6)."
+  ],
+  "D-093-R032": [
+   "Procedure section 6 dispatch clause; delegated agents load the main checkout's CLAUDE.md and rules (project-control/reports/M0-T190-verification-sessions.md section 4); the M0-T190 review briefs carried the clause and record paths."
+  ],
+  "D-093-R033": [
+   "Static rule in an instruction file; the existing SessionStart hook extended (tools/test_directive_reminder.py, 22 tests); events startup, resume, clear, compact and fork observed (project-control/reports/M0-T190-verification-sessions.md section 3); the line is bounded to 600 characters (G5 item 1)."
+  ],
+  "D-093-R034": [
+   "Settings unchanged (G5 item 6); untested session types named (project-control/reports/M0-T190-verification-sessions.md section 6)."
+  ],
+  "D-093-R035": [
+   "Procedure section 9: a hook supplies context, proves no research and enforces no legal correctness; instruction files are the route relied on."
+  ],
+  "D-093-R036": [
+   "Session notes /root/project/lanes-runtime/owner-docs/session-2026-10-11a/SESSION_NOTES.md carry dated CHECKPOINT and STATE lines through the task; the existing after-compaction hook is registered for this session; procedure section 9."
+  ],
+  "D-093-R037": [
+   "Procedure section 2 (trigger) and the rule's second bullet."
+  ],
+  "D-093-R038": [
+   "Record format README (question, evidence with authority, title, URL, id, page, dates, excerpt, saved copy and SHA-256); 33 data files saved in the evidence pack; G1 verified 27 saved-copy digests."
+  ],
+  "D-093-R039": [
+   "Records' meaning_and_applicability (provisions read, exceptions considered, reading, applies); the check requires them."
+  ],
+  "D-093-R040": [
+   "Records' measurement_basis (quantities with basis and scope; double_count_risk)."
+  ],
+  "D-093-R041": [
+   "Records' conclusion (observed facts apart from interpretation; conflicts; conditions; settled_by); review block separates agent review from professional_review."
+  ],
+  "D-093-R042": [
+   "Records' implementation and review blocks; derived review_state goes stale when revision or code identity changes (NB-01 showed stale at 882ffd43, project-control/reports/M0-T190-verification-sessions.md section 5)."
+  ],
+  "D-093-R043": [
+   "One small format reusing the six labels and existing terms; JSON records of 180 to 290 lines each, linking long material."
+  ],
+  "D-093-R044": [
+   "Records' freshness block (checked_on, method, snapshot_date, limitation); procedure section 5."
+  ],
+  "D-093-R045": [
+   "Procedure section 4 items 1 and 2."
+  ],
+  "D-093-R046": [
+   "Status vocabulary in the check (not_researched, searched_not_found, access_blocked, conflicting_evidence, interpretation_awaiting_review, answered_from_primary_source); README kinds forbid treating an index entry or filing as the instrument or plan."
+  ],
+  "D-093-R047": [
+   "Records' searches (source, query, result, missing item, affected outputs, next step); the check requires them for not-found and blocked statuses (tests)."
+  ],
+  "D-093-R048": [
+   "OWNER_QUESTIONS.md F1 asks only for documents or permission for records requests; procedure section 4 item 5 forbids asking the owner to choose a reading."
+  ],
+  "D-093-R049": [
+   "The next wave continues (handoff section 4); nothing waits for F1."
+  ],
+  "D-093-R050": [
+   "project-control/reports/M0-T190-reviews.md: G1 reviewer opened ZR 12-10, 23-52, 23-344 and the official datasets live, worked NB-05 before reading the record or code, then compared; the review is recorded in each record."
+  ],
+  "D-093-R051": [
+   "Procedure section 7; the check's tests use boundaries (stale code, reviewer equals producer, absent record, status rules) and three mutation proofs (builder) plus three in-memory mutations (G3)."
+  ],
+  "D-093-R052": [
+   "tools/research_record_check.py --check in the CI control-plane job; incomplete, stale, absent and Verified-while-C1-open cases refused; complete record passes structurally and is called not a professional verification (tests; project-control/reports/M0-T190-verification-sessions.md section 5; G4)."
+  ],
+  "D-093-R053": [
+   "Procedure section 8 states what is enforced and what is procedural; G3 confirmed the section matches the code."
+  ],
+  "D-093-R054": [
+   "Only Verified is refused; any other label passes (--promotion ... --label Conditional exit 0, project-control/reports/M0-T190-verification-sessions.md section 5); code drift never fails the check."
+  ],
+  "D-093-R055": [
+   "No report or web change (S8); the procedure section 10 keeps records out of the main screen and PDF summary."
+  ],
+  "D-093-R056": [
+   "Records cite the official sources; G1 re-fetched them live; the owner research is cited as a discovery aid only."
+  ],
+  "D-093-R057": [
+   "NB-01: instruments known only from the ACRIS index; status access_blocked; settled by the 2022 and 2016 instruments."
+  ],
+  "D-093-R058": [
+   "NB-02: scope of 39,934 sq ft not established; status searched_not_found; double-count risk stated; the code already sets zoning-lot DOB figures aside."
+  ],
+  "D-093-R059": [
+   "NB-03: conditional no-rear-yard reading under ZR 23-344(b) with (c)(3) as the alternative; status interpretation_awaiting_review; G1 agrees."
+  ],
+  "D-093-R060": [
+   "NB-04: printed tax map, administrative and GIS bases kept apart; status conflicting_evidence; the 2017 Buckley survey named."
+  ],
+  "D-093-R061": [
+   "NB-05: not a special density area (answered from the law and the recorded borough and special district); unit count 29 conditional on NB-01 and NB-04; traced to engine_conditions.special_density and r6b_dwelling_units; G1 worked it independently and agrees."
+  ],
+  "D-093-R062": [
+   "No report number changed (S8); records keep figures conditional."
+  ],
+  "D-093-R064": [
+   "Records' dependency_assessment: tax lot as zoning lot (NB-01, DB-232), 23-344(b) not encoded for every district 23-344 lists (NB-03, DB-230), special density default (NB-05, DB-231); no address-specific exception."
+  ],
+  "D-093-R065": [
+   "Every verification session was disposable, print mode, read tools only; the owner's session untouched (project-control/reports/M0-T190-verification-sessions.md)."
+  ],
+  "D-093-R066": [
+   "Files and commits on branch task/research-verification-rules, pull request 487; evidence on main after the merge is recorded in the handoff (row R063 stays with the after-merge check)."
+  ],
+  "D-093-R067": [
+   "project-control/reports/M0-T190-verification-sessions.md section 1: claude 2.1.288; loaded files from the transcript's instructions entries; AGENTS.md not loaded; no exclusions."
+  ],
+  "D-093-R068": [
+   "project-control/reports/M0-T190-verification-sessions.md section 2: the fresh session's prompt and result, including why the missing approved plan keeps NB-02 unresolved."
+  ],
+  "D-093-R069": [
+   "project-control/reports/M0-T190-verification-sessions.md sections 2 and 3: resume and compaction recovered the policy and handoff seq 156 without reading files; untested types named in section 6."
+  ],
+  "D-093-R070": [
+   "tools/test_research_record_check.py (incomplete and complete records); G4's own scratch demonstration in project-control/reports/M0-T190-reviews.md."
+  ],
+  "D-093-R071": [
+   "NB-05 traced from ZR 12-10 and 23-52 to engine_conditions.special_density and r6b_dwelling_units with the expected 29 units and boundaries; NB-01 and NB-02 give precise missing-document blockers."
+  ],
+  "D-093-R073": [
+   "Observed on Claude Code 2.1.288: loading and SessionStart sources recorded in project-control/reports/M0-T190-verification-sessions.md."
+  ],
+  "D-093-R074": [
+   "tools/context_budget.json eager_token_budget null; context_budget_check reports without failing (~10,652 tokens); other checks still fail closed (tests, G3, G5 item 5); PROGRAM_KNOWLEDGE and WORKING_KNOWLEDGE updated; nothing moved."
+  ]
+ }
+}

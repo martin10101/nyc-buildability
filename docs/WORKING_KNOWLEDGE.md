@@ -690,6 +690,8 @@ push), read the AssertionError payload from the failed log, delete the branch.
 - ZR 12-10 (the very large page) was read through the canonical HTML address with a browser user-agent; the print channel
   for that node has timed out before. HPD's PDFs on nyc.gov download with a browser user-agent and read with `pdftotext`.
 - A new automatic instruction line needs room first: the automatic set stands at about 9,922 of 10,000 tokens.
+  (Superseded 2026-10-11: the owner removed the 10,000-token cap, D-093-R074; sizes are still reported, nothing was
+  moved, and question B1 stays open.)
 
 ## Loop-run and Windows-PC notes (moved from Tier 1 `.claude/rules/PROGRAM_KNOWLEDGE.md` on 2026-10-06, unchanged)
 

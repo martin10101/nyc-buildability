@@ -10,6 +10,7 @@ zero active directives injects nothing, and a hook failure never breaks the sess
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import shutil
@@ -25,16 +26,36 @@ HOOK = ROOT / ".claude" / "hooks" / "directive_reminder.py"
 
 PER_PROMPT_CAP = 400
 SESSION_CAP = 1400
+RESEARCH_CAP = 600
+HANDOFF_CAP = 140
 RAW_SOURCE_SENTINEL = "STANDING-DIRECTIVE-COMPLIANCE-PROTOCOL-RAW-SENTINEL"
+RESEARCH_RULE_REL = ".claude/rules/research-and-verification.md"
 
 
-def run_hook(payload: dict | str, registry: Path | None):
+def run_hook(payload: dict | str, registry: Path | None, research_root: Path | None = None):
     env = dict(os.environ)
     if registry is not None:
         env["CLAUDE_DIRECTIVE_REGISTRY"] = str(registry)
+    if research_root is not None:
+        env["CLAUDE_RESEARCH_ROOT"] = str(research_root)
     data = payload if isinstance(payload, str) else json.dumps(payload)
     return subprocess.run([sys.executable, str(HOOK)], input=data,
                           capture_output=True, text=True, env=env)
+
+
+def make_research_root(tmp: Path, rule_body: str = "# research rule placeholder\n",
+                       handoff_first: str | None = "# SESSION HANDOFF - seq 1") -> Path:
+    """A temp repository root carrying the research rule (so the hook emits the full research
+    line with its digest) and, unless handoff_first is None, a handoff whose first line is the
+    given text. Returns the root to pass as CLAUDE_RESEARCH_ROOT."""
+    root = tmp / "repo"
+    (root / ".claude" / "rules").mkdir(parents=True, exist_ok=True)
+    (root / RESEARCH_RULE_REL).write_text(rule_body, encoding="utf-8")
+    if handoff_first is not None:
+        (root / "docs").mkdir(parents=True, exist_ok=True)
+        (root / "docs" / "SESSION_HANDOFF.md").write_text(
+            handoff_first + "\nsecond line\n", encoding="utf-8")
+    return root
 
 
 def make_registry(tmp: Path, directives) -> Path:
@@ -97,16 +118,28 @@ class ReminderHookTests(unittest.TestCase):
         self.assertIn("D-001", ctx)
         self.assertLessEqual(len(ctx), SESSION_CAP)
 
-    def test_zero_active_directives_injects_nothing(self):
+    def test_zero_active_directives_injects_no_directive_pointer(self):
+        # D-093: the research line is ALWAYS emitted on SessionStart, but with zero active
+        # directives the DIRECTIVE part still injects nothing (no pointer, no directive warning).
         reg = make_registry(self.tmp, [("D-001", "Superseded thing", "superseded")])
-        r = run_hook({"hook_event_name": "SessionStart", "source": "startup"}, reg)
+        rr = make_research_root(self.tmp)
+        r = run_hook({"hook_event_name": "SessionStart", "source": "startup"}, reg, rr)
         self.assertEqual(r.returncode, 0)
-        self.assertEqual(r.stdout.strip(), "")
+        ctx = context(r.stdout)
+        self.assertIn("Research and verification (D-093)", ctx)
+        self.assertNotIn("Active owner directives", ctx)
+        self.assertNotIn("WARNING (directive-compliance)", ctx)
 
-    def test_missing_registry_is_silent(self):
-        r = run_hook({"hook_event_name": "SessionStart"}, self.tmp / "nonexistent")
+    def test_missing_registry_injects_no_directive_pointer(self):
+        # D-093: a missing directive registry keeps the directive part silent, but the research
+        # line is still emitted on SessionStart.
+        rr = make_research_root(self.tmp)
+        r = run_hook({"hook_event_name": "SessionStart"}, self.tmp / "nonexistent", rr)
         self.assertEqual(r.returncode, 0)
-        self.assertEqual(r.stdout.strip(), "")
+        ctx = context(r.stdout)
+        self.assertIn("Research and verification (D-093)", ctx)
+        self.assertNotIn("Active owner directives", ctx)
+        self.assertNotIn("WARNING (directive-compliance)", ctx)
 
     def test_corrupt_registry_warns_visibly_not_silently(self):
         reg = self.tmp / "directives"
@@ -158,6 +191,116 @@ class ReminderHookTests(unittest.TestCase):
             self.assertEqual(r.returncode, 0)
             self.assertNotIn("permissionDecision", r.stdout)
             self.assertNotIn("\"deny\"", r.stdout)
+
+
+def _handoff_portion(ctx: str) -> str:
+    """Extract the quoted handoff first line from the research line."""
+    marker = 'docs/SESSION_HANDOFF.md ("'
+    start = ctx.index(marker) + len(marker)
+    end = ctx.index('")', start)
+    return ctx[start:end]
+
+
+class ResearchLineTests(unittest.TestCase):
+    """D-093: the SessionStart research-and-verification pointer line."""
+
+    def setUp(self):
+        self.tmp = Path(tempfile.mkdtemp(prefix="research-"))
+        # One active directive, so the directive part is present and the research line must
+        # still come FIRST.
+        self.reg = make_registry(self.tmp, [("D-093", "Research and verification", "active")])
+
+    def tearDown(self):
+        shutil.rmtree(self.tmp, ignore_errors=True)
+
+    def test_every_session_source_carries_the_research_line(self):
+        rr = make_research_root(self.tmp)
+        for source in ("startup", "resume", "clear", "compact"):
+            payload = {"hook_event_name": "SessionStart", "source": source}
+            r = run_hook(payload, self.reg, rr)
+            self.assertEqual(r.returncode, 0, source)
+            ctx = context(r.stdout)
+            self.assertIn("Research and verification (D-093)", ctx, source)
+            self.assertIn(RESEARCH_RULE_REL, ctx, source)
+            self.assertIn("docs/RESEARCH_AND_VERIFICATION.md", ctx, source)
+            self.assertIn("docs/research/evidence-records/", ctx, source)
+            # research line FIRST, directive pointer AFTER it
+            self.assertTrue(ctx.startswith("Research and verification (D-093)"), source)
+            self.assertIn("Active owner directives", ctx, source)
+            self.assertLessEqual(len(ctx.split("\n", 1)[0]), RESEARCH_CAP, source)
+
+    def test_absent_source_still_carries_the_research_line(self):
+        rr = make_research_root(self.tmp)
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, rr)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("Research and verification (D-093)", context(r.stdout))
+
+    def test_digest_matches_the_file(self):
+        body = "# the research rule body\nwith two lines\n"
+        rr = make_research_root(self.tmp, rule_body=body)
+        expected = hashlib.sha256(body.encode("utf-8")).hexdigest()[:12]
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, rr)
+        self.assertIn(f"[sha256 {expected}]", context(r.stdout))
+
+    def test_digest_is_lf_normalized(self):
+        rr = make_research_root(self.tmp, rule_body="line1\r\nline2\r\n")
+        expected = hashlib.sha256(b"line1\nline2\n").hexdigest()[:12]
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, rr)
+        self.assertIn(f"[sha256 {expected}]", context(r.stdout))
+
+    def test_missing_rule_gives_visible_warning_exit_0(self):
+        root = self.tmp / "norule"
+        (root / "docs").mkdir(parents=True)
+        (root / "docs" / "SESSION_HANDOFF.md").write_text("# handoff\n", encoding="utf-8")
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, root)
+        self.assertEqual(r.returncode, 0)
+        ctx = context(r.stdout)
+        self.assertIn("WARNING (research-and-verification)", ctx)
+        self.assertIn("the research rule is not loaded", ctx)
+
+    def test_missing_handoff_says_handoff_missing(self):
+        rr = make_research_root(self.tmp, handoff_first=None)
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, rr)
+        ctx = context(r.stdout)
+        self.assertIn('("(handoff missing)")', ctx)
+
+    def test_hostile_and_long_handoff_first_line_sanitized_and_capped(self):
+        hostile = "'; rm -rf / $(whoami) `id` <script>alert(1)</script> " * 20
+        hostile = hostile[:500]
+        self.assertEqual(len(hostile), 500)
+        rr = make_research_root(self.tmp, handoff_first=hostile)
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, rr)
+        self.assertEqual(r.returncode, 0)
+        ctx = context(r.stdout)
+        for bad in (";", "$(", "`", "<script>", "'"):
+            self.assertNotIn(bad, ctx, bad)
+        self.assertLessEqual(len(_handoff_portion(ctx)), HANDOFF_CAP)
+        self.assertNotIn("permissionDecision", r.stdout)
+
+    def test_research_line_bounded_under_cap(self):
+        rr = make_research_root(self.tmp, handoff_first="x" * 400)
+        r = run_hook({"hook_event_name": "SessionStart"}, self.reg, rr)
+        research = context(r.stdout).split("\n", 1)[0]
+        self.assertLessEqual(len(research), RESEARCH_CAP)
+
+    def test_prompt_submit_output_unchanged_no_research_line(self):
+        rr = make_research_root(self.tmp)
+        r = run_hook({"hook_event_name": "UserPromptSubmit"}, self.reg, rr)
+        self.assertEqual(r.returncode, 0)
+        ctx = context(r.stdout)
+        self.assertNotIn("Research and verification (D-093)", ctx)
+        self.assertNotIn("Active owner directives", ctx)
+        self.assertIn("/directive-compliance", ctx)
+        self.assertLessEqual(len(ctx), PER_PROMPT_CAP)
+
+    def test_research_line_emitted_with_zero_active_directives(self):
+        empty = make_registry(self.tmp, [("D-010", "superseded", "superseded")])
+        rr = make_research_root(self.tmp)
+        r = run_hook({"hook_event_name": "SessionStart"}, empty, rr)
+        self.assertEqual(r.returncode, 0)
+        ctx = context(r.stdout)
+        self.assertIn("Research and verification (D-093)", ctx)
+        self.assertNotIn("Active owner directives", ctx)
 
 
 class SettingsWiringTests(unittest.TestCase):

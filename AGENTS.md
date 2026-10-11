@@ -25,6 +25,12 @@ Never invent API schemas, dataset fields, units, legal rules, effective dates, o
 source meanings. Official sources are primary; conflicts and stale data stay
 visible. A missing value reads `unknown`, never zero.
 
+## Research and verification (D-093)
+When a change affects a property fact, rule applicability, a calculation input, a result
+or a certainty label, follow `.claude/rules/research-and-verification.md` and
+`docs/RESEARCH_AND_VERIFICATION.md` (canonical; this is a pointer, not a copy), and read the
+affected records in `docs/research/evidence-records/`.
+
 ## Deterministic boundary
 AI drafts and explains; deterministic code computes every rule, formula, and
 report value, each carrying provenance. Legal logic lives in the rule engine, not

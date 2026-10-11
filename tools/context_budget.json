@@ -1,6 +1,7 @@
 {
   "_comment": "Config for tools/context_budget_check.py. Guards the automatic project-instruction context budget so it cannot silently regrow to the pre-2026-07-21 ~23k-token bloat. Tokens are estimated as ceil(chars/4).",
-  "eager_token_budget": 10000,
+  "_comment_eager": "eager_token_budget is null: the owner removed the always-loaded token cap (D-093-R074, 2026-10-11, \"No dont move just take of the tkoen restrictions\"). The eager size is still reported, never failed. Set an integer to re-enable a hard cap.",
+  "eager_token_budget": null,
   "handoff_token_budget": 8000,
   "handoff_file": "docs/SESSION_HANDOFF.md",
   "retired_markers": ["retired", "superseded", "deprecated", "obsolete"],

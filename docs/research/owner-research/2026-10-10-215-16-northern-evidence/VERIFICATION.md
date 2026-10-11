@@ -39,3 +39,8 @@ The owner brought this research back on 2026-10-10, answering the research brief
 - The approved ZD1 and PW1 zoning section of NB 440608941.
 - The Buckley survey of 2017-02-21.
 - The legal status of the "ALLEY" label crossing lots 1 and 70 on the current tax map.
+
+## Correction and records (2026-10-11, task M0-T190, D-093)
+
+- **The `data/` folder was not in git.** The list above says every file under `data/` is kept, but the repository's `.gitignore` ignores every folder named `data/`, so none of them had been committed. On 2026-10-11 the 33 files (all except the two law pages) were copied from the owner's original ZIP, each checked against its SHA-256 in `source-manifest.json` (33 of 33 equal), and committed with the ignore rule overridden for this folder only.
+- **Evidence records.** The five questions are now recorded one per file under `docs/research/evidence-records/` (NB-01 to NB-05), with their sources, measurement bases, statuses and affected code. Those records are the current statement; this file stays the record of the 2026-10-10 re-check.

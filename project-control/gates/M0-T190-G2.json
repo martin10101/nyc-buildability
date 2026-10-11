@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T190",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T190-producer-report.md",
+  "reviewed_at": "2026-10-11T02:26:23.741147+00:00",
+  "content_manifest_sha256": "a3c06721eb0c3e4d72991a9760a92c4c33e73be933247120eac02c0aca986681",
+  "reviewed_sha": "7a57fb6110599d7f45b1c5ddd96df5ba2f5edb89",
+  "updated_at": "2026-10-11T02:26:24.851622+00:00"
+}

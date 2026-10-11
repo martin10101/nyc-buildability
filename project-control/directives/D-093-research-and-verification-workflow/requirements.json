@@ -1,0 +1,2373 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-093",
+ "version": 1,
+ "requirement_count": 74,
+ "producer": "orchestrator",
+ "updated_at": "2026-10-11T01:38:58+00:00",
+ "requirements": [
+  {
+   "id": "D-093-R001",
+   "text": "'@\"/root/.claude/uploads/33a4b56e-2b0e-47dd-9b18-d09cf4097f56/b0ad1ba0-CLAUDE-PERMANENT-RESEARCH-AND-SESSION-RULES.md\" Resume as the NYC Buildability orchestrator.' 'Start: tmux, then `cd /root/project/nyc-buildability && claude` (no MCP servers; `/mcp` must show none before any write).' 'Read-only checks first; change nothing until they pass: `git rev-parse --show-toplevel`, `git status`, `git rev-parse HEAD`, `git -C /root/project/w-wave20 rev-parse HEAD` (expect 7adc476e or a later commit of the wave-22 accept seam), `gh pr view 486 --json state,headRefOid`, `git worktree list`, `tmux ls`, ListAgents, `python tools/project_control.py status` (377 accepted plus any of M5-T154..156 the old session accepted).' 'Read CLAUDE.md, docs/SESSION_HANDOFF.md (seq 155) in full, then the last STATE lines of /root/project/lanes-runtime/owner-docs/session-2026-10-10a/SESSION_NOTES.md.' 'Reconcile them with git, CI and the ledger; those win.': resume as the orchestrator: read-only checks first (checkout, git, wave-20 worktree, pull request 486, worktrees, tmux, agents, ledger); read CLAUDE.md, the seq-155 handoff and the last STATE lines of the 2026-10-10a session notes; git, CI and the ledger win over prose.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The read-only checks run before any change.",
+   "required_evidence": "The session notes of 2026-10-11a (first STATE line) and this session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R002",
+   "text": "'Next action: handoff section 4 (rule-check returns -> seam_w22_accept.sh -> PR 486 body, CI, pre-merge audit, fail-closed merge -> owner PDF as images), then the next wave of section 4 item 6.' 'Do not repeat completed work.': the wave-22 accept seam named here (rule-check returns, accept script, pull request 486 body, CI, pre-merge audit, fail-closed merge, owner PDF images) is not repeated where git and the ledger show it done; the next wave of the handoff's section 4 follows.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Ledger status and git before any seam step.",
+   "required_evidence": "The session notes and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R003",
+   "text": "'Standing restrictions: handoff section 5.': every standing restriction in the handoff's section 5 stays in force for this work.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No restriction is lifted by this directive except as the amendment row R074 records.",
+   "required_evidence": "The diff of this task and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R004",
+   "text": "'Updates to the owner: four short bullets, plain words.': updates to the owner are four short plain-word bullets.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Chat updates.",
+   "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R005",
+   "text": "'Report READY TO RESUME or BLOCKED.Read the attached MD and implement it as a permanent project workflow.': report READY TO RESUME or BLOCKED; then implement the attached brief as a permanent project workflow (its rows follow).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The resume report precedes the work.",
+   "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R006",
+   "text": "'Update the existing project instructions, research procedure, session handoff and verification checks.': the existing project instructions, the research procedure, the session handoff and the verification checks are updated (extended, not duplicated).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The task diff touches the existing files.",
+   "required_evidence": "The task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R007",
+   "text": "'Preserve our existing approval boundaries and unresolved property numbers.': no approval boundary changes and no unresolved property number (lot area, zoning-lot scope, existing floor area, rear yard, unit count) is changed or resolved by this work.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No product calculation file changes; report numbers unchanged.",
+   "required_evidence": "The task diff and the report outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R008",
+   "text": "'The next session must recover these requirements without me repeating them.' 'Verify this using a fresh session and a context-recovery check.': a fresh session started without this conversation, and a context-recovery (resume and compaction) session, find the rule, the procedure, the handoff and the evidence records without the owner repeating anything.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Disposable claude sessions run from the normal launch directory after the change is on main; prompts and results saved.",
+   "required_evidence": "The saved prompts, results and transcripts of the disposable sessions.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R009",
+   "text": "'Show me the actual files changed, which checks passed, and any remaining limitations.': the return to the owner lists the actual files changed, the checks that passed and the remaining limitations.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The completion report.",
+   "required_evidence": "This session's final message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R010",
+   "text": "'Record genuine questions in our existing owner questionnaire and continue everything that is already authorized.': genuine owner questions go into the existing OWNER_QUESTIONS.md (asked in chat in the same step); all already-authorized work continues.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The questionnaire diff; the next wave continues.",
+   "required_evidence": "OWNER_QUESTIONS.md and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R011",
+   "text": "'Complete the installation and verification\u2014not just a promise to remember.': the installation and its verification are completed in this session, with evidence; a promise to remember is not delivery.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Everything committed, reviewed, merged and tested.",
+   "required_evidence": "Commits, CI, merge and the saved verification outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R012",
+   "text": "'Implement this workflow in the project.' 'I should not have to carry the same research corrections into every new session or ask another AI to perform ordinary source checks that belong in this project.' 'Complete the authorized documentation, configuration and verification work.': the workflow is implemented in the project so research corrections and ordinary source checks are carried by the project, not re-supplied by the owner; documentation, configuration and verification work are completed.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Committed instruction, procedure, hook and check files.",
+   "required_evidence": "The task diff on main.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R013",
+   "text": "'Return concrete changed files and evidence that the next session can load them.': the return names concrete changed files and evidence the next session loads them.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The loading checks.",
+   "required_evidence": "The completion report and the saved outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R014",
+   "text": "'Preserve existing merge, activation and professional-review requirements.' 'This instruction does not authorize changing unresolved property numbers or enabling hidden features.': merge, activation and professional-review requirements are unchanged; no unresolved property number changes and no hidden feature is enabled.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No change to gates, merge rules, production switches or report numbers.",
+   "required_evidence": "The task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R015",
+   "text": "'Identify the actual repository root, branch/worktree, installed Claude Code version, instruction files, session handoff, research records, design requirements and existing owner questionnaire.' 'Inspect applicable parent and nested instructions and project settings for conflicts or disabled loading.': discover the repository root, branch/worktree, installed Claude Code version, instruction files, handoff, research records, design requirements and owner questionnaire; inspect parent/nested instructions and settings for conflicts or disabled loading.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A discovery record.",
+   "required_evidence": "The path mapping in the procedure and handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R016",
+   "text": "'Extend the canonical files already used.' 'The paths below are **fallback locations**, not assertions that these files currently exist:': extend the files already in use; the brief's paths are fallbacks only.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Existing files extended where an equivalent exists.",
+   "required_evidence": "The task diff and the path mapping.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R017",
+   "text": "'| Session entry point | Root `CLAUDE.md` | A short mandatory pointer to the research rule, relevant protocol and current handoff. |': CLAUDE.md carries a short mandatory pointer to the research rule, the procedure and the current handoff.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "CLAUDE.md diff.",
+   "required_evidence": "CLAUDE.md on main.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R018",
+   "text": "'| Always-loaded project rule | `.claude/rules/research-and-verification.md` | The compact standing rule in section 2.' 'No path-scoped frontmatter. |': the compact standing rule is an always-loaded project rule file with no path-scoped frontmatter.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The rule file exists without frontmatter and loads in a fresh session.",
+   "required_evidence": "The rule file and the fresh-session transcript's loaded-instructions record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R019",
+   "text": "'| Detailed procedure | `docs/governance/RESEARCH_AND_VERIFICATION.md` | Evidence requirements, search procedure, review and completion checks.' 'Read when relevant. |': a detailed procedure (evidence requirements, search procedure, review and completion checks) exists and is read when relevant.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The procedure file.",
+   "required_evidence": "The procedure file on main.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R020",
+   "text": "'| Research decisions | Existing research index and topic/case records | Sources, conclusions, conflicts, review status and affected implementation. |': research decisions (sources, conclusions, conflicts, review status, affected implementation) live in the existing research index and case records.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Records linked from the research index.",
+   "required_evidence": "docs/RESEARCH_REQUESTS.md and the records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R021",
+   "text": "'| Current work state | Existing session handoff | Branch/commit, next work, unresolved items, approvals and links. |' 'Record the actual path mapping once in the canonical handoff.': the session handoff carries branch/commit, next work, unresolved items, approvals and links, and the actual path mapping once.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Handoff diff.",
+   "required_evidence": "docs/SESSION_HANDOFF.md on main.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R022",
+   "text": "'| Owner questions | Existing `OWNER_QUESTIONS.md` | Consolidated document requests and genuine owner decisions. |': the existing OWNER_QUESTIONS.md holds the consolidated document requests and genuine owner decisions.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Questionnaire diff.",
+   "required_evidence": "OWNER_QUESTIONS.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R023",
+   "text": "'Use repository-relative links for shared instructions.' 'Keep private owner material in its established private location, with a clear access requirement; do not publish it merely to make a fresh clone self-contained.': shared instructions use repository-relative links; private owner material stays in its private location with its access requirement stated and is not published to make a clone self-contained.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Link and path review.",
+   "required_evidence": "The task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R024",
+   "text": "'Keep permanent instructions short.' 'Do not paste the full property report, all source documents or the entire session history into startup context.': permanent instructions stay short; no property report, source documents or session history go into startup context.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Size of the rule and pointer.",
+   "required_evidence": "The context-budget report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R025",
+   "text": "'If the project uses `AGENTS.md` as its canonical instructions, preserve that arrangement and verify how the installed Claude Code loads it.' 'Avoid conflicting copies of the same policy.': if AGENTS.md were canonical it would be preserved and its loading verified; no conflicting copies of the policy exist.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A search for AGENTS.md and for duplicate policy copies.",
+   "required_evidence": "The discovery record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R026",
+   "text": "'Install this compact standing rule' 'Adapt only the references to the actual paths discovered above:': the compact standing rule of section 2 is installed with only its path references adapted.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Word-for-word comparison of the installed rule with the brief.",
+   "required_evidence": "The rule file.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R027",
+   "text": "'Use the installed version's supported project-instruction mechanism.' 'Track shared rules and any shared configuration in version control through the existing authorized workflow.' 'A file saved only in one account's personal memory or an uncommitted worktree does not establish availability in other clones.': the rule uses the installed version's project-instruction mechanism and is tracked in git through the normal workflow; personal memory or an uncommitted worktree does not count.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Files tracked on main.",
+   "required_evidence": "git ls-files on main.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R028",
+   "text": "'The normal launch directory loads the intended project instructions and settings.': the normal launch directory loads the intended instructions and settings.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A disposable session from /root/project/nyc-buildability; its loaded-instructions record.",
+   "required_evidence": "Saved transcript excerpt.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R029",
+   "text": "'New, resumed and compacted sessions recover the policy and current task state.': new, resumed and compacted sessions recover the policy and the current task state.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Disposable new, resume and compaction sessions.",
+   "required_evidence": "Saved prompts, results and hook outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R030",
+   "text": "'Another worktree or remote session must receive the relevant commit before relying on the policy.' 'List any active worktrees still on an older version; do not reset or overwrite their work.': other worktrees and remote sessions get the commit before relying on the policy; active worktrees on an older version are listed, never reset or overwritten.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A worktree listing against the merge commit.",
+   "required_evidence": "The listing in the session folder and the handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R031",
+   "text": "'Changing accounts does not become a dependency on the previous account's personal memory.' 'Do not log the owner out or switch accounts just to test this.': the policy does not depend on one account's personal memory; the owner is not logged out and accounts are not switched to test it.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The policy lives in git; no account action.",
+   "required_evidence": "The completion report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R032",
+   "text": "'Existing reviewer/worker launch instructions pass the applicable policy and evidence references.' 'Do not assume every delegated task receives the parent conversation.' 'Use the project's existing review arrangement; no new agent framework is needed.': existing reviewer and worker launch instructions pass the policy and the evidence references; delegated tasks are not assumed to see the parent conversation; the existing review arrangement is used.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The dispatch clause in the procedure and its use in briefs.",
+   "required_evidence": "The procedure and this task's review briefs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R033",
+   "text": "'For static rules, use project instruction files. **If a context-restoration hook is needed**, first inspect the existing hook and checkpoint setup; extend it instead of adding a duplicate.' 'Verify the installed `SessionStart` event behavior for startup, resume, compaction and other supported reset/fork events.' 'Keep it fast and limited to policy identity, handoff location and relevant state.': static rules use instruction files; if a context-restoration hook is needed, the existing hook is extended (not duplicated), its SessionStart behaviour verified for startup, resume, compaction and other supported events, and it stays fast and limited to policy identity, handoff location and relevant state.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Hook tests and disposable-session hook outputs.",
+   "required_evidence": "The hook, its tests and the saved outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R034",
+   "text": "'Preserve all unrelated settings and access restrictions.' 'Do not bypass configuration restrictions or claim coverage for a session type that was not tested.': unrelated settings and access restrictions are preserved; configuration restrictions are not bypassed; no coverage is claimed for an untested session type.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Settings diff is empty except where named.",
+   "required_evidence": "The task diff and the completion report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R035",
+   "text": "'A startup hook supplies context; it is not proof that research happened and does not enforce legal correctness.' 'If hooks are unavailable or disabled, record that limitation and verify the supported instruction-file route.': a startup hook is context, not proof of research or legal correctness; if hooks are unavailable the limitation is recorded and the instruction-file route verified.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The procedure states it.",
+   "required_evidence": "The procedure.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R036",
+   "text": "'Checkpoint decisions as they occur, not just at a graceful session exit.' 'Abrupt disconnection or an exhausted context window must not lose the latest finding or open blocker.' 'Use the existing checkpoint mechanism where present; do not dump whole transcripts into the handoff.': decisions are checkpointed as they occur using the existing checkpoint mechanism; abrupt exit loses no latest finding or open blocker; no transcripts are dumped into the handoff.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Session-notes checkpoints during this work.",
+   "required_evidence": "The session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R037",
+   "text": "'Trigger this procedure when a change affects an official property fact, legal interpretation, calculation input, result, or certainty label.' 'Routine styling and unrelated maintenance do not require a new zoning investigation.': the evidence procedure triggers when a change affects an official property fact, legal interpretation, calculation input, result or certainty label; routine styling and unrelated maintenance do not.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The procedure's trigger section.",
+   "required_evidence": "The procedure.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R038",
+   "text": "'For each affected question, create or update one concise record with:' '1. **Question and scope:** property/scenario, tax lot or zoning lot, building or whole site, current-law scenario or historical approval.' '2. **Primary evidence:** issuing authority, title, direct URL, document/job/section ID, page, document/effective date, retrieval date and relevant excerpt or source field.' 'Save permitted source material in the established evidence location.': one concise record per affected question, with question and scope, and primary evidence (authority, title, URL, ID, page, document/effective date, retrieval date, excerpt or field); permitted source material saved in the established evidence location.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The record format and the structural check.",
+   "required_evidence": "The records and the check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R039",
+   "text": "'3. **Meaning and applicability:** definitions, parent provisions, relevant exceptions, overlays/special districts, exclusions and field instructions.' 'Explain which apply and why.' 'Do not stop at the first matching paragraph.': each record states meaning and applicability: definitions, parent provisions, exceptions, overlays, exclusions, field instructions, which apply and why.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Record format field and check.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R040",
+   "text": "'4. **Measurement/accounting basis:** units and whether a quantity is deed, survey, printed tax map, approved plan, filing attribute, administrative record or GIS; existing/proposed and building/site scope; any inclusion that could cause double counting.': each record states the measurement or accounting basis (units, deed/survey/tax map/approved plan/filing/administrative/GIS, existing or proposed, building or site, double-count risk).",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Record format field and check.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R041",
+   "text": "'5. **Conclusion and status:** separate observed fact from interpretation.' 'Record unresolved conflicts, conditional assumptions and what would settle them.' 'Distinguish AI review from professional verification.': each record separates observed fact from interpretation, records conflicts, conditions and what would settle them, and tells AI review apart from professional verification.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Record format fields and check.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R042",
+   "text": "'6. **Implementation link:** affected functions/output fields, worked example, regression cases and reviewer findings.' 'Record the reviewed revision so a later change cannot inherit review status automatically.': each record links affected functions/output fields, worked example, regression cases and reviewer findings, and records the reviewed revision so a later change cannot inherit review status.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Record format fields; the check derives staleness.",
+   "required_evidence": "The records and the check's tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R043",
+   "text": "'Reuse existing fields and status terms where possible.' 'Do not build a second evidence platform or expand every record into an essay.': existing fields and status terms are reused; no second evidence platform; records stay concise.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Format review.",
+   "required_evidence": "The procedure and records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R044",
+   "text": "'Before describing a new assessment as current, check the applicable official rule/data version under the project's freshness policy.' 'If live verification is unavailable, state the snapshot date and limitation; do not silently relabel old evidence as checked today.': before calling an assessment current, the official rule/data version is checked under the freshness policy; if live checking is unavailable, the snapshot date and limitation are stated.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Record field for checked-on date and snapshot.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R045",
+   "text": "'Search the relevant permitted official sources, following references to supporting documents.' 'Examples include form instructions and data dictionaries, tax-map history, recorded-document indexes, approved plans and applicable legal definitions.' 'These are routes to consider according to the question, not a requirement to query every agency every time.': a missing fact is searched in the relevant permitted official sources, following references; routes are chosen by the question.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Procedure section.",
+   "required_evidence": "The procedure.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R046",
+   "text": "'Distinguish **not researched**, **searched but not found**, **access blocked**, **conflicting evidence**, and **interpretation awaiting review**.' 'A missing field in one dataset is not proof that the fact is unavailable elsewhere.' 'An index entry does not establish document contents; a filing status does not establish what an approved plan shows.': records distinguish not researched, searched but not found, access blocked, conflicting evidence and interpretation awaiting review; a missing dataset field, an index entry or a filing status does not settle a fact.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Status vocabulary in the check.",
+   "required_evidence": "The check and the records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R047",
+   "text": "'Record the source/query attempted, result, exact missing document, affected outputs and next retrieval step.' 'Respect access controls.' 'Use a reasonable permitted alternative, then consolidate a genuine blocker rather than repeatedly retrying a denial.': each search records the source/query, result, exact missing document, affected outputs and next retrieval step; access controls are respected; a denial is consolidated as one blocker, not retried.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Record fields for searches.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R048",
+   "text": "'Ask the owner for documents, access or a real project preference.' 'Do not ask the owner to choose which legal area or interpretation is correct merely to unblock the calculation.': the owner is asked only for documents, access or a real project preference, never to choose a legal area or interpretation to unblock a calculation.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Questionnaire review.",
+   "required_evidence": "OWNER_QUESTIONS.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R049",
+   "text": "'Continue work that does not depend on the missing item.': work that does not depend on a missing item continues.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The next wave continues.",
+   "required_evidence": "Session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R050",
+   "text": "'Use the existing review workflow to evaluate the source interpretation independently of the implementation.' 'The reviewer must open the decisive sources, consider the relevant exception and counterexample, and work the expected result separately before checking the code.' 'Repeating the builder's explanation is not independent verification.' 'If independent review is unavailable, report it as pending.': the source interpretation is reviewed independently through the existing review workflow: the reviewer opens the decisive sources, considers the exception and counterexample, works the expected result before reading code; otherwise the review is reported pending.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An independent reviewer's return on the Northern Boulevard records.",
+   "required_evidence": "The review return in the reports.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R051",
+   "text": "'For changed logic, test meaningful boundaries: an applicable versus inapplicable exception, conflicting measurement bases, a shared internal line versus an external boundary, or building-only versus whole-site totals.' 'Avoid tests that merely copy the implementation's formula.' 'A synthetic fixture must never be relabeled as a professionally verified real-site result.': changed logic is tested at meaningful boundaries, not by copying the formula; a synthetic fixture is never relabelled as a verified real-site result.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Procedure section and the check's tests.",
+   "required_evidence": "The procedure and tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R052",
+   "text": "'Add the smallest appropriate check to the existing validation/review process so an affected result cannot be marked verified when its required evidence record is absent, stale relative to the changed inputs/rule, or unresolved.' 'Automated checks can validate references, required fields, dependency status and test coverage.' 'They cannot certify that a zoning interpretation is legally correct.' 'Do not invent a `verified: true` field and treat its presence as proof.': the smallest check in the existing validation process stops a result being marked verified when its evidence record is absent, stale against the changed inputs/rule, or unresolved; it validates structure only and certifies nothing; no verified:true field is treated as proof.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A deliberately incomplete record is refused; a complete one passes structurally without being called verified; CI runs the check.",
+   "required_evidence": "The check, its tests and CI.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R053",
+   "text": "'If the existing workflow supports enforced checks, integrate this there and document the scope.' 'Otherwise implement the available checks and state exactly what remains procedural.': the check is integrated where the existing workflow enforces checks, its scope documented, and what remains procedural is stated exactly.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Procedure section 'what is enforced'.",
+   "required_evidence": "The procedure and CI.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R054",
+   "text": "'Keep draft or conditional work possible under the project's existing labels and activation rules.' 'Do not create a project-wide stop for one unresolved property.': draft and conditional work stay possible under the existing labels and activation rules; one unresolved property never stops the project.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The check only blocks promotion to Verified.",
+   "required_evidence": "The check and its tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R055",
+   "text": "'Keep this internal evidence structure out of the architect's main reading flow.' 'Reuse the established clean PDF and website design; evidence should be accessible without overwhelming the answer.': the evidence structure stays out of the architect's main reading flow; the established PDF and website design are reused.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No report or web change in this task.",
+   "required_evidence": "The task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R056",
+   "text": "'Locate the supplied `215-16-Northern-research-handoff.md` and evidence ZIP.' 'Treat that research as an input to verify against its cited sources, not an unquestionable replacement for earlier work.' 'If these attachments are absent, request them once in the existing questionnaire and continue installing the general workflow.': the Northern Boulevard research handoff and evidence pack are located and treated as input to verify against their cited sources.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Records cite the official sources, not the handoff alone.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R057",
+   "text": "'Which recorded instruments establish the current zoning lot, and what remains known only from index entries?': Northern Boulevard question 1: which recorded instruments establish the current zoning lot, and what is known only from index entries.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An evidence record.",
+   "required_evidence": "The record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R058",
+   "text": "'Does the proposed zoning floor-area total already include retained lot 1 area?': Northern Boulevard question 2: whether the proposed zoning floor-area total already includes retained lot 1 area.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An evidence record.",
+   "required_evidence": "The record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R059",
+   "text": "'Is the short-block rear-yard provision applicable, and how do the neighboring line classifications affect the alternative analysis?': Northern Boulevard question 3: whether the short-block rear-yard provision applies and how the neighbouring line classifications affect the alternative analysis.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An evidence record.",
+   "required_evidence": "The record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R060",
+   "text": "'Which dimensions come from printed tax-map labels versus GIS, and what does the identified survey need to settle?': Northern Boulevard question 4: which dimensions come from printed tax-map labels versus GIS, and what the named survey must settle.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An evidence record.",
+   "required_evidence": "The record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R061",
+   "text": "'Can the special-density geography be resolved while the independent inputs to the dwelling-unit count remain conditional?': Northern Boulevard question 5: whether the special-density geography can be resolved while the other inputs to the unit count stay conditional.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An evidence record traced to code.",
+   "required_evidence": "The record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R062",
+   "text": "'Preserve the existing report numbers until the required official-document review supports changing them.': the report's numbers stay unchanged until the official-document review supports a change.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No product calculation change in this task.",
+   "required_evidence": "The task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R063",
+   "text": "'Once a general reasoning defect is established, identify the other rules, scenarios and outputs that use the same logic and assess those dependencies.' 'Do not assume every similar result is wrong or hard-code an address-specific exception.': once a general reasoning defect is established, other rules, scenarios and outputs using the same logic are identified and assessed; no blanket assumption and no address-specific hard-coding.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A dependency assessment in the records.",
+   "required_evidence": "The records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R064",
+   "text": "'Perform these checks using disposable/read-only sessions where possible.' 'Never clear or terminate the owner's active working session to run a demonstration.': the proof checks use disposable or read-only sessions; the owner's active session is never cleared or terminated.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Disposable claude -p sessions only.",
+   "required_evidence": "The saved outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R065",
+   "text": "'| Persistence | Actual file paths, diff/commit or prepared PR, and confirmation that shared files are tracked and available on the intended branch. |': persistence evidence: file paths, commit/PR, and the shared files tracked and available on main.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "git ls-files and the merge.",
+   "required_evidence": "The completion report.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R066",
+   "text": "'| Instruction loading | Installed version and observed loaded instruction files using its supported inspection method; identify exclusions or overrides. |': instruction-loading evidence: installed version and the loaded instruction files observed by a supported inspection method; exclusions or overrides named.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Transcript loaded-instructions record of a disposable session.",
+   "required_evidence": "Saved excerpt.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R067",
+   "text": "'| Fresh session | A session without this conversation can find the policy, handoff and evidence record; explain why missing plans remain unresolved.' 'Record the actual prompt/result. |': fresh-session evidence: a session without this conversation finds the policy, the handoff and the evidence record and explains why the missing plans keep items unresolved; the actual prompt and result recorded.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A disposable session.",
+   "required_evidence": "Saved prompt and result.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R068",
+   "text": "'| Context recovery | A disposable compaction/resume test recovers the policy and task state.' 'Mark untested session types honestly. |': context-recovery evidence: a disposable compaction/resume test recovers the policy and task state; untested session types are named.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Disposable resume and compaction sessions.",
+   "required_evidence": "Saved prompts, results and hook outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R069",
+   "text": "'| Evidence check | A deliberately incomplete test record prevents promotion to verified; a properly complete record passes the structural check without being called professionally verified. |': evidence-check proof: an incomplete test record is refused promotion to verified; a complete record passes the structural check without being called professionally verified.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The check's tests.",
+   "required_evidence": "Test output.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R070",
+   "text": "'| Practical review | One Northern Boulevard question traced from source to interpretation, relevant code and expected behavior, or a precise documented missing-document blocker. |': practical-review proof: one Northern Boulevard question traced from source to interpretation, code and expected behaviour, or a precise missing-document blocker.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A traced record and an independent review.",
+   "required_evidence": "The record and the review return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R071",
+   "text": "'| Handoff | The next action, remaining dependencies and required owner documents are recorded in the canonical handoff/questionnaire. |': handoff proof: the next action, remaining dependencies and required owner documents are in the handoff and the questionnaire.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Handoff and questionnaire diff.",
+   "required_evidence": "Both files.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R072",
+   "text": "'Return one concise completion report: **what changed, where it lives, which checks actually ran, which session types are covered, and what remains unresolved.** Do not respond only with a promise to remember.' 'If one check cannot run, finish the available work and identify that specific limit.': one concise completion report: what changed, where it lives, which checks ran, which session types are covered, what remains unresolved; a check that cannot run is named with its limit.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The final message.",
+   "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R073",
+   "text": "'Official Anthropic documentation checked October 10, 2026.' 'Confirm compatibility with the version actually installed:': compatibility with the installed Claude Code version (2.1.288) is confirmed by observing it, not assumed from the documentation.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Observed behaviour of the installed version.",
+   "required_evidence": "Saved outputs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-093-R074",
+   "text": "'No dont move just take of the tkoen restrictions': answer to the always-loaded size conflict: move no instruction text (question B1 stays open and nothing moves); instead remove the always-loaded token cap so the new research rule can be added: the eager-budget limit in tools/context_budget_check.py stops failing (sizes still reported) and the 'never raise the cap' budget line in PROGRAM_KNOWLEDGE.md is updated to match. The other checks of the context-budget job (stale, duplicate and retired-section regressions) stay.",
+   "source_ref": "source-002-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-093-BOOTSTRAP",
+     "M0-T190"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-093-R018",
+    "D-093-R024"
+   ],
+   "required_harness": "tools/test_context_budget_check.py updated; the context-budget CI job passes with the eager total above 10,000; no instruction text moved.",
+   "required_evidence": "The task diff and the CI run.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

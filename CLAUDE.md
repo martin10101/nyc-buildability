@@ -34,6 +34,7 @@ document only when the task at hand needs it (routing table below).
 18. For repeated failures, commissioning failures, external CLI/provider incompatibilities, or conflicting evidence, load /deficit-convergence before editing. Do not use live reruns as serial discovery. Produce either verified closure or one consolidated blocker report.
 19. Communication (D-064): plain facts, short answers, no jargon, no over-explaining — answer only what's asked. Applies to owner replies, subagent prompts/returns, Codex messages.
 20. Zoning-rule review register (D-090-R379): every session that adds or changes zoning-rule behavior must update the register (`docs/zoning-rule-review/`; how: its `GUIDE.md`) as part of the same change. No session enters a human verdict.
+21. Research and verification (D-093, mandatory): `.claude/rules/research-and-verification.md` (always loaded) governs every change to a property fact, rule applicability, calculation input, result or certainty label. Read the procedure `docs/RESEARCH_AND_VERIFICATION.md` and the affected records in `docs/research/evidence-records/` first; current state: `docs/SESSION_HANDOFF.md`.
 
 ## Owner working guidance (2026-10-06; D-090 R300-R329; the owner's text, unchanged)
 
