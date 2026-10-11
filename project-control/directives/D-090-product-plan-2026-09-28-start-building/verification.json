@@ -7715,18 +7715,25 @@
     "D-090-R639"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738",
+   "reviewed_manifest_sha256": "d590469e58a343f0391a34d6bda4371d4e1cd7b7ddce62092b4e26d67f623a03",
    "requirements": [
     {
      "id": "D-090-R639",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Recorded in .claude/rules/PROGRAM_KNOWLEDGE.md (diff): new pointer \"Read CI green at the EXACT head before every gate, accept, merge and handoff (D-090 R639)\".",
+      "This task's own gates were recorded after CI read green at the submit head 4e92b20c: gh run 38171255530 headSha=4e92b20c conclusion=success.",
+      "The 72fe33cf push CI run (38171847167) is CANCELLED because a disjoint peer push (M5-T168) superseded it; that is the orchestrator's accept-time concern, not a material regression (files byte-stable 4e92b20c..72fe33cf).",
+      "Open: the orchestrator must re-read CI green at the exact accept/merge head before recording acceptance.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T20:43:09+00:00"
   },
   {
    "directive_id": "D-090",

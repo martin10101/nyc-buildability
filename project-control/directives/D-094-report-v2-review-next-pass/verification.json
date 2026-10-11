@@ -263,48 +263,85 @@
     "D-094-R083"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738",
+   "reviewed_manifest_sha256": "b52ff7631fc526fc3fb7254dadce2f2350ff74a7b1124d04f5bec4cd9413b42a",
    "requirements": [
     {
      "id": "D-094-R056",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner words match source-001 Acceptance checks verbatim: \"Render and inspect every exported page at readable size... a text extraction alone does not verify layout.\"",
+      "This task's share is the before render of every exported page: the manifest pins page-1..9.png (colour) and grey-1..9.png at 110 dpi; I recomputed all 115 sha256 = 115/115 match, perfect 1:1 (no missing/extra).",
+      "I confirmed report.pdf = 9 pages A4 and page/grey PNGs = 909x1287 px (A4 at 110 dpi); I opened page-1 and page-8 \u2014 genuine, readable renders (footers \"Page 1 of 9\", \"Page 8 of 9\").",
+      "Open for later: the after-side render and the per-page layout inspection against the redesign belong to each page-changing task; nothing of the before share stays open.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity b52ff763), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 visual-quality-reviewer). DCV report: project-control/reports/M0-T194-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R057",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner words match source-001 verbatim: \"Check the website at representative desktop and mobile sizes... figures, labels, caveats, and source references appear in both outputs.\"",
+      "Before share is the website capture: the manifest pins w{320,390,768,1024,1440,1920}-results-viewport/-strip-NN/-report-preview; I recomputed every sha256 (within the 115/115) and viewport dims equal their widths.",
+      "I opened w390-results-viewport (mobile Results panel, 20,150 sq ft) and w1440-report-preview (desktop Results + Report block + report start) \u2014 both genuine captures at mobile and desktop widths.",
+      "Open for later: the figure/label/caveat/source parity check between the new website and PDF is the report-redesign tasks' share.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity b52ff763), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 visual-quality-reviewer). DCV report: project-control/reports/M0-T194-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R069",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner words match source-002 verbatim: \"I read and visually checked all nine pages... the presentation problem is largely unchanged.\"",
+      "Before share freezes the exact report the reviewer audited: report.html is byte-identical (cmp) to session-2026-10-11c/print-main23/report.html (the print from main b4704161), sha256 d2359b16 on both.",
+      "Product identity holds: `git diff --name-status b47041611 fc96fd9c -- apps/ services/ packages/` shows only one added test file (services/api/tests/contracts/test_results_contract_1_5_0.py), no runtime diff; page-1 shows \"17 to 22 apartments\" and page-8 the \"29\" ceiling, matching the reviewed state.",
+      "Open for later: R069's substance (next revision judged first on presentation) is the redesign work, not this freeze task.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity b52ff763), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 visual-quality-reviewer). DCV report: project-control/reports/M0-T194-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R072",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner words match source-002 verbatim: \"option-comparison and building-diagram pages are unchanged... approximately 10% more text.\"",
+      "Before share records the baseline budget: I re-ran metrics_before.py once \u2014 PDF words/page 364/193/291/338/245/719/296/346/201 = 2993; HTML per-section 349/428/316/225/948/505 = 2775 \u2014 exactly matching the manifest.",
+      "Before screenshots of the named pages exist (option-comparison section; page-5 scenario/building-diagram) and are sha256-pinned.",
+      "Open for later: the after-comparison proving those pages changed and the text did not grow is each page-changing task's share.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity b52ff763), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 visual-quality-reviewer). DCV report: project-control/reports/M0-T194-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R077",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner words match source-002 verbatim: \"Pages 6-9 Supporting information is useful, but explanations repeat... clearly organized evidence appendix.\"",
+      "Before share records the baseline repeats: my re-run reproduced PDF 3 distinct sentences / 7 printings and HTML 3 distinct / 8 printings, each sentence listed, matching the manifest.",
+      "Before screenshots of pages 6-9 (page-6..9.png colour + grey) are pinned and sha256-verified.",
+      "Open for later: the actual removal of repeats, the appendix reorganization and the after-count are later report tasks' share.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity b52ff763), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 visual-quality-reviewer). DCV report: project-control/reports/M0-T194-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R083",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner words match source-002 verbatim: \"before-and-after screenshots of every changed PDF page and corresponding website view, checked against the existing design requirements.\"",
+      "This task is the explicit before (H0) half: every page (9 colour + 9 grey) and every website width (viewport + strips + report preview at six widths), with re-runnable commands and sha256s \u2014 I verified 115/115 hashes and that metrics-run1.json == metrics-run2.json byte-identically (S4).",
+      "The before set is self-consistent and re-runnable; metrics reproduce exactly on a fresh run.",
+      "Open for later: the \"after\" screenshots of every changed page/view and the design-contract check are each page-changing task's share.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity b52ff763), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 visual-quality-reviewer). DCV report: project-control/reports/M0-T194-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T20:43:08+00:00"
   },
   {
    "directive_id": "D-094",
@@ -361,306 +398,552 @@
     "D-094-R113"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738",
+   "reviewed_manifest_sha256": "d590469e58a343f0391a34d6bda4371d4e1cd7b7ddce62092b4e26d67f623a03",
    "requirements": [
     {
      "id": "D-094-R009",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md change 2026-10-11: principle 1 plus the wording ban on \"feasible\"/\"buildable\"/\"achievable\"/\"can be built\" and page-3 \"demonstrated site fit: Not demonstrated, no bar until a placement exists\".",
+      "A polished drawing is kept from reading as feasibility: page-4 \"schematic, not to scale\" and the \"Illustrative area allocation\" caption; competitor structure borrowed, its conclusions not.",
+      "Open: page build (M5-T165/T166) must apply these labels per page.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R010",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 1 leads with results in large type (headline 28-32 pt) and a small supporting set; page 4 is the predictable scenario sheet (section, reconciled schedule, not-checked list).",
+      "Faithful to the owner's \"dominant headline number + small metrics; predictable scenario sections; drawings that occupy space; short labels\".",
+      "Open: the built pages realise the layout.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R012",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 1 \"Named furniture\" ends \"The coverage inventory leaves the report (R012)\"; page-1 table \"What it never carries\" adds \"the coverage inventory\"; the appendix opens with the compact scope note of material exclusions.",
+      "Internal progress/missing-work moves to the owner update per principle 4.",
+      "Open: build task must actually relocate the inventory.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R014",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 2 = one neighbourhood locator then one large dimensioned constraints close-up; the Supersession paragraph names R014/R074 and retires the second co-equal map and \"among its surroundings\".",
+      "The no-photograph rule (owner E1) is kept explicitly; licensed imagery not substituted by generated photos.",
+      "Open: drawing build (M5-T166) renders the close-up.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R018",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 3: \"The comparable-results table comes first ... all eleven options in the owner-approved order ... none reads as evaluated\"; table row 3 preserved.",
+      "All eleven options stay accounted for (principle 2; R007/R084 cited).",
+      "Open: comparison page build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R019",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 3 \"What it never carries\" lists \"the missing-work inventory\"; principle 4 sends the inventory to the owner update.",
+      "Matches \"Place the detailed missing-work inventory in the owner update\".",
+      "Open: build relocation.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R020",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 3: three distinct measures \u2014 allowance, scheduled floor area, demonstrated site fit (\"Not demonstrated\", with no bar, until a placement exists).",
+      "Encodes \"replace the equal bars with an explicit allowance/scheduled/site-fit distinction; do not imply the scheduled area has been achieved\".",
+      "Open: comparison page build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R021",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 4: floor stack only as a compact drawing labelled \"schematic, not to scale\" until a placement exists; main area goes to section and placed footprint.",
+      "The label is canonicalised to \"schematic, not to scale\" (comma) and flagged [ORCH-CORRECTED per M0-T193 G3 design A2] as the fixed label for the owner's \"schematic / not to scale\"; meaning identical, deliberate and recorded (not a weakening).",
+      "Open: scenario-sheet build applies the label token.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R025",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Appendix paragraph: issue records with five fields (issue, consequence, next action, responsible role, evidence reference); missing site documents kept apart from program work; limitations as short references on the affected result.",
+      "Matches the owner's \"one concise issue record\" structure.",
+      "Open: appendix page build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R026",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Appendix paragraph (ORCH-CORRECTED A1): \"the inputs with their basis in plain words and their actual source identifiers and dates (never just \\\"City records\\\"; R026)\".",
+      "Carries the owner's \"actual source identifiers and dates\" and \"include real worked calculations or rename the section\"; also re-bound to build task M5-T164.",
+      "Open: appendix build; also bound to M5-T164/M0-T194 for the built page.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R027",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Appendix table row 6: \"the rule sections with links to the law, each result naming its review-register entry and state\".",
+      "Exact-section links were delivered by M5-T159 (already) and the contract preserves them.",
+      "Open: link-destination checks happen in H2/M5-T159 build, not here.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R028",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Appendix: \"the run identity (fingerprint, code commit, computed date) ... the status key, printed once. No repeated headings\"; page-9 provenance moves to the Appendix.",
+      "Matches \"keep them in a clearly named appendix ... avoid repeated headings\".",
+      "Open: appendix build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R029",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Fixed wording quoted once: \"<allowance> is a conditional tax-lot-only arithmetic allowance, not established remaining development rights.\" placed beside the headline when the zoning lot is unconfirmed.",
+      "Page-1 property-specific zoning-lot sentence names the register INDEX entry, never the instrument; faithful to NB-01 (ACRIS ZONE 2022020201551002 recorded 2022-02-08 vs lots 1&70; lot-70 area 10075); no overstatement.",
+      "Open: page-1 build (also bound M5-T158, accepted).",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R041",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "One shared structure for website and PDF via the rewritten page-type table rows 1-6 (decision summary \u2192 site/constraints \u2192 comparison \u2192 scenario sheet \u2192 appendix) and principle 5 (one result revision per figure).",
+      "Keeps the full product scope (principle 2).",
+      "Open: the shared structure is realised in the web + PDF builds.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R042",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Principle 4: architects see results, caveats, comparisons, drawings and next actions; feature-completion/missing-implementation/test status go to the owner update.",
+      "Matches \"separate audience needs\".",
+      "Open: build enforces the split.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R047",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"Print type scale\": title 22-23 pt; headline 28-32 pt; section headings 14 pt; body 10.5 pt; table \u22659.5 pt; drawing labels \u22658.5 pt; footer 8.5-9 pt. Every value sits inside the owner's starting ranges and brief \u00a75.",
+      "The 2026-10-10 \"Type\" paragraph is marked superseded with its old values bracketed.",
+      "Open: the scale is applied in the PDF/CSS build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R048",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Same paragraph: \"margins 14 mm on A4 while question D1 (paper size) is open. Fonts are never shrunk to fit a page count: the larger scale may add a page.\"",
+      "Matches \"consistent margins ~14-18 mm ... do not reduce fonts to force a page count\".",
+      "Open: build applies margins/grid.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R049",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The adopted brief \u00a75 (unchanged, line 143) already carries \"Put units in the header or beside the value consistently\" and right-aligned tabular numerals; the change's checks H2 explicitly cover \"section 5 ... tables\".",
+      "The \"don't duplicate a section title as its table caption\" phrasing is not restated verbatim but is a build-time table detail covered by H2.",
+      "Open: the \"no duplicated caption/title\" check is enforced at page build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R050",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The six status labels (Verified, Provisional, Illustrative, Conditional, Pending verification, Unresolved) stay (contract line 102); \"A shared limitation is stated once\"; principle 3 keeps uncertainty beside the result.",
+      "\"Do not remove uncertainty to imitate the competitor\" is honoured by principle 3 and the kept labels.",
+      "Open: build keeps status beside each output.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R051",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Principle 1: result first, material qualification next, derivation in linked detail; page-1 estimate links to its full calculation and uncertainties link to #issue-<n>.",
+      "\"On the website detail can expand; the PDF contains or precisely references the same evidence\" is carried by principle 5 and frontend-web.md.",
+      "Open: build realises the linked-detail behaviour.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R052",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 2 \"What it never carries\" adds \"a second map doing the same job\"; each map has a distinct job (locator vs dimensioned close-up); page 4 keeps the section/footprint as the main drawing, not the stack.",
+      "Matches \"every map a distinct job; a diagram repeating 'three floors' must not displace a useful site drawing\".",
+      "Open: build removes redundant maps.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R053",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 2 close-up: dimension lines anchored to the edges they measure, each naming its basis in plain words (example \"103.88 ft, city map outline, not surveyed\"), street names with mapped widths, north arrow, scale bar; illustrative geometry marked.",
+      "The \"103.88 ft, city map outline\" example is source-exact to NB-04 (gis 103.87921, display-only, not surveyed); no overstatement.",
+      "Open: drawing build renders the anchored dimensions.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R054",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Principles 3 and 4 keep missing data visible as short references; the Checks count repeated sentences and drive them to zero (\"no repeated 'not yet' prose\").",
+      "Matches \"keep missing data honest without repeated 'not yet' prose\".",
+      "Open: text-budget/repeat checks run per page build.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R065",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The single canonical contract is edited; CLAUDE.md routing row, .claude/rules/drawings-report-presentation.md and .claude/rules/frontend-web.md each add a short pointer to \"the change of 2026-10-11, D-094\"; no competing design document created.",
+      "Prior owner decisions preserved (R939 not-placed sentence, E1 no-photo, one-outline check kept).",
+      "Nothing stays open for this row.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R066",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"Six principles (R066)\" block lists exactly the owner's six: architect-facing results first; full scope retained; uncertainty beside the result; internal progress to the owner update; source/geometry consistency; every-page visual inspection.",
+      "Each principle cites its supporting rows; all six present and faithful.",
+      "Open: the principles are enforced by the page tasks.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R071",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page-1 item 3: \"The ceiling is never labelled Provisional or presented as settled; the estimate is never presented as a count of apartments to build\"; the fixed distinction line ends \"neither is a demonstrated layout.\"",
+      "Encodes \"this does not establish that 29 units can actually be built\".",
+      "Open: page-1 build renders the distinction.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R072",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Checks: \"The report never goes above [2,993]; the target is about 10 % fewer (2,713). PDF page 1: at most 220 words.\" i.e. less text, not more.",
+      "Addresses \"the report actually contains ~10% more text\"; before set is the report at main b4704161; also bound to M0-T194 (before set).",
+      "Open: the text-budget test runs per changed page.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R074",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 2 dimensioned constraints close-up with anchored dimensions; the Supersession paragraph names R014/R074 and retires the superseded 2026-10-10 parts.",
+      "Matches \"the constraints page needs a close-up drawing with dimensions attached to the relevant boundaries\".",
+      "Open: close-up drawing build (M5-T166).",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R076",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 4: a section with zoning lines plus the dimensioned placed footprint once placed; table row 4 \"never carries\" rooms, unit walls, apartment counts, stair or elevator positions; the two-zone illustration.",
+      "Matches \"three stacked rectangles provide no footprint/placement/arrangement\" \u2014 the sheet now provides footprint/section when placed.",
+      "Open: scenario build realises the footprint/section.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R077",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Appendix \"no explanation printed twice\"; Checks count sentences of \u22658 words printed twice (before set: 3 sentences, 7 printings) and drive to zero.",
+      "Matches \"supporting info useful but explanations repeat; much belongs in an organised appendix\".",
+      "Open: repeats check runs per build; also bound M0-T194.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R078",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page-1 item 3: the legal ceiling beside the apartment estimate, side by side and distinct, with the fixed distinction line quoted once in Fixed wordings.",
+      "Encodes \"an architect needs those together, with a short distinction: conditional zoning ceiling vs an unvalidated apartment-yield estimate\".",
+      "Open: page-1 build places them together.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R081",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Page 1 defines \"Four kinds of content and nothing else\": results with assumption lines + allowance phrase; one site graphic; ceiling beside estimate with the distinction line; at most three uncertainties linked to #issue-<n>; plus a bounded \"Named furniture\" list.",
+      "Matches the reviewer's \"rebuild the first page: prominent results, assumptions beside them, one useful site graphic, the few uncertainties\".",
+      "Open: page-1 build (M5-T165).",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R083",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Checks H0-H3: before/after of every changed PDF page (colour and grey) and each changed website view at six widths, checked against the contract rows and section-12 UX ids, inside the task's G3; final export gets the one-minute reader check.",
+      "Matches \"require visual proof: before-and-after screenshots of every changed PDF page and website view\".",
+      "Open: the H0-H3 captures are produced by M0-T194 (before set) and each page task.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R087",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Two-zone illustration: \"The remaining share is never called 'core and corridors'\"; the second zone is \"Other building area: core, circulation, walls and services\".",
+      "Faithful to the owner's decision that 25-40% must not read as a calculated layout.",
+      "Open: build renders the zone names.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R088",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"The two-zone area illustration ... replaces the earlier state 'nothing drawn inside the footprint' (R088)\" under R089-R098.",
+      "Records the authorization to add the illustration.",
+      "Open: build adds the illustration.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R089",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Fixed wordings quote the two labels exactly: \"Apartment area\" and \"Other building area: core, circulation, walls and services\"; the owner's closing full stop is excluded; no inner double-quote or backslash (token-generator constraint met).",
+      "Faithful to the owner's words.",
+      "Open: build uses the label tokens from presentation-tokens.json.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R090",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Fixed wordings quote the caption exactly: \"Illustrative area allocation\u2014not a floor plan\" with the em dash; closing full stop excluded; no inner double-quote/backslash.",
+      "Faithful to the owner's caption.",
+      "Open: build uses the caption token.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R091",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"One stated percentage ... 60 % apartment area\"; basis stated as the low end of the owner's 60-75 % share (D-090 R540; preliminary_apartment_estimate.py share_low = 0.60) \u2014 I confirmed share_low: float = 0.60 at line 94 of that file; \"the drawing's proportions equal the calculation\".",
+      "Declared an assumption, not a measurement, owner-editable.",
+      "Open: build draws proportions = the stated 60 %.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R092",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"Compatible area measures\": the share applies to the estimate's measure (residential floor area); the statement \"plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked\" travels with every appearance; physical plate listed as not checked; \"Zoning floor area is never treated as the physical floor-plate area\".",
+      "Matches \"check compatible area measurements; do not automatically treat zoning floor area as the physical floorplate area\".",
+      "Open: build carries the plate statement; also bound M5-T164.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R093",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"No rooms, unit walls, apartment counts, or invented stair or elevator positions (R093)\"; page-4 table \"never carries\" the same list.",
+      "Faithful to the owner's prohibition.",
+      "Open: build honours the prohibition.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R094",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"Zones are drawn inside the footprint only when the footprint has been fitted to the site; until then, a simple proportional bar sits beside the building diagram.\"",
+      "Faithful to the owner's sequencing; also bound M5-T164.",
+      "Open: build switches bar\u2192zones on fit.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R095",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"The caption ... is the only explanation beside the drawing\" and \"The method goes in the appendix\"; appendix lists the area-illustration method.",
+      "Matches \"keep the explanation to one short caption; put methodology in the appendix\".",
+      "Open: build keeps one caption, method in appendix.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R096",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "\"The website and the PDF show the same illustration\"; .claude/rules/frontend-web.md adds \"website and PDF show the same figures and the same area illustration\".",
+      "Faithful to \"apply this consistently to the website and PDF\".",
+      "Open: web + PDF builds (M5-T164/web tasks) render the same illustration.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R097",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Recorded in the design instructions (this contract, two-zone section, \"entered 2026-10-11 16:57 UTC\") AND in the owner questionnaire: OWNER_QUESTIONS.md \"Answered and kept here\" \u2192 \"H1 ... answered 16:57 UTC\" with the labels and caption.",
+      "Both halves of \"record in design instructions and questionnaire\" are present.",
+      "Nothing stays open for the recording share.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R109",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "CLAUDE.md start-of-session: \"After a planned handoff ... read docs/SESSION_HANDOFF.md and every file it names, then start its exact next action: no reconcile checks, tests or READY TO RESUME round (owner, D-094 R109-R113)\"; SKILL.md section F matches.",
+      "Realises \"make it quicker and less token sends from where I left off\" with the information transfer kept.",
+      "Nothing stays open (recorded rule; applies to future sessions).",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R110",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "CLAUDE.md splits the routine: planned-handoff branch (no checks) vs \"After a crash or forced stop:\" keeping the original five numbered steps; SKILL.md section F mirrors it; PROGRAM_KNOWLEDGE.md D-070 line changed \"only verifies+launches\" \u2192 \"only launches (no resume checks, D-094 R109-R113; same full handoff and prompt)\".",
+      "R110's text was re-read in f0540a03 BEFORE the contract (requirements_reread audit entry at 19:14:51; content digest resynced) to match source-008; the owner's verbatim message in source-007 is unchanged (single capture commit f7914cc3a).",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R111",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The owner's question (\"how do we make it quicker/cheaper\") is answered and logged at docs/back-and-forth-developer/2026-10-11-questions-and-answers.md section 17 (\"How do we make the start of the next session quicker and cheaper?\").",
+      "This task records the resulting routine in the instruction files; the return-to-owner artifact itself (chat + Q&A log) was written in f0540a03, outside this task's allowed paths.",
+      "Nothing stays open for the recording share.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R112",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SKILL.md section F: \"the prompt carries NO resume checks and no READY TO RESUME round ... the prompt and handoff otherwise keep all their information\"; CLAUDE.md keeps \"read the handoff and every file it names\".",
+      "Faithful to the owner's correction: same prompt, full saved handoff kept; R109/R110 resynced to match.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     },
     {
      "id": "D-094-R113",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "CLAUDE.md: \"no reconcile checks, tests or READY TO RESUME round (owner, D-094 R109-R113); do not begin untracked work\" on the planned-handoff path; the checks remain only \"After a crash or forced stop:\"; SKILL.md section F scopes verify/reconcile/READY-TO-RESUME to the crash/forced-stop branch.",
+      "Faithful to \"the checks, just you don't have to do, since we literally go from session to session\"; the \"do not begin untracked work\" guard was added by [ORCH-CORRECTED per G3 code A1].",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T20:43:09+00:00"
   },
   {
    "directive_id": "D-094",

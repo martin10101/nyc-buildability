@@ -129,15 +129,15 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The auto-mode classifier may block the CLAUDE.md or .claude writes: capture/cite the directive and retry once, never bypass.",
     "D-094 rows bound here are verified as recorded in the contract (the rule), not as built pages; the page tasks bind them again for the build."
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:05.424160+00:00",
-  "updated_at": "2026-10-11T20:21:09.446817+00:00",
+  "updated_at": "2026-10-11T20:43:10.502964+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -230,5 +230,7 @@
       "status": "claimed",
       "message": "G3 design and code PASS (+ delta attestations at 1dac23f2); review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T20:43:10.502771+00:00"
 }
