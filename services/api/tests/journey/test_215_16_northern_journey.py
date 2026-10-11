@@ -44,6 +44,7 @@ from pathlib import Path
 
 import pytest
 
+from app.api.v1.study_read import get_rate_limiter
 from app.cad.results_dxf import ResultsDxf, render_results_dxf
 from app.cad.results_dxf_notes import ascii_text
 from app.connectors import acris_index_soda as _acris
@@ -131,6 +132,18 @@ def _no_network(monkeypatch):
     monkeypatch.setattr(http.client.HTTPConnection, "connect", _blocked)
     monkeypatch.setattr(http.client.HTTPSConnection, "connect", _blocked)
     monkeypatch.setattr(socket, "create_connection", _blocked)
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """The study-read route's per-caller limiter is process-wide module state (30 req / 60 s). This
+    module's recorded read makes one /study call through the route (via _northern_setup); reset the
+    limiter around every test so a trailing window from an earlier route-hitting module does not
+    429 that single call (G3 F1 test-isolation fix; same shape as the _reset_rate_limiter fixtures
+    in tests/contracts/test_study_setup_bridge.py and tests/profile/test_zoning_lot_index.py)."""
+    get_rate_limiter().reset()
+    yield
+    get_rate_limiter().reset()
 
 
 _ACRIS_PACK = (
@@ -384,6 +397,36 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     # W11 (c): the label is a short name; the reasoning why the plan fits is in fit_note.
     assert building_b["label"] == "Building B: the fewest storeys reaching the minimum base height"
     assert "fits the lot coverage" in building_b["fit_note"]
+
+    # C3 (G4 F2): a STRUCTURAL guard, not anchored to any one key or to the frozen-fixture count -
+    # enumerate EVERY shown value whose citations include the benchmark lot-area source and EVERY
+    # building alternative, and assert each carries EXACTLY ONE zoning-lot index condition (the
+    # marker "register of recorded documents"). A future lot-area figure added without the condition
+    # fails
+    # here even though the named-key assertions above (which name only specific keys) would miss it.
+    # The loop does not depend on how many such values exist, but must not be vacuous.
+    _lot_area_source = f"{entry_bbl}:lot_area"
+    _marker = "register of recorded documents"
+
+    def _index_conditions(conditions):
+        return [c for c in conditions if _marker in c["assumption"]]
+
+    lot_area_values_checked = 0
+    for answer in document["answers"].values():
+        if answer.get("status") != "available":
+            continue
+        states = answer.get("value_states", {})
+        for value in answer["values"]:
+            if not any(src.get("ref") == _lot_area_source for src in value.get("sources", [])):
+                continue
+            state = states[value["key"]]
+            assert state["way"] == "conditional", value["key"]
+            assert len(_index_conditions(state["conditions"])) == 1, value["key"]
+            lot_area_values_checked += 1
+    assert lot_area_values_checked >= 1  # non-vacuous: at least one shown value cites the lot area
+    for alt in document["building_alternatives"]:
+        assert len(_index_conditions(alt["way"].get("conditions", []))) == 1, alt["building"]
+
     coverage_portion = document["coverage_by_portion"]
     assert coverage_portion["status"] == "withheld"
     assert coverage_portion["gap_kind"] == "missing_information"

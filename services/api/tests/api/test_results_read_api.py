@@ -30,7 +30,7 @@ from app.api.v1.results_read import (
     get_results_study_inputs_provider,
 )
 from app.api.v1.results_request import ResultsRequestError, build_option, read_results_request
-from app.api.v1.study_inputs import assemble_study_inputs
+from app.api.v1.study_inputs import acris_zoning_lot_index_provider, assemble_study_inputs
 from app.api.v1.study_setup_document import build_study_setup_document
 from app.config import INTERNAL_RESULTS_ENABLED_ENV_VAR
 from app.connectors import acris_index_soda as _acris
@@ -38,7 +38,7 @@ from app.contracts.evaluator_inputs import build_evaluator_inputs
 from app.contracts.study_contracts import StudyContractError, validate_study_document
 from app.contracts.study_setup_bridge import StudySetupBridgeError, study_from_study_setup
 from app.main import create_app
-from app.profile.zoning_lot_index import classify_zoning_lot_index
+from app.profile.zoning_lot_index import ZoningLotIndexState, classify_zoning_lot_index
 from app.resilience.transport import TransportResponse
 from app.scenario.three_answers.result_way_engine_bridge import (
     FLOOR_TO_FLOOR_KEY,
@@ -387,6 +387,56 @@ def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     assert doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]["reason"] == (
         doc["coverage_by_portion"]["reason"]
     )
+
+
+# ======================================================= DB-232 NOT_READ live route (C4, G4 F3)
+def _failing_503_transport(url, headers, timeout):
+    """A replay transport that returns HTTP 503 for every ACRIS request (a 5xx persisting through
+    the connector's bounded retry budget), so the zoning-lot connector fails closed."""
+    return TransportResponse(503, "")
+
+
+def _not_read_benchmark_provider():
+    """A results study-inputs provider over the recorded benchmark pack whose zoning-lot index comes
+    from the PRODUCTION acris_zoning_lot_index_provider reacting to a FAILING ACRIS connector: the
+    5xx failure maps to NOT_READ (study_inputs.py), never a 503 and never NONE_FOUND. Everything
+    else mirrors benchmark_provider; the index is built once (the retries sleep)."""
+    prepared, geometry = _benchmark_carriers()
+    addr = _benchmark_identity_address()
+    index = acris_zoning_lot_index_provider(transport=_failing_503_transport)(NORTHERN_BBL, "c4")
+    assert index.state is ZoningLotIndexState.NOT_READ  # the connector failure mapped to NOT_READ
+
+    def provide(bbl, correlation_id, *, selected=None):
+        return assemble_study_inputs(
+            replay_pluto(), env=LANE_B_ON, address=addr,
+            site_geometry=geometry, prepared_outline=prepared, zoning_lot_index=index,
+        )
+
+    return provide
+
+
+def test_db232_connector_failure_route_answers_200_with_could_not_be_read(enabled, monkeypatch):
+    """C4 / S4: when the bound zoning-lot connector FAILS (HTTP 503 through the retry budget) the
+    route still answers 200 and the floor-area figure carries exactly one 'could not be read'
+    zoning-lot condition; the scope row stays 'Not confirmed' and nothing is worded as 'none
+    found'."""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(_not_read_benchmark_provider()), {"housing_program": "standard_residence"}
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    fa_state = doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_floor_area"]
+    assert fa_state["way"] == "conditional"
+    index_conditions = [
+        c for c in fa_state["conditions"] if "register of recorded documents" in c["assumption"]
+    ]
+    assert len(index_conditions) == 1
+    assert "could not be read" in index_conditions[0]["assumption"]
+    zoning_row = next(a for a in doc["scope"]["assumptions"] if a["key"] == "zoning_lot")
+    assert zoning_row["value"] == "Not confirmed"
+    assert "could not be read" in zoning_row["statement"]
+    assert "none found" not in json.dumps(doc).lower()
 
 
 def test_m5t146_live_route_entered_floor_to_floor_works_building_b_at_that_height(

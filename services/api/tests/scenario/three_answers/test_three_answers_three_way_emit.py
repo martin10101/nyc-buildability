@@ -25,11 +25,12 @@ from pathlib import Path
 
 import pytest
 
+from app.api.v1.study_read import get_rate_limiter
 from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
-from app.profile.zoning_lot_index import classify_zoning_lot_index
+from app.profile.zoning_lot_index import classify_zoning_lot_index, not_read
 from app.resilience.transport import TransportResponse
 from app.scenario.three_answers import (
     BuildingDefaults,
@@ -44,6 +45,7 @@ from app.scenario.three_answers.engine_conditions import (
     Source,
     derive_conditions,
 )
+from app.scenario.three_answers.result_way_bridge import zoning_lot_citation
 from app.scenario.three_answers.result_way_engine_bridge import (
     run_engine_and_result_ways,
     run_engine_and_result_ways_from_evidence,
@@ -92,6 +94,13 @@ from app.spatial.site_geometry.outline import prepare_outline
 from tests.api.test_study_read_api import _TEST_ONLY_OPTION
 from tests.contracts.test_evaluator_inputs import _benchmark_identity_address
 from tests.contracts.test_study_setup_bridge import _LANE_ON, _OPTION_ID, _REVISION, _northern_setup
+from tests.profile.test_zoning_lot_index import (
+    OTHER_BLOCK_LOT,
+    SUBJECT_BBL,
+    SUBJECT_ENTIRE,
+    _doc,
+    _result,
+)
 from tests.spatial._northern_replay import (
     DCM_ENVELOPE,
     replay_dcm_page,
@@ -108,7 +117,7 @@ from .test_result_ways_lib import (
     plain_inputs,
     support_all,
 )
-from .test_three_answers_benchmark import _ON, _benchmark_inputs
+from .test_three_answers_benchmark import _ON, _benchmark_inputs, _benchmark_scope_inputs
 
 _REPO_ROOT = Path(__file__).resolve().parents[5]
 _CASES = _REPO_ROOT / "docs" / "reference-cases" / "R6B" / "cases"
@@ -130,6 +139,18 @@ def _ref_rows(case: str) -> dict:
 
 def _ref_value(case: str, row_id: str):
     return _ref_rows(case)[row_id]["expected"]["value"]
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """The study-read route's per-caller limiter is process-wide module state (30 req / 60 s).
+    _benchmark_adapter makes one /study call through the route (via _northern_setup); reset the
+    limiter around every test so a trailing window does not make that call 429 (G3 F1 test-isolation
+    fix; same shape as the fixtures in tests/contracts/test_study_setup_bridge.py and
+    tests/profile/test_zoning_lot_index.py)."""
+    get_rate_limiter().reset()
+    yield
+    get_rate_limiter().reset()
 
 
 # --------------------------------------------------------------------------- the benchmark emit
@@ -222,6 +243,107 @@ def test_db232_not_checked_adds_no_scope_row_or_condition():
     assert not any(
         "register of recorded documents" in c["assumption"] for c in fa.get("conditions", [])
     )
+
+
+# ----------------------------------------------------- DB-232 non-benchmark states (C2, G4 F1)
+# One emit/document-level test per non-benchmark classifier state (NOT_READ, NONE_FOUND,
+# SINGLE_LOT_ONLY, another-block). The benchmark exercises OTHER_LOTS_NAMED end to end and
+# test_db232_not_checked_adds_no_scope_row_or_condition covers NOT_CHECKED; before this round no
+# test drove the per-state scope sentence (three_way_document._zoning_lot_scope_statement) nor the
+# NOT_READ condition at the document level, so a reword/regression in those templates (NONE_FOUND
+# saying 'no zoning-lot issue', or the NOT_READ condition dropping at emit) would pass CI. The
+# index is built from the classifier over the labelled SYNTHETIC rows of
+# tests/profile/test_zoning_lot_index.py; expected wording comes from NB-01 (revision 3) and the
+# rule text, never a program run.
+def _emit_with_index(index):
+    """Emit a made-up interior R6B lot (5,355 sq ft, the area agreeing, the K20 conditions
+    checked-and-absent) with the classifier ``index`` threaded through BOTH the decision ways (the
+    figure condition) and the emit (the scope row), so each non-benchmark state runs end to end at
+    the document level with no benchmark-fixture dependency."""
+    citation = zoning_lot_citation(index)
+    engine_inputs = _benchmark_inputs(
+        lot_area_sq_ft=5355.0, lot_type="interior", overlay_present=False,
+        lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=_benchmark_scope_inputs(),
+    )
+    engine_doc = generate_results(engine_inputs, env=_ON).document
+    way_inputs = plain_inputs(
+        lot_type=LotType.INTERIOR, area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0),
+        zoning_lot=citation, **k20(True),
+    )
+    return emit_three_way_document(engine_doc, decide_result_ways(way_inputs), zoning_lot=citation)
+
+
+def _zoning_lot_row(doc: dict) -> dict:
+    return next(a for a in doc["scope"]["assumptions"] if a["key"] == "zoning_lot")
+
+
+def _fa_state(doc: dict) -> dict:
+    return _states(doc["answers"]["floor_area_allowance"])["max_residential_floor_area"]
+
+
+def _has_index_condition(state: dict) -> bool:
+    return any(
+        "register of recorded documents" in c["assumption"] for c in state.get("conditions", [])
+    )
+
+
+def test_db232_emit_not_read_adds_could_not_be_read_condition_on_the_lot_area_figures():
+    """C2 / S4: NOT_READ (the connector failed closed) adds the property-specific 'could not be
+    read' zoning-lot condition to the lot-area figure (way conditional, exactly one index condition)
+    and the scope row stays 'Not confirmed'; the figure is still shown, and nothing is worded as
+    'none found'."""
+    emitted = _emit_with_index(not_read(SUBJECT_BBL, reason="timeout", as_of_date="2026-09-30"))
+    row = _zoning_lot_row(emitted)
+    assert row["value"] == "Not confirmed"
+    assert "could not be read" in row["statement"]
+    state = _fa_state(emitted)
+    assert state["way"] == "conditional"
+    index_conditions = [
+        c for c in state["conditions"] if "register of recorded documents" in c["assumption"]
+    ]
+    assert len(index_conditions) == 1
+    assert "could not be read" in index_conditions[0]["assumption"]
+    blob = json.dumps(emitted).lower()
+    assert "none found" not in blob and "no zoning-lot issue" not in blob
+
+
+def test_db232_emit_none_found_names_as_of_not_a_title_search_never_clears_the_lot():
+    """C2 / S3: NONE_FOUND (no ZONE indexed) adds NO figure condition; the scope sentence names the
+    index as-of date and says it is not a title search, keeps the value 'Not confirmed', and never
+    clears the zoning lot ('no zoning-lot issue'). Synthetic empty index; as-of 2026-09-30 is the
+    NB-01 E2 dataset good-through date."""
+    emitted = _emit_with_index(classify_zoning_lot_index(_result([])))
+    row = _zoning_lot_row(emitted)
+    assert row["value"] == "Not confirmed"  # the zoning lot is never marked confirmed/clear
+    assert "September 30, 2026" in row["statement"]  # the as-of date (synthetic _result default)
+    assert "not a title search" in row["statement"]
+    assert not _has_index_condition(_fa_state(emitted))
+    assert "no zoning-lot issue" not in json.dumps(emitted).lower()
+
+
+def test_db232_emit_single_lot_only_says_filed_on_this_lot_alone_and_not_read_no_condition():
+    """C2 / S2: a ZONE indexed against the subject lot ALONE (synthetic, entire) is SINGLE_LOT_ONLY:
+    no figure condition; the scope sentence says a description is filed on this lot alone and was
+    not read."""
+    zone = _doc("Z1", "ZONE", [SUBJECT_ENTIRE], crfn="CRFN-Z1")
+    emitted = _emit_with_index(classify_zoning_lot_index(_result([zone])))
+    row = _zoning_lot_row(emitted)
+    assert row["value"] == "Not confirmed"
+    assert "filed on this lot alone" in row["statement"]
+    assert "not read" in row["statement"]
+    assert not _has_index_condition(_fa_state(emitted))
+
+
+def test_db232_emit_another_block_lists_the_other_lot_to_check_no_same_block_condition():
+    """C2 / S5: a ZONE indexed against the subject AND a lot on ANOTHER block (synthetic) stays
+    SINGLE_LOT_ONLY with no same-block warning: no figure condition; the other-block lot is listed
+    with 'check what it covers'."""
+    zone = _doc("Z1", "ZONE", [SUBJECT_ENTIRE, OTHER_BLOCK_LOT], crfn="CRFN-Z1")
+    emitted = _emit_with_index(classify_zoning_lot_index(_result([zone])))
+    row = _zoning_lot_row(emitted)
+    assert "another block" in row["statement"]
+    assert "check what it covers" in row["statement"]
+    assert not _has_index_condition(_fa_state(emitted))
 
 
 # --------------------------------------------------------------------------- made-up emit path

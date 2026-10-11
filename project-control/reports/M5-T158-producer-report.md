@@ -338,3 +338,129 @@ Self-checks at head e97080823 (lanes venv):
 Diff stat: three files, 105 insertions, 6 deletions. D-093 still applies; NB-01 unchanged (the
 orchestrator writes revision 3). No production file touched in this correction. Ports 3000/3001/8000
 never touched.
+
+---
+
+# M5-T158 - correction round C (G3 F1 required + G4 F1-F3 advisories; test files only)
+
+Built on the frozen head `1e43857ee` (`git reset --hard`; worktree
+`/root/project/nyc-buildability/.claude/worktrees/agent-ac29f83da2c6ff32b`). TEST FILES AND THIS
+REPORT ONLY - no production code touched (git status shows only the three test files). D-093 applies:
+I opened `docs/research/evidence-records/NB-01-zoning-lot-instruments.json` (revision 3) and its
+observed facts (E2 ZONE 2022020201551002, CRFN 2022000059134, recorded 2022-02-08, indexed against
+lots 1 and 70; dataset good-through 2026-09-30; lot 1 = BBL 4073340001 same block 7334; E10 partial
+P/entire E). Every expected value below comes from NB-01 and the rule/wording templates, never a
+program run. NB-01 was not edited.
+
+## C1 (G3 F1, REQUIRED) - the study-read limiter is reset around every route-hitting test
+
+The documented command and the minimal repro failed with HTTP 429 at the frozen head
+(`tests/scenario/three_answers tests/journey` -> `1 failed, 477 passed`; the journey's single
+`/study` call 429'd because the trailing 60-s window from the route-hitting
+`tests/scenario/three_answers` tests exceeded 30). Added an autouse `get_rate_limiter().reset()`
+fixture (same shape as the existing `_reset_rate_limiter` fixtures) to the two route-hitting modules
+in scope:
+- `services/api/tests/journey/test_215_16_northern_journey.py` (`+import get_rate_limiter`, autouse
+  `_reset_rate_limiter`) - hits `/study` via `_northern_setup`.
+- `services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py` (same) -
+  `_benchmark_adapter` hits `/study` via `_northern_setup`.
+
+Proof (lanes venv, `services/api`, `PYTHONPATH=.`):
+- `pytest -q -p no:cacheprovider tests/scenario/three_answers tests/journey` ->
+  **482 passed, 2 skipped** (was `1 failed, 477 passed`).
+- the packet command `pytest -q -p no:cacheprovider tests/connectors/test_acris_index_soda.py
+  tests/profile/test_zoning_lot_index.py tests/connectors/test_benchmark_215_16_northern_fixtures.py
+  tests/scenario/three_answers tests/journey tests/drawings tests/cad tests/api` ->
+  **3439 passed, 8 skipped** (was `1 failed, 3433 passed`).
+
+## C2 (G4 F1) - emit/document-level test per non-benchmark state
+
+Added to `services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py`. Each builds
+the index from the classifier over the labelled SYNTHETIC rows of
+`tests/profile/test_zoning_lot_index.py` (imported: `_doc`, `_result`, `SUBJECT_ENTIRE`,
+`OTHER_BLOCK_LOT`, `SUBJECT_BBL`), projects it with `zoning_lot_citation`, and emits a made-up interior
+R6B lot document through `emit_three_way_document(..., zoning_lot=citation)` with the citation also on
+the way inputs - so both the figure condition and the scope row run end to end (no benchmark-fixture
+dependency). New tests:
+- `test_db232_emit_not_read_adds_could_not_be_read_condition_on_the_lot_area_figures` (NOT_READ): the
+  lot-area figure is conditional with exactly one "register of recorded documents" condition saying
+  "could not be read"; scope row value "Not confirmed"; no "none found".
+- `test_db232_emit_none_found_names_as_of_not_a_title_search_never_clears_the_lot` (NONE_FOUND): no
+  figure condition; scope sentence names the as-of date (September 30, 2026) and "not a title search";
+  value stays "Not confirmed"; "no zoning-lot issue" never appears.
+- `test_db232_emit_single_lot_only_says_filed_on_this_lot_alone_and_not_read_no_condition`
+  (SINGLE_LOT_ONLY): no condition; sentence says filed on this lot alone and was not read.
+- `test_db232_emit_another_block_lists_the_other_lot_to_check_no_same_block_condition` (another-block,
+  still SINGLE_LOT_ONLY): no same-block condition; the other-block lot is listed with "check what it
+  covers".
+
+Proof: `pytest -q -p no:cacheprovider tests/scenario/three_answers/test_three_answers_three_way_emit.py
+-k db232` -> **5 passed** (the 4 new + the existing not_checked).
+
+## C3 (G4 F2) - structural guard in the journey test
+
+Added a structural block to the main benchmark journey test
+(`services/api/tests/journey/test_215_16_northern_journey.py`, OTHER_LOTS_NAMED): it enumerates EVERY
+shown value whose `sources` cite the lot-area source `f"{entry_bbl}:lot_area"` and EVERY building
+alternative, and asserts each is conditional and carries EXACTLY ONE "register of recorded documents"
+condition. The loop does not depend on how many such values exist (it iterates all answers/values) and
+asserts non-vacuousness (`lot_area_values_checked >= 1`). On the benchmark it checks
+`max_residential_floor_area` and `max_residential_floor_area_qualifying_affordable_or_senior` plus
+building B - a future lot-area figure added without the condition fails here even though the named-key
+assertions above would miss it.
+
+Proof: `pytest -q -p no:cacheprovider tests/journey/test_215_16_northern_journey.py` -> **2 passed**.
+
+## C4 (G4 F3) - route answers 200 with "could not be read" on a connector failure
+
+Added `test_db232_connector_failure_route_answers_200_with_could_not_be_read` to
+`services/api/tests/api/test_results_read_api.py`. It binds a results study-inputs provider whose
+zoning-lot index is produced by the PRODUCTION `acris_zoning_lot_index_provider(transport=503)` seam
+reacting to a failing ACRIS connector (HTTP 503 persisting through the retry budget -> SourceUnavailable
+-> NOT_READ, exercising study_inputs.py's AcrisIndexConnectorError->not_read mapping; asserted
+`index.state is NOT_READ`). The route answers 200; the floor-area figure carries exactly one
+"could not be read" zoning-lot condition; scope row "Not confirmed"; no "none found".
+
+Proof: `pytest -q -p no:cacheprovider
+tests/api/test_results_read_api.py::test_db232_connector_failure_route_answers_200_with_could_not_be_read`
+-> **1 passed**.
+
+## Self-checks (all at the frozen head, lanes venv, from `services/api`)
+
+- `python -m ruff check .` -> **All checks passed!**
+- the two C1 commands above -> pass (counts above).
+- full CI-style run in one process `PYTHONPATH=. python -m pytest -q -p no:cacheprovider tests` ->
+  **9385 passed, 8 skipped, 1 warning in 393.53s, exit 0** (the prior full run was 9380; +5 = the 4
+  new C2 emit tests + the C4 route test).
+
+## Mutation proofs
+
+In-place production edits are blocked by the sandbox ([Modify Shared Resources]); per the established
+precedent (mutations run outside the shared source) each mutation was reproduced by an in-process
+monkeypatch (no file written) of the exact production behaviour named, and the correction test was
+confirmed to FAIL at the INTENDED assertion, then restored:
+- (a) NONE_FOUND scope sentence made to say "no zoning-lot issue" (patched
+  `three_way_document._zoning_lot_scope_statement`) -> C2 none_found FAILS at
+  `assert "no zoning-lot issue" not in json.dumps(emitted).lower()`
+  (test_three_answers_three_way_emit.py:321).
+- (b) the zoning-lot condition dropped from the qualifying floor-area value only (patched
+  `result_ways._floor_area_way` to use a not_checked citation when `"qualifying" in key`) -> C3 FAILS
+  at `assert len(_index_conditions(state["conditions"])) == 1` (test_215_16_northern_journey.py:424),
+  not at any earlier named assertion.
+- (c) the provider made to return NONE_FOUND on a connector failure (patched
+  `zoning_lot_index.not_read` to return a NONE_FOUND index) -> C4 FAILS at
+  `assert index.state is ZoningLotIndexState.NOT_READ` (test_results_read_api.py:407).
+
+## What I could not verify / limits
+
+- Mutations could not be applied to production files in place (sandbox denial); they were simulated
+  in-process via monkeypatch reproducing the exact mutated behaviour. No production file was modified
+  (git status shows only the three test files + this report).
+- apps/web vitest not run this round (no web test changed; the backlog web consumers were handled in
+  part B scope correction 1). Full suites + security checks are CI's job on the exact head.
+- Live ACRIS egress never exercised (offline replay; C4's 503 is a replay transport). Professional/
+  legal verification of draft rule DB232-R1 is out of scope (ADR-007, labelled draft).
+- Not in this round (recorded for production-enablement review): the malformed server document-id
+  advisory and the per-study request fan-out; no production change made for them.
+
+Diff stat: three test files, 219 insertions, 4 deletions. Ports 3000/3001/8000 never touched.
