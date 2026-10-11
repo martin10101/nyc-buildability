@@ -7348,18 +7348,24 @@
     "D-090-R941"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a",
+   "reviewed_manifest_sha256": "ef64af8eb02dd9e0dc49b8b8c95786d7353d103286048c5c458dddf846d16af5",
    "requirements": [
     {
      "id": "D-090-R941",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation (owner 04:23 UTC \"I told u to do a handoff why is 2 thinks still running\"). This task's share is the pointer only, per the brief. .claude/rules/PROGRAM_KNOWLEDGE.md (blob 813ea947) adds \"Owner handoff = NOTHING keeps running (D-090-R941): save each helper's unfinished work into the session folder (git diff --binary), stop it, record where it is; overrides the skill's let-helpers-finish line.\"",
+      "I checked the pointer against source-084-amendment.md and the requirements.json R941 row (classification obligation; reading: \"when the owner asks for a handoff, nothing the session started keeps running\"); the pointer faithfully reflects the owner's words plus the separately-labelled reading and adds nothing beyond it.",
+      "Stays open: the behavioral \"next-handoff nothing keeps running\" harness is later evidence (a future handoff); it is not provable at this docs-only head, and the session-handoff skill text itself is not edited (carried by the pointer) \u2014 both noted as open in the evidence map's known_limits.",
+      "Verifier's carry-forward condition met at 3f7bb0d6: the task's allowed-path files are identical to those verified at 26b54c5a (content identity ef64af8e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer). DCV report: project-control/reports/M0-T191-DCV.md."
+     ],
+     "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T05:14:36+00:00"
   },
   {
    "directive_id": "D-090",

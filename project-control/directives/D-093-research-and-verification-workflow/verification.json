@@ -764,36 +764,61 @@
     "D-093-R068"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a",
+   "reviewed_manifest_sha256": "ef64af8eb02dd9e0dc49b8b8c95786d7353d103286048c5c458dddf846d16af5",
    "requirements": [
     {
      "id": "D-093-R029",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Harness row \"New, resumed and compacted sessions recover the policy and current task state.\" This task's share is the delegated-agent nuance; I reproduced from the three cited transcripts that a subagent inherits its parent session's start-time instruction set.",
+      "Fresh post-merge session 2f0aa039 loaded research-and-verification.md (2452 chars) while subagents a1200433925ba8efc (02:58:48) and a7180378d084bf28b (03:05:24) loaded the pre-merge set (CLAUDE.md 14177, PROGRAM_KNOWLEDGE 17012, no research rule) \u2014 all char counts match the record exactly.",
+      "docs/RESEARCH_AND_VERIFICATION.md \u00a79 (blob f5adba44) states the policy is attached again after a compaction and that a delegated agent gets its parent's start-time set, with the untested caveat named.",
+      "Stays open: whether a compaction of the parent refreshes the set its LATER subagents inherit is untested (stated in the record and \u00a79) and I could not test it (needs a live compaction).",
+      "Verifier's carry-forward condition met at 3f7bb0d6: the task's allowed-path files are identical to those verified at 26b54c5a (content identity ef64af8e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer). DCV report: project-control/reports/M0-T191-DCV.md."
+     ],
+     "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a"
     },
     {
      "id": "D-093-R032",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation \"reviewer/worker launch instructions pass the applicable policy... Do not assume every delegated task receives the parent conversation... no new agent framework.\" \u00a76 dispatch clause (blob f5adba44) now explains WHY every builder/reviewer brief must carry the policy + record paths: helpers do not see the conversation and inherit the parent's start-time instructions.",
+      "I confirmed the practice from primary evidence: the M5-T157 builder transcript a7180378d084bf28b first user message carries the clause verbatim (\"Research and verification (owner directive D-093) applies: read .claude/rules/research-and-verification.md and docs/RESEARCH_AND_VERIFICATION.md in your checkout before you change anything\").",
+      ".claude/rules/PROGRAM_KNOWLEDGE.md (blob 813ea947) adds the pointer \"A subagent inherits its PARENT session's start-time instruction snapshot... reaches helpers only through the brief\"; no new agent framework is introduced.",
+      "Nothing stays open for this row.",
+      "Verifier's carry-forward condition met at 3f7bb0d6: the task's allowed-path files are identical to those verified at 26b54c5a (content identity ef64af8e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer). DCV report: project-control/reports/M0-T191-DCV.md."
+     ],
+     "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a"
     },
     {
      "id": "D-093-R034",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Prohibition \"Preserve all unrelated settings and access restrictions... do not claim coverage for a session type that was not tested.\" I reproduced that `git diff d4636970..26b54c5a` over the packet's paths touches only the four docs/report files; no .claude/settings.json, hook, or .claude/agents definition changed.",
+      "The untested session type (compaction refresh for later helpers) is explicitly named in both the evidence record (\"Not tested...\") and \u00a79, so no coverage is claimed for it.",
+      "forbidden_paths (services/, apps/, packages/, .claude/settings.json, .claude/agents/) are untouched in the material range (confirmed by the diff).",
+      "Nothing stays open for this row.",
+      "Verifier's carry-forward condition met at 3f7bb0d6: the task's allowed-path files are identical to those verified at 26b54c5a (content identity ef64af8e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer). DCV report: project-control/reports/M0-T191-DCV.md."
+     ],
+     "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a"
     },
     {
      "id": "D-093-R068",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Evidence row \"Context recovery... Mark untested session types honestly.\" The record project-control/reports/M0-T191-delegated-agents.md (blob b87e6fcc) names the untested session type honestly and corrects the over-broad M0-T190 \u00a74 sentence beside it.",
+      "I confirmed the over-broad sentence exists verbatim at project-control/reports/M0-T190-verification-sessions.md line 166 (\"So once the main checkout holds the D-093 files, every delegated agent loads the rule.\") and that the evidence (this session's own pre-merge subagents lacked the rule) shows it is genuinely over-broad.",
+      "The accepted M0-T190 report is NOT edited by this task (`git diff d4636970..26b54c5a -- .../M0-T190-verification-sessions.md` empty); the correction lives in the new record.",
+      "Nothing stays open for this row.",
+      "Verifier's carry-forward condition met at 3f7bb0d6: the task's allowed-path files are identical to those verified at 26b54c5a (content identity ef64af8e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer). DCV report: project-control/reports/M0-T191-DCV.md."
+     ],
+     "reviewed_sha": "3f7bb0d65195bb557aed7aa2806ba6f277e4421a"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T05:14:36+00:00"
   },
   {
    "directive_id": "D-093",
