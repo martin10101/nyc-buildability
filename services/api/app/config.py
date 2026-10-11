@@ -23,6 +23,7 @@ __all__ = [
     "INTERNAL_SCENARIO_ENABLED_ENV_VAR",
     "INTERNAL_STUDY_READ_ENABLED_ENV_VAR",
     "INTERNAL_TRANSIT_PARKING_READ_ENABLED_ENV_VAR",
+    "INTERNAL_ZONING_LOT_INDEX_ENABLED_ENV_VAR",
     "LANE_FLAG_ENV_VARS",
     "internal_hidden_issue_flags_read_enabled",
     "internal_parity_read_enabled",
@@ -31,6 +32,7 @@ __all__ = [
     "internal_scenario_enabled",
     "internal_study_read_enabled",
     "internal_transit_parking_read_enabled",
+    "internal_zoning_lot_index_enabled",
     "lane_enabled",
 ]
 
@@ -110,6 +112,23 @@ INTERNAL_PARITY_READ_ENABLED_ENV_VAR = "INTERNAL_PARITY_READ_ENABLED"
 #      rate limit here and the resilient PLUTO fetcher), never an unguarded connector.
 #   3. A review of the live default once the website half (Part B) binds it.
 INTERNAL_RESULTS_ENABLED_ENV_VAR = "INTERNAL_RESULTS_ENABLED"
+
+# Env var gating the LIVE ACRIS zoning-lot-index provider binding (backlog DB-232, task
+# M5-T158). The study-inputs seam carries a zoning_lot_index provider shaped like the
+# existing-floor-area provider; this flag decides only whether the LIVE binding (the ACRIS
+# index connector + the draft classifier) is bound as that provider's default. A DISTINCT name
+# with the same fail-safe posture as every flag here (absent/empty/unknown -> disabled). When
+# off (the production default) no provider is bound and the zoning_lot_index state is
+# NOT_CHECKED, so every existing output is byte-identical to the pre-wiring slice; tests inject
+# a fixture-backed provider to exercise the seam offline regardless of the flag.
+#
+# ENABLEMENT CHECKLIST (before this live binding serves real traffic, all REQUIRED; until they
+# exist this flag stays OFF in production - security review): the same preconditions as the
+# other live internal reads (route auth / blocker B-001, a route-local rate limit because the
+# binding makes live ACRIS SODA calls per study, the resilient-fetch path) PLUS the DB-232
+# directive check that reading one official document-type code to make the reminder
+# property-specific is in scope (the warning stays flag-only; the zoning lot is never concluded).
+INTERNAL_ZONING_LOT_INDEX_ENABLED_ENV_VAR = "INTERNAL_ZONING_LOT_INDEX_ENABLED"
 
 # One flag per parallel-build lane (task M0-T164, D-090; docs/lanes/PARALLEL_BUILD_PLAN.md §7).
 # New lane behavior ships behind its lane's flag; production never sets these until the owner
@@ -194,6 +213,15 @@ def internal_results_enabled(env: Mapping[str, str] | None = None) -> bool:
     (fail safe), so the route is a generic 404 unless explicitly turned on.
     """
     return _flag_enabled(INTERNAL_RESULTS_ENABLED_ENV_VAR, env)
+
+
+def internal_zoning_lot_index_enabled(env: Mapping[str, str] | None = None) -> bool:
+    """Whether the LIVE ACRIS zoning-lot-index provider binding is enabled (DB-232, M5-T158).
+
+    Returns True ONLY for an explicit true token; absent/empty/unknown -> False (fail safe), so
+    no live provider is bound and the zoning_lot_index state stays NOT_CHECKED in production.
+    """
+    return _flag_enabled(INTERNAL_ZONING_LOT_INDEX_ENABLED_ENV_VAR, env)
 
 
 def lane_enabled(lane: str, env: Mapping[str, str] | None = None) -> bool:

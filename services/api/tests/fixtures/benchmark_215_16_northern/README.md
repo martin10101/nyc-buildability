@@ -19,6 +19,29 @@ C-8, C-9; directive D-090, owner GO D-090-R015). Benchmark: competitor review se
   re-hashes every file and rebuilds every connector URL. `.gitattributes` (`-text`) keeps the
   bytes exact. The two ArcGIS count bodies end in CRLF as served.
 
+## ACRIS index connector files (M5-T158 / DB-232, added 2026-10-11)
+
+Five `acris_index_*` files back the new ACRIS index connector
+(`app.connectors.acris_index_soda`, source id `nyc-acris-index-metadata`; registry draft
+`docs/research/source-registry-drafts/acris-index.json`; record NB-01). They read the
+recorded-document **index metadata only** — never a document image (viewer-gated,
+`docs/SOURCE_ACCESS_REGISTRY.md` §11.5). An index entry does not establish an instrument's
+contents (D-093); the classifier labels the lot-area figures as conditional drafts and never
+concludes the zoning lot.
+
+| File | Query | Notes |
+|---|---|---|
+| `acris_index_legals_8h5j-fqxa_lot_4-7334-70.json` | Q1 Legals by borough/block/lot (lot 70) | 7 document ids. Same rows as the B-01 `acris_legals_8h5j-fqxa_bbl_4-7334-70.json`; different bytes only because this connector adds `$order=document_id` for stable paging |
+| `acris_index_master_bnx9-e6tj_subject_docs.json` | Q2 Master for those 7 ids | `$select` omits `document_amt`; the Parties (names) dataset is never queried |
+| `acris_index_legals_8h5j-fqxa_zone_decl_cert.json` | Q3 Legals for the ZONE/DECL/CERT ids | each is indexed against lot 1 (4073340001) and lot 70, partial_lot E |
+| `acris_index_legals_8h5j-fqxa_good_through.json` | Q4 `max(good_through_date)` | 2026-09-30; byte-identical to the evidence pack's `acris_global_goodthrough.json` |
+| `acris_index_doc_control_codes_7isb-wh4c.json` | Document Control Codes (`connector: null`) | a byte copy of the evidence pack's `acris_codes.json` (NB-01 E3). **No live codes call**: `DOCUMENT_TYPE_DESCRIPTIONS` is pinned in code and a contract test checks it against this copy |
+
+The four Q1–Q4 files were captured 2026-10-11 through the connector's own URL builders; the codes
+file was captured 2026-10-10 by the owner research. **No synthetic files** are stored in this
+pack — synthetic classifier inputs (single-lot, another-block, partial-lot, deeds-only, mixed)
+are built inline in `tests/profile/test_zoning_lot_index.py` and labelled there.
+
 ## Data versions at capture (C-7)
 
 | Source | Version / freshness recorded |

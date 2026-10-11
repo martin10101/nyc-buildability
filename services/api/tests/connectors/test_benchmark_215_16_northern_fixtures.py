@@ -13,6 +13,7 @@ from pathlib import Path
 import pytest
 
 from app.connectors import (
+    acris_index_soda,
     building_footprints_arcgis,
     dcm_street_centerline_arcgis,
     dtm_lot_outline,
@@ -28,6 +29,19 @@ MANIFEST = json.loads((PACK / "MANIFEST.json").read_text(encoding="utf-8"))
 ENTRIES = {entry["file"]: entry for entry in MANIFEST["files"]}
 NOT_RECORDINGS = {"MANIFEST.json", "README.md", ".gitattributes"}
 BBL = "4073340070"
+# Known capture dates: the B-01 pack was captured 2026-09-30; M5-T158/DB-232 added the ACRIS
+# index connector's own Q1-Q4 captures on 2026-10-11, and copied the codes table (no live codes
+# call) from the 2026-10-10 evidence pack.
+CAPTURE_DATES = {"2026-09-30", "2026-10-11", "2026-10-10"}
+# The subject lot's seven document ids (Q1), and its ZONE/DECL/CERT ids (Q3), both in the
+# connector's sorted request order (so these rebuild the connector's own IN-list URLs).
+ACRIS_SUBJECT_DOCUMENT_IDS = sorted([
+    "2018013000919001", "2018013000919002", "2022020201551001", "2022020201551002",
+    "2022031600431001", "2024011000700001", "2024011000700002",
+])
+ACRIS_ZONE_DECL_CERT_IDS = sorted([
+    "2022020201551001", "2022020201551002", "2022031600431001",
+])
 # MapPLUTO lot bounds (EPSG:2263, 0.01 ft) padded by 100 ft (wide-street buffer) + 50 ft margin,
 # as app.spatial.wide_street_live_provider derives its DCM query envelope.
 DCM_ENVELOPE = (1048638.63, 216160.44, 1049061.58, 216581.1)
@@ -53,7 +67,7 @@ def test_file_bytes_match_manifest_sha256(name):
     assert hashlib.sha256(body).hexdigest() == entry["sha256"]
     assert entry["http_status"] == 200
     assert entry["url"].startswith("https://")
-    assert entry["retrieved_at"].startswith("2026-09-30T")
+    assert entry["retrieved_at"][:10] in CAPTURE_DATES
     assert entry["connector"] or entry["documented_in"]
 
 
@@ -93,6 +107,16 @@ def test_connector_backed_urls_are_the_connectors_own_requests():
         "building_footprints_layer_metadata.json": building_footprints_arcgis.build_metadata_url(),
         "building_footprints_lot_polygon_4073340070.json":
             building_footprints_arcgis.build_query_url(polygon=_lot_ring(), page_size=2000),
+        "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json":
+            acris_index_soda.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0),
+        "acris_index_master_bnx9-e6tj_subject_docs.json":
+            acris_index_soda.build_master_url(
+                ACRIS_SUBJECT_DOCUMENT_IDS, limit=1000, offset=0),
+        "acris_index_legals_8h5j-fqxa_zone_decl_cert.json":
+            acris_index_soda.build_legals_by_documents_url(
+                ACRIS_ZONE_DECL_CERT_IDS, limit=1000, offset=0),
+        "acris_index_legals_8h5j-fqxa_good_through.json":
+            acris_index_soda.build_good_through_url(),
     }
     connector_backed = {name for name, entry in ENTRIES.items() if entry["connector"]}
     assert connector_backed == set(built)

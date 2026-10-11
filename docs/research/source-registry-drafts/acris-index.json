@@ -1,1 +1,53 @@
-{"source_id": "nyc-acris-index-metadata", "status": "placeholder (M5-T158)"}
+[
+  {
+    "source_id": "nyc-acris-index-metadata",
+    "agency": "NYC Department of Finance (DOF) — Office of the City Register (ACRIS)",
+    "name": "ACRIS recorded-document INDEX metadata — NYC Open Data (Real Property Legals 8h5j-fqxa + Real Property Master bnx9-e6tj + Document Control Codes 7isb-wh4c)",
+    "official_url": "https://data.cityofnewyork.us/api/views/8h5j-fqxa.json",
+    "source_type": "official_open_data_soda_api",
+    "api_dataset_identifier": "8h5j-fqxa (Legals: document_id + borough/block/lot -> BBL join, partial_lot flag), bnx9-e6tj (Master: document_id, doc_type, document_date, recorded_datetime, crfn, good_through_date), 7isb-wh4c (Document Control Codes: doc__type -> doc__type_description). The Parties dataset (grantor/grantee names) EXISTS but is NEVER queried by this connector.",
+    "authentication": {
+      "required": false,
+      "recommended": "Socrata application token via X-App-Token header (optional; never required, never logged)",
+      "evidence": "SODA endpoints queried anonymously live 2026-10-11 (M5-T158 capture, benchmark pack acris_index_* files)"
+    },
+    "rate_limits": {
+      "without_token": "throttled by IP in the shared tokenless pool",
+      "with_token": "not throttled unless abusive",
+      "throttle_signal": "HTTP 429",
+      "evidence": "Socrata platform baseline (registry governance rule 5); connector honors Retry-After and fails closed on an exhausted budget"
+    },
+    "update_frequency": "per Socrata rowsUpdatedAt / HTTP Last-Modified per response. Observed Last-Modified at capture (2026-10-11): Legals Thu, 08 Oct 2026 20:07:34 GMT; Master Thu, 08 Oct 2026 20:08:51 GMT. The dataset-wide max(good_through_date) is the authoritative 'index up to date through' date: 2026-09-30 at capture.",
+    "geographic_coverage": "All five boroughs (Legals ~22.7M rows). Manhattan documents generally from 1966, the other boroughs generally from ~2003. Documents recorded before that window, or re-indexed to new lots after a tax-lot split, may not appear under the current lot (see known_limitations).",
+    "fields_available": {
+      "note": "The connector reads INDEX METADATA ONLY and NEVER requests document_amt (a Master $select without it) and NEVER queries the Parties dataset. SODA omits blank fields per record, so an absent key means the value is unknown/absent, never zero.",
+      "legals_columns_read": ["document_id", "borough", "block", "lot", "partial_lot (P=partial / E=entire; dataset column description)", "good_through_date"],
+      "master_columns_read": ["document_id", "doc_type", "document_date", "recorded_datetime", "crfn", "good_through_date"],
+      "codes_columns_read": ["doc__type", "doc__type_description"],
+      "pinned_document_type_codes": {"ZONE": "ZONING LOT DESCRIPTION", "DECL": "DECLARATION", "CERT": "CERTIFICATE"},
+      "never_read": ["document_amt (Master financial amount)", "recorded_borough (reads '1' on these Queens documents; not used)", "the Parties dataset (grantor/grantee names)"],
+      "evidence": "Legals api/views queryString and PARTIAL LOT column description ('P=partial E=entire'); NB-01 E1/E2/E3; benchmark pack acris_index_* MANIFEST entries."
+    },
+    "terms_usage_notes": "NYC Open Data terms; provenance official; DOF. Use for CITATION and LINKAGE only — never presented as, or treated as, the recorded document image. An index entry does not establish an instrument's contents (D-093). The document-type codes are an advisory classification; the draft reading of ZONE against ZR 12-10 is a labelled unreviewed interpretation (ADR-007), not a title search.",
+    "connector_implementation": "IMPLEMENTED (task M5-T158, backlog DB-232): services/api/app/connectors/acris_index_soda.py — fixture-driven, fail-closed index connector. fetch_zoning_lot_index validates the BBL (app.connectors.bbl.normalize_bbl) BEFORE any request, then: Q1 Legals by borough/block/lot (stable $order=document_id, $limit/$offset, page budget); Q2 Master for those document ids in IN-list chunks of at most 50, $select WITHOUT document_amt; Q3 Legals for the ZONE/DECL/CERT ids only (every lot each is indexed against); Q4 max(good_through_date). Bounded retry on 429/5xx/timeout/network via app.resilience.transport; the query.soql.no-such-column 400 is typed schema drift and never retried. Typed error taxonomy (every one is fail-closed to the classifier's NOT_READ, never NONE_FOUND): rate_limited, schema_drift, timeout, source_unavailable, page_budget_exhausted, incomplete_index (a subject document with no Master row). The three document-type codes are PINNED in DOCUMENT_TYPE_DESCRIPTIONS (no live codes call); a contract test checks them against the recorded 7isb-wh4c copy. The pure classifier app.profile.zoning_lot_index.classify_zoning_lot_index applies draft rule DB232-R1 and never picks a 'latest' document and never concludes the zoning lot. Study-inputs seam: app.api.v1.study_inputs carries a zoning_lot_index provider shaped like the existing-floor-area provider; the LIVE binding (app.api.v1.study_inputs.acris_zoning_lot_index_provider) is bound ONLY behind INTERNAL_ZONING_LOT_INDEX_ENABLED (default OFF), so production is unchanged (state NOT_CHECKED). Fixtures: services/api/tests/fixtures/benchmark_215_16_northern/acris_index_*.json (Q1-Q4 captured 2026-10-11 by the connector's own URL builders + the 7isb-wh4c codes copy).",
+    "last_successful_ingestion": "2026-10-11 (benchmark lot 4073340070 Q1-Q4 live capture; replayed offline by the connector's URL builder)",
+    "latest_source_version": "No per-record version column. Freshness is the response Last-Modified and the dataset max(good_through_date) = 2026-09-30 at the 2026-10-11 capture.",
+    "health_status": "verified_live_2026-10-11 (metadata/linkage only; document images remain viewer-gated, source nyc-acris-document-images, SOURCE_ACCESS_REGISTRY.md §11.5)",
+    "known_limitations": [
+      "Metadata only — the scanned instrument is viewer-gated and automated image capture is prohibited (nyc-acris-document-images, §11.5). An index entry never establishes a document's contents (D-093; NB-01 access_blocked).",
+      "A former lot number is not re-indexed to the new lot by this query: the 2016 ZONE on lot 1 (before the tax-lot split) is indexed only against lot 1, so a query on lot 70 misses it. The benchmark is covered by the 2022 re-recording; for other lots a NONE_FOUND result can be wrong (it says 'not a title search').",
+      "A zoning lot declared only by a DECL (ZR 12-10(d)) with no ZONE is not caught by draft rule DB232-R1(b); the existing generic zoning-lot statement still covers that case.",
+      "Lots on another block (large-scale developments) are listed for checking but never trigger the same-block warning (rule (c)); condominium and air-rights lots are indexed differently and are not handled.",
+      "recorded_borough reads '1' on these Queens documents and is never used.",
+      "SODA omits blank fields per record; an absent key is unknown/absent, never zero.",
+      "partial_lot 'P' (partial) on a ZONE makes the lot-area basis uncertain and is treated as conditional (rule (d))."
+    ],
+    "fallback_source": "none for the metadata channel (this IS the open-data index). For the document contents themselves: manual retrieval via the ACRIS viewer under its terms (nyc-acris-document-images), or an owner-authorized records request / paid bulk subscription — never automated.",
+    "open_questions": [
+      "Whether ACRIS re-indexes older documents to new lots after a tax-lot split (not established from the repository; affects NONE_FOUND reliability for split lots).",
+      "Whether every zoning-lot description is typed ZONE, including pre-ACRIS Queens records (~before 2003).",
+      "Whether the recorded CERT is the ZR 12-10(f) title certificate (not established from the index).",
+      "Whether the Document Control Codes table 7isb-wh4c is complete (no api/views metadata was saved for it)."
+    ]
+  }
+]
