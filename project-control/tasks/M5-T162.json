@@ -85,21 +85,21 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The page-1 answer table still has no row for the legal unit limit and the page-1 lot-selection sentence is generic; both belong to the report v3 redesign (D-094 plan P-3) and stay out of scope.",
     "The report's other consumers (website report preview, the PDF print) read the same server HTML; no web file changes."
   ],
   "blockers": [],
   "created_at": "2026-10-11T09:31:14.105669+00:00",
-  "updated_at": "2026-10-11T09:31:14.392605+00:00",
+  "updated_at": "2026-10-11T09:31:16.739948+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -130,5 +130,14 @@
     "cd services/api && python -m ruff check .",
     "cd services/api && python -m pytest -q tests/drawings tests/cad tests/journey"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T09:31:16.739870+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    }
+  ]
 }
