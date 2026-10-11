@@ -335,6 +335,31 @@
      "G1 delta at 882ffd43: E1 (ACRIS Legals) now quotes only the lots and flags, E2 (ACRIS Master) the type, dates and CRFN; both equal their saved copies; nothing else in NB-01's meaning changed; F1 closed."
     ],
     "report": "project-control/reports/M0-T190-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11T07:26Z",
+    "reviewed_revision": 3,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+     "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
+     "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
+     "services/api/app/api/v1/study_inputs.py": "ebc38eeab6b1892d24040ef6e6d39d890bb5db9fb46cd373803a1c59ba5ef733",
+     "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
+     "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
+     "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
+     "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
+     "services/api/app/drawings/report/readers.py": "4a515b689bb7a8305b4119900e024ccd294732f148848fc81b2a3eb1dfd8bf07"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1e43857e: the five acris_index_* fixtures match their recorded SHA-256 (raw and LF); parsed rows equal the evidence-pack copies (Q1 order-only diff, confirmed), Q4 and the codes copy byte-identical; URL builders equal NB-01 E8/E9; MASTER_SELECT omits document_amt and recorded_borough; the Parties dataset is never queried; BBL normalized before any request; paging stable/bounded; every typed failure fails closed to NOT_READ (never NONE_FOUND).",
+     "Independent connector+classifier replay reproduces NB-01/S1 exactly: OTHER_LOTS_NAMED naming 4073340001, ZONE 2022020201551002 CRFN 2022000059134, CERT+DECL reminders, as_of 2026-09-30; the five scope-row statements word each state correctly (NONE_FOUND/NOT_READ never 'no zoning-lot issue'; value 'Not confirmed').",
+     "NB-01 revision 3 verified: E1 URL now the document-id query of its saved copy; E8-E10 saved copies present with matching SHA-256 (raw+LF); observed_facts vs interpretation separated; research_status stays access_blocked; all 10 code_identity hashes equal the frozen head; 14 regression-case tests exist; research_record_check --check PASS (exit 0).",
+     "Live confirmation 2026-10-11: official Legals still indexes ZONE 2022020201551002 against lots 1 and 70 (all E) and returns the 7 lot-70 docs; Master metadata confirms document_amt='Principal debt or obligation' (omitted) and recorded_borough (unused), and good_through_date means 'index up to date through'. Disclosed DECL-only / former-lot-ZONE gaps are honest bounded negatives (ADVISORY-1)."
+    ],
+    "report": "project-control/reports/M5-T158-reviews.md"
    }
   ],
   "professional_review": null
