@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T19:08:40+00:00",
+ "updated_at": "2026-10-11T19:14:51+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -132,10 +132,12 @@
   "D-094-R108",
   "D-094-R109",
   "D-094-R110",
-  "D-094-R111"
+  "D-094-R111",
+  "D-094-R112",
+  "D-094-R113"
  ],
- "requirements_id_digest_sha256": "617bb0673b94b8ecb0cfc7ee8cdd4021687e4bcc252cc762f5698bb65fb3b76f",
- "requirements_content_digest_sha256": "29beee610a4c452bdc38cc3cd14a6062978a1cd3f24f2ca1a4b57380807ff2b7",
+ "requirements_id_digest_sha256": "16d603ac1300af497235e340bd89cb85bd370a3a8e01cb0022f37ea8a5cbba21",
+ "requirements_content_digest_sha256": "310e8f6482e6dc4194d7278c57c167e308653bf2e63d345c08605c17357b5a3e",
  "sources": [
   {
    "file": "source-001.md",
@@ -191,6 +193,14 @@
    "recorded_at": "2026-10-11T19:08:40+00:00",
    "content_digest_sha256": "e2852b665abde4c5c18ddbd76a11d76a8fffa1eb44c242fed27a345e532a7707",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-008-amendment.md",
+   "kind": "amendment",
+   "sequence": 8,
+   "recorded_at": "2026-10-11T19:14:39+00:00",
+   "content_digest_sha256": "c6c7ff08bb024930676835716f012a9a0ee43c0cdfa1efcf09434120222ff868",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -199,7 +209,8 @@
   "source-004-amendment.md",
   "source-005-amendment.md",
   "source-006-amendment.md",
-  "source-007-amendment.md"
+  "source-007-amendment.md",
+  "source-008-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -302,6 +313,18 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-007 (the owner's instruction on resuming after a handoff) and requirements D-094-R109 to R111, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T19:14:39+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-008 (the owner's correction of the quick-resume answer) and requirements D-094-R112 to R113, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T19:14:51+00:00",
+   "actor": "orchestrator",
+   "action": "requirements_reread",
+   "note": "Re-read D-094-R109 (reading and required_harness) and D-094-R110 (required_harness) to match the owner's correction source-008 (R112, R113): keep the same copy-in prompt and the full saved handoff; drop only the between-session checks. The owner's quoted words are unchanged; the requirements content digest is resynced in the same commit. Session 0dfe2ecc, claude-opus-5-5."
   }
  ]
 }

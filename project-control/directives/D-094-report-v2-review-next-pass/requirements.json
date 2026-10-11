@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 111,
+ "requirement_count": 113,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T19:08:40+00:00",
+ "updated_at": "2026-10-11T19:14:51+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3404,7 +3404,7 @@
   },
   {
    "id": "D-094-R109",
-   "text": "'For next time how do we make it quicker and less token sends from when I left off the session.': make the resume after a handoff quicker and spend fewer tokens between the owner's copy-in and the start of work.",
+   "text": "'For next time how do we make it quicker and less token sends from when I left off the session.': make the resume after a handoff quicker and spend fewer tokens between the owner's copy-in and the start of work, by dropping the between-session checks (R113), not by shortening the copy-in prompt or the saved handoff information (R112, the owner's correction).",
    "source_ref": "source-007-amendment.md#owner-message-verbatim",
    "classification": "obligation",
    "binding": true,
@@ -3419,7 +3419,7 @@
     "effective_date": "2026-10-11"
    },
    "dependencies": [],
-   "required_harness": "The next handoff's copy-in prompt and its reading list are short; the receiving session starts the next action without re-reading whole plan files.",
+   "required_harness": "The receiving session starts the next action without the between-session checks; the copy-in prompt and the saved handoff keep all their information (R112).",
    "required_evidence": "The next handoff file and the receiving session's first actions.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
@@ -3452,7 +3452,7 @@
    "dependencies": [
     "D-094-R109"
    ],
-   "required_harness": "CLAUDE.md's start-of-session routine and the session-handoff skill's resume prompt say so; the checks remain only for a crash or forced turnover.",
+   "required_harness": "CLAUDE.md's start-of-session routine and the session-handoff skill's successor prompt drop the checks after a planned handoff and keep everything else; the checks remain only for a crash or forced turnover.",
    "required_evidence": "The governance change to CLAUDE.md and the session-handoff skill, and the next handoff.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
@@ -3485,6 +3485,73 @@
    "dependencies": [],
    "required_harness": "Answered in chat and in the owner's question-and-answer log.",
    "required_evidence": "The chat answer and the log section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R112",
+   "text": "'No, you should still give the same prompt.' 'My point was that the saving of the file, so you get the information, so you know everything, where everything is in the new session, that needs to stay.' 'You need to be able to quickly jump back in and know exactly where everything is, how to proceed.': the copy-in prompt stays the same and the saved handoff keeps all the information (everything, where everything is, how to proceed), so the new session knows exactly where it is and jumps back in quickly; this corrects the session's proposal of a shorter prompt and a narrower reading list.",
+   "source_ref": "source-008-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R109",
+    "D-094-R110"
+   ],
+   "required_harness": "The next handoff keeps its full content and the same copy-in prompt, minus only the checks.",
+   "required_evidence": "The next handoff file and its copy-in prompt.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R113",
+   "text": "'But the checks, just you don't have to do, since we literally go from session to session.': after a planned handoff the new session does not run the between-session checks (the owner goes straight from one session to the next).",
+   "source_ref": "source-008-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R110"
+   ],
+   "required_harness": "CLAUDE.md's start-of-session routine and the session-handoff skill's successor prompt drop the checks after a planned handoff and keep everything else.",
+   "required_evidence": "The governance change to CLAUDE.md and the session-handoff skill.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",

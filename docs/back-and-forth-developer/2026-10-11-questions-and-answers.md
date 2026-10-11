@@ -404,10 +404,13 @@ to build).
 
 - **Owner:** after a handoff nothing changes: the owner clears the session and pastes the handoff text, so the checks
   and tests the new session runs first are a waste of time; the new session should jump in where the last one left off.
-- **Developer (ANSWERED; recorded as D-094 rows R109 to R111):**
-  - Agreed. After a planned handoff the next session starts the next step at once: no re-checks, no re-reading.
+- **Developer (first answer):** agreed; no checks after a planned handoff, only after a crash or forced stop; and also
+  a shorter pasted text and a handoff pointing only to the few lines the next step needs.
+- **Owner's correction:** keep the same pasted text and the full saved handoff, so the new session knows everything,
+  where everything is and how to proceed; only the checks go.
+- **Settled (recorded as D-094 rows R109 to R113):**
+  - The handoff file, the session brief and notes, and the pasted text stay as complete as before.
+  - After a planned handoff the new session skips the checks and starts the next step at once.
   - The checks stay only after a crash or a forced stop, when the last session could not finish its handoff.
-  - The bigger cost was reading: this session read the whole plan file (about 1,500 lines) before starting. Next
-    time the handoff names only the lines the next step needs, and the text the owner pastes is short.
   - The project's instruction file and the handoff routine still say "check first"; a small change brings them in
-    line with the owner's instruction.
+    line (inside the design-rules task).
