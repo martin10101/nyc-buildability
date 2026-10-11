@@ -1,0 +1,262 @@
+{
+  "task_id": "M5-T165",
+  "title": "Report page 1 rebuilt to the design contract change of 2026-10-11 (results with their assumptions, one site graphic, the legal ceiling beside the apartment estimate with the distinction line, at most three linked uncertainties) and the print type scale from the tokens; NB-01 revision 4",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Rebuild report page 1 (services/api/app/drawings/report/) to the design contract change of 2026-10-11, rows 1 and furniture: (1) the results in large type, each with its assumption line (R055: '10,075 sq ft recorded lot area x FAR 2.0, tax lot 70 alone') and the allowance phrase beside the headline; (2) one site graphic, the existing compact frame in its unchanged wrapper; (3) 'Legal ceiling 29 (Conditional)' side by side with 'Estimate 17-22 (Provisional)' with the distinction line from the tokens; the estimate links to its full calculation on the scenario sheet; (4) at most three uncertainties in the order zoning lot, lot-area basis, rear yard, each linked to '#issue-<n>'. The coverage inventory leaves the report (coverage_groups stays for the owner update); the scope line goes on page 1 and the material-exclusions block heads the appendix's open items. The generic zoning-lot line (page_decision_summary.py:32-33) and the 'R6B height limits' literal (:88-90) come from data. Print sizes come from the TYPE tokens (layout.py:58-80 hard-coded today; section title print 14 pt). The duplicate long apartment-estimate sentence on the scenario sheet goes (R013). Refactors for later tasks: the zoning-lot logic of readers.py (marker :269, zoning_lot_basis :430-461, its effect line and item builder) moves to a new zoning_lot_item.py (the G-6 report-side isolation); the constraint effect texts (readers.py:270-281) move to a new constraint_text.py that reads the document's own value state; every moved text keeps its 1.4.0 output except the rear-yard text, which becomes the open check of the contract (names 23-344(b) and (c)(3), no conclusion, links 23-344). A presentation-tokens.json wording group holds the distinction line, the two zone labels and the caption, each equal to the contract's quoted text. The stale page-2 CSS comment (layout.py:120-123) is reworded to the one-locator composition. The lot_area effect text names the GIS outline 'city map outline', never 'tax-map outline'. NB-01 revision 4 records the code identity (including M5-T162's readers.py change) and the isolation decision. Wave 24's owner of NB-01.",
+  "business_reason": "D-094 R073/R078/R081 (the reviewer's next-pass item 1): page 1 must lead with the answers, their assumptions, one site graphic and the few uncertainties that change the answer; the 29 and the 17-22 belong together with a short distinction. This is the first PDF the owner was promised.",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/layout.py",
+    "docs/design/presentation-tokens.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "project-control/reports/D-094-visual-proof-before.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/zoning_lot_item.py",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/open_items.py",
+    "services/api/tests/drawings/report/test_report_page_one.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "project-control/reports/M5-T165-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T193"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/unit_limit_text.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/components.py",
+    "services/api/app/drawings/report/labels.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/app/drawings/report/page_scenario_sheet.py",
+    "services/api/app/drawings/report/zoning_lot_item.py",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/open_items.py",
+    "docs/design/presentation-tokens.json",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "apps/web/src/app/globals.css",
+    "apps/web/scripts/presentation-tokens.mjs",
+    "apps/web/scripts/tests/presentation-tokens.test.mjs",
+    "services/api/tests/drawings/test_presentation_tokens.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "services/api/tests/drawings/report/test_report_page_one.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "project-control/reports/M5-T165-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/map_caption.py",
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/scenario/",
+    "packages/",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/report/test_report_law_links.py",
+    "services/api/tests/api/test_report_read_context.py",
+    "apps/web/e2e/",
+    "apps/web/src/components/",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the benchmark document",
+      "when": "page 1 is built",
+      "then": "it holds exactly the four kinds of content plus the contract's named furniture"
+    },
+    {
+      "id": "S2",
+      "given": "a document carrying the zoning-lot condition",
+      "when": "page 1 is built",
+      "then": "the sentence names the register's index entry, never the instrument ('the city's register lists a zoning lot description recorded 2022-02-08 against lots 1 and 70'), values from the document's condition; the generic line appears only in the not-checked state, once"
+    },
+    {
+      "id": "S3",
+      "given": "the report stylesheet",
+      "when": "the print sizes are read",
+      "then": "the headline is 28-32 pt and every print size comes from the TYPE tokens (CSS-level test)"
+    },
+    {
+      "id": "S4",
+      "given": "page 1's ceiling and estimate",
+      "when": "they are built",
+      "then": "one block holds both with the token distinction line (a test asserts the token equals the contract's quoted line); no forbidden word including buildable, achievable, can be built; the 29 is never Provisional or settled; a withheld limit shows unit_limit_text's reason"
+    },
+    {
+      "id": "S5",
+      "given": "the benchmark's 1.4.0 rear-yard state",
+      "when": "the uncertainties are built",
+      "then": "at most three, in the order zoning lot, lot-area basis, rear yard; the rear yard comes from constraint_text.py worded as the open check"
+    },
+    {
+      "id": "S6",
+      "given": "every '#issue-<n>' link and the estimate link",
+      "when": "the HTML is read",
+      "then": "each resolves; the estimate links to its full calculation on the scenario sheet"
+    },
+    {
+      "id": "S7",
+      "given": "the report HTML",
+      "when": "the standing budget test runs (test_report_benchmark.py, visible_text, header and footer excluded)",
+      "then": "the page-1 section's words are at most 200 (the cap fixed at G0; baseline 327); the total is at most the baseline 2,448; page 1 adds no sentence of 8+ words found elsewhere; the repeat count does not rise"
+    },
+    {
+      "id": "S8",
+      "given": "the R070 guards",
+      "when": "the suites run",
+      "then": "the zoning-lot flag stays on page 1 and as item 1 (test_db232 kept); the 29 derivation (20,150 / 680 = 29.63 -> 29) still prints in the evidence section; test_report_law_links.py stays green unedited"
+    },
+    {
+      "id": "S9",
+      "given": "the eleven-option test",
+      "when": "it runs",
+      "then": "it is untouched and green"
+    },
+    {
+      "id": "S10",
+      "given": "readers.py after the moves",
+      "when": "the modularity check runs",
+      "then": "readers.py at most 600 SLOC and 40 symbols; the facade keeps every name in readers.__all__ plus ANSWER_NAMES; the marker stays in step with result_way_conditions.py:76; the DB-233 print-width guard holds"
+    },
+    {
+      "id": "S11",
+      "given": "the allowance phrase",
+      "when": "page 1 is built",
+      "then": "it sits beside the headline"
+    },
+    {
+      "id": "S12",
+      "given": "the report",
+      "when": "it is built",
+      "then": "the scope line is on page 1; the exclusions block heads the open items; no feature inventory remains; all six page types are present"
+    },
+    {
+      "id": "S13",
+      "given": "the moved texts",
+      "when": "the 1.4.0 benchmark is built",
+      "then": "their output is unchanged except the rear-yard text; test_location_sheet.py stays green unedited"
+    },
+    {
+      "id": "S14",
+      "given": "the parallel close-up task M5-T166",
+      "when": "this task's tests run",
+      "then": "the page-1 wrapper is unchanged (class summary-figure, the 88 mm column, the caption 'The lot among its neighbours (city map; not surveyed).'); report-print.flag-on.spec.ts stays green unedited in CI"
+    },
+    {
+      "id": "S15",
+      "given": "NB-01",
+      "when": "python3 tools/research_record_check.py --check runs",
+      "then": "revision 4 records the code identity including M5-T162's change and the isolation decision; code_current True; exit 0"
+    },
+    {
+      "id": "S16",
+      "given": "the token generator",
+      "when": "its --check and tests run",
+      "then": "they pass; the screen tokens are byte-identical; the wording group holds the three texts, each equal to the contract's quote"
+    },
+    {
+      "id": "S17",
+      "given": "the scenario sheet",
+      "when": "it is built",
+      "then": "the long apartment-estimate sentence prints once in the report"
+    },
+    {
+      "id": "S18",
+      "given": "the whole report text",
+      "when": "it is searched",
+      "then": "no text calls a GIS value or outline 'tax map' or 'tax-map outline'"
+    },
+    {
+      "id": "S19",
+      "given": "the whole report text",
+      "when": "it is searched",
+      "then": "'not known beyond the corner area' appears nowhere; the rear-yard text names 23-344(b) and (c)(3), states no conclusion and links 23-344"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The larger type scale may add a page; fonts are never shrunk to avoid it (PDF budgets are checked by eye in H2).",
+    "readers.py is near its size line; the moves to zoning_lot_item.py and constraint_text.py keep it under 600 SLOC."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T20:43:40.698256+00:00",
+  "updated_at": "2026-10-11T20:43:41.105390+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R011",
+        "D-094-R012",
+        "D-094-R013",
+        "D-094-R029",
+        "D-094-R030",
+        "D-094-R037",
+        "D-094-R047",
+        "D-094-R048",
+        "D-094-R050",
+        "D-094-R051",
+        "D-094-R054",
+        "D-094-R055",
+        "D-094-R060",
+        "D-094-R070",
+        "D-094-R071",
+        "D-094-R072",
+        "D-094-R073",
+        "D-094-R078",
+        "D-094-R079",
+        "D-094-R081",
+        "D-094-R085",
+        "D-094-R089",
+        "D-094-R090"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T20:43:40.698446+00:00",
+  "path_notes": "Runs beside M5-T166 (no shared file; M5-T166 changes no CSS: any page-2/3 CSS need is relayed to this builder before it submits). Builders never start a server; the report-print e2e runs in CI.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py",
+    "python3 tools/research_record_check.py --check",
+    "python3 tools/modularity_check.py --check",
+    "cd apps/web && node scripts/presentation-tokens.mjs --check && node --test scripts/tests/presentation-tokens.test.mjs"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
