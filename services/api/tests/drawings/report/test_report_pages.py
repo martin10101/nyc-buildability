@@ -368,7 +368,13 @@ def test_f8_open_items_short_effect_and_full_reason() -> None:
     html = build_report_html(benchmark())
     text = visible_text(html)
     assert "Effect on the answer" in text
-    assert "No legal apartment limit is shown." in text
+    # After M5-T157 the standard-residence limit is shown (a Conditional ceiling); the effect
+    # follows the document instead of the old fixed "No legal apartment limit is shown." sentence.
+    assert (
+        "The legal apartment limit is shown as a conditional ceiling for standard residences; "
+        "it is not known for qualifying affordable housing or qualifying senior housing."
+    ) in text
+    assert "No legal apartment limit is shown." not in text
     assert "rear yard is not known beyond the corner area" in text
     assert "class=\"reason-row\"" in html
 

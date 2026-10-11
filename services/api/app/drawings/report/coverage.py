@@ -67,13 +67,22 @@ def coverage_entries(results: Mapping, *, maps_present: bool = False) -> list[di
         (PARTLY, "lot outline and floor stack; the envelope is not drawn")
         if readers.geometry_available(results) else (NOT_YET, "no lot outline")
     )
+    # F reads from the document: 'Partly' with a note naming the shown limit's program when at
+    # least one legal dwelling-unit limit is shown (M5-T157 made the standard-residence limit a
+    # Conditional ceiling); 'Not yet' only when none is shown.
+    shown_limit_programs = readers.shown_legal_unit_limit_programs(results)
+    f_state = (
+        (PARTLY, f"the limit for {', '.join(shown_limit_programs)} is shown as a conditional "
+                 "ceiling")
+        if shown_limit_programs else (NOT_YET, "no legal unit limit is shown")
+    )
     states = {
         "A": (IN_REPORT, ""),
         "B": (IN_REPORT, ""),
         "C": c_state,
         "D": d_state,
         "E": e_state,
-        "F": (NOT_YET, "the legal unit limit is withheld"),
+        "F": f_state,
         "G": (PARTLY, "the worked building only") if has_capacity else (NOT_YET, "no estimate"),
         "H": (IN_REPORT, ""),
         "I": (IN_REPORT, ""),
