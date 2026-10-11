@@ -54,7 +54,7 @@ TOKENS = {
             "screen_px": 18,
             "line_height": 1.3,
             "weight": 600,
-            "print_pt": 12,
+            "print_pt": 14,
         },
         "body": {
             "screen_px": 16,
@@ -100,6 +100,13 @@ TOKENS = {
             "surface": "#F2F5F6",
         },
     },
+    "wording": {
+        "ceiling_estimate_distinction": "The ceiling is a conditional zoning limit; the estimate "
+        "is an unvalidated apartment-yield range; neither is a demonstrated layout.",
+        "area_zone_apartment": "Apartment area",
+        "area_zone_other": "Other building area: core, circulation, walls and services",
+        "area_illustration_caption": "Illustrative area allocation—not a floor plan",
+    },
 }
 
 COLOR = TOKENS["color"]
@@ -109,3 +116,4 @@ RADIUS = TOKENS["radius"]
 FONT = TOKENS["font"]
 TYPE = TOKENS["type"]
 STATUS = TOKENS["status"]
+WORDING = TOKENS["wording"]

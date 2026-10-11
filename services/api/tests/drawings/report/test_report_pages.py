@@ -375,7 +375,8 @@ def test_f8_open_items_short_effect_and_full_reason() -> None:
         "it is not known for qualifying affordable housing or qualifying senior housing."
     ) in text
     assert "No legal apartment limit is shown." not in text
-    assert "rear yard is not known beyond the corner area" in text
+    # The rear-yard benchmark wording (the open check, M5-T165) is asserted in
+    # test_report_benchmark.py, which now owns the moved benchmark-text assertions.
     assert "class=\"reason-row\"" in html
 
 
@@ -406,25 +407,27 @@ def test_a3_not_checked_items_have_no_redundant_detail() -> None:
     assert expected < len(readers.open_items(doc))
 
 
-# =========================================================================== F10 / D9
-def test_f10_d9_coverage_compact_block_on_decision_summary() -> None:
+# ==================================================================== F10 / R012 / UX-12
+def test_f10_r012_coverage_inventory_leaves_the_report() -> None:
+    # The coverage inventory (the D9 "what this report covers" block) LEAVES the report
+    # (R012/UX-12, change 2026-10-11; M5-T165). It is the owner update's material now, not
+    # the architect's reading path. Page 1 carries a compact scope line pointing to the
+    # material-exclusions block at the head of the appendix. coverage.coverage_groups stays
+    # for the owner update.
+    from app.drawings.report import coverage
     html = build_report_html(benchmark())
+    text = visible_text(html)
+    # the inventory and its state headings appear NOWHERE in the report.
+    assert "What this report covers" not in text
+    assert "In this report:" not in text
+    assert "Coverage of the promised sections" not in text
+    assert "1 of 11 options worked" not in text
+    # page 1 carries the scope line to the appendix instead.
     decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
-    text = visible_text(decision)
-    # D9: a compact block grouped by state, on the decision summary.
-    assert "What this report covers" in text
-    assert "In this report:" in text and "Partly:" in text and "Not yet:" in text
-    assert "1 of 11 options worked" in text
-    for further in ("Comparable sales nearby", "Context maps", "Tax abatement eligibility"):
-        assert further in text
-    # the owner-held section is marked.
-    assert "Financial analysis inputs (held)" in text
-    # D9: the coverage table is removed from the assumptions page (stated once).
-    assumptions = html[
-        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
-    ]
-    assert "What this report covers" not in visible_text(assumptions)
-    assert "Coverage of the promised sections" not in visible_text(assumptions)
+    scope_line = "The material exclusions are listed at the head of the appendix."
+    assert scope_line in visible_text(decision)
+    # the owner-update data stays computable even though the report no longer prints it.
+    assert dict(coverage.coverage_groups(benchmark())).get("Not yet")
 
 
 # =========================================================================== F11
@@ -603,9 +606,11 @@ def test_vc2_no_long_document_sentence_printed_twice() -> None:
     assert text.count("by portion the law allows up to 100 percent coverage") == 1
     assert text.count("if the recorded lot area of 10,075 sq ft is confirmed") == 1
     assert "see site and context for the lot-area basis." in text
-    # the estimate line (composed; carried on pages 1 and 4) is the allowed repeat.
+    # The long apartment-estimate sentence now prints ONCE: on the scenario sheet (page 4),
+    # its full calculation. Page 1 shows the range "Estimate 17-22" and links here, so the
+    # duplicate on page 1 is gone (D-094 R013, R2-F14; M5-T165).
     estimate = readers.apartment_estimate_text(doc["building_alternatives"][0]["capacity_estimate"])
-    assert text.count(estimate.lower()) == 2
+    assert text.count(estimate.lower()) == 1
 
 
 # =========================================================================== Q3
@@ -630,7 +635,11 @@ def test_q3_coverage_and_maps_with_and_without_a_map_document() -> None:
     without = build_report_html(doc)
     groups_without = dict(coverage.coverage_groups(doc, maps_present=False))
     assert "Context maps" in groups_without["Not yet"]
-    assert "Context maps" not in visible_text(without[without.index('id="site-and-context"'):])
+    # No Context-maps SECTION on the site-and-context page (slice bounded to that page).
+    # The coverage inventory has left the report (M5-T165); "Context maps" now appears only
+    # in the appendix's material-exclusions block, which is out of this slice.
+    site = without[without.index('id="site-and-context"'):without.index('id="option-comparison"')]
+    assert "Context maps" not in visible_text(site)
 
     # with a map document whose maps render: context maps are In this report, and shown.
     with_maps = build_report_html(doc, map_context=_benchmark_map_context(), env=_LANE_E)

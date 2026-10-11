@@ -19,10 +19,15 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 __all__ = [
+    "legal_ceiling",
     "legal_unit_limit_item",
     "shown_legal_unit_limit_programs",
     "shown_legal_unit_limits",
 ]
+
+# The document key for the standard-residence legal dwelling-unit limit (the page-1
+# "legal ceiling").
+_STANDARD_LIMIT_KEY = "legal_unit_limit_standard"
 
 # The one plain sentence shown when NO legal dwelling-unit limit is shown.
 NO_LIMIT_SENTENCE = "No legal apartment limit is shown."
@@ -65,6 +70,30 @@ def _as_label(program: str | None, fallback: str) -> str:
     if not program:
         return fallback
     return program[:1].upper() + program[1:]
+
+
+def legal_ceiling(results: Mapping) -> dict:
+    """The standard-residence legal dwelling-unit ceiling for the page-1 ceiling/estimate
+    block, read only from the document: ``{"value", "label", "reason"}``. When the standard
+    limit is shown, ``value`` is its formatted figure and ``label`` its own state label (a
+    conditional ceiling is Conditional, never Provisional or settled, D-094 S4); when it is
+    withheld, ``value`` is ``None`` and ``reason`` carries the document's own reason; when the
+    document carries no standard limit, every field is ``None`` (no invented value)."""
+    from . import readers
+
+    for name in readers.ANSWER_NAMES:
+        row = readers.named_value(readers.answer_block(results, name), _STANDARD_LIMIT_KEY)
+        if row is not None:
+            return {"value": row["display"], "label": row["status_label"], "reason": None}
+    for name in readers.ANSWER_NAMES:
+        for withheld in readers.withheld_values(readers.answer_block(results, name)):
+            if withheld.get("key") == _STANDARD_LIMIT_KEY:
+                return {
+                    "value": None,
+                    "label": withheld["status_label"],
+                    "reason": withheld.get("reason"),
+                }
+    return {"value": None, "label": None, "reason": None}
 
 
 def shown_legal_unit_limits(results: Mapping) -> list[dict]:

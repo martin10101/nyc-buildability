@@ -34,8 +34,10 @@ export const PY_PATH = join(
   "presentation_tokens.py",
 );
 
-// The token groups that both outputs mirror, in a fixed render order.
-const TOKEN_GROUPS = ["color", "spacing", "control", "radius", "font", "type", "status"];
+// The token groups that both outputs mirror, in a fixed render order. The Python
+// module mirrors every group; the CSS block mirrors only the visual ones (the
+// `wording` group holds report/website copy, not CSS, so it is Python-only).
+const TOKEN_GROUPS = ["color", "spacing", "control", "radius", "font", "type", "status", "wording"];
 
 const CSS_BEGIN =
   "  /* BEGIN GENERATED presentation tokens (M5-T148) — source:" +
@@ -122,6 +124,41 @@ export function renderGlobalsCss(tokens, originalCss) {
 
 // --- Python ---------------------------------------------------------------
 
+// Python modules in services/api are linted at line-length 100 (ruff E501) and a
+// test asserts the generated module keeps every line <= 100. A long token string is
+// rendered as adjacent implicit-concatenation chunks so every line fits; Python joins
+// the chunks back into the exact same string.
+const PY_MAX_LINE = 100;
+
+function pyString(value, prefixLen, indent) {
+  const text = assertPlainString(value);
+  const pad = "    ".repeat(indent);
+  // reserve 3 for the two quotes and a possible trailing comma.
+  const firstBudget = PY_MAX_LINE - prefixLen - 3;
+  if (text.length <= firstBudget) {
+    return `"${text}"`;
+  }
+  const contBudget = PY_MAX_LINE - pad.length - 3;
+  const words = text.split(" ");
+  const lines = [];
+  let current = "";
+  let budget = firstBudget;
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (current && candidate.length > budget) {
+      lines.push(`${current} `); // trailing space preserves the word boundary on join
+      current = word;
+      budget = contBudget;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) {
+    lines.push(current);
+  }
+  return lines.map((line, i) => (i === 0 ? `"${line}"` : `${pad}"${line}"`)).join("\n");
+}
+
 function pyLiteral(value, indent) {
   const pad = "    ".repeat(indent);
   const padInner = "    ".repeat(indent + 1);
@@ -142,7 +179,15 @@ function pyLiteral(value, indent) {
     return "{}";
   }
   const body = keys
-    .map((key) => `${padInner}"${key}": ${pyLiteral(value[key], indent + 1)},`)
+    .map((key) => {
+      const prefix = `${padInner}"${key}": `;
+      const item = value[key];
+      const rendered =
+        typeof item === "string"
+          ? pyString(item, prefix.length, indent + 1)
+          : pyLiteral(item, indent + 1);
+      return `${prefix}${rendered},`;
+    })
     .join("\n");
   return `{\n${body}\n${pad}}`;
 }
@@ -169,6 +214,7 @@ export function renderPython(tokens) {
     'FONT = TOKENS["font"]',
     'TYPE = TOKENS["type"]',
     'STATUS = TOKENS["status"]',
+    'WORDING = TOKENS["wording"]',
   ].join("\n");
   return `${header}\n${tokensText}\n${aliases}\n`;
 }

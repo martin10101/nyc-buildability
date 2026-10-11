@@ -116,9 +116,13 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
     ]
     estimate = readers.apartment_estimate_text(view.get("capacity_estimate"))
     if estimate is not None:
+        # This is the apartment estimate's FULL calculation; page 1 shows the range and
+        # links here (D-094 R013, R2-F14). The id lets that link resolve. The long
+        # sentence prints once in the report - on this sheet, not on page 1.
+        estimate_id = f"estimate-{view['building']}" if view.get("building") else None
         tail.append(
             el("p", raw(f'<strong>Preliminary apartment estimate:</strong> {estimate} '),
-               label_chip(labels.PROVISIONAL))
+               label_chip(labels.PROVISIONAL), id=estimate_id)
         )
     children.append(el("div", *tail, class_="sheet-tail"))
     return str(

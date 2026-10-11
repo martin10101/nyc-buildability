@@ -10,13 +10,29 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import readers
+from . import coverage, readers
 from .components import label_chip, short_line
-from .html import el
+from .html import el, escape, raw
 
 __all__ = ["render"]
 
 QUESTION = "What remains unresolved, and what would resolve it?"
+
+
+def _material_exclusions(results: Mapping) -> object:
+    """The compact scope note at the head of the appendix (D-094 R012): every
+    material exclusion, i.e. the sections the report does not yet cover. The coverage
+    inventory itself has left the report; this names only what is excluded. Maps are
+    reported as not present here because this page is built without the map context."""
+    groups = dict(coverage.coverage_groups(results))
+    not_yet = groups.get("Not yet", [])
+    if not not_yet:
+        return el("p", "This report covers every promised section.", class_="scope-note")
+    return el(
+        "p",
+        raw(f"<strong>Not yet in this report:</strong> {escape('; '.join(not_yet))}"),
+        class_="scope-note",
+    )
 
 
 def _assumptions(results: Mapping) -> object:
@@ -37,13 +53,15 @@ def _open_items(results: Mapping) -> object:
     )
     rows: list[object] = []
     for item in items:
+        # Each row carries id="issue-<n>" so the page-1 uncertainties link to it (R050, R060).
         rows.append(
             el("tr",
                el("td", item["number"], class_="open-number"),
                el("td", item["title"]),
                el("td", item["effect"]),
                el("td", item.get("resolves") or "Not stated"),
-               el("td", label_chip(item["status_label"])))
+               el("td", label_chip(item["status_label"])),
+               id=f"issue-{item['number']}")
         )
         reason = item.get("reason")
         # Omit the detail line when it only repeats the item's name or effect (A3).
@@ -64,6 +82,7 @@ def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     children = [
         el("p", "Assumptions and open items", class_="type-name"),
         el("h2", QUESTION),
+        _material_exclusions(results),
         el("h3", "Shared assumptions"),
         _assumptions(results),
         el("div", el("h3", "Open items"), _open_items(results), class_="open-items-block"),
