@@ -35,12 +35,13 @@ Nothing in a case comes from a program run: not a value, not a column, not a sen
 | `cases/step-p4-worked.json` + `step-p4-worked.md` | The readings worked from the law text captured by task M4-T031 and read independently in step P4 (task M4-T032): ZR 34-22 and its sections 34-221 to 34-224, and ZR 34-23 and its sections 34-231 to 34-233, for a residential building in a C2-2 district mapped within R6B; with those read, whether the floor area ratio, the lot coverage and the rear yard are the same as plain R6B, and whether any captured overlay text speaks of lot coverage; ZR 35-22 and ZR 35-62, 35-63, 35-641, 35-642 and 35-643; the definitions of a mixed building, lot coverage, the five yards and the street wall, curb level and prevailing street wall frontage; what may stand in a required rear yard; large sites and qualifying residential sites; whether ZR 34-111's exceptions reach C2-2 within R6B; dwelling units and qualifying housing and the ZR 23-52 factors, with a worked unit count for a made-up 100-by-100 lot; and ZR 23-441, 23-442 and 23-443 (section 8; backlog row DB-170 item (a)). |
 | `cases/step-p5-worked.json` + `step-p5-worked.md` | The readings worked from the 46 texts captured by tasks M4-T033 and M4-T034 and read independently in step P5 (task M4-T035): the mixed-building floor-area sections ZR 35-30 to 35-33 (with ZR 35-31's shared-floor-area rule) and the floor-area-ratio definition, worked for a made-up mixed building of shops below standard residences; ZR 23-24 and the ZR 34-23 page (ZR 34-231 to 34-233); the ZR 12-10 definitions of a fully electrified building, an ultra-low-energy building, a building and a story; the fourteen parking, loading-berth and bicycle-parking sections and what each of seven development options' parking, loading and bicycle line may say; and the benchmark lot's rear yard read from ZR 23-342 and ZR 23-344 (backlog rows DB-184 first piece and DB-185 (b)). |
 | `cases/step-p6-worked.json` + `step-p6-worked.md` | One independent hand-worked example of a first building option in R6B, read independently in step P6 (task M4-T037): whether a building may be lower than the minimum base height (ZR 23-431, 23-432, 23-436 and ZR 35-631 to 35-633); a footprint and floors worked by hand for a made-up interior lot of 100 by 100 ft and for the recorded corner lot (the lot coverage by portion; the rear-yard, street-wall and ground-elevation variants where a property fact is missing); what a floor schedule must list; and the arithmetic of the preliminary apartment estimate on the owner's starting values, kept apart from the legal dwelling-unit ceiling. Both worked buildings are a plain stack, every storey the same plan - the method of the example, an assumption, not a rule of law and not a recommendation. |
+| `cases/short-block-rear-yard.json` + `short-block-rear-yard.md` | The two independent readings of ZR 23-344(b) (the short dimension of a block) and 23-344(c)(3), read independently in step P7 (task M5-T176): what 23-344(b) measures and whether "less than 230 feet" is strict and how "within 100 feet of such street line" is measured; 23-344(c) and (c)(3); how ZR 23-342, 23-343 and 23-344(a)/(b)/(c) fit together; ten made-up boundary cases M1 to M10; and the real lot (215-16 Northern Boulevard, lot 70 of block 7334) under Z1 (lot 70 alone) and Z2 (lots 70 and 1 together) on each measurement basis, with the bounding streets, their widths and the ALLEY. A value or yes/no is recorded only where both readings agree on the same basis; every disagreement, every not-known reading and the measurement basis the captured text does not fix stay not settled; no unconditional "no rear yard" is recorded for the real lot. |
 
 Each case is kept twice from one source: a structured data file under `cases/` that a test can load, and
 a page rendered from it that a person can read. The helper returns are kept unchanged under
 `provenance/`: the two first-round returns, the two step-P1 readings, the two step-P2
 commercial-overlay readings, the two step-P3 readings, the two step-P4 readings, the two step-P5
-readings and the two step-P6 readings.
+readings, the two step-P6 readings and the two step-P7 readings.
 
 ## Law text: what steps P1 and P2 captured, and what the readers did not have
 
@@ -220,6 +221,36 @@ the recorded outline themselves and reached slightly different corner-portion an
 so the real lot's whole-lot coverage, footprint and building A's one-storey floor area are held as both
 figures, not smoothed. A text the readers did not have may be captured later; `docs/research/zr-snapshots/v1/`
 shows what is captured now.
+
+**Step P7** (task M5-T176) is the two independent readings of ZR 23-344(b) (the short dimension of a
+block) and 23-344(c)(3), read independently by two AI helpers (readings 15 and 16) working alone from a
+sealed folder of the 189 pinned law captures without their notes, the block-7334 lot outlines, the DCM
+centrelines, the PLUTO rows of lots 70 and 1, the printed tax-map labels, the zoning of lot 70, and ten
+made-up boundary cases M1 to M10. The step-P7 readers were **given four earlier answers as settled** -
+copied word for word from the reference cases (used here for lot 70's lot lines, from
+`cases/step-p3-worked.json`, and for lot 70's reach, from `cases/corner-reach.json`) - so completed
+readings are reused and not worked again. With that, the step-P7 rows settle, from captured text, what
+23-344(b) measures and that "less than 230 feet" is strict; which lots 23-344(c) reaches, what becomes a
+rear lot line and that (c)(1) versus (c)(3) turns on the adjoining lot's lot-line kind plus the subject
+lot's own district (not the neighbour's district); that a public park can bound a block and a private way
+cannot; and that more than one 23-344 modification can apply to one lot and (b) is not barred on a corner
+lot. They keep **not settled** the measurement basis for the short dimension, the method of measuring
+"within 100 feet", the exact-100-ft edge, the method for a non-rectangular block, and the overlap of (b)
+and (c), because the captured text does not fix them; and for the real lot they keep the rear-yard answer
+conditional on the measurement basis, the zoning lot (Z1 vs Z2) and the neighbouring lots' records, so no
+unconditional "no rear yard" is recorded.
+
+From both step-P7 readings' own summary of what they still did not have, the step-P7 readers lacked, as
+facts not law (an item is on this list only where BOTH readings name it): an authoritative measurement
+basis - a survey - for the side-street separation; a zoning-lot description, deed or Declaration deciding
+whether lots 70 and 1 are one zoning lot; the zoning and lot-line kinds of the other lots on the block;
+and the status of the ALLEY and the SW-end bounding feature. Each reading also named outside-folder texts
+of its own: reading 1 a "block frontage"/"frontage" definition; reading 2 a general "lot line"
+definition, ZR 23-38 and ZR 23-72, the full text of ZR 34-23, and the district-suffix rule (such as ZR
+11-25) behind whether R6B falls within "R6 through R12". The two readers measured the block themselves and
+reached different centreline separations (260.02 ft and about 261.0 ft, both above 230 ft), so the real
+lot's short-dimension determination stays basis-dependent and not settled. A text the readers did not have
+may be captured later; `docs/research/zr-snapshots/v1/` shows what is captured now.
 
 ## The rule for changing an expected value
 

@@ -45,7 +45,7 @@ SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
     "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
-    "step-p6-worked",
+    "step-p6-worked", "short-block-rear-yard",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -113,6 +113,22 @@ REQUIRED_BASE_IDS = {
         "both-readers-did-not-have", "real-lot-missing-facts", "settled-answer-contradicted",
         "six-steps-closing",
     ],
+    # The step-P7 case (short-block-rear-yard): the two readings of ZR 23-344(b) and
+    # (c)(3). The reading of 23-344(b) (b-*); of 23-344(c)/(c)(3) (c-*); how the
+    # sections fit (fit-*); the ten made-up cases (M1 to M10); the real lot
+    # (real-lot-*); the missing facts and what both readers did not have; and the map
+    # of M5-T167's scenarios S1 to S12.
+    "short-block-rear-yard": [
+        "b-what-measured", "b-measurement-basis", "b-less-than-230", "b-within-100-feet",
+        "b-exact-100-ft", "b-block-boundary",
+        "c-which-lots", "c-becomes-rear-lot-line", "c-from-which-street-line", "c-1-vs-c-3",
+        "fit-sections", "fit-multiple-apply", "fit-b-on-corner-lot", "fit-b-c-overlap",
+        "M1", "M2", "M3", "M4", "M5", "M6", "M7", "M8", "M9", "M10",
+        "real-lot-bounding-streets", "real-lot-alley", "real-lot-short-dimension",
+        "real-lot-front-lot-line", "real-lot-reach", "real-lot-z1-rear-yard",
+        "real-lot-z2-rear-yard", "real-lot-beyond-100-sliver",
+        "real-lot-missing-facts", "both-readers-did-not-have", "m5-t167-scenario-map",
+    ],
 }
 
 EXPECTED_KINDS = ("value", "not_known")
@@ -138,7 +154,10 @@ ROW_KEYS = {
 # steps of that building or estimate as numbers in one structured block, which the
 # renderer shows and the step-P6 tests recompute (every derived number from the
 # block's own inputs). A row without it holds no such block.
-OPTIONAL_ROW_KEYS = {"superseded_by", "numbers_block"}
+# A step-P7 row may also carry ``quantities``: a list of {name, value, unit, basis}
+# entries, each basis one of the nine measurement bases (step_p7.quantity_basis_errors
+# / S7). A row without it carries no measured quantity.
+OPTIONAL_ROW_KEYS = {"superseded_by", "numbers_block", "quantities"}
 EXPECTED_KEYS = {"kind", "value", "unit", "reason"}
 CITATION_KEYS = {
     "kind", "section", "title", "quote", "snapshot_id", "snapshot_file",
