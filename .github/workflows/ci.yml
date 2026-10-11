@@ -517,6 +517,12 @@ jobs:
         run: python3 tools/test_directive_compliance.py
       - name: Run directive-compliance reminder-hook tests
         run: python3 tools/test_directive_reminder.py
+      # Research-and-verification workflow (D-093, task M0-T190): validate the committed
+      # evidence records and run the record-check's own test suite (both stdlib-only).
+      - name: Validate research evidence records (D-093)
+        run: python3 tools/research_record_check.py --check
+      - name: Run research evidence-record check tests (D-093)
+        run: python3 tools/test_research_record_check.py
       - name: Run read-only reviewer guard test (governed roster incl. directive-compliance-verifier)
         run: python3 tools/test_readonly_agent_guard.py
       # MCP default-deny policy (D-020, task M0-T077): the checked-in project settings
