@@ -76,21 +76,21 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "If the real route still withholds the limit at the first press, the product (not the test) disagrees with M5-T157's design: the builder stops and reports; no product file may change in this task.",
     "Ports 3000, 3001 and 8000 hold the owner's preview; the orchestrator stops it before the builder's browser run and restarts it afterwards."
   ],
   "blockers": [],
   "created_at": "2026-10-11T08:46:28.502690+00:00",
-  "updated_at": "2026-10-11T08:46:28.904418+00:00",
+  "updated_at": "2026-10-11T08:46:31.729664+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -122,5 +122,14 @@
     "cd apps/web && npm run lint && npm run typecheck",
     "cd apps/web && CI=true npx playwright test e2e/results.flag-on.spec.ts (lanes venv first on PATH, PYTHONPATH as in the CI web-e2e job; ports 3000/3001/8000 free first)"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T08:46:31.729556+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    }
+  ]
 }
