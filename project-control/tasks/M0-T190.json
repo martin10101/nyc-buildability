@@ -179,8 +179,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "An always-loaded rule adds startup context (owner removed the cap, D-093-R074; size still reported).",
     "The structural check cannot certify a legal reading; it only blocks promotion without evidence (stated in the procedure).",
@@ -188,7 +188,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T01:38:57.776876+00:00",
-  "updated_at": "2026-10-11T02:26:21.307713+00:00",
+  "updated_at": "2026-10-11T02:26:30.871382+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
