@@ -157,11 +157,12 @@ _HEIGHT_KEYS = (
     "max_base_height_qualifying_affordable_or_senior",
     "max_building_height_qualifying_affordable_or_senior",
 )
+# M5-T157: the benchmark lot's record places it OUTSIDE both special density areas (Queens cd 411),
+# so legal_unit_limit_standard is now a CONDITIONAL ceiling, not withheld.
 _WITHHELD_ON_BENCHMARK = (
     "max_lot_coverage", "rear_yard", "setback_above_base",
     "achieved_zoning_floor_area", "building_floors", "building_height", "floor_plate_area",
-    "legal_unit_limit_standard", "legal_unit_limit_qualifying_affordable",
-    "legal_unit_limit_qualifying_senior",
+    "legal_unit_limit_qualifying_affordable", "legal_unit_limit_qualifying_senior",
 )
 
 
@@ -206,6 +207,13 @@ def test_s1_benchmark_carriers_reach_gather_through_adapter(monkeypatch, benchma
     assert "103.93 ft" in coverage.reason and "215 Place" in coverage.reason
     for key in _WITHHELD_ON_BENCHMARK:
         assert isinstance(_way(ways, key), Withheld), key
+    # M5-T157: the record places the benchmark lot OUTSIDE both special density areas (Queens
+    # cd 411), so the legal dwelling-unit limit is a conditional ceiling with the always-present
+    # zoning-lot condition - never settled, never the user_statement kind (the record decides).
+    unit = _way(ways, "legal_unit_limit_standard")
+    assert isinstance(unit, Conditional)
+    assert any("zoning lot" in c.assumption for c in unit.conditions)
+    assert all(c.kind != KIND_USER_STATEMENT for c in unit.conditions)
     for row in ways.result_ways():
         assert "value" not in row.way.to_value_state(), row.key  # never a zero
     assert res.gathered.large_lot.met is False  # 10,075 < 30,000
@@ -315,16 +323,39 @@ def test_s8_overlay_present_rear_yard_no_longer_blocked_by_the_overlay():
 
 # --------------------------------------------------------------------------- S9 density statement
 def test_s9_user_density_statement(benchmark_geom):
-    """S9 / owner rule R255: a user's statement that the lot is NOT in a special density area makes
-    the legal unit limit conditional on that statement and appears in NO gathered fact record;
-    without the statement the unit limit is withheld."""
+    """S9 / owner rule R255 / M5-T157 R2. The RECORD decides where it can: the benchmark lot's
+    record places it OUTSIDE both special density areas (Queens cd 411), so with an agreeing or no
+    statement the legal unit limit is a conditional ceiling on the zoning lot - never the
+    user_statement kind - and a disagreeing statement withholds it (a statement never overrides it).
+    The
+    user-statement path is reached ONLY where the record is NOT KNOWN: a bare profile (no readable
+    community district) with a statement that the lot is not in one makes the limit conditional on
+    THAT statement; without the statement it is withheld. A statement never enters a fact record."""
     profile, prepared, geometry = benchmark_geom
-    inputs = _inputs(profile=profile, outline=prepared, geometry=geometry)
+    bench = _inputs(profile=profile, outline=prepared, geometry=geometry)
+    # the record decides on the benchmark: conditional zoning-lot ceiling, never the statement kind
+    for stmt in (True, None):
+        res = run_engine_and_result_ways(
+            bench, evaluator_inputs=_eval_doc(), special_density_statement=stmt, env=_LANE_OFF
+        )
+        unit = _way(res.gathered.ways, "legal_unit_limit_standard")
+        assert isinstance(unit, Conditional)
+        assert any("zoning lot" in c.assumption for c in unit.conditions)
+        assert all(c.kind != KIND_USER_STATEMENT for c in unit.conditions)
+    # a statement that disagrees with the record is withheld, never overrides it
+    disagree = run_engine_and_result_ways(
+        bench, evaluator_inputs=_eval_doc(), special_density_statement=False, env=_LANE_OFF
+    )
+    assert isinstance(_way(disagree.gathered.ways, "legal_unit_limit_standard"), Withheld)
+
+    # the user-statement path is reached only where the record is NOT KNOWN (a bare profile: every
+    # column served empty, so the community district cannot be read)
+    bare = _inputs(profile=_bare_profile(), outline=None, geometry=None)
     with_stmt = run_engine_and_result_ways(
-        inputs, evaluator_inputs=_eval_doc(), special_density_statement=True, env=_LANE_OFF
+        bare, evaluator_inputs=_eval_doc(), special_density_statement=True, env=_LANE_OFF
     )
     without = run_engine_and_result_ways(
-        inputs, evaluator_inputs=_eval_doc(), special_density_statement=None, env=_LANE_OFF
+        bare, evaluator_inputs=_eval_doc(), special_density_statement=None, env=_LANE_OFF
     )
     unit = _way(with_stmt.gathered.ways, "legal_unit_limit_standard")
     assert isinstance(unit, Conditional)
