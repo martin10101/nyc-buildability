@@ -100,6 +100,9 @@ zone.
   25-232 [C][nH]
 - 66-11 transit-zone definitions [C][nH] · 12-10 "Transit Zone, Greater" / "Transit Zone, Outer" [C]
   (membership is a recorded value) · Appendix I transit-zone maps [C][nH]
+- the parking sections also reference the parking-removal special permits 73-432 / 73-433 (reduce existing
+  parking) [C], 75-31 (authorization to remove) [C], 74-52 (special permit to remove) [C] — captured but
+  project-specific (CPC/BSA); recorded in each section's `cross_references_out`, not followed as entries.
 - Reading (unreviewed draft): the parking "waiver" is the City-of-Yes elimination/reduction of parking
   minimums inside the transit zones; parking and transit-zone geography are well captured but no rule
   computes them.

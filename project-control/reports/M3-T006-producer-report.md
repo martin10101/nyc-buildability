@@ -36,6 +36,7 @@ feasible.
 - Sections: **73** total — **68 captured**, **5 NOT CAPTURED** (24-11, 24-111, 23-154, 77-00,
   shared-housing use/standards).
 - Handled by a rule file: **6** (11-25, 23-22, 23-52, 23-362, 23-432, 23-344(a)); **67 not handled**.
+- Cross-references recorded (rework 1): **162** — **104 followed**, **58 not followed** (each with a reason).
 - Defined terms: **38** — **30 captured**, **8 NOT CAPTURED**.
 - Pitfalls: **14** DOB Buildings Bulletins (2 rescinded: BB 2014-025, BB 2009-030) + **6** BSA
   project-specific topics + DCP guidance (reached indirectly, no page numbers cited).
@@ -101,17 +102,18 @@ access-blocked"); none asserts verification of a result.
    `yvxd-uipr` via SODA, Socrata baseline) and a human channel (the resolutions search portal, 1998+;
    resolution PDFs behind the nyc.gov bot wall). Caveats to pin: every resolution is project-specific and
    never general provenance; the dataset is "informational purposes" and does not cover the Board's full
-   jurisdiction; freshness is a single `rowsUpdatedAt` signal (unresolved date — see below). This is a
-   discovery recommendation; a G1 reviewer must re-read api/views + the portal terms before a verified
-   row. The registry is a forbidden path for this task.
+   jurisdiction; freshness is a single `rowsUpdatedAt` signal = 1790020601 = **2026-09-21T19:56:41Z**
+   (producer-computed; see recommendation 5). This is a discovery recommendation; a G1 reviewer must
+   re-read api/views + the portal terms before a verified row. The registry is a forbidden path here.
 3. **Coverage-matrix rows** (the file is a forbidden path here): the matrix's "Zoning Resolution text"
    row is dated 2026-07-20 and still reads `missing`; this library shows it is now `partial` for a
    handful of R6B sections. Also consider rows for the not-handled families (side yards, overlay FAR,
    community facility, parking/transit, shared housing, split lot).
 4. **NB-06 correction** (research-and-verification workflow, orchestrator): fix search S3 / the freshness
    note so it records the wide/narrow text as captured.
-5. **`yvxd-uipr` freshness:** resolve `rowsUpdatedAt` epoch 1790020601 (computes to ~2026-09-20, not the
-   "Jan 17 2025" the fetch model rendered) at a G1 read.
+5. **`yvxd-uipr` freshness (resolved, G1 A2):** `rowsUpdatedAt` epoch 1790020601 = **2026-09-21T19:56:41Z**
+   (producer-computed with `datetime.utcfromtimestamp`), not the "Jan 17 2025" the fetch model rendered
+   (that would be epoch 1737072000). Record this exact value in any BSA registry row.
 
 ## What I could not check
 
@@ -130,8 +132,36 @@ access-blocked"); none asserts verification of a result.
 - I did not re-fetch the ~45 captured sections live (relied on the repository snapshots as the captured
   primary sources, as the brief directs); H1 live-checked 23-344 and it matched.
 
+## Rework 1 (G1 r1 FAIL — F1 required, A1-A3 advisories)
+
+G1 verdict was FAIL on one required finding (F1); 7 of 8 scenarios + both discrepancies verified PASS.
+
+- **F1 (S2 closure) — FIXED.** The first pass drew cross-references from the helpers' `refers_to`
+  summaries, which dropped real numbered references in eleven options-frontier sections. Rework 1 re-runs
+  the producer's **own** extraction over the verbatim text + table + footnotes of **every** captured
+  section and records every numbered reference in `cross_references_out` with `captured` true/false and,
+  where not followed, a one-line reason. My extraction found more than the reviewer's named list (20
+  sections, 54 previously-missing refs). NAICS sector codes (31-33/44-45/48-49) are excluded only inside
+  the Article-32 use-group sections and documented. The "Followed" summary in `cross-reference-closure.md`
+  is corrected: the options-frontier sections are captured but their onward internal references are not all
+  followed.
+  - Reference counts now: **162 recorded, 104 followed, 58 not followed.**
+  - Zero-dropped audit (`audit_refs.py`): `TOTAL sections with missing refs: 0; total missing refs: 0`
+    (EXIT 0).
+- **A1 — applied.** 34-113 coverage_status `not_applicable` → `not_evaluated` (whether this lot ever
+  received a floor-area bonus is an unresolved property fact); scope_status now conditional.
+- **A2 — applied.** BSA dataset freshness `rowsUpdatedAt` 1790020601 = **2026-09-21T19:56:41Z**
+  (producer-computed; the fetch model's "Jan 17 2025" would be epoch 1737072000). Recorded in
+  `research-log.md`, `pitfalls.md`, and the recommendations.
+- **A3 — applied.** `pitfalls.md` now records that BB 2016-013 rescinded BB 2014-025 **because NYS General
+  City Law (GCL §36) was amended.**
+
+Rework-1 checks (direct exit codes): JSON load EXIT 0; capture-claim script PASS EXIT 0; reference audit
+zero-dropped EXIT 0; `scripts/lanes/check_lane_paths.py --coverage` PASS EXIT 0; forbidden-word scan clean;
+`git diff --name-only 737d9cd5` = only the 7 docs files + this report.
+
 ## Requested status
 
-awaiting_gate. Required gates per packet: G0, G1, G2; reviewer agents data-contract-verifier and
-directive-compliance-verifier. Producer self-checks above (JSON load, capture-claim, lane coverage,
-diff scope, S8 scan) all pass.
+awaiting_gate (re-review). Required gates per packet: G0, G1, G2; reviewer agents data-contract-verifier
+and directive-compliance-verifier. Producer self-checks (JSON load, capture-claim, reference audit, lane
+coverage, diff scope, S8 scan) all pass.

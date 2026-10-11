@@ -21,7 +21,10 @@
     "not_handled": 67,
     "defined_terms_total": 38,
     "defined_terms_captured": 30,
-    "defined_terms_not_captured": 8
+    "defined_terms_not_captured": 8,
+    "cross_references_recorded": 162,
+    "cross_references_followed": 104,
+    "cross_references_not_followed": 58
   },
   "sections": [
     {
@@ -169,6 +172,10 @@
       },
       "cross_references_out": [
         {
+          "section_id": "23-413",
+          "captured": true
+        },
+        {
           "section_id": "23-432",
           "captured": true
         }
@@ -193,6 +200,10 @@
       "cross_references_out": [
         {
           "section_id": "23-413",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
           "captured": true
         }
       ],
@@ -256,18 +267,6 @@
       },
       "cross_references_out": [
         {
-          "section_id": "23-34",
-          "captured": true
-        },
-        {
-          "section_id": "23-434",
-          "captured": true
-        },
-        {
-          "section_id": "23-435",
-          "captured": true
-        },
-        {
           "section_id": "23-311",
           "captured": true
         },
@@ -276,7 +275,19 @@
           "captured": true
         },
         {
+          "section_id": "23-34",
+          "captured": true
+        },
+        {
           "section_id": "23-341",
+          "captured": true
+        },
+        {
+          "section_id": "23-434",
+          "captured": true
+        },
+        {
+          "section_id": "23-435",
           "captured": true
         }
       ],
@@ -299,19 +310,20 @@
       },
       "cross_references_out": [
         {
-          "section_id": "23-361",
-          "captured": false
-        },
-        {
-          "section_id": "23-362",
-          "captured": true
-        },
-        {
           "section_id": "23-342",
           "captured": true
         },
         {
           "section_id": "23-343",
+          "captured": true
+        },
+        {
+          "section_id": "23-361",
+          "captured": false,
+          "reason": "R1-R5 lot coverage; NOT CAPTURED; out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-362",
           "captured": true
         }
       ],
@@ -544,7 +556,24 @@
         "snapshot_id": "zr-23-34",
         "content_digest_sha256": "1cb54ef3763ed86697add52ce6c8fd9416c8b95418477d0dadbd7bf1bce9a977"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "23-341",
+          "captured": true
+        },
+        {
+          "section_id": "23-342",
+          "captured": true
+        },
+        {
+          "section_id": "23-343",
+          "captured": true
+        },
+        {
+          "section_id": "23-344",
+          "captured": true
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: group header; no computed rule"
       ],
@@ -581,7 +610,8 @@
         },
         {
           "section_id": "25-85",
-          "captured": false
+          "captured": false,
+          "reason": "accessory-parking obstruction; NOT CAPTURED; out of scope; not followed"
         }
       ],
       "handled_by": [
@@ -630,15 +660,18 @@
         },
         {
           "section_id": "25-621",
-          "captured": false
+          "captured": false,
+          "reason": "accessory-parking obstruction; NOT CAPTURED; out of scope; not followed"
         },
         {
           "section_id": "25-622",
-          "captured": false
+          "captured": false,
+          "reason": "accessory-parking obstruction; NOT CAPTURED; out of scope; not followed"
         },
         {
           "section_id": "26-50",
-          "captured": false
+          "captured": false,
+          "reason": "other accessory obstruction; NOT CAPTURED; out of scope; not followed"
         }
       ],
       "handled_by": [
@@ -718,7 +751,8 @@
         },
         {
           "section_id": "26-50",
-          "captured": false
+          "captured": false,
+          "reason": "other accessory obstruction; NOT CAPTURED; out of scope; not followed"
         }
       ],
       "handled_by": [
@@ -745,7 +779,8 @@
         },
         {
           "section_id": "23-421",
-          "captured": true
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
         },
         {
           "section_id": "23-435",
@@ -892,7 +927,23 @@
         "snapshot_id": "zr-23-44",
         "content_digest_sha256": "6c3a5adc66e3d1bdbb90477c993cf22c30fa845ad3c7adf27920b298a98cbb3f"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "23-441",
+          "captured": true,
+          "reason": "special tower sub-provision under 23-44; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "23-442",
+          "captured": true,
+          "reason": "special community-district sub-provision under 23-44; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "23-443",
+          "captured": true,
+          "reason": "special-geography sub-provision under 23-44; captured; out of scope for a non-special-area R6B lot; not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: special-geography provisions not computed"
       ],
@@ -913,11 +964,13 @@
       "cross_references_out": [
         {
           "section_id": "23-30",
-          "captured": false
+          "captured": false,
+          "reason": "yard group header; NOT CAPTURED; not followed"
         },
         {
           "section_id": "23-63",
-          "captured": false
+          "captured": false,
+          "reason": "balcony cross-reference; NOT CAPTURED; out of scope; not followed"
         }
       ],
       "handled_by": [
@@ -940,7 +993,8 @@
       "cross_references_out": [
         {
           "section_id": "23-21",
-          "captured": true
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
         },
         {
           "section_id": "23-22",
@@ -948,11 +1002,13 @@
         },
         {
           "section_id": "23-23",
-          "captured": true
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
         },
         {
           "section_id": "23-24",
-          "captured": true
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
         }
       ],
       "handled_by": [
@@ -975,23 +1031,28 @@
       "cross_references_out": [
         {
           "section_id": "23-421",
-          "captured": true
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
         },
         {
           "section_id": "23-422",
-          "captured": true
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
         },
         {
           "section_id": "23-423",
-          "captured": true
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
         },
         {
           "section_id": "23-424",
-          "captured": true
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
         },
         {
           "section_id": "23-425",
-          "captured": false
+          "captured": false,
+          "reason": "R1-R5 height; NOT CAPTURED; out of scope for R6B; not followed"
         }
       ],
       "handled_by": [
@@ -1179,24 +1240,27 @@
       "cross_references_out": [
         {
           "section_id": "37-727",
-          "captured": false
+          "captured": false,
+          "reason": "floor-area-bonus provision for previously-bonused lots; NOT CAPTURED; out of scope; not followed"
         },
         {
           "section_id": "37-73",
-          "captured": false
+          "captured": false,
+          "reason": "floor-area-bonus provision for previously-bonused lots; NOT CAPTURED; out of scope; not followed"
         },
         {
           "section_id": "74-761",
-          "captured": false
+          "captured": false,
+          "reason": "floor-area-bonus special permit for previously-bonused lots; NOT CAPTURED; out of scope; not followed"
         }
       ],
       "handled_by": [
-        "NOT HANDLED: previously-bonused lots; not this lot"
+        "NOT HANDLED: existing-floor-area-bonus provision; not computed"
       ],
-      "coverage_status": "not_applicable",
+      "coverage_status": "not_evaluated",
       "last_amended": "2007-10-17",
-      "scope_status": "out of scope: previously-bonused lots",
-      "notes": "Captured; 37-727/37-73/74-761 NOT CAPTURED / out of scope."
+      "scope_status": "conditional: applies only if this lot previously received a floor-area bonus (unresolved property fact)",
+      "notes": "Captured; 37-727/37-73/74-761 NOT CAPTURED / out of scope. Whether the benchmark lot ever received a floor-area bonus is an UNRESOLVED property fact, so coverage is not_evaluated, not not_applicable (matrix sec 2 rule 1 reserves not_applicable for affirmatively-resolved applicability) - G1 A1."
     },
     {
       "section_id": "35-62",
@@ -1214,15 +1278,18 @@
         },
         {
           "section_id": "23-423",
-          "captured": true
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
         },
         {
           "section_id": "23-424",
-          "captured": true
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
         },
         {
           "section_id": "35-22",
-          "captured": true
+          "captured": true,
+          "reason": "C-district R1-R5-equivalency height provision; captured but out of scope for R6B (uses 35-63); not followed"
         },
         {
           "section_id": "35-64",
@@ -1277,7 +1344,23 @@
         "snapshot_id": "zr-35-64",
         "content_digest_sha256": "5baf8c24274f58277c3bca6522e234eb11f546e7a24ee0c19614a9e234fac328"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "35-641",
+          "captured": true,
+          "reason": "special tower sub-provision under 35-64; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "35-642",
+          "captured": true,
+          "reason": "special height/setback sub-provision under 35-64; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "35-643",
+          "captured": true,
+          "reason": "special-geography sub-provision under 35-64; captured; out of scope for a non-special-area R6B lot; not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: special-geography provisions not computed"
       ],
@@ -1298,7 +1381,8 @@
       "cross_references_out": [
         {
           "section_id": "23-613",
-          "captured": false
+          "captured": false,
+          "reason": "planting-strip detail; NOT CAPTURED; out of scope; not followed"
         }
       ],
       "handled_by": [
@@ -1336,7 +1420,12 @@
         "snapshot_id": "zr-35-53",
         "content_digest_sha256": "755aa5113e8ea050c21e41355448ed20d88610eeaadaea256a92c23611629ceb"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "23-41",
+          "captured": true
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: referenced by r6b_height prose (old mixed-building rear-yard numbering), not computed"
       ],
@@ -1354,7 +1443,13 @@
         "snapshot_id": "zr-32-131",
         "content_digest_sha256": "568c257513253c16251d32f93097558ad857b026a68ddaf3b3b0e736dcebc35c"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "32-10",
+          "captured": false,
+          "reason": "Use Group use-allowances header; NOT CAPTURED; option-5/11 use-permission closure not yet followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no use-permission rule file"
       ],
@@ -1372,7 +1467,13 @@
         "snapshot_id": "zr-32-161",
         "content_digest_sha256": "f319ba9259c135f77200c8583455290b2b52c249f703d4d1ec2c425f7ed65675"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "32-10",
+          "captured": false,
+          "reason": "Use Group use-allowances header; NOT CAPTURED; option-5/11 use-permission closure not yet followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no use-permission rule file"
       ],
@@ -1394,6 +1495,26 @@
         {
           "section_id": "33-121",
           "captured": true
+        },
+        {
+          "section_id": "33-13",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "33-14",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "33-15",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "33-16",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
         }
       ],
       "handled_by": [
@@ -1413,7 +1534,27 @@
         "snapshot_id": "zr-33-121",
         "content_digest_sha256": "6c27de59da7cfa1250de2d6081b5da0b50eee4676ef9c28b7feba472be34ac00"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "12-10",
+          "captured": true,
+          "reason": "the Definitions chapter; specific defined terms are tracked in defined_terms, not as a numbered cross-reference"
+        },
+        {
+          "section_id": "24-111",
+          "captured": false
+        },
+        {
+          "section_id": "74-902",
+          "captured": false,
+          "reason": "Article VII special-permit (CPC) provision; NOT CAPTURED; project-specific, not followed"
+        },
+        {
+          "section_id": "74-903",
+          "captured": false,
+          "reason": "Article VII special-permit (CPC) provision; NOT CAPTURED; project-specific, not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no commercial/overlay FAR rule file"
       ],
@@ -1435,6 +1576,44 @@
         {
           "section_id": "35-31",
           "captured": true
+        },
+        {
+          "section_id": "35-32",
+          "captured": true
+        },
+        {
+          "section_id": "35-33",
+          "captured": true
+        },
+        {
+          "section_id": "35-34",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-35",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-351",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-36",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-361",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-362",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
         }
       ],
       "handled_by": [
@@ -1454,7 +1633,17 @@
         "snapshot_id": "zr-35-31",
         "content_digest_sha256": "65e29c688be2f04b8963b87bc564afb16539c497b19b1219f58a0cf8edad80fe"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "35-30",
+          "captured": true
+        },
+        {
+          "section_id": "35-36",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no mixed-building floor-area combination rule file"
       ],
@@ -1508,7 +1697,21 @@
         "snapshot_id": "zr-25-20",
         "content_digest_sha256": "666f0d241ef5ac95e22a94f67626636305c2d92caff3bc48f0de250d588f8d07"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-21",
+          "captured": false,
+          "reason": "required-parking sub-provision header; NOT CAPTURED; option 10/11, not yet followed"
+        },
+        {
+          "section_id": "25-22",
+          "captured": true
+        },
+        {
+          "section_id": "25-23",
+          "captured": true
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1526,7 +1729,22 @@
         "snapshot_id": "zr-25-211",
         "content_digest_sha256": "59439d66be5065f6b1ecec8fa9b261a78b9a633732a23f1e1a8da2345ca253b7"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-212",
+          "captured": true
+        },
+        {
+          "section_id": "73-432",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, income-restricted housing); captured but project-specific (CPC/BSA); option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "75-31",
+          "captured": true,
+          "reason": "authorization to remove required parking; captured but project-specific (CPC); option-10 waiver context; not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1544,7 +1762,21 @@
         "snapshot_id": "zr-25-212",
         "content_digest_sha256": "a4e88a1ebbda6a9ef6c696904da9d5a565d687475126ba401bc534c3c1e53057"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-20",
+          "captured": true
+        },
+        {
+          "section_id": "25-211",
+          "captured": true
+        },
+        {
+          "section_id": "25-63",
+          "captured": false,
+          "reason": "off-street parking/loading waiver provision; NOT CAPTURED; option 10/11, not yet followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1589,7 +1821,31 @@
         "snapshot_id": "zr-25-221",
         "content_digest_sha256": "21327ea6aaadc6bc2d5da320a9f7d34351c4552e4636689303b4678be6499b97"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-22",
+          "captured": true
+        },
+        {
+          "section_id": "25-222",
+          "captured": true
+        },
+        {
+          "section_id": "73-432",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, income-restricted housing); captured but project-specific (CPC/BSA); option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "73-433",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, qualifying senior housing); captured but project-specific; option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "74-52",
+          "captured": true,
+          "reason": "special permit to remove required parking; captured but project-specific (CPC); option-10 waiver context; not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1607,7 +1863,13 @@
         "snapshot_id": "zr-25-222",
         "content_digest_sha256": "70b6c0c3fdbe8b0170aced554e64481dfac213acd626243e834dba578f286564"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-63",
+          "captured": false,
+          "reason": "off-street parking/loading waiver provision; NOT CAPTURED; option 10/11, not yet followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1652,7 +1914,26 @@
         "snapshot_id": "zr-25-231",
         "content_digest_sha256": "8dc7f3d9f4542188435199dfc128cee02bd5ff81b2b3b6133a8b0dc6dc322a6e"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-23",
+          "captured": true
+        },
+        {
+          "section_id": "25-232",
+          "captured": true
+        },
+        {
+          "section_id": "73-433",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, qualifying senior housing); captured but project-specific; option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "74-52",
+          "captured": true,
+          "reason": "special permit to remove required parking; captured but project-specific (CPC); option-10 waiver context; not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1670,7 +1951,13 @@
         "snapshot_id": "zr-25-232",
         "content_digest_sha256": "e07f95d07ca351c6c406f77ea406e2156e652d598a8ed7948c3fd990042ff91d"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "25-63",
+          "captured": false,
+          "reason": "off-street parking/loading waiver provision; NOT CAPTURED; option 10/11, not yet followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no parking rule file"
       ],
@@ -1688,7 +1975,13 @@
         "snapshot_id": "zr-66-11",
         "content_digest_sha256": "711cd3e486aef487e3809e7cad05779ccc2d387af087ca640da7686b05e0f429"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "12-10",
+          "captured": true,
+          "reason": "the Definitions chapter; specific defined terms are tracked in defined_terms, not as a numbered cross-reference"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no transit-zone rule file"
       ],

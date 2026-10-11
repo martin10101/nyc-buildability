@@ -45,7 +45,7 @@ H6 options), saved outside git in the session folder and cited here.
 | BSA resolutions search portal | how to search / fields / coverage | found (1998+; no API; keyword = address / ZR section / application type) | — | use Open Data for machine access |
 | NYC Open Data `yvxd-uipr` api/views | dataset fields / attribution / freshness | found (25 fields; attribution BSA) | — | a G1 reviewer re-reads for a registry row |
 | `data.cityofnewyork.us/resource/yvxd-uipr.json` `$where zoning_district LIKE '%R6B%'` (+ 72-21, 73-%) | R6B cases + cited sections | found (47 R6B records; ~22 transcribed with cal. no., section, date, status) | — | discovery examples only; never generalize |
-| `yvxd-uipr` freshness | human-readable last-updated date | **unresolved** — `rowsUpdatedAt` epoch 1790020601; the fetch model rendered "Jan 17 2025" but the epoch computes to ~2026-09-20 | the true freshness date | a proper G1 read |
+| [producer] `yvxd-uipr` freshness | convert `rowsUpdatedAt` epoch 1790020601 to UTC | found: **1790020601 = 2026-09-21T19:56:41Z** (producer-computed with `datetime.utcfromtimestamp`); the fetch model's "Jan 17 2025" is wrong (that would be epoch 1737072000) | — | record 2026-09-21T19:56:41Z in any BSA registry row (G1 A2) |
 | 2025 DCP Zoning Handbook PDF | R6B / contextual / overlay warnings + page numbers | **access blocked** — ">10 MB" fetch limit + nyc.gov 403 | Handbook page-cited warnings | browser capture of the R6 / contextual-district / overlay pages |
 | DCP districts-tools `r6.page` / `residence-districts-r1-r10.page` (fetch + curl) | live page / redirect target / R6B content | **access blocked** — "this page has moved"; direct curl HTTP 403 (AkamaiGHost) | the new live URL | resolve in a browser and record the new path |
 
@@ -70,9 +70,9 @@ H6 options), saved outside git in the session folder and cited here.
    `zr-12-10.snapshot.json`). **Not edited here** — NB-06 is read-only and outside this task's allowed
    paths. **Next step (orchestrator):** correct NB-06 search S3 / its freshness note through the
    research-and-verification workflow, or open a research request.
-2. **`yvxd-uipr` freshness date unresolved.** `rowsUpdatedAt` epoch 1790020601 computes to ~2026-09-20,
-   not the "Jan 17 2025" the fetch model rendered. **Next step:** a G1 read of api/views for the registry
-   row.
+2. **`yvxd-uipr` freshness date (resolved by the producer, G1 A2).** `rowsUpdatedAt` epoch 1790020601 =
+   **2026-09-21T19:56:41Z** (UTC), not the "Jan 17 2025" the fetch model rendered (that would be epoch
+   1737072000). **Next step:** record 2026-09-21T19:56:41Z in any BSA registry row at a G1 read.
 3. **Access blocks to record, never evade:** nyc.gov asset PDFs (bulletins; 716 KB binary unparsed by the
    fetch tool); the 2025 DCP Zoning Handbook (>10 MB + 403); the moved DCP districts-tools pages (403,
    new URL unknown); ZR 23-154 (HTTP 403 on both portal hosts). Each is recorded, not worked around.

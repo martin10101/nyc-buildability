@@ -55,25 +55,57 @@ hyphenated-term filename, but the wide/narrow text sits in the plain `zr-12-10.s
 read-only for this task and is **not** edited here; the discrepancy is logged in `research-log.md` for the
 orchestrator.
 
+## Complete reference extraction (G1 F1 — rework 1)
+
+The first pass drew cross-references from the research helpers' `refers_to` summaries, which dropped real
+numbered references present in the snapshot text of eleven options-frontier sections (the G1 reviewer's
+F1). Rework 1 re-runs the producer's **own** extraction over the verbatim text + table + footnotes of
+**every** captured section and records **every** numbered reference in that section's
+`cross_references_out`, each with `captured` true/false and — where the reference is **not followed** (it
+has no section entry of its own) — a one-line `reason`. Nothing is silently dropped (S2).
+
+- **Reference counts:** 162 cross-references recorded across the 68 captured sections — 104 followed (they
+  have their own section entry), 58 not followed (recorded with a reason).
+- **NAICS exclusion:** inside the Article-32 Use Group sections (32-131, 32-161) the tokens `31-33`,
+  `44-45`, `48-49` are **NAICS industry-sector codes** (North American Industry Classification System) in
+  the use-allowance tables, not ZR section numbers; they are excluded, and only there. Single 2-digit
+  NAICS sectors (51, 52, …) never match the hyphenated ZR pattern anyway. Every other numbered token is
+  treated as a ZR reference.
+- **Zero-dropped check:** the producer's reference audit (`audit_refs.py`, scratch, output in the producer
+  report) re-extracts all 68 captured sections and confirms every extracted reference now appears in
+  `cross_references_out` — zero dropped.
+
 ## What was followed vs out of scope
 
-- **Followed** (captured, in scope): the R6-R12 FAR / height / setback / street-wall / rear-yard / lot-
-  coverage chain (23-20, 23-22, 23-34, 23-341/342/343/344, 23-362/363, 23-41x, 23-43x, 23-52, 23-62,
-  23-335), the C-overlay residential-bulk chain (34-11, 34-21/22/23/231/232/233, 34-24, 34-111), the
-  Chapter-5 R6-R12-equivalency chain (35-01, 35-63, 35-631/632/633), and the options frontier above.
-- **Terminal** (captured, no further in-scope numeric reference): 11-25, 23-22, 23-52, 23-34, 23-311,
-  23-411, 23-434, 23-335, 34-111, 34-231, 34-233, 35-01.
-- **Out of scope** (captured, but the district line or body excludes an R6B / C2-2 lot — reason recorded
-  per entry): 23-42 (R1-R5 height), 23-435 (towers R9-R12), 34-112 (C1-6+/C2-6+/C3-C6), 34-113
-  (previously-bonused lots), 35-62 (R1-R5 equivalency), 23-44 and 35-64 (special geographic areas —
-  title-only capture; coverage stays `not_evaluated`, not `not_applicable`, because applicability to a
-  mapped special area is not affirmatively resolved), 35-53 (pre-Dec-2024 mixed-building rear-yard
-  numbering), 36-64 (district-boundary split — relevant to option 8 only under one reading).
-- **NOT CAPTURED, out of scope** (referenced but not needed for an R6B / C2-2 lot): 23-361 (R1-R5 lot
-  coverage), 23-425 (R1-R5 height), 25-621 / 25-622 / 25-85 (accessory parking/loading obstructions),
-  26-50, 23-613 (planting-strip detail), 23-30 / 23-63 (balcony/yard cross-refs), 37-727 / 37-73 /
-  74-761 (floor-area-bonus provisions). Also referenced only in rule prose (not captured): 23-38, 23-51,
-  23-70, 23-72.
+- **Followed** (captured, in scope, with its own section entry): the R6-R12 FAR / height / setback /
+  street-wall / rear-yard / lot-coverage chain (23-20, 23-22, 23-34, 23-341/342/343/344, 23-362/363,
+  23-41x, 23-43x, 23-52, 23-62, 23-335), the C-overlay residential-bulk chain (34-11,
+  34-21/22/23/231/232/233, 34-24, 34-111), and the Chapter-5 R6-R12-equivalency chain (35-01, 35-63,
+  35-631/632/633).
+- **Options-frontier sections: captured, catalogued — but their onward internal references are NOT all
+  followed.** 32-131 / 32-161 (use), 33-12 / 33-121 (overlay FAR), 35-30 / 35-31 / 35-32 / 35-33
+  (mixed-building FAR), 25-20 / 25-211 / 25-212 / 25-22 / 25-221 / 25-222 / 25-23 / 25-231 / 25-232
+  (parking), 66-11, Appendix I each have a section entry, but the references they make onward — e.g. 32-10
+  (use-allowances header, NOT CAPTURED), 33-13..16 (NOT CAPTURED), 74-902/903 (CPC special permits, NOT
+  CAPTURED), 35-34/35/351/36/361/362 (NOT CAPTURED), 25-63 and 25-21 (NOT CAPTURED), 73-432/73-433/75-31/
+  74-52 (parking-removal special permits, **captured** but project-specific CPC/BSA) — are recorded in
+  `cross_references_out` with a reason and are **not** followed to their own entry in this first pass. The
+  parking-removal special permits are on-point for option 10's waiver and are a named next step.
+- **Terminal** (captured, no further in-scope numeric reference): 11-25, 23-22, 23-52, 23-311, 23-411,
+  23-434, 23-335, 34-111, 34-231, 34-233, 35-01.
+- **Out of scope** (captured, but the district line or body affirmatively excludes an R6B / C2-2 lot —
+  `not_applicable`, reason recorded per entry): 23-42 (R1-R5 height), 23-435 (towers R9-R12), 34-112
+  (C1-6+/C2-6+/C3-C6), 35-62 (R1-R5 equivalency).
+- **Conditional / applicability unresolved** (captured; coverage `not_evaluated`, not `not_applicable`):
+  34-113 (existing-floor-area-bonus — whether this lot ever received a bonus is an unresolved property
+  fact; corrected per G1 A1); 23-44 and 35-64 (special geographic areas — title-only capture; applicability
+  to a mapped special area is not affirmatively resolved); 35-53 (pre-Dec-2024 mixed-building rear-yard
+  numbering); 36-64 (district-boundary split — relevant to option 8 only under one reading).
+- **NOT CAPTURED, out of scope** (now recorded in the referring section's `cross_references_out` with
+  `captured: false` + a reason, never dropped): 23-361 (R1-R5 lot coverage), 23-425 (R1-R5 height),
+  25-621 / 25-622 / 25-85 (accessory parking/loading obstructions), 26-50, 23-613 (planting-strip detail),
+  23-30 / 23-63 (balcony/yard cross-refs), 37-727 / 37-73 / 74-761 (floor-area-bonus provisions). Also
+  referenced only in rule prose (not captured): 23-38, 23-51, 23-70, 23-72.
 - **NOT CAPTURED, in scope / needed by an option** (recorded as `missing`): 24-11, 24-111 (community
   facility), 23-154 (UAP), 77-00 (split-lot alternative reading), and the shared-housing use/standards
   sections (section numbers unresolved).
@@ -81,6 +113,9 @@ orchestrator.
 ## Reproduce
 
 `benchmark-r6b-sections.json` is generated so that every capture claim is read straight from the snapshot
-folder. The producer's capture-claim check (`verify_captures.py`, kept as a scratch tool, output in the
-producer report) confirms every captured entry's snapshot id and digest equal the snapshot file's, and
-every NOT CAPTURED entry has no snapshot file.
+folder and every captured section's `cross_references_out` is built from a fresh extraction over that
+section's snapshot text. Two producer scripts (kept as scratch tools, outputs in the producer report)
+confirm it: the capture-claim check (`verify_captures.py`) confirms every captured entry's snapshot id and
+digest equal the snapshot file's and every NOT CAPTURED entry has no snapshot file; the reference audit
+(`audit_refs.py`) confirms every numbered reference in each captured section's text appears in that
+section's `cross_references_out` — zero dropped.

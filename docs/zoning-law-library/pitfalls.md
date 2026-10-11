@@ -26,7 +26,7 @@ cited section numbers against the post-Dec-2024 ZR before relying on it.** Bulle
 | Cellar — habitability / 12-10 reference | ZR 12-10 | BB 2011-010, 4/14/2011 (status not re-verified) | /bb_2011-010.pdf | References the 12-10 floor-area definitions for below-grade space; cellar living space triggers HMC/MDL limits separate from zoning. |
 | Lot area / zoning lot | ZR 12-10 "zoning lot" | BB 2020-003, 3/2/2020 (current; supersedes a 1978 memo in part) | /bb_2020-003.pdf | A newly formed zoning lot may NOT consist of PARTS of tax lots (post-200 Amsterdam). **Never equate a tax lot with a zoning lot.** |
 | Street / lot frontage — privately-owned mapped streets | ZR street definitions / 12-10 | BB 2014-001, 1/9/2014 (status not re-verified) | /bb_2014-001.pdf | Only certain privately-owned MAPPED streets may be used for zoning (frontage, yards, the street line setbacks run from); an unmapped private way does not fix the street line. |
-| Street frontage — unmapped streets (BSA) | ZR; BSA approval | BB 2014-025, 12/3/2014 — **RESCINDED** by BB 2016-013 (8/24/2016) | /bb_2014-025.pdf | Building on an unmapped street historically triggered BSA approval, but this bulletin is **rescinded** — do not cite as current; confirm the live rule. |
+| Street frontage — unmapped streets (BSA) | ZR; BSA approval | BB 2014-025, 12/3/2014 — **RESCINDED** by BB 2016-013 (8/24/2016), which states it rescinds 2014-025 **because NYS General City Law (GCL §36) was amended** | /bb_2014-025.pdf | Building on an unmapped street historically triggered BSA approval, but this bulletin is **rescinded** (the GCL §36 amendment changed the rule) — do not cite as current; confirm the live rule. |
 | Side yard / open area along a side lot line | ZR 23-335; 34-232 (overlay) | BB 2016-011, 5/13/2016 (current — not re-verified) | /bb_2016-011.pdf | Where no side yard is required, a provided side OPEN AREA must meet the ZR 5-ft minimum AND BC 1613.7 seismic separation. Directly on NB-06 Q3. |
 | Rear yard — mixed building, required level | old ZR 35-53 (pre-Dec-2024; C-district mixed-building rear yard) | BB 2009-030, 12/23/2009 — **RESCINDED** by BB 2014-024 (also in 2022-017) | /bb_2009-030.pdf | It construed the LEVEL at which a residential rear yard is required in a mixed building (the C2-2 scenario), BUT it is **rescinded**; rely on current ZR. The Dec-2024 renumbering moved old 35-53. Not a substitute for the 23-342/23-344 analysis. |
 | Permitted obstructions — rooftop / terrace occupancy | ZR 12-10, 23-62, 33-42, 75-01 | BB 2018-002, 3/14/2018 (status not re-verified) | /bb_2018-002.pdf | Adding occupancy/use on a roof or terrace can exceed permitted obstructions and the height envelope and needs a new/amended C of O; a "permitted obstruction" is not occupiable floor area. |
@@ -48,7 +48,9 @@ generalized** (SOURCE_AUTHORITY_POLICY §2 rule 4; registry §9.6). Page:
 Illustrative of what has needed BSA relief on R6B lots; drawn from the NYC Open Data "BSA Applications
 Status" dataset (`yvxd-uipr`) and the BSA resolutions search portal. A single resolution is
 project-specific; absence from the dataset is not evidence of none (it covers 1998+, "informational
-purposes" only). Portal: `https://www.nyc.gov/site/bsa/resolutions/search-for-resolutions.page`.
+purposes" only). The dataset's single freshness signal is `rowsUpdatedAt` = **1790020601 =
+2026-09-21T19:56:41Z** (producer-computed). Portal:
+`https://www.nyc.gov/site/bsa/resolutions/search-for-resolutions.page`.
 
 | Topic | ZR section | BSA calendar no. + year (project-specific) | Watch (unreviewed draft) |
 |---|---|---|---|
