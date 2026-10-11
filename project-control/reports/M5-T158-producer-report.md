@@ -303,3 +303,38 @@ routed them here:
 
 Only the three out-of-scope test files above (routed to the orchestrator). No production file was
 needed outside the packet's allowed_paths.
+
+---
+
+# M5-T158 part B - scope correction 1 (the three routed consumer tests)
+
+Built on head `e97080823` (part A + part B + M5-T159 law-link + M5-T160 record; scope correction 1
+added the three consumer test files to allowed_paths). Applied exactly the reported remedies - real
+behaviour, no weakened assertion:
+
+1. `services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py` - added
+   `_benchmark_zoning_lot_index()` (the ACRIS pack replayed + classified, as in the journey test)
+   and threaded it into `_emit_from_evidence` -> the evidence entry reproduces the committed
+   OTHER_LOTS_NAMED fixture byte-for-byte.
+2. `services/api/tests/api/test_results_read_api.py` - `benchmark_provider` gains `with_zoning_lot`
+   (default OFF, mirroring production / the e2e harness where the live binding is behind the
+   default-off flag -> NOT_CHECKED). `test_m5t146_...` turns it ON so the LIVE route reproduces the
+   committed fixture (added a positive assertion that building B carries the zoning-lot condition);
+   `_reference_document` now threads `inputs.zoning_lot_index` to mirror the route exactly. This keeps
+   the e2e harness equality test (`test_e2e_harness_results_inputs.py`, NOT edited) green: both the
+   harness and the default `benchmark_provider` stay NOT_CHECKED, matching production.
+3. `apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx` - shared
+   conditions 2 -> 3 (area, zoning-lot, K20) + an assertion that the shared list contains the
+   zoning-lot concern.
+
+Self-checks at head e97080823 (lanes venv):
+- `cd services/api && python -m ruff check .` -> All checks passed!
+- `PYTHONPATH=. python -m pytest -q -p no:cacheprovider tests/scenario tests/api tests/journey
+  tests/drawings tests/cad tests/rules tests/connectors tests/profile tests/test_lane_flags.py`
+  -> `7064 passed, 8 skipped` (0 failed).
+- apps/web: `npm run lint` -> 0 errors (2 pre-existing warnings in untouched files);
+  `npm run typecheck` -> exit 0; `npx vitest run` -> `128 files, 2641 passed` (0 failed).
+
+Diff stat: three files, 105 insertions, 6 deletions. D-093 still applies; NB-01 unchanged (the
+orchestrator writes revision 3). No production file touched in this correction. Ports 3000/3001/8000
+never touched.
