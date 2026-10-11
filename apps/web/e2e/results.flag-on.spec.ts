@@ -166,10 +166,23 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(buildingBlock.getByTestId("building-alternative-fit-note")).toHaveText(buildingB.fit_note);
     // nothing is called feasible.
     expect(await options.innerText()).not.toMatch(/feasible|complies|legally correct/i);
-    // the legal dwelling-unit limit shows withheld with NO number (it becomes "29 units" only after
-    // the special-density statement, asserted later).
+    // M5-T161 (CI repair after M5-T157 / DB-231): the city's record places this Queens lot outside
+    // both special density areas, so from the FIRST press — before any statement — the legal
+    // dwelling-unit limit for standard residences is a CONDITIONAL ceiling (reference row L6, 29
+    // units), never settled and never withheld, carrying the zoning-lot condition ("If this tax lot
+    // is the whole zoning lot"). That value row lives inside the allowance card's "Details"
+    // disclosure (hidden by default), so the earlier innerText check could pass only because the row
+    // was folded away. Open the disclosure and read the VISIBLE row, so this check cannot pass while
+    // the row is hidden.
     await expect(allowance).toContainText("Legal dwelling-unit limit");
-    expect(await dialog.innerText()).not.toContain(`${UNIT_LIMIT_STANDARD} units`);
+    await allowance.getByTestId("answer-details-button").first().click();
+    const legalLimitFirst = allowance
+      .getByTestId("answer-value")
+      .filter({ hasText: "Legal dwelling-unit limit" });
+    await expect(legalLimitFirst).toBeVisible();
+    await expect(legalLimitFirst).toContainText(`${UNIT_LIMIT_STANDARD} units`);
+    await expect(legalLimitFirst.getByTestId("answer-conditional-marker")).toHaveText("Conditional");
+    await expect(legalLimitFirst).toContainText("If this tax lot is the whole zoning lot");
 
     // No line the website writes calls a value the maximum for the property (R269).
     expect(await dialog.innerText()).not.toContain("maximum for this property");
@@ -203,17 +216,32 @@ test.describe("M5-T140 results panel — flag-on journey over the real results r
     await expect(schedule14).toContainText("14 ft");
     await expect(schedule14).not.toContainText("10 ft");
 
-    // Make the special-density statement and press again: the standard legal unit limit appears as
-    // a conditional result naming that statement (reference L6), never as a settled number. Reopen
-    // the folded form first (ruling V11 (1)).
+    // Make the special-density statement and press again. The statement AGREES with the record (the
+    // lot is outside both special density areas), so it changes NOTHING: the legal dwelling-unit
+    // limit is the same conditional 29, still marked Conditional, still carrying the zoning-lot
+    // condition — and the record, never the user's statement, is the reason, so no line names the
+    // statement ("as the user states" is absent). The record decides; a statement never overrides
+    // it. Reopen the folded form first (ruling V11 (1)). The fresh press is kept on purpose: it
+    // proves the statement leaves the answer unchanged.
     await dialog.getByTestId("results-change-inputs").click();
     await dialog.getByTestId("results-density-statement").check();
     const thirdResponse = waitResults(page);
     await dialog.getByTestId("results-show").click();
     await thirdResponse;
     await expect(dialog.getByTestId("three-answers-panel")).toBeVisible();
-    await expect(allowance).toContainText(`${UNIT_LIMIT_STANDARD} units`);
-    await expect(allowance).toContainText("special density area");
+    // The result re-rendered, so the allowance "Details" disclosure is folded again; reopen it and
+    // read the VISIBLE row (so the check cannot pass while the row is hidden).
+    await allowance.getByTestId("answer-details-button").first().click();
+    const legalLimitAfter = allowance
+      .getByTestId("answer-value")
+      .filter({ hasText: "Legal dwelling-unit limit" });
+    await expect(legalLimitAfter).toBeVisible();
+    await expect(legalLimitAfter).toContainText(`${UNIT_LIMIT_STANDARD} units`);
+    await expect(legalLimitAfter.getByTestId("answer-conditional-marker")).toHaveText("Conditional");
+    await expect(legalLimitAfter).toContainText("If this tax lot is the whole zoning lot");
+    // The record decides, so the user's statement is never named as the condition (textContent
+    // catches it even while folded).
+    await expect(dialog).not.toContainText("as the user states");
 
     // The program-name drift guard for the two OTHER programs: select each, press, and assert the
     // returned housing-program line names the label the form shows — read from the form's selected
