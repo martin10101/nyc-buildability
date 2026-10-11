@@ -112,15 +112,15 @@
     "visual-quality-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Gaps between tax lots also include rail lines, parks or unmapped land: only a gap crossed by a named street centre line is labelled as that street.",
     "Label placement on angled streets may collide: the overlap test of S4 fails closed."
   ],
   "blockers": [],
   "created_at": "2026-10-10T18:56:11.640231+00:00",
-  "updated_at": "2026-10-11T00:28:07.585512+00:00",
+  "updated_at": "2026-10-11T00:42:01.851093+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -162,5 +162,7 @@
       "actor": "orchestrator",
       "change": "[ORCH-CORRECTED 2026-10-10, after the G3 review and before the correction round] added services/api/app/drawings/maps/context_scene.py to the allowed paths. The code review (G3, PASS) advised moving the shared view-frame, projection and label-placement helpers out of site_context_plan.py (719 code lines, two modularity warnings), and the visual review's corrections would grow that file further. The new module takes those helpers; the public imports stay. No other path, gate, reviewer, scenario or bound row changed."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T00:42:01.850890+00:00"
 }

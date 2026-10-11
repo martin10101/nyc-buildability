@@ -7060,36 +7060,61 @@
     "D-090-R938"
    ],
    "producer": "geospatial-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "59112f0dfb1b1650c6e791e3080a396ab5673d82",
+   "reviewed_manifest_sha256": "2b562d8f2660e48b4a3c8583930f5dbd1b78151ebc38d093303343d911c06f82",
    "requirements": [
     {
      "id": "D-090-R843",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The site-context plan draws every mapping element the row names: the selected lot outline, the adjoining context (neighbouring tax lots, existing building footprints, streets), street names with mapped widths, a grid-north arrow, a real scale bar at a standard architectural scale, the lot's edge-length dimensions and a legend of only what is drawn; I confirmed this in services/api/app/drawings/maps/site_context_plan.py and context_scene.py and in printed page 3 of print-w22g (Lot 70 with 103.88/99.98/99.98/101.71 ft, NORTHERN BOULEVARD \"100 ft mapped width\", 216 STREET \"60 ft mapped width\", north arrow, scale bar, legend).",
+      "Source, date and measurement basis are returned in the caption and are source-traced: test_s5_caption_names_each_source_and_its_date and test_s5_the_street_area_and_survey_notes_are_present PASS in my rerun (MapPLUTO 2026-09-09, Digital City Map 2025-12-01, Building footprints 2026-09-27, \"Approximate \u2014 tax map\"); a missing layer returns Unavailable, never a partial picture (test_s6_* PASS), satisfying \"state the limitation instead of an isolated polygon.\"",
+      "The one element the row names that this task does NOT draw is yards/setbacks: ruling Y6/Y8 forbids drawing any law (the engine does not yet compute them), confirmed by test_s7_no_law_is_drawn (kinds_drawn \u2286 {street_area, subject_lot, neighbour_lot, building_footprint, existing_building}).",
+      "OPEN FOR THE REST: the yards/setbacks depiction and the whole-report placement of the plan stay open under R843 for M5-T156 and later envelope work (the row remains pending and bound to M5-T154/M5-T156/BOOTSTRAP in the registry).",
+      "Verifier's carry-forward condition met at 59112f0d: the task's allowed-path files are identical to those verified at 7adc476e (content identity 2b562d8f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T155-DCV.md."
+     ],
+     "reviewed_sha": "59112f0dfb1b1650c6e791e3080a396ab5673d82"
     },
     {
      "id": "D-090-R936",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The drawing names what it is and shows the lot among its surroundings, not an isolated rectangle: render_site_context_plan titles itself \"Site plan: the lot among its neighbours\", draws the streets as named street areas with mapped widths, the street corner, the neighbouring lots and the existing buildings, rotated to the Northern Boulevard frontage; test_s2_streets_are_named_with_their_mapped_widths, test_s2_only_the_subject_and_its_edge_sharing_neighbours_are_labelled and test_s2_rotated_to_the_frontage_with_grid_north_noted PASS in my rerun.",
+      "I looked at the printed pages myself: page 3 reads as an architect's site plan (coral Lot 70 as a corner lot at Northern Blvd & 215 Place among Lots 1/11/61, grey existing buildings, named streets with widths), and page 1 carries the compact summary frame of the same plan.",
+      "The subject lot reads first (coral fill drawn above the grey neighbour buildings; the subject's own existing building is a dashed outline), proven by test_t155_c1_subject_fill_reads_above_the_existing_building, answering the \"grey rectangle\" complaint.",
+      "OPEN FOR THE REST: R936 is also bound to M5-T154 (the live map data) and M5-T156 (placing the drawing in the report at a glance); the row stays pending for those shares.",
+      "Verifier's carry-forward condition met at 59112f0d: the task's allowed-path files are identical to those verified at 7adc476e (content identity 2b562d8f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T155-DCV.md."
+     ],
+     "reviewed_sha": "59112f0dfb1b1650c6e791e3080a396ab5673d82"
     },
     {
      "id": "D-090-R937",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The task produces the two \"where is the lot\" drawings the row requires: render_neighbourhood_map (street network north-up with the lot marked) and render_block_map (the block close-up), each returning a sources-and-dates caption; test_s3_neighbourhood_shows_the_street_network_with_the_lot_marked, test_s3_block_marks_only_the_subject_and_names_the_streets and test_s4_caption_is_returned_with_dates PASS in my rerun.",
+      "I looked at printed page 2 (\"Where is the lot?\"): the neighbourhood map (north-up grid, \"Subject lot\" marker, scale 0/500/1,000 ft, Digital City Map source + 1 Dec 2025 date) and the block close-up (Lot 70 coral among neighbours, MapPLUTO/footprints/DCM sources with edit dates) are both present.",
+      "The row says \"city OR neighbourhood scale\"; the neighbourhood map satisfies the neighbourhood-scale option, so the absence of a city-scale overview (tracked as backlog DB-228) does not fail the row.",
+      "OPEN FOR THE REST: R937 is bound to M5-T154 and M5-T156; the page-level assembly and the optional city-scale overview stay open there (the row remains pending).",
+      "Verifier's carry-forward condition met at 59112f0d: the task's allowed-path files are identical to those verified at 7adc476e (content identity 2b562d8f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T155-DCV.md."
+     ],
+     "reviewed_sha": "59112f0dfb1b1650c6e791e3080a396ab5673d82"
     },
     {
      "id": "D-090-R938",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "This task delivers coloured, clearly labelled drawings at stated standard scales to the competitor-sample standard: the drawings carry a legend, named streets, a scale bar and north arrow, every label is at least 7 pt with no overlaps (test_s4_fits_and_every_label_is_at_least_7pt_with_no_overlaps and test_s4_report_frame_fits_and_every_label_is_at_least_7pt PASS in my rerun), and the look sits within the presentation contract (no URL/field/code word: test_s5_no_url_field_name_or_code_word and forbidden_tokens == [] PASS; no stock/photo imagery \u2014 Y9).",
+      "The independent visual-quality-reviewer compared the printed report with the competitor sample's location page and returned PASS at the corrected head 6c8c9f7d, finding the owner's \"doesn't look like my competitors\" complaint \"substantially answered\"; I corroborated by looking at pages 1\u20133 myself (coloured, labelled, stated-scale drawings, property-location page present).",
+      "\"The building's shape shown on its lot\" is only partially in this task's scope: existing building footprints are drawn (dashed on the subject), while the proposed building's placement is deferred by ruling Y8/R939 to M5-T156, which prints the plain \"No building is placed on this plan yet\" line (seen on page 3).",
+      "OPEN FOR THE REST: R938 is bound to M5-T156; the full property-location page assembly and the eventual proposed-building placement stay open there (the row remains pending).",
+      "Verifier's carry-forward condition met at 59112f0d: the task's allowed-path files are identical to those verified at 7adc476e (content identity 2b562d8f), the pinned files are unchanged, the text of the row and its binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G2, G3, G4 PASS at that content identity (G3 one independent code-reviewer; G4 one independent qa-engineer; the visual review by one independent visual-quality-reviewer; delta reviews by the same three at the corrected head 6c8c9f7d; producer geospatial-engineer is neither). DCV report: project-control/reports/M5-T155-DCV.md."
+     ],
+     "reviewed_sha": "59112f0dfb1b1650c6e791e3080a396ab5673d82"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T00:42:01+00:00"
   },
   {
    "directive_id": "D-090",
