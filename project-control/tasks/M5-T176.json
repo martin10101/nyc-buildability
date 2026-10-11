@@ -110,15 +110,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "ready",
+  "progress_percent": 5,
   "risks": [
     "The readings may disagree on the measurement basis of the block dimension; then the real-lot rows stay NOT SETTLED and M5-T167 shows not known.",
     "The sealed folder lives on the private build server: the case records its inputs by name and digest, never the third-party text in bulk."
   ],
   "blockers": [],
   "created_at": "2026-10-11T22:26:04.432252+00:00",
-  "updated_at": "2026-10-11T22:26:04.894049+00:00",
+  "updated_at": "2026-10-11T22:26:06.853179+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
