@@ -31,6 +31,8 @@ clear, the entry stays OPEN and is marked **FOR THE OWNER'S OTHER AGENT**, and t
 to hand it on. A request is never a blocker. Everything above still holds: an answer is a lead to be
 checked, never a source of record.
 
+**Since D-093 (owner, 2026-10-11).** Ordinary source checks belong to the project itself, under `docs/RESEARCH_AND_VERIFICATION.md`: the orchestrator's own researchers open the official sources and record each answer as an evidence record in `docs/research/evidence-records/`, linked from the request here. A request goes to the owner only for what the project cannot reach (a document behind an access control, a records request, a real project preference). A question about what a law means is never sent to the owner to decide: it is recorded as a labelled draft reading with its law link and reviewed independently (ADR-007); where this file says otherwise above, this paragraph governs.
+
 **Entry format:** question · why it matters · what it unlocks · status (OPEN / ANSWERED
 <date> / ROUTED-to-architect-doc).
 
@@ -486,6 +488,8 @@ the MapPLUTO outlines and neighbours, the ACRIS index entries, the DOB filings, 
 neighbouring-line classification; resolving the special density area from the lot's borough and special district;
 and a warning when recorded zoning-lot documents name more than one tax lot. Until then the report's numbers stay
 as they are (D-050).
+
+**Evidence records (D-093, 2026-10-11).** One record per question, with sources, measurement basis, status and the code each affects: [NB-01](research/evidence-records/NB-01-zoning-lot-instruments.json) zoning-lot instruments (access blocked), [NB-02](research/evidence-records/NB-02-proposed-zfa-scope.json) scope of the 39,934 sq ft (searched, not found), [NB-03](research/evidence-records/NB-03-rear-yard-short-block.json) rear yard along the short block (reading awaiting review), [NB-04](research/evidence-records/NB-04-lot-dimensions-basis.json) dimensions and bases (conflicting evidence), [NB-05](research/evidence-records/NB-05-special-density-area.json) special density area (answered from the law and the record; the unit count stays conditional).
 
 **Residual OPEN.** The contents of the zoning-lot instruments and the 2018 deed; the approved ZD1/PW1 of
 NB 440608941; the 2017 survey; the "ALLEY" label across lots 1 and 70 on the tax map.

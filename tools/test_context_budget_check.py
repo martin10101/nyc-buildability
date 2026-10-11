@@ -19,15 +19,22 @@ import context_budget_check as m  # noqa: E402
 
 def _run_main(root: pathlib.Path, cfg: dict) -> int:
     """Point the checker at a synthetic tree and run it, swallowing stdout."""
+    return _run_main_capture(root, cfg)[0]
+
+
+def _run_main_capture(root: pathlib.Path, cfg: dict):
+    """As _run_main but return (exit_code, captured_stdout)."""
     cfg_path = root / "cfg.json"
     cfg_path.write_text(json.dumps(cfg), encoding="utf-8")
     old = m.ROOT
     m.ROOT = root
+    buf = io.StringIO()
     try:
-        with contextlib.redirect_stdout(io.StringIO()):
-            return m.main(["--config", str(cfg_path)])
+        with contextlib.redirect_stdout(buf):
+            rc = m.main(["--config", str(cfg_path)])
     finally:
         m.ROOT = old
+    return rc, buf.getvalue()
 
 
 BASE_CFG = {
@@ -185,6 +192,58 @@ class Checks(unittest.TestCase):
             cfg = dict(BASE_CFG)
             cfg["board_allowlist"] = ["docs/BOARD.md"]
             self.assertEqual(_run_main(root, cfg), 0)
+
+
+class NullEagerBudget(unittest.TestCase):
+    """D-093-R074 (2026-10-11): a null eager_token_budget removes the always-loaded token cap.
+    The eager size is still reported but never fails; every other check is unchanged and still
+    fails closed. An integer value keeps the old failing behaviour (test_budget_exceeded)."""
+
+    def _null_cfg(self, **over) -> dict:
+        cfg = dict(BASE_CFG)
+        cfg["eager_token_budget"] = None
+        cfg.update(over)
+        return cfg
+
+    def test_null_eager_never_fails_even_when_huge(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            big = "# Big rule\n" + ("padding line of text " * 3000)
+            _mktree(root, rules={"big.md": big})
+            rc, out = _run_main_capture(root, self._null_cfg())
+            self.assertEqual(rc, 0, out)
+            self.assertIn("no cap: owner D-093-R074", out)
+
+    def test_null_eager_still_enforces_handoff_budget(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            _mktree(root, rules={"hold.md": "# hold\nX\n"},
+                    handoff="padding handoff line " * 3000)
+            self.assertEqual(_run_main(root, self._null_cfg(handoff_token_budget=100)), 1)
+
+    def test_null_eager_still_enforces_retired_section(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            retired = "# Rule\n\n## Old thing RETIRED\n" + ("this is retired narrative. " * 40)
+            _mktree(root, rules={"hold.md": retired})
+            self.assertEqual(_run_main(root, self._null_cfg()), 1)
+
+    def test_null_eager_still_enforces_duplicate_board(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            _mktree(root, rules={"hold.md": "# hold\nX\n"})
+            rows = "\n".join(f"| M0-T{i:03d} | accepted |" for i in range(10))
+            board = "# Board\n\n| Task | Status |\n|---|---|\n" + rows + "\n"
+            (root / "docs" / "BOARD.md").write_text(board, encoding="utf-8")
+            self.assertEqual(_run_main(root, self._null_cfg()), 1)
+
+    def test_null_eager_still_enforces_historical_marker(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = pathlib.Path(d)
+            _mktree(root, rules={"hold.md": "# hold\nX\n"})
+            (root / "docs" / "STALE.md").write_text("# Stale board\nstatus\n", encoding="utf-8")
+            self.assertEqual(
+                _run_main(root, self._null_cfg(historical_required=["docs/STALE.md"])), 1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,266 @@
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-02",
+ "title": "215-16 Northern Boulevard: does the permitted 39,934 sq ft include the retained lot 1 building?",
+ "revision": 1,
+ "last_changed": "2026-10-11",
+ "question": {
+  "text": "Does the 39,934 sq ft proposed zoning floor area of new-building job 440608941 already include the retained lot 1 building, so that subtracting lot 1's floor area again would double count?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
+  "lot_scope": "zoning_lot_unconfirmed",
+  "site_scope": "whole_site",
+  "time_scope": "historical_approval"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "filing_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB Job Application Filings)",
+   "title": "DOB BIS job 440608941, document 01 (new building, tax lot 70)",
+   "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4623241",
+   "reference": "job 440608941 doc 01",
+   "page": null,
+   "document_date": "latest action 04/23/2024",
+   "retrieved": "2026-10-10",
+   "excerpt": "job_type NB; status PERMIT ISSUED - ENTIRE JOB/WORK; existing_zoning_sqft 0; proposed_zoning_sqft 39934; total_construction_floor_area 45388",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4623241.json",
+   "sha256": "4d1b0bf11c0796f5e42f97a82e49911202352e9e73e6ebf0e080801971579c8f"
+  },
+  {
+   "id": "E2",
+   "kind": "filing_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB Job Application Filings)",
+   "title": "DOB BIS job 421803891, document 01 (tax lot 1)",
+   "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4157401",
+   "reference": "job 421803891 doc 01",
+   "page": null,
+   "document_date": "latest action 04/11/2022",
+   "retrieved": "2026-10-10",
+   "excerpt": "job_type A1; status PLAN EXAM - DISAPPROVED; existing_zoning_sqft 9100; proposed_zoning_sqft 39772; job_description \"ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.\"",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+   "sha256": "7a4ab2c4c63b813f4c4c4561b16a024f67f6f1d75ce6b49ca2ac0a4f12a1e4e7"
+  },
+  {
+   "id": "E3",
+   "kind": "filing_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB Job Application Filings)",
+   "title": "DOB BIS job 421199072, document 01 (tax lot 1, before the 2017 split)",
+   "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4157401",
+   "reference": "job 421199072 doc 01",
+   "page": null,
+   "document_date": "latest action 02/22/2017",
+   "retrieved": "2026-10-10",
+   "excerpt": "job_type A1; status PERMIT ISSUED - ENTIRE JOB/WORK; existing_zoning_sqft 14150; proposed_zoning_sqft 14150",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+   "sha256": "7a4ab2c4c63b813f4c4c4561b16a024f67f6f1d75ce6b49ca2ac0a4f12a1e4e7"
+  },
+  {
+   "id": "E4",
+   "kind": "agency_guidance",
+   "authority": "NYC Department of Buildings",
+   "title": "PW1 User Guide (revised February 2020)",
+   "url": "https://www.nyc.gov/assets/buildings/pdf/pw1_userguide.pdf",
+   "reference": "PW1 sections 12B and 12C",
+   "page": "14",
+   "document_date": "revised February 2020",
+   "retrieved": "2026-10-10",
+   "excerpt": "section 12C, proposed zoning floor area: \"proposed building(s)/building segments and any existing building(s)/building segments on the zoning lot\" (quoted by the owner research; NOT re-fetched or re-read by the orchestrator) (official file not kept in the repository; its SHA-256 0ae58ac6c4a055e011d1a815f8204faa41c438d733f37ab2b66bc03e5ee4627c is listed in docs/research/owner-research/2026-10-10-215-16-northern-evidence/source-manifest.json)",
+   "saved_copy": null,
+   "sha256": null
+  },
+  {
+   "id": "E5",
+   "kind": "dataset_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB NOW certificates of occupancy)",
+   "title": "Certificate of occupancy index rows for BBL 4073340070",
+   "url": "https://data.cityofnewyork.us/resource/pkdm-hqz6.json?bbl=4073340070",
+   "reference": "dataset pkdm-hqz6",
+   "page": null,
+   "document_date": "as published",
+   "retrieved": "2026-10-10",
+   "excerpt": "[{\"job_filing_name\": \"440608941\", \"job_type\": \"NEW BUILDING\", \"bin\": \"4623241\", \"borough\": \"Queens\", \"house_no\": \"45-06\", \"street_name\": \"215 PLACE\", \"block\": \"7334\", \"lot\": \"70\", \"zip_code\": \"11361\", \"submitted_date\": \"2026-05-28T00:00:00.000\", \"c_of_o_status\": \"CO Issued\", \"c_of_o_sequence\": \"95328\", \"c_of_o_filing_type\": \"Initial\", \"community_board\": \"411\", \"c_of_o_issuance_date\": \"06/03/26  1:",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_co_pkdm-hqz6_bbl_4073340070.json",
+   "sha256": "33b21da95409d2c01b3be0e9474329d8f1972a67192210730e4c8b265265831d"
+  },
+  {
+   "id": "E6",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: floor area",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-floor-area)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "“Floor area” is the sum of the gross areas of the several floors of a #building# or #buildings#, measured from the exterior faces of exterior walls or from the center lines of walls separating two #buildings#. In particular, #floor area# includes:\n\n(1) #basement# space, except as specifically excluded in this definition;\n\n(2) elevator shafts or stairwells at each floor, except as specifically excluded in this definition;\n\n(3) floor space in penthouses;\n\n(4) attic space (whether or not a floor has been laid) providing structural headroom of eight feet or more;\n\n(5) floor space in gallerias, interior balconies, mezzanines or bridges;\n\n(6) floor space in open or roofed bridges, breeze ways or porches, if more than 50 percent of the perimeter of such bridge, breeze way or porch is enclosed, and provided that a parapet not higher than 3 feet, 8 inches, or a railing not less than 50 percent open and not higher than 4 feet, 6 inches, shall not constitute an enclosure;\n\n(7) any other floor space used for dwelling purposes, no matter where located within a #building#, when not specifically excluded;\n\n(8) floor space in #accessory buildings#, except for floor space used for #accessory# mechanical equipment;\n\n(9) floor space used for #accessory# off-street loading berths in excess of 200 percent of the amount required by the applicable district regulations;\n\n(10) floor space that is not otherwise exempt pursuant to this Section and is, or is made, inaccessible within a #building#;\n\n(11) floor space in exterior balconies or in open or roofed terraces if more than 67 percent of the perimeter of such balcony or terrace is enclosed and provided that parapets, railings or safety guards, whether applied singly, or in combination, shall not constitute an enclosure when meeting the following criteria:\n\n(i) parapets shall not exceed four feet in height;\n\n(ii) railings shall not exceed 4 feet, 6 inches, and shall be at least 50 percent open for the portion that exceeds four feet in height; and\n\n(iii) safety guards shall not exceed 10 feet in height and shall be at least 90 percent transparent for the portion that exceeds four feet in height. In addition, where such balcony or terrace has a roofed portion above it, there shall be an opening that is not less than 40 percent of the height between the bottom of the roof and the finished floor level of such balcony.\n\nFor the purposes of such calculation, exterior #building# walls on adjoining #zoning lots abutting# an open or roofed terrace shall not constitute an enclosure. A sun control device that is accessible for purposes other than for maintenance shall be considered a balcony; and\n\n(12) any other floor space not specifically excluded.\n\nHowever, the #floor area# of a #building# shall not include:\n\n(1) #cellar# space, except where such space is used for dwelling purposes. #Cellar# space used for retailing shall be included for the purpose of calculating requirements for #accessory# off-street parking spaces, #accessory# bicycle parking spaces and #accessory# off-street loading berths;\n\n(2) elevator or stair bulkheads, #accessory# water tanks, or cooling towers, except that such exclusions shall not apply in R2A Districts;\n\n(3) uncovered steps;\n\n(4) attic space (whether or not a floor has been laid) providing structural headroom of less than eight feet;\n\n(5) floor space in open or roofed bridges, breeze ways or porches, provided that not more than 50 percent of the perimeter of such bridge, breeze way or porch is enclosed, and provided that a parapet not higher than 3 feet, 8 inches, or a railing not less than 50 percent open and not higher than 4 feet, 6 inches, shall not constitute an enclosure;\n\n(6) floor space used for #accessory# off-street parking spaces provided in any #story#:\n\n(i) up to 300 square feet per #single-# or #two-family residence#, on #zoning lots# where individual parking spaces accessory to #residential# #uses# are provided;\n\n(ii) within #group parking facilities# located not more than 23 feet above #curb level#, except where such floor space used for #accessory# parking is contained within a #public parking garage#; or\n\n(iii) within #automated parking facilities# located not more than 40 feet above #curb level#, except where such floor space used for #accessory# parking is contained within a #public parking garage#;\n\n(7) floor space used for #accessory# off-street loading berths, up to 200 percent of the amount required by the applicable district regulation;\n\n(8) floor space used for #accessory# mechanical equipment. Such exclusion shall also include the minimum necessary floor space to provide for necessary maintenance and access to such equipment. For the purposes of calculating floor space used for mechanical equipment, #building segments# on a single #zoning lot# may be considered to be separate #buildings#;\n\n(9) floor space in exterior balconies or in open or roofed terraces provided that not more than 67 percent of the perimeter of such balcony or terrace is enclosed and provided that parapets, railings or safety guards, whether applied singly or in combination, shall not constitute an enclosure when meeting the following criteria:\n\n(i) parapets shall not exceed four feet in height;\n\n(ii) railings shall not exceed 4 feet, 6 inches, and shall be at least 50 percent open for the portion that exceeds four feet in height; and\n\n(iii) safety guards shall not exceed 10 feet in height and shall be at least 90 percent transparent for the portion that exceeds four feet in height. In addition, where such balcony or terrace has a roofed portion above it, there shall be an opening that is not less than 40 percent of the height between the bottom of the roof and the finished floor level of such balcony,\n\nFor the purposes of such calculation, exterior #building# walls on adjoining #zoning lots abutting# an open or roofed terrace shall not constitute an enclosure. A sun control device that is accessible for purposes other than for maintenance shall be considered a balcony;\n\n(10) floor space within stairwells:\n\n(i) at each floor of #buildings# containing #residences developed# or #enlarged# after April 16, 2008, that are greater than 125 feet in height, provided that:\n\n(a) such stairwells are located on a #story# containing #residences#;\n\n(b) such stairwells are used as a required means of egress from such #residences#;\n\n(c) such stairwells have a minimum width of 44 inches;\n\n(d) such floor space excluded from #floor area# shall be limited to a maximum of eight inches of stair and landing width measured along the length of the stairwell enclosure at each floor; and\n\n(e) where such stairwells serve non-#residential uses# on any floor, or are located within multi-level #dwelling units#, the entire floor space within such stairwells on such floors shall count as #floor area#;\n\n(ii) at each floor of #buildings developed# or #enlarged# after April 28, 2015, that are 420 feet or greater in height, provided that:\n\n(a) such stairwells serve a space with an occupancy group other than Group R-2, as classified in the New York City Building Code, that is located at or above a height of 420 feet; and\n\n(b) such floor space excluded from #floor area# shall be limited to:\n\n(A) the 25 percent of stair and landing width required by the New York City Building Code which is provided in addition to the stair and landing widths required by such Code for means of egress; or\n\n(B) the one stairwell required by the New York City Building Code which is provided in addition to the stairwells required by such Code for means of egress. For the purposes of this paragraph, such additional stairwell shall include the stair and landings as well as any walls enclosing the stair and landings;\n\n(11) floor space used for the storage of equipment by the Fire Department pursuant to the New York City Fire Code, Section 511.7 (Storage space for pre-positioned department equipment) in #buildings# that are 420 feet or greater in height;\n\n(12) #qualifying exterior wall thickness#;\n\n(13) floor space in a #qualifying rooftop greenhouse#;\n\n(14) floor space on a sun control device, where such space is inaccessible other than for maintenance;\n\n(15) floor space within a #fully electrified building# or an #ultra low energy building#, of an amount equivalent to five percent of the #floor area# located within such #building#, and exclusive of any floor space otherwise excluded from #floor area#;\n\n(16) floor space in #buildings# containing #multiple dwelling residences# allocated to #building# amenities, corridors, refuse storage or disposal, or access to elevated ground floor #dwelling units# that is provided in accordance with the provisions of Section 23-23, inclusive;\n\n(17) floor space in #Quality Housing buildings# that was exempted pursuant the Quality Housing Program, as such program existed prior to December 5, 2024.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-floor-area.snapshot.json",
+   "sha256": "5e42081021554199cdc0ea631c2aa9dc9a021b2f0b5d99f74253fcdf660bb999"
+  }
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": [
+   "DOB PW1 User Guide p. 14, sections 12B and 12C (E4, as quoted by the owner research)",
+   "ZR 12-10 'floor area' (E6)"
+  ],
+  "exceptions_considered": [
+   "A filing's proposed total can be building-only if its zoning section lists the retained building separately; only the filled PW1 section 12 and the ZD1 show which.",
+   "Total construction floor area (45,388 sq ft) is a different measure from zoning floor area.",
+   "The 2022 A1 total (39,772, disapproved) and the NB total (39,934, permitted) are different filings, not one revision.",
+   "The 2017 job 421199072 (14,150) predates the March 2017 tax-lot split."
+  ],
+  "reading": "If the PW1 instruction was followed, 39,934 sq ft is the zoning lot's whole proposed zoning floor area, including the retained lot 1 building; subtracting lot 1's 9,100 sq ft again would count it twice. That is not established: the filled PW1/ZD1 has not been read, and the guide quote has not been re-read by the orchestrator.",
+  "applies": "not_determined"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {
+    "name": "NB 440608941 proposed zoning floor area",
+    "value": "39934",
+    "units": "sq ft",
+    "basis": "filing_attribute",
+    "scope": "proposed; building-only or whole zoning lot: unknown"
+   },
+   {
+    "name": "NB 440608941 total construction floor area",
+    "value": "45388",
+    "units": "sq ft",
+    "basis": "filing_attribute",
+    "scope": "proposed; construction measure, not zoning floor area"
+   },
+   {
+    "name": "A1 421803891 existing zoning floor area",
+    "value": "9100",
+    "units": "sq ft",
+    "basis": "filing_attribute",
+    "scope": "existing; filed under tax lot 1; plan exam disapproved"
+   },
+   {
+    "name": "A1 421803891 proposed zoning floor area",
+    "value": "39772",
+    "units": "sq ft",
+    "basis": "filing_attribute",
+    "scope": "proposed; described as one zoning lot of lots 1 and 70; disapproved"
+   },
+   {
+    "name": "A1 421199072 zoning floor area",
+    "value": "14150",
+    "units": "sq ft",
+    "basis": "filing_attribute",
+    "scope": "existing and proposed; 2017, before the tax-lot split"
+   }
+  ],
+  "double_count_risk": "Adding lot 1's 9,100 sq ft to 39,934 counts lot 1 twice if 39,934 already includes it; treating 39,772 and 39,934 as one approved revision; using construction floor area."
+ },
+ "conclusion": {
+  "research_status": "searched_not_found",
+  "observed_facts": [
+   "job_type NB; status PERMIT ISSUED - ENTIRE JOB/WORK; existing_zoning_sqft 0; proposed_zoning_sqft 39934; total_construction_floor_area 45388",
+   "job_type A1; status PLAN EXAM - DISAPPROVED; existing_zoning_sqft 9100; proposed_zoning_sqft 39772; job_description \"ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.\"",
+   "job 421199072: existing and proposed zoning floor area 14150 sq ft, permit issued 02/22/2017"
+  ],
+  "interpretation": "Whether 39,934 sq ft includes the retained lot 1 building is unknown; the PW1 guide suggests it should, which is a reason not to subtract lot 1 again, not a finding.",
+  "conflicts": [],
+  "conditions": [
+   "Remaining capacity cannot be computed while the scope of 39,934 sq ft is unknown."
+  ],
+  "settled_by": [
+   "the approved ZD1 and PW1 section 12 (zoning area schedule) of NB 440608941 and its amendments",
+   "the lot 1 approvals of jobs 421803891 and 421199072"
+  ]
+ },
+ "searches": [
+  {
+   "source": "DOB BIS job pages",
+   "query": "job 440608941 and the lot 1 property profile",
+   "result": "access_blocked",
+   "missing_item": "the approved ZD1 and PW1 zoning section of NB 440608941",
+   "affected_outputs": [
+    "floor_area.existing",
+    "floor_area.remaining"
+   ],
+   "next_step": "a records request for the approved plans (questionnaire F1)"
+  },
+  {
+   "source": "DOB NOW public portal",
+   "query": "filings for BBL 4073340070",
+   "result": "access_blocked",
+   "missing_item": "approved plans; the portal showed maintenance on 2026-10-09 to 2026-10-11",
+   "affected_outputs": [
+    "floor_area.existing"
+   ],
+   "next_step": "retry after the maintenance window for public filings"
+  },
+  {
+   "source": "NYC Open Data DOB datasets (BIS jobs, DOB NOW jobs, certificates of occupancy)",
+   "query": "jobs and certificates for BINs 4157401 and 4623241 and BBLs 4073340001 and 4073340070",
+   "result": "not_found",
+   "missing_item": "an authoritative zoning floor-area schedule for the zoning lot or for lot 1",
+   "affected_outputs": [
+    "floor_area.existing",
+    "floor_area.remaining"
+   ],
+   "next_step": "the approved plans named in settled_by"
+  }
+ ],
+ "implementation": {
+  "affected_outputs": [
+   "floor_area.existing",
+   "floor_area.remaining",
+   "unused_floor_area"
+  ],
+  "code_paths": [
+   "services/api/app/profile/existing_floor_area/resolve.py",
+   "services/api/app/profile/existing_floor_area/scope.py",
+   "services/api/app/profile/parity/unused_floor_area.py"
+  ],
+  "code_identity": {
+   "services/api/app/profile/existing_floor_area/resolve.py": "7765d4e73f0f67fe7201eb943fa62b2877e70c3c2ce547e67fcba55332ea1807",
+   "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+   "services/api/app/profile/parity/unused_floor_area.py": "64ff6bdd84c53fef888512b80bba47ea4c81b36a0b07a28dc05fcb00df52ca4d"
+  },
+  "worked_example": {
+   "inputs": "The owner research's hypothetical, not a finding: zoning lot 20,000 sq ft x FAR 2.0 = 40,000 sq ft.",
+   "expected": "If 39,934 is the whole zoning lot's total: 40,000 - 39,934 = 66 sq ft. If it is building-only and lot 1's 9,100 is separate: 40,000 - 49,034 = -9,034 sq ft. Neither is shown; existing zoning floor area reads unknown when a block filing mentions a zoning lot, and remaining capacity reads 'Not confirmed'.",
+   "basis": "Arithmetic on the filed figures; owner rule D-090-R038 (remaining capacity reads Not confirmed until the zoning lot and existing zoning floor area are verified).",
+   "prepared_by": "orchestrator (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; not professionally checked"
+  },
+  "regression_cases": [
+   "A block filing that mentions a zoning lot sets the DOB figure aside (existing behaviour; services/api/tests/profile/test_existing_floor_area_benchmark.py).",
+   "Unused floor area reports 'Not confirmed', never a number (services/api/app/profile/parity/unused_floor_area.py)."
+  ],
+  "dependency_assessment": [
+   "The code already avoids this double count: existing_floor_area.resolve sets aside a zoning-lot-scoped DOB figure and records zoning_lot_scope as not established; parity.unused_floor_area computes no remaining figure. No change is needed for this record; any future remaining-capacity calculation must read this record first."
+  ]
+ },
+ "review": {
+  "producer": "orchestrator",
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/profile/existing_floor_area/resolve.py": "7765d4e73f0f67fe7201eb943fa62b2877e70c3c2ce547e67fcba55332ea1807",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+     "services/api/app/profile/parity/unused_floor_area.py": "64ff6bdd84c53fef888512b80bba47ea4c81b36a0b07a28dc05fcb00df52ca4d"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: DOB 440608941 re-fetched live (proposed 39,934; construction 45,388); searched_not_found honest; the PW1 quote is marked as not re-read by the orchestrator.",
+     "F3 advisory: the certificate-of-occupancy excerpt is a truncated raw snippet; its saved copy matches."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-10",
+  "method": "live_fetch",
+  "snapshot_date": null,
+  "limitation": "The DOB job rows were re-fetched by the orchestrator on 2026-10-10; the PW1 guide quote was not."
+ },
+ "promotion": {
+  "requested_label": null
+ }
+}

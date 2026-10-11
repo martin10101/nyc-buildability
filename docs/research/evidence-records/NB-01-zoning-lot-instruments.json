@@ -1,0 +1,281 @@
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-01",
+ "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
+ "revision": 2,
+ "last_changed": "2026-10-11",
+ "question": {
+  "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
+  "lot_scope": "zoning_lot_unconfirmed",
+  "site_scope": "whole_site",
+  "time_scope": "both"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "index_entry",
+   "authority": "NYC Department of Finance, ACRIS (NYC Open Data: Real Property Legals)",
+   "title": "ACRIS index rows for the three 2022 instruments on block 7334",
+   "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=70",
+   "reference": "dataset 8h5j-fqxa; documents 2022020201551001, 2022020201551002, 2022031600431001",
+   "page": null,
+   "document_date": "index rows good through 2022-02-28 / 2022-03-31",
+   "retrieved": "2026-10-10",
+   "excerpt": "document 2022020201551001 indexed against lots 1, 70 (partial_lot E, easement N, air_rights N); document 2022020201551002 indexed against lots 1, 70 (partial_lot E, easement N, air_rights N); document 2022031600431001 indexed against lots 1, 70 (partial_lot E, easement N, air_rights N)",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_keydocs.json",
+   "sha256": "4c47cae83a7dc30105bb58566ab0f20e3e149488354880a71bb2bd0e23e85450"
+  },
+  {
+   "id": "E2",
+   "kind": "index_entry",
+   "authority": "NYC Department of Finance, ACRIS (NYC Open Data: Real Property Master)",
+   "title": "ACRIS master rows (document type, dates, CRFN) for block 7334 lots 1 and 70",
+   "url": "https://data.cityofnewyork.us/resource/bnx9-e6tj.json",
+   "reference": "dataset bnx9-e6tj",
+   "page": null,
+   "document_date": "as recorded",
+   "retrieved": "2026-10-10",
+   "excerpt": "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661; 2016081000837001 CERT dated 2016-08-04 recorded 2016-08-11 (lot 1); 2016081000837002 ZONE dated 2016-08-09 recorded 2016-08-11 (lot 1); 2018013000919001 DEED dated 2018-01-18 recorded 2018-01-31 (lot 70); dataset maximum good-through date 2026-09-30",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_master_all.json",
+   "sha256": "cae876e4907aefcc743dac475a561204820ccdcbd232b177c8295fb8fbdec681"
+  },
+  {
+   "id": "E3",
+   "kind": "dataset_record",
+   "authority": "NYC Department of Finance, ACRIS (NYC Open Data: Document Control Codes)",
+   "title": "ACRIS document type codes",
+   "url": "https://data.cityofnewyork.us/resource/7isb-wh4c.json",
+   "reference": "dataset 7isb-wh4c",
+   "page": null,
+   "document_date": "as published",
+   "retrieved": "2026-10-10",
+   "excerpt": "CERT = \"CERTIFICATE\"; ZONE = \"ZONING LOT DESCRIPTION\"; DECL = \"DECLARATION\"",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_codes.json",
+   "sha256": "518363532df753ac364ce47c5d62dfbdbaf609b598845bfcfe2ec83b9739c625"
+  },
+  {
+   "id": "E4",
+   "kind": "filing_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB Job Application Filings)",
+   "title": "DOB BIS job 421803891, document 01 (tax lot 1)",
+   "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4157401",
+   "reference": "job 421803891 doc 01",
+   "page": null,
+   "document_date": "latest action 04/11/2022",
+   "retrieved": "2026-10-10",
+   "excerpt": "job_type A1; status PLAN EXAM - DISAPPROVED; existing_zoning_sqft 9100; proposed_zoning_sqft 39772; job_description \"ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.\"",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+   "sha256": "7a4ab2c4c63b813f4c4c4561b16a024f67f6f1d75ce6b49ca2ac0a4f12a1e4e7"
+  },
+  {
+   "id": "E5",
+   "kind": "filing_record",
+   "authority": "NYC Department of Buildings (NYC Open Data: DOB Job Application Filings)",
+   "title": "DOB BIS job 421158801, document 01 (tax lot 1)",
+   "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4157401",
+   "reference": "job 421158801 doc 01",
+   "page": null,
+   "document_date": "latest action 06/12/2015",
+   "retrieved": "2026-10-10",
+   "excerpt": "job_type SI; status COMPLETED; job_description \"APPLICATION SUBMITTED TO SUBDIVIDE EXISTING ONE (1) TAX LOT INTO (2) TAX LOTS.\"",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+   "sha256": "7a4ab2c4c63b813f4c4c4561b16a024f67f6f1d75ce6b49ca2ac0a4f12a1e4e7"
+  },
+  {
+   "id": "E6",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: zoning lot",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-zoning-lot)",
+   "page": null,
+   "document_date": "last amended 2011-02-02",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"zoning lot\" is either:\n\n(a) a lot of record existing on December 15, 1961, or any applicable subsequent amendment thereto;\n\n(b) a tract of land, either unsubdivided or consisting of two or more contiguous lots of record, located within a single #block#, which, on December 15, 1961, or any applicable subsequent amendment thereto, was in single ownership;\n\n(c) a tract of land, either unsubdivided or consisting of two or more lots of record contiguous for a minimum of 10 linear feet, located within a single #block#, which at the time of filing for a building permit (or, if no building permit is required, at the time of the filing for a certificate of occupancy) is under single fee ownership and with respect to which each party having any interest therein is a party in interest (as defined herein); or\n\n(d) a tract of land, either unsubdivided or consisting of two or more lots of record contiguous for a minimum of 10 linear feet, located within a single #block#, which at the time of filing for a building permit (or, if no building permit is required, at the time of filing for a certificate of occupancy) is declared to be a tract of land to be treated as one #zoning lot# for the purpose of this Resolution. Such declaration shall be made in one written Declaration of Restrictions covering all of such tract of land or in separate written Declarations of Restrictions covering parts of such tract of land and which in the aggregate cover the entire tract of land comprising the #zoning lot#. Any Declaration of Restrictions or Declarations of Restrictions which individually or collectively cover a tract of land are referred to herein as \"Declarations.\" Each Declaration shall be executed by each party in interest (as defined herein) in the portion of such tract of land covered by such Declaration (excepting any such party as shall have waived its right to execute such Declaration in a written instrument executed by such party in recordable form and recorded at or prior to the recording of the Declaration). Each Declaration and waiver of right to execute a Declaration shall be recorded in the Conveyances Section of the Office of the City Register or, if applicable, the County Clerk's Office of the county in which such tract of land is located, against each lot of record constituting a portion of the land covered by such Declaration.\n\nA #zoning lot#, therefore, may or may not coincide with a lot as shown on the official tax map of the City of New York, or on any recorded subdivision plat or deed.\n\nParcels within City-owned tracts of land located in Broad Channel within the boundaries of Community Board 14 in the Borough of Queens that were numerically identified for leasing purposes on maps filed in the Office of Borough President prior to December 15, 1961, may be considered as individual lots of record as of September 10, 1981.\n\n(e) For purposes of the provisions of paragraph (c) hereof:\n\n(1) prior to issuing a building permit or a certificate of occupancy, as the case may be, the Department of Buildings shall be furnished with a certificate issued to the applicant therefor by a title insurance company licensed to do business in the State of New York showing that each party having any interest in the subject tract of land is a party in interest (as defined herein); except that where the City of New York is a fee owner, such certificate may be issued by the New York City Law Department; and\n\n(2) a \"party in interest\" in the tract of land shall include only (W) the fee owner thereof, (X) the holder of any enforceable recorded interest superior to that of the fee owner and which could result in such holder obtaining possession of all or substantially all of such tract of land, (Y) the holder of any enforceable recorded interest in all or substantially all of such tract of land which would be adversely affected by the development thereof and (Z) the holder of any unrecorded interest in all or substantially all of such tract of land which would be superior to and adversely affected by the development thereof and which would be disclosed by a physical inspection of the tract of land.\n\n(f) For purposes of the provisions of paragraph (d) hereof:\n\n(1) prior to issuing a building permit or a certificate of occupancy, as the case may be, the Department of Buildings shall be furnished with a certificate issued to the applicant therefor by a title insurance company licensed to do business in the State of New York showing that each party in interest (excepting those parties waiving their respective rights to join therein, as set forth in this definition) has executed the Declaration and that the same, as well as each such waiver, have been duly recorded; except that where the City of New York is a fee owner, such certificate may be issued by the New York City Law Department;\n\n(2) the Buildings Department, in issuing a building permit for construction of a #building or other structure# on the #zoning lot# declared pursuant to paragraph (d) above or, if no building permit is required, in issuing a certificate of occupancy for such #building or other structure#, shall accept an application for same from and, if all conditions for issuance of same are fulfilled, shall issue same to any party to the Declaration;\n\n(3) by their execution and recording of a Declaration, the parties to the Declaration, and all parties who have waived their respective rights to execute such Declaration, shall be deemed to have agreed that no breach by any party to the Declaration, or any agreement ancillary thereto, shall have any effect on the treatment of the tract of land covered by the Declaration as one #zoning lot# for purposes of this Resolution and such tract of land shall be treated as one #zoning lot# unless such #zoning lot# is subdivided in accordance with the provisions of this Resolution; and\n\n(4) a \"party in interest\" in the portion of the tract of land covered by a Declaration shall include only (W) the fee owner or owners thereof, (X) the holder of any enforceable recorded interest in all or part thereof which would be superior to the Declaration and which could result in such holder obtaining possession of any portion of such tract of land, (Y) the holder of any enforceable recorded interest in all or part thereof which would be adversely affected by the Declaration, and (Z) the holder of any unrecorded interest in all or part thereof which would be superior to and adversely affected by the Declaration and which would be disclosed by a physical inspection of the portion of the tract of land covered by the Declaration.\n\nA #zoning lot# may be subdivided into two or more #zoning lots#, provided that all resulting #zoning lots# and all #buildings# thereon shall comply with all of the applicable provisions of this Resolution. If such #zoning lot#, however, is occupied by a #non-complying building#, such #zoning lot# may be subdivided provided such subdivision does not create a new #non-compliance# or increase the degree of #non-compliance# of such #building#.\n\nWhere ownership of a #zoning lot# or portion thereof was effected prior to the effective date of this amendment, as evidenced by an attorney's affidavit, any #development#, #enlargement# or alteration on such #zoning lot# may be based upon such prior effected ownership as then defined in the #zoning lot# definition of Section 12-10. Such prior leasehold agreements shall be duly recorded prior to August 1, 1978.\n\nPrior to the issuance of any permit for a #development# or #enlargement# pursuant to this Resolution a complete metes and bounds of the #zoning lot#, the tax lot number, the block number and the ownership of the #zoning lot# as set forth in paragraphs (a), (b), (c) and (d) herein shall be recorded by the applicant in the Conveyances Section of the Office of the City Register (or, if applicable, the County Clerk's Office) of the county in which the said #zoning lot# is located. The #zoning lot# definition in effect prior to the effective date of this amendment shall continue to apply to Board of Standards and Appeals approvals in effect at the effective date hereof.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-zoning-lot.snapshot.json",
+   "sha256": "fd7ef653f25036c291f3930677ffbff451a300ada27d65846a6600032e8f551b"
+  },
+  {
+   "id": "E7",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: lot area",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-lot-area)",
+   "page": null,
+   "document_date": "last amended 1964-02-20",
+   "retrieved": "2026-10-07",
+   "excerpt": "\"Lot area\" is the area of a #zoning lot#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-lot-area.snapshot.json",
+   "sha256": "c579b8dc916e3f3080226ef85b96318d0145dfe3b970e2596117ef1ad400241f"
+  }
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": [
+   "ZR 12-10 'zoning lot' (E6)",
+   "ZR 12-10 'lot area' (E7)",
+   "ACRIS document type codes CERT, ZONE, DECL (E3)"
+  ],
+  "exceptions_considered": [
+   "A tax-lot split is not a zoning-lot subdivision: DOB job 421158801 (2015) split one tax lot into two; it does not establish the zoning lot.",
+   "A later zoning-lot subdivision or replacement declaration would change the answer; none was found in the searched index (good through 2026-09-30), which is not proof of absence.",
+   "The 2016 CERT and ZONE (lot 1) share execution dates with the 2022 CERT and ZONE; this may be a re-recording, which the index cannot show."
+  ],
+  "reading": "Lot area is the area of a zoning lot (E7), and a zoning lot can contain several tax lots (E6). The index (E1, E2) puts the 2022 certificate, zoning lot description and declaration against both lot 1 and lot 70, and DOB job 421803891 says 'ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70)' (E4). That points to one zoning lot of lots 1 and 70, but an index entry and a filing description do not establish what the instruments say. The zoning lot is unconfirmed.",
+  "applies": "not_determined"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {
+    "name": "tax lot 70 area",
+    "value": "10075",
+    "units": "sq ft",
+    "basis": "administrative_record",
+    "scope": "existing; tax lot 70 only"
+   },
+   {
+    "name": "tax lot 1 area",
+    "value": "9925",
+    "units": "sq ft",
+    "basis": "administrative_record",
+    "scope": "existing; tax lot 1 only"
+   },
+   {
+    "name": "lots 1 and 70 together",
+    "value": "20000",
+    "units": "sq ft",
+    "basis": "derived",
+    "scope": "sum of two administrative areas; not a zoning-lot area"
+   }
+  ],
+  "double_count_risk": "Working lot 70 alone while lot 1's building may stand on the same zoning lot; or adding areas or floor areas across the two tax lots before the zoning lot is established."
+ },
+ "conclusion": {
+  "research_status": "access_blocked",
+  "observed_facts": [
+   "2022020201551001 CERT dated 2016-08-04, recorded 2022-02-08, CRFN 2022000059133, indexed against lots 1, 70; 2022020201551002 ZONE dated 2016-08-09, recorded 2022-02-08, CRFN 2022000059134, indexed against lots 1, 70; 2022031600431001 DECL dated 2022-03-16, recorded 2022-03-22, CRFN 2022000121661, indexed against lots 1, 70 (lots from E1; type, dates and CRFN from E2)",
+   "CERT = \"CERTIFICATE\"; ZONE = \"ZONING LOT DESCRIPTION\"; DECL = \"DECLARATION\"",
+   "DOB job 421803891 text: \"ALTERATION -1 APPLICATION TO BE FILED UNDER TAX LOT #1 TO REFLECT ONE (1) ZONING LOT AND (2) TAX LOTS (LOT #1 & #70). NO WORK TO BE DONE UNDER THIS APPLICATION. NB APPLICATION #440608941 HAS BEEN FILED UNDER TAX LOT #70.\"",
+   "DOB job 421158801 (2015): \"APPLICATION SUBMITTED TO SUBDIVIDE EXISTING ONE (1) TAX LOT INTO (2) TAX LOTS.\""
+  ],
+  "interpretation": "Likely one zoning lot of tax lots 1 and 70; not established until the instruments are read.",
+  "conflicts": [],
+  "conditions": [
+   "Every lot-area-based figure the report gives for lot 70 assumes lot 70 alone is the zoning lot."
+  ],
+  "settled_by": [
+   "the recorded 2022 CERT 2022020201551001, ZONE 2022020201551002 and DECL 2022031600431001 with their exhibits",
+   "the 2016 CERT 2016081000837001 and ZONE 2016081000837002",
+   "a current title and zoning-lot review"
+  ]
+ },
+ "searches": [
+  {
+   "source": "ACRIS document images (a836-acris.nyc.gov)",
+   "query": "DocumentImageView and DocumentDetail for 2022020201551001, 2022020201551002, 2022031600431001",
+   "result": "access_blocked",
+   "missing_item": "the contents of CERT 2022020201551001, ZONE 2022020201551002 and DECL 2022031600431001",
+   "affected_outputs": [
+    "lot_area",
+    "floor_area.allowance",
+    "dwelling_units.legal_limit"
+   ],
+   "next_step": "owner saves the three documents in a browser (questionnaire F1), or authorizes a records request"
+  },
+  {
+   "source": "NYC Open Data ACRIS Legals and Master",
+   "query": "block 7334 lots 1 and 70, all documents",
+   "result": "found",
+   "missing_item": "",
+   "affected_outputs": [],
+   "next_step": ""
+  },
+  {
+   "source": "NYC Open Data ACRIS Legals and Master",
+   "query": "a zoning-lot subdivision or replacement declaration after 2022 on lots 1 or 70 (37 document ids read)",
+   "result": "not_found",
+   "missing_item": "any later zoning-lot instrument",
+   "affected_outputs": [
+    "lot_area"
+   ],
+   "next_step": "the title and zoning-lot review named in settled_by"
+  }
+ ],
+ "implementation": {
+  "affected_outputs": [
+   "lot_area",
+   "floor_area.allowance",
+   "floor_area.remaining",
+   "lot_coverage.allowed_footprint",
+   "dwelling_units.legal_limit",
+   "report.zoning_lot_warning"
+  ],
+  "code_paths": [
+   "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py",
+   "services/api/app/profile/existing_floor_area/scope.py"
+  ],
+  "code_identity": {
+   "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+   "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6"
+  },
+  "worked_example": {
+   "inputs": "Tax lots 1 and 70; three 2022 instruments indexed against both; DOB 421803891's text.",
+   "expected": "Zoning lot: unconfirmed. The program may warn that the zoning lot may include lot 1 and label lot-area figures conditional on it; it may not treat lots 1 and 70 as one confirmed zoning lot, nor lot 70 alone as confirmed.",
+   "basis": "ZR 12-10 lot area and zoning lot (E6, E7); an index entry does not establish an instrument's contents (D-093).",
+   "prepared_by": "orchestrator (Claude Code session 01TpXJN7), 2026-10-11; worked from the law text, not from a program run; not professionally checked"
+  },
+  "regression_cases": [
+   "An index entry naming two tax lots gives a warning, never a merged lot area (backlog DB-232).",
+   "A DOB filing whose text names a zoning lot has its floor-area figure set aside (services/api/app/profile/existing_floor_area/scope.py; tests in services/api/tests/profile/test_existing_floor_area_benchmark.py)."
+  ],
+  "dependency_assessment": [
+   "Same assumption elsewhere: every lot-area-based output (floor-area allowance, coverage footprint, dwelling-unit limit, remaining capacity) takes the subject tax lot as the zoning lot. It is wrong only where a zoning lot spans several tax lots; no blanket change and no address-specific exception. Queued: DB-232 (a warning from the ACRIS index, labelled conditional).",
+   "zoning_lot_history.py is reminder-only and never concludes a zoning lot; existing_floor_area/scope.py already sets aside zoning-lot-scoped DOB figures. Both stay consistent with this record."
+  ]
+ },
+ "review": {
+  "producer": "orchestrator",
+  "agent_reviews": [
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 1,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 1b41c813: re-fetched the ACRIS Legals rows of 2022031600431001 (lots 1 and 70) and the Master facts; status access_blocked and kind index_entry honest.",
+     "F1 REQUIRED: E1's excerpt gave the type, dates and CRFN, which live in the Master dataset (E2), not the Legals dataset; corrected in revision 2."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11T02:13Z",
+    "reviewed_revision": 2,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 delta at 882ffd43: E1 (ACRIS Legals) now quotes only the lots and flags, E2 (ACRIS Master) the type, dates and CRFN; both equal their saved copies; nothing else in NB-01's meaning changed; F1 closed."
+    ],
+    "report": "project-control/reports/M0-T190-reviews.md"
+   }
+  ],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-10",
+  "method": "live_fetch",
+  "snapshot_date": null,
+  "limitation": "The ACRIS index is good through 2026-09-30; this is not a title certification."
+ },
+ "promotion": {
+  "requested_label": null
+ }
+}

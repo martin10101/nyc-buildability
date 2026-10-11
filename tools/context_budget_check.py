@@ -141,13 +141,21 @@ def main(argv: list[str]) -> int:
         total_lines += ln
         rel = f.relative_to(ROOT).as_posix()
         print(f"  {b:>7}B  {ln:>4}L  ~{t:>5} tok  {rel}")
+    # eager_token_budget may be null: the owner removed the always-loaded token cap
+    # (D-093-R074, 2026-10-11). With null the eager size is still reported but never fails;
+    # an integer keeps the hard-cap behaviour. Every other check below is UNCHANGED and still
+    # fails closed.
     budget = cfg["eager_token_budget"]
-    print(f"  ---- eager total: {total_bytes}B  {total_lines}L  ~{total_tok} tok  (budget {budget} tok)")
-    if total_tok > budget:
-        failures.append(
-            f"eager project-instruction budget exceeded: ~{total_tok} tok > {budget} tok "
-            f"(the @-import / unconditional-rule load regrew — move detail to on-demand docs or path-scoped rules)"
-        )
+    if budget is None:
+        print(f"  ---- eager total: {total_bytes}B  {total_lines}L  ~{total_tok} tok  "
+              f"(no cap: owner D-093-R074)")
+    else:
+        print(f"  ---- eager total: {total_bytes}B  {total_lines}L  ~{total_tok} tok  (budget {budget} tok)")
+        if total_tok > budget:
+            failures.append(
+                f"eager project-instruction budget exceeded: ~{total_tok} tok > {budget} tok "
+                f"(the @-import / unconditional-rule load regrew — move detail to on-demand docs or path-scoped rules)"
+            )
 
     # 2) Session-handoff cap ---------------------------------------------------
     handoff = ROOT / cfg["handoff_file"]
