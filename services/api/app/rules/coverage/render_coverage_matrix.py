@@ -67,7 +67,6 @@ def render_markdown(matrix: dict) -> str:
     out_cols = matrix["output_columns"]
     add_ons = matrix["add_on_columns"]
     labels = _column_labels(matrix)
-    column_order = matrix["column_order"]
 
     lines.append(f"# {matrix['title']}")
     lines.append("")
@@ -91,7 +90,10 @@ def render_markdown(matrix: dict) -> str:
     lines.append("")
     lines.append(ls["method"])
     lines.append("")
-    lines.append("| ZR section | Section title | Table caption | Covers | Districts | Content digest (sha256) |")
+    lines.append(
+        "| ZR section | Section title | Table caption | "
+        "Covers | Districts | Content digest (sha256) |"
+    )
     lines.append("|---|---|---|---|---:|---|")
     for s in ls["sources"]:
         lines.append(

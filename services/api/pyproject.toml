@@ -77,6 +77,18 @@ include = ["app*"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+# DB-240 / M5-T168: discover files without deferring to .gitignore. `ruff check .`
+# (run from services/api, the api CI job's first step) relativises the repo-root
+# .gitignore `coverage/` rule to its walk root and basename-matches `coverage`, so it
+# pruned the TRACKED source dir app/rules/coverage/ — unlike git, which honours the
+# `!services/api/app/rules/coverage/` re-include and keeps the folder tracked. No
+# repo-root .gitignore pattern can both keep services/api/coverage/ ignored by git
+# (S4) and let ruff read the sibling source (every such pattern strips to the
+# basename `coverage` and prunes it), so the fix lives here. Ruff's built-in excludes
+# still cover venv/__pycache__/build/dist/.*_cache, and coverage-tool output holds no
+# .py, so this lints nothing new in practice (measured: ruff's file list grows by
+# exactly render_coverage_matrix.py).
+respect-gitignore = false
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
