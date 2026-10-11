@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T08:46:29+00:00",
+ "updated_at": "2026-10-11T09:31:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -92,7 +92,7 @@
   "D-094-R068"
  ],
  "requirements_id_digest_sha256": "f74274df853fb37780d8e2f07a4fbd5d5d09264e112d5974829b6b0222b20c4f",
- "requirements_content_digest_sha256": "f772d7ab63557b06b0197bd2c926456e16a3a247d6925a782257e129caa4a4b4",
+ "requirements_content_digest_sha256": "54edc0bdc7305c18137dbf9d66df17f72e5ce392307e6f211ab7868ce0b12d8f",
  "sources": [
   {
    "file": "source-001.md",
@@ -110,7 +110,8 @@
   "M5-T158",
   "M5-T159",
   "M5-T160",
-  "M5-T161"
+  "M5-T161",
+  "M5-T162"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -161,6 +162,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T161 (the flag-on results browser journey follows the record-driven special density (CI repair after M5-T157)) to R034, R035 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T09:31:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T162 (report wording follows the shown legal unit limit (after M5-T157)) to R057, R058 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

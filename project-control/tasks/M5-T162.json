@@ -1,0 +1,134 @@
+{
+  "task_id": "M5-T162",
+  "title": "Report wording after M5-T157: the legal apartment limit open item and the report's coverage list say which limits are shown (standard residences, a conditional ceiling) and which are not known (qualifying affordable and senior housing); no line says 'No legal apartment limit is shown' while one is shown",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Make two report texts follow the results document instead of fixed sentences written before M5-T157. (1) services/api/app/drawings/report/readers.py: the 'Legal apartment limit' open item's effect is built from the document: it names each legal dwelling-unit limit that is withheld (by its program, e.g. qualifying affordable housing, qualifying senior housing) as not known, and, where a legal dwelling-unit limit is SHOWN (on the benchmark: standard residences, a Conditional ceiling), says it is shown as a conditional ceiling; the sentence 'No legal apartment limit is shown.' is used only when no legal dwelling-unit limit is shown. The reason row keeps each withheld limit's own reason (today only the first withheld limit's reason survives), labelled by program. (2) services/api/app/drawings/report/coverage.py: the 'Legal unit limits' entry reads 'Partly' with a short note naming the shown limit and that it is conditional when at least one legal dwelling-unit limit is shown, and 'Not yet' only when none is shown. No figure, label, status or other text changes. Texts are plain user texts: no internal names, no claim about what law text is captured.",
+  "business_reason": "The orchestrator's trial print of the wave-23 report (session-2026-10-11c/print-trial) says on page 1 and in open item 6 'No legal apartment limit is shown' and lists 'Legal unit limits' as 'Not yet', while page 8 shows the standard-residence legal dwelling-unit limit 29 (Conditional) that M5-T157 made visible. The owner's export checks (D-094 R057, R058) require the same figures and labels everywhere and the legal unit limit kept distinct; a PDF that denies a figure it shows fails them.",
+  "inputs": [
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11c/print-trial/report.pdf"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "project-control/reports/M5-T162-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T157"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "project-control/reports/M5-T162-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/",
+    "services/api/app/rules/",
+    "packages/",
+    "apps/",
+    "docs/",
+    ".github/",
+    "render.yaml",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the recorded benchmark document (standard-residence legal dwelling-unit limit shown, Conditional, 29; qualifying affordable and qualifying senior limits withheld)",
+      "when": "the report is built",
+      "then": "the 'Legal apartment limit' open item's effect says the limit is not known for qualifying affordable housing and for qualifying senior housing and that the standard-residence limit is shown as a conditional ceiling; the text 'No legal apartment limit is shown' appears nowhere; the reason row carries each withheld limit's own reason, labelled by program"
+    },
+    {
+      "id": "S2",
+      "given": "a document in which every legal dwelling-unit limit is withheld",
+      "when": "the report is built",
+      "then": "the effect says no legal apartment limit is shown, and the coverage list reads 'Not yet' for legal unit limits"
+    },
+    {
+      "id": "S3",
+      "given": "a document in which no legal dwelling-unit limit is withheld",
+      "when": "the report is built",
+      "then": "there is no 'Legal apartment limit' open item"
+    },
+    {
+      "id": "S4",
+      "given": "the benchmark document",
+      "when": "the coverage list is built",
+      "then": "'Legal unit limits' reads 'Partly' with a note naming the shown standard-residence limit as conditional; never 'Not yet' while a limit is shown"
+    },
+    {
+      "id": "S5",
+      "given": "any document in which a legal dwelling-unit limit value is shown",
+      "when": "the report HTML is built",
+      "then": "a guard test holds that no line denies it (no 'No legal apartment limit is shown', no 'the legal unit limit is withheld'), on the decision summary (most important open items) and the open-items page alike"
+    },
+    {
+      "id": "S6",
+      "given": "every existing report, drawing and journey test",
+      "when": "the suites run",
+      "then": "only these two texts change; no figure, status label or other text moves; tests/drawings, tests/cad and tests/journey pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The page-1 answer table still has no row for the legal unit limit and the page-1 lot-selection sentence is generic; both belong to the report v3 redesign (D-094 plan P-3) and stay out of scope.",
+    "The report's other consumers (website report preview, the PDF print) read the same server HTML; no web file changes."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T09:31:14.105669+00:00",
+  "updated_at": "2026-10-11T09:31:14.392605+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R569",
+        "D-090-R584"
+      ]
+    },
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R007"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R057",
+        "D-094-R058"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T09:31:14.106684+00:00",
+  "path_notes": "Defect found by the orchestrator's trial print at the wave-23 head 06644b03 (session-2026-10-11c notes). Runs alone; no other builder.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings tests/cad tests/journey"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
