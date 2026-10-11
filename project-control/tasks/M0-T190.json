@@ -180,7 +180,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 50,
   "risks": [
     "An always-loaded rule adds startup context (owner removed the cap, D-093-R074; size still reported).",
     "The structural check cannot certify a legal reading; it only blocks promotion without evidence (stated in the procedure).",
@@ -188,7 +188,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T01:38:57.776876+00:00",
-  "updated_at": "2026-10-11T01:39:00.925743+00:00",
+  "updated_at": "2026-10-11T01:52:10.633323+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -282,6 +282,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; orchestrator writes the documents and records; one backend-engineer builder writes the check, the hook pointer and the budget change"
+    },
+    {
+      "at": "2026-10-11T01:52:10.633205+00:00",
+      "agent": "orchestrator",
+      "percent": 50,
+      "status": "claimed",
+      "message": "orchestrator part committed (rule, CLAUDE.md, procedure, five records, links, data files restored); scope correction 1; waiting for the builder (check, hook line, budget, CI)"
     }
   ],
   "scope_corrections": [
