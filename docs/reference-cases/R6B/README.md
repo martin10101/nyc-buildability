@@ -246,8 +246,11 @@ basis - a survey - for the side-street separation; a zoning-lot description, dee
 whether lots 70 and 1 are one zoning lot; the zoning and lot-line kinds of the other lots on the block;
 and the status of the ALLEY and the SW-end bounding feature. Each reading also named outside-folder texts
 of its own: reading 1 a "block frontage"/"frontage" definition; reading 2 a general "lot line"
-definition, ZR 23-38 and ZR 23-72, the full text of ZR 34-23, and the district-suffix rule (such as ZR
-11-25) behind whether R6B falls within "R6 through R12". The two readers measured the block themselves and
+definition, ZR 23-38 and ZR 23-72, and the full text of ZR 34-23. Reading 2 reads R6B as within "R6
+through R12" and flags it a point a professional must confirm, because the captured 23-344 text does not
+separately enumerate the letter-suffix districts (R6A/R6B); reading 1 reads R6B as within R6 through R12
+without raising the point. ZR 11-25, which bears on whether R6B is within "R6 through R12", was in the
+sealed folder and was not read by reading 1 or by reading 2. The two readers measured the block themselves and
 reached different centreline separations (260.02 ft and about 261.0 ft, both above 230 ft), so the real
 lot's short-dimension determination stays basis-dependent and not settled. A text the readers did not have
 may be captured later; `docs/research/zr-snapshots/v1/` shows what is captured now.

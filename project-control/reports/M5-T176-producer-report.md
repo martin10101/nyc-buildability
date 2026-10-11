@@ -46,14 +46,16 @@ the GIS-outline reach (99.97 / 103.93 / 144.60 ft) [S].
 Differ or one holds a condition (recorded NOT SETTLED / with the condition named):
 - Centreline side-street separation: reading 1 = 260.02 ft, reading 2 = about 261.0 ft (differ ~1 ft,
   both > 230) -> real-lot-short-dimension stays NOT SETTLED (both figures kept; no single figure).
-- R6B within "R6 through R12" for (c)(3): reading 2 holds this subject to a district-suffix text
-  (such as ZR 11-25) it did not have and flags it; reading 1 reads R6B as within R6-R12 without the
-  caveat. Recorded as a value with the condition named (c-1-vs-c-3; also in the real-lot rows and the
-  scenario map), per the rule of agreement.
+- R6B within "R6 through R12" for (c)(3): reading 2 reads R6B as within "R6 through R12" and flags it a
+  point a professional must confirm, because the captured 23-344 text does not enumerate the
+  letter-suffix districts (R6A/R6B); reading 1 reads R6B as within R6-R12 without the caveat. ZR 11-25
+  (which bears on this) was in the sealed folder and is not read by reading 1 or by reading 2. Recorded
+  as a value with the condition named (c-1-vs-c-3; also in the real-lot rows and the scenario map), per
+  the rule of agreement. (Reworded in rework 1 per G3 A1.)
 - Outside-folder texts named: reading 1 names a missing "block frontage"/"frontage" definition;
-  reading 2 names a missing general "lot line" definition, ZR 23-38, ZR 23-72, the full ZR 34-23, and
-  the R6B-suffix rule. The ZR 12-10 "street setback line" definition was in the folder: reading 2 read
-  it, reading 1 did not read it (recorded as "not read by reading 1", never "not captured").
+  reading 2 names a missing general "lot line" definition, ZR 23-38, ZR 23-72 and the full ZR 34-23.
+  The ZR 12-10 "street setback line" definition was in the folder: reading 2 read it, reading 1 did not
+  read it (recorded as "not read by reading 1", never "not captured").
 - Both agree on the per-basis short-dimension result but the governing basis is unresolved law; both
   agree the exact-100-ft edge, the "within 100 feet" method and the non-parallel-block method are not
   fixed; both agree the (b)/(c) overlap has no priority rule. All kept NOT SETTLED.
@@ -95,8 +97,10 @@ Differ or one holds a condition (recorded NOT SETTLED / with the condition named
 - ZR 23-38, ZR 23-72 (reading 2) - the 23-344 note points to further interactions - could add further
   modifications.
 - Full ZR 34-23 (reading 2) - the C2-2 overlay rear-yard conclusion stays conditional.
-- District-suffix rule (such as ZR 11-25) (reading 2) - "R6 through R12 Districts" - whether R6B counts
-  within R6-R12 for (c)(3).
+- (R6B within "R6 through R12": reading 2 reads R6B as within "R6 through R12" and flags it a point a
+  professional must confirm, because the captured 23-344 text does not enumerate letter-suffix
+  districts. ZR 11-25, which bears on this, was in the sealed folder and is not read by either reading -
+  so it is a "not read" item, not a text the readers did not have.)
 - The ZR 12-10 "street setback line" was in the folder and read by reading 2 (supersedes the street
   line for yards, but only in Staten Island or Queens Community District 10); not read by reading 1.
 
@@ -113,7 +117,8 @@ Differ or one holds a condition (recorded NOT SETTLED / with the condition named
 - S7 -> M8, real-lot-z2-rear-yard.
 - S8 -> b-block-boundary, M9, real-lot-alley, real-lot-bounding-streets.
 - S9 -> M10, b-measurement-basis.
-- S10 -> c-1-vs-c-3 and the R6B-within-"R6 through R12" condition (ZR 11-25 not had).
+- S10 -> c-1-vs-c-3 and the R6B-within-"R6 through R12" condition (reading 2 reads R6B within R6-R12, a
+  professional must confirm; ZR 11-25 is M5-T167 S10's framing and was in the folder, not read by either reading).
 - S11 -> fit-multiple-apply, fit-b-c-overlap, c-1-vs-c-3.
 - S12 -> the quantity-basis rule and real-lot-short-dimension (no two bases mixed).
 
@@ -169,3 +174,59 @@ derived figure (an earlier reading) is explicitly noted as outside the step-P7 r
 ## Files written (LF sha256; `tr -d '\r' < f | sha256sum`)
 
 (computed and listed in the return to the orchestrator)
+
+## Rework 1 (G3 A1 and A2; the orchestrator, 2026-10-11)
+
+The two G3 advisories are fixed, so the case says exactly what the readings say. No kind, value or
+quantity changed; only the wording of the R6B-suffix condition and the cross-street detail. Pages
+re-rendered from the data; the step-P7 module keeps no row-content pin for this case, so no pin changed.
+
+### A1 - the R6B-suffix condition (rows c-1-vs-c-3, m5-t167-scenario-map, both-readers-did-not-have;
+the rendered page; README; this report)
+
+Neither reading names ZR 11-25 and neither says it lacked a text: reading 2 reads that the captured
+23-344 text does not separately enumerate the letter-suffix districts (R6A/R6B) and reads R6B as within
+"R6 through R12", a point a professional must confirm (return-independent-hand-calculation-16.md Q4 common
+law and Q6: "The captured text does not separately enumerate letter-suffix districts (R6A/R6B); I read R6B
+as within 'R6 through R12', a point a professional must confirm"; "whether 'R6 through R12 Districts'
+includes the R6B suffix for (c)(3) - captured text does not enumerate suffixes"). Reading 1 reads R6B as
+within R6 through R12 without raising the point. ZR 11-25 (zr-11-25.json) was in the sealed folder and
+neither reading opened it (confirmed: 0 occurrences of "11-25" in either return).
+
+- OLD (c-1-vs-c-3 value): "... is a point reading 2 holds subject to a district-suffix rule (such as ZR
+  11-25) that the readers did not have, and flags for a professional; reading 1 reads R6B as within R6
+  through R12 without raising the suffix point."
+- NEW (c-1-vs-c-3 value): "... is a point reading 2 holds because the captured 23-344 text does not
+  separately enumerate the letter-suffix districts (R6A/R6B); reading 2 reads R6B as within 'R6 through
+  R12' and flags it as a point a professional must confirm. Reading 1 reads R6B as within R6 through R12
+  without raising the suffix point. (ZR 11-25, which bears on whether R6B is within 'R6 through R12', was
+  in the sealed folder and is not read by reading 1 or by reading 2.)"
+- The source_reference, the both-readers-did-not-have row, the m5-t167-scenario-map S10 clause, and the
+  README step-P7 section are reworded the same way: the condition stays named; ZR 11-25 is now a "not read
+  by reading 1 / reading 2" item, never "a text the readers did not have". (The pre-existing README row
+  for the separate `suffix` case, which legitimately says the R6 sections reach R6B through ZR 11-25, is
+  a repo fact, not a readings claim, and is untouched.)
+
+### A2 - the cross-street detail (row real-lot-bounding-streets)
+
+The 45 Road / 45 Drive / 46 Avenue + ~126 ft detail is stated by reading 1 only
+(return-independent-hand-calculation-15.md Q5a); reading 2 does not name these (confirmed: 0 occurrences
+in return 16). The ALLEY is named by both. The jointly held value (the three bounding streets and widths,
+the SW end unresolved) is unchanged.
+
+- OLD (value): "... is NOT resolved from the readers' facts: the nearest captured cross-streets (45 Road
+  50 ft, 45 Drive 50 ft) run roughly east-west near the block, 46 Avenue (80 ft) lies about 126 ft beyond
+  the farthest lots, and a 2021 tax-map ALLEY label sits inside the block ..."
+- NEW (value): "... is NOT resolved from the readers' facts; reading 1 adds (reading 1 only) that the
+  nearest captured cross-streets 45 Road (50 ft) and 45 Drive (50 ft) run roughly east-west near the block
+  and 46 Avenue (80 ft) lies about 126 ft beyond the farthest lots. A 2021 tax-map ALLEY label sits inside
+  the block (both readings), so which single feature bounds the SW end is not known (see real-lot-alley)."
+- The source_reference now names return-independent-hand-calculation-15.md Q5a as the only source for the
+  cross-street detail, while both returns give the three bounding streets and widths.
+
+### Rework-1 checks (direct exit codes; lanes venv, from services/api)
+
+- a. `python -m ruff check .`: PASS, exit 0.
+- b. `python -m pytest -q -p no:cacheprovider tests/rules/reference_cases tests/spatial/test_lot_reach.py tests/scenario/three_answers/test_result_way_bridge_overlay.py tests/scenario/three_answers/test_result_ways.py`: all passed, exit 0 (test_r6b_reference_cases.py now carries the orchestrator's CASE_IDS pin; the step-P7 suite and the loader-consuming tests pass).
+- c. `python tests/rules/reference_cases/r6b_reference_cases_render.py --check`: PASSED (no issues), exit 0.
+- d. `python3 tools/modularity_check.py --check`: failures 0, exit 0.
