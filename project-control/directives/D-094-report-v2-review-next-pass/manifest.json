@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T15:52:06+00:00",
+ "updated_at": "2026-10-11T16:57:27+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -107,10 +107,23 @@
   "D-094-R083",
   "D-094-R084",
   "D-094-R085",
-  "D-094-R086"
+  "D-094-R086",
+  "D-094-R087",
+  "D-094-R088",
+  "D-094-R089",
+  "D-094-R090",
+  "D-094-R091",
+  "D-094-R092",
+  "D-094-R093",
+  "D-094-R094",
+  "D-094-R095",
+  "D-094-R096",
+  "D-094-R097",
+  "D-094-R098",
+  "D-094-R099"
  ],
- "requirements_id_digest_sha256": "448366ba7231bd26dfcc2f56f9a2963fe65a8cfb6dd36be43c6fac1b8b7d6fbe",
- "requirements_content_digest_sha256": "e3113b576df5a69e8e2813678876f11fd4ba32479af9afea1b5daa8953376536",
+ "requirements_id_digest_sha256": "e79aaecf0a14e461e1eee8158bcb042e952d9bbfc62826be4f6a990676fdc204",
+ "requirements_content_digest_sha256": "ea3139c1c0f61d4158f2d45636ad1c99cacd02915cabfa222ec513e4e9a78257",
  "sources": [
   {
    "file": "source-001.md",
@@ -126,10 +139,19 @@
    "recorded_at": "2026-10-11T15:52:06+00:00",
    "content_digest_sha256": "bf42a09aa906179ae963e5fa380e896a4ba69988dc700be9fc81168a4151c020",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "recorded_at": "2026-10-11T16:57:27+00:00",
+   "content_digest_sha256": "593b8a49f103b1136cc73c02ff79e35f5b3b992b381a1f50d87fd1a8912ae91f",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
-  "source-002-amendment.md"
+  "source-002-amendment.md",
+  "source-003-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -202,6 +224,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-002 (the outside reviewer's audit of the report printed after wave 23) and requirements D-094-R069 to R086, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T16:57:27+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-003 (the owner's answer to question H1 and the instruction to stop giving time estimates) and requirements D-094-R087 to R099, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

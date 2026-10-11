@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 86,
+ "requirement_count": 99,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T15:52:06+00:00",
+ "updated_at": "2026-10-11T16:57:27+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -2680,6 +2680,431 @@
    "dependencies": [],
    "required_harness": "A plain-words reply follows.",
    "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R087",
+   "text": "'Yes\u2014but the remaining 25\u201340% shouldn\u2019t all be called \u201ccore and corridors.\u201d That could make a rough assumption look like a calculated building layout.': answer to question H1: yes to a two-zone illustration, but the remaining 25 to 40 percent must not all be called 'core and corridors', which would make a rough assumption look like a calculated building layout.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No output names the non-apartment share 'core and corridors'.",
+   "required_evidence": "Text guard tests on the report and the website.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R088",
+   "text": "'> Yes, add a simple two-zone illustration, with these requirements:': authorizes a simple two-zone illustration on the worked scenario, under the requirements R089 to R098; it replaces the meanwhile state (nothing drawn inside the footprint).",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R087"
+   ],
+   "required_harness": "The illustration exists only in the form R089-R095 allow.",
+   "required_evidence": "The scenario sheet and its tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R089",
+   "text": "'Label the zones \u201cApartment area\u201d and \u201cOther building area: core, circulation, walls and services.\u201d': the two zones are labelled exactly 'Apartment area' and 'Other building area: core, circulation, walls and services.'",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "A test reads both labels from the rendered sheet and the website view.",
+   "required_evidence": "Report and web tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R090",
+   "text": "'Caption it \u201cIllustrative area allocation\u2014not a floor plan.\u201d': the illustration carries the caption 'Illustrative area allocation\u2014not a floor plan.'",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "A test reads the caption from the rendered sheet and the website view.",
+   "required_evidence": "Report and web tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R091",
+   "text": "'Use one explicitly stated percentage from the existing 60\u201375% assumption.' 'Keep the drawing and calculations consistent, and show the assumed percentage beside it.': the illustration uses ONE explicitly stated percentage taken from the existing 60 to 75 percent assumption; the drawing's proportions and the calculation agree, and the percentage is shown beside it.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "The drawn apartment share equals the stated percentage within drawing tolerance; the stated percentage lies in 60-75 and matches the estimate's own input.",
+   "required_evidence": "A geometry test and a worked example.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R092",
+   "text": "'Check that the estimate and drawing use compatible area measurements.' 'Do not automatically treat zoning floor area as the physical floorplate area.': the estimate and the drawing use compatible area measures; zoning floor area is never treated automatically as the physical floor-plate area.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "The measurement basis of each area is stated and checked; a test fails if zoning floor area is used as the plate area without a stated conversion.",
+   "required_evidence": "The register entry, its worked example and tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R093",
+   "text": "'No rooms, unit walls, apartment counts, or invented stair/elevator locations.': the illustration shows no rooms, no unit walls, no apartment counts and no invented stair or elevator locations.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "A test asserts the illustration holds exactly two zones and no other drawn elements or counts.",
+   "required_evidence": "Drawing tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R094",
+   "text": "'Place the zones inside the footprint only when that footprint has actually been fitted to the site.' 'Until then, show a simple proportional bar beside the building diagram.': the zones are drawn inside the footprint only when that footprint has actually been fitted to the site; until then a simple proportional bar is shown beside the building diagram.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "Tests cover both states: footprint fitted (zones inside it) and not fitted (a proportional bar beside the diagram, nothing inside the footprint).",
+   "required_evidence": "Drawing tests for both states.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R095",
+   "text": "'Keep the explanation to one short caption.' 'Put methodology in the appendix.': the explanation beside the illustration is one short caption; the methodology goes in the appendix.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "The sheet carries one caption; the appendix carries the method.",
+   "required_evidence": "Report tests and the rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R096",
+   "text": "'Apply this consistently to the website and PDF.': the same illustration rules apply on the website and in the PDF.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "Website and PDF show the same labels, caption, percentage and state.",
+   "required_evidence": "Parity tests and screenshots.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R097",
+   "text": "'Record the decision in our existing design instructions and questionnaire so future sessions retain it.': the decision is recorded in the existing design instructions (the architect presentation contract) and in the questionnaire, so later sessions keep it.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "The contract's change section and the questionnaire's answered section hold the decision.",
+   "required_evidence": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md and OWNER_QUESTIONS.md.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R098",
+   "text": "'Verify the rendered result for readability and consistency before marking it complete.': the rendered result is checked for readability and consistency before the work is called complete.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-094-R088"
+   ],
+   "required_harness": "Rendered pages and website views are inspected and the check is recorded before completion is claimed.",
+   "required_evidence": "The export check record with screenshots.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R099",
+   "text": "'Also,dont give me time estimate on when it will be done that was a 1 time question': no time estimates for when work will be done in owner updates; the estimate question was a one-time question.",
+   "source_ref": "source-003-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Owner updates name the next deliverable without a time estimate unless the owner asks.",
+   "required_evidence": "This session's transcript and later updates.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
