@@ -37,7 +37,8 @@
     "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
     "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p7.py",
     "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
-    "project-control/reports/M5-T176-producer-report.md"
+    "project-control/reports/M5-T176-producer-report.md",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py"
   ],
   "forbidden_paths": [
     "services/api/app/** - no rule file, engine, registry, review register or capture copy changes; the support code imports nothing from app",
@@ -148,6 +149,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one producer dispatched with both step-P7 readings"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T23:07:42+00:00",
+      "actor": "orchestrator",
+      "change": "Added services/api/tests/rules/reference_cases/test_r6b_reference_cases.py. The packet makes the case id part of r6b_reference_cases_lib.py CASE_IDS (S5 and the lib's own rule), and test_r6b_reference_cases.py::test_each_case_has_a_data_file_and_a_page pins the whole CASE_IDS tuple literally (line 45), so adding the case reddens it; the contract missed this consumer (the orchestrator's contract-seam miss, found by the producer and routed per the consumer-sweep rule). The only change allowed in that file is appending 'short-block-rear-yard' to the pinned tuple. No row binding, scenario or other path changes."
     }
   ]
 }
