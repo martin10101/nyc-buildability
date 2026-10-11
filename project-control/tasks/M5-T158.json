@@ -192,8 +192,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "An index entry is not the instrument; nothing here establishes the zoning lot (NB-01 stays access_blocked).",
     "Plan P-2 decided 'a reminder only; no records check' and the plan lists ACRIS as 'flag only, per P-2': this task reads index metadata to make the reminder property-specific and never concludes the zoning lot or computes transfers (reading recorded for the directive check).",
@@ -202,7 +202,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T04:59:18.302039+00:00",
-  "updated_at": "2026-10-11T08:30:47.197187+00:00",
+  "updated_at": "2026-10-11T08:30:55.179414+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
