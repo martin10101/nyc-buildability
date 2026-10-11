@@ -207,6 +207,31 @@
      "Program behaviour today (no statement gives 'inside one', limit withheld) and after DB-231 described correctly."
     ],
     "report": "project-control/reports/M0-T190-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 2,
+    "reviewed_code_identity": {
+     "services/api/app/scenario/three_answers/engine_conditions.py": "6768a49a023ee92b2919fad14bf27c0a067171073a31ec0c6232dfe6a2f0811f",
+     "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02",
+     "services/api/app/scenario/three_answers/special_density_geography.py": "ce2c6b15416ec232f04f46f0f319fc68dd807a677ab7a806c6fc3f9744de11b6",
+     "services/api/app/scenario/three_answers/result_way_facts.py": "8e440578e5c38ed11488f64bf1d172716301b264e814926887feee9c3bff560c",
+     "services/api/app/scenario/three_answers/result_way_bridge.py": "df70486d6270d3846bb462a5f0d09fc56b705e7974f3d23077858ed208623a9b",
+     "services/api/app/scenario/three_answers/result_ways.py": "09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72",
+     "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "31ee7f0ae458a1c9232ef4e057f715c29c6ae56c33e4dc42e38661b6a41024c3",
+     "services/api/app/scenario/three_answers/three_way_scope_lines.py": "8cece25b78227d8c63840826173220d8b06c2d805cc1a2b59ea0f5fd19abd0ee"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "DB probe: official Socrata dataset 64uk-42ks returns spdist1='DB' for Downtown Brooklyn CD 302 lots (423 State St, 365 Jay St, 291 Cadman Plaza E) - the code token 'DB' is correct.",
+     "All 4 law-capture digests equal sha256 of their committed verbatim excerpts and match the code pins (ZR 12-10 x3) / the rule+snapshot pin (ZR 23-52 f48f1ddc). Benchmark 20,150/680=29 and boundaries 29.75->30, 29.7485->29, 30.0->30, interior 10,710/680=16 all reproduce.",
+     "All 8 implementation.code_identity LF-normalized sha256 reproduce at the frozen head; research_record_check --check PASS (code_current=True); 98 targeted tests pass; null/ambiguous/contradiction states all resolve to NOT KNOWN; 'not read' is never 'no'.",
+     "Live PLUTO for BBL 4073340070 (215-16 Northern) returns QN, borocode 4, cd 411, spdist1 null, R6B/C2-2 - matches E4 and the NOT-IN conclusion.",
+     "ADVISORY: the record's evidence array omits the zr-12-10-special-downtown-brooklyn-district snapshot (source of the 'DB' letters); provenance exists in repo+code+test but should be cited as an evidence item in revision 2.",
+     "ADVISORY: OQ-5 (Appendix A) correctly kept open; the empirical DB probe corroborates the token but is not the enumerated authoritative list."
+    ],
+    "report": "project-control/reports/M5-T157-reviews.md"
    }
   ],
   "professional_review": null
