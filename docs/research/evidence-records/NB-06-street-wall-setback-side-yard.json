@@ -1,0 +1,436 @@
+{
+ "schema": "research_record/v1",
+ "record_id": "NB-06",
+ "title": "215-16 Northern Boulevard: street-wall location, the 23-433 setback trigger at or below the base height, and R6B side yards (ZR 23-431, 35-631; 23-432/23-433, 35-632; 23-335, 34-232)",
+ "revision": 1,
+ "last_changed": "2026-10-11",
+ "question": {
+  "text": "For a building on lot 70 (R6B with a C2-2 overlay, corner of Northern Boulevard and 215 Place): (Q1) where must the street wall sit along each frontage, and does the C2-2 overlay change the rule for a residential-only building and for a mixed building? (Q2) does ZR 23-433 require any setback for a building at or below the maximum base height (the benchmark three-storey 30 ft option), and on what condition? (Q3) is a side yard required, optional or prohibited in R6B, and under which section?",
+  "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070; R6B with a C2-2 overlay; corner of Northern Boulevard and 215 Place)",
+  "lot_scope": "zoning_lot_unconfirmed",
+  "site_scope": "building",
+  "time_scope": "current_law"
+ },
+ "evidence": [
+  {
+   "id": "E1",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street wall",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street-wall)",
+   "page": null,
+   "document_date": "last amended 1961-12-15",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"street wall\" is a wall or portion of a wall of a #building# facing a #street#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street-wall.snapshot.json",
+   "sha256": "9996f2941ad3aa7bbe2de5fcce1a472fe1c3a7d99696a0c6aa8788ab3c90e7e6"
+  },
+  {
+   "id": "E2",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: corner lot",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-lot-corner)",
+   "page": null,
+   "document_date": "last amended 1965-05-20",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"corner lot\" is either a #zoning lot# bounded entirely by #streets#, or a #zoning lot# which adjoins the point of intersections of two or more #streets# and in which the interior angle formed by the extensions of the #street lines# ... forms an angle of 135 degrees or less. ... The portion of such #zoning lot# subject to the regulations for #corner lots# is that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json",
+   "sha256": "9f0d18ea0bf1064bfa98345631644e6d422edf0f6c3597af92be6bff9fbe04ea"
+  },
+  {
+   "id": "E3",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: mixed building",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-mixed-building)",
+   "page": null,
+   "document_date": "last amended 2011-02-02",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"mixed building\" is a #building# in a #Commercial District# used partly for #residential use# and partly for #community facility# or #commercial use#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-mixed-building.snapshot.json",
+   "sha256": "8f9e9381d410330706c2d0aa4eb252e317009f6ba1a959eb70c3fc591500cc89"
+  },
+  {
+   "id": "E4",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-431 Street wall location requirements (R6 through R12)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-431",
+   "reference": "ZR 23-431 (zr-23-431)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-04",
+   "excerpt": "(a) Line-up rules In R6B, R7B, and R8B Districts, the #street wall# of a #building# shall be located no closer to the #street line# than the closest #street wall#, or portion thereof, nor further from the #street line# than the furthest #street wall#, or portion thereof, of an existing adjacent #building# on the same or an adjoining #zoning lot# located on the same #street# frontage. ... However, where, the #street wall# surrounding the subject #building# do not have a #prevailing street wall frontage#, the applicable #street wall# regulations of paragraph (b) may be applied. (b) Percentage-based rules ... (1) Along #wide streets#, at least 70 percent of the #aggregate width of street walls# shall be located within eight feet of the #street line# ... (2) Along #narrow streets#, at least 70 percent of the #aggregate width of street wall# shall be located within 10 feet of the #street line# ...",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-431.snapshot.json",
+   "sha256": "2baef4dba3ada0bdeb5aef044f5f084cb1b2fdeb640cfcf1807b11182e8b019c"
+  },
+  {
+   "id": "E5",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 34-11 General Provisions (bulk of residential buildings in Commercial Districts)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-11",
+   "reference": "ZR 34-11 (zr-34-11)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "C1 C2 C3 C4 C5 C6. In the districts indicated, the #bulk# regulations of Article II, Chapter 3, shall apply to all #residential buildings# in accordance with the provisions of this Section, except as modified by the provisions of Sections 34-21 through 34-24, relating to exceptions to applicability of #Residence District# controls.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-34-11.snapshot.json",
+   "sha256": "2e9d1b6a5b5c80de83f65f97180bcfe8e89a6a89a45af1c666d23bbcc062fe73"
+  },
+  {
+   "id": "E6",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 34-24 Modification of Height and Setback Regulations, paragraph (b)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-24",
+   "reference": "ZR 34-24 (zr-34-24)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "In the districts indicated, the height and setback regulations set forth in Article II, Chapter 3, and made applicable to such districts in Section 34-11 (General Provisions), are modified as set forth in this Section. ... (b) In Commercial Districts with R6 through R12 equivalency In #Commercial Districts# mapped within, or with a #residential equivalent# of R6 through R12 Districts: (1) the modifications to #residential# height and setback regulations set forth in Section 35-63, inclusive, shall be applied;",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-34-24.snapshot.json",
+   "sha256": "ea58695d327b3f0f601601b1598f1967fd7cb3d4b57f4d8e22d119a90ee1e774"
+  },
+  {
+   "id": "E7",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 35-01 Applicability of This Chapter (Article III, Chapter 5 bulk)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-01",
+   "reference": "ZR 35-01 (zr-35-01)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "The #bulk# regulations of this Chapter apply to any #mixed building# located on any #zoning lot# or portion of a #zoning lot# in any #Commercial District# in which such #building# is permitted. The #bulk# regulations of this Chapter shall also apply in any #Commercial District# where there are multiple #buildings# on a single #zoning lot# and such #zoning lot# contains a #residential use# and either a #commercial# #use# or a #community facility# #use#. In addition, the #bulk# regulations of this Chapter, or of specified Sections thereof, also apply in other provisions of this Resolution where they are incorporated by cross-reference.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-35-01.snapshot.json",
+   "sha256": "9554360d527ed83894f3e888c8b929784054341a0f0620f591ca9454c377b785"
+  },
+  {
+   "id": "E8",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 35-63 Height and Setback Requirements in Commercial Districts with R6 Through R12 Equivalency",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-63",
+   "reference": "ZR 35-63 (zr-35-63)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "C1 C2 C4 C5 C6. In #Commercial Districts# mapped within, or with a #residential equivalent# of R6 through R12 Districts, the #street wall# location of a #building# shall be as set forth in Section 35-631, and the height and setback provisions shall be as set forth in Section 35-632. Additional height and setback provisions are set forth in Section 35-633 and Section 35-64, inclusive.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-35-63.snapshot.json",
+   "sha256": "3d3cde27577484bf5fe244be0e0e3601b53becce0d1b46c0d58b26cc4f2227df"
+  },
+  {
+   "id": "E9",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 35-631 Street wall location (Commercial Districts, C1 C2 C4 C5 C6)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-631",
+   "reference": "ZR 35-631 (zr-35-631)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "(a) Line-up rules For #Commercial Districts# mapped within, or with a #residential equivalent# of, R8 through R12 Districts, when located within the #Manhattan Core#, the following #street wall# location provisions shall apply along #wide streets#: ... (b) Percentage-based rules For all #buildings# that are not subject to the provisions of paragraph (a) of this Section the following shall apply: At least 70 percent of the #aggregate width of street walls# shall be located within eight feet of the #street line# and shall extend to at least the minimum base height specified in Sections 23-432, or the height of the #building#, whichever is less. Up to 30 percent of the #aggregate width of street walls# may be recessed beyond eight feet of the #street line#, provided that any such recesses deeper than 10 feet along a #wide street# or 15 feet along a #narrow street# are located within an #outer court#. However, where the #street walls# surrounding the subject #building# are located on a #block# with a #prevailing street wall frontage# that is located further from the #street line# than the applicable provisions of this paragraph, the line-up provisions of paragraph (a) of Section 23-431 may be applied.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-35-631.snapshot.json",
+   "sha256": "6d4f7c08487deaea1df63292b7c7e379ab85195797111278dd1a012e3b187f65"
+  },
+  {
+   "id": "E10",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-432 Height and setback requirements (base-height table, R6 through R12)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+   "reference": "ZR 23-432 (zr-23-432)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-09-30",
+   "excerpt": "For portions of a #building# #street wall# that exceed the maximum base height, a setback shall be provided at a height not lower than the minimum base height or higher than the maximum base height in accordance with Section 23-433. [Structured table row read for R6B: minimum base height 30 ft; standard #residences# maximum base height 45 ft; standard #residences# maximum height of #buildings or other structures# 55 ft; qualifying affordable/senior housing maximum base height 45 ft, maximum height 65 ft.]",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+   "sha256": "37c1414c2f1fb93404dca4178d70304c6f39eeecf0f39aa215bd2754cd16887a"
+  },
+  {
+   "id": "E11",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-433 Standard setback regulations (R6 through R12)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-433",
+   "reference": "ZR 23-433 (zr-23-433)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-04",
+   "excerpt": "At a height not lower than the minimum base height or higher than the maximum base height specified for the applicable district, a setback with a depth of at least 10 feet shall be provided from any #street wall# fronting on a #wide street#, and a setback with a depth of at least 15 feet shall be provided from any #street wall# fronting on a #narrow street#. Such minimum setbacks may be modified as follows: ... (c) These setback provisions are optional for any #building# wall that either is located beyond 50 feet of a #street line#, or oriented so that lines drawn perpendicular to it, in plan, would intersect a #street line# at an angle of 65 degrees or less.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-433.snapshot.json",
+   "sha256": "8dcd40b8053992c0f0fb552f086eb6b727d2e54e2d27fb72f8530573285a4368"
+  },
+  {
+   "id": "E12",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 35-632 Maximum height of buildings and setback regulations (overlay), paragraph (a)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-632",
+   "reference": "ZR 35-632 (zr-35-632)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "In the districts indicated, where mapped within, or with a #residential equivalent# of an R6 through R12 district, the height and setback regulations of Section 23-43 (Height and Setback Requirements in R6 Through R12 Districts), inclusive, shall be applied in accordance with the provisions set forth in this Section. (a) Height and setback requirements The minimum base height, maximum base height and maximum #building# height shall be as set forth in the table in Section 23-432 for the applicable #Residence District#. ... For portions of a #building# #street wall# that exceed the maximum base height, a setback shall be provided at a height not lower than the minimum base height or higher than the maximum base height, in accordance with Section 23-433.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-35-632.snapshot.json",
+   "sha256": "b2f0bfc9880735f80a3064bed3006e3c0553df9869ba908461cb68ae044ea71c"
+  },
+  {
+   "id": "E13",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 23-335 Side yard requirements for R6 through R12 Districts",
+   "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-335",
+   "reference": "ZR 23-335 (zr-23-335)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "(a) #Detached# #buildings# In the districts indicated, for #zoning lots# containing only #single-family# or #two-family# #detached# #residences#, two #side yards#, each with a minimum width of five feet, shall be provided. (b) All other #buildings# In the districts indicated, for #zoning lots# containing all other types of #residences#, no #side yards# shall be required. However, if any open area extending along a #side lot line# is provided at any level, it shall have a minimum width of five feet, measured perpendicular to the #side lot line#.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-23-335.snapshot.json",
+   "sha256": "17698b050f9ee1b71b2147c94d7164e4a74e5ac55132bd243eb661db289b739c"
+  },
+  {
+   "id": "E14",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 34-232 Modification of side yard requirements (Commercial Districts)",
+   "url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-232",
+   "reference": "ZR 34-232 (zr-34-232)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "C1 C2 C3 C4 C5 C6. In the districts indicated, no #side yard# shall be required for any #residential building#. However, if any open area extending along a #side lot line# is provided at any level, it shall have a minimum width of five feet, measured perpendicular to the #side lot line#. The allowances for permitted obstructions in any #yard# or #rear yard equivalent# set forth in Sections 23-311 and 23-312 shall be permitted in such open areas.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-34-232.snapshot.json",
+   "sha256": "21c8c429183185daca7192de2e0678733385f345d5787230ff68d73c7cd382d8"
+  },
+  {
+   "id": "E15",
+   "kind": "gis_geometry",
+   "authority": "NYC Department of City Planning (DCM Street Center Line feature service) - collected by the owner research",
+   "title": "DCM Street Center Line features at the lot 70 envelope (mapped street widths)",
+   "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=1%3D1&geometry=1048638.6300%2C216160.4400%2C1049061.5800%2C216581.1000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&outSR=2263&f=json",
+   "reference": "DCM Street Center Line FeatureServer/0, lot envelope BBL 4073340070",
+   "page": null,
+   "document_date": "feature service; HTTP Last-Modified 2025-12-01",
+   "retrieved": "2026-10-10",
+   "excerpt": "Features at the lot envelope: Street_NM 'Northern Boulevard' Streetwidth '100'; Street_NM '215 Place' Streetwidth '60'; Street_NM '215 Street' Streetwidth '60' (all Feat_status 'City_St', RoadwayType 'Surface_ST', Build_Status 'Improved'). The Streetwidth field is a free-text string of the mapped width in feet (no official field-level specification; RQ-005 residual). Not a survey; a mapped width does not by itself fix the street-line position.",
+   "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dcm_street_centerline_lot_envelope_4073340070.json",
+   "sha256": "3fad815e5954fe778193d80ef172b5e08faa209682cf31f4e372556d2dafaf1f"
+  }
+ ],
+ "meaning_and_applicability": {
+  "provisions_read": [
+   "ZR 12-10 'street wall' (E1), 'corner lot' (E2), 'mixed building' (E3)",
+   "ZR 23-431 (a) line-up rules and (b) percentage-based rules (E4)",
+   "ZR 23-432 base-height table and setback-trigger sentence; R6B row read 30/45/55 ft (E10)",
+   "ZR 23-433 standard setback regulations, paragraphs (a)-(d) (E11)",
+   "ZR 23-335 (a) and (b) side yard requirements for R6 through R12 (E13)",
+   "ZR 34-11 general provisions: Article II Chapter 3 bulk applies to all residential buildings in C1-C6 except as modified by 34-21 to 34-24 (E5)",
+   "ZR 34-24 (b)(1): for R6-R12 equivalency the Section 35-63 (inclusive) modifications shall be applied (E6)",
+   "ZR 34-232 modification of side yard requirements in Commercial Districts (E14)",
+   "ZR 35-01 applicability of Article III Chapter 5 bulk (mixed buildings; and by cross-reference) (E7)",
+   "ZR 35-63 (E8), 35-631 (a)/(b) (E9), 35-632 (a) (E12)",
+   "DCM Street Center Line mapped widths: Northern Boulevard 100 ft; 215 Place 60 ft (E15)",
+   "Repository policy D-052 (owner-approved street-width classification, project-control/directives/D-052-street-width-draft-classification/): below 75 feet is narrow; exactly 75 feet or above is wide; classify only when every permitted value is on the same side of the threshold",
+   "NOT captured in the repository snapshot set: ZR 12-10 'street, narrow' / 'street, wide' definitions (the verbatim current text; repository notes record a 2026-03-26 amendment to 'street, wide'). Live fetch of the 12-10 page on 2026-10-11 truncated before the street definitions (see searches S3)."
+  ],
+  "exceptions_considered": [
+   "35-631(a) line-up applies only to Commercial Districts with an R8 through R12 equivalent in the Manhattan Core; this site is R6B in Queens, so (a) does not apply and (b) governs.",
+   "35-631(b) and 23-431 each contain a closing clause: where the block has a #prevailing street wall frontage# further from the street line than the paragraph's own provisions, the line-up rules of 23-431(a) may be applied. Whether such a prevailing frontage exists on either frontage is an unresearched adjacency fact (condition).",
+   "35-632(b) eligible-site height increases apply to R6 through R12 WITHOUT a letter suffix; R6B has a letter suffix, so (b) does not apply. 35-632(c) towers apply to R9 through R12; not R6B.",
+   "23-335(a) (two 5 ft side yards) applies only to single- or two-family detached residences; a multi-family or mixed building falls under 23-335(b) (no side yard required). In the overlay 34-232 removes the side-yard requirement for ANY residential building.",
+   "The wide/narrow classification's alternate-width provisions noted in the repository (12-10 'street, wide' amended 2026-03-26 for C5-3/C6-4/C6-6) do not apply to an R6B/C2-2 site.",
+   "FAR, lot coverage, the rear yard (NB-03), lot dimensions (NB-04), special-density or MIH overlays, parking, use, and obstructions are separate questions and are not resolved here."
+  ],
+  "reading": "A labelled DRAFT reading, not a DOB determination. Q1 (street wall). ZR 23-431(a) is the residence-district rule for R6B: a line-up with eligible existing adjacent buildings. However, in the C2-2 overlay the Article III modifications apply. For a MIXED building (residential plus the C2-2 commercial use, 12-10 E3) ZR 35-01 applies the Chapter 5 bulk directly; for a RESIDENTIAL-ONLY building 34-11 applies Article II Chapter 3 bulk 'except as modified by ... 34-24', and 34-24(b)(1) 'shall' apply the Section 35-63 (inclusive) modifications for an R6-R12 equivalency, which 35-01's closing cross-reference sentence contemplates. Either pathway reaches 35-63, under which (E8) the street-wall location of a building 'shall be as set forth in Section 35-631'. R6B is not an R8-R12 Manhattan Core district, so 35-631(a) does not apply and 35-631(b) governs: at least 70 percent of the aggregate width of the street wall on EACH frontage must sit within 8 feet of that street line and extend to at least the minimum base height (30 ft for R6B) or the building height, whichever is less; up to 30 percent may recess beyond 8 feet, with recesses deeper than 10 ft on the wide frontage (Northern Boulevard) or 15 ft on the narrow frontage (215 Place) placed in an outer court. This supports repository backlog item DB-099, whose premise 'no Article III snapshot' is now outdated. The precise street-wall position within (b) stays conditional on whether the block has a prevailing street-wall frontage further from the street line (then the 23-431(a) line-up may be applied), and the 8-ft measure runs from the operative street line, which a mapped width does not fix. Q2 (setback). Both the residence-district chain (23-432 -> 23-433, E10/E11) and the overlay chain (35-632(a) -> 23-433, E12/E11) require a setback only for the portion of a building street wall that EXCEEDS the maximum base height (45 ft for R6B standard residences), provided between the minimum and maximum base heights. The benchmark three-storey 30 ft option equals the minimum base height and is well below the 45 ft maximum base height, so no setback is triggered. The street-width class (D-052: Northern Boulevard 100 ft = wide, 215 Place 60 ft = narrow) decides only the DEPTH of a setback that would apply above 45 ft (10 ft from a wide-street wall, 15 ft from a narrow-street wall); it is not triggered at or below the maximum base height. Q3 (side yards). Under 23-335 a side yard is NOT required for this building (23-335(b): all residences other than single/two-family detached), and the overlay 34-232 removes the requirement for any residential building; a side yard is permitted (optional), and any open area along a side lot line must be at least 5 feet wide. Only a single- or two-family detached residence would need two 5-ft side yards under 23-335(a), and even that is removed by 34-232 in the overlay. A side yard is not prohibited.",
+  "applies": "conditional"
+ },
+ "measurement_basis": {
+  "quantities": [
+   {
+    "name": "Northern Boulevard mapped street width",
+    "value": "100",
+    "units": "ft",
+    "basis": "gis",
+    "scope": "existing; DCM Street Center Line mapped width of the Northern Boulevard frontage (wide street, >=75 ft per D-052)"
+   },
+   {
+    "name": "215 Place mapped street width",
+    "value": "60",
+    "units": "ft",
+    "basis": "gis",
+    "scope": "existing; DCM Street Center Line mapped width of the 215 Place frontage (narrow street, <75 ft per D-052)"
+   },
+   {
+    "name": "R6B minimum base height",
+    "value": "30",
+    "units": "ft",
+    "basis": "law",
+    "scope": "proposed building; ZR 23-432 table, R6B row"
+   },
+   {
+    "name": "R6B maximum base height (standard residences)",
+    "value": "45",
+    "units": "ft",
+    "basis": "law",
+    "scope": "proposed building; ZR 23-432 table, R6B row"
+   },
+   {
+    "name": "R6B maximum building height (standard residences)",
+    "value": "55",
+    "units": "ft",
+    "basis": "law",
+    "scope": "proposed building; ZR 23-432 table, R6B row"
+   },
+   {
+    "name": "benchmark building height (three-storey option)",
+    "value": "30",
+    "units": "ft",
+    "basis": "derived",
+    "scope": "proposed building; the benchmark scenario's three-storey 30 ft option, equal to the R6B minimum base height"
+   },
+   {
+    "name": "street-wall proximity to street line (35-631(b))",
+    "value": "8",
+    "units": "ft",
+    "basis": "law",
+    "scope": "proposed building; >=70% of aggregate street-wall width within 8 ft of each street line"
+   },
+   {
+    "name": "required setback depth above max base height (if triggered)",
+    "value": "10 (wide) / 15 (narrow)",
+    "units": "ft",
+    "basis": "law",
+    "scope": "proposed building; ZR 23-433 depth from a street wall fronting a wide (Northern Boulevard) vs narrow (215 Place) street; only for a portion above 45 ft"
+   }
+  ],
+  "double_count_risk": "none identified; street-wall location, the base-to-tower setback, and side yards address different building elements and are not additive. The wide/narrow classification is applied per frontage (Northern Boulevard wide; 215 Place narrow), never once per building; the mapped width is not a survey and does not fix the street-line position from which the 8-ft and setback depths are measured."
+ },
+ "conclusion": {
+  "research_status": "interpretation_awaiting_review",
+  "observed_facts": [
+   "ZR 23-431(a): in R6B, R7B and R8B the street wall shall be located no closer/further from the street line than the closest/furthest street wall of an existing adjacent building on the same street frontage; where there is no prevailing street wall frontage, paragraph (b) may be applied.",
+   "ZR 23-431(b): along wide streets at least 70% of the aggregate width of street walls within 8 ft of the street line; along narrow streets within 10 ft.",
+   "ZR 34-11: in C1-C6, the bulk regulations of Article II Chapter 3 apply to all residential buildings except as modified by Sections 34-21 through 34-24.",
+   "ZR 34-24(b)(1): in Commercial Districts with an R6-R12 equivalency, 'the modifications to residential height and setback regulations set forth in Section 35-63, inclusive, shall be applied'.",
+   "ZR 35-01: the bulk regulations of Article III Chapter 5 apply to any mixed building in a Commercial District, and also apply where incorporated by cross-reference in other provisions.",
+   "ZR 35-63: for a Commercial District with an R6-R12 equivalency, the street-wall location of a building shall be as set forth in 35-631 and the height and setback provisions as set forth in 35-632.",
+   "ZR 35-631(a): the line-up rules apply only to an R8-R12 equivalency in the Manhattan Core. 35-631(b): for all buildings not subject to (a), at least 70% of the aggregate width of street walls within 8 ft of the street line, extending to at least the minimum base height or the building height whichever is less.",
+   "ZR 23-432 table (R6B row): minimum base height 30 ft; standard residences maximum base height 45 ft and maximum building height 55 ft. The section: a setback is provided 'for portions of a building street wall that exceed the maximum base height'.",
+   "ZR 23-433: at a height not lower than the minimum base height or higher than the maximum base height, a setback at least 10 ft deep from a street wall on a wide street, or 15 ft from a street wall on a narrow street; optional beyond 50 ft of a street line or at a 65-degree-or-less orientation.",
+   "ZR 35-632(a): heights come from the 23-432 table for the applicable Residence District, and a setback is provided for portions of a building street wall that exceed the maximum base height, per 23-433.",
+   "ZR 23-335: (a) single/two-family detached residences require two 5-ft side yards; (b) all other residences require no side yard, but any open area along a side lot line must be at least 5 ft wide.",
+   "ZR 34-232: in C1-C6 no side yard is required for any residential building; any open area along a side lot line must be at least 5 ft wide.",
+   "DCM Street Center Line at the lot envelope: Northern Boulevard Streetwidth '100'; 215 Place Streetwidth '60'; 215 Street Streetwidth '60'."
+  ],
+  "interpretation": "DRAFT reading awaiting independent review: (Q1) the C2-2 overlay makes 35-631(b) the governing street-wall rule for both a residential-only building (via 34-11 + 34-24(b)(1) + 35-63) and a mixed building (via 35-01 + 35-63) on this R6B corner lot, requiring at least 70% of each frontage's street wall within 8 ft of the street line; the exact position within (b) is conditional on the block's prevailing street-wall frontage and on the operative street-line position. (Q2) no setback is required for a building at or below the R6B maximum base height of 45 ft, so the benchmark three-storey 30 ft option needs none; the wide/narrow class sets only the depth of a setback that would apply above 45 ft. (Q3) no side yard is required (23-335(b); 34-232 in the overlay); one is optional with a 5-ft minimum if provided. Not a DOB determination.",
+  "conflicts": [],
+  "conditions": [
+   "Whether 35-631(a) line-up or 35-631(b) percentage governs the exact street-wall position depends on whether either frontage of the block has a #prevailing street wall frontage# further from the street line (eligible adjacent buildings within 15 ft of the street line, within 25 ft of the subject, height over 35 ft) - an unresearched adjacency fact.",
+   "The 8-ft street-wall measure and any setback depth run from the operative street line; a DCM mapped width does not fix the street-line position (handoff: widths alone do not fix street-line positions). The street line comes from a survey or the approved plan.",
+   "The wide/narrow classification (Northern Boulevard 100 ft = wide; 215 Place 60 ft = narrow) rests on the DCM mapped widths plus the owner-approved D-052 policy; the verbatim ZR 12-10 'street, narrow'/'street, wide' definition is not captured in the repository snapshots (S3).",
+   "Whether the building is residential-only or mixed changes the applicability pathway (34-11/34-24(b)(1)/35-63 versus 35-01); both reach 35-631(b) here.",
+   "The setback depth (10 ft wide / 15 ft narrow) is relevant only for a portion of a building street wall above the 45 ft maximum base height; the benchmark 30 ft option does not reach it."
+  ],
+  "settled_by": [
+   "an independent G1 review of the 34-11 -> 34-24(b)(1) -> 35-63 -> 35-631(b) cross-reference chain and the residential-only vs mixed-building reading",
+   "capture of ZR 12-10 'street, narrow' and 'street, wide' (current text; repository notes a 2026-03-26 amendment to 'street, wide') via the print/PDF channel, added to the snapshot set",
+   "an adjacency survey of existing street walls on each frontage (to choose 35-631(a) vs (b))",
+   "the approved plan or a certified survey for the operative street-line positions"
+  ]
+ },
+ "searches": [
+  {
+   "source": "Repository ZR snapshot set (docs/research/zr-snapshots/v1/)",
+   "query": "23-431, 23-432, 23-433, 23-335, 34-11, 34-24, 34-232, 35-01, 35-63, 35-631, 35-632, and the 12-10 street-wall / corner-lot / mixed-building definitions",
+   "result": "found",
+   "missing_item": "",
+   "affected_outputs": [
+    "street_wall.location",
+    "setback_lines",
+    "side_yard.required"
+   ],
+   "next_step": ""
+  },
+  {
+   "source": "Repository evidence pack (docs/research/owner-research/2026-10-10-215-16-northern-evidence/) and research handoff",
+   "query": "Northern Boulevard and 215 Place mapped street widths",
+   "result": "found",
+   "missing_item": "",
+   "affected_outputs": [
+    "street_wall.location",
+    "setback_lines"
+   ],
+   "next_step": ""
+  },
+  {
+   "source": "ZR portal 12-10 definitions page (live) and a domain-scoped web search",
+   "query": "ZR 12-10 'street, narrow' and 'street, wide' verbatim definitions",
+   "result": "not_found",
+   "missing_item": "the verbatim current text of ZR 12-10 'street, narrow' and 'street, wide' (the live 12-10 page on 2026-10-11 truncated before the street definitions; the web search returned only a paraphrase: narrow <75 ft, wide >=75 ft, consistent with D-052)",
+   "affected_outputs": [
+    "street_wall.location",
+    "setback_lines"
+   ],
+   "next_step": "capture ZR 12-10 'street, narrow'/'street, wide' via the print/PDF channel with a browser UA, sha-pin it, and add it to the snapshot set; classification meanwhile rests on the DCM widths plus the owner-approved D-052 policy"
+  },
+  {
+   "source": "Not researched here (deferred to a later placement step)",
+   "query": "existing adjacent street walls on each block frontage (prevailing street wall frontage test)",
+   "result": "not_found",
+   "missing_item": "the positions and heights of eligible existing adjacent buildings on the Northern Boulevard and 215 Place frontages",
+   "affected_outputs": [
+    "street_wall.location",
+    "building_alternative.placement"
+   ],
+   "next_step": "an adjacency survey or field/streetview review when the placement step needs to choose 35-631(a) line-up vs 35-631(b) percentage"
+  }
+ ],
+ "implementation": {
+  "affected_outputs": [
+   "building_alternative.placement",
+   "street_wall.location",
+   "setback_lines",
+   "side_yard.required"
+  ],
+  "code_paths": [],
+  "code_identity": {},
+  "worked_example": {
+   "inputs": "R6B with a C2-2 overlay, corner lot at Northern Boulevard (mapped width 100 ft = wide) and 215 Place (mapped width 60 ft = narrow); benchmark three-storey 30 ft building.",
+   "expected": "Street wall per 35-631(b): at least 70% of the aggregate street-wall width on each frontage within 8 ft of that street line, extending to at least the 30 ft minimum base height or the building height whichever is less, with up to 30% recessed (recesses deeper than 10 ft on Northern Boulevard or 15 ft on 215 Place in an outer court). No setback: 30 ft is at or below the 45 ft R6B maximum base height, so 23-433/35-632(a) is not triggered. No side yard required (23-335(b); 34-232), one optional with a 5-ft minimum if provided. The exact street-wall position stays conditional on the block's prevailing street-wall frontage and the operative street-line position.",
+   "basis": "ZR provisions quoted in E1-E14 and the DCM widths in E15; the owner-approved D-052 75-ft threshold; worked from the law text, not a program run.",
+   "prepared_by": "official-source-researcher (Claude Code session 01TpXJN7), 2026-10-11; a labelled unreviewed draft (ADR-007); not professionally checked"
+  },
+  "regression_cases": [
+   "A building rising above the 45 ft maximum base height in R6B: a setback is required between 30 and 45 ft, at least 10 ft deep from the Northern Boulevard (wide) street wall and 15 ft from the 215 Place (narrow) street wall, per 23-433 / 35-632(a).",
+   "A single- or two-family detached residence: two 5-ft side yards under 23-335(a) in plain R6B, but none under 34-232 in the C2-2 overlay.",
+   "A block frontage with a prevailing street-wall frontage further from the street line than 8 ft: the 23-431(a) line-up may be applied instead of 35-631(b).",
+   "A residential-only building versus a mixed building: both reach 35-631(b) here (via 34-11/34-24(b)(1)/35-63 and via 35-01, respectively).",
+   "A street wall or wall beyond 50 ft of a street line, or oriented at 65 degrees or less to it: the 23-433 setback is optional (23-433(c))."
+  ],
+  "dependency_assessment": [
+   "Backlog DB-099: its premise 'no Article III snapshot' is now outdated - 34-11, 34-24, 34-232, 35-01, 35-63, 35-631, 35-632 are captured and support the reading that the C2-2 overlay applies 35-631(b) to both residential-only and mixed buildings. The DISCOVERY_BACKLOG.md update is the orchestrator's (outside this task's allowed paths).",
+   "Shares street lines and the wide/narrow classification with NB-03 (rear yard) and NB-04 (lot dimensions): the street-line-position condition must stay consistent across NB-03/NB-04/NB-06; the same DCM widths feed the wide/narrow class.",
+   "A future street-wall or placement rule must encode the overlay pathway and the 35-631(a)-vs-(b) prevailing-frontage test as labelled drafts, with a deterministic wide/narrow classification per frontage, never an address-specific exception."
+  ]
+ },
+ "review": {
+  "producer": "official-source-researcher",
+  "agent_reviews": [],
+  "professional_review": null
+ },
+ "freshness": {
+  "checked_on": "2026-10-11",
+  "method": "snapshot",
+  "snapshot_date": "2026-10-07",
+  "limitation": "Law text from the repository ZR snapshot set captured 2026-09-30 (23-432) to 2026-10-07 (35-6xx, 34-xx, 23-335, the 12-10 definitions); 23-431 and 23-433 captured 2026-10-04; all last amended 2024-12-05 except the 12-10 definitions (street wall 1961-12-15, corner lot 1965-05-20, mixed building 2011-02-02). Street widths read from the owner-research pack retrieved 2026-10-10 (not re-fetched today). ZR 12-10 'street, narrow'/'street, wide' is not in the snapshot set and the live 12-10 fetch on 2026-10-11 truncated before the street definitions (search S3); the wide/narrow classification rests on the DCM widths plus the owner-approved D-052 policy. A labelled unreviewed draft (ADR-007); not professionally verified."
+ },
+ "promotion": {
+  "requested_label": null
+ }
+}
