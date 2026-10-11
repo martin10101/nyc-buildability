@@ -26,6 +26,7 @@ import hashlib
 import json
 import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -79,6 +80,41 @@ def _sha256_lf(path: Path) -> str:
 
 def _is_date(value) -> bool:
     return isinstance(value, str) and bool(re.match(r"^\d{4}-\d{2}-\d{2}([T ]|$)", value))
+
+
+# A review `date` is accepted in exactly these forms: a date-only "YYYY-MM-DD" (treated as the
+# start of that day, 00:00 UTC) or a UTC date-and-time "YYYY-MM-DDTHH:MMZ" / "...:SSZ" (optional
+# fractional seconds). Any other form (a US date, a space separator, a non-"Z" offset) is refused.
+REVIEW_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?Z)?$")
+REVIEW_DATE_FORMS = ("'YYYY-MM-DD', 'YYYY-MM-DDTHH:MMZ' or 'YYYY-MM-DDTHH:MM:SSZ' "
+                     "(UTC 'Z', optional fractional seconds)")
+
+
+def _parse_review_instant(value):
+    """Parse a review `date` in an accepted form to a timezone-aware UTC datetime, or return None.
+
+    A date-only value is the start of that day (00:00 UTC) so a same-day timed review sorts later.
+    """
+    if not isinstance(value, str) or not REVIEW_DATE_RE.match(value):
+        return None
+    iso = value[:-1] + "+00:00" if value.endswith("Z") else value
+    try:
+        dt = datetime.fromisoformat(iso)
+    except ValueError:
+        return None
+    return dt if dt.tzinfo is not None else dt.replace(tzinfo=timezone.utc)
+
+
+def _review_sort_key(index: int, review: dict):
+    """Governing-review order: highest reviewed_revision, then the parsed UTC time (a date-only
+    entry = the start of its day; an unparseable date sorts first so a valid review still wins),
+    then list order. The structural check refuses unparseable review dates, so a passing record
+    never relies on that last fallback."""
+    rev = review.get("reviewed_revision")
+    rev = rev if isinstance(rev, int) and not isinstance(rev, bool) else -1
+    instant = _parse_review_instant(review.get("date"))
+    ts = instant.timestamp() if instant is not None else float("-inf")
+    return (rev, ts, index)
 
 
 def _is_hex64(value) -> bool:
@@ -182,7 +218,7 @@ def validate_record(record, path, root) -> list[str]:
     _validate_measurement(record.get("measurement_basis"), err, req_str, req_enum)
     _validate_searches(record.get("searches"), status, err, req_str, req_enum)
     _validate_implementation(record.get("implementation"), root, err, req_str)
-    _validate_review(record.get("review"), record.get("revision"), err, req_str, req_enum, req_date)
+    _validate_review(record.get("review"), record.get("revision"), err, req_str, req_enum)
     _validate_freshness(record.get("freshness"), err, req_str, req_enum, req_date)
     _validate_promotion(record.get("promotion"), err)
     return errors
@@ -388,7 +424,7 @@ def _validate_implementation(im, root, err, req_str):
             err(f"key 'implementation.{key}' must be a list.")
 
 
-def _validate_review(rv, revision, err, req_str, req_enum, req_date):
+def _validate_review(rv, revision, err, req_str, req_enum):
     if not isinstance(rv, dict):
         err("key 'review' must be an object.")
         return
@@ -410,7 +446,9 @@ def _validate_review(rv, revision, err, req_str, req_enum, req_date):
             elif isinstance(producer, str) and reviewer == producer:
                 err(f"'{lab}.reviewer' must not equal the record producer '{producer}' "
                     f"(an independent reviewer is required).")
-            req_date(ar, "date", f"'{lab}.date'")
+            if _parse_review_instant(ar.get("date")) is None:
+                err(f"key '{lab}.date' value {ar.get('date')!r} is not an accepted review date; "
+                    f"use one of: {REVIEW_DATE_FORMS}.")
             if not (isinstance(ar.get("reviewed_revision"), int)
                     and not isinstance(ar.get("reviewed_revision"), bool)):
                 err(f"key '{lab}.reviewed_revision' must be an integer.")
@@ -485,7 +523,7 @@ def derive(record, root) -> dict:
     reviews = [a for a in (rv.get("agent_reviews") or []) if isinstance(a, dict)]
     if not reviews:
         return {"code_current": code_current, "review_state": "none"}
-    latest = max(enumerate(reviews), key=lambda t: (str(t[1].get("date") or ""), t[0]))[1]
+    latest = max(enumerate(reviews), key=lambda t: _review_sort_key(*t))[1]
     reviewed_code = latest.get("reviewed_code_identity")
     reviewed_code = reviewed_code if isinstance(reviewed_code, dict) else {}
     matches_rev = latest.get("reviewed_revision") == record.get("revision")
