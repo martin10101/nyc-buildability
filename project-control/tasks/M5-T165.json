@@ -210,14 +210,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The larger type scale may add a page; fonts are never shrunk to avoid it (PDF budgets are checked by eye in H2).",
     "readers.py is near its size line; the moves to zoning_lot_item.py and constraint_text.py keep it under 600 SLOC."
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:40.698256+00:00",
-  "updated_at": "2026-10-11T20:43:49.671066+00:00",
+  "updated_at": "2026-10-11T23:11:50.351404+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -266,6 +266,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-11T23:11:50.351311+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "integrated (4617c720 + [ORCH-CORRECTED] 20801603); G1/G3/G4 PASS with corrections; visual G3 FAIL (page-1 layout); rework 1 dispatched"
     }
   ],
   "scope_corrections": [
