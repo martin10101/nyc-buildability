@@ -1,0 +1,144 @@
+{
+  "task_id": "M3-T006",
+  "title": "Zoning-law library, first pass (documents only): every ZR section reachable from the rules the R6B benchmark uses with cross-references followed to the end, the sections the program handles and does not, the sections the remaining options need, and a pitfall checklist from official guidance",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "Write a documents-only zoning-law library under docs/zoning-law-library/ (extends planned milestone M3; feeds M3-T004/M3-T005, builds no corpus code): (1) benchmark-r6b-sections.json: one entry per ZR section reachable from the sections the R6B-applicable rulesets cite (11-25, 23-22, 23-52, 23-52(b), 23-362, 23-432, 23-344(a)) and from the benchmark's reading (reference cases, NB-06), every cross-reference followed to the end or marked terminal / out of scope with a reason; fields: section_id, title, zr_url, capture_status (snapshot_id + content_digest_sha256 copied from docs/research/zr-snapshots/v1/, or NOT CAPTURED), cross_references_out, handled_by (rule-file paths or NOT HANDLED with a reason), coverage_status (the M3-T001 vocabulary), last_amended, notes; (2) cross-reference-closure.md: the traversal; (3) coverage.md: handled and not handled; (4) options-sections.md: for each of the eleven options in the owner-approved order, the ZR sections it needs and whether each is captured and handled; (5) pitfalls.md: a checklist from official guidance (DOB Buildings Bulletins, DOB determinations - project-specific, never generalized - BSA resolutions, the DCP Zoning Handbook), each item with its source, date and link, cited, never bulk-copied; (6) research-log.md: every search, what was found or not, access blocks (nyc.gov PDFs may refuse non-browser fetches: record, never evade), the next step; (7) README.md: what the library is, the unreviewed-draft label (ADR-007), the scope and its limits. Built from the returns of read-only research helpers the orchestrator dispatches (saved outside git) plus the producer's own checks. New captures, registry entries (BSA) and coverage-matrix rows are RECOMMENDED in the report, never made here.",
+  "business_reason": "The owner (D-094 R102, answer to I1) ordered the zoning-law library started this session beside the report, to stop missing rules: today the program cites seven ZR sections for the benchmark and has no catalog of what it does not handle and no guidance pitfalls.",
+  "inputs": [
+    "services/api/app/rules/rulesets/",
+    "docs/research/zr-snapshots/v1/",
+    "docs/reference-cases/R6B/",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "docs/SOURCE_AUTHORITY_POLICY.md",
+    "project-control/tasks/M3-T004.json",
+    "project-control/tasks/M3-T005.json"
+  ],
+  "outputs": [
+    "docs/zoning-law-library/README.md",
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "docs/zoning-law-library/cross-reference-closure.md",
+    "docs/zoning-law-library/coverage.md",
+    "docs/zoning-law-library/pitfalls.md",
+    "docs/zoning-law-library/options-sections.md",
+    "docs/zoning-law-library/research-log.md",
+    "project-control/reports/M3-T006-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/zoning-law-library/README.md",
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "docs/zoning-law-library/cross-reference-closure.md",
+    "docs/zoning-law-library/coverage.md",
+    "docs/zoning-law-library/pitfalls.md",
+    "docs/zoning-law-library/options-sections.md",
+    "docs/zoning-law-library/research-log.md",
+    "project-control/reports/M3-T006-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    "docs/design/",
+    "docs/research/",
+    "docs/reference-cases/",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/zoning-rule-review/",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md",
+    "docs/SOURCE_AUTHORITY_POLICY.md",
+    "docs/CONSTRUCTION_CODE_RELEASE_SCOPE.md",
+    "tools/",
+    ".github/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "every ZR section an R6B-applicable ruleset cites",
+      "when": "benchmark-r6b-sections.json is read",
+      "then": "each has an entry whose capture_status matches the snapshot folder (snapshot_id and content_digest_sha256 equal the snapshot's)"
+    },
+    {
+      "id": "S2",
+      "given": "every cross-reference named in an in-scope captured section",
+      "when": "the closure is checked",
+      "then": "it is an entry, or marked 'cross-reference not captured' or 'out of scope' with a reason; none is silently dropped"
+    },
+    {
+      "id": "S3",
+      "given": "each entry",
+      "when": "handled_by is read",
+      "then": "it names exact rule-file paths under services/api/app/rules/rulesets/ or 'NOT HANDLED' with a one-line reason; coverage_status uses the M3-T001 vocabulary"
+    },
+    {
+      "id": "S4",
+      "given": "the eleven options in the owner-approved order",
+      "when": "options-sections.md is read",
+      "then": "each option lists the sections it needs with captured and handled states; none is skipped"
+    },
+    {
+      "id": "S5",
+      "given": "every pitfall item",
+      "when": "pitfalls.md is read",
+      "then": "it cites an official source (bulletin number and date, a determination with the project-specific caveat, a BSA calendar number, or a Handbook page) with its link; no uncited item; no bulk-copied text"
+    },
+    {
+      "id": "S6",
+      "given": "every search the library rests on",
+      "when": "research-log.md is read",
+      "then": "each has the source, the query, found / not found / access blocked, the missing item and the next step"
+    },
+    {
+      "id": "S7",
+      "given": "the task's diff",
+      "when": "git diff --name-only runs",
+      "then": "only docs/zoning-law-library/** and the producer report changed; no snapshot, registry, coverage matrix or report-lane file"
+    },
+    {
+      "id": "S8",
+      "given": "the README and every document",
+      "when": "they are read",
+      "then": "the unreviewed-draft label and direct source links are present; nothing is labelled Verified; no compliant/buildable/feasible claim; unresolved items stay unresolved"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "nyc.gov asset PDFs refuse non-browser fetches: record BLOCKED with the URL, never evade; cite by reference.",
+    "Following cross-references can fan out across the whole ZR: bound the first pass to the R6B + C2-2 benchmark frontier and the eleven options, and record out-of-scope terminals explicitly.",
+    "Public repository: pointers and short quotes with provenance only, no bulk third-party text."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T19:45:14.195377+00:00",
+  "updated_at": "2026-10-11T19:45:14.558369+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R102",
+        "D-094-R104"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T19:45:14.195566+00:00",
+  "path_notes": "Lane L (library), disjoint from the report lane; docs/zoning-law-library/ is covered by Lane C's docs/** ownership rule (no OWNERSHIP.yaml change). Research helper returns are saved in the session folder outside git and cited in research-log.md.",
+  "documented_test_commands": [
+    "python3 -c \"import json;json.load(open('docs/zoning-law-library/benchmark-r6b-sections.json'))\"",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

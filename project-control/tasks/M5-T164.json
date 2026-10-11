@@ -1,0 +1,210 @@
+{
+  "task_id": "M5-T164",
+  "title": "Results contract 1.5.0 (additive, optional): rear-yard checks, constraint lines, envelope rows, illustrative placement, input facts on the nine bases, and the area allocation; version sets in both validators and the web reader",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "One additive, optional revision of the results contract to 1.5.0 (names fixed at G0 from work order v2 task M5-T164): (a) rear-yard checks for ZR 23-344 (a), (b) and (c)(3), each with state applies/not_applicable/not_known, inputs (name, value, unit, basis), conditions, text and zr_sections; a not_known check carries no number; a combined rear-yard row with its way and conditions; (b) geometry.constraint_lines (the (b) 100-ft line, the corner area, the 8-ft street-wall band, the setback line), each with state, basis and zr_sections, geometry only when established; (c) envelope rows: setback, street wall, side yard; (d) building_alternatives[].placement: status, label const 'Illustrative', outline only when placed, method, basis, measure with its conversion statement (G-14), conditions, checks, not_checked; (e) optional floor_plates.entries[].building; (f) input_facts: key, value, unit, basis (closed enum equal to the nine QUANTITY_BASES of tools/research_record_check.py:51), source title, source date; (g) building_alternatives[].area_allocation: label const 'Illustrative', one share (minimum 0.60, maximum 0.75), the measure in the estimate's own vocabulary (preliminary_apartment_estimate.py), the conversion statement, apartment-area, other-area and total sq ft, a fitted flag, conditions; no zone geometry, unit count or core position; (h) version sets: CONTRACT_VERSIONS_WITH_WAY_LAYER (results_way_rules.py:36) and the web SUPPORTED_RESULTS_CONTRACT_VERSIONS (results-contract-checks.ts:51) gain '1.5.0'. Checks use only oneOf, const, additionalProperties:false, minimum/maximum (KNOWN_KEYWORDS has no if/then/not). Both schema copies identical; results.ts regenerated with packages/contracts/scripts/generate_ts_types.py.",
+  "business_reason": "The rear-yard, envelope, placement and area-illustration tasks of waves 25-27 need a contract shape that keeps not-known values without numbers and illustrative geometry labelled, before any engine emits them.",
+  "inputs": [
+    "packages/contracts/schemas/v1/results.schema.json",
+    "services/api/app/contracts/results_way_rules.py",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
+    "tools/research_record_check.py",
+    ".github/scripts/validate_contracts.py",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/README.md"
+  ],
+  "outputs": [
+    "packages/contracts/schemas/v1/results.schema.json",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "packages/contracts/generated/results.ts",
+    "services/api/app/contracts/results_way_rules.py",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_withheld_check_with_number_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_withheld_placement_with_outline_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_allocation_zone_geometry_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_placement_label_wrong_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_input_fact_basis_unknown_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_allocation_share_out_of_range_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_allocation_without_measure_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_way_layer_broken_contract_1_5_0.json",
+    "services/api/tests/drawings/kit/snapshots/synthetic_rear_yard_constraints_contract_1_5_0.site_plan.svg",
+    "services/api/tests/drawings/kit/snapshots/synthetic_placed_building_contract_1_5_0.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/synthetic_rear_yard_constraints_contract_1_5_0.dxf",
+    "services/api/tests/cad/snapshots/results_dxf/synthetic_placed_building_contract_1_5_0.dxf",
+    "services/api/tests/contracts/test_results_contract_1_5_0.py",
+    "project-control/reports/M5-T164-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "packages/contracts/schemas/v1/results.schema.json",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "packages/contracts/generated/results.ts",
+    "services/api/app/contracts/results_way_rules.py",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_withheld_check_with_number_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_withheld_placement_with_outline_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_allocation_zone_geometry_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_placement_label_wrong_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_input_fact_basis_unknown_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_allocation_share_out_of_range_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_allocation_without_measure_contract_1_5_0.json",
+    "packages/contracts/fixtures/invalid/results/synthetic_way_layer_broken_contract_1_5_0.json",
+    "services/api/tests/drawings/kit/snapshots/synthetic_rear_yard_constraints_contract_1_5_0.site_plan.svg",
+    "services/api/tests/drawings/kit/snapshots/synthetic_placed_building_contract_1_5_0.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/synthetic_rear_yard_constraints_contract_1_5_0.dxf",
+    "services/api/tests/cad/snapshots/results_dxf/synthetic_placed_building_contract_1_5_0.dxf",
+    "services/api/tests/drawings/kit/test_adapter.py",
+    "services/api/tests/api/test_contract_schema_packaging.py",
+    "services/api/tests/contracts/test_results_contract_1_5_0.py",
+    "project-control/reports/M5-T164-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "apps/web/src/components/",
+    "services/api/tests/drawings/report/",
+    "services/api/tests/contracts/test_study_contracts.py",
+    "docs/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "every existing valid results fixture",
+      "when": "it is validated against the 1.5.0 schema",
+      "then": "it stays valid, byte-for-byte unchanged"
+    },
+    {
+      "id": "S2",
+      "given": "the new valid 1.5.0 examples",
+      "when": "they are validated",
+      "then": "they pass: a conditional rear yard with its checks and the (b) line; envelope rows; a placed and a withheld placement; input_facts; a fitted and an unfitted area_allocation"
+    },
+    {
+      "id": "S3",
+      "given": "a withheld or not_known row with a number, a withheld placement with an outline, an allocation with zone geometry",
+      "when": "they are validated",
+      "then": "each is rejected, using only oneOf, const, additionalProperties:false"
+    },
+    {
+      "id": "S4",
+      "given": "a placement or allocation label other than 'Illustrative'",
+      "when": "it is validated",
+      "then": "it is rejected"
+    },
+    {
+      "id": "S5",
+      "given": "an input fact with a basis outside the nine",
+      "when": "it is validated",
+      "then": "it is rejected, and a test asserts the enum equals QUANTITY_BASES"
+    },
+    {
+      "id": "S6",
+      "given": "any document using a 1.5.0 block",
+      "when": "it is validated",
+      "then": "it must declare 1.5.0; the two schema copies are identical; results.ts is regenerated"
+    },
+    {
+      "id": "S7",
+      "given": "the contract checks",
+      "when": "python .github/scripts/validate_contracts.py and pytest .github/scripts/tests run",
+      "then": "both pass"
+    },
+    {
+      "id": "S8",
+      "given": "the journey fixture",
+      "when": "the task's diff is read",
+      "then": "it is unchanged"
+    },
+    {
+      "id": "S9",
+      "given": "each new valid example",
+      "when": "it is compared with the 1.4.0 fixture it came from",
+      "then": "it is that drawable fixture plus only the new blocks"
+    },
+    {
+      "id": "S10",
+      "given": "the fan-out consumers (test_report_pages ALL_FIXTURES, test_results_*_slot, test_results_way_rules, test_study_contracts, the kit and CAD snapshot fan-out, kit test_adapter, the web results-fixtures consumers)",
+      "when": "they run at the rebased head",
+      "then": "they are green and unedited (except the named snapshots and NOT_DRAWABLE_FIXTURES if needed)"
+    },
+    {
+      "id": "S11",
+      "given": "the web reader",
+      "when": "it reads 1.5.0 and an unknown version",
+      "then": "it accepts 1.5.0 and still rejects unknown versions"
+    },
+    {
+      "id": "S12",
+      "given": "a 1.5.0 document that breaks a way-layer rule",
+      "when": "both Python validators and the web checks read it",
+      "then": "all three refuse it; 1.3.0 and 1.4.0 behaviour is unchanged"
+    },
+    {
+      "id": "S13",
+      "given": "an allocation with share outside 0.60-0.75, or without its measure or conversion statement",
+      "when": "it is validated",
+      "then": "it is rejected"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "If the shape proves too small later, a 1.6.0 revision is needed before M5-T170/M5-T172; G1 checks the shapes against NB-03, NB-04, NB-06, the nine bases, G-14 and R091.",
+    "packages/contracts/** is also listed by the dormant claimed task M5-T125 (2026-09-30, no producer, never progressed); later waves edited these files without it; no producer is running on it."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T19:45:10.033096+00:00",
+  "updated_at": "2026-10-11T19:45:10.492146+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R017",
+        "D-094-R026",
+        "D-094-R044",
+        "D-094-R058",
+        "D-094-R079",
+        "D-094-R082",
+        "D-094-R091",
+        "D-094-R092",
+        "D-094-R094",
+        "D-094-R096"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T19:45:10.033343+00:00",
+  "path_notes": "Fixture and snapshot names fixed here (synthetic_*_contract_1_5_0 sorts after recorded_215_16_northern_journey.json, so test_study_contracts' first file is unchanged). New fixture and snapshot files are not seeded: a placeholder would break the fixture-iterating tests.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "python .github/scripts/validate_contracts.py",
+    "pytest -q .github/scripts/tests",
+    "cd services/api && python -m pytest -q tests/contracts tests/drawings tests/cad tests/api/test_contract_schema_packaging.py",
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/__tests__/results-contract-checks.test.ts"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

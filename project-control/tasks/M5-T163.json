@@ -1,0 +1,141 @@
+{
+  "task_id": "M5-T163",
+  "title": "NB-03 revision 2 (rear yard on a short block, ZR 23-344(b)/(c)(3)): gaps a-h answered, and the ZR 12-10 'street', 'street setback line', 'street, wide' and 'street, narrow' definitions captured (documents only)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Revise docs/research/evidence-records/NB-03-rear-yard-short-block.json to revision 2, answering gaps a-h of work order v2 (M5-T163): (a) the depth conflict 99.97 (gis), 100 (printed_tax_map) and ~101.06 (derived) shown as a conflict with no basis chosen; (b) the shared short-dimension test also used by 23-363(c), one measure; (c) captures of ZR 12-10 'street' and 'street setback line' through the print/PDF channel or the disclosed fallback, sha256-pinned, stating which features bound a block and what the tax map's ALLEY means for (b); (d) a method for irregular blocks, or 'searched, not found'; (e) the R4B neighbours and any district-boundary yard rule; (f) record (do not fix) the stale register entry and the rule's limitation text; (g) no worked example yet (M5-T176 supplies it); (h) MapPLUTO LotFront/LotDepth meaning on a corner lot and their basis, or 'searched, not found'. If the channel works, also capture 12-10 'street, wide' and 'street, narrow' (NB-06 records them later, in M5-T170). Each capture lands in docs/research/zr-snapshots/v1/ in the existing zr-12-10-* shape and as a byte-identical bundled copy in services/api/app/_zr_snapshots/v1/. W24 owner of the README status cells and the RESEARCH_REQUESTS.md index line (G-13). A defined term that does not exist in 12-10 is reported, not invented.",
+  "business_reason": "The rear-yard engine task (M5-T167) and the independent reading (M5-T176) need NB-03's open inputs answered and the block-boundary definitions captured from the primary source first.",
+  "inputs": [
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/README.md",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-line.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "docs/RESEARCH_AND_VERIFICATION.md"
+  ],
+  "outputs": [
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-wide.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street-wide.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "project-control/reports/M5-T163-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/README.md",
+    "docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-wide.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street-wide.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+    "docs/RESEARCH_REQUESTS.md",
+    "project-control/reports/M5-T163-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "services/api/tests/",
+    "apps/",
+    "packages/",
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/design/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the revised NB-03",
+      "when": "python3 tools/research_record_check.py --check runs",
+      "then": "it exits 0"
+    },
+    {
+      "id": "S2",
+      "given": "each new capture",
+      "when": "the snapshot checks run",
+      "then": "each capture is sha256-pinned and names its channel; python services/api/scripts/sync_zr_snapshots.py --check exits 0; tests/rules/test_zr_snapshot_bundle.py passes; CI is green at the task head"
+    },
+    {
+      "id": "S3",
+      "given": "the new captures",
+      "when": "test_report_law_links.py runs unedited",
+      "then": "it stays green: each capture follows the existing zr-12-10-* shape with request_url the 12-10 page and no '#'"
+    },
+    {
+      "id": "S4",
+      "given": "gaps a-h",
+      "when": "the record is read",
+      "then": "each gap has a dated line, a source, and a next step where it stays open"
+    },
+    {
+      "id": "S5",
+      "given": "the record's quantities",
+      "when": "they are read",
+      "then": "every quantity carries one of the nine bases"
+    },
+    {
+      "id": "S6",
+      "given": "the record's expected values",
+      "when": "they are read",
+      "then": "no program output appears among them"
+    },
+    {
+      "id": "S7",
+      "given": "the record's research_status",
+      "when": "it changes",
+      "then": "the README status cell and the RESEARCH_REQUESTS.md index prose change in the same task, and nowhere else"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The ZR site's big pages 504; use the documented fallback (direct GET, browser user agent, sha256-pinned) and disclose it.",
+    "'street setback line' may not be a 12-10 defined term: report it, never invent a capture."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T19:45:07.827947+00:00",
+  "updated_at": "2026-10-11T19:45:08.266771+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R036",
+        "D-094-R037",
+        "D-094-R061",
+        "D-094-R079"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T19:45:07.828209+00:00",
+  "path_notes": "Documents only; the bundled snapshot copies under services/api/app/_zr_snapshots/v1/ are the only services/ files and must be byte-identical to the canonical captures.",
+  "documented_test_commands": [
+    "python3 tools/research_record_check.py --check",
+    "python services/api/scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

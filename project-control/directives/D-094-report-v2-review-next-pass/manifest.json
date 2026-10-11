@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T19:14:51+00:00",
+ "updated_at": "2026-10-11T19:45:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -137,7 +137,7 @@
   "D-094-R113"
  ],
  "requirements_id_digest_sha256": "16d603ac1300af497235e340bd89cb85bd370a3a8e01cb0022f37ea8a5cbba21",
- "requirements_content_digest_sha256": "310e8f6482e6dc4194d7278c57c167e308653bf2e63d345c08605c17357b5a3e",
+ "requirements_content_digest_sha256": "bae4d0cd78c523f20b3ab4f39a20ec4f169d0e105bae2884e0bdb9bb02c0e3a9",
  "sources": [
   {
    "file": "source-001.md",
@@ -220,7 +220,12 @@
   "M5-T159",
   "M5-T160",
   "M5-T161",
-  "M5-T162"
+  "M5-T162",
+  "M0-T194",
+  "M0-T193",
+  "M5-T163",
+  "M5-T164",
+  "M3-T006"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -325,6 +330,36 @@
    "actor": "orchestrator",
    "action": "requirements_reread",
    "note": "Re-read D-094-R109 (reading and required_harness) and D-094-R110 (required_harness) to match the owner's correction source-008 (R112, R113): keep the same copy-in prompt and the full saved handoff; drop only the between-session checks. The owner's quoted words are unchanged; the requirements content digest is resynced in the same commit. Session 0dfe2ecc, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:03+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T194 (D-094 visual-proof baseline (the before set)) to R056, R057, R069, R072, R077, R083 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:06+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T193 (design contract revision for D-094 and the quick-resume routine) to R009, R010, R012, R014, R018, R019, R020, R021, R025, R026, R027, R028, R029, R041, R042, R047, R048, R049, R050, R051, R052, R053, R054, R065, R066, R071, R072, R074, R076, R077, R078, R081, R083, R087, R088, R089, R090, R091, R092, R093, R094, R095, R096, R097, R109, R110, R111, R112, R113 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:08+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T163 (NB-03 revision 2 and the 12-10 captures) to R036, R037, R061, R079 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:10+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T164 (results contract 1.5.0) to R017, R026, R044, R058, R079, R082, R091, R092, R094, R096 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T006 (zoning-law library, first pass (documents only)) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
