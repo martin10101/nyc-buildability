@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-11T04:59:18+00:00",
+ "updated_at": "2026-10-11T05:24:10+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -965,7 +965,7 @@
   "D-090-R941"
  ],
  "requirements_id_digest_sha256": "5157a3c5304c380d0a674cbb1d28426081538c10380babba5759d549181bdb66",
- "requirements_content_digest_sha256": "b837c0593b776f23c835eac7b3fd4068e29e2d948580b13e3bde022f68e71a92",
+ "requirements_content_digest_sha256": "160eac6fe5826a2081d4455bddf3984ad2067831b4b7e318e16d45bfc944a070",
  "sources": [
   {
    "file": "source-001.md",
@@ -1786,7 +1786,8 @@
   "M5-T156",
   "M5-T157",
   "M0-T191",
-  "M5-T158"
+  "M5-T158",
+  "M5-T159"
  ],
  "affected_prs": [
   262,
@@ -2661,6 +2662,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T158 (zoning-lot warning from the ACRIS index (DB-232)) to R229, R240, R241, R255, R520, R570, R584, R588, R689, R783 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T05:24:10+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T159 (law links to exact sections (D-094 P-1)) to R584 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
