@@ -356,3 +356,21 @@ to build).
   - **DWG:** many architects work in DWG; reading or writing DWG is still the owner's licensing decision.
   - **Liability wording:** before selling to clients, a lawyer may want to review the disclaimer and terms (the app
     already labels results as preliminary, unreviewed drafts with law links).
+
+## 15. "Why not reverse-engineer from the city's own data?"
+
+- **Owner:** take real buildings across districts, uses and odd lots (especially new ones filed after the 2024 City of
+  Yes changes), run the program on each lot, and compare with what the architect actually filed and built. Can we get
+  everything from the city's websites, including permit filings?
+- **Developer (ANSWERED; OPEN question J4):** yes, a strong and scalable test.
+  - The city publishes permit filings as open data (an older system and the newer DOB NOW, updated daily), plus
+    certificates of occupancy; the older filings carry the proposed zoning floor area (the app already reads it); the
+    newer filings dataset has about 95 columns, which must be confirmed one by one (floor area, height, stories,
+    units) before relying on them; recorded documents show air-rights deals and zoning-lot mergers; appeal-board
+    decisions show variances. The plans themselves are generally not available as bulk data, so the comparison is on
+    numbers, not drawings.
+  - A real building is evidence of what one architect did, not proof of the maximum: buildings often stop below the
+    maximum, use bonuses or special permits, merge lots, or were filed under the old rules. So the test is: the
+    program's legal maximum should never be below what was legally built, and every difference gets a stated cause.
+  - Recommendation: a research task with the reading-only helpers (about 20-30 recent new buildings); the owner's own
+    projects (J2) still add what public data cannot show (why choices were made, examiner objections).
