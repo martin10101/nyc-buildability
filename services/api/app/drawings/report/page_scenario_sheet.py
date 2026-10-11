@@ -89,24 +89,30 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
         # One plain sentence whenever the document gives no floor plate (ruling Y8);
         # no footprint, building outline or 3D view is drawn.
         children.append(short_line(readers.NOT_PLACED_LINE))
-    children.append(
-        figure(
-            stack,
-            "Floor-stack section (Illustrative): drawn from the schedule only, "
-            "with no placement on the lot.",
-            line_when_absent="The floor-stack section is not shown here.",
-        )
+    # The (tall, narrow) floor-stack figure sits BESIDE the "Why it has this shape"
+    # and "What was not checked" text, so the sheet fits one page where it can
+    # (correction 3; render_floor_stack has no smaller frame). The floor schedule
+    # needs the full width, so it stays below.
+    fig = figure(
+        stack,
+        "Floor-stack section (Illustrative): drawn from the schedule only, "
+        "with no placement on the lot.",
+        line_when_absent="The floor-stack section is not shown here.",
     )
+    side: list[object] = []
     if view.get("label"):
-        children.append(el("div", el("h3", "Why it has this shape"), el("p", view["label"])))
-    # The floor schedule, what was not checked and the preliminary apartment estimate
-    # stay TOGETHER on one page, so the estimate never lands as a lone line on a page
-    # of its own (rework 1 fix 5).
+        side.append(el("div", el("h3", "Why it has this shape"), el("p", view["label"])))
+    side.append(_not_checked(view))
+    children.append(el("div",
+        el("div", fig, class_="scenario-figure"),
+        el("div", *side, class_="scenario-side"),
+        class_="scenario-row"))
+    # The floor schedule and the preliminary apartment estimate stay together, so the
+    # estimate never lands as a lone line (rework 1 fix 5).
     tail: list[object] = [
         el("h3", "Floor schedule"),
         table(_SCHEDULE_HEADERS, _schedule_rows(raw_building),
               caption="Floor schedule for this building"),
-        _not_checked(view),
     ]
     estimate = readers.apartment_estimate_text(view.get("capacity_estimate"))
     if estimate is not None:

@@ -444,17 +444,28 @@ def _decision_section(html: str) -> str:
     return html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
 
 
-# ================================================= short tables never split (rework 3)
-def test_short_tables_carry_the_no_split_rule() -> None:
-    from app.drawings.report.html import SHORT_TABLE_MAX_ROWS, table
+# ===================================== no-split by printed HEIGHT, tall tables break (correction 3)
+def test_short_table_by_height_is_no_split_and_a_tall_one_is_not() -> None:
+    from app.drawings.report.html import (
+        SHORT_TABLE_MAX_HEIGHT_MM,
+        estimated_table_height_mm,
+        table,
+    )
 
-    short = str(table(["A", "B"], [["1", "2"]] * SHORT_TABLE_MAX_ROWS))
-    longer = str(table(["A", "B"], [["1", "2"]] * (SHORT_TABLE_MAX_ROWS + 1)))
-    assert 'class="no-split"' in short  # <= 8 rows: never split across a page
-    assert "no-split" not in longer  # > 8 rows: may split
-    # the print CSS gives no-split the break-inside rule.
+    # pick a body-row count that is short by estimated height, and one that is tall.
+    short_rows = next(
+        n for n in range(1, 40)
+        if estimated_table_height_mm(n) <= SHORT_TABLE_MAX_HEIGHT_MM
+        and estimated_table_height_mm(n + 1) > SHORT_TABLE_MAX_HEIGHT_MM
+    )
+    short = str(table(["A", "B"], [["1", "2"]] * short_rows))
+    tall = str(table(["A", "B"], [["1", "2"]] * (short_rows + 1)))
+    assert 'class="no-split"' in short  # <= 70 mm: never split across a page
+    assert "no-split" not in tall  # taller: may break between rows
     css = layout.report_css("H", "F")
     assert re.search(r"\.no-split\s*\{[^}]*break-inside:\s*avoid", css)
+    # a tall table's note never separates from its row (the note row never starts a page).
+    assert re.search(r"\.reason-row\s*\{[^}]*break-before:\s*avoid", css)
 
 
 def test_status_label_key_is_a_no_split_table() -> None:

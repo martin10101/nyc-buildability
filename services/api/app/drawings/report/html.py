@@ -67,9 +67,18 @@ def el(tag: str, *children: object, **attributes: object) -> _Raw:
     return _Raw(f"<{tag}{attrs(clean)}>{body}</{tag}>")
 
 
-# A table with this many body rows or fewer is never split across a page break
-# (it moves whole, with its heading): it is marked ``no-split`` for the print CSS.
-SHORT_TABLE_MAX_ROWS = 8
+# The no-split rule applies only to a SHORT table by its printed HEIGHT (correction
+# 3): a table whose estimated height is at most ``SHORT_TABLE_MAX_HEIGHT_MM`` (one
+# printed row is about ``_PRINTED_ROW_MM`` at true size) is marked ``no-split`` and
+# moves whole with its heading (e.g. the status-label key, the floor schedule). A
+# taller table may break between rows, with its header repeated.
+SHORT_TABLE_MAX_HEIGHT_MM = 70.0
+_PRINTED_ROW_MM = 7.0
+
+
+def estimated_table_height_mm(body_rows: int) -> float:
+    """A rough printed height of a table: the header plus one printed row each."""
+    return _PRINTED_ROW_MM * (body_rows + 1)
 
 
 def table(
@@ -80,13 +89,14 @@ def table(
     caption: object | None = None,
 ) -> _Raw:
     """A table with a repeating header group (``thead``) and body rows. Header and
-    body cells are escaped unless passed as ``raw(...)``. A SHORT table (at most
-    ``SHORT_TABLE_MAX_ROWS`` body rows, e.g. the status-label key) is marked
-    ``no-split`` so the print CSS never breaks it across a page."""
+    body cells are escaped unless passed as ``raw(...)``. A SHORT table (estimated
+    printed height at most ``SHORT_TABLE_MAX_HEIGHT_MM``, e.g. the status-label key)
+    is marked ``no-split`` so the print CSS never breaks it across a page; a taller
+    table may break between rows (its header repeats)."""
     head = el("tr", *[el("th", header) for header in headers])
     body = [el("tr", *[el("td", cell) for cell in row]) for row in rows]
     names = [class_] if class_ else []
-    if len(body) <= SHORT_TABLE_MAX_ROWS:
+    if estimated_table_height_mm(len(body)) <= SHORT_TABLE_MAX_HEIGHT_MM:
         names.append("no-split")
     children: list[object] = []
     if caption is not None:

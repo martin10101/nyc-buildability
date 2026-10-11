@@ -126,17 +126,27 @@ a {{ color: {action}; }}
 .location-wide-figure {{ break-inside: avoid; margin: 0 0 5mm; }}
 .location-wide-figure figure {{ margin: 1mm 0; }}
 .figure-title {{ font-size: 9.5pt; font-weight: 700; margin: 0 0 1mm; }}
-/* The scenario sheet's schedule, unchecked items and estimate stay together, so
-   the estimate never lands alone on a page (rework 1 fix 5). */
+/* The scenario sheet's floor schedule and estimate stay together, so the estimate
+   never lands alone on a page (rework 1 fix 5). */
 .sheet-tail {{ break-inside: avoid; }}
+/* The tall floor-stack figure sits beside the 'Why' and 'What was not checked' text
+   so the sheet fits one page where it can (correction 3). */
+.scenario-row {{ display: flex; gap: 6mm; align-items: flex-start; break-inside: avoid; }}
+.scenario-figure {{ flex: 0 0 auto; }}
+.scenario-figure figure {{ margin: 0; }}
+.scenario-side {{ flex: 1 1 0; min-width: 0; }}
+.scenario-side h3 {{ margin-top: 0; }}
 /* Provenance and the drawing notes share a row in two columns so the evidence page
    stays compact and the status-label key is not orphaned (corrections T156-C1). */
 .evidence-columns {{ display: flex; gap: 8mm; align-items: flex-start; break-inside: avoid; }}
 .evidence-column {{ flex: 1 1 0; min-width: 0; }}
 .evidence-column h3 {{ margin-top: 0; }}
 .evidence-column ul {{ margin: 0; }}
-/* The shared assumptions and the open-items table are each a complete sub-section
-   on its own page, so neither the table is split into a near-empty fragment nor a
-   page holds a bare fragment (correction 2). */
-.open-items-block {{ break-before: page; }}
+/* The open-items table is TALL (a note under most rows), so it breaks between rows
+   with its header repeated, and the assumptions plus the start of the open items
+   share a page (correction 3). An item's note never separates from the item (the
+   note row never starts a page), and at least three rows stay on each side. */
+.reason-row {{ break-before: avoid; }}
+.open-items-block table {{ orphans: 3; widows: 3; }}
+.open-items-block table td {{ padding-top: 2mm; padding-bottom: 2mm; }}
 """.strip()
