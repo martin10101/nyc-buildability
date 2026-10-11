@@ -414,3 +414,15 @@ to build).
   - The checks stay only after a crash or a forced stop, when the last session could not finish its handoff.
   - The project's instruction file and the handoff routine still say "check first"; a small change brings them in
     line (inside the design-rules task).
+
+## 18. "Do you think we're making incredible progress?" (asked about 20:20 UTC, mid-session)
+
+- **Developer (answered):** steady, careful progress, but not "incredible" yet. That day's work was mostly the
+  groundwork the visible changes depend on: the design rules for the report's next pass written, reviewed and
+  accepted; the "before" pictures and word counts of the report and website pinned; the rear-yard research record
+  updated; the zoning-law library's first pass written; the results format extended. The first change the owner
+  can see, the rebuilt page 1, was being built but was not finished. Every piece passes independent review and an
+  8-minute automated test run, and the build server runs only a few helpers at once, which keeps it reliable but
+  slower than it looks.
+- **At the handoff (owner, about 21:27 UTC: "dont start any new tesk finish up"):** nothing new was started; the
+  running helpers were stopped and their unfinished work saved for the next session (see the handoff).
