@@ -233,6 +233,30 @@
      "ADVISORY: OQ-5 (Appendix A) correctly kept open; the empirical DB probe corroborates the token but is not the enumerated authoritative list."
     ],
     "report": "project-control/reports/M5-T157-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11T07:55Z",
+    "reviewed_revision": 3,
+    "reviewed_code_identity": {
+     "services/api/app/scenario/three_answers/engine_conditions.py": "6768a49a023ee92b2919fad14bf27c0a067171073a31ec0c6232dfe6a2f0811f",
+     "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json": "404179f2c2aab9c25826c59c92c4715fe0647a8f552cb1e385c72ccc7cb7ef02",
+     "services/api/app/scenario/three_answers/special_density_geography.py": "ce2c6b15416ec232f04f46f0f319fc68dd807a677ab7a806c6fc3f9744de11b6",
+     "services/api/app/scenario/three_answers/result_way_facts.py": "8e440578e5c38ed11488f64bf1d172716301b264e814926887feee9c3bff560c",
+     "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
+     "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
+     "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "3faa78e607b5ac366122f94486dc9381e66f0e187f3f9b91977c8692abcca5a2",
+     "services/api/app/scenario/three_answers/three_way_scope_lines.py": "8cece25b78227d8c63840826173220d8b06c2d805cc1a2b59ea0f5fd19abd0ee"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "Revision 3 delta verified at fb52a874: the three updated code identities (result_way_bridge 485dff13, result_ways ac0747a3, result_way_engine_bridge 3faa78e6) reproduce LF-normalized; the other five are unchanged.",
+     "DB-232 changed the zoning-lot CONDITION only: the special-density decision (_density, special_density_geography) and the 680 factor/rounding (r6b rule unchanged) are untouched; _unit_standard_way attaches exactly one zoning-lot condition - property-specific in other_lots_named/not_read, else the generic M5-T157 one.",
+     "The added dependency_assessment sentence and the extended tax-lot condition are accurate; the benchmark journey fixture confirms the unit-limit condition names lot 1 (recorded February 8, 2022, CRFN 2022000059134), special-density note unchanged.",
+     "research_record_check --check PASS (exit 0); NB-05 code_current=True.",
+     "Advisories from revision 2 still stand: the evidence array still omits the zr-12-10-special-downtown-brooklyn-district snapshot (DB source), and OQ-5/Appendix A is correctly kept open."
+    ],
+    "report": "project-control/reports/M5-T158-reviews.md"
    }
   ],
   "professional_review": null
