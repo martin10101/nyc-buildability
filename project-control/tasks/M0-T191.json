@@ -62,14 +62,14 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "None beyond wording; no code changes."
   ],
   "blockers": [],
   "created_at": "2026-10-11T03:04:32.988960+00:00",
-  "updated_at": "2026-10-11T05:03:01.602923+00:00",
+  "updated_at": "2026-10-11T05:03:03.855524+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
