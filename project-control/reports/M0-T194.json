@@ -1,0 +1,19 @@
+{
+  "task_id": "M0-T194",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/D-094-visual-proof-before.md",
+  "submitted_at": "2026-10-11T20:21:05.868115+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T194-evidence-map.json",
+  "content_manifest_sha256": "b52ff7631fc526fc3fb7254dadce2f2350ff74a7b1124d04f5bec4cd9413b42a",
+  "reviewed_sha": "4e92b20c1b174280f5280657d50d6bceb547c702",
+  "applicable_requirements": [
+    "D-094-R056",
+    "D-094-R057",
+    "D-094-R069",
+    "D-094-R072",
+    "D-094-R077",
+    "D-094-R083"
+  ],
+  "updated_at": "2026-10-11T20:21:06.446321+00:00"
+}

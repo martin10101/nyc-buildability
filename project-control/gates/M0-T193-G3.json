@@ -1,0 +1,12 @@
+{
+  "task_id": "M0-T193",
+  "gate_id": "G3",
+  "reviewer": "product-design-director",
+  "role": "independent_review",
+  "result": "PASS",
+  "report_file": "project-control/reports/M0-T193-reviews.md",
+  "reviewed_at": "2026-10-11T20:21:09.221109+00:00",
+  "content_manifest_sha256": "d590469e58a343f0391a34d6bda4371d4e1cd7b7ddce62092b4e26d67f623a03",
+  "reviewed_sha": "4e92b20c1b174280f5280657d50d6bceb547c702",
+  "updated_at": "2026-10-11T20:21:09.442496+00:00"
+}
