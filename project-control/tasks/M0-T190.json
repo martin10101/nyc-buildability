@@ -180,7 +180,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 50,
+  "progress_percent": 90,
   "risks": [
     "An always-loaded rule adds startup context (owner removed the cap, D-093-R074; size still reported).",
     "The structural check cannot certify a legal reading; it only blocks promotion without evidence (stated in the procedure).",
@@ -188,7 +188,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T01:38:57.776876+00:00",
-  "updated_at": "2026-10-11T01:52:10.633323+00:00",
+  "updated_at": "2026-10-11T02:26:21.307713+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -289,6 +289,13 @@
       "percent": 50,
       "status": "claimed",
       "message": "orchestrator part committed (rule, CLAUDE.md, procedure, five records, links, data files restored); scope correction 1; waiting for the builder (check, hook line, budget, CI)"
+    },
+    {
+      "at": "2026-10-11T02:26:21.307643+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and corrected; G1 PASS (F1 applied, delta PASS), G3 PASS, G4 PASS, G5 PASS; verification sessions recorded; review record and evidence map written"
     }
   ],
   "scope_corrections": [
