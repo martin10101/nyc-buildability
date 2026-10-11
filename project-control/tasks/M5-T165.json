@@ -183,9 +183,9 @@
     },
     {
       "id": "S18",
-      "given": "the whole report text",
+      "given": "every text this task writes (constraint_text.py, zoning_lot_item.py, unit_limit_text.py, page_decision_summary.py, page_assumptions.py, page_scenario_sheet.py, readers.py's own sentences) and the whole of page 1",
       "when": "it is searched",
-      "then": "no text calls a GIS value or outline 'tax map' or 'tax-map outline'"
+      "then": "none calls a GIS value or outline 'tax map' or 'tax-map outline' (the page-1 fallback site-plan caption included); the engine's basis-rank display name 'Approximate tax map' (readers.py _BASIS_NAMES, shared with the web screen) and the texts written outside this task's paths are owed by the GIS-wording sweep (DB-245)"
     },
     {
       "id": "S19",
@@ -266,6 +266,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T23:11:49+00:00",
+      "actor": "orchestrator",
+      "change": "S18 narrowed (orchestrator decision on G1/G3/G4 of 2026-10-11). As contracted S18 searched the whole report; all three reviewers found the remaining 'tax-map outline' / 'Approximate tax map' texts are written outside this task's allowed paths (app/scenario first_option_results.py and result_way_bridge.py, the recorded journey fixture, page_site_context.py, options.py) or are the engine's basis-rank display name readers.py _BASIS_NAMES['approximate_tax_map'], which the web screen shares (apps/web/src/lib/architect/three-answers.ts) and the DXF notes echo; renaming it in the PDF alone would split the PDF from the website (R041/R057). Those go to ONE GIS-wording sweep (backlog DB-245, queued to M5-T167's contract, which owns the engine and the benchmark regeneration). This task keeps S18 for every text it writes and the whole of page 1, and fixes the page-1 fallback site-plan caption (page_decision_summary.py) in its rework. Old S18: given 'the whole report text', then 'no text calls a GIS value or outline 'tax map' or 'tax-map outline''. No path, row binding or other scenario changes."
     }
   ]
 }
