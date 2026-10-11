@@ -1102,24 +1102,37 @@
     "D-094-R104"
    ],
    "producer": "legal-corpus-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "d5b280d1ea9b98183530a04bc2775c2b1974ad0b",
+   "reviewed_manifest_sha256": "46bbd9c5b95f017ec95532f98ddba57673df98f674a50be3b4e9a0fe2c078163",
    "requirements": [
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "At f50d55d3 the seven documents exist under docs/zoning-law-library/ from producer commits 71a03977 + 12663e29, which by git diff-tree touch only those seven files plus the producer report (S7 holds).",
+      "I re-extracted every \\d{2}-\\d{2,3} reference from all 68 captured snapshots: 162 cross-references, 104 followed, 58 not-followed, zero silently dropped and zero without a reason; all 98 captured entries' snapshot ids + content_digest_sha256 match the snapshot files and recompute from sha256(verbatim_excerpt), and the 13 NOT-CAPTURED entries have no snapshot file.",
+      "I re-read the R6B-applicable rulesets myself and confirmed the catalog's handled set of six sections (11-25, 23-22, 23-52, 23-362, 23-432, 23-344(a)) and that r6b_height.rule.json cites 23-432 only; coverage.md (6 handled / 67 not), options-sections.md (all eleven options in options.py order) and pitfalls.md (DOB bulletins, determinations, BSA calendar numbers, DCP guidance \u2014 each with a link) are present, with the ADR-007 unreviewed-draft label in every file.",
+      "Stays open: the \"handoff tells the next session\" clause is the D-094-BOOTSTRAP share, not this task's; and the library is a declared first pass \u2014 5 sections + 8 defined terms uncaptured and 58 options-frontier references un-followed, all recommended for a later capture task, not made here.",
+      "Verifier's carry-forward condition met at d5b280d1: the task's allowed-path files are identical to those verified at f50d55d3 (content identity 46bbd9c5), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T006-DCV.md."
+     ],
+     "reviewed_sha": "d5b280d1ea9b98183530a04bc2775c2b1974ad0b"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "SESSION_NOTES.md (2026-10-11d, 19:50 UTC) records 7 helpers dispatched at once \u2014 three builders (M5-T163, M5-T164, M5-T168) plus four read-only M3-T006 research helpers (H1/H3/H4/H6) \u2014 within the 8 cap, builders at the 3 cap, and the extras research-only.",
+      "The four research-helper briefs (research/common.md and prompt-H*.md) state \"you write NOTHING\" and forbid Write/Edit, file creation, redirection and any git state change; the only material commits are the producer's, so the helpers wrote nothing in the repo.",
+      "The notes show builders never exceeded three (the M3-T006 producer was explicitly held for a builder slot at 20:03) and M3-T006 is lane L, disjoint from the report lane and sharing no file (its material commits touch only its eight allowed files).",
+      "Stays open: nothing stays open for this task; one transient 6-reviewer moment (20:13) was all read-only, inside R104's 8-cap, and was self-corrected within a minute.",
+      "Verifier's carry-forward condition met at d5b280d1: the task's allowed-path files are identical to those verified at f50d55d3 (content identity 46bbd9c5), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T006-DCV.md."
+     ],
+     "reviewed_sha": "d5b280d1ea9b98183530a04bc2775c2b1974ad0b"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T22:16:47+00:00"
   },
   {
    "directive_id": "D-094",
