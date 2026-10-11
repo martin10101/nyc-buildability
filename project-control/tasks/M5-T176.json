@@ -1,0 +1,144 @@
+{
+  "task_id": "M5-T176",
+  "title": "Step P7: two independent readings of ZR 23-344(b) (the short dimension of a block) and 23-344(c)(3) written into the R6B reference cases as one case, short-block-rear-yard: a value only where both readings agree on the same basis, every disagreement NOT SETTLED; reference rows only: NO rule file, NO engine code, NO result, NO capture, NO register entry, NO human verdict",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "A new R6B reference case short-block-rear-yard built from the two step-P7 readings (returns kept unchanged as provenance -15 and -16): rows for the reading of 23-344(b) (what is measured, between what, along what, whether 'less than 230 feet' is strict, how 'within 100 feet of such street line' is measured, what can bound a block), of 23-344(c) and (c)(3), of how 23-342, 23-343 and 23-344(a)/(b)/(c) fit together, the ten made-up cases M1 to M10, and the real lot (215-16 Northern Boulevard, lot 70 of block 7334) under Z1 (lot 70 alone) and Z2 (lots 70 and 1) on each measurement basis. A value or yes/no is recorded only where both readings give it on the same words and the same basis; otherwise NOT SETTLED with both readings named and the kind of gap stated. Every quantity carries its basis; no program output appears anywhere; the case maps each of M5-T167's scenarios S1 to S12 to a row or says which reading gap leaves it open.",
+  "business_reason": "D-094 R036/R079: the rear-yard analysis needs an explicit, independently worked applicability check of ZR 23-344(b) before the engine is changed (M5-T167 takes its expected values from this case and the law, never from program output); R037: nothing in it may read as an established exemption.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11d/sealed-p7-v2 (private build server; the readers' only input)",
+    "the two saved readings (private session folder; copied unchanged into provenance -15 and -16)",
+    "docs/reference-cases/R6B/README.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/short-block-rear-yard.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-15.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-16.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p7.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+    "project-control/reports/M5-T176-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T163"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/short-block-rear-yard.md",
+    "docs/reference-cases/R6B/README.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-15.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-16.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p7.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+    "project-control/reports/M5-T176-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/** - no rule file, engine, registry, review register or capture copy changes; the support code imports nothing from app",
+    "apps/**, packages/** and every fixture and snapshot",
+    "docs/research/** - no capture or evidence record is edited (NB-03 and NB-04 are read only)",
+    "docs/zoning-rule-review/** - no register entry, no human verdict anywhere",
+    "every other reference-case file under docs/reference-cases/ (cases, rendered pages, provenance 1-14) - not changed, reworded or superseded",
+    "every other test file; .github/**; tools/**; CLAUDE.md; .claude/**; any dependency file",
+    "project-control/** except the producer report"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the two step-P7 readings",
+      "when": "the provenance files are checked",
+      "then": "both are present unchanged below a short header (each ends with END-OF-REPORT), and their digests are pinned in the check"
+    },
+    {
+      "id": "S2",
+      "given": "every row of short-block-rear-yard.json",
+      "when": "the check reads it",
+      "then": "each row names both readings and quotes the captured words it rests on with the capture's file name"
+    },
+    {
+      "id": "S3",
+      "given": "M5-T167's scenarios S1 to S12 (frontage 229.99 / 230.00 / 230.01; bases straddling 230; reach 100.00 / 100.03; a corner lot; a two-lot zoning lot; a park-bounded and an irregular block; the (a)/(b)/(c) combination; mixed bases)",
+      "when": "the case is read against them",
+      "then": "each maps to a row, or the case says which reading gap leaves it open; the readings of 'within 100 feet' and 'less than 230 feet' are rows of their own"
+    },
+    {
+      "id": "S4",
+      "given": "the case",
+      "when": "program_result_errors runs",
+      "then": "it is empty: no value in the case comes from a program run"
+    },
+    {
+      "id": "S5",
+      "given": "the reference-case suite",
+      "when": "it runs",
+      "then": "the reference-case tests are green and README lists the case"
+    },
+    {
+      "id": "S6",
+      "given": "a point where the two readings disagree, or agree on different bases",
+      "when": "the row is written",
+      "then": "it is NOT SETTLED, names both readings and states the kind of gap; no value is chosen between them"
+    },
+    {
+      "id": "S7",
+      "given": "every quantity in the case",
+      "when": "the check reads it",
+      "then": "it carries exactly one of the nine bases (tools/research_record_check.py QUANTITY_BASES) and no sum mixes bases"
+    },
+    {
+      "id": "S8",
+      "given": "the real lot under Z1 and Z2",
+      "when": "the rows are written",
+      "then": "no row records an unconditional 'no rear yard'; each conclusion names its condition (zoning lot, basis) and links ZR 23-344"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The readings may disagree on the measurement basis of the block dimension; then the real-lot rows stay NOT SETTLED and M5-T167 shows not known.",
+    "The sealed folder lives on the private build server: the case records its inputs by name and digest, never the third-party text in bulk."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T22:26:04.432252+00:00",
+  "updated_at": "2026-10-11T22:26:04.894049+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R036",
+        "D-094-R037",
+        "D-094-R044",
+        "D-094-R079"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T22:26:04.432495+00:00",
+  "path_notes": "Contracted after both sealed readings are saved and their tool logs audited. The producer receives the two returns as files from the orchestrator and copies them unchanged. Builders never touch ports 3000/3001/8000.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "cd services/api && python tests/rules/reference_cases/r6b_reference_cases_render.py --check",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

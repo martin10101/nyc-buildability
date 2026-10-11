@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T20:43:45+00:00",
+ "updated_at": "2026-10-11T22:26:05+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -137,7 +137,7 @@
   "D-094-R113"
  ],
  "requirements_id_digest_sha256": "16d603ac1300af497235e340bd89cb85bd370a3a8e01cb0022f37ea8a5cbba21",
- "requirements_content_digest_sha256": "b31b83ce333c7d90d7784e6a811ac520a5be36ad32876dcd6e7c27c771c108ef",
+ "requirements_content_digest_sha256": "66a6f6ec9f7a46a5cdef444821e0788cfdd7b515cc1bdadd22eeb451960c7114",
  "sources": [
   {
    "file": "source-001.md",
@@ -228,7 +228,8 @@
   "M3-T006",
   "M5-T165",
   "M5-T166",
-  "M5-T171"
+  "M5-T171",
+  "M5-T176"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -381,6 +382,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T171 (website page-1 parity) to R035, R041, R051, R057, R071, R078, R081, R083 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T22:26:05+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T176 (step P7: short-block rear-yard reference case) to R036, R037, R044, R079 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

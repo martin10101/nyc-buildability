@@ -1445,6 +1445,47 @@
      "reviewed_sha": null
     }
    ]
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T176",
+   "applicable_requirement_ids": [
+    "D-094-R036",
+    "D-094-R037",
+    "D-094-R044",
+    "D-094-R079"
+   ],
+   "producer": "rules-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-094-R036",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R037",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R044",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R079",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
