@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-090",
  "version": 1,
- "requirement_count": 940,
+ "requirement_count": 941,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T03:04:35+00:00",
+ "updated_at": "2026-10-11T04:50:27+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -31670,6 +31670,39 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured 2026-10-10; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-090-R941",
+   "text": "'I told u to do a handoff why is 2 thinks still running': correction to the routine handoff (R617 to R625): when the owner asks for a handoff, nothing the session started keeps running. Before the handoff is reported, each running helper's unfinished work is saved in the session folder (for example a binary diff of its worktree), the helper is stopped, and the handoff says where the work is and how the next session re-dispatches it fresh. This replaces, for this owner, the session-handoff skill's advice to let healthy helpers finish. Recorded where the next session reads it: a one-line PROGRAM_KNOWLEDGE pointer.",
+   "source_ref": "source-084-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-090-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [
+    "D-090-R617"
+   ],
+   "required_harness": "A one-line pointer in .claude/rules/PROGRAM_KNOWLEDGE.md; at the next owner-invoked handoff, the session notes show every helper saved and stopped before the handoff was reported.",
+   "required_evidence": "The pointer in the task diff; the next handoff's session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

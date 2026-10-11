@@ -1229,7 +1229,19 @@
    "superseded_by": null,
    "affected_tasks": [],
    "manifest": "D-093-research-and-verification-workflow/manifest.json"
+  },
+  {
+   "directive_id": "D-094",
+   "slug": "report-v2-review-next-pass",
+   "title": "Owner 2026-10-11 (forwarded review 'Review of report v2 and instructions for Claude Code'): make the report's main answers fast to read without cutting scope - results first, development inventory to the owner update, drawing-led scenario sheets - after correcting three evidence issues (zoning-lot basis, special density geography, rear yard 23-344(b)/(c)(3)) in the data path; one shared website/PDF structure; one meaningful spatial example; every-page inspection and link-destination checks",
+   "status": "active",
+   "issued_at": "2026-10-11",
+   "issued_by": "owner",
+   "supersedes": [],
+   "superseded_by": null,
+   "affected_tasks": [],
+   "manifest": "D-094-report-v2-review-next-pass/manifest.json"
   }
  ],
- "updated_at": "2026-10-11T01:35:36+00:00"
+ "updated_at": "2026-10-11T04:50:28+00:00"
 }
