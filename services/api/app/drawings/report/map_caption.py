@@ -72,9 +72,12 @@ def source_sentence(map_context: object, layers: tuple[str, ...]) -> str | None:
 
 
 def _tail_notes(result: object) -> list[str]:
-    """The drawing's own short notes (rotation, honesty), each a full sentence. The
+    """The drawing's own short notes (rotation), each a full sentence. The
     source-attribution and measurement-basis note labels are dropped - the
-    "Sources:" sentence already names those in plain words."""
+    "Sources:" sentence already names those in plain words - and the "Map geometry
+    only; tax boundaries ... nothing is surveyed." honesty line is dropped from
+    every map caption so it appears ONCE in the report, on the evidence page
+    (D-094 R077; M5-T166 S6). The drawings keep it standalone."""
     out: list[str] = []
     for label in getattr(result, "labels", ()) or ():
         if getattr(label, "role", None) != "note":
@@ -83,6 +86,8 @@ def _tail_notes(result: object) -> list[str]:
         if source.endswith("/attribution") or source == "/map_context/measurement/label":
             continue
         text = str(getattr(label, "text", "")).strip()
+        if text.startswith("Map geometry only"):
+            continue
         if text:
             out.append(text if text.endswith((".", ":")) else text + ".")
     return out

@@ -35,11 +35,46 @@ def _lot_area_basis(results: Mapping) -> object:
     return el("div", *children)
 
 
+_QUALIFYING_SUFFIX = "_qualifying_affordable_or_senior"
+
+
+def _height_pairs(env: Mapping) -> list[tuple[dict, dict | None]]:
+    """The shown height values paired as (standard, qualifying-housing) by key, in
+    document order. A standard value with no qualifying counterpart pairs with
+    ``None`` (the qualifying cell then reads '—')."""
+    present = {v["key"]: v for v in readers.present_values(env)}
+    pairs: list[tuple[dict, dict | None]] = []
+    for key, value in present.items():
+        if key.endswith(_QUALIFYING_SUFFIX):
+            continue
+        pairs.append((value, present.get(key + _QUALIFYING_SUFFIX)))
+    return pairs
+
+
+def _heights_table(results: Mapping) -> object | None:
+    """The compact 3x2 standard / qualifying-housing heights table (D-094 R016):
+    one row per base height metric, its labels taken from the document, the standard
+    and qualifying-housing figures side by side with their status. ``None`` when the
+    envelope shows no height values."""
+    env = readers.answer_block(results, "permitted_envelope")
+    pairs = _height_pairs(env)
+    if not pairs:
+        return None
+    body: list[list[object]] = []
+    for standard, qualifying in pairs:
+        qual_cell = qualifying["display"] if qualifying else "—"
+        body.append([standard["label"], standard["display"], qual_cell,
+                     label_chip(standard["status_label"])])
+    return table(
+        ["Height limit", "Standard", "Qualifying housing", "Status"],
+        body,
+        caption="Height limits for this lot",
+    )
+
+
 def _constraint_rows(results: Mapping, item_number: dict) -> list[list[object]]:
     rows: list[list[object]] = []
     env = readers.answer_block(results, "permitted_envelope")
-    for value in readers.present_values(env):
-        rows.append([value["label"], value["display"], label_chip(value["status_label"])])
 
     def see(category: str) -> str:
         number = item_number.get(category)
@@ -81,15 +116,6 @@ def _site_outline(results: Mapping, site_plan: Embedded) -> object:
     return figure(site_plan, site_plan.caption or "")
 
 
-def _not_placed(results: Mapping) -> list[object]:
-    """One plain sentence whenever the results document gives no floor plate (Y8);
-    no building footprint, outline or 3D view is drawn. The document's reason text
-    is never spliced in."""
-    if not readers.building_not_placed(results):
-        return []
-    return [short_line(readers.NOT_PLACED_LINE)]
-
-
 def render(
     results: Mapping, ident: Mapping, *, site_plan: Embedded,
     surroundings: page_location.Surroundings | None = None, env=None,
@@ -99,18 +125,24 @@ def render(
     if surroundings is not None:
         # The location sheet opens page type 2 (ruling Y10).
         children.append(page_location.render(surroundings))
-    # The 'What constrains the design?' sheet follows, on its own printed page.
-    children.append(el("div",
+    # The 'What constrains the design?' sheet follows, on its own printed page. The
+    # 'No building placed' state is a legend entry on the close frame now (M5-T166 S8);
+    # the plain not-placed sentence stays on the scenario sheet only.
+    constraints_block: list[object] = [
         el("h2", QUESTION),
         _lot_area_basis(results),
         _site_outline(results, site_plan),
-        *_not_placed(results),
+    ]
+    heights = _heights_table(results)
+    if heights is not None:
+        constraints_block += [el("h3", "Height limits"), heights]
+    constraints_block += [
         el("h3", "Constraints"),
         table(
             ["Constraint", "State", "Status"],
             _constraint_rows(results, item_number),
             caption="Zoning constraints for this lot",
         ),
-        class_="constraints-sheet",
-    ))
+    ]
+    children.append(el("div", *constraints_block, class_="constraints-sheet"))
     return str(el("section", *children, class_="report-page", id="site-and-context"))

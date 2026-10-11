@@ -129,14 +129,14 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     def embed(fn_name, layers, frame):
         return drawings_embed.embed_map(fn_name, map_context, layers=layers, frame=frame, env=env)
 
-    # The neighbourhood map and the block close-up are CO-EQUAL wide strips stacked
-    # full width on the location page (each at most 182 by 105 mm, no title inside -
-    # the report adds the title); page 1 takes the compact summary plan, the
-    # constraints sheet the one full-size plan (corrections T156-C2).
+    # Page 2 is the neighbourhood locator only (D-094 R014/R074); the block close-up
+    # is still built here (restorable) but not printed (render shows the locator). Page 1
+    # takes the compact close frame; the constraints sheet takes the large close frame -
+    # the subject and its edge-sharing neighbours dominated, dimensioned (M5-T166).
     neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "wide")
     block = embed("render_block_map", map_caption.BLOCK_LAYERS, "wide")
     summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary")
-    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "wide")
+    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "close")
     drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
     if not drawn:
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)
@@ -157,17 +157,16 @@ def _wide_figure(title: str, drawing: Embedded | None) -> object | None:
 
 
 def render(surroundings: Surroundings) -> object:
-    """The 'Where is the lot?' sheet, filling ONE balanced A4 page (corrections
-    T156-C2): the neighbourhood map and the block close-up as two co-equal
-    full-width wide strips stacked, each with its title and its sources-and-dates
-    caption. One short line when the surroundings are not available. No photo, empty
-    frame or photo wording (ruling Y9); the stack can take a third figure later
-    without a redesign."""
+    """The 'Where is the lot?' sheet: ONE neighbourhood locator (D-094 R014/R074).
+    The block close-up is no longer printed here - the dimensioned constraints close
+    frame on the next sheet does that job - but the stack can still take a second
+    figure later without a redesign. One short line when the surroundings are not
+    available. No photo, empty frame or photo wording (ruling Y9)."""
     children: list[object] = [el("h2", QUESTION)]
     if not surroundings.available:
         children.append(short_line(surroundings.reason or _SURROUNDINGS_UNAVAILABLE))
         return el("div", *children, class_="location-sheet")
-    stack = [fig for fig in (_wide_figure("Neighbourhood", surroundings.neighbourhood),
-                             _wide_figure("Block close-up", surroundings.block)) if fig is not None]
+    stack = [fig for fig in (_wide_figure("Neighbourhood", surroundings.neighbourhood),)
+             if fig is not None]
     children.append(el("div", *stack, class_="location-stack"))
     return el("div", *children, class_="location-sheet")

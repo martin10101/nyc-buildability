@@ -1,1 +1,143 @@
-"""Placeholder (M5-T166): test constraints page."""
+"""The 'What constrains the design?' sheet (M5-T166, S5-S8, S10, S12).
+
+Page 2 keeps one neighbourhood locator; the constraints sheet carries the large
+dimensioned close frame, a compact 3x2 standard / qualifying-housing heights table
+(labels from the document), the constraint rows each with its state, the 'No
+building placed' legend entry (the not-placed sentence stays on the scenario
+sheet), and the "Map geometry only ..." honesty line is printed once in the whole
+report. Every expected figure is read from the document, never retyped.
+"""
+
+from __future__ import annotations
+
+import html as _html
+import json
+import re
+from pathlib import Path
+
+from app.drawings.report import build_report_html, readers
+
+_FIXTURES = (
+    Path(__file__).resolve().parents[5]
+    / "packages" / "contracts" / "fixtures" / "valid" / "results"
+)
+_WINDOW_PACK = Path(__file__).resolve().parents[2] / "fixtures" / "benchmark_215_16_northern_window"
+_LANE_E = {"LANE_E_ENABLED": "1"}
+_MAP_DRAWINGS = {"site_context_plan", "neighbourhood_map", "block_map",
+                 "location_map", "zoning_map"}
+
+
+def benchmark() -> dict:
+    return json.loads((_FIXTURES / "recorded_215_16_northern_journey.json").read_text("utf-8"))
+
+
+def map_context() -> dict:
+    from app.api.v1.report_context import recorded_pack_provider
+
+    doc = recorded_pack_provider(_WINDOW_PACK)("4073340070", "test")
+    assert doc is not None
+    return doc
+
+
+def visible_text(markup: str) -> str:
+    markup = re.sub(r"<style.*?</style>", " ", markup, flags=re.S | re.I)
+    markup = re.sub(r"<script.*?</script>", " ", markup, flags=re.S | re.I)
+    markup = re.sub(r"<[^>]+>", " ", markup)
+    return _html.unescape(markup)
+
+
+def _site_section(html: str) -> str:
+    return html[html.index('id="site-and-context"'):html.index('id="option-comparison"')]
+
+
+def _report_with_maps() -> str:
+    return build_report_html(benchmark(), map_context=map_context(), env=_LANE_E)
+
+
+def _svg_drawings(html: str) -> list[tuple[str, float]]:
+    out: list[tuple[str, float]] = []
+    for tag in re.findall(r"<svg\b[^>]*>", html):
+        dr = re.search(r'data-drawing="([^"]+)"', tag)
+        w = re.search(r'width="([-\d.]+)pt"', tag) or re.search(r'width="([-\d.]+)"', tag)
+        if dr and w:
+            out.append((dr.group(1), float(w.group(1))))
+    return out
+
+
+# =========================================================================== S5
+def test_s5_at_most_three_map_figures_each_a_distinct_job() -> None:
+    maps = [(d, w) for d, w in _svg_drawings(_report_with_maps()) if d in _MAP_DRAWINGS]
+    assert len(maps) <= 3
+    assert len(set(maps)) == len(maps)  # each a distinct job (drawing + printed size)
+    names = [d for d, _w in maps]
+    assert names.count("block_map") == 0           # the block close-up is not printed
+    assert names.count("neighbourhood_map") == 1   # the locator
+    assert names.count("site_context_plan") == 2   # the compact (page 1) + large (page 3)
+
+
+# =========================================================================== S6
+def test_s6_map_geometry_only_appears_once() -> None:
+    assert _report_with_maps().count("Map geometry only") == 1
+
+
+# =========================================================================== S7
+def test_s7_heights_table_is_three_by_two_from_the_document() -> None:
+    site = _site_section(_report_with_maps())
+    constraints = visible_text(site[site.index("What constrains the design?"):])
+    for label in ("Minimum base height", "Maximum base height", "Maximum building height"):
+        assert label in constraints
+    assert "Standard" in constraints and "Qualifying housing" in constraints
+    # the standard and qualifying figures sit side by side (max building: 55 / 65 ft).
+    assert "55 ft" in constraints and "65 ft" in constraints
+    # the long per-row document label is no longer printed in the heights table.
+    assert "with qualifying affordable or senior housing" not in constraints
+
+
+def test_s7_coverage_once_and_no_bare_not_shown() -> None:
+    site = visible_text(_site_section(build_report_html(benchmark())))
+    assert site.count("Maximum lot coverage") == 1
+    assert "Not shown" not in site
+
+
+def test_s7_context_maps_svg_only_with_a_map_document() -> None:
+    without = _site_section(build_report_html(benchmark()))
+    assert "<svg" not in without
+    assert "Context maps" not in visible_text(without)
+    assert "<svg" in _site_section(_report_with_maps())
+
+
+def test_s7_heights_table_absent_without_envelope_values() -> None:
+    doc = benchmark()
+    doc["answers"]["permitted_envelope"] = {
+        "status": "not_available", "reason": "x", "reason_kind": "missing_input"}
+    html = build_report_html(doc)  # no crash, no heights table
+    assert "Height limits for this lot" not in visible_text(html)
+
+
+# =========================================================================== S8
+def test_s8_no_building_placed_legend_on_site_sentence_on_scenario() -> None:
+    html = _report_with_maps()
+    site = visible_text(_site_section(html))
+    scenario = visible_text(html[html.index('id="scenario-B"'):])
+    assert "No building placed" in site                 # the close frame legend entry
+    assert readers.NOT_PLACED_LINE not in site          # not the full sentence
+    assert readers.NOT_PLACED_LINE in scenario          # the sentence stays on the sheet
+
+
+# =========================================================================== S10
+def test_s10_site_section_words_within_the_baseline() -> None:
+    off = build_report_html(benchmark())
+    site = off[off.index('id="site-and-context"'):off.index('id="option-comparison"')]
+    assert len(visible_text(site).split()) <= 199  # the G0 baseline
+
+
+# =========================================================================== S12
+def test_s12_six_sections_and_page_one_wrapper_untouched() -> None:
+    html = _report_with_maps()
+    for sid in ("decision-summary", "site-and-context", "option-comparison",
+                "scenario-B", "assumptions-open-items", "calculations-evidence"):
+        assert f'id="{sid}"' in html
+    decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+    # the page-1 wrapper (class summary-figure, its short caption) is unchanged.
+    assert 'class="summary-figure"' in decision
+    assert "The lot among its neighbours (city map; not surveyed)." in decision

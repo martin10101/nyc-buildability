@@ -69,13 +69,13 @@ def test_s1_location_sheet_opens_page_type_two() -> None:
     assert site.index("Where is the lot?") < site.index("What constrains the design?")
     # The location sheet lives INSIDE page type 2 - the page-type list stays at six.
     assert html.count('class="report-page"') == 6
-    # it holds the neighbourhood map and the block close-up (two figures), and the
-    # 'What constrains the design?' sheet holds the site plan among the surroundings.
+    # M5-T166 (D-094 R014/R074): page 2 is the neighbourhood locator only; the
+    # dimensioned close frame is on the 'What constrains the design?' sheet.
     location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
-    assert location.count("<figure") == 2 and location.count("<svg") == 2
-    assert site.count("<svg") >= 3
-    # the two location thumbnails are titled so the reader knows which is which.
-    assert "Neighbourhood" in location and "Block close-up" in location
+    assert location.count("<figure") == 1 and location.count("<svg") == 1
+    assert site.count("<svg") == 2  # the locator + the one close frame
+    assert "Neighbourhood" in location
+    assert "Block close-up" not in location  # the block close-up is no longer printed
 
 
 def test_page1_carries_the_summary_frame_site_plan() -> None:
@@ -117,17 +117,18 @@ def _caption_texts(markup: str) -> list[str]:
     return [_html.unescape(c) for c in caps]
 
 
-def test_location_page_layout_two_co_equal_wide_maps() -> None:
-    # The location page carries the neighbourhood map and the block close-up as two
-    # CO-EQUAL full-width wide strips stacked (corrections T156-C2), two drawings in
-    # all; the full-size site plan is NOT here (it stays on the constraints sheet).
+def test_location_page_is_the_locator_only() -> None:
+    # M5-T166: the location page carries ONE neighbourhood locator; the block
+    # close-up is no longer printed (the dimensioned close frame does that job on the
+    # next sheet). The stack can still take a second figure later without a redesign.
     site = _site_section(_report_with_maps())
     location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
-    assert location.count('class="location-wide-figure"') == 2  # two co-equal figures
-    assert location.count("<figure") == 2 and location.count("<svg") == 2
-    assert "Neighbourhood" in location and "Block close-up" in location
-    # each wide figure carries its own sources-and-dates caption.
-    assert location.count('class="figure-note"') == 2
+    assert location.count('class="location-wide-figure"') == 1  # one locator figure
+    assert location.count("<figure") == 1 and location.count("<svg") == 1
+    assert "Neighbourhood" in location
+    assert "Block close-up" not in location
+    # the locator carries its own sources-and-dates caption.
+    assert location.count('class="figure-note"') == 1
 
 
 def test_s1_captions_name_sources_and_their_dates() -> None:
@@ -135,7 +136,7 @@ def test_s1_captions_name_sources_and_their_dates() -> None:
     # (Y7): one short "Sources: ..." line with a readable title and an edit date for
     # each layer the drawing shows.
     captions = _caption_texts(_site_section(_report_with_maps()))
-    assert len(captions) >= 3
+    assert len(captions) >= 2  # the neighbourhood locator and the close frame
     assert all(cap.strip() for cap in captions)  # every drawing is captioned
     sourced = [cap for cap in captions if cap.startswith("Sources:")]
     assert sourced, "a location caption opens with a plain 'Sources:' line"
@@ -207,7 +208,7 @@ def test_s2_tolerance_is_one_hundredth_of_a_foot() -> None:
 
 
 # =========================================================================== S3
-def test_s3_not_yet_placed_on_site_plan_and_scenario_sheet() -> None:
+def test_s3_not_placed_sentence_scenario_only_legend_on_site() -> None:
     doc = benchmark()
     assert readers.building_not_placed(doc) is True  # the document gives no floor plate
     line = readers.NOT_PLACED_LINE
@@ -217,8 +218,11 @@ def test_s3_not_yet_placed_on_site_plan_and_scenario_sheet() -> None:
     html = build_report_html(doc, map_context=map_context(), env=_LANE_E)
     site = _site_section(html)
     scenario = html[html.index('id="scenario-B"'):]
-    assert line in visible_text(site)
+    # M5-T166 S8: the not-placed sentence stays on the scenario sheet ONLY; the site
+    # page shows the 'No building placed' legend entry on the close frame instead.
+    assert line not in visible_text(site)
     assert line in visible_text(scenario)
+    assert "No building placed" in visible_text(site)
     # the document's own reason text is never spliced into the report.
     assert "No floor plate is drawn" not in visible_text(html)
 

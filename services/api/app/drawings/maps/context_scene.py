@@ -51,6 +51,11 @@ from .model import (
 from .street_areas import clip_polygon_to_rect
 
 __all__ = [
+    "CLOSE_CANVAS_W",
+    "CLOSE_FURN_TOP",
+    "CLOSE_MAX_H_PT",
+    "CLOSE_PLAN",
+    "CLOSE_PLAN_MARGIN",
     "FRAME_INSET",
     "SUMMARY_CANVAS_W",
     "SUMMARY_FURN_TOP",
@@ -113,6 +118,16 @@ WIDE_CANVAS_W = REPORT_CANVAS_W
 WIDE_PLAN = (8.0, 8.0, 504.0, 246.0)
 WIDE_PLAN_MARGIN = 30.0
 WIDE_FURN_TOP = 250.0
+
+# LARGE CLOSE frame (M5-T166, D-094 R014): a near-full-width close-up for page 3,
+# big enough for dimension lanes with labels at >= 8.5 pt. At most 182 mm (515.9 pt)
+# wide; the subject and its edge-sharing neighbours dominate; the furniture strip
+# (north arrow + scale bar + legend, with the 'No building placed' entry) sits below.
+CLOSE_CANVAS_W = REPORT_CANVAS_W
+CLOSE_PLAN = (8.0, 8.0, 504.0, 392.0)
+CLOSE_PLAN_MARGIN = 18.0
+CLOSE_FURN_TOP = 402.0
+CLOSE_MAX_H_PT = 470.0
 
 _Box = tuple[float, float, float, float]
 
@@ -477,10 +492,44 @@ def _north(cx: float, top: float, deg: float, *, caption: bool = True,
     return parts, bottom
 
 
+def _not_placed_legend_row(x: float, top: float) -> tuple[list[str], float]:
+    """A 'No building placed' legend row for the close frame: an empty dashed
+    swatch (no proposed building is drawn, D-094 R017) and the plain words. The
+    not-placed sentence itself stays on the scenario sheet (M5-T166 S8)."""
+    y = top
+    parts = [
+        element("rect", [("x", x), ("y", y), ("width", 18.0), ("height", 10.0),
+                         ("fill", "none"), ("stroke", "#9E9E9E"),
+                         ("stroke-dasharray", "3 2"), ("stroke-width", 0.6)]),
+        text_element(x + 24.0, y + 8.5, "No building placed", size=TYPOGRAPHY.label_pt,
+                     source=None, role="legend"),
+    ]
+    return parts, y + 16.0
+
+
 def compose_context(drawing: str, title: str, sheet: Sheet, frame: ViewFrame,
-                    notes: Sequence[MapNote], *, mode: str = "sheet") -> Drawing:
+                    notes: Sequence[MapNote], *, mode: str = "sheet",
+                    not_placed_legend: bool = False) -> Drawing:
     """Assemble the scene plus the furniture (north arrow rotated to grid north).
-    ``mode`` is 'report', 'sheet', 'summary' or 'wide'."""
+    ``mode`` is 'report', 'sheet', 'summary', 'wide' or 'close' (the large page-3
+    constraints close frame, which carries the 'No building placed' legend entry
+    when ``not_placed_legend`` is set)."""
+    if mode == "close":
+        panel, north_bottom = _north(REPORT_NORTH_CX, CLOSE_FURN_TOP, frame.north_deg)
+        bar_parts, bar_labels = scale_bar(REPORT_SCALE_X, CLOSE_FURN_TOP + 16.0, frame.k, 150.0)
+        legend_parts, legend_bottom = legend_flow(
+            sheet.kinds, REPORT_LEGEND_X, CLOSE_FURN_TOP, CLOSE_CANVAS_W - REPORT_LEGEND_X - 8.0)
+        if not_placed_legend:
+            extra, legend_bottom = _not_placed_legend_row(REPORT_LEGEND_X, legend_bottom + 2.0)
+            legend_parts = legend_parts + extra
+        furn_bottom = max(north_bottom, legend_bottom, CLOSE_FURN_TOP + 46.0)
+        height = min(CLOSE_MAX_H_PT, furn_bottom + 8.0)
+        body = sheet.parts + panel + bar_parts + legend_parts
+        svg = svg_document(width=CLOSE_CANVAS_W, height=height, drawing=drawing, title=title,
+                           defs=hatch_defs(sheet.kinds), body=body)
+        note_labels = [Label(n.text, n.source, "note") for n in notes]
+        return Drawing(drawing, svg, tuple(sheet.labels + bar_labels + note_labels),
+                       tuple(sheet.kinds))
     if mode == "summary":
         panel, north_bottom = _north(SUMMARY_NORTH_CX, SUMMARY_FURN_TOP, frame.north_deg,
                                      caption=False, half=9.0)

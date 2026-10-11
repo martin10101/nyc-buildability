@@ -60,9 +60,10 @@ def test_s7_report_shows_surroundings_with_the_recorded_pack(enabled) -> None:
     assert response.headers["content-type"] == "text/html; charset=utf-8"
     body = response.text
     assert "Where is the lot?" in body
-    # the location sheet and the site plan among the surroundings carry drawings.
+    # the neighbourhood locator and the dimensioned close frame carry drawings
+    # (M5-T166: page 2 is the locator only, so the site section has two maps).
     site = body[body.index('id="site-and-context"'):body.index('id="option-comparison"')]
-    assert site.count("<svg") >= 3
+    assert site.count("<svg") >= 2
     assert "Sources: NYC City Planning, MapPLUTO (edited" in body  # plain source caption
     assert "via NYC Open Data" not in body and "5zhs" not in body
     assert ("No building is placed on this plan yet: the program does not yet work out "
