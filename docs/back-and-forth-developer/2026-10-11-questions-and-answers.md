@@ -332,3 +332,27 @@ to build).
   2026-10-11.
 - Questions to the owner and their answers: the private owner questionnaire.
 - Reference PDFs (competitor sample, our latest report): the private reference folder.
+
+## 14. Last question before the next session: "Any blind spots?"
+
+- **Developer's answer (ANSWERED; three new OPEN questions):**
+  - **Professional check early (OPEN, J1):** no licensed professional has checked any rule yet; a wrong early reading
+    would repeat in every option and district. Recommendation: a few paid hours of an expediter or zoning-savvy
+    architect on the review list (about 35-40 items) before the work spreads beyond R6B.
+  - **Addresses with known answers (OPEN, J2):** everything is tested on one lot. Recommendation: the owner sends 5-10
+    addresses from past projects (different lot shapes and districts) with what was approved; they become test cases.
+  - **Private backup (OPEN, J3):** the questionnaire, session logs, reference PDFs and working notes live only on the
+    build server. Recommendation: a private backup the owner controls (a private repository or cloud drive; the
+    owner creates it).
+  - **Real addresses end to end:** several live data connections are built but switched off (the zoning-lot document
+    index, the permit-filings reader); the real-address experience is not proven yet. Before showing clients: an
+    internal trial on real addresses, then the owner approves each live switch.
+  - **Law changes over time:** the city amends the zoning law; a routine re-check of the saved law sections is part
+    of the law library work.
+  - **Process weight:** every small fix goes through building, two reviews, a rule check and the full tests; good for
+    accuracy, slower; the owner's outside reviews keep the focus on what architects see.
+  - **Financial stage inputs:** beyond AMI rents and incentives, projections need construction and financing costs,
+    which have no official source; the owner will supply or approve those assumptions.
+  - **DWG:** many architects work in DWG; reading or writing DWG is still the owner's licensing decision.
+  - **Liability wording:** before selling to clients, a lawyer may want to review the disclaimer and terms (the app
+    already labels results as preliminary, unreviewed drafts with law links).
