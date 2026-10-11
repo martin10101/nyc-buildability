@@ -107,4 +107,36 @@ A reading of the law is an unreviewed draft (ADR-007); this record certifies not
 DOB determination. No independent review is recorded (`review.agent_reviews` empty — the G1 reviewer
 adds it later through the orchestrator). No professional verification.
 
+---
+
+## Revision 2 (2026-10-11) — G1 review corrections
+
+Applied on the integrated head 2bbfed94311cd40ecb07f836590dd4413870099a. NB-06 `revision` -> 2,
+`last_changed` 2026-10-11; `review.agent_reviews` left empty (the orchestrator adds reviews).
+
+1. **REQUIRED (conclusion.conditions[0]).** (a) The fallback named was wrong: 35-631(a) line-up does
+   not apply to this R6B Queens site; the fallback in 35-631(b)'s closing clause is the **23-431(a)**
+   line-up. Reworded the condition to say the 35-631(b) percentage rule governs unless its closing
+   clause permits the 23-431(a) line-up. (b) Removed the gloss that defined "prevailing street wall
+   frontage" with the 23-431(a) eligible-adjacent-building test (15 ft / 25 ft / over 35 ft).
+   Replaced it with the ZR 12-10 defined term and added **E16** (`zr-12-10-prevailing-street-wall-frontage`
+   .snapshot.json, LF sha256 `0bef4080835cc1535bc0c01fb6919056335fcb0d43bcd5816f88d458e108469f`,
+   last amended 2024-12-05, retrieved 2026-10-07), also added to `provisions_read`. The 15/25/>35-ft
+   test is now kept only where it is actually the 23-431(a) eligibility test.
+2. **ADVISORY (E15 / observed facts).** The envelope query returned 6 features; relabelled the listed
+   widths as a selection of this lot's frontages (Northern Boulevard, 215 Place), noted 215 Street
+   (and 45 Road) are not frontages of this corner lot, and that the list is not exhaustive. Same
+   wording carried into the DCM observed-facts bullet.
+3. **ADVISORY (exceptions_considered).** Added one line for 35-631(c) (large zoning lots / whole
+   block: inapplicable — lot 70 is about 10,075 sq ft, under the 40,000 sq ft test quoted, and does
+   not occupy the block) and one for 35-631(d) (articulation allowances: 12-inch general, up to 50%
+   of aggregate street-wall width at up to 3 ft, no projection past the street line except per the
+   Admin Code).
+
+Self-check: `python3 tools/research_record_check.py --check` -> PASS, exit 0. NB-06 line:
+`status=interpretation_awaiting_review  code_current=True  review_state=none  requested_label=None`.
+(Observed: NB-05 now reports `review_state=stale` — this derives from the orchestrator's integration
+commit 2bbfed94, not from this edit; NB-05 is outside this task's allowed paths. Staleness is
+reported, not failed; the check still passes.)
+
 END-OF-REPORT

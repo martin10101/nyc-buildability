@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-06",
  "title": "215-16 Northern Boulevard: street-wall location, the 23-433 setback trigger at or below the base height, and R6B side yards (ZR 23-431, 35-631; 23-432/23-433, 35-632; 23-335, 34-232)",
- "revision": 1,
+ "revision": 2,
  "last_changed": "2026-10-11",
  "question": {
   "text": "For a building on lot 70 (R6B with a C2-2 overlay, corner of Northern Boulevard and 215 Place): (Q1) where must the street wall sit along each frontage, and does the C2-2 overlay change the rule for a residential-only building and for a mixed building? (Q2) does ZR 23-433 require any setback for a building at or below the maximum base height (the benchmark three-storey 30 ft option), and on what condition? (Q3) is a side yard required, optional or prohibited in R6B, and under which section?",
@@ -218,14 +218,28 @@
    "page": null,
    "document_date": "feature service; HTTP Last-Modified 2025-12-01",
    "retrieved": "2026-10-10",
-   "excerpt": "Features at the lot envelope: Street_NM 'Northern Boulevard' Streetwidth '100'; Street_NM '215 Place' Streetwidth '60'; Street_NM '215 Street' Streetwidth '60' (all Feat_status 'City_St', RoadwayType 'Surface_ST', Build_Status 'Improved'). The Streetwidth field is a free-text string of the mapped width in feet (no official field-level specification; RQ-005 residual). Not a survey; a mapped width does not by itself fix the street-line position.",
+   "excerpt": "The envelope query returned 6 features; this is a selection of the two that are frontages of lot 70: Street_NM 'Northern Boulevard' Streetwidth '100'; Street_NM '215 Place' Streetwidth '60' (both Feat_status 'City_St', RoadwayType 'Surface_ST', Build_Status 'Improved'). The query also returned '215 Street' Streetwidth '60' (and '45 Road' '50'), but 215 Street is NOT a frontage of this corner lot (its frontages are Northern Boulevard and 215 Place) and is listed only for context; the list is not presented as exhaustive. The Streetwidth field is a free-text string of the mapped width in feet (no official field-level specification; RQ-005 residual). Not a survey; a mapped width does not by itself fix the street-line position.",
    "saved_copy": "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dcm_street_centerline_lot_envelope_4073340070.json",
    "sha256": "3fad815e5954fe778193d80ef172b5e08faa209682cf31f4e372556d2dafaf1f"
+  },
+  {
+   "id": "E16",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: prevailing street wall frontage",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-prevailing-street-wall-frontage)",
+   "page": null,
+   "document_date": "last amended 2024-12-05",
+   "retrieved": "2026-10-07",
+   "excerpt": "A \"prevailing street wall frontage\" shall refer to #block# frontages where, within 150 feet of the #street wall# of a subject #building#, at least half of the #aggregate width of street walls# on the same side of the #block# are within two feet of the average distance of such #street walls# from the #street line#. The total #aggregate width of street walls# shall not be less than 100 feet. ... To determine whether the #street wall# on the subject property is eligible to utilize certain #street wall# location modifications applicable to #prevailing street wall frontage#, the percentage of #street wall# segments that are within the 150-foot selection and within two feet of such average distance, shall be greater than 50 percent.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-prevailing-street-wall-frontage.snapshot.json",
+   "sha256": "0bef4080835cc1535bc0c01fb6919056335fcb0d43bcd5816f88d458e108469f"
   }
  ],
  "meaning_and_applicability": {
   "provisions_read": [
-   "ZR 12-10 'street wall' (E1), 'corner lot' (E2), 'mixed building' (E3)",
+   "ZR 12-10 'street wall' (E1), 'corner lot' (E2), 'mixed building' (E3), 'prevailing street wall frontage' (E16)",
    "ZR 23-431 (a) line-up rules and (b) percentage-based rules (E4)",
    "ZR 23-432 base-height table and setback-trigger sentence; R6B row read 30/45/55 ft (E10)",
    "ZR 23-433 standard setback regulations, paragraphs (a)-(d) (E11)",
@@ -242,6 +256,8 @@
   "exceptions_considered": [
    "35-631(a) line-up applies only to Commercial Districts with an R8 through R12 equivalent in the Manhattan Core; this site is R6B in Queens, so (a) does not apply and (b) governs.",
    "35-631(b) and 23-431 each contain a closing clause: where the block has a #prevailing street wall frontage# further from the street line than the paragraph's own provisions, the line-up rules of 23-431(a) may be applied. Whether such a prevailing frontage exists on either frontage is an unresearched adjacency fact (condition).",
+   "35-631(c) modifications for large zoning lots ('for #street walls# on #buildings# on a #zoning lot# that has a #lot area# of at least 40,000 square feet or occupies an entire #block#, at least 70 percent of the #aggregate width of street walls# shall be located within 15 feet of the #street line#') are inapplicable: lot 70's recorded area is about 10,075 sq ft (NB-04), well under 40,000 sq ft, and it does not occupy the whole block.",
+   "35-631(d) articulation allowances apply in all districts and on all frontages (projections/recesses up to 12 inches generally; and up to 50 percent of the aggregate street-wall width may recess or project up to 3 feet), permitting facade articulation beyond the (b) location without changing the governing rule; no projection may extend beyond the street line except where the Administrative Code permits.",
    "35-632(b) eligible-site height increases apply to R6 through R12 WITHOUT a letter suffix; R6B has a letter suffix, so (b) does not apply. 35-632(c) towers apply to R9 through R12; not R6B.",
    "23-335(a) (two 5 ft side yards) applies only to single- or two-family detached residences; a multi-family or mixed building falls under 23-335(b) (no side yard required). In the overlay 34-232 removes the side-yard requirement for ANY residential building.",
    "The wide/narrow classification's alternate-width provisions noted in the repository (12-10 'street, wide' amended 2026-03-26 for C5-3/C6-4/C6-6) do not apply to an R6B/C2-2 site.",
@@ -326,12 +342,12 @@
    "ZR 35-632(a): heights come from the 23-432 table for the applicable Residence District, and a setback is provided for portions of a building street wall that exceed the maximum base height, per 23-433.",
    "ZR 23-335: (a) single/two-family detached residences require two 5-ft side yards; (b) all other residences require no side yard, but any open area along a side lot line must be at least 5 ft wide.",
    "ZR 34-232: in C1-C6 no side yard is required for any residential building; any open area along a side lot line must be at least 5 ft wide.",
-   "DCM Street Center Line at the lot envelope: Northern Boulevard Streetwidth '100'; 215 Place Streetwidth '60'; 215 Street Streetwidth '60'."
+   "DCM Street Center Line at the lot envelope (6 features returned; selection of this lot's frontages): Northern Boulevard Streetwidth '100'; 215 Place Streetwidth '60'. (215 Street Streetwidth '60' and 45 Road '50' also returned by the envelope query but are not frontages of this corner lot; the list is not exhaustive.)"
   ],
   "interpretation": "DRAFT reading awaiting independent review: (Q1) the C2-2 overlay makes 35-631(b) the governing street-wall rule for both a residential-only building (via 34-11 + 34-24(b)(1) + 35-63) and a mixed building (via 35-01 + 35-63) on this R6B corner lot, requiring at least 70% of each frontage's street wall within 8 ft of the street line; the exact position within (b) is conditional on the block's prevailing street-wall frontage and on the operative street-line position. (Q2) no setback is required for a building at or below the R6B maximum base height of 45 ft, so the benchmark three-storey 30 ft option needs none; the wide/narrow class sets only the depth of a setback that would apply above 45 ft. (Q3) no side yard is required (23-335(b); 34-232 in the overlay); one is optional with a 5-ft minimum if provided. Not a DOB determination.",
   "conflicts": [],
   "conditions": [
-   "Whether 35-631(a) line-up or 35-631(b) percentage governs the exact street-wall position depends on whether either frontage of the block has a #prevailing street wall frontage# further from the street line (eligible adjacent buildings within 15 ft of the street line, within 25 ft of the subject, height over 35 ft) - an unresearched adjacency fact.",
+   "Whether the 35-631(b) percentage rule governs the exact street-wall position, or its closing clause instead permits the 23-431(a) line-up, depends on whether either frontage of the block has a #prevailing street wall frontage# located further from the street line than 8 ft. 'Prevailing street wall frontage' is the ZR 12-10 defined term (E16): within 150 ft of the subject building's street wall, at least half of the aggregate width of street walls on the same side of the block are within two feet of their average distance from the street line (aggregate not less than 100 ft; the street wall is eligible when more than 50 percent of the segments are within two feet of that average). This is an unresearched adjacency fact. (The separate 15 ft / 25 ft / over-35-ft test is the 23-431(a) eligible-adjacent-building test, not the definition of a prevailing street wall frontage; 35-631(a) itself does not apply to this R6B Queens site.)",
    "The 8-ft street-wall measure and any setback depth run from the operative street line; a DCM mapped width does not fix the street-line position (handoff: widths alone do not fix street-line positions). The street line comes from a survey or the approved plan.",
    "The wide/narrow classification (Northern Boulevard 100 ft = wide; 215 Place 60 ft = narrow) rests on the DCM mapped widths plus the owner-approved D-052 policy; the verbatim ZR 12-10 'street, narrow'/'street, wide' definition is not captured in the repository snapshots (S3).",
    "Whether the building is residential-only or mixed changes the applicability pathway (34-11/34-24(b)(1)/35-63 versus 35-01); both reach 35-631(b) here.",
