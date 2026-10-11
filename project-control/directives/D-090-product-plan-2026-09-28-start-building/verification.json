@@ -7537,6 +7537,47 @@
     }
    ],
    "verified_at": "2026-10-11T06:23:29+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T161",
+   "applicable_requirement_ids": [
+    "D-090-R255",
+    "D-090-R520",
+    "D-090-R584",
+    "D-090-R639"
+   ],
+   "producer": "frontend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-090-R255",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R520",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R584",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-090-R639",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

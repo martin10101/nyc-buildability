@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T01:35:36+00:00",
  "created_at": "2026-10-11T01:35:36+00:00",
- "updated_at": "2026-10-11T07:43:26+00:00",
+ "updated_at": "2026-10-11T08:46:29+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c8f060296942bb7658849ea2c9ec8a06077b06ca",
  "capture_head_sha": null,
@@ -99,7 +99,7 @@
   "D-093-R075"
  ],
  "requirements_id_digest_sha256": "a9156a61278a20fde68a0efd42cbf434e58d2d56f502ea1a540cfdf2352133ed",
- "requirements_content_digest_sha256": "d6c314eeb4f4f5eb19d63879efc78773df6de3f4f86973009d5a36e8140e505e",
+ "requirements_content_digest_sha256": "8d694d27a591040e8d8c8f493075d411740e30e474151b75147a654e068d80cc",
  "sources": [
   {
    "file": "source-001.md",
@@ -137,7 +137,8 @@
   "M5-T157",
   "M5-T158",
   "M5-T160",
-  "M0-T192"
+  "M0-T192",
+  "M5-T161"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -206,6 +207,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T192 (research-record check: governing review by revision and parsed time (D-093 R075)) to R075 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T08:46:29+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T161 (the flag-on results browser journey follows the record-driven special density (CI repair after M5-T157)) to R051 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
