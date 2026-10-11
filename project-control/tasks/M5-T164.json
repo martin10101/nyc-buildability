@@ -170,15 +170,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "If the shape proves too small later, a 1.6.0 revision is needed before M5-T170/M5-T172; G1 checks the shapes against NB-03, NB-04, NB-06, the nine bases, G-14 and R091.",
     "packages/contracts/** is also listed by the dormant claimed task M5-T125 (2026-09-30, no producer, never progressed); later waves edited these files without it; no producer is running on it."
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:10.033096+00:00",
-  "updated_at": "2026-10-11T22:25:40.722706+00:00",
+  "updated_at": "2026-10-11T22:50:14.960807+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -222,5 +222,7 @@
       "status": "claimed",
       "message": "G1, G3 and G4 PASS at 6dde1345; review record and evidence map written; submit at the next CI-green head"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T22:50:14.960603+00:00"
 }
