@@ -426,6 +426,17 @@ class MalformedReviewDate(Base):
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
         self.assertIn("FAIL", r.stdout)
 
+    def test_non_z_utc_offset_is_refused_naming_index_and_forms(self):
+        # Only a 'Z' (UTC) suffix is accepted; a numeric offset (even +00:00, which is UTC) is
+        # refused. A loosened regex accepting [+-]HH:MM offsets would silently admit these.
+        for d in ("2026-10-11T07:26:00+00:00", "2026-10-11T07:26-05:00"):
+            rec = self.record()
+            rec["review"]["agent_reviews"][0]["date"] = d
+            errs = rrc.validate_record(rec, self.path_for(rec), self.root)
+            self.assertTrue(any("is not an accepted review date" in e
+                                and "agent_reviews[0].date" in e for e in errs), (d, errs))
+            self.assertTrue(any("YYYY-MM-DDTHH:MMZ" in e for e in errs), (d, errs))
+
     def test_every_accepted_form_is_valid(self):
         for d in ("2026-10-11", "2026-10-11T02:13Z", "2026-10-11T07:26:00Z",
                   "2026-10-11T07:26:00.500Z"):

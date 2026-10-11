@@ -119,4 +119,6 @@ I did not run the full api/web suites, `tools/project_control.py`, git push, or 
 orchestrator's/CI's. I did not independently re-verify the legal readings in the records (out of
 scope and not a professional verification; the check certifies nothing about legal correctness).
 
+G4-advisory follow-up (rebased onto 2a7cc7f0): added `MalformedReviewDate.test_non_z_utc_offset_is_refused_naming_index_and_forms` pinning that `2026-10-11T07:26:00+00:00` and `2026-10-11T07:26-05:00` are refused naming the review index and accepted forms (test file only, no production change); 38 tests OK; `--check` PASS; mutation (loosen REVIEW_DATE_RE to accept `[+-]HH:MM`) failed the new test, then restored.
+
 END-OF-REPORT
