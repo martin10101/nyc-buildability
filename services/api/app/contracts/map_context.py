@@ -31,6 +31,7 @@ feet - a layer whose CRS stamp does not report ``latest_wkid`` 2263 becomes
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
@@ -48,18 +49,47 @@ from app.spatial.site_geometry.adapters import lot_outline_from_mappluto
 
 if TYPE_CHECKING:  # pragma: no cover - typing only, no runtime import cost
     from app.connectors.building_footprints_arcgis import ContextBuildingsResult
+    from app.connectors.dcm_street_centerline_geometry import SegmentGeometryQueryResult
     from app.connectors.mappluto_geometry_arcgis import LotGeometryResult
+    from app.connectors.mappluto_window_arcgis import MapPlutoWindowResult
     from app.connectors.zoning_features_arcgis import LayerQueryResult
 
 __all__ = [
     "MapContextUnavailable",
     "MapNotes",
+    "ReportMapNotes",
     "build_map_context",
+    "build_report_map_context",
+    "parse_mapped_width_ft",
 ]
 
 CONTRACT_VERSION = "1.0.0"
+# Contract 1.1.0 (task M5-T154, ruling Y2): the report's site-context document.
+# Adds the OPTIONAL context_window / tax_lots / streets members on top of the
+# 1.0.0 shape, so every 1.0.0 document stays valid unchanged.
+CONTRACT_VERSION_1_1_0 = "1.1.0"
 DOCUMENT_KIND = "map_context"
 UNITS = "feet"
+
+# A mapped-street width text is turned into a number ONLY when it is one plain
+# non-negative number such as "60" or "100"; "60-75", "<=75", ">90", "Unknown"
+# or an empty string give null (D-052; ruling Y2). This is NOT a wide/narrow
+# classification - it is the literal mapped width when the source states one.
+_PLAIN_NUMBER_RE = re.compile(r"\d+(?:\.\d+)?")
+
+
+def parse_mapped_width_ft(width_text: object) -> int | float | None:
+    """The mapped street width in feet, or ``None``. A number ONLY when
+    ``width_text`` is exactly one plain non-negative number (optionally
+    surrounded by whitespace); any range, bound, word or empty text gives
+    ``None`` (ruling Y2 / D-052). An integral value returns an ``int``."""
+    if not isinstance(width_text, str):
+        return None
+    text = width_text.strip()
+    if not _PLAIN_NUMBER_RE.fullmatch(text):
+        return None
+    value = float(text)
+    return int(value) if value.is_integer() else value
 # EPSG:2263 latest_wkid; a layer whose stamp does not report it is not drawn.
 _LATEST_WKID_2263 = 2263
 # The only machine reason-kind the E-07 renderers and the contract admit.
@@ -95,6 +125,29 @@ class MapNotes:
     buildings_attribution: str
 
 
+@dataclass(frozen=True)
+class ReportMapNotes:
+    """The printed dataset attributions for the report's site-context maps.
+
+    The builder places each verbatim as the layer's ``attribution``; the source
+    EDIT DATE is NOT appended here - it rides on each layer's provenance
+    (``source_data_last_edited``), so the caption composes 'source, date' from
+    the attribution plus provenance (ruling Y7), never an invented date. The
+    builder composes no legal text of its own."""
+
+    tax_lots_attribution: str
+    buildings_attribution: str
+    streets_attribution: str
+
+
+# Fixed, non-invented reason for the zoning layer on a report site-context map:
+# the report context does not fetch zoning districts (the zoning map stays its
+# own feature). An honest not_available layer, never a blank or invented one.
+_ZONING_NOT_FETCHED_REASON = (
+    "Zoning districts are not fetched for the report site-context map."
+)
+
+
 def build_map_context(
     lot: LotGeometryResult,
     nyzd: LayerQueryResult | None,
@@ -126,6 +179,157 @@ def build_map_context(
     document = _resolve_through_adapter(document)
     validate_map_context_document(document)
     return document
+
+
+# ---------------------------------------------------------------------------
+# Report site-context document (contract 1.1.0, ruling Y2)
+# ---------------------------------------------------------------------------
+
+
+def build_report_map_context(
+    lot: LotGeometryResult,
+    *,
+    context_window: tuple[float, float, float, float],
+    tax_lots: MapPlutoWindowResult | None,
+    tax_lots_unavailable_reason: str | None = None,
+    footprints: ContextBuildingsResult | None,
+    streets: SegmentGeometryQueryResult | None,
+    streets_unavailable_reason: str | None = None,
+    streets_window: tuple[float, float, float, float],
+    notes: ReportMapNotes,
+) -> dict:
+    """Assemble, adapter-load and validate the report's 1.1.0 site-context
+    document: the subject lot drawn among its surroundings. ``zoning_districts``
+    is always a ``not_available`` layer (the report context does not fetch
+    zoning). Each surrounding layer is either drawable or a ``not_available``
+    layer carrying its reason; a refusing connector NEVER raises here (the caller
+    passes ``None`` plus a reason). Every outline and path is an input geometry
+    unchanged.
+
+    Raises:
+        MapContextUnavailable: the subject lot outline is refused or not in
+            EPSG:2263 (no map without a lot).
+    """
+    subject_lot = _subject_lot(lot)
+    document = {
+        "contract_version": CONTRACT_VERSION_1_1_0,
+        "document_kind": DOCUMENT_KIND,
+        "map_context": {
+            "crs": SUPPORTED_CRS,
+            "units": UNITS,
+            "measurement": measurement(RANK_APPROXIMATE_TAX_MAP),
+            "subject_lot": subject_lot,
+            "zoning_districts": _unavailable(_ZONING_NOT_FETCHED_REASON),
+            "building_footprints": _buildings_layer(footprints, notes),
+            "context_window": _window_box(context_window),
+            "tax_lots": _tax_lots_layer(tax_lots, tax_lots_unavailable_reason, notes),
+            "streets": _streets_layer(
+                streets, streets_unavailable_reason, streets_window, notes
+            ),
+        },
+    }
+    document = _resolve_through_adapter(document)
+    validate_map_context_document(document)
+    return document
+
+
+def _window_box(envelope: tuple[float, float, float, float]) -> dict:
+    xmin, ymin, xmax, ymax = (float(v) for v in envelope)
+    return {"xmin": xmin, "ymin": ymin, "xmax": xmax, "ymax": ymax}
+
+
+def _verbatim_polygon(rings: list) -> list[list[list[float]]]:
+    """The source esri rings as a contract polygon, verbatim (floats preserve the
+    parsed value): no quantization, repair or re-orientation (ruling Y2)."""
+    return [[[float(x), float(y)] for x, y in ring] for ring in rings]
+
+
+def _tax_lots_layer(
+    result: MapPlutoWindowResult | None, reason: str | None, notes: ReportMapNotes
+) -> dict:
+    if result is None:
+        return _unavailable(reason or "Neighbouring tax lots could not be retrieved for this lot.")
+    provenance = _tax_lots_provenance(result)
+    if provenance is None:
+        return _unavailable(
+            "The neighbouring-tax-lot source carries no edit-version provenance; it is not drawn."
+        )
+    entries: list[dict] = []
+    for window_lot in result.lots:
+        entry: dict = {"bbl": window_lot.bbl, "outline": _verbatim_polygon(window_lot.outline)}
+        if window_lot.address:
+            entry["address"] = window_lot.address
+        entries.append(entry)
+    return {
+        "status": "available",
+        "entries": entries,
+        "attribution": notes.tax_lots_attribution,
+        "provenance": provenance,
+    }
+
+
+def _streets_layer(
+    result: SegmentGeometryQueryResult | None,
+    reason: str | None,
+    window: tuple[float, float, float, float],
+    notes: ReportMapNotes,
+) -> dict:
+    if result is None:
+        return _unavailable(reason or "Street centre lines could not be retrieved for this lot.")
+    provenance = _streets_provenance(result)
+    if provenance is None:
+        return _unavailable(
+            "The street-centre-line source carries no edit-version provenance; it is not drawn."
+        )
+    entries: list[dict] = []
+    for polyline in result.entries:
+        name = polyline.segment.street_name
+        if not polyline.has_usable_geometry or polyline.paths is None:
+            continue
+        if not (isinstance(name, str) and name.strip()):
+            continue
+        width_text = polyline.segment.streetwidth_raw
+        entries.append({
+            "name": name,
+            "width_text": width_text,
+            "mapped_width_ft": parse_mapped_width_ft(width_text),
+            "paths": [[[float(x), float(y)] for x, y in path] for path in polyline.paths],
+        })
+    return {
+        "status": "available",
+        "window": _window_box(window),
+        "entries": entries,
+        "attribution": notes.streets_attribution,
+        "provenance": provenance,
+    }
+
+
+def _tax_lots_provenance(result: MapPlutoWindowResult) -> dict | None:
+    urls = result.request_urls or []
+    digests = result.raw_digests or []
+    return _layer_provenance(
+        source_id=result.source_id,
+        dataset_id=result.dataset_id,
+        request_url=urls[0] if urls else None,
+        retrieved_at=result.retrieved_at,
+        raw_digest=digests[0] if digests else None,
+        source_data_last_edited=result.source_data_last_edited,
+        source_data_last_edited_ms=result.source_data_last_edited_ms,
+    )
+
+
+def _streets_provenance(result: SegmentGeometryQueryResult) -> dict | None:
+    urls = result.page_urls or []
+    digests = result.raw_digests or []
+    return _layer_provenance(
+        source_id=result.source_id,
+        dataset_id=result.layer,
+        request_url=urls[0] if urls else None,
+        retrieved_at=result.retrieved_at,
+        raw_digest=digests[0] if digests else None,
+        source_data_last_edited=result.source_data_last_edited,
+        source_data_last_edited_ms=result.source_data_last_edited_ms,
+    )
 
 
 # ---------------------------------------------------------------------------

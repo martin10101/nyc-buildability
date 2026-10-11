@@ -1,0 +1,171 @@
+{
+  "task_id": "M5-T156",
+  "title": "The report shows where the lot is: a location sheet ('Where is the lot?') with the neighbourhood map and the block close-up, the site plan among its surroundings, sources and dates in plain words, the 'not yet placed' line, and no photo (D-090 source-082 and source-083)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Wire the report to the map provider (M5-T154) and the context drawings (M5-T155): page type 2 opens with 'Where is the lot?' (rulings Y9 and Y10), its site plan shows the lot among its surroundings, page 1's figure follows, captions name sources and dates (Y7), the 'not yet placed' line is printed (Y8), the one-outline check of Y5 holds, and the browser-test harness binds the recorded pack; record the change in the presentation contract.",
+  "business_reason": "The owner: 'There's no reference to where he is' and 'It doesn't look like my competitors' (D-090 source-082); street photos come later (source-083).",
+  "inputs": [
+    "the report package of wave 21 (services/api/app/drawings/report/)",
+    "app/api/v1/report_context.py (M5-T154)",
+    "app.drawings.maps render_site_context_plan, render_block_map, render_neighbourhood_map (M5-T155)",
+    "apps/web/e2e/harness/fixture_api.py (lines near 806 to 815)",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "N/plan-wave22.md"
+  ],
+  "outputs": [
+    "the report with the location sheet and the site plan among its surroundings",
+    "report_read.py using the provider",
+    "the harness bound to the recorded pack",
+    "the contract's dated change entry",
+    "the tests of S1 to S9"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "services/api/app/api/v1/report_read.py",
+    "services/api/app/drawings/report",
+    "services/api/tests/drawings/report",
+    "services/api/tests/api/test_report_read_api.py",
+    "services/api/tests/api/test_report_read_context.py",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "project-control/reports/M5-T156-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/requirements*",
+    "services/api/pyproject.toml",
+    ".github/**",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    "services/api/app/rules/rulesets/**",
+    "services/api/app/scenario/**",
+    "services/api/app/drawings/maps/**",
+    "services/api/app/drawings/kit/**",
+    "services/api/app/connectors/**",
+    "services/api/app/contracts/**",
+    "services/api/app/api/v1/report_context.py",
+    "packages/**",
+    "apps/web/src/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "case": "Location sheet",
+      "input": "the benchmark results document with the recorded window pack",
+      "expected": "page type 2 opens with 'Where is the lot?' holding the neighbourhood map and the block close-up, each captioned with its sources and dates in plain words; then 'What constrains the design?' with the site plan among its surroundings and the constraints; six page types in all."
+    },
+    {
+      "id": "S2",
+      "case": "One outline",
+      "input": "the benchmark; a map document whose outline is moved by 0.5 ft",
+      "expected": "the benchmark passes the check of ruling Y5 and shows the surroundings; the moved one drops them, keeps today's lot-only plan and prints one limitation line; two outlines are never drawn together."
+    },
+    {
+      "id": "S3",
+      "case": "Not yet placed",
+      "input": "the benchmark",
+      "expected": "the site plan and the scenario sheet print the document's own reason that no building is placed; no building footprint is drawn."
+    },
+    {
+      "id": "S4",
+      "case": "No photo",
+      "input": "the report's visible text and markup",
+      "expected": "no image of a street, no empty figure frame, and none of 'photo', 'Street View', 'street view', 'aerial' in the location sheet; 'Aerial and street photographs' appears only under the scope list's 'Not yet'."
+    },
+    {
+      "id": "S5",
+      "case": "Scope list",
+      "input": "the benchmark with and without the map document",
+      "expected": "'Context maps' is under what the report covers only when they are printed; otherwise it stays under 'Not yet'."
+    },
+    {
+      "id": "S6",
+      "case": "Without map data",
+      "input": "provider returning None; layers unavailable",
+      "expected": "the location sheet prints one short line saying the surroundings are not available and why, never a blank sheet; the site plan is today's lot-only plan with the limitation line of the contract (R843)."
+    },
+    {
+      "id": "S7",
+      "case": "Route",
+      "input": "POST /api/v1/properties/{bbl}/report with the provider overridden",
+      "expected": "the route asks the provider for the same lot as the results body and embeds the drawings; flags off behave as in wave 21; a provider error never fails the report."
+    },
+    {
+      "id": "S8",
+      "case": "No typed number, no developer words",
+      "input": "the benchmark report",
+      "expected": "wave-21 tests still pass: every number comes from the documents; no field name, code word, URL or internal id is visible."
+    },
+    {
+      "id": "S9",
+      "case": "Contract entry",
+      "input": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+      "expected": "a dated change entry (2026-10-10, D-090 rows R936 to R940) records the location sheet inside page type 2 and the site-plan rules of rulings Y5 to Y9."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "visual-quality-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The drawings and the provider arrive from the two other tasks: this builder starts after both are integrated on the branch.",
+    "Adding a sheet moves page numbers: the browser test's page assertions are updated, none weakened."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-10T18:56:13.637484+00:00",
+  "updated_at": "2026-10-11T00:42:03.596455+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R551",
+        "D-090-R843",
+        "D-090-R893",
+        "D-090-R923",
+        "D-090-R936",
+        "D-090-R937",
+        "D-090-R938",
+        "D-090-R939",
+        "D-090-R940"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-10T18:56:13.637710+00:00",
+  "path_notes": "ONE builder (backend-engineer), started only after M5-T154 and M5-T155 are integrated on the branch. The browser spec is updated but run only by the orchestrator.\n\nTHE ORCHESTRATOR'S RULINGS FOR WAVE 22 (they govern; later over earlier). Y1: three tasks on ONE branch (task/wave22-site-context), reviewed at ONE head, merged as ONE pull request. M5-T154 (the map data) and M5-T155 (the drawings) are built side by side against the document shape of Y2 and the interfaces of Y3 and Y4. M5-T156 (the report) is built after both are integrated on the branch; its builder starts then. Y2: the map document becomes contract_version 1.1.0; every 1.0.0 document stays valid unchanged. 1.1.0 adds three OPTIONAL members to map_context: (a) 'context_window': {xmin, ymin, xmax, ymax}, finite numbers in the document's CRS (EPSG:2263, US survey feet), the box the building footprints and the neighbouring lots were fetched for (the lot's bounding box plus 400 ft); (b) 'tax_lots': a layer_unavailable object or {status: 'available', entries: [{bbl, address (optional non-empty string), outline: polygon}], attribution, provenance}; the subject lot is never an entry; no owner name or any personal field is requested or stored; (c) 'streets': a layer_unavailable object or {status: 'available', window: {xmin, ymin, xmax, ymax} (the lot's bounding box plus 1,000 ft), entries: [{name, width_text (string or null, the source text unchanged), mapped_width_ft (number or null: a number only when width_text is one plain number such as '60' or '100'; '60-75', '<=75' or any other text gives null, D-052), paths: [line]}], attribution, provenance}, where line is an array of at least two points. Polygons, points, layer_unavailable and provenance reuse the schema's existing definitions. Only keywords the contract validator knows are used. Y3: drawing interfaces (M5-T155), exported from app.drawings.maps like render_location_map: render_site_context_plan(context, *, frame='sheet') -> Drawing | Unavailable: the lot among its surroundings, about 80 ft around the lot at a standard scale; render_block_map(context, *, frame='sheet'): the close-up of the block, the whole context_window; render_neighbourhood_map(context, *, frame='sheet'): the street network of the streets window with street names, the lot marked. frame='report' gives the report frame of wave 21 (no notes column; at most 182 mm by 150 mm; every text at least 7 pt at the printed size; legend only for what is drawn; attribution and notes returned to the caller for the caption). A drawing whose needed layer is not available returns Unavailable with its reason; it never draws a partial picture that looks complete. Y4: data interface (M5-T154), in app/api/v1/report_context.py: a provider (bbl, correlation_id) -> a schema-valid 1.1.0 map document or None, and the FastAPI dependency get_report_map_context_provider. The live binding runs only when LIVE_SPATIAL_PROVIDER_ENABLED is on and never raises: a connector refusal makes that layer layer_unavailable; no subject outline gives None. The assembly takes injectable fetch functions, and the module offers an entry point that binds the provider to a recorded pack folder, so the browser-test harness can use the recorded pack with only the app package on the Python path. Y5: one outline. The map document's subject outline is the measurement-grade MapPLUTO outline (EPSG:2263). The report (M5-T156) uses the surroundings only when that outline, shifted by its own minimum x and y, equals the results document's lot outline within 0.01 ft at every vertex; otherwise it drops the surroundings and prints one limitation line. Two outlines are never drawn together. Y6: drawings compute no law. No yard, corner area, setback, coverage portion or building position is drawn: the engine does not produce them yet. Street areas are the space between the tax lots inside the window, labelled with the name of the street centre line that runs through them, and '<n> ft mapped width' only where mapped_width_ft is a number. The site plan's caption says plainly that street areas are drawn from the gaps between tax lots and that nothing is surveyed. Edge lengths of the lot are drawing measures of the outline. North arrow: grid north. Y7: every map and plan caption names its sources and their dates in plain words (from attribution and provenance: the source's last-edited date or version), e.g. 'Sources: NYC Department of City Planning, MapPLUTO 26v2; NYC building footprints, edited <date>; Digital City Map street centre lines, edited <date>'. No URL, field name or code word in the visible text (wave-21 ruling X6). Y8: the building is not placed (D-090 R939). Until the engine places it, the site plan and the scenario sheet print the results document's own reason (/geometry/floor_plates/reason), e.g. 'No building is placed on this plan yet: <reason>'. No footprint, no outline of a building and no 3D view is drawn. Y9: no street photo (D-090 R940, R551). No picture, empty frame or wording that suggests a photo. The location sheet's figure grid can take a third figure later without a redesign. Y10: page structure (M5-T156). Page type 2 'Site and context' opens with a sheet titled 'Where is the lot?' holding the neighbourhood map and the block close-up, each with its caption; then the existing sheet 'What constrains the design?' with the site plan among its surroundings and the constraints. Page type 1's small site figure becomes the report frame of the site context plan when it is available. The page-type list stays at six; M5-T156 records the change in docs/design/ARCHITECT_PRESENTATION_CONTRACT.md as a dated change entry citing D-090 rows R936 to R940. The report's scope list moves 'Context maps' to what the report covers only when they are printed; 'Aerial and street photographs' stays under 'Not yet'. Y11: recording. M5-T154's builder may make the recording requests ONCE: keyless GET requests to the official ArcGIS services the project's connectors already use (MapPLUTO, building footprints, Digital City Map street centre lines), for the benchmark lot's windows only; each response is kept byte-exact with its request URL and SHA-256 in the pack's MANIFEST; the tests only replay; no other network call; no key, account or email address. Y12: builders never start Next, uvicorn, Playwright or any server and never touch ports 3000, 3001 or 8000; the orchestrator runs the browser tests and prints the PDF. A builder who finds that a file outside its allowed paths must change STOPS and reports it. No new package (shapely 2.0.7 is already pinned). Y13: nothing is called feasible, compliant, verified, optimal or preferred; labels follow the six-label mapping of wave 21 (ruling X4); nothing is labelled Verified.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check . && python -m pytest -q -p no:cacheprovider tests/drawings tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/api/test_results_read_api.py",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-10T18:56:19.349818+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the builder starts after M5-T154 and M5-T155 are integrated on the branch"
+    },
+    {
+      "at": "2026-10-11T00:27:58.515771+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built, three reworks, three corrections (incl. the true-size print); G3, G4 and the visual review PASS; delta reviews PASS at 6c8c9f7d; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T00:42:03.596296+00:00"
+}

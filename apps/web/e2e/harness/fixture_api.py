@@ -67,6 +67,7 @@ from app.api.v1.parity_read import (
     get_dof_transport,
 )
 from app.api.v1.properties import get_pluto_fetcher
+from app.api.v1.report_context import get_report_map_context_provider, recorded_pack_provider
 from app.api.v1.results_read import get_results_study_inputs_provider
 from app.api.v1.rule_evaluation import get_spatial_substrate_provider
 from app.api.v1.study_inputs import (
@@ -811,8 +812,18 @@ def build_app():
     # served through the SAME real flow with NO extra seam. It delegates to the results route's
     # post_results, so it reuses INTERNAL_RESULTS_ENABLED (set above) and this same
     # get_results_study_inputs_provider override; on 200 it renders the emitted results document
-    # into the full HTML report. No map document is built on this path (the map connectors are not
-    # produced here), so no map replay is added and the report is produced without maps.
+    # into the full HTML report.
+    # M5-T156: bind the report's map-context provider to the recorded 215-16 Northern WINDOW pack
+    # (M5-T154), so the report shows the lot among its surroundings and the orchestrator's printed
+    # PDF carries the location sheet. recorded_pack_provider serves the recorded bytes through the
+    # REAL connectors' own fetch/parse code (no network, app-package-only); the window pack extends
+    # the base benchmark pack (per-BBL subject geometry + layer metadata). Production uses the live
+    # provider gated OFF by LANE_E/LIVE_SPATIAL_PROVIDER_ENABLED, so it stays mapless there.
+    report_map_pack = REPO_ROOT / "services" / "api" / "tests" / "fixtures" / (
+        "benchmark_215_16_northern_window"
+    )
+    report_map_provider = recorded_pack_provider(report_map_pack)
+    app.dependency_overrides[get_report_map_context_provider] = lambda: report_map_provider
     # W5: the three W2/W3/W4 internal reads, mounted in app.main (self-gated and
     # default off). Enable each flag FOR THIS PROCESS ONLY and inject the one
     # provider per route from a recorded official pack, so route/connector/builder/

@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import labels, readers, sources
+from . import labels, map_caption, readers, sources
 from .components import short_line
 from .html import el, escape, escape_attr, raw, table
 
@@ -73,18 +73,22 @@ def _provenance(results: Mapping) -> object:
     return el("ul", *items)
 
 
+_SURVEY_NOTE = (
+    "Map geometry only; tax boundaries do not establish the legal zoning lot; "
+    "nothing is surveyed."
+)
+
+
 def _attributions(map_context) -> list[str]:
-    notes: list[str] = []
-    if isinstance(map_context, Mapping):
-        context = map_context.get("map_context")
-        context = context if isinstance(context, Mapping) else {}
-        for layer_name in ("zoning_districts", "building_footprints"):
-            layer = context.get(layer_name)
-            if isinstance(layer, Mapping):
-                for field in ("attribution", "accuracy", "use_limitation"):
-                    if layer.get(field):
-                        notes.append(str(layer[field]))
-    return notes
+    """The map sources in plain words - a readable title and its edit date once per
+    layer shown (ruling Y7/X6), then the honesty note. No dataset id, no "via NYC
+    Open Data" phrase and no terms-of-use text (rework 1 fix 3)."""
+    if not isinstance(map_context, Mapping):
+        return []
+    lines = map_caption.source_lines(map_context, map_caption.SITE_LAYERS)
+    if not lines:
+        return []
+    return [*lines, _SURVEY_NOTE]
 
 
 def _label_key() -> object:
@@ -104,13 +108,18 @@ def render(results: Mapping, ident: Mapping, *, map_context=None, env=None) -> s
         el("h3", "Permitted envelope"),
         table(["Figure", "Value", "Law"], _figure_rows(results, "permitted_envelope"),
               caption="Envelope figures and their law sections"),
-        el("h3", "Provenance"),
-        _provenance(results),
     ]
+    # Provenance and the drawing notes sit side by side in two columns, so this page
+    # is compact enough to hold the status-label key and the key is never orphaned on
+    # a near-empty last page (corrections T156-C1).
+    columns = [el("div", el("h3", "Provenance"), _provenance(results), class_="evidence-column")]
     attributions = _attributions(map_context)
     if attributions:
-        children.append(el("h3", "Drawing notes and map attributions"))
-        children.append(el("ul", *[el("li", note) for note in attributions]))
+        columns.append(el("div",
+            el("h3", "Drawing notes and map attributions"),
+            el("ul", *[el("li", note) for note in attributions]),
+            class_="evidence-column"))
+    children.append(el("div", *columns, class_="evidence-columns"))
     children.append(el("h3", "Status-label key"))
     children.append(_label_key())
     return str(el("section", *children, class_="report-page", id="calculations-evidence"))

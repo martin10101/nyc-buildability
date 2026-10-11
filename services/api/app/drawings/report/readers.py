@@ -24,9 +24,12 @@ __all__ = [
     "input_rows",
     "label_meta_statement",
     "lot_area_basis",
+    "NOT_PLACED_LINE",
+    "building_not_placed",
     "named_value",
     "not_worked_buildings",
     "open_items",
+    "results_lot_outline",
     "present_values",
     "provenance",
     "recorded_lot_area_text",
@@ -432,6 +435,34 @@ def apartment_estimate_text(estimate: object) -> str | None:
 def geometry_available(results: Mapping) -> bool:
     geometry = results.get("geometry")
     return isinstance(geometry, Mapping) and geometry.get("status") == "available"
+
+
+def results_lot_outline(results: Mapping) -> list | None:
+    """The lot-outline rings from ``/geometry/lot_outline`` (the results document's
+    own local-feet outline), or ``None`` when the document carries none. Used by
+    the one-outline check (ruling Y5), never retyped or drawn directly."""
+    geometry = results.get("geometry")
+    if not isinstance(geometry, Mapping):
+        return None
+    rings = geometry.get("lot_outline")
+    return rings if isinstance(rings, list) and rings else None
+
+
+# The ONE plain sentence shown whenever the results document gives no floor plate
+# (ruling Y8, D-090 R939). The document's reason text is never spliced in.
+NOT_PLACED_LINE = (
+    "No building is placed on this plan yet: the program does not yet work out "
+    "where a building sits on the lot."
+)
+
+
+def building_not_placed(results: Mapping) -> bool:
+    """True when the results document carries a floor-plates block that is not
+    ``available`` - no building is placed on the plan yet (ruling Y8). False when a
+    floor plate is placed or the document carries no floor-plates block."""
+    geometry = results.get("geometry")
+    plates = geometry.get("floor_plates") if isinstance(geometry, Mapping) else None
+    return isinstance(plates, Mapping) and plates.get("status") != "available"
 
 
 _INPUT_NAMES = {

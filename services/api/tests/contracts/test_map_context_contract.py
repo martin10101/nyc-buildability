@@ -60,13 +60,15 @@ def test_stem_registered() -> None:
 
 
 def test_fixtures_present() -> None:
-    """Guard against a vacuous pass: the four E-07 shapes and the three named
-    single-defect invalid fixtures."""
-    assert len(VALID) == 4, [p.name for p in VALID]
+    """Guard against a vacuous pass: the five valid map shapes (the four E-07
+    1.0.0 shapes and the 1.1.0 window shape) and the four named single-defect
+    invalid fixtures."""
+    assert len(VALID) == 5, [p.name for p in VALID]
     assert {p.name for p in INVALID} == {
         "wrong_crs.json",
         "open_ring.json",
         "missing_use_limitation.json",
+        "street_mapped_width_not_a_number.json",
     }
 
 
@@ -122,7 +124,7 @@ def test_crs_const_matches_adapter() -> None:
 def test_document_kind_and_version_are_pinned() -> None:
     props = _schema()["properties"]
     assert props["document_kind"]["const"] == "map_context"
-    assert props["contract_version"]["enum"] == ["1.0.0"]
+    assert props["contract_version"]["enum"] == ["1.0.0", "1.1.0"]
 
 
 def test_entry_cap_matches_adapter_max_map_features() -> None:

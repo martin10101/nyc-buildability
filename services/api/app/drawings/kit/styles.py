@@ -152,6 +152,32 @@ STYLE_TABLE: tuple[ShapeStyle, ...] = (
                _hatch(135, 3.0, False, "#4A6572"), "A-ZONE-DIST", True, 8),
     ShapeStyle("building_footprint", "Building footprint", AREA, "#E0E0E0", "#9E9E9E", 0.4, (),
                _hatch(90, 3.0, False, "#9E9E9E"), "A-BLDG-FTPR", True, 9),
+    # Site-and-context drawings (M5-T155, D-090 R936-R938): the lot among its
+    # neighbours. The two surrounding kinds use the presentation tokens' neutral
+    # greys (page #F2F5F6, divider-ish #C9CFD4, supporting #52616C) so they stay
+    # quiet and the emphasised subject lot (the coral A-PROP-SUBJ above) reads
+    # first, matching the competitor close-up where only the subject is coloured.
+    # 'street_area' is the pale OPEN space between tax lots, named on the street
+    # by its centre line; it is the LIGHTEST area fill (#F2F5F6, lighter than a
+    # building's #E0E0E0) so the greyscale hierarchy still reads, and it carries
+    # a sparse, pale 45-degree hatch (wide 10 pt spacing) only to keep the
+    # black-and-white uniqueness every area kind needs - it never competes with
+    # the street name on top. 'neighbour_lot' is a thin grey line only (no fill),
+    # the way the competitor draws adjoining lots.
+    ShapeStyle("street_area", "Street", AREA, "#F2F5F6", "#C9CFD4", 0.4, (),
+               Hatch(45, 10.0, False, "#D8E0E5", 0.3), "C-ROAD-AREA", True, 9),
+    ShapeStyle("neighbour_lot", "Neighbouring lot", LINE, None, "#52616C", 0.6, (),
+               None, "A-PROP-ADJ", True, 8),
+    # The neighbourhood map draws the street NETWORK as centre lines (not areas),
+    # so a mid-grey solid line reads as roads at the ~2,000 ft scale.
+    ShapeStyle("street_centreline", "Street", LINE, None, "#AAB4BC", 1.0, (),
+               None, "C-ROAD-CNTR", True, 8),
+    # The EXISTING building on the SUBJECT lot is drawn as a dashed outline only
+    # (M5-T155 T155-C1), so the subject's coral fill reads above it and the
+    # reader sees it is an existing structure (city records), distinct from the
+    # "no proposed building placed yet" line. Other lots' buildings stay grey.
+    ShapeStyle("existing_building", "Existing building (city records)", LINE, None, "#8A8A8A",
+               0.5, (3.0, 2.0), None, "A-BLDG-EXST", True, 9),
     # Text - drawing notes (the DXF annotation layer).
     ShapeStyle("note", "Note", TEXT, None, "#111111", 0.25, (),
                None, "A-ANNO-NOTE", False, 7),

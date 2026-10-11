@@ -85,28 +85,42 @@ def _sheet(results: Mapping, raw_building: Mapping, view: Mapping, env) -> str:
         children.append(
             el("p", "This building is below the minimum base height.", class_="limitation")
         )
-    children.append(
-        figure(
-            stack,
-            "Floor-stack section (Illustrative): drawn from the schedule only, "
-            "with no placement on the lot.",
-            line_when_absent="The floor-stack section is not shown here.",
-        )
+    if readers.building_not_placed(results):
+        # One plain sentence whenever the document gives no floor plate (ruling Y8);
+        # no footprint, building outline or 3D view is drawn.
+        children.append(short_line(readers.NOT_PLACED_LINE))
+    # The (tall, narrow) floor-stack figure sits BESIDE the "Why it has this shape"
+    # and "What was not checked" text, so the sheet fits one page where it can
+    # (correction 3; render_floor_stack has no smaller frame). The floor schedule
+    # needs the full width, so it stays below.
+    fig = figure(
+        stack,
+        "Floor-stack section (Illustrative): drawn from the schedule only, "
+        "with no placement on the lot.",
+        line_when_absent="The floor-stack section is not shown here.",
     )
+    side: list[object] = []
     if view.get("label"):
-        children.append(el("div", el("h3", "Why it has this shape"), el("p", view["label"])))
-    children.append(el("h3", "Floor schedule"))
-    children.append(
+        side.append(el("div", el("h3", "Why it has this shape"), el("p", view["label"])))
+    side.append(_not_checked(view))
+    children.append(el("div",
+        el("div", fig, class_="scenario-figure"),
+        el("div", *side, class_="scenario-side"),
+        class_="scenario-row"))
+    # The floor schedule and the preliminary apartment estimate stay together, so the
+    # estimate never lands as a lone line (rework 1 fix 5).
+    tail: list[object] = [
+        el("h3", "Floor schedule"),
         table(_SCHEDULE_HEADERS, _schedule_rows(raw_building),
-              caption="Floor schedule for this building")
-    )
-    children.append(_not_checked(view))
+              caption="Floor schedule for this building"),
+    ]
     estimate = readers.apartment_estimate_text(view.get("capacity_estimate"))
     if estimate is not None:
-        children.append(
+        tail.append(
             el("p", raw(f'<strong>Preliminary apartment estimate:</strong> {estimate} '),
                label_chip(labels.PROVISIONAL))
         )
+    children.append(el("div", *tail, class_="sheet-tail"))
     return str(
         el("section", *children, class_="report-page", id=f"scenario-{view.get('building')}")
     )

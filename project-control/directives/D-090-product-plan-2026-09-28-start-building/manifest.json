@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-10T07:36:33+00:00",
+ "updated_at": "2026-10-10T18:56:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -954,10 +954,17 @@
   "D-090-R930",
   "D-090-R931",
   "D-090-R932",
-  "D-090-R933"
+  "D-090-R933",
+  "D-090-R934",
+  "D-090-R935",
+  "D-090-R936",
+  "D-090-R937",
+  "D-090-R938",
+  "D-090-R939",
+  "D-090-R940"
  ],
- "requirements_id_digest_sha256": "b9c6f38d9fb21a16b4432583280bf245f6acca6a819676377281dc6bba6dac86",
- "requirements_content_digest_sha256": "030652450f861cc0b4785cb8b44f6867c6e734cbbf453b58c9211727dbacdaa8",
+ "requirements_id_digest_sha256": "ca491ca235905ad55997233ef7e553d5fa98a7674b6564a181204d6b482de6a6",
+ "requirements_content_digest_sha256": "99bcd267cee2fb1bf8414f79d12daf0d961f3fc8c4053511abc6cb9bbb5da235",
  "sources": [
   {
    "file": "source-001.md",
@@ -1605,6 +1612,22 @@
    "recorded_at": "2026-10-10T07:25:55+00:00",
    "content_digest_sha256": "40fa31b6ee36e3696a48e68583bfbf8185e0acbd5dce75ed1e4b910a715dbd74",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-082-amendment.md",
+   "kind": "amendment",
+   "sequence": 82,
+   "recorded_at": "2026-10-10T18:36:53+00:00",
+   "content_digest_sha256": "7604c8f4d5f618318ad5cb9c7640d18e4f6a4f3004109c4b5550d39abd817dda",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-083-amendment.md",
+   "kind": "amendment",
+   "sequence": 83,
+   "recorded_at": "2026-10-10T18:42:30+00:00",
+   "content_digest_sha256": "2a6675af06e9bc9ee455b9d5c454237b1603faa17790085e80a0f6f82fd4badd",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -1687,7 +1710,9 @@
   "source-078-amendment.md",
   "source-079-amendment.md",
   "source-080-amendment.md",
-  "source-081-amendment.md"
+  "source-081-amendment.md",
+  "source-082-amendment.md",
+  "source-083-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1745,7 +1770,10 @@
   "M5-T149",
   "M5-T151",
   "M5-T152",
-  "M5-T153"
+  "M5-T153",
+  "M5-T154",
+  "M5-T155",
+  "M5-T156"
  ],
  "affected_prs": [
   262,
@@ -2566,6 +2594,36 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T153 (the website follows the report's priorities and wording) to R894, R895, R903, R917, R918, R922, R924, R927, R928, R929 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-10T18:36:53+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-082 (session 01TpXJN7: the owner's correction of the report's site drawing and the brief's format) and requirements D-090-R934 to R939, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-10T18:42:30+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-083 (session 01TpXJN7: the owner's answer to question E1 (street photos)) and requirements D-090-R940 to R940, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-10T18:56:10+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T154 (the map data around the lot for the report) to R843, R936, R937 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-10T18:56:12+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T155 (context drawings: site plan among its surroundings, block close-up, neighbourhood map) to R843, R936, R937, R938 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-10T18:56:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T156 (the report shows where the lot is) to R551, R843, R893, R923, R936, R937, R938, R939, R940 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

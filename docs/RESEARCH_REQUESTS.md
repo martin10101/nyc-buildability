@@ -452,6 +452,44 @@ verification target.*
 
 ---
 
+## RQ-009 — 215-16 Northern Boulevard: the zoning lot, the lot area and the rear yard beyond the corner — ANSWERED 2026-10-10 (owner's research AI); key facts re-checked by the orchestrator; residual OPEN
+
+**Question.** The owner's research brief of 2026-10-10 (given as an .md file; a copy is at
+`/root/project/lanes-runtime/owner-docs/session-2026-10-10a/research-brief-215-16-northern.md`): (1) are tax
+lots 1 and 70 of Queens block 7334 one zoning lot; (2) is the lot area 10,075 or 10,387.99 sq ft; (3) is a rear yard
+required beyond the corner area; plus a quick check on special density areas.
+
+**Why it matters.** The benchmark lot's floor area, coverage, rear yard and apartment limit are all worked on the
+zoning lot and its area. The report shows lot 70 alone.
+
+**Answer received (2026-10-10).** The handoff, unchanged:
+`docs/research/owner-research/2026-10-10-215-16-northern-research-handoff.md`. The evidence pack's small files
+are kept beside it in `docs/research/owner-research/2026-10-10-215-16-northern-evidence/`.
+- (1) Likely one zoning lot, not proven. All three 2022 instruments (CERT, ZONE, DECL) are indexed against both
+  lots, and DOB job 421803891 says "one zoning lot and two tax lots". The instruments and the approved ZD1 were not
+  read. Whether NB 440608941's 39,934 sq ft already includes lot 1's building is not established (DOB PW1 guide,
+  section 12C).
+- (2) The legal area was not found. The printed tax maps of 2017 and 2021 give 100.76 by 100 ft. A survey dated
+  2017-02-21 (Christopher M. Buckley) is named in DOF's change history.
+- (3) The brief left out ZR 23-344(b): along the short dimension of a block (frontage under 230 ft between bounding
+  streets), no rear yard is required within 100 ft of that street line. Northern Boulevard's block frontage is
+  200.01 ft on the tax map (203.13 ft in GIS), and the lot is about 100 ft deep. Lots 11 and 61 adjoin the south
+  line along what the research reads as their side lot lines (23-344(c)(3)).
+- Special density areas: ZR 12-10 lists only the Manhattan Core and the Special Downtown Brooklyn District.
+
+**Verified (orchestrator, 2026-10-10).** Against the official sources, re-fetched: the tax maps (byte-identical),
+the MapPLUTO outlines and neighbours, the ACRIS index entries, the DOB filings, the DOF change history, ZR 12-10
+"short dimension of a block" and ZR 23-344(b). Detail, and what is still unverified:
+`docs/research/owner-research/2026-10-10-215-16-northern-evidence/VERIFICATION.md`.
+
+**What it unlocks (queued, not done).** Backlog rows DB-230 to DB-232: the short-block rear-yard rule and the
+neighbouring-line classification; resolving the special density area from the lot's borough and special district;
+and a warning when recorded zoning-lot documents name more than one tax lot. Until then the report's numbers stay
+as they are (D-050).
+
+**Residual OPEN.** The contents of the zoning-lot instruments and the 2018 deed; the approved ZD1/PW1 of
+NB 440608941; the 2017 survey; the "ALLEY" label across lots 1 and 70 on the tax map.
+
 ## Closed register (one line per satisfied request; full text in git history)
 
 - **RQ-001** — satisfied by the loop's own accepted research (M4-T016, A2 geometry-mechanics

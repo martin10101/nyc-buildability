@@ -425,6 +425,57 @@ def test_f11_evidence_inputs_label_key_and_nowrap() -> None:
     assert "the figures below are read from the result" not in text
 
 
+# ================================================= no page wider than the paper (correction 2)
+def test_correction2_decision_row_shrinks_and_cells_wrap() -> None:
+    css = layout.report_css("H", "F")
+    # The answers column takes the remaining width and can shrink to fit.
+    assert re.search(r"\.summary-answers\s*\{[^}]*flex:\s*1 1 auto[^}]*min-width:\s*0", css)
+    # The figure stays 88 mm beside it.
+    assert re.search(r"\.summary-figure\s*\{[^}]*flex:\s*0 0 88mm", css)
+    # The answer figures WRAP (no nowrap), so the table shrinks below their one-line width.
+    cell = re.search(r"\.answers-table \.answer-figure\s*\{([^}]*)\}", css)
+    assert cell and "white-space: nowrap" not in cell.group(1)
+    # The decision row holds the shrinking answers table beside the fixed figure.
+    decision = _decision_section(build_report_html(benchmark(), env=_LANE_E))
+    assert 'class="summary-answers"' in decision and 'class="summary-figure"' in decision
+
+
+def _decision_section(html: str) -> str:
+    return html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+
+
+# ===================================== no-split by printed HEIGHT, tall tables break (correction 3)
+def test_short_table_by_height_is_no_split_and_a_tall_one_is_not() -> None:
+    from app.drawings.report.html import (
+        SHORT_TABLE_MAX_HEIGHT_MM,
+        estimated_table_height_mm,
+        table,
+    )
+
+    # pick a body-row count that is short by estimated height, and one that is tall.
+    short_rows = next(
+        n for n in range(1, 40)
+        if estimated_table_height_mm(n) <= SHORT_TABLE_MAX_HEIGHT_MM
+        and estimated_table_height_mm(n + 1) > SHORT_TABLE_MAX_HEIGHT_MM
+    )
+    short = str(table(["A", "B"], [["1", "2"]] * short_rows))
+    tall = str(table(["A", "B"], [["1", "2"]] * (short_rows + 1)))
+    assert 'class="no-split"' in short  # <= 70 mm: never split across a page
+    assert "no-split" not in tall  # taller: may break between rows
+    css = layout.report_css("H", "F")
+    assert re.search(r"\.no-split\s*\{[^}]*break-inside:\s*avoid", css)
+    # a tall table's note never separates from its row (the note row never starts a page).
+    assert re.search(r"\.reason-row\s*\{[^}]*break-before:\s*avoid", css)
+
+
+def test_status_label_key_is_a_no_split_table() -> None:
+    # the status-label key (a short table) moves whole, never a lone fragment.
+    html = build_report_html(benchmark())
+    evidence = html[html.index('id="calculations-evidence"'):]
+    key_table = evidence[evidence.index("<table", evidence.index("Status-label key")):]
+    assert key_table.startswith('<table class="key-table no-split"')
+
+
 # =========================================================================== A2
 def test_a2_no_non_drawing_text_below_8pt() -> None:
     css = layout.report_css("H", "F")
@@ -538,37 +589,38 @@ def test_vc2_no_long_document_sentence_printed_twice() -> None:
 
 
 # =========================================================================== Q3
-class _FakeMap:
-    def __init__(self) -> None:
-        self.svg = '<svg viewBox="0 0 120 90"></svg>'
-        self.caption = "Zoning map"
-        self.notes = ()
-        self.attribution = "DCP"
+def _benchmark_map_context() -> dict:
+    """The recorded 215-16 Northern WINDOW map document (M5-T154), built through the
+    real connectors from recorded bytes - its subject outline matches the benchmark
+    results lot outline, so the one-outline check (Y5) passes."""
+    from app.api.v1.report_context import recorded_pack_provider
+
+    pack = (
+        Path(__file__).resolve().parents[2] / "fixtures" / "benchmark_215_16_northern_window"
+    )
+    return recorded_pack_provider(pack)("4073340070", "q3")
 
 
-def _fake_map_render(_doc, *, frame: str = "report", env=None):
-    return _FakeMap()
-
-
-def test_q3_coverage_and_maps_with_and_without_a_map_document(monkeypatch) -> None:
+def test_q3_coverage_and_maps_with_and_without_a_map_document() -> None:
     doc = benchmark()
     from app.drawings.report import coverage
 
-    # without a map document: context maps are Not yet, and no maps section.
+    # without a map document: context maps are Not yet, and the location sheet prints
+    # one short line (never a blank sheet, S6) - no Context-maps section.
     without = build_report_html(doc)
     groups_without = dict(coverage.coverage_groups(doc, maps_present=False))
     assert "Context maps" in groups_without["Not yet"]
     assert "Context maps" not in visible_text(without[without.index('id="site-and-context"'):])
 
     # with a map document whose maps render: context maps are In this report, and shown.
-    monkeypatch.setattr("app.drawings.maps.render_location_map", _fake_map_render, raising=False)
-    monkeypatch.setattr("app.drawings.maps.render_zoning_map", _fake_map_render, raising=False)
-    with_maps = build_report_html(doc, map_context={"map_context": {"zoning_districts": {}}})
+    with_maps = build_report_html(doc, map_context=_benchmark_map_context(), env=_LANE_E)
     groups_with = dict(coverage.coverage_groups(doc, maps_present=True))
     assert "Context maps" in groups_with["In this report"]
     start = with_maps.index('id="site-and-context"')
     site = with_maps[start:with_maps.index('id="option-comparison"')]
-    assert "Context maps" in visible_text(site) and "<svg" in site
+    assert "<svg" in site
+    text = visible_text(with_maps)
+    assert "Context maps" in text  # in the coverage inventory
 
 
 # =============================================== drawing frame (ruling X9); run once integrated

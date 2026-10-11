@@ -1,0 +1,545 @@
+{
+  "research_date": "2026-10-10",
+  "property": "Queens block 7334 lot 70; related lot 1",
+  "sources": [
+    {
+      "path": "official-pdfs/taxmap_40733419660701000000_0.pdf",
+      "source_file": "taxmap_40733419660701000000_0.pdf",
+      "bytes": 426469,
+      "sha256": "560b151f66ddbd72cb397dafef220ce1ad518339276b041aa2fe7534ce67195b",
+      "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733419660701000000",
+      "final_url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733419660701000000",
+      "retrieved_at": "2026-10-10T18:48:21.895029+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/taxmap_40733420140108123603_0.pdf",
+      "source_file": "taxmap_40733420140108123603_0.pdf",
+      "bytes": 174465,
+      "sha256": "07ed5c1330076a6daffc4f5c9cc3b10e8e50bbd6c8c7a59c2338902c7a307094",
+      "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420140108123603",
+      "final_url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420140108123603",
+      "retrieved_at": "2026-10-10T18:48:21.895735+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/taxmap_40733420170322143246_0.pdf",
+      "source_file": "taxmap_40733420170322143246_0.pdf",
+      "bytes": 214094,
+      "sha256": "b734d49b88df8de0d13ba0c79bff3ac5032752af4ec6050385f6694187a01e24",
+      "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420170322143246",
+      "final_url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420170322143246",
+      "retrieved_at": "2026-10-10T18:48:21.896300+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/taxmap_40733420210729120533_0.pdf",
+      "source_file": "taxmap_40733420210729120533_0.pdf",
+      "bytes": 190721,
+      "sha256": "cefd083d936cbd0a4e41e6763ed19e554a5726706c19bd5c0606695b9a6fce0c",
+      "url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420210729120533",
+      "final_url": "https://propertyinformationportal.nyc.gov/pdf/home/index/map_library/40733420210729120533",
+      "retrieved_at": "2026-10-10T18:48:21.896892+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/citymap_cp4366.pdf",
+      "source_file": "citymap_cp4366.pdf",
+      "bytes": 2085402,
+      "sha256": "77b6d02cfe50ded6a9f4e1c6f724796fa264bfd335d1ec55ace65462242f74e1",
+      "url": "https://nycdcp-dcm-alteration-maps.nyc3.digitaloceanspaces.com/cp4366.pdf",
+      "final_url": "https://nycdcp-dcm-alteration-maps.nyc3.digitaloceanspaces.com/cp4366.pdf",
+      "retrieved_at": "2026-10-10T18:51:17.772420+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/pw1_userguide.pdf",
+      "source_file": "pw1_userguide.pdf",
+      "bytes": 447763,
+      "sha256": "0ae58ac6c4a055e011d1a815f8204faa41c438d733f37ab2b66bc03e5ee4627c",
+      "url": "https://www.nyc.gov/assets/buildings/pdf/pw1_userguide.pdf",
+      "final_url": "https://www.nyc.gov/assets/buildings/pdf/pw1_userguide.pdf",
+      "retrieved_at": "2026-10-10T18:47:38.848785+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 28 Sep 2026 17:08:18 GMT"
+    },
+    {
+      "path": "official-pdfs/law_23_342.pdf",
+      "source_file": "law_23_342.pdf",
+      "bytes": 49536,
+      "sha256": "cbc9a976ec7c1b1384e61f0cca04dfb65f70ce1bd1b155fb6bc654496c72d83d",
+      "url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18051",
+      "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18051",
+      "retrieved_at": "2026-10-10T18:47:42.718096+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/law_23_344.pdf",
+      "source_file": "law_23_344.pdf",
+      "bytes": 840257,
+      "sha256": "14b06230fb843682f59abfcd0327058bda5f2fe1250327e573d2eef596a5109f",
+      "url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18052",
+      "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18052",
+      "retrieved_at": "2026-10-10T18:46:57.628613+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/law_23_362.pdf",
+      "source_file": "law_23_362.pdf",
+      "bytes": 48874,
+      "sha256": "7e9a20c390d065b0ffb766ff1e7f3dddf6254dcaa6779176484fac41da7f4363",
+      "url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/22764",
+      "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/22764",
+      "retrieved_at": "2026-10-10T18:47:44.706224+00:00",
+      "status": 200
+    },
+    {
+      "path": "official-pdfs/law_23_52.pdf",
+      "source_file": "law_23_52.pdf",
+      "bytes": 49313,
+      "sha256": "ce493bac0429750dd67962e6db61d0fb87a7de57e6d076fd02c58f17d701ddc2",
+      "url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18026",
+      "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18026",
+      "retrieved_at": "2026-10-10T18:47:44.144673+00:00",
+      "status": 200
+    },
+    {
+      "path": "data/acris_codes.json",
+      "source_file": "acris_codes.json",
+      "bytes": 24004,
+      "sha256": "518363532df753ac364ce47c5d62dfbdbaf609b598845bfcfe2ec83b9739c625",
+      "url": "https://data.cityofnewyork.us/resource/7isb-wh4c.json",
+      "final_url": "https://data.cityofnewyork.us/resource/7isb-wh4c.json",
+      "retrieved_at": "2026-10-10T18:46:00.033189+00:00",
+      "status": 200,
+      "last_modified_header": "Wed, 05 Aug 2026 13:49:57 GMT"
+    },
+    {
+      "path": "data/acris_legals_keydocs.json",
+      "source_file": "acris_legals_keydocs.json",
+      "bytes": 2077,
+      "sha256": "4c47cae83a7dc30105bb58566ab0f20e3e149488354880a71bb2bd0e23e85450",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?%24where=document_id%20in%28%272018013000919001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%29&%24limit=1000",
+      "final_url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?%24where=document_id%20in%28%272018013000919001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%29&%24limit=1000",
+      "retrieved_at": "2026-10-10T18:46:05.397431+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:07:34 GMT"
+    },
+    {
+      "path": "data/acris_legals_lot1.json",
+      "source_file": "acris_legals_lot1.json",
+      "bytes": 8929,
+      "sha256": "02068ff61f4c8d07b52cc74bae9ce1f20891c965e3c1b5b81baa65509c16fc09",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=1&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=1&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:46:05.364849+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:07:34 GMT"
+    },
+    {
+      "path": "data/acris_legals_lot70_primary.json",
+      "source_file": "acris_legals_lot70_primary.json",
+      "bytes": 2080,
+      "sha256": "712dbf8f65fbced6a1ffdf0489c176e3c25746be70028ccd834bed74a129f6ad",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=70&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=70&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:59:33.201307+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:07:34 GMT"
+    },
+    {
+      "path": "data/acris_master_all.json",
+      "source_file": "acris_master_all.json",
+      "bytes": 13228,
+      "sha256": "cae876e4907aefcc743dac475a561204820ccdcbd232b177c8295fb8fbdec681",
+      "url": "https://data.cityofnewyork.us/resource/bnx9-e6tj.json?%24where=document_id+in%28%272004122300074001%27%2C%272004122300074002%27%2C%272004122300074003%27%2C%272016081000837001%27%2C%272016081000837002%27%2C%272016081601303001%27%2C%272018013000919001%27%2C%272018013000919002%27%2C%272018013100045001%27%2C%272018013100045002%27%2C%272018013100045003%27%2C%272018013100045004%27%2C%272018013100045005%27%2C%272018013100045006%27%2C%272018013100045007%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%2C%272024011000700001%27%2C%272024011000700002%27%2C%27BK_7240056400865%27%2C%27BK_8040128101135%27%2C%27BK_8040128101139%27%2C%27BK_8140137601360%27%2C%27FT_4200005225320%27%2C%27FT_4330005137233%27%2C%27FT_4450005137245%27%2C%27FT_4580005950558%27%2C%27FT_4630002352063%27%2C%27FT_4640002352064%27%2C%27FT_4650002352065%27%2C%27FT_4670005950567%27%2C%27FT_4730005950573%27%2C%27FT_4770004802977%27%2C%27FT_4830005950583%27%2C%27FT_4920005950592%27%2C%27FT_4950005950595%27%29&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/bnx9-e6tj.json?%24where=document_id+in%28%272004122300074001%27%2C%272004122300074002%27%2C%272004122300074003%27%2C%272016081000837001%27%2C%272016081000837002%27%2C%272016081601303001%27%2C%272018013000919001%27%2C%272018013000919002%27%2C%272018013100045001%27%2C%272018013100045002%27%2C%272018013100045003%27%2C%272018013100045004%27%2C%272018013100045005%27%2C%272018013100045006%27%2C%272018013100045007%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%2C%272024011000700001%27%2C%272024011000700002%27%2C%27BK_7240056400865%27%2C%27BK_8040128101135%27%2C%27BK_8040128101139%27%2C%27BK_8140137601360%27%2C%27FT_4200005225320%27%2C%27FT_4330005137233%27%2C%27FT_4450005137245%27%2C%27FT_4580005950558%27%2C%27FT_4630002352063%27%2C%27FT_4640002352064%27%2C%27FT_4650002352065%27%2C%27FT_4670005950567%27%2C%27FT_4730005950573%27%2C%27FT_4770004802977%27%2C%27FT_4830005950583%27%2C%27FT_4920005950592%27%2C%27FT_4950005950595%27%29&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:46:53.880377+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:08:51 GMT"
+    },
+    {
+      "path": "data/acris_references.json",
+      "source_file": "acris_references.json",
+      "bytes": 7812,
+      "sha256": "b8277a73f98768b8dc16490e35828292a74b14167aac9b9cc0769fe4f0475d22",
+      "url": "https://data.cityofnewyork.us/resource/pwkr-dpni.json?%24where=document_id+in%28%272024011000700001%27%2C%272024011000700002%27%2C%272022031600431001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272018013100045003%27%2C%272018013100045005%27%2C%272018013100045006%27%2C%272018013100045007%27%2C%272018013100045004%27%2C%272018013000919001%27%2C%272018013000919002%27%2C%272018013100045001%27%2C%272018013100045002%27%2C%272016081000837001%27%2C%272016081601303001%27%2C%272016081000837002%27%2C%27FT_4830005950583%27%2C%27FT_4920005950592%27%2C%272004122300074001%27%2C%27FT_4950005950595%27%2C%272004122300074002%27%2C%272004122300074003%27%2C%27BK_7240056400865%27%2C%27BK_8040128101135%27%2C%27BK_8040128101139%27%2C%27BK_8140137601360%27%2C%27FT_4200005225320%27%2C%27FT_4330005137233%27%2C%27FT_4450005137245%27%2C%27FT_4580005950558%27%2C%27FT_4630002352063%27%2C%27FT_4640002352064%27%2C%27FT_4650002352065%27%2C%27FT_4670005950567%27%2C%27FT_4730005950573%27%2C%27FT_4770004802977%27%29&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/pwkr-dpni.json?%24where=document_id+in%28%272024011000700001%27%2C%272024011000700002%27%2C%272022031600431001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272018013100045003%27%2C%272018013100045005%27%2C%272018013100045006%27%2C%272018013100045007%27%2C%272018013100045004%27%2C%272018013000919001%27%2C%272018013000919002%27%2C%272018013100045001%27%2C%272018013100045002%27%2C%272016081000837001%27%2C%272016081601303001%27%2C%272016081000837002%27%2C%27FT_4830005950583%27%2C%27FT_4920005950592%27%2C%272004122300074001%27%2C%27FT_4950005950595%27%2C%272004122300074002%27%2C%272004122300074003%27%2C%27BK_7240056400865%27%2C%27BK_8040128101135%27%2C%27BK_8040128101139%27%2C%27BK_8140137601360%27%2C%27FT_4200005225320%27%2C%27FT_4330005137233%27%2C%27FT_4450005137245%27%2C%27FT_4580005950558%27%2C%27FT_4630002352063%27%2C%27FT_4640002352064%27%2C%27FT_4650002352065%27%2C%27FT_4670005950567%27%2C%27FT_4730005950573%27%2C%27FT_4770004802977%27%29&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:48:25.997424+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:08:20 GMT"
+    },
+    {
+      "path": "data/acris_references_reverse.json",
+      "source_file": "acris_references_reverse.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "url": "https://data.cityofnewyork.us/resource/pwkr-dpni.json?%24where=reference_by_doc_id+in%28%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%2C%272016081000837001%27%2C%272016081000837002%27%29&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/pwkr-dpni.json?%24where=reference_by_doc_id+in%28%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%2C%272016081000837001%27%2C%272016081000837002%27%29&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:48:26.021039+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:08:20 GMT"
+    },
+    {
+      "path": "data/acris_remarks.json",
+      "source_file": "acris_remarks.json",
+      "bytes": 2499,
+      "sha256": "250d7df9bb49fc18eee5715648662cd4e85006ad55d32a2de061b6286ddf3cba",
+      "url": "https://data.cityofnewyork.us/resource/9p4w-7npp.json?%24where=document_id+in%28%272024011000700001%27%2C%272024011000700002%27%2C%272022031600431001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272018013100045003%27%2C%272018013100045005%27%2C%272018013100045006%27%2C%272018013100045007%27%2C%272018013100045004%27%2C%272018013000919001%27%2C%272018013000919002%27%2C%272018013100045001%27%2C%272018013100045002%27%2C%272016081000837001%27%2C%272016081601303001%27%2C%272016081000837002%27%2C%27FT_4830005950583%27%2C%27FT_4920005950592%27%2C%272004122300074001%27%2C%27FT_4950005950595%27%2C%272004122300074002%27%2C%272004122300074003%27%2C%27BK_7240056400865%27%2C%27BK_8040128101135%27%2C%27BK_8040128101139%27%2C%27BK_8140137601360%27%2C%27FT_4200005225320%27%2C%27FT_4330005137233%27%2C%27FT_4450005137245%27%2C%27FT_4580005950558%27%2C%27FT_4630002352063%27%2C%27FT_4640002352064%27%2C%27FT_4650002352065%27%2C%27FT_4670005950567%27%2C%27FT_4730005950573%27%2C%27FT_4770004802977%27%29&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/9p4w-7npp.json?%24where=document_id+in%28%272024011000700001%27%2C%272024011000700002%27%2C%272022031600431001%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272018013100045003%27%2C%272018013100045005%27%2C%272018013100045006%27%2C%272018013100045007%27%2C%272018013100045004%27%2C%272018013000919001%27%2C%272018013000919002%27%2C%272018013100045001%27%2C%272018013100045002%27%2C%272016081000837001%27%2C%272016081601303001%27%2C%272016081000837002%27%2C%27FT_4830005950583%27%2C%27FT_4920005950592%27%2C%272004122300074001%27%2C%27FT_4950005950595%27%2C%272004122300074002%27%2C%272004122300074003%27%2C%27BK_7240056400865%27%2C%27BK_8040128101135%27%2C%27BK_8040128101139%27%2C%27BK_8140137601360%27%2C%27FT_4200005225320%27%2C%27FT_4330005137233%27%2C%27FT_4450005137245%27%2C%27FT_4580005950558%27%2C%27FT_4630002352063%27%2C%27FT_4640002352064%27%2C%27FT_4650002352065%27%2C%27FT_4670005950567%27%2C%27FT_4730005950573%27%2C%27FT_4770004802977%27%29&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:47:38.821679+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:08:30 GMT"
+    },
+    {
+      "path": "data/acris_global_goodthrough.json",
+      "source_file": "acris_global_goodthrough.json",
+      "bytes": 54,
+      "sha256": "9b2e2a01fe269e9f77bab6aa4092ee2601907a6908d963ba6eebfd5052e47ca3",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?%24select=max(good_through_date)",
+      "final_url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?%24select=max(good_through_date)",
+      "retrieved_at": "2026-10-10T18:51:17.773331+00:00",
+      "status": 200,
+      "last_modified_header": "Thu, 08 Oct 2026 20:07:34 GMT"
+    },
+    {
+      "path": "data/acris_legals_meta.json",
+      "source_file": "acris_legals_meta.json",
+      "bytes": 23220,
+      "sha256": "c4703f66671e1e04299097a0dc05aaf6d24a9298e57955be183e09c10837a486",
+      "url": "https://data.cityofnewyork.us/api/views/8h5j-fqxa.json",
+      "final_url": "https://data.cityofnewyork.us/api/views/8h5j-fqxa.json",
+      "retrieved_at": "2026-10-10T18:47:39.022678+00:00",
+      "status": 200
+    },
+    {
+      "path": "data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+      "source_file": "dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+      "bytes": 20473,
+      "sha256": "7a4ab2c4c63b813f4c4c4561b16a024f67f6f1d75ce6b49ca2ac0a4f12a1e4e7",
+      "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4157401&%24select=job__,doc__,borough,house__,street_name,block,lot,bin__,bbl,job_type,job_status,job_status_descrp,latest_action_date,pre__filing_date,approved,fully_permitted,signoff_date,building_type,building_class,existing_occupancy,proposed_occupancy,existing_zoning_sqft,proposed_zoning_sqft,enlargement_sq_footage,total_construction_floor_area,existingno_of_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,street_frontage,zoning_dist1,zoning_dist2,zoning_dist3,special_district_1,special_district_2,landmarked,little_e,loft_board,job_description,dobrundate",
+      "final_url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4157401&%24select=job__,doc__,borough,house__,street_name,block,lot,bin__,bbl,job_type,job_status,job_status_descrp,latest_action_date,pre__filing_date,approved,fully_permitted,signoff_date,building_type,building_class,existing_occupancy,proposed_occupancy,existing_zoning_sqft,proposed_zoning_sqft,enlargement_sq_footage,total_construction_floor_area,existingno_of_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,street_frontage,zoning_dist1,zoning_dist2,zoning_dist3,special_district_1,special_district_2,landmarked,little_e,loft_board,job_description,dobrundate",
+      "retrieved_at": "2026-10-10T18:45:52.932428+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 21:30:29 GMT"
+    },
+    {
+      "path": "data/dob_bis_jobs_ic3t-wcy2_bin_4623241.json",
+      "source_file": "dob_bis_jobs_ic3t-wcy2_bin_4623241.json",
+      "bytes": 1828,
+      "sha256": "4d1b0bf11c0796f5e42f97a82e49911202352e9e73e6ebf0e080801971579c8f",
+      "url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4623241&%24select=job__,doc__,borough,house__,street_name,block,lot,bin__,bbl,job_type,job_status,job_status_descrp,latest_action_date,pre__filing_date,approved,fully_permitted,signoff_date,building_type,building_class,existing_occupancy,proposed_occupancy,existing_zoning_sqft,proposed_zoning_sqft,enlargement_sq_footage,total_construction_floor_area,existingno_of_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,street_frontage,zoning_dist1,zoning_dist2,zoning_dist3,special_district_1,special_district_2,landmarked,little_e,loft_board,job_description,dobrundate",
+      "final_url": "https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4623241&%24select=job__,doc__,borough,house__,street_name,block,lot,bin__,bbl,job_type,job_status,job_status_descrp,latest_action_date,pre__filing_date,approved,fully_permitted,signoff_date,building_type,building_class,existing_occupancy,proposed_occupancy,existing_zoning_sqft,proposed_zoning_sqft,enlargement_sq_footage,total_construction_floor_area,existingno_of_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,street_frontage,zoning_dist1,zoning_dist2,zoning_dist3,special_district_1,special_district_2,landmarked,little_e,loft_board,job_description,dobrundate",
+      "retrieved_at": "2026-10-10T18:45:52.932895+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 21:30:29 GMT"
+    },
+    {
+      "path": "data/dob_now_jobs_lot1.json",
+      "source_file": "dob_now_jobs_lot1.json",
+      "bytes": 5753,
+      "sha256": "45ad52f5d715673015bdbfb32e6598c35ff22e8453698c49c346e83d8e93c58d",
+      "url": "https://data.cityofnewyork.us/resource/w9ak-ipjd.json?%24where=bbl%3D%274073340001%27&%24select=job_filing_number%2Cfiling_status%2Cjob_type%2Cfiling_date%2Ccurrent_status_date%2Capproved_date%2Cfirst_permit_date%2Csignoff_date%2Chouse_no%2Cstreet_name%2Cborough%2Cblock%2Clot%2Cbin%2Cbbl%2Cexisting_stories%2Cproposed_no_of_stories%2Cexisting_height%2Cproposed_height%2Cexisting_dwelling_units%2Cproposed_dwelling_units%2Ctotal_construction_floor_area%2Cjob_description&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/w9ak-ipjd.json?%24where=bbl%3D%274073340001%27&%24select=job_filing_number%2Cfiling_status%2Cjob_type%2Cfiling_date%2Ccurrent_status_date%2Capproved_date%2Cfirst_permit_date%2Csignoff_date%2Chouse_no%2Cstreet_name%2Cborough%2Cblock%2Clot%2Cbin%2Cbbl%2Cexisting_stories%2Cproposed_no_of_stories%2Cexisting_height%2Cproposed_height%2Cexisting_dwelling_units%2Cproposed_dwelling_units%2Ctotal_construction_floor_area%2Cjob_description&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:48:26.035588+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 20:26:51 GMT"
+    },
+    {
+      "path": "data/dob_now_jobs_w9ak-ipjd_bbl_4073340070.json",
+      "source_file": "dob_now_jobs_w9ak-ipjd_bbl_4073340070.json",
+      "bytes": 25855,
+      "sha256": "db2a63f04f9055392751ea6e582a749eb2b01651166b4a9ac113c1baf18fe9cf",
+      "url": "https://data.cityofnewyork.us/resource/w9ak-ipjd.json?bbl=4073340070&%24select=job_filing_number,filing_status,job_type,filing_date,current_status_date,approved_date,first_permit_date,signoff_date,house_no,street_name,borough,block,lot,bin,bbl,building_type,existing_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,total_construction_floor_area,little_e,review_building_code,work_on_floor,job_description,filing_review_type,full_demolition_work_type_",
+      "final_url": "https://data.cityofnewyork.us/resource/w9ak-ipjd.json?bbl=4073340070&%24select=job_filing_number,filing_status,job_type,filing_date,current_status_date,approved_date,first_permit_date,signoff_date,house_no,street_name,borough,block,lot,bin,bbl,building_type,existing_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,total_construction_floor_area,little_e,review_building_code,work_on_floor,job_description,filing_review_type,full_demolition_work_type_",
+      "retrieved_at": "2026-10-10T18:45:59.876244+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 20:26:51 GMT"
+    },
+    {
+      "path": "data/dob_bis_co_bs8b-p36w_bin_4157401.json",
+      "source_file": "dob_bis_co_bs8b-p36w_bin_4157401.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "url": "https://data.cityofnewyork.us/resource/bs8b-p36w.json?bin=4157401",
+      "final_url": "https://data.cityofnewyork.us/resource/bs8b-p36w.json?bin=4157401",
+      "retrieved_at": "2026-10-10T18:45:52.931854+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 20:40:49 GMT"
+    },
+    {
+      "path": "data/dob_now_co_pkdm-hqz6_bin_4157401.json",
+      "source_file": "dob_now_co_pkdm-hqz6_bin_4157401.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "url": "https://data.cityofnewyork.us/resource/pkdm-hqz6.json?bin=4157401",
+      "final_url": "https://data.cityofnewyork.us/resource/pkdm-hqz6.json?bin=4157401",
+      "retrieved_at": "2026-10-10T18:45:58.828219+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 20:01:41 GMT"
+    },
+    {
+      "path": "data/dob_now_co_pkdm-hqz6_bbl_4073340070.json",
+      "source_file": "dob_now_co_pkdm-hqz6_bbl_4073340070.json",
+      "bytes": 624,
+      "sha256": "33b21da95409d2c01b3be0e9474329d8f1972a67192210730e4c8b265265831d",
+      "url": "https://data.cityofnewyork.us/resource/pkdm-hqz6.json?bbl=4073340070",
+      "final_url": "https://data.cityofnewyork.us/resource/pkdm-hqz6.json?bbl=4073340070",
+      "retrieved_at": "2026-10-10T18:45:58.815809+00:00",
+      "status": 200,
+      "last_modified_header": "Fri, 09 Oct 2026 20:01:41 GMT"
+    },
+    {
+      "path": "data/dtm_block7334_0.json",
+      "source_file": "dtm_block7334_0.json",
+      "bytes": 38290,
+      "sha256": "3886cce637f1e84436aba2e683213fa2d340fea810d51515ed432d1261b36ae9",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query?where=BORO%3D%274%27+AND+BLOCK%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/0/query?where=BORO%3D%274%27+AND+BLOCK%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:47:34.789496+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 08:18:32 GMT"
+    },
+    {
+      "path": "data/dtm_block7334_8.json",
+      "source_file": "dtm_block7334_8.json",
+      "bytes": 4302,
+      "sha256": "89100b0f10989a070136e6d34552ec06fead5a671362f4b82371bd5f6f50c749",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/8/query?where=BOROUGH%3D%274%27+AND+BLOCK%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/8/query?where=BOROUGH%3D%274%27+AND+BLOCK%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:47:34.790532+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 08:18:32 GMT"
+    },
+    {
+      "path": "data/dtm_block7334_9.json",
+      "source_file": "dtm_block7334_9.json",
+      "bytes": 6330,
+      "sha256": "9835ba0399a9177a9ba8e44d169a7658386ddbd28931571237bc0e2ceb4578af",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/9/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/9/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:47:34.791184+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 08:18:32 GMT"
+    },
+    {
+      "path": "data/dtm_block7334_12.json",
+      "source_file": "dtm_block7334_12.json",
+      "bytes": 131,
+      "sha256": "1fc423ae159c0a6192968e2e21dcdcc14f433100443c8a90144534292b03c808",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/12/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/12/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:47:34.791608+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 08:18:32 GMT"
+    },
+    {
+      "path": "data/dtm_block7334_15.json",
+      "source_file": "dtm_block7334_15.json",
+      "bytes": 2304,
+      "sha256": "65aa4739a8dc3204e846f177d59a6d657a67b4023413debd415d7fc089a604dc",
+      "url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/15/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services6.arcgis.com/yG5s3afENB5iO9fj/ArcGIS/rest/services/DTM_ETL_DAILY_view/FeatureServer/15/query?where=Borough%3D%274%27+AND+Block%3D7334&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:47:38.810527+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 08:18:32 GMT"
+    },
+    {
+      "path": "data/DCM_City_Map_Alterations_site.json",
+      "source_file": "DCM_City_Map_Alterations_site.json",
+      "bytes": 7233,
+      "sha256": "3056c92919625919aa0e878ecdfebae8bbcf9342c73b26ba936fad2efa565954",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_City_Map_Alterations/FeatureServer/0/query?where=1%3D1&geometry=1048670%2C216260%2C1048940%2C216490&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_City_Map_Alterations/FeatureServer/0/query?where=1%3D1&geometry=1048670%2C216260%2C1048940%2C216490&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:50:15.866362+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 01 Dec 2025 19:31:22 GMT"
+    },
+    {
+      "path": "data/DCM_City_Map_Alterations_metadata.json",
+      "source_file": "DCM_City_Map_Alterations_metadata.json",
+      "bytes": 12862,
+      "sha256": "c528cacb1bb28f6d199ce7547beab41633ce5007e8f93c6986b9c96754325407",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_City_Map_Alterations/FeatureServer/0?f=json",
+      "final_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_City_Map_Alterations/FeatureServer/0?f=json",
+      "retrieved_at": "2026-10-10T18:50:15.865512+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 01 Dec 2025 19:31:22 GMT"
+    },
+    {
+      "path": "data/DCM_Digital_City_Map_site.json",
+      "source_file": "DCM_Digital_City_Map_site.json",
+      "bytes": 2108,
+      "sha256": "f18cb2a2ef45fa49fa840ac367f9e7185224d87339802fd5955cdd382446884a",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Digital_City_Map/FeatureServer/0/query?where=1%3D1&geometry=1048670%2C216260%2C1048940%2C216490&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "final_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Digital_City_Map/FeatureServer/0/query?where=1%3D1&geometry=1048670%2C216260%2C1048940%2C216490&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=%2A&returnGeometry=true&outSR=2263&resultRecordCount=2000&f=json",
+      "retrieved_at": "2026-10-10T18:50:15.867269+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 01 Dec 2025 19:35:09 GMT"
+    },
+    {
+      "path": "data/dcm_street_centerline_lot_envelope_4073340070.json",
+      "source_file": "dcm_street_centerline_lot_envelope_4073340070.json",
+      "bytes": 8758,
+      "sha256": "3fad815e5954fe778193d80ef172b5e08faa209682cf31f4e372556d2dafaf1f",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=1%3D1&geometry=1048638.6300%2C216160.4400%2C1049061.5800%2C216581.1000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&outSR=2263&f=json",
+      "final_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/DCM_Street_Center_Line/FeatureServer/0/query?where=1%3D1&geometry=1048638.6300%2C216160.4400%2C1049061.5800%2C216581.1000&geometryType=esriGeometryEnvelope&inSR=2263&spatialRel=esriSpatialRelIntersects&outFields=OBJECTID,Borough,Feat_Type,Feat_status,Street_NM,HonoraryNM,Old_ST_NM,Streetwidth,Route_Type,RoadwayType,Build_Status,Record_ST,Paper_ST,Stair_ST,CCO_ST,Marg_Wharf,Edit_Date&orderByFields=OBJECTID%20ASC&resultRecordCount=2000&resultOffset=0&outSR=2263&f=json",
+      "retrieved_at": "2026-10-10T18:45:52.931019+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 01 Dec 2025 19:39:55 GMT"
+    },
+    {
+      "path": "data/bsa_yvxd-uipr_block7334.json",
+      "source_file": "bsa_yvxd-uipr_block7334.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "url": "https://data.cityofnewyork.us/resource/yvxd-uipr.json?block=7334&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/yvxd-uipr.json?block=7334&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:50:20.218392+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 21 Sep 2026 19:56:53 GMT"
+    },
+    {
+      "path": "data/bsa_yvxd-uipr_metadata.json",
+      "source_file": "bsa_yvxd-uipr_metadata.json",
+      "bytes": 52252,
+      "sha256": "3406a78a25ffc4412cdd640315f50ec2f2edc6fe8880d5b29057e254dbfe084e",
+      "url": "https://data.cityofnewyork.us/api/views/yvxd-uipr.json",
+      "final_url": "https://data.cityofnewyork.us/api/views/yvxd-uipr.json",
+      "retrieved_at": "2026-10-10T18:50:20.180795+00:00",
+      "status": 200
+    },
+    {
+      "path": "data/bsa_f72e-3i4c_block7334.json",
+      "source_file": "bsa_f72e-3i4c_block7334.json",
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "url": "https://data.cityofnewyork.us/resource/f72e-3i4c.json?block=7334&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/f72e-3i4c.json?block=7334&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:50:26.218932+00:00",
+      "status": 200,
+      "last_modified_header": "Wed, 19 Aug 2020 01:52:32 GMT"
+    },
+    {
+      "path": "data/bsa_f72e-3i4c_block_contains7334.json",
+      "source_file": "bsa_f72e-3i4c_block_contains7334.json",
+      "bytes": 518,
+      "sha256": "6d0105dad3c8f3363709da52b12d2decc810abb90b6879dffbb0142a949219b3",
+      "url": "https://data.cityofnewyork.us/resource/f72e-3i4c.json?%24where=block+like+%27%257334%25%27&%24limit=10000",
+      "final_url": "https://data.cityofnewyork.us/resource/f72e-3i4c.json?%24where=block+like+%27%257334%25%27&%24limit=10000",
+      "retrieved_at": "2026-10-10T18:57:05.919439+00:00",
+      "status": 200,
+      "last_modified_header": "Wed, 19 Aug 2020 01:52:32 GMT"
+    },
+    {
+      "path": "data/bsa_f72e-3i4c_metadata.json",
+      "source_file": "bsa_f72e-3i4c_metadata.json",
+      "bytes": 34290,
+      "sha256": "fc11c2f5d0b0960b6147a57e5f04f135e51969a427d33dd4668da25139cbfb4a",
+      "url": "https://data.cityofnewyork.us/api/views/f72e-3i4c.json",
+      "final_url": "https://data.cityofnewyork.us/api/views/f72e-3i4c.json",
+      "retrieved_at": "2026-10-10T18:50:26.104533+00:00",
+      "status": 200
+    },
+    {
+      "path": "data/law_12_10.html",
+      "source_file": "law_12_10.html",
+      "bytes": 1316607,
+      "sha256": "4ecb60db1ea6677eeb21883cd1f6aed6b7db6780cf16feafff92218311963215",
+      "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+      "final_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+      "retrieved_at": "2026-10-10T18:46:05.496151+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 00:08:16 GMT"
+    },
+    {
+      "path": "data/law_23_22.html",
+      "source_file": "law_23_22.html",
+      "bytes": 131721,
+      "sha256": "9f5708006097756c8eb7d509095f652573341f516bc9d7fb15a3eede63b8f319",
+      "url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+      "final_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+      "retrieved_at": "2026-10-10T18:46:10.523138+00:00",
+      "status": 200,
+      "last_modified_header": "Sat, 10 Oct 2026 00:18:01 GMT"
+    },
+    {
+      "path": "data/mappluto.json",
+      "source_file": "mappluto_evidence.json",
+      "bytes": 32701,
+      "sha256": "24355a87e4e3596a7112046794a64d9a8a5068e2d02fd5f89e94c44d8e401ce8",
+      "url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BoroCode%3D4+AND+Block%3D7334&outFields=OBJECTID%2CBoroCode%2CBorough%2CBBL%2CBlock%2CLot%2CAddress%2CZoneDist1%2CZoneDist2%2COverlay1%2CSPDist1%2CSplitZone%2CLotArea%2CLotFront%2CLotDepth%2CVersion%2CShape__Area%2CShape__Length%2CAPPBBL%2CAPPDate&outSR=2263&f=json",
+      "final_url": "https://services5.arcgis.com/GfwWNkhOj9bNBqoJ/arcgis/rest/services/MAPPLUTO/FeatureServer/0/query?where=BoroCode%3D4+AND+Block%3D7334&outFields=OBJECTID%2CBoroCode%2CBorough%2CBBL%2CBlock%2CLot%2CAddress%2CZoneDist1%2CZoneDist2%2COverlay1%2CSPDist1%2CSplitZone%2CLotArea%2CLotFront%2CLotDepth%2CVersion%2CShape__Area%2CShape__Length%2CAPPBBL%2CAPPDate&outSR=2263&f=json",
+      "retrieved_at": "2026-10-10T19:05:33.168808+00:00",
+      "status": 200,
+      "last_modified_header": "Wed, 09 Sep 2026 15:30:24 GMT"
+    },
+    {
+      "path": "data/pluto.json",
+      "source_file": "pluto_evidence.json",
+      "bytes": 11516,
+      "sha256": "0bab4cedd1617419744b967d547b5db435c57deda4840b429a0549a840604d05",
+      "url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?borough=QN&block=7334&%24select=borough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Coverlay1%2Cspdist1%2Csplitzone%2Clotarea%2Clotfront%2Clotdepth%2Cbbl%2Cappbbl%2Cappdate%2Cversion&%24limit=1000",
+      "final_url": "https://data.cityofnewyork.us/resource/64uk-42ks.json?borough=QN&block=7334&%24select=borough%2Cblock%2Clot%2Caddress%2Czonedist1%2Czonedist2%2Coverlay1%2Cspdist1%2Csplitzone%2Clotarea%2Clotfront%2Clotdepth%2Cbbl%2Cappbbl%2Cappdate%2Cversion&%24limit=1000",
+      "retrieved_at": "2026-10-10T19:05:33.169695+00:00",
+      "status": 200,
+      "last_modified_header": "Mon, 24 Aug 2026 20:20:51 GMT"
+    },
+    {
+      "path": "build_geometry.py",
+      "source_file": "build_geometry.py",
+      "bytes": 5626,
+      "sha256": "408d329fb58abd6ce7291020a8a38fe4c7fc37f5a4e974bc8151cc41a0bd64de",
+      "note": "Original research calculation/diagram code; not an official document."
+    },
+    {
+      "path": "geometry-calculations.json",
+      "source_file": "derived/geometry-calculations.json",
+      "bytes": 2843,
+      "sha256": "31f1d4bfee60640727d74248b33da446e491d9871c571726f43a5e3907ad2762",
+      "note": "Derived GIS calculations. Measurement basis is not a survey."
+    },
+    {
+      "path": "site-boundary-diagram.png",
+      "source_file": "derived/site-boundary-diagram.png",
+      "bytes": 185575,
+      "sha256": "c2c9ae3f1b49d5fd4e23d1ccfb4121e5baab32163f7e6897bfed638675a1c348",
+      "note": "Derived GIS illustration, inspected visually; not a legal plan."
+    },
+    {
+      "path": "page-images/pw1-guide-page14.png",
+      "source_file": "renders/pw1-guide-page14.png",
+      "bytes": 414476,
+      "sha256": "36223a16944ce6b929c3967fc8317689b04959758fb19a9ecc071fce2685cf1e",
+      "note": "Raster rendering/crop of the corresponding official PDF; original PDF included."
+    },
+    {
+      "path": "page-images/zr-23-344-page2.png",
+      "source_file": "renders/zr-23-344-page2.png",
+      "bytes": 222663,
+      "sha256": "d663884e9225470909c92bbcbb1f398742382f4b04cd1bd0917a778da95996da",
+      "note": "Raster rendering/crop of the corresponding official PDF; original PDF included."
+    },
+    {
+      "path": "page-images/taxmap_40733420210729120533_0.png",
+      "source_file": "renders/taxmap_40733420210729120533_0.png",
+      "bytes": 404620,
+      "sha256": "3c1336f3402f2d1e9afbc68c6582671fcfca811645f8ea9397387a37ce4f36db",
+      "note": "Raster rendering/crop of the corresponding official PDF; original PDF included."
+    },
+    {
+      "path": "page-images/citymap_title.png",
+      "source_file": "renders/citymap_title.png",
+      "bytes": 913271,
+      "sha256": "6330082fdd7435017dcacfb293268c15c98c64d761910aaa2c2c4ef18bfdda38",
+      "note": "Raster rendering/crop of the corresponding official PDF; original PDF included."
+    },
+    {
+      "path": "page-images/citymap_site_detail.png",
+      "source_file": "renders/citymap_site_detail.png",
+      "bytes": 826729,
+      "sha256": "fd10739de153260954bc44445e3c93b668667ef20f9f77e8a5e2784c3789cea4",
+      "note": "Raster rendering/crop of the corresponding official PDF; original PDF included."
+    }
+  ]
+}

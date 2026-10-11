@@ -1,0 +1,53 @@
+{
+ "task_id": "M5-T155",
+ "material_commits": [
+  "17ebd08a (street areas, the site plan among its surroundings, the block close-up, the neighbourhood map)",
+  "59b55038 (rework 1: real-pack tests, labels only where they help, clipped viewports)",
+  "5d14c917 (rework 2: nothing drawn as street outside the data window)",
+  "c1d05fc0 (rework 3: the compact summary frame)",
+  "3619744e (the producer's returns as its report)",
+  "4d9aef34 (corrections after review: subject above the existing building, neutral gaps, label room, helpers in context_scene.py, clean wide frames)",
+  "b7401e53 (polish: the subject marker's label, the wide block close-up fills its frame)",
+  "d330a3f2 (the corrections and polish returns in its report)"
+ ],
+ "claim_seam_head": "f68c60267c983c756f314c2b03628279a1bfc63a",
+ "files_changed": [
+  "project-control/reports/M5-T155-producer-report.md",
+  "services/api/app/drawings/kit/styles.py",
+  "services/api/app/drawings/maps/__init__.py",
+  "services/api/app/drawings/maps/adapter.py",
+  "services/api/app/drawings/maps/block_map.py",
+  "services/api/app/drawings/maps/context_scene.py",
+  "services/api/app/drawings/maps/model.py",
+  "services/api/app/drawings/maps/neighbourhood_map.py",
+  "services/api/app/drawings/maps/site_context_plan.py",
+  "services/api/app/drawings/maps/street_areas.py",
+  "services/api/tests/drawings/maps/context_support.py",
+  "services/api/tests/drawings/maps/test_context_adapter.py",
+  "services/api/tests/drawings/maps/test_context_maps.py",
+  "services/api/tests/drawings/maps/test_site_context_plan.py",
+  "services/api/tests/drawings/maps/test_street_areas.py"
+ ],
+ "what_did_not_change": "location_map.py and zoning_map.py and their snapshots unchanged; no law drawn (no yard, corner area, setback, coverage or building position); no package.",
+ "known_limits": [
+  "No city-scale overview map and no aerial photograph yet (backlog DB-228).",
+  "The ten-second test with a real architect is not run (it needs a person)."
+ ],
+ "checks_at_material_head": [
+  "CI at 6c8c9f7d: all 46 checks success (CI runs 38097919683 pull request and 38097916934 push: web-e2e with the whole Playwright suite, api, control-plane, dependency security; secret-scan and context-budget success); reviewers' focused runs at 6c8c9f7d: 5097 passed, 6 skipped (code), 4482 passed (QA); overflow check n = 0 on the true-size print."
+ ],
+ "requirements": {
+  "D-090-R843": [
+   "The site plan shows the lot, its neighbours and buildings, streets with names and mapped widths, north arrow, a real scale bar, the lot's edge lengths, a legend of only what is drawn, and returns its sources and dates; a missing layer gives Unavailable with its reason, never a partial picture: services/api/tests/drawings/maps/test_site_context_plan.py: test_s2_has_north_arrow_scale_bar_legend_title_and_subtitle, test_s5_caption_names_each_source_and_its_date, test_s6_a_missing_needed_layer_gives_unavailable. Yards and setbacks are not drawn: the engine does not produce them yet (ruling Y6; backlog DB-227)."
+  ],
+  "D-090-R936": [
+   "The site drawing names what it is ('Site plan: the lot among its neighbours') and shows the lot among its surroundings, rotated to the Northern Boulevard frontage: services/api/tests/drawings/maps/test_site_context_plan.py: test_s2_rotated_to_the_frontage_with_grid_north_noted, test_s2_streets_are_named_with_their_mapped_widths; the report as the real website received it from the real route on the preview built from the candidate head 6c8c9f7d, printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-w22g/ (report.pdf, 9 A4 pages at true size; overflow check n = 0; page-N.png), pages 1 and 3."
+  ],
+  "D-090-R937": [
+   "The neighbourhood map (north-up street network, lot marked) and the block close-up: services/api/tests/drawings/maps/test_context_maps.py: test_s3_neighbourhood_shows_the_street_network_with_the_lot_marked, test_s3_block_marks_only_the_subject_and_names_the_streets, test_s4_caption_is_returned_with_dates; the report as the real website received it from the real route on the preview built from the candidate head 6c8c9f7d, printed by apps/web/scripts/print-report-pdf.mjs: /root/project/lanes-runtime/owner-docs/session-2026-10-10a/print-w22g/ (report.pdf, 9 A4 pages at true size; overflow check n = 0; page-N.png), page 2."
+  ],
+  "D-090-R938": [
+   "Coloured, labelled drawings at standard scales, compared by the visual review with the competitor's location page (project-control/reports/M5-T155-reviews.md); labels at least 7 pt with no overlaps: services/api/tests/drawings/maps/test_context_maps.py: test_s4_fits_and_every_label_is_at_least_7pt_with_no_overlaps."
+  ]
+ }
+}

@@ -102,8 +102,20 @@ def _answers_table(results: Mapping) -> raw:
     )
 
 
-def _summary_block(results: Mapping, env) -> raw:
+def _summary_block(results: Mapping, env, site_context_plan) -> raw:
     answers = el("div", _answers_table(results), class_="summary-answers")
+    # When the surroundings are available, page type 1's small site figure is the
+    # COMPACT summary frame of the site context plan (ruling Y10), beside the answers
+    # as in wave 21 so the decision summary fits its first printed page.
+    if site_context_plan is not None and site_context_plan.is_drawing:
+        # Page 1's thumbnail carries a SHORT caption that fits its column; the full
+        # sources-and-dates caption is on the site plan of the 'What constrains the
+        # design?' sheet and on the evidence page (rework 2 fix 1).
+        plan = el("figure",
+                  raw(site_context_plan.svg or ""),
+                  el("figcaption", "The lot among its neighbours (city map; not surveyed)."),
+                  class_="summary-figure")
+        return el("div", answers, plan, class_="summary")
     site_plan = drawings_embed.embed_summary_site_plan(results, env=env)
     if site_plan.is_drawing:
         plan = figure(
@@ -158,13 +170,14 @@ def _coverage_block(results: Mapping, maps_present: bool) -> raw:
     return el("div", el("h3", "What this report covers"), *lines, class_="coverage")
 
 
-def render(results: Mapping, ident: Mapping, *, maps_present: bool = False, env=None) -> str:
+def render(results: Mapping, ident: Mapping, *, maps_present: bool = False,
+           site_context_plan=None, env=None) -> str:
     worked = readers.worked_buildings(results)
     children = [
         _property_heading(ident),
         el("p", labels.STANDING_LABEL, class_="standing-label"),
         el("h2", QUESTION),
-        _summary_block(results, env),
+        _summary_block(results, env, site_context_plan),
     ]
     estimate = _apartment_estimate(worked)
     if estimate is not None:

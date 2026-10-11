@@ -151,11 +151,35 @@ def embed_floor_stack(alternative: Mapping, *, env=None) -> Embedded:
     return _call(kit, "render_floor_stack", alternative, env, _FLOOR_STACK_UNAVAILABLE)
 
 
-def embed_map(fn_name: str, map_context: Mapping, *, env=None) -> Embedded:
-    """A location or zoning map at the report frame."""
+_MAP_UNAVAILABLE = "This map is not shown here."
+
+
+def embed_map(
+    fn_name: str, map_context: Mapping, *, layers: tuple[str, ...], frame: str = "report", env=None
+) -> Embedded:
+    """A site-context, block or neighbourhood map, captioned in plain words with a
+    short "Sources: ..." line (the layers it shows, each with its edit date once)
+    and the drawing's own notes (:mod:`.map_caption`, rulings Y7/X6). ``frame`` is
+    ``"report"`` (the full-size plan) or ``"summary"`` (the compact page-1 /
+    location-sheet thumbnail). An Unavailable, missing keyword or kit failure prints
+    one short line, never an error (S6)."""
     from app.drawings import maps
 
-    return _call(maps, fn_name, map_context, env, "This map is not shown here.")
+    from . import map_caption
+
+    fn = getattr(maps, fn_name, None)
+    if fn is None or not _frame_supported(fn):
+        return Embedded(short_line=_MAP_UNAVAILABLE)
+    try:
+        result = fn(map_context, frame=frame, env=env)
+    except Exception:  # noqa: BLE001 - any kit failure means no map, never an error page
+        return Embedded(short_line=_MAP_UNAVAILABLE)
+    svg = getattr(result, "svg", None)
+    if svg is None:
+        reason = getattr(result, "reason", None)
+        return Embedded(short_line=str(reason) if reason else _MAP_UNAVAILABLE)
+    caption = map_caption.figure_caption(result, map_context, layers)
+    return Embedded(svg=size_svg_to_points(svg), caption=caption)
 
 
 def allowance_bar_chart_svg(

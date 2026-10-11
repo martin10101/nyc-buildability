@@ -10,6 +10,7 @@ from __future__ import annotations
 
 __all__ = [
     "LAW_SITE_TITLE",
+    "map_source_title",
     "readable_fact_title",
     "readable_rule_status",
     "readable_rule_title",
@@ -19,6 +20,20 @@ __all__ = [
 ]
 
 LAW_SITE_TITLE = "New York City Zoning Resolution (official text)"
+
+# Readable, plain-words titles for the site-context map layers (rulings Y7, X6).
+# The caption shows these, never the dataset id, the "via NYC Open Data" phrase or
+# the terms-of-use text the raw attribution carries.
+_MAP_SOURCE_TITLES = {
+    "tax_lots": "NYC City Planning, MapPLUTO",
+    "building_footprints": "NYC building footprints",
+    "streets": "NYC Digital City Map street centre lines",
+}
+
+
+def map_source_title(layer_key: object) -> str:
+    """The readable source title for a site-context map layer."""
+    return _MAP_SOURCE_TITLES.get(str(layer_key), "Recorded city data")
 
 # Known draft rule ids -> readable titles. An unknown id falls back to a generic
 # title so no raw id (which can carry build words) reaches the reader.

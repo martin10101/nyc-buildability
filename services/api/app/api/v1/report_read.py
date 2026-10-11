@@ -20,10 +20,13 @@ selection) is read from the emitted results document. The street address is NOT
 in that document and is not reachable on this reuse path without a second call,
 so the header uses the borough/block/lot display (producer report, M5-T151).
 
-MAPS. The map connectors the map document needs (zoning features, building
-footprints) are not produced on the results-inputs path, so no map document is
-built here and the report is produced without maps (never an error page); the
-site page states that briefly and the coverage inventory does not claim maps.
+MAPS (M5-T156). The report asks the injected map-context provider
+(:func:`get_report_map_context_provider`) for the SAME lot as the results body.
+When it returns a 1.1.0 map document whose subject outline matches the results
+lot outline (ruling Y5), the report shows the lot among its surroundings; when it
+returns ``None`` (the default live provider is gated off) or a document that does
+not match, the report keeps today's lot-only plan and one short limitation line.
+A provider error never fails the report (the whole call is guarded).
 """
 
 from __future__ import annotations
@@ -37,6 +40,7 @@ from fastapi.responses import HTMLResponse, Response
 
 from app.drawings.report import build_report_html
 
+from .report_context import MapContextProvider, get_report_map_context_provider
 from .results_read import get_results_study_inputs_provider, post_results
 from .study_inputs import StudyInputsProvider
 
@@ -63,15 +67,30 @@ def _clean_address(raw: str | None) -> str | None:
     return trimmed
 
 
+def _map_context_for(
+    provide_map_context: MapContextProvider, bbl: str, correlation_id: str
+) -> dict | None:
+    """Ask the provider for this lot's map document. A provider error never fails
+    the report (ruling Y4 / S7): any exception yields no map document."""
+    try:
+        return provide_map_context(bbl, correlation_id or "")
+    except Exception:  # noqa: BLE001 - a map failure is never an error page
+        logger.warning("report_v1 map_context_failed correlation_id=%s", correlation_id)
+        return None
+
+
 @router.post("/properties/{bbl}/report", include_in_schema=False)
 async def post_report(
     request: Request,
     bbl: str,
     provide_inputs: StudyInputsProvider = Depends(get_results_study_inputs_provider),  # noqa: B008
+    provide_map_context: MapContextProvider = Depends(get_report_map_context_provider),  # noqa: B008
 ) -> Response:
     """Run the accepted engine chain for one BBL (via the results route) and
-    return the full report as HTML. Same flag, gating and refusals as the results
-    route; feature-flag gated OFF by default (INTERNAL_RESULTS_ENABLED)."""
+    return the full report as HTML, with the lot among its surroundings when the
+    map provider supplies a matching map document (ruling Y5). Same flag, gating
+    and refusals as the results route; feature-flag gated OFF by default
+    (INTERNAL_RESULTS_ENABLED)."""
     # Delegate the entire flag/gating/engine flow to the results route. Any
     # non-200 (404 flag-off, 422, 429, 503, 500) is returned verbatim.
     results_response = await post_results(request, bbl, provide_inputs)
@@ -82,7 +101,8 @@ async def post_report(
     address = _clean_address(request.query_params.get("address"))
     try:
         document = json.loads(bytes(results_response.body))
-        html = build_report_html(document, identity={"address": address})
+        map_context = _map_context_for(provide_map_context, bbl, correlation_id or "")
+        html = build_report_html(document, map_context=map_context, identity={"address": address})
     except Exception:
         logger.error("report_v1 render_failed correlation_id=%s", correlation_id)
         # Reuse the results route's typed internal-error refusal shape.
