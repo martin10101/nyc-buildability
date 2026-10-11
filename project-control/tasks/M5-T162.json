@@ -93,15 +93,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "The page-1 answer table still has no row for the legal unit limit and the page-1 lot-selection sentence is generic; both belong to the report v3 redesign (D-094 plan P-3) and stay out of scope.",
     "The report's other consumers (website report preview, the PDF print) read the same server HTML; no web file changes."
   ],
   "blockers": [],
   "created_at": "2026-10-11T09:31:14.105669+00:00",
-  "updated_at": "2026-10-11T10:18:38.903140+00:00",
+  "updated_at": "2026-10-11T10:18:41.320985+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
