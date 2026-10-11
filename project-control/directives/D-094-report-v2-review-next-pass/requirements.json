@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 99,
+ "requirement_count": 104,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T16:57:27+00:00",
+ "updated_at": "2026-10-11T18:13:13+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3105,6 +3105,161 @@
    "dependencies": [],
    "required_harness": "Owner updates name the next deliverable without a time estimate unless the owner asks.",
    "required_evidence": "This session's transcript and later updates.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R100",
+   "text": "'The Buildings Department's guidance' 'Does the program have that build in?' 'Published decisions same q': the owner asks whether the program has the Buildings Department's guidance and published decisions built in: answer plainly.",
+   "source_ref": "source-004-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A plain answer in chat.",
+   "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R101",
+   "text": "'Past permit filings on the same lot: these often show what an examiner objected to before.' 'We found 1 while working but what about in real life situation when a client will check a address how will it work': the owner asks how past permit filings work for a real client address (not only the benchmark found during the work): answer plainly with what exists and what does not.",
+   "source_ref": "source-004-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A plain answer in chat.",
+   "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R102",
+   "text": "'Should we start the law library right away?' 'Did u tell the session handoff to work on that in next season ?': answer to I1: start the zoning-law library in the next session, as a second line of work beside the report (every section reachable from the rules the benchmark uses, cross-references followed, a list of sections the program handles and does not, and a pitfall list from official guidance); the handoff tells the next session so.",
+   "source_ref": "source-004-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff's next actions include the library lane; a task is contracted for it.",
+   "required_evidence": "docs/SESSION_HANDOFF.md and the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R103",
+   "text": "'feed the results.' 'Each result built on them would say it rests on the architect's value, so nobody mistakes it for a city record.' 'That's question I3 in your file did u record that for the build?': answer to I3: record for the build that architect-entered facts (lot area, dimensions, zoning-lot grouping, existing floor area) feed the results right after the first worked option, each result labelled as resting on the architect's value so nobody mistakes it for a city record; then the survey reader is finished with real surveys.",
+   "source_ref": "source-004-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The plan holds a task for it after the first worked option; results built on entered values carry the label.",
+   "required_evidence": "The work order and the ledger.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R104",
+   "text": "'That's question I2 in your file' 'So please add that on this it should spone up agents': answer to I2: allow up to 8 helpers at once when the extra ones only read and research (at most 3 building, never sharing files); the next session spins up research agents (for the law library and the rules of the remaining options).",
+   "source_ref": "source-004-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No more than 3 builders and no more than 8 helpers at once; every helper beyond 5 is read-only research.",
+   "required_evidence": "Session notes and dispatch records.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",

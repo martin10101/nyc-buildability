@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T16:57:27+00:00",
+ "updated_at": "2026-10-11T18:13:13+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -120,10 +120,15 @@
   "D-094-R096",
   "D-094-R097",
   "D-094-R098",
-  "D-094-R099"
+  "D-094-R099",
+  "D-094-R100",
+  "D-094-R101",
+  "D-094-R102",
+  "D-094-R103",
+  "D-094-R104"
  ],
- "requirements_id_digest_sha256": "e79aaecf0a14e461e1eee8158bcb042e952d9bbfc62826be4f6a990676fdc204",
- "requirements_content_digest_sha256": "ea3139c1c0f61d4158f2d45636ad1c99cacd02915cabfa222ec513e4e9a78257",
+ "requirements_id_digest_sha256": "e5bfac6a7dc46f654431a44d480c4f7e95a3ddd3b294b574c35ee5d0a3fb8563",
+ "requirements_content_digest_sha256": "07370032196f901171bea69a23eb96c54e028c70cc766e420ec2589d5547728e",
  "sources": [
   {
    "file": "source-001.md",
@@ -147,11 +152,20 @@
    "recorded_at": "2026-10-11T16:57:27+00:00",
    "content_digest_sha256": "593b8a49f103b1136cc73c02ff79e35f5b3b992b381a1f50d87fd1a8912ae91f",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-004-amendment.md",
+   "kind": "amendment",
+   "sequence": 4,
+   "recorded_at": "2026-10-11T18:13:13+00:00",
+   "content_digest_sha256": "299968c21747ca6e6df49fac37e6b28529502311d9da1e7816771b85b2516249",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
   "source-002-amendment.md",
-  "source-003-amendment.md"
+  "source-003-amendment.md",
+  "source-004-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -230,6 +244,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-003 (the owner's answer to question H1 and the instruction to stop giving time estimates) and requirements D-094-R087 to R099, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T18:13:13+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-004 (the owner's answers to I1, I2 and I3 and two questions about built-in sources) and requirements D-094-R100 to R104, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
