@@ -180,7 +180,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -188,8 +188,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "An index entry is not the instrument; nothing here establishes the zoning lot (NB-01 stays access_blocked).",
     "Plan P-2 decided 'a reminder only; no records check' and the plan lists ACRIS as 'flag only, per P-2': this task reads index metadata to make the reminder property-specific and never concludes the zoning lot or computes transfers (reading recorded for the directive check).",
@@ -198,7 +198,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T04:59:18.302039+00:00",
-  "updated_at": "2026-10-11T04:59:18.687714+00:00",
+  "updated_at": "2026-10-11T05:00:25.423497+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -244,5 +244,14 @@
     "python3 tools/research_record_check.py --check",
     "python services/api/app/rules/review_register/render_review_register.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T05:00:25.423372+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; part A builder dispatched (connector, classifier, fixtures, seam); part B after M5-T157"
+    }
+  ]
 }
