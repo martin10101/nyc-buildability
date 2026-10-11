@@ -108,7 +108,8 @@
     "project-control/reports/M5-T158-producer-report.md",
     "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
     "services/api/tests/api/test_results_read_api.py",
-    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx"
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "docs/research/evidence-records/NB-05-special-density-area.json"
   ],
   "forbidden_paths": [
     "services/api/app/rules/rulesets/",
@@ -262,6 +263,11 @@
       "at": "2026-10-11T06:47:31+00:00",
       "actor": "orchestrator",
       "change": "Added three consumer test files that pin the pre-DB-232 benchmark output (the committed three-way fixture through the engine entry; the live route against the committed first-option blocks; the panel's shared-condition count). The builder found them, left them unedited (out of scope) and reported the one-line remedy for each. No row binding changes."
+    },
+    {
+      "at": "2026-10-11T07:54:05+00:00",
+      "actor": "orchestrator",
+      "change": "Added NB-05: part B changed three of its linked code files (result_way_bridge.py, result_ways.py, result_way_engine_bridge.py: the unit limit's zoning-lot condition becomes the property-specific one in two states), so the record reads code_current False; D-093 requires the record to be revised with the code that changes its linked logic (orchestrator writes revision 3; G1 re-reviews). Found by the M0-T192 builder."
     }
   ]
 }
