@@ -4,8 +4,8 @@ Moved out of :mod:`.readers` so the document reader stays general. This module
 holds:
 
 * the marker phrase that identifies the ACRIS zoning-lot-index condition (kept in
-  step with ``app.scenario.three_answers.result_way_conditions.ZONING_LOT_INDEX_MARKER``
-  by a test, so the two cannot drift apart);
+  step with the scenario engine's ``ZONING_LOT_INDEX_MARKER`` (the three-answers
+  conditions module) by a test, so the two cannot drift apart);
 * :func:`zoning_lot_basis` - the ``(assumption, settled_by)`` of the shown figure's
   zoning-lot condition (re-exported by :mod:`.readers` as a compatibility facade);
 * :func:`zoning_lot_open_item` - the "Zoning lot" open item built from that basis;

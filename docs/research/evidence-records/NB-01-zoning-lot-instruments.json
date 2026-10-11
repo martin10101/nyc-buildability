@@ -280,7 +280,7 @@
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
    "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
    "services/api/app/drawings/report/readers.py": "91f607aaca9d99bab66be4b0112ff94d90a945622785df95416846f7bfb783a1",
-   "services/api/app/drawings/report/zoning_lot_item.py": "f3595523d30105fcb6a261859bedfb56ff8a61923851da54faefc52ef1dbab59"
+   "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52"
   },
   "worked_example": {
    "inputs": "Tax lots 1 and 70; three 2022 instruments indexed against both; DOB 421803891's text.",
