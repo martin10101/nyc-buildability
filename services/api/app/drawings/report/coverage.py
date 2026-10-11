@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import readers
+from . import readers, unit_limit_text
 
 __all__ = [
     "IN_REPORT",
@@ -69,13 +69,22 @@ def coverage_entries(results: Mapping, *, maps_present: bool = False) -> list[di
     )
     # F reads from the document: 'Partly' with a note naming the shown limit's program when at
     # least one legal dwelling-unit limit is shown (M5-T157 made the standard-residence limit a
-    # Conditional ceiling); 'Not yet' only when none is shown.
-    shown_limit_programs = readers.shown_legal_unit_limit_programs(results)
-    f_state = (
-        (PARTLY, f"the limit for {', '.join(shown_limit_programs)} is shown as a conditional "
-                 "ceiling")
-        if shown_limit_programs else (NOT_YET, "no legal unit limit is shown")
-    )
+    # Conditional ceiling); 'Not yet' only when none is shown. "conditional ceiling" is said only
+    # for a limit whose own state is conditional; any other shown limit is named plainly.
+    shown_limits = unit_limit_text.shown_legal_unit_limits(results)
+    if shown_limits:
+        conditional = [row["program"] for row in shown_limits if row["conditional"]]
+        plain = [row["program"] for row in shown_limits if not row["conditional"]]
+        parts: list[str] = []
+        if conditional:
+            parts.append(
+                f"the limit for {', '.join(conditional)} is shown as a conditional ceiling"
+            )
+        if plain:
+            parts.append(f"the limit for {', '.join(plain)} is shown")
+        f_state = (PARTLY, "; ".join(parts))
+    else:
+        f_state = (NOT_YET, "no legal unit limit is shown")
     states = {
         "A": (IN_REPORT, ""),
         "B": (IN_REPORT, ""),

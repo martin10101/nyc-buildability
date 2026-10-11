@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import formatting, labels
+from . import formatting, labels, unit_limit_text
 
 __all__ = [
     "answer_block",
@@ -33,7 +33,6 @@ __all__ = [
     "present_values",
     "provenance",
     "recorded_lot_area_text",
-    "shown_legal_unit_limit_programs",
     "withheld_values",
     "worked_buildings",
     "zoning_line",
@@ -277,7 +276,6 @@ _EFFECTS = {
     "coverage": "The square-foot coverage figure is withheld.",
     "rear_yard": "The rear yard is not known beyond the corner area.",
     "placement": "Where the building sits on the lot is not worked out.",
-    "legal_unit_limit": "No legal apartment limit is shown.",
     "setback": "The setback above the base is not worked out.",
     "street_wall": "The street wall is not checked.",
     "parking": "Parking, loading and bicycle requirements are not checked.",
@@ -315,114 +313,6 @@ def _not_checked_category(text: str) -> str | None:
     if "parking" in low or "loading" in low or "bicycle" in low:
         return "parking"
     return None
-
-
-# "Legal dwelling-unit limit, <program>…" is the shape of every legal dwelling-unit limit's own
-# label; the program (e.g. "standard residences", "qualifying senior housing") is read from it.
-_LIMIT_LABEL_PREFIX = "Legal dwelling-unit limit, "
-
-
-def _limit_program(label: object) -> str | None:
-    """The program a legal dwelling-unit limit is for, read from its own label
-    (``"Legal dwelling-unit limit, <program>…"``) and cut before the derivation
-    or number part. ``None`` when the label is absent or not in that form, so no
-    program is invented for a malformed value."""
-    text = str(label or "")
-    if not text.startswith(_LIMIT_LABEL_PREFIX):
-        return None
-    rest = text[len(_LIMIT_LABEL_PREFIX):]
-    for separator in (":", "("):
-        index = rest.find(separator)
-        if index != -1:
-            rest = rest[:index]
-    rest = rest.strip()
-    return rest or None
-
-
-def _join_programs(programs: list[str], conjunction: str) -> str:
-    """Join program names as plain English: ``"a"``, ``"a or b"``, ``"a, b or c"``."""
-    names = [name for name in programs if name]
-    if not names:
-        return ""
-    if len(names) == 1:
-        return names[0]
-    return ", ".join(names[:-1]) + f" {conjunction} " + names[-1]
-
-
-def _as_label(program: str | None, fallback: str) -> str:
-    """A program as a sentence-leading label (first letter capitalised), or the
-    fallback when no program could be read from the value's label."""
-    if not program:
-        return fallback
-    return program[:1].upper() + program[1:]
-
-
-def shown_legal_unit_limit_programs(results: Mapping) -> list[str]:
-    """The programs of the legal dwelling-unit limits that are SHOWN - read only
-    from values actually present in an answer's shown values (never a truthiness
-    test on an optional block), each named from its own label. Empty when none is
-    shown, which includes an absent or malformed answer block."""
-    programs: list[str] = []
-    for name in ANSWER_NAMES:
-        for row in present_values(answer_block(results, name)):
-            if "legal_unit_limit" not in str(row.get("key") or ""):
-                continue
-            program = _limit_program(row.get("label"))
-            if program and program not in programs:
-                programs.append(program)
-    return programs
-
-
-def _withheld_legal_unit_limits(results: Mapping) -> list[dict]:
-    """The withheld legal dwelling-unit limit rows across the answers, in document
-    order."""
-    rows: list[dict] = []
-    for name in ANSWER_NAMES:
-        for row in withheld_values(answer_block(results, name)):
-            if "legal_unit_limit" in str(row.get("key") or ""):
-                rows.append(row)
-    return rows
-
-
-def _legal_unit_limit_item(results: Mapping) -> dict | None:
-    """The 'Legal apartment limit' open item, built from the document: each
-    withheld limit named by its program as not known, a shown limit said to be a
-    conditional ceiling for its program (the number stays on the derivation table),
-    the reason and resolver kept per program. ``"No legal apartment limit is
-    shown."`` only when none is shown. ``None`` when none is withheld (no item)."""
-    withheld = _withheld_legal_unit_limits(results)
-    if not withheld:
-        return None
-    shown = shown_legal_unit_limit_programs(results)
-    withheld_programs = [_limit_program(row.get("label")) or row.get("label") for row in withheld]
-    withheld_programs = [str(p) for p in withheld_programs if p]
-    if shown:
-        effect = (
-            "The legal apartment limit is shown as a conditional ceiling for "
-            + _join_programs(shown, "and")
-        )
-        if withheld_programs:
-            effect += "; it is not known for " + _join_programs(withheld_programs, "or")
-        effect += "."
-    else:
-        effect = _EFFECTS["legal_unit_limit"]
-    reason_parts: list[str] = []
-    resolve_parts: list[str] = []
-    for row in withheld:
-        label = _as_label(_limit_program(row.get("label")), "A legal dwelling-unit limit")
-        reason = str(row.get("reason") or "").strip()
-        resolver = str(row.get("resolved_by") or "").strip()
-        reason_parts.append(f"{label}: {reason}" if reason else label)
-        if resolver:
-            resolve_parts.append(f"{label}: {resolver}")
-    return {
-        "category": "legal_unit_limit",
-        "title": "Legal apartment limit",
-        "effect": effect,
-        "reason": " ".join(reason_parts),
-        "resolves": " ".join(resolve_parts) or None,
-        "status_label": withheld[0]["status_label"],
-    }
 
 
 def open_items(results: Mapping) -> list[dict]:
@@ -464,7 +354,7 @@ def open_items(results: Mapping) -> list[dict]:
             if category == "legal_unit_limit":
                 continue
             put(category, row["label"], row["reason"], row["resolved_by"], row["status_label"])
-    limit_item = _legal_unit_limit_item(results)
+    limit_item = unit_limit_text.legal_unit_limit_item(results)
     if limit_item is not None:
         by_category["legal_unit_limit"] = limit_item
     coverage = _coverage_block(results)

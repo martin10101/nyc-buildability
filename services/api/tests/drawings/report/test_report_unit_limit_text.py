@@ -3,7 +3,9 @@ limits' coverage line follow the results document (after M5-T157 made the
 standard-residence limit a Conditional ceiling).
 
 One test per input state (benchmark; all withheld; none withheld; only one
-withheld; a malformed/absent allowance block) plus the S5 guard. Every expected
+withheld; a malformed/absent allowance block) plus the S5 guard, and one per state
+of a shown limit's own way (conditional; a non-conditional way; no value_states
+entry) proving 'conditional' is read from the state, not defaulted. Every expected
 reason and resolver is read from the document, never retyped from a program run;
 the composed effect and coverage note follow the packet's scenarios S1-S5.
 """
@@ -15,7 +17,7 @@ import json
 import re
 from pathlib import Path
 
-from app.drawings.report import build_report_html, coverage, readers
+from app.drawings.report import build_report_html, coverage, readers, unit_limit_text
 
 _FIXTURES = (
     Path(__file__).resolve().parents[5]
@@ -98,7 +100,7 @@ def test_s2_every_limit_withheld_says_none_shown() -> None:
         "resolved_by": "Working the standard-residence limit and checking it against an example.",
         "zr_sections": ["ZR 23-52"],
     }
-    assert readers.shown_legal_unit_limit_programs(doc) == []
+    assert unit_limit_text.shown_legal_unit_limit_programs(doc) == []
     item = _legal_item(doc)
     assert item is not None
     assert item["effect"] == _EFFECT_NONE
@@ -111,7 +113,7 @@ def test_s3_no_withheld_means_no_open_item() -> None:
     states = _fa_states(doc)
     del states[_AFFORDABLE]
     del states[_SENIOR]
-    assert readers.shown_legal_unit_limit_programs(doc) == ["standard residences"]
+    assert unit_limit_text.shown_legal_unit_limit_programs(doc) == ["standard residences"]
     assert _legal_item(doc) is None
     # a shown limit still reads 'Partly' in the coverage list (S4), not 'Not yet'.
     assert _coverage_f(doc)["state"] == coverage.PARTLY
@@ -140,13 +142,13 @@ def test_malformed_or_absent_allowance_block_is_not_shown() -> None:
     # a malformed answer block (not a mapping) must read as NOT shown and give no open item,
     # without a truthiness test on the optional block.
     doc["answers"]["floor_area_allowance"] = "malformed"
-    assert readers.shown_legal_unit_limit_programs(doc) == []
+    assert unit_limit_text.shown_legal_unit_limit_programs(doc) == []
     assert _legal_item(doc) is None
     assert _coverage_f(doc)["state"] == coverage.NOT_YET
 
     absent = benchmark()
     del absent["answers"]["floor_area_allowance"]
-    assert readers.shown_legal_unit_limit_programs(absent) == []
+    assert unit_limit_text.shown_legal_unit_limit_programs(absent) == []
     assert _legal_item(absent) is None
 
 
@@ -161,10 +163,54 @@ def test_s4_coverage_partly_names_the_shown_limit_as_conditional() -> None:
     assert _COVERAGE_WITHHELD not in entry["note"]
 
 
+# ------------------------------------------------- 'conditional' is read from the own state
+# "conditional" must come from the shown limit's own state (value_states[<key>].way), not a
+# default. One test per state of the standard limit's way, for both the effect and the note.
+_EFFECT_CONDITIONAL = (
+    "The legal apartment limit is shown as a conditional ceiling for standard residences; "
+    "it is not known for qualifying affordable housing or qualifying senior housing."
+)
+_EFFECT_PLAIN = (
+    "The legal apartment limit is shown for standard residences; it is not known for "
+    "qualifying affordable housing or qualifying senior housing."
+)
+_NOTE_CONDITIONAL = "the limit for standard residences is shown as a conditional ceiling"
+_NOTE_PLAIN = "the limit for standard residences is shown"
+
+
+def test_way_conditional_says_conditional_ceiling() -> None:
+    doc = benchmark()
+    assert _fa_states(doc)[_STANDARD]["way"] == "conditional"  # the benchmark state
+    assert _legal_item(doc)["effect"] == _EFFECT_CONDITIONAL
+    assert _coverage_f(doc)["note"] == _NOTE_CONDITIONAL
+
+
+def test_way_non_conditional_is_shown_plainly() -> None:
+    doc = benchmark()
+    _fa_states(doc)[_STANDARD]["way"] = "settled"  # shown, but not conditional
+    item = _legal_item(doc)
+    assert item["effect"] == _EFFECT_PLAIN
+    assert "conditional ceiling" not in item["effect"]
+    entry = _coverage_f(doc)
+    assert entry["note"] == _NOTE_PLAIN
+    assert "conditional" not in entry["note"]
+
+
+def test_no_value_states_entry_is_shown_plainly() -> None:
+    doc = benchmark()
+    del _fa_states(doc)[_STANDARD]  # shown value, but no state to read - not conditional
+    item = _legal_item(doc)
+    assert item["effect"] == _EFFECT_PLAIN
+    assert "conditional ceiling" not in item["effect"]
+    entry = _coverage_f(doc)
+    assert entry["note"] == _NOTE_PLAIN
+    assert "conditional" not in entry["note"]
+
+
 # --------------------------------------------------------------------------- S5 guard
 def test_s5_guard_no_denial_while_a_limit_is_shown() -> None:
     doc = benchmark()
-    assert readers.shown_legal_unit_limit_programs(doc)  # a limit is shown
+    assert unit_limit_text.shown_legal_unit_limit_programs(doc)  # a limit is shown
     html = build_report_html(doc)
     text = _visible_text(html)
     assert _EFFECT_NONE not in text

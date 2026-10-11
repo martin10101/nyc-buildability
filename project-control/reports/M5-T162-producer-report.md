@@ -120,3 +120,54 @@ stays unresolved: affordable and senior remain not known; the standard limit sta
   run in CI on the accepted head (R639).
 - Qualifying affordable and qualifying senior dwelling-unit limits remain not-worked program gaps; this
   task only fixes wording and does not compute them.
+
+## Rework 1 (scope correction 1; base df174f25)
+
+Correction: say "conditional" only for a limit whose OWN state is conditional, not by default; and
+move the legal-limit helpers out of readers.py into a new module.
+
+What changed:
+- New module `services/api/app/drawings/report/unit_limit_text.py` holds `_limit_program`,
+  `_join_programs`, `_as_label`, `shown_legal_unit_limits` (new), `shown_legal_unit_limit_programs`,
+  `_withheld_legal_unit_limits`, `legal_unit_limit_item`, and the `NO_LIMIT_SENTENCE` constant.
+- `shown_legal_unit_limits(results)` returns `{"program", "conditional"}` per shown limit, reading
+  `conditional` only from the value's own `value_states[<key>].way == "conditional"` (the same check
+  the web journey test uses). An absent, malformed or other state is not conditional - no default.
+  No truthiness test on an optional fact; the only booleans are `if shown`, `if conditional`,
+  `if plain`, `if limit_item is not None`, `isinstance(...)` guards.
+- The effect and the coverage "F" note split shown limits into conditional vs plain; "conditional
+  ceiling" is said only for the conditional ones, others are named plainly ("is shown for <program>").
+- `readers.py` keeps only thin wiring: `open_items` calls `unit_limit_text.legal_unit_limit_item`; the
+  moved helpers and the `legal_unit_limit` entry of `_EFFECTS` are gone; readers stays a document reader.
+- `coverage.py` reads `unit_limit_text.shown_legal_unit_limits` directly (switched off readers).
+
+Import cycle: avoided. `readers` imports `unit_limit_text` at module load; `unit_limit_text` reaches
+back into `readers` (`ANSWER_NAMES`, `answer_block`, `present_values`, `withheld_values`) only inside
+its functions (deferred `from . import readers`), and reads `value_states` straight off the block, so
+neither module imports the other at top in both directions. `coverage` and the tests import
+`unit_limit_text` directly. No module reads another's private names across the boundary.
+
+New texts (non-conditional way, and no `value_states` entry - both the same):
+- Effect: "The legal apartment limit is shown for standard residences; it is not known for qualifying
+  affordable housing or qualifying senior housing."
+- Coverage note: "the limit for standard residences is shown".
+Benchmark (standard way conditional) is byte-identical to rework 0: effect "...shown as a conditional
+ceiling for standard residences; ..."; coverage note "the limit for standard residences is shown as a
+conditional ceiling".
+
+Three new state tests in `test_report_unit_limit_text.py` (each asserts the effect AND the coverage
+note): `test_way_conditional_says_conditional_ceiling`, `test_way_non_conditional_is_shown_plainly`
+(way "settled"), `test_no_value_states_entry_is_shown_plainly`.
+
+Checks (direct exit codes; lanes venv, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider):
+- `cd services/api && python -m ruff check .` -> All checks passed! RUFF_EXIT=0
+- `python -m pytest -q tests/drawings/report/test_report_unit_limit_text.py -v` -> 10 passed, NEWTEST_EXIT=0
+- `python -m pytest -q tests/drawings tests/cad tests/journey` -> 1658 passed, 6 skipped, SUITE_EXIT=0
+- `python3 tools/modularity_check.py --check` -> MOD_EXIT=0. source_lines: readers.py 505,
+  unit_limit_text.py 137, coverage.py 114 - all below the 600 warn line.
+
+Mutation proof (restored; green rerun above): forced `"conditional": True` regardless of state in
+`shown_legal_unit_limits`. `test_way_non_conditional_is_shown_plainly` and
+`test_no_value_states_entry_is_shown_plainly` both FAILED - the effect gained "as a conditional
+ceiling" ("The legal apartment limit is shown as a conditional ceiling for standard residences; ...").
+Restored to `way == "conditional"`.
