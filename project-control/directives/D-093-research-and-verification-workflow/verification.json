@@ -977,18 +977,25 @@
     "D-093-R075"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "445a589539e7d55dabc4b135ff83dba59414b44b",
+   "reviewed_manifest_sha256": "762ff7d1da99bbae77245d57be29c3498ceb7e93d687cc4dbeefd659126d2688",
    "requirements": [
     {
      "id": "D-093-R075",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Governing-review selection is date-format-independent: at the frozen head `derive()` picks `max(enumerate(reviews), key=_review_sort_key)`, and `_review_sort_key` returns `(reviewed_revision, parsed-UTC-timestamp, index)` with `_parse_review_instant` mapping a date-only \"YYYY-MM-DD\" to 00:00 UTC \u2014 so the highest revision governs, ties by parsed time then list order, and a same-day date-only entry can never make a newer review read older (research_record_check.py blob 2fbd970c, lines 95-119, 513-534).",
+      "Malformed review dates are refused: `_validate_review` emits a structural error when `_parse_review_instant` is None, and `REVIEW_DATE_RE = ^\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?Z)?$` admits only a date or a UTC ...Z date-time (lines 90, 451-453); a non-Z offset (even +00:00) and a space separator are refused \u2014 a stricter-than-literal but non-weakening reading, matched by packet S3 and the tests.",
+      "Harness reproduced by me at the frozen head: `python3 tools/research_record_check.py --check` \u2192 exit 0, PASS, all six records NB-01..NB-06 read review_state=current; `python3 tools/test_research_record_check.py` \u2192 \"Ran 38 tests ... OK\" exit 0, including `test_nb01_case_date_only_higher_revision_governs` (timed rev-2 + date-only rev-3 reads current \u2014 the NB-01 shape R075 names) and the GoverningReview(4)/MalformedReviewDate(5) cases; G3/G4 reproduced the red/green mutation proving the test is load-bearing.",
+      "Stays open for later work: backlog DB-238 is still WATCH at the frozen head (docs/DISCOVERY_BACKLOG.md line 368) \u2014 its update is an orchestrator step at the merge seam, and the \"control-plane CI job passes\" clause is evidence at the wave's PR head; both are post-this-head/merge items outside this task's diff, so they stay open and are not this task's share to close.",
+      "Verifier's carry-forward condition met at 445a5895: the task's allowed-path files are identical to those verified at 5df3f09f (content identity 762ff7d1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (5 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M0-T192-DCV.md."
+     ],
+     "reviewed_sha": "445a589539e7d55dabc4b135ff83dba59414b44b"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T08:17:06+00:00"
   }
  ]
 }
