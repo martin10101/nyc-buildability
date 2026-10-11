@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 74,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T04:59:18+00:00",
+ "updated_at": "2026-10-11T05:27:04+00:00",
  "requirements": [
   {
    "id": "D-093-R001",
@@ -1198,7 +1198,8 @@
     "task_ids": [
      "D-093-BOOTSTRAP",
      "M0-T190",
-     "M5-T158"
+     "M5-T158",
+     "M5-T160"
     ],
     "task_types": [],
     "milestones": [],
@@ -1584,7 +1585,8 @@
      "D-093-BOOTSTRAP",
      "M0-T190",
      "M5-T157",
-     "M5-T158"
+     "M5-T158",
+     "M5-T160"
     ],
     "task_types": [],
     "milestones": [],

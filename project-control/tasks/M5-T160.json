@@ -1,0 +1,110 @@
+{
+  "task_id": "M5-T160",
+  "title": "D-094 P-6.0: research record NB-06 for 215-16 Northern Boulevard: street-wall location (ZR 23-431, 35-631(b)), the 23-433 setback trigger at or below the base height, and side yards in R6B - the constraints a placed building must respect",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Write evidence record NB-06 from the repository's law captures (and dated live fetches where a capture is missing): street-wall location along each frontage, the 23-433 setback trigger for a building at or below the base height, and R6B side-yard rules, so a later placement step can respect them or state what stays unresolved.",
+  "business_reason": "The owner's review asks for one meaningful spatial example: a footprint placed on the site with its relevant constraints (D-094 R043). The planner found the street-wall rule for R6B with C2-2 unresearched (DB-099) and no record for the setback trigger (work order P-6.0).",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11b/workorder-D094-presentation-draft.md",
+    "docs/research/zr-snapshots/v1/",
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "docs/research/evidence-records/README.md",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json"
+  ],
+  "outputs": [
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/README.md",
+    "project-control/reports/M5-T160-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T190"
+  ],
+  "allowed_paths": [
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/README.md",
+    "project-control/reports/M5-T160-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    ".github/",
+    ".claude/",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "lot 70 (R6B with a C2-2 overlay, corner of Northern Boulevard and 215 Place)",
+      "when": "the street-wall location rules are researched (ZR 23-431 and the Article III rule the overlay may bring, 35-631(b); backlog DB-099)",
+      "then": "the record names, from the law captures, where a street wall must sit along each frontage and which rule governs a building with or without commercial use, or names exactly what stays unresolved"
+    },
+    {
+      "id": "S2",
+      "given": "a building at or below the maximum base height",
+      "when": "the 23-433 setback rule is researched",
+      "then": "the record states, quoting the capture, whether any setback is required, with the condition (street width class from the D-052 policy) it depends on"
+    },
+    {
+      "id": "S3",
+      "given": "R6B",
+      "when": "side-yard rules are researched",
+      "then": "the record states whether a side yard is required or optional and the rule that says so"
+    },
+    {
+      "id": "S4",
+      "given": "the record",
+      "when": "python3 tools/research_record_check.py --check runs",
+      "then": "it passes structurally; research_status is interpretation_awaiting_review (or a stricter status) and no label is requested"
+    },
+    {
+      "id": "S5",
+      "given": "the record",
+      "when": "the G1 reviewer reads it",
+      "then": "every evidence item has a capture id and SHA-256 or a dated live fetch, and every reading cites the provision text it rests on"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "A reading of law is an unreviewed draft (ADR-007); the record certifies nothing.",
+    "Street widths follow the D-052 policy; an unresolved width keeps the dependent reading unresolved."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T05:27:03.867480+00:00",
+  "updated_at": "2026-10-11T05:27:04.315181+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R038",
+        "D-093-R050"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R043"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T05:27:03.867755+00:00",
+  "path_notes": "Work order: /root/project/lanes-runtime/owner-docs/session-2026-10-11b/workorder-D094-presentation-draft.md (P-6.0). Research only; no code. The orchestrator adds the RESEARCH_REQUESTS.md index line.",
+  "documented_test_commands": [
+    "python3 tools/research_record_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

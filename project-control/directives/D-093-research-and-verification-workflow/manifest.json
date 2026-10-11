@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T01:35:36+00:00",
  "created_at": "2026-10-11T01:35:36+00:00",
- "updated_at": "2026-10-11T04:59:18+00:00",
+ "updated_at": "2026-10-11T05:27:04+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c8f060296942bb7658849ea2c9ec8a06077b06ca",
  "capture_head_sha": null,
@@ -98,7 +98,7 @@
   "D-093-R074"
  ],
  "requirements_id_digest_sha256": "796fbc274a4b27b8369acb868957ba593209329e867785bcdcff3ba6c7fe87fc",
- "requirements_content_digest_sha256": "3a003cfdbefa2d6a691d5c626dd511c08bcf4b164a7bedeaa51fdeac36eb2179",
+ "requirements_content_digest_sha256": "2a6e30d6c0c146d743b31d1b82c5ff6160a24a26602ea8038e32478b3330d9f6",
  "sources": [
   {
    "file": "source-001.md",
@@ -125,7 +125,8 @@
   "M0-T190",
   "M0-T191",
   "M5-T157",
-  "M5-T158"
+  "M5-T158",
+  "M5-T160"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -176,6 +177,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T158 (zoning-lot warning from the ACRIS index (DB-232)) to R007, R038, R050, R051, R057 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T05:27:04+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T160 (research record NB-06: street wall, setback trigger, side yards (D-094 P-6.0)) to R038, R050 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
