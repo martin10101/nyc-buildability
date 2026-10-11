@@ -87,18 +87,25 @@
     "D-094-R027"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "fc71429314b7c087dd2043d92b6ce686a0e85af4",
+   "reviewed_manifest_sha256": "0edb5fb5058e102dffcea3bb706a102a23af551e2692f4ae0b45a1aff8c931e1",
    "requirements": [
     {
      "id": "D-094-R027",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Obligation: every law link resolves to its exact current section (not the homepage); affected results connect to review-register entries; destinations checked in the exported PDF. I rendered the evidence page myself from `packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json` through the real `build_report_html`: 12 law hrefs, every one an exact section-page URL (article-ii/chapter-3/23-22, /23-52, /23-432) equal to the captures' own `source.request_url`; the homepage is ABSENT from the href set.",
+      "I opened the captures directly: zr-23-22/zr-23-52/zr-23-432 carry official `article/chapter/section` request_urls and zr-12-10 carries `/article-i/chapter-2/12-10`; zr-11-25 carries only `https://zr.planning.nyc.gov/entityprint/pdf/node/18433` (wrong host), so 11-25 prints as plain text \u2014 I confirmed in the rendered HTML that label `11-25` appears with no anchor, and 23-52(b) keeps its sub-paragraph label while linking to section page 23-52. S3 fail-closed behavior reproduced.",
+      "Focused suite `tests/drawings/report/test_report_law_links.py` = 22 passed at the frozen head (lanes venv). The oracle is fixture-derived and independent of the module under test (`_capture_section_url` scans the capture files directly); this is the G3/G4 fixture-derived rework. G3 and G4 each ran their own homepage/query-rejection mutations and the guards failed as required.",
+      "STAYS OPEN for report v3 (correctly deferred by the packet risks + evidence-map, not a defect here): the exported-PDF link-destination harness (the row's required_harness/required_evidence, link-check record R060) and connecting affected results to their existing review-register entries. This task delivers the HTML law links only; the PDF-destination check and register linkage are unverified and owed.",
+      "Verifier's carry-forward condition met at fc714293: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0edb5fb5), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T159-DCV.md."
+     ],
+     "reviewed_sha": "fc71429314b7c087dd2043d92b6ce686a0e85af4"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T06:23:29+00:00"
   },
   {
    "directive_id": "D-094",

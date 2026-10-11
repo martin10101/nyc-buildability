@@ -7457,18 +7457,25 @@
     "D-090-R584"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "fc71429314b7c087dd2043d92b6ce686a0e85af4",
+   "reviewed_manifest_sha256": "0edb5fb5058e102dffcea3bb706a102a23af551e2692f4ae0b45a1aff8c931e1",
    "requirements": [
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Hold: keep activation restrictions \u2014 all production switches stay off, no hidden feature turned on by the emitting piece or display. `git diff 9e107bf3 2ca80696` over the three production files, grepped for flag/feature/enable/disable/switch/setting/env/getenv/os.environ/deploy/activ/config/settings, returns NOTHING.",
+      "page_evidence.py's only behavioral change is deleting the hard-coded homepage constant `_LAW_URL` and calling `law_links.section_url(section)` with a plain-text fallback; sources.py only adds the `zr_section_page_number` helper; law_links.py is a new pure-resolution module using the existing read-only SnapshotStore. No feature is gated, toggled, or defaulted-on.",
+      "The two task material commits (f48b3d97, 0330d598) touch only the 5 allowed-path files; forbidden paths (readers.py, test_report_pages.py, rulesets/, render.yaml, .github/, apps/web/package*.json, .claude/) are untouched.",
+      "Nothing stays open for this task: the HTML-only link change introduces no activation change, so the hold is fully honored here (the hold itself persists directive-wide for other pieces).",
+      "Verifier's carry-forward condition met at fc714293: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0edb5fb5), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T159-DCV.md."
+     ],
+     "reviewed_sha": "fc71429314b7c087dd2043d92b6ce686a0e85af4"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T06:23:29+00:00"
   }
  ]
 }
