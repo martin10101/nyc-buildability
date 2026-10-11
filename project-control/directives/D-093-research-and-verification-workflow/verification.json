@@ -835,6 +835,54 @@
      "reviewed_sha": null
     }
    ]
+  },
+  {
+   "directive_id": "D-093",
+   "task_id": "M5-T158",
+   "applicable_requirement_ids": [
+    "D-093-R007",
+    "D-093-R038",
+    "D-093-R050",
+    "D-093-R051",
+    "D-093-R057"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-093-R007",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R038",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R050",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R051",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R057",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

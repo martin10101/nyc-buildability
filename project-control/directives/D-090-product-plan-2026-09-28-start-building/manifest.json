@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-11T04:53:04+00:00",
+ "updated_at": "2026-10-11T04:59:18+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -965,7 +965,7 @@
   "D-090-R941"
  ],
  "requirements_id_digest_sha256": "5157a3c5304c380d0a674cbb1d28426081538c10380babba5759d549181bdb66",
- "requirements_content_digest_sha256": "042d10e80c22d558d84a6779f7372c93a3bc2210e6cb9f9823fc3ca7625e9daa",
+ "requirements_content_digest_sha256": "b837c0593b776f23c835eac7b3fd4068e29e2d948580b13e3bde022f68e71a92",
  "sources": [
   {
    "file": "source-001.md",
@@ -1785,7 +1785,8 @@
   "M5-T155",
   "M5-T156",
   "M5-T157",
-  "M0-T191"
+  "M0-T191",
+  "M5-T158"
  ],
  "affected_prs": [
   262,
@@ -2654,6 +2655,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Scope correction of claimed task M0-T191 before any review of its new rows: bound it also to R941 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7 (transcript 72bfc3c3), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T04:59:18+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T158 (zoning-lot warning from the ACRIS index (DB-232)) to R229, R240, R241, R255, R520, R570, R584, R588, R689, R783 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
