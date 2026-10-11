@@ -10,7 +10,7 @@
  "issued_at": "2026-09-30",
  "captured_at": "2026-09-30T05:18:52+00:00",
  "created_at": "2026-09-30T05:18:52+00:00",
- "updated_at": "2026-10-10T18:56:14+00:00",
+ "updated_at": "2026-10-11T03:04:35+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "2283c17805b7788b3de2807bd6189f31dbca1bb3",
  "capture_head_sha": null,
@@ -964,7 +964,7 @@
   "D-090-R940"
  ],
  "requirements_id_digest_sha256": "ca491ca235905ad55997233ef7e553d5fa98a7674b6564a181204d6b482de6a6",
- "requirements_content_digest_sha256": "99bcd267cee2fb1bf8414f79d12daf0d961f3fc8c4053511abc6cb9bbb5da235",
+ "requirements_content_digest_sha256": "31b2e06464c8666fa3a804193a58aa831af7cc0c3b72a7eaf7666140879c19c6",
  "sources": [
   {
    "file": "source-001.md",
@@ -1773,7 +1773,8 @@
   "M5-T153",
   "M5-T154",
   "M5-T155",
-  "M5-T156"
+  "M5-T156",
+  "M5-T157"
  ],
  "affected_prs": [
   262,
@@ -2624,6 +2625,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T156 (the report shows where the lot is) to R551, R843, R893, R923, R936, R937, R938, R939, R940 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T03:04:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T157 (special density area from the record (DB-231)) to R229, R240, R241, R255, R392, R520, R569, R570, R584, R588, R689, R783 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

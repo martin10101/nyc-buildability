@@ -1,0 +1,92 @@
+{
+  "task_id": "M0-T191",
+  "title": "D-093 correction: a delegated agent inherits its parent session's start-time instructions (procedure, knowledge pointer, evidence record)",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Correct the M0-T190 claim that every delegated agent loads the research rule once main holds it: record the after-merge evidence that a subagent inherits the instruction snapshot its parent session loaded at start, state it in the procedure, and add one knowledge pointer.",
+  "business_reason": "Delegated builders and reviewers in a session started before a rule change would otherwise work without the rule.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11a/verify-main/subagent-check.txt",
+    "project-control/reports/M0-T190-verification-sessions.md"
+  ],
+  "outputs": [
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "project-control/reports/M0-T191-delegated-agents.md",
+    ".claude/rules/PROGRAM_KNOWLEDGE.md",
+    "project-control/reports/M0-T191-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T190"
+  ],
+  "allowed_paths": [
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "project-control/reports/M0-T191-delegated-agents.md",
+    ".claude/rules/PROGRAM_KNOWLEDGE.md",
+    "project-control/reports/M0-T191-producer-report.md",
+    "docs/SESSION_HANDOFF.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    ".claude/settings.json",
+    ".claude/agents/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the subagent transcript of 2026-10-11 02:58 UTC",
+      "when": "its instructions entry is read",
+      "then": "the evidence record quotes it: the pre-merge CLAUDE.md size and no research rule, while the files on disk had changed"
+    },
+    {
+      "id": "S2",
+      "given": "docs/RESEARCH_AND_VERIFICATION.md",
+      "when": "sections 6 and 9 are read",
+      "then": "they say a delegated agent inherits its parent session's start-time instructions, so a session started before a rule change must pass the rule in the brief"
+    },
+    {
+      "id": "S3",
+      "given": "the M0-T190 verification-sessions report",
+      "when": "compared with the new record",
+      "then": "the new record names the over-broad sentence of its section 4 and corrects it without editing the accepted report"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "None beyond wording; no code changes."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T03:04:32.988960+00:00",
+  "updated_at": "2026-10-11T03:04:33.352015+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R029",
+        "D-093-R032",
+        "D-093-R034",
+        "D-093-R068"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T03:04:32.989112+00:00",
+  "path_notes": "Docs only. The accepted M0-T190 report is not edited; the correction lives in the new record.",
+  "documented_test_commands": [
+    "python3 tools/context_budget_check.py",
+    "python3 tools/validate_directive_compliance.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
