@@ -82,21 +82,21 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Internal 'see item N' links and the full link-destination check of the exported PDF are later work (report v3, P-3/P-7); this task covers the law links only.",
     "Wave-23 builders change readers.py and the report-page tests; this task must not touch them."
   ],
   "blockers": [],
   "created_at": "2026-10-11T05:24:09.886355+00:00",
-  "updated_at": "2026-10-11T05:24:10.321080+00:00",
+  "updated_at": "2026-10-11T05:25:23.818215+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -118,5 +118,14 @@
     "cd services/api && python -m ruff check .",
     "cd services/api && python -m pytest -q tests/drawings/report tests/rules"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T05:25:23.818106+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    }
+  ]
 }
