@@ -109,15 +109,15 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The ZR site's big pages 504; use the documented fallback (direct GET, browser user agent, sha256-pinned) and disclose it.",
     "'street setback line' may not be a 12-10 defined term: report it, never invent a capture."
   ],
   "blockers": [],
   "created_at": "2026-10-11T19:45:07.827947+00:00",
-  "updated_at": "2026-10-11T20:43:12.624015+00:00",
+  "updated_at": "2026-10-11T21:11:38.458590+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -153,5 +153,7 @@
       "status": "claimed",
       "message": "built; G1 PASS (+ delta attestation at bebcaeef); review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T21:11:38.458464+00:00"
 }

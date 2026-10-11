@@ -955,36 +955,61 @@
     "D-094-R079"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "13221abaec4141f5ac5ba6bc3962bf045f35f4fe",
+   "reviewed_manifest_sha256": "fef93aff3d7bd2114c690bee7d8b7d830aea9a78bb302a56eaaaeb5ca4233fb9",
    "requirements": [
     {
      "id": "D-094-R036",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor reproduced: source-001.md attached brief, \"Evaluate these pathways against the actual zoning-lot and boundary evidence.\" / \"Update the diagram and conclusion together.\"; requirements.json text is faithful.",
+      "NB-03 rev 2 (blob acfd359f) evaluates BOTH pathways against boundary evidence: 23-344(b) short-dimension-of-a-block (Northern Blvd block frontage 200.01 ft printed_tax_map / 203.13 ft gis, both < 230) and 23-344(c)(3) R6-R12 adjoining side-lot-line (neighbours' north lines classified as side lot lines, E3/E4), against zoning_lot_unconfirmed and the actual boundary evidence (E6 tax map, E7 GIS, E10 \"block\").",
+      "The record's conclusion is updated to the conditional reading; it is a labelled draft, not a DOB determination.",
+      "Stays open: the \"update the diagram\" half and the engine that computes the single short-dimension measure are M5-T167's share (gap b / DB-230); the independent worked example is M5-T176's share.",
+      "Verifier's carry-forward condition met at 13221aba: the task's allowed-path files are identical to those verified at adc36fc7 (content identity fef93aff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T163-DCV.md."
+     ],
+     "reviewed_sha": "13221abaec4141f5ac5ba6bc3962bf045f35f4fe"
     },
     {
      "id": "D-094-R037",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor reproduced: source-001.md, \"Do not infer an unconditional zero rear yard from GIS, and do not continue explaining the issue as though the corner-radius test were the only applicable exception.\"",
+      "No unconditional zero rear yard from GIS: lot depth is kept a three-basis conflict (100 printed_tax_map / 99.97 gis / ~101.06 derived), \"no basis chosen\", conclusion \"conditional\", research_status interpretation_awaiting_review.",
+      "Corner test is not the only exception: exceptions_considered records 23-344(a) as a point test that \"neither replaces nor defeats the street-line test of (b)\"; (a), (b) and (c)(3) are each evaluated separately.",
+      "Stays open: the rendered-report wording of R037 is M5-T165's share (R037 is also bound to M5-T165).",
+      "Verifier's carry-forward condition met at 13221aba: the task's allowed-path files are identical to those verified at adc36fc7 (content identity fef93aff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T163-DCV.md."
+     ],
+     "reviewed_sha": "13221abaec4141f5ac5ba6bc3962bf045f35f4fe"
     },
     {
      "id": "D-094-R061",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor reproduced: source-001.md, \"Confirm that legal source facts are not marked unknown solely because a software feature is unfinished.\"",
+      "Legal source facts in scope are captured as facts, not left unknown: ZR 12-10 'street' (E8), 'street setback line' (E9), 'street, wide' (E12), 'street, narrow' (E13) captured sha256-pinned with byte-identical bundled copies; I verified content_digest_sha256 == sha256(verbatim_excerpt) for all four and sync_zr_snapshots --check exit 0 (189 files byte-identical).",
+      "Genuine site facts stay unresolved as recorded searches with the exact missing item + next step (depth conflict; survey/approved ZD1 access_blocked; whether the tax-map ALLEY is a mapped #street#; district-boundary provision not_found), not marked unknown because software is unfinished.",
+      "Stays open: the export-wide review of every \"unknown\" on rendered report pages is a report-regeneration check; this documents-only task does not touch the export, and R061 is bound here only to M5-T163, so its research-fact share is discharged.",
+      "Verifier's carry-forward condition met at 13221aba: the task's allowed-path files are identical to those verified at adc36fc7 (content identity fef93aff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T163-DCV.md."
+     ],
+     "reviewed_sha": "13221abaec4141f5ac5ba6bc3962bf045f35f4fe"
     },
     {
      "id": "D-094-R079",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor reproduced: source-002-amendment.md, \"...It still omits the separate short-block-frontage exception in ZR 23-344(b). That provision needs an explicit applicability check before the rear-yard analysis is complete; I am not saying the exemption is already established.\"",
+      "NB-03 rev 2 performs an explicit 23-344(b) applicability check beside the 100-ft point test: inputs recorded with bases (front lot line on the short-dimension street line; block frontage < 230 ft; reach within 100 ft of that street line), with 23-344(a) kept as a distinct point test.",
+      "The exemption is not presented as established: \"a labelled draft reading, not a DOB determination\", applies \"conditional\", interpretation_awaiting_review, depth conflict unresolved.",
+      "Stays open: the report's rear-yard item (23-344(b) check + result state) and the rule tests covering applicable/not-applicable/unknown are M5-T164/M5-T165/M5-T167's share (R079 is also bound to M5-T164 and M5-T165).",
+      "Verifier's carry-forward condition met at 13221aba: the task's allowed-path files are identical to those verified at adc36fc7 (content identity fef93aff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T163-DCV.md."
+     ],
+     "reviewed_sha": "13221abaec4141f5ac5ba6bc3962bf045f35f4fe"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T21:11:37+00:00"
   },
   {
    "directive_id": "D-094",
