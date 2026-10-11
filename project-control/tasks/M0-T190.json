@@ -68,7 +68,43 @@
     "tools/research_record_check.py",
     "tools/test_context_budget_check.py",
     "tools/test_directive_reminder.py",
-    "tools/test_research_record_check.py"
+    "tools/test_research_record_check.py",
+    "AGENTS.md",
+    ".claude/session-handoff-profile.md",
+    "docs/WORKING_KNOWLEDGE.md",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/DCM_City_Map_Alterations_metadata.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/DCM_City_Map_Alterations_site.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/DCM_Digital_City_Map_site.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_codes.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_global_goodthrough.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_keydocs.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_lot1.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_lot70_primary.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_legals_meta.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_master_all.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_references.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_references_reverse.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/acris_remarks.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_f72e-3i4c_block7334.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_f72e-3i4c_block_contains7334.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_f72e-3i4c_metadata.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_yvxd-uipr_block7334.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/bsa_yvxd-uipr_metadata.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dcm_street_centerline_lot_envelope_4073340070.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_co_bs8b-p36w_bin_4157401.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4157401.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_bis_jobs_ic3t-wcy2_bin_4623241.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_co_pkdm-hqz6_bbl_4073340070.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_co_pkdm-hqz6_bin_4157401.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_jobs_lot1.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dob_now_jobs_w9ak-ipjd_bbl_4073340070.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_0.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_12.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_15.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_8.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/dtm_block7334_9.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/mappluto.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence/data/pluto.json"
   ],
   "forbidden_paths": [
     "services/",
@@ -228,7 +264,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-11T01:38:57.777101+00:00",
-  "path_notes": "Producer is the orchestrator for documents and records; tools and hook code may be written by one backend-engineer builder in its own worktree and cherry-picked. No product code changes.",
+  "path_notes": "Producer is the orchestrator for documents and records; tools and hook code may be written by one backend-engineer builder in its own worktree and cherry-picked. No product code changes. Scope correction 1 (2026-10-11): AGENTS.md (a pointer for Codex reviewers), the session-handoff profile (every handoff keeps the research entry), docs/WORKING_KNOWLEDGE.md (the old cap note marked superseded) and the 33 official data responses of the Northern Boulevard evidence pack, which .gitignore had kept out of git (added with the ignore overridden; each equal to its manifest SHA-256).",
   "documented_test_commands": [
     "python3 tools/research_record_check.py --check",
     "python3 tools/test_research_record_check.py",
@@ -246,6 +282,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; orchestrator writes the documents and records; one backend-engineer builder writes the check, the hook pointer and the budget change"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T01:51:41+00:00",
+      "actor": "orchestrator",
+      "change": "Added AGENTS.md, .claude/session-handoff-profile.md, docs/WORKING_KNOWLEDGE.md and the 33 data files of the 215-16 Northern Boulevard evidence pack (found missing from git: .gitignore ignores data/) to allowed_paths. No row binding changed."
     }
   ]
 }
