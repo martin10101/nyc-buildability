@@ -383,3 +383,19 @@ to build).
   - The set becomes a growing check that is run again every time a rule changes.
   - Recommendation: a research task with the reading-only helpers (about 20-30 recent new buildings); the owner's own
     projects (J2) still add what public data cannot show (why choices were made, examiner objections).
+
+## 16. "Can the program get air-rights purchases, lot mergers and special permissions from the city?"
+
+- **Developer (ANSWERED; OPEN question J5):**
+  - **Air rights and lot mergers: partly built.** These are recorded in the city's register of property documents.
+    The app's register check reads the register's index (what kind of document, when, which lots it names); that is
+    how it found the 2022 zoning lot description naming lots 70 and 1. It flags the concern on every lot-area figure.
+    It does not read the documents themselves, so it cannot say how many square feet moved (the documents are mostly
+    scanned images). The check is switched off for real visitors until reviewed and approved by the owner.
+  - **Permit filings that mention a zoning lot:** built (the permit-filings reader notes filings that mention a
+    zoning lot shared with other lots); also off for real visitors.
+  - **Special permissions (appeal-board variances, planning-commission special permits): not built.** The city
+    publishes these decisions, some as searchable data and some as documents; which records hold what must be
+    confirmed before building the check.
+  - **Recommendation (J5):** (1) switch on the two existing checks after review and the owner's approval; (2) add the
+    variance and special-permit check; (3) later, read the recorded documents themselves.
