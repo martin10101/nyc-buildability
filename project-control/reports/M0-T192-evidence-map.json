@@ -1,0 +1,28 @@
+{
+ "task_id": "M0-T192",
+ "material_commits": [
+  "3aa81c90 (builder: governing review by revision, parsed UTC time, order; malformed review dates refused; 8 tests)",
+  "c9e292a7 (builder: non-Z offset refusal test (G4 advisory))"
+ ],
+ "claim_seam_head": "349d3f78ed919759dafba73b6f08ecaf0e607337",
+ "files_changed": [
+  "project-control/reports/M0-T192-producer-report.md",
+  "tools/research_record_check.py",
+  "tools/test_research_record_check.py"
+ ],
+ "what_did_not_change": "No record file, CI workflow, hook, setting or promotion rule; derive() return shape and CLI output unchanged.",
+ "known_limits": [
+  "The professional_review.date stays validated as a non-empty string only (G3 advisory A1).",
+  "Backlog DB-238 is updated by the orchestrator when the wave merges."
+ ],
+ "checks_at_material_head": [
+  "python3 tools/test_research_record_check.py: Ran 38 tests OK (c9e292a7)",
+  "python3 tools/research_record_check.py --check: PASS; NB-01 to NB-06 code_current True, review_state current",
+  "modularity_check: failures 0"
+ ],
+ "requirements": {
+  "D-093-R075": [
+   "tools/research_record_check.py now picks the governing review by (reviewed_revision, parsed UTC time with date-only = start of day, list order) instead of comparing date strings, and refuses review dates that are not YYYY-MM-DD or a UTC date-and-time ending in Z; the NB-01 case (timed revision 2, date-only revision 3) reads current (test_nb01_case_date_only_higher_revision_governs, proven by restoring the old key); every committed record still passes; G3, G4 and G5 PASS with their own mutations. DB-238 is updated at merge."
+  ]
+ }
+}

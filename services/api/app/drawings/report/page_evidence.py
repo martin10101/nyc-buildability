@@ -11,14 +11,13 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import labels, map_caption, readers, sources
+from . import labels, law_links, map_caption, readers, sources
 from .components import short_line
 from .html import el, escape, escape_attr, raw, table
 
 __all__ = ["render"]
 
 QUESTION = "How was this derived?"
-_LAW_URL = "https://zoningresolution.planning.nyc.gov/"
 
 
 def _law_links(zr_sections) -> object:
@@ -31,7 +30,13 @@ def _law_links(zr_sections) -> object:
                      f'<span class="nowrap">{escape(number)}</span>')
         else:
             label = escape(sources.LAW_SITE_TITLE)
-        parts.append(f'<a href="{escape_attr(_LAW_URL)}">{label}</a>')
+        # Link only to the exact captured section URL; a section with no capture
+        # prints as plain text (never a guessed URL, never the homepage) - D-094 R027.
+        url = law_links.section_url(section)
+        if url:
+            parts.append(f'<a href="{escape_attr(url)}">{label}</a>')
+        else:
+            parts.append(label)
     return raw("; ".join(parts)) if parts else "See the official Zoning Resolution"
 
 

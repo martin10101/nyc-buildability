@@ -22,6 +22,7 @@ import research_record_check as rrc  # noqa: E402
 
 CHECKER = HERE / "research_record_check.py"
 OUTPUT = "dwelling_units.legal_limit"
+WRONG_SHA = "0" * 64  # a code identity that will not match the temp repo's code file
 
 
 def complete_record(code_rel: str, code_sha: str) -> dict:
@@ -338,6 +339,110 @@ class CheckExitCodes(Base):
         r = self.run_check()
         self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
         self.assertIn("FAIL", r.stdout)
+
+
+class GoverningReview(Base):
+    """The governing agent review is the one for the highest reviewed_revision; ties are broken by
+    the parsed UTC time (a date-only date counts as the start of its day) and then by list order
+    (D-093 R075). Expected review_state worked by hand from that rule, not from a program run."""
+
+    def a_review(self, reviewed_revision: int, date: str, code_sha: str) -> dict:
+        return {
+            "reviewer": "code-reviewer", "date": date,
+            "reviewed_revision": reviewed_revision,
+            "reviewed_code_identity": {self.code_rel: code_sha},
+            "verdict": "agrees", "findings": [], "report": None,
+        }
+
+    def test_nb01_case_date_only_higher_revision_governs(self):
+        # MUTATION TARGET (string date comparison): a timed revision-2 review followed by a
+        # date-only revision-3 review (the NB-01 shape). The revision-3 review governs because it is
+        # the higher revision and matches the current revision and code -> current. Under the old
+        # string date comparison the timed '2026-10-11T02:13Z' sorts after the date-only
+        # '2026-10-11', so the revision-2 review would govern and the record would read stale.
+        rec = self.record()
+        rec["revision"] = 3
+        rec["review"]["agent_reviews"] = [
+            self.a_review(2, "2026-10-11T02:13Z", WRONG_SHA),
+            self.a_review(3, "2026-10-11", self.code_sha),
+        ]
+        self.assertEqual(rrc.derive(rec, self.root)["review_state"], "current")
+
+    def test_same_revision_timed_same_day_governs_over_date_only(self):
+        # Same revision, same day: the timed review (a real time) governs over the date-only review
+        # (start of day), regardless of list order. Proven both ways: whichever review carries the
+        # matching code identity decides the review_state, and here that is always the timed one.
+        rec = self.record()  # revision 2
+        rec["review"]["agent_reviews"] = [
+            self.a_review(2, "2026-10-11", WRONG_SHA),             # start of day: does not govern
+            self.a_review(2, "2026-10-11T09:00Z", self.code_sha),  # later same day: governs
+        ]
+        self.assertEqual(rrc.derive(rec, self.root)["review_state"], "current")
+        rec["review"]["agent_reviews"] = [
+            self.a_review(2, "2026-10-11", self.code_sha),      # start of day: still does not govern
+            self.a_review(2, "2026-10-11T09:00Z", WRONG_SHA),   # later same day governs, code mismatch
+        ]
+        self.assertEqual(rrc.derive(rec, self.root)["review_state"], "stale")
+
+    def test_higher_revision_with_earlier_date_still_governs(self):
+        # The highest reviewed_revision governs even when its date is earlier than a lower-revision
+        # review: revision dominates the parsed time.
+        rec = self.record()
+        rec["revision"] = 3
+        rec["review"]["agent_reviews"] = [
+            self.a_review(2, "2026-10-11T23:00Z", WRONG_SHA),  # later date, lower revision
+            self.a_review(3, "2026-10-10", self.code_sha),     # earlier date, higher revision: governs
+        ]
+        self.assertEqual(rrc.derive(rec, self.root)["review_state"], "current")
+
+    def test_date_only_parses_to_start_of_utc_day(self):
+        start = rrc._parse_review_instant("2026-10-11")
+        self.assertIsNotNone(start)
+        self.assertEqual((start.hour, start.minute, start.second), (0, 0, 0))
+        self.assertLess(start, rrc._parse_review_instant("2026-10-11T00:01Z"))
+
+
+class MalformedReviewDate(Base):
+    def test_slash_date_is_refused_naming_index_and_forms(self):
+        rec = self.record()
+        rec["review"]["agent_reviews"][0]["date"] = "11/10/2026"
+        errs = rrc.validate_record(rec, self.path_for(rec), self.root)
+        self.assertTrue(any("is not an accepted review date" in e
+                            and "agent_reviews[0].date" in e for e in errs), errs)
+        self.assertTrue(any("YYYY-MM-DDTHH:MMZ" in e for e in errs), errs)
+
+    def test_space_separated_datetime_is_refused(self):
+        # The former lax ISO check accepted a space separator; the strict review-date form refuses it.
+        rec = self.record()
+        rec["review"]["agent_reviews"][0]["date"] = "2026-10-11 07:26"
+        errs = rrc.validate_record(rec, self.path_for(rec), self.root)
+        self.assertTrue(any("is not an accepted review date" in e for e in errs), errs)
+
+    def test_malformed_review_date_fails_the_check(self):
+        rec = self.record()
+        rec["review"]["agent_reviews"][0]["date"] = "2026-10-11 07:26"
+        self.write(rec)
+        r = self.run_check()
+        self.assertEqual(r.returncode, 1, r.stdout + r.stderr)
+        self.assertIn("FAIL", r.stdout)
+
+    def test_non_z_utc_offset_is_refused_naming_index_and_forms(self):
+        # Only a 'Z' (UTC) suffix is accepted; a numeric offset (even +00:00, which is UTC) is
+        # refused. A loosened regex accepting [+-]HH:MM offsets would silently admit these.
+        for d in ("2026-10-11T07:26:00+00:00", "2026-10-11T07:26-05:00"):
+            rec = self.record()
+            rec["review"]["agent_reviews"][0]["date"] = d
+            errs = rrc.validate_record(rec, self.path_for(rec), self.root)
+            self.assertTrue(any("is not an accepted review date" in e
+                                and "agent_reviews[0].date" in e for e in errs), (d, errs))
+            self.assertTrue(any("YYYY-MM-DDTHH:MMZ" in e for e in errs), (d, errs))
+
+    def test_every_accepted_form_is_valid(self):
+        for d in ("2026-10-11", "2026-10-11T02:13Z", "2026-10-11T07:26:00Z",
+                  "2026-10-11T07:26:00.500Z"):
+            rec = self.record()
+            rec["review"]["agent_reviews"][0]["date"] = d
+            self.assertEqual(rrc.validate_record(rec, self.path_for(rec), self.root), [], d)
 
 
 if __name__ == "__main__":

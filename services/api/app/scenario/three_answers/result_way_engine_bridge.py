@@ -40,7 +40,7 @@ from app.contracts.evaluator_inputs import build_three_answer_inputs
 
 from . import engine_conditions
 from .engine import ThreeAnswersResult, generate_results
-from .engine_conditions import DensityStatement, Presence
+from .engine_conditions import DensityDecision, Presence
 from .inputs import BuildingDefaults, ThreeAnswerInputs
 from .result_way_bridge import GatheredResult, gather_result_ways
 from .result_way_inputs import DensityKnowledge, LotType, Recorded
@@ -52,6 +52,7 @@ from .three_way_document import (
 )
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
+    from app.profile.zoning_lot_index import ZoningLotIndex
     from app.rules.registry import RuleRegistry
     from app.spatial.site_geometry.outline import PreparedOutline
     from app.spatial.site_geometry.results import SiteGeometry
@@ -96,13 +97,21 @@ def _is_corner(lot_type: LotType | None) -> bool | None:
     return lot_type is LotType.CORNER
 
 
-def _density_statement(knowledge: DensityKnowledge) -> DensityStatement:
-    """The decision step's density knowledge mapped to the user's plain statement: the user's
-    statement that the lot is not in a special density area, or no statement (every other state -
-    none given, or a statement the program does not yet act on - carries no usable statement)."""
-    if knowledge is DensityKnowledge.USER_STATEMENT_NOT_IN_ONE:
-        return DensityStatement.NOT_IN_ONE
-    return DensityStatement.NONE
+_DECISION_BY_KNOWLEDGE = {
+    DensityKnowledge.EVIDENCE_NOT_IN_ONE: DensityDecision.RECORDED_NOT_IN_ONE,
+    DensityKnowledge.EVIDENCE_IN_ONE: DensityDecision.RECORDED_IN_ONE,
+    DensityKnowledge.USER_STATEMENT_NOT_IN_ONE: DensityDecision.USER_STATEMENT_NOT_IN_ONE,
+    DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE: DensityDecision.RECORD_STATEMENT_DISAGREE,
+    DensityKnowledge.NOT_GIVEN: DensityDecision.NOT_KNOWN,
+}
+
+
+def _density_decision(knowledge: DensityKnowledge) -> DensityDecision:
+    """The decision step's density knowledge mapped to the ONE engine decision (task M5-T157), so
+    the engine condition and the shown way are driven from the SAME decision. A record read outside
+    both areas, or a user's statement to that effect where the record is silent, gives the engine
+    "not in one"; a record inside one, a disagreement, or a not-known record gives it "in one"."""
+    return _DECISION_BY_KNOWLEDGE[knowledge]
 
 
 @dataclass(frozen=True)
@@ -124,6 +133,7 @@ def run_engine_and_result_ways(
     *,
     evaluator_inputs: Mapping[str, Any] | None,
     special_density_statement: bool | None = None,
+    zoning_lot_index: ZoningLotIndex | None = None,
     registry: RuleRegistry | None = None,
     env: Mapping[str, str] | None = None,
 ) -> EngineResultWays:
@@ -153,10 +163,12 @@ def run_engine_and_result_ways(
         geometry=inputs.site_geometry,
         housing_kind=inputs.housing_program,
         special_density_statement=special_density_statement,
+        zoning_lot_index=zoning_lot_index,
     )
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
+        zoning_lot=gathered.inputs.zoning_lot,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)
 
@@ -172,6 +184,7 @@ def run_engine_and_result_ways_from_evidence(
     prepared_outline: PreparedOutline | None,
     site_geometry: SiteGeometry | None,
     special_density_statement: bool | None = None,
+    zoning_lot_index: ZoningLotIndex | None = None,
     building_defaults: BuildingDefaults | None = None,
     user_choices: frozenset[str] | None = None,
     registry: RuleRegistry | None = None,
@@ -214,6 +227,7 @@ def run_engine_and_result_ways_from_evidence(
         geometry=site_geometry,
         housing_kind=housing_program,
         special_density_statement=special_density_statement,
+        zoning_lot_index=zoning_lot_index,
     )
     recorded = gathered.recorded
     reach = gathered.inputs.reach
@@ -224,7 +238,7 @@ def run_engine_and_result_ways_from_evidence(
         is_corner=_is_corner(gathered.inputs.lot_type),
         reach_ft=reach.corner.reach.value if reach is not None else None,
         angle_deg=reach.corner.angle.value if reach is not None else None,
-        density_statement=_density_statement(gathered.inputs.special_density),
+        density_decision=_density_decision(gathered.inputs.special_density),
     )
     inputs = build_three_answer_inputs(
         dict(evaluator_inputs),
@@ -259,5 +273,6 @@ def run_engine_and_result_ways_from_evidence(
         condition_sources=conditions, user_choices=user_choices,
         corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
         lot_outline_available=outline_ring is not None,
+        zoning_lot=gathered.inputs.zoning_lot,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

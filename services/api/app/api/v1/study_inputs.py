@@ -63,9 +63,10 @@ supplies the confirmed address. These are later slices.
 from __future__ import annotations
 
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from functools import lru_cache
+from typing import TYPE_CHECKING
 
 from app.api.v1.pluto_version_cache import (
     VersionProbe,
@@ -87,6 +88,7 @@ from app.profile.data_versions import (
 from app.profile.existing_floor_area import ExistingFloorAreaEvidence
 from app.profile.fact_version_check import attach_version_check
 from app.profile.site_facts import build_site_facts
+from app.profile.zoning_lot_index import ZoningLotIndex, not_checked
 from app.spatial.multi_lot_site import (
     LotChoice,
     MultiLotSite,
@@ -97,6 +99,9 @@ from app.spatial.multi_lot_site import (
 from app.spatial.site_geometry import SiteGeometry
 from app.spatial.site_geometry.outline import PreparedOutline
 
+if TYPE_CHECKING:
+    from app.resilience.transport import Transport
+
 __all__ = [
     "ExistingFloorAreaProvider",
     "GeometryProvider",
@@ -105,6 +110,8 @@ __all__ = [
     "StudyInputs",
     "StudyInputsProvider",
     "StudyInputsUnavailableError",
+    "ZoningLotIndexProvider",
+    "acris_zoning_lot_index_provider",
     "assemble_study_inputs",
     "default_study_inputs_provider",
     "pluto_study_inputs_provider",
@@ -138,6 +145,11 @@ class StudyInputs:
     property_profile: Mapping[str, object] | None = None
     site_geometry: SiteGeometry | None = None
     prepared_outline: PreparedOutline | None = None
+    # Additive, INERT carrier (M5-T158, DB-232): the ACRIS recorded-document index
+    # classification for this lot. Defaults to NOT_CHECKED (no provider bound - the production
+    # default), so the study_setup the route emits is byte-identical to the pre-wiring slice;
+    # part B wires it into the result ways. It never concludes the zoning lot.
+    zoning_lot_index: ZoningLotIndex = field(default_factory=not_checked)
 
 
 class StudyInputsUnavailableError(Exception):
@@ -212,6 +224,17 @@ OutlineProvider = Callable[[str, str], "PreparedOutline | None"]
 # route's or assembly's.
 ExistingFloorAreaProvider = Callable[[str, str], "ExistingFloorAreaEvidence | None"]
 
+# (canonical_bbl, correlation_id) -> the ACRIS zoning-lot-index classification, or None when no
+# provider is bound (the live default). The INJECTED zoning-lot-index seam (DB-232, M5-T158),
+# shaped exactly like the existing-floor-area seam. UNLIKE that seam, a provider that cannot read
+# the index does NOT raise: it returns a NOT_READ :class:`ZoningLotIndex`, so the study still
+# answers and the lot-area figures are labelled conditional (part B). None -> NOT_CHECKED. Tests
+# and the e2e harness bind a fixture/transport-backed provider; the LIVE default binds
+# :func:`acris_zoning_lot_index_provider` ONLY behind INTERNAL_ZONING_LOT_INDEX_ENABLED (default
+# OFF), so the zoning_lot_index stays NOT_CHECKED in production. An index fetch is the provider's
+# own I/O, never the route's or assembly's.
+ZoningLotIndexProvider = Callable[[str, str], "ZoningLotIndex | None"]
+
 
 def _existing_evidence(
     provider: ExistingFloorAreaProvider | None,
@@ -259,6 +282,7 @@ def assemble_study_inputs(
     site_geometry: SiteGeometry | None = None,
     prepared_outline: PreparedOutline | None = None,
     existing_floor_area: ExistingFloorAreaEvidence | None = None,
+    zoning_lot_index: ZoningLotIndex | None = None,
 ) -> StudyInputs:
     """Build :class:`StudyInputs` from a successful PLUTO fetch result.
 
@@ -348,7 +372,10 @@ def assemble_study_inputs(
     # Surface the three objects already in hand (M5-T134): the built ``profile``, the
     # ``site_geometry`` argument (threaded above, then carried), and the ``prepared_outline`` from
     # the outline seam (reading O21). INERT carriers - the study_setup the route emits is unchanged.
-    # Each stays None when not produced; no default stands for a fact.
+    # Each stays None when not produced; no default stands for a fact. ``zoning_lot_index`` is the
+    # DB-232 carrier: None -> NOT_CHECKED, so an unbound provider leaves the output byte-identical.
+    if zoning_lot_index is None:
+        zoning_lot_index = not_checked()
     return StudyInputs(
         lot_choice=choice,
         site=site,
@@ -357,6 +384,7 @@ def assemble_study_inputs(
         property_profile=profile,
         site_geometry=site_geometry,
         prepared_outline=prepared_outline,
+        zoning_lot_index=zoning_lot_index,
     )
 
 
@@ -369,6 +397,7 @@ def pluto_study_inputs_provider(
     geometry_provider: GeometryProvider | None = None,
     outline_provider: OutlineProvider | None = None,
     existing_floor_area_provider: ExistingFloorAreaProvider | None = None,
+    zoning_lot_index_provider: ZoningLotIndexProvider | None = None,
 ) -> StudyInputsProvider:
     """A :data:`StudyInputsProvider` over a PLUTO ``fetcher``.
 
@@ -434,6 +463,11 @@ def pluto_study_inputs_provider(
         existing_floor_area = _existing_evidence(
             existing_floor_area_provider, canonical_bbl, correlation_id
         )
+        zoning_lot_index = (
+            zoning_lot_index_provider(canonical_bbl, correlation_id)
+            if zoning_lot_index_provider is not None
+            else None
+        )
         return assemble_study_inputs(
             result,
             selected=selected,
@@ -444,9 +478,47 @@ def pluto_study_inputs_provider(
             site_geometry=site_geometry,
             prepared_outline=prepared_outline,
             existing_floor_area=existing_floor_area,
+            zoning_lot_index=zoning_lot_index,
         )
 
     return provider
+
+
+def acris_zoning_lot_index_provider(
+    *, transport: Transport | None = None
+) -> ZoningLotIndexProvider:
+    """Build a :data:`ZoningLotIndexProvider` from the ACRIS index connector + the draft
+    classifier (DB-232, M5-T158).
+
+    It reads the recorded-document INDEX (metadata only) and classifies it. A connector failure
+    is NOT a study failure: it maps to the classifier's ``NOT_READ`` state (the study still
+    answers, with the lot-area figures labelled conditional), NEVER a 503 and NEVER
+    ``NONE_FOUND``. The imports are local so importing this module reads no connector and makes
+    no network call. ``transport`` is injectable so tests exercise the NOT_READ mapping offline;
+    None uses the connector's live default.
+    """
+    from app.connectors.acris_index_soda import (
+        AcrisIndexConnectorError,
+        fetch_zoning_lot_index,
+        urllib_transport,
+    )
+    from app.connectors.bbl import BBLValidationError
+    from app.profile.zoning_lot_index import classify_zoning_lot_index, not_read
+
+    active_transport = transport if transport is not None else urllib_transport
+
+    def provide(canonical_bbl: str, correlation_id: str) -> ZoningLotIndex:
+        try:
+            result = fetch_zoning_lot_index(
+                canonical_bbl, transport=active_transport, correlation_id=correlation_id
+            )
+        except BBLValidationError:
+            return not_read(canonical_bbl, reason="validation_error")
+        except AcrisIndexConnectorError as exc:
+            return not_read(canonical_bbl, reason=exc.error_type)
+        return classify_zoning_lot_index(result)
+
+    return provide
 
 
 @lru_cache(maxsize=1)
@@ -497,6 +569,7 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
         live_geometry_provider,
         live_outline_provider,
     )
+    from app.config import internal_zoning_lot_index_enabled
     from app.spatial.live_provider import live_spatial_provider_enabled
 
     live_spatial = live_spatial_provider_enabled()
@@ -504,11 +577,18 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     # The outline seam (M5-T134, reading O21) is bound behind the SAME flag as geometry: OFF in
     # production, so the prepared_outline carrier stays absent and the live study read is unchanged.
     outline_provider = live_outline_provider() if live_spatial else None
+    # The ACRIS zoning-lot-index seam (DB-232, M5-T158) is bound behind its OWN default-off flag
+    # INTERNAL_ZONING_LOT_INDEX_ENABLED: OFF in production, so the zoning_lot_index stays
+    # NOT_CHECKED and the live study read is byte-identical to the pre-wiring slice.
+    zoning_lot_index_provider = (
+        acris_zoning_lot_index_provider() if internal_zoning_lot_index_enabled() else None
+    )
     return pluto_study_inputs_provider(
         get_pluto_fetcher(),
         version_probe=cached_default_version_probe(),
         geometry_provider=geometry_provider,
         outline_provider=outline_provider,
+        zoning_lot_index_provider=zoning_lot_index_provider,
     )
 
 

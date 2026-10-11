@@ -1,0 +1,2131 @@
+{
+ "schema": "directive_requirements/v1",
+ "directive_id": "D-094",
+ "version": 1,
+ "requirement_count": 68,
+ "producer": "orchestrator",
+ "updated_at": "2026-10-11T09:31:14+00:00",
+ "requirements": [
+  {
+   "id": "D-094-R001",
+   "text": "'@\"/root/.claude/uploads/72bfc3c3-0b4e-4095-b46f-c2182facd54a/93e92372-REPORT-V2-REVIEW-AND-CLAUDE-NEXT-PASS.md\" Resume as the NYC Buildability orchestrator.' 'Read-only checks first; change nothing until they pass: `git rev-parse --show-toplevel`, `git status`, `git rev-parse HEAD` (expect main 9e107bf3 or a later main), `git -C /root/project/w-wave20 rev-parse HEAD` (expect 67a4b844 or later on task/wave23-density-zoning-lot), `git worktree list`, `tmux ls`, ListAgents, `python tools/project_control.py status` (expect 381 accepted on main).' 'Reconcile them with git, CI and the ledger; those win.': resume as the orchestrator: tmux, no MCP servers, read-only checks before any change (checkout, git, the wave-23 worktree, worktrees, tmux, agents, ledger 381 accepted); read CLAUDE.md, the seq-158 handoff and the last STATE lines of the 2026-10-11a session notes; git, CI and the ledger win over prose.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The read-only checks run before any change.",
+   "required_evidence": "The 2026-10-11b session notes (first STATE line) and this session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R002",
+   "text": "'Next action: handoff section 4 (collect the three helper returns or re-dispatch them, then wave 23:': next action is the handoff's section 4: the three helpers of the previous session (the M0-T191 code review and the DB-232 planner returned and were saved; the M5-T157 builder was stopped with its unfinished patch saved) are collected or re-dispatched, then wave 23 (M0-T191, M5-T157 for DB-231, M5-T158 for DB-232) is built and merged together. How this review's corrections fold into that wave is the orchestrator's sequencing within authorized work, recorded in the session notes.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The ledger and the wave-23 branch show the three tasks progressing in that order.",
+   "required_evidence": "Ledger records and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R003",
+   "text": "'Research and verification (D-093) applies; put its dispatch clause in every brief.' 'Do not repeat completed work.': the research and verification workflow (D-093) applies to all of this work; every helper brief carries the procedure's dispatch clause (section 6) and the affected record paths; completed work is reused, not repeated.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Every brief written in this session contains the dispatch clause.",
+   "required_evidence": "The briefs in the 2026-10-11b session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R004",
+   "text": "'Standing restrictions: handoff section 5.': the standing restrictions in the handoff's section 5 continue (Tier D stops; never merge pull request 241; expansion hold except its releases; production switches off; no model override on a dispatch; no timers or unattended merges; at most 3 builders and 4 reviewers; preview ports untouched by builders; nothing Verified before the owner answers C1; report numbers change only with official-document support).",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No action in this session breaks a section-5 restriction.",
+   "required_evidence": "Session notes; the pre-merge audit of the wave.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R005",
+   "text": "'Updates to the owner: four short bullets, plain words.' 'Report READY TO RESUME or BLOCKED.': the session reports READY TO RESUME or BLOCKED after the checks; later owner updates are four short bullets in plain words.",
+   "source_ref": "source-001.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The first reply states READY TO RESUME or BLOCKED.",
+   "required_evidence": "This session's transcript.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R006",
+   "text": "'Yes\u2014the main pages are still too wordy, although the report is more organized now.' 'It still spends too much space explaining the program\u2019s limitations and too little showing an architect what the results mean.' 'It mixes a property assessment with a software progress report.': the report's main pages are too wordy: they spend too much space on the program's limitations and too little on what the results mean for an architect; the report must stop mixing the property assessment with a software progress report.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The revised export's main pages are re-reviewed against this finding (checks R056 to R063).",
+   "required_evidence": "The revised export and the review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R007",
+   "text": "'Keep the full report scope; make its main answers much faster to understand.' 'The target remains the full architect-facing feasibility product, with a concise entry point and substantial supporting drawings and evidence.' 'Styling cannot produce the missing analysis.': keep the full report scope (no promised section or option removed) while making the main answers much faster to understand: a concise entry point plus substantial supporting drawings and evidence; styling alone is not the fix, the missing analysis (building geometry, scenario results) is owed.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Every section and option of the full report remains present or traceable in the revised export.",
+   "required_evidence": "Section-by-section comparison of the revised export with the report section map.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R008",
+   "text": "'Where we go next: have Claude reconcile the research with the generated results, redesign the summary and scenario template, and complete one meaningful spatial example.' 'Then apply that structure across the remaining scenarios and website.' 'There are also content problems to correct before polishing further:' '## Correct the evidence before polishing the conclusions': order of the next pass: (1) reconcile the research with the generated results (the evidence corrections, R029 to R039) before polishing conclusions; (2) redesign the summary and the scenario template; (3) complete one meaningful spatial example; (4) then apply that structure across the remaining scenarios and the website.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The ledger order of the follow-on tasks matches this sequence.",
+   "required_evidence": "Ledger task dependencies and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R009",
+   "text": "'Its weaknesses should not be copied.' 'A polished drawing is not proof of a feasible scheme.' 'Its visual hierarchy and drawing-led structure are worth learning from; its conclusions still need independent checking.': learn from the competitor's hierarchy and drawing-led structure but do not copy its weaknesses (overlapping cards, repeated sheets, unused space, internal inconsistencies); a polished drawing is not proof of a feasible scheme and the competitor's conclusions still need independent checking.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The revised export has no overlapping elements, no repeated sheet and no unreconciled figures (every-page inspection, R056).",
+   "required_evidence": "The every-page inspection record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R010",
+   "text": "'A dominant headline number and a small set of supporting metrics.' 'Predictable scenario sections with summaries, sections/massing, schedules, and plans.' 'Drawings that occupy enough space to inspect.' 'Short labels that let the reader compare values without reading paragraphs.': adopt the competitor's useful patterns: a dominant headline number with a few supporting metrics; predictable scenario sections (summary, section or massing, schedule, plans); drawings large enough to inspect; short labels for comparing values without reading paragraphs.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The redesigned summary and scenario template show these four patterns.",
+   "required_evidence": "Rendered pages of the revised export.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R011",
+   "text": "'Results, caveats, assumptions, and unfinished features compete. | Lead with a concise conclusion, clearly scoped metrics, one useful site visual, and the few issues that materially change the answer.' 'Prominent results, a useful drawing, and the few issues that could change the answer.': page 1 (decision summary): lead with a concise conclusion, clearly scoped metrics, one useful site visual and the few issues that materially change the answer; the address no longer dominates and the main floor-area result is not buried in a table.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered page 1 of the revised export.",
+   "required_evidence": "The every-page inspection record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R012",
+   "text": "'Move the development inventory to the owner update.' 'Keep a compact report-scope note and all material exclusions. |': page 1: move the feature-completion (development) inventory out of the report into the owner update; keep a compact report-scope note and every material exclusion.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No feature-completion inventory on page 1; a scope note with the material exclusions present.",
+   "required_evidence": "Rendered page 1; the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R013",
+   "text": "'| 1 \u2014 Apartment estimate | A long sentence carries the estimate and its entire methodology.' 'The same sentence appears on page 5. | Use a prominent provisional estimate with a short assumption line and a precise reference to the full calculation.': apartment estimate: a prominent provisional estimate with a short assumption line and a precise reference to the full calculation; the lack of demonstrated site fit and the unconfirmed legal cap stay beside it; the duplicate long sentence on page 5 goes.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered estimate block; the reference resolves to the calculation.",
+   "required_evidence": "Rendered pages; link check (R060).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R014",
+   "text": "'These maps do not show what fits. | Retain one neighborhood locator and one useful close-up when each answers a different question.' 'Add verified, licensed site imagery when available; do not substitute generated property photographs. |': context maps: one neighborhood locator and one useful close-up, each answering a different question, readable labels and concise source attribution; verified, licensed site imagery only when available, never generated property photographs (owner answer E1 stands).",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered context page; no generated property photograph anywhere.",
+   "required_evidence": "Rendered pages; asset provenance.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R015",
+   "text": "'Six height rows repeat two programs with only one differing maximum. | Make the subject site and relevant neighbors dominant on a dedicated constraints diagram.' 'Anchor dimensions to their edges.' 'A close-up showing relevant boundaries, dimensions, and constraints.': constraints: a dedicated constraints diagram where the subject site and relevant neighbors dominate, with dimensions anchored to their edges by dimension lines.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered constraints diagram at readable size.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R016",
+   "text": "'Compare height limits in a compact standard/qualifying-housing table.': height limits in one compact standard / qualifying-housing table instead of six rows repeating two programs.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered height table.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R017",
+   "text": "'Show applicable yard/setback areas only when their geometry and basis are established. |': yard and setback areas are drawn only when their geometry and legal basis are established.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No yard or setback area drawn without an established basis in the result.",
+   "required_evidence": "Result data vs rendered drawing.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R018",
+   "text": "'Two equal bars compare an allowance with an arithmetic schedule, not demonstrated capacity. | Put available comparable results first.' 'Keep all eleven required options traceable, with concise incomplete states in approved order.' 'Available comparisons first; concise incomplete states; development details in the owner update.': option comparison: available comparable results first; all eleven required options stay traceable, unavailable ones as concise incomplete states in the owner-approved order.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "All eleven options present in approved order; available results first.",
+   "required_evidence": "Rendered comparison page; R059 check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R019",
+   "text": "'Place the detailed missing-work inventory in the owner update.': the detailed missing-work inventory moves from the comparison page to the owner update.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No missing-work inventory on the comparison page.",
+   "required_evidence": "Rendered page; the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R020",
+   "text": "'Replace the equal bars with an explicit allowance/scheduled/site-fit distinction; do not imply the scheduled area has been achieved on site. |': replace the two equal bars with an explicit allowance / scheduled area / site-fit distinction that never implies the scheduled area has been achieved on site.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered comparison shows the three measures distinctly.",
+   "required_evidence": "Rendered page.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R021",
+   "text": "'It supplies no footprint, placement, setbacks, or spatial test. | Keep it as a compact schematic until calculated placement exists.' 'Label horizontal width as schematic/not to scale.' 'Give the main drawing area to actual site fit, section, or massing as those outputs become available. |': scenario drawing: the three-box stack stays only as a compact schematic labelled schematic / not to scale until calculated placement exists; the main drawing area goes to actual site fit, section or massing as those outputs exist.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered scenario page.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R022",
+   "text": "'Two decimal places imply precision unsupported by a surveyed arrangement. | Show floor/use, height or level, and clearly defined area measures needed for the decision.' 'Keep detailed accounting in the appendix.': schedule: show floor and use, height or level, and clearly defined area measures needed for the decision; detailed accounting goes to the appendix.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered schedule.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R023",
+   "text": "'Retain full internal precision; make displayed rounding and totals reconcile.': keep full internal precision; displayed rounding and totals reconcile.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A test that displayed rows sum to the displayed total.",
+   "required_evidence": "Test and rendered schedule.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R024",
+   "text": "'Do not silently equate gross floor area, zoning floor area, and apartment area. |': never silently equate gross floor area, zoning floor area and apartment area.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Every area figure names its measure.",
+   "required_evidence": "Rendered pages and result data.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R025",
+   "text": "'Some explanations repeat their own table row. | Use one concise issue record: issue, consequence, next action, responsible role, evidence reference.' 'Separate missing site documents from work the software must perform.' 'Preserve material limitations on the relevant result as short references. |': open items: one concise issue record (issue, consequence, next action, responsible role, evidence reference); missing site documents separated from software work; material limitations kept on the affected result as short references.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered open-items section.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R026",
+   "text": "'The page is largely an input/output listing rather than a worked calculation. | Use compact section references, actual source identifiers and dates, input basis, calculation, and result.' 'Include real worked calculations or rename the section accurately. |': evidence page: compact section references, actual source identifiers and dates (not 'City records'), input basis, calculation and result; real worked calculations or an accurate section name.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered evidence page.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R027",
+   "text": "'| 8 \u2014 Links | All linked statutory citations point to `https://zoningresolution.planning.nyc.gov/`, rather than the named section. | Resolve each link to the exact current section and connect affected results to their existing review-register entries.' 'Every linked law citation on page 8 goes to the zoning homepage\u2014not its named section.': every law link resolves to its exact current section (not the zoning homepage); affected results connect to their existing review-register entries; destinations checked in the exported PDF.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T159"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Every link annotation in the exported PDF opened and its destination checked.",
+   "required_evidence": "Link-check record (R060).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R028",
+   "text": "'| 9 \u2014 Provenance | The status key and review notes are useful supporting material but do not need to drive the main reading experience. | Keep them in a clearly named appendix.' 'Provide enough run/source/revision information to identify what actually generated this report.' 'Avoid repeated headings such as \u201cStatus-label key\u201d twice. |': status key and review notes go in a clearly named appendix with enough run, source and revision information to identify what generated the report; no repeated headings.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered appendix.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R029",
+   "text": "'State that concern near the headline result. **20,150 sq ft is a conditional tax-lot-only arithmetic allowance, not established remaining development rights.**' 'State that concern near the headline result. **20,150 sq ft is a conditional tax-lot-only arithmetic allowance, not established remaining development rights.**' 'The possible shared zoning lot involving lots 1 and 70 needs property-specific prominence beside the allowance.': zoning lot: the property-specific concern (lots 1 and 70 may share a zoning lot) is stated near the headline result; 20,150 sq ft is presented as a conditional tax-lot-only arithmetic allowance, not established remaining development rights.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T158"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered page 1 and the website summary show the concern beside the allowance.",
+   "required_evidence": "Rendered pages and screenshots; record NB-01.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R030",
+   "text": "'The generic sentence \u201cthe app does not verify the zoning lot\u201d is insufficient once a property-specific concern has been identified.': the generic sentence that the app does not verify the zoning lot is no longer the only treatment once a property-specific concern exists.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T158"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The property-specific wording appears where the generic sentence was.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R031",
+   "text": "'Incorporate the existing research handoff and evidence pack, preserving their distinctions between verified source facts, inferences, and unavailable documents.': incorporate the existing October 10 research handoff and evidence pack, keeping their distinctions between verified source facts, inferences and unavailable documents.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T158"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The affected evidence records cite the pack and keep those distinctions.",
+   "required_evidence": "docs/research/evidence-records/ (NB-01 and others).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R032",
+   "text": "'Do not calculate remaining capacity by automatically subtracting lot 1 area from the 39,934-square-foot DOB field: that field may already include retained buildings.' 'This review does not establish a replacement remaining-capacity figure.': never compute remaining capacity by subtracting lot 1's area from the 39,934 sq ft DOB field (it may include retained buildings); no replacement remaining-capacity figure is established by this review.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T158"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No such subtraction in code or report.",
+   "required_evidence": "Code search and rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R033",
+   "text": "'Current ZR 12-10 defines these areas as Manhattan Core and Special Downtown Brooklyn.': external fact to check at the primary source (D-093): current ZR 12-10 defines special density areas as Manhattan Core and Special Downtown Brooklyn.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T157"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A dated capture of ZR 12-10 in the law snapshots or record NB-05.",
+   "required_evidence": "Record NB-05 and the snapshot.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R034",
+   "text": "'Resolve that source fact through the normal rule/evidence process.' 'If the application cannot yet use it, record the implementation limitation separately.' 'The current definition identifies Manhattan Core and Special Downtown Brooklyn; this Queens property falls outside those areas.': special density geography: resolve the source fact (this Queens property is outside those areas) through the normal rule and evidence process instead of leaving it unknown or relying on a user declaration; if the application cannot yet use it, record that implementation limitation separately.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T157",
+     "M5-T161"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The report and website no longer show special-density membership as unknown for this property, or show an implementation limitation distinct from a legal unknown.",
+   "required_evidence": "Record NB-05; rendered pages; tests of M5-T157.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R035",
+   "text": "'This does not by itself establish the property's legal unit limit.' 'Do not promote the earlier conditional arithmetic example of 29 units to a confirmed site entitlement.': resolving special density geography does not establish the legal unit limit; zoning-lot basis, residential area, use, exemptions and the calculation still need correct handling; the conditional 29-unit example is never promoted to a confirmed entitlement.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T157",
+     "M5-T161"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The unit limit stays Conditional where its inputs are unresolved.",
+   "required_evidence": "Result data, rendered pages, record NB-05.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R036",
+   "text": "'Evaluate these pathways against the actual zoning-lot and boundary evidence.' 'Update the diagram and conclusion together.': rear yard: evaluate the short-block provision ZR 23-344(b) and the R6-R12 adjoining-side-line provision 23-344(c)(3) against the actual zoning-lot and boundary evidence; update the diagram and the conclusion together.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The rear-yard result and diagram cite both provisions and their evidence.",
+   "required_evidence": "Record NB-03; rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R037",
+   "text": "'Do not infer an unconditional zero rear yard from GIS, and do not continue explaining the issue as though the corner-radius test were the only applicable exception.': no unconditional zero rear yard inferred from GIS, and no explanation that treats the corner-radius test as the only applicable exception.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rear-yard text and data checked.",
+   "required_evidence": "Rendered pages and result data.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R038",
+   "text": "'Check whether the research was incorporated, whether the run used an older fixture/cache, and whether the report renderer is consuming the intended result revision.' 'Fix the data path, not just the wording.': find why the older statements persist (research not incorporated, an older fixture or cache, or the renderer reading another result revision) and fix the data path, not just the wording.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A recorded root cause per stale statement and a test that pins the corrected path.",
+   "required_evidence": "Root-cause note; tests.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R039",
+   "text": "'2. **Reconcile the three evidence issues above.** Record each as incorporated, disputed with supporting evidence, or awaiting a specifically identified document.' 'Continue unrelated presentation work while documents are unavailable.' 'Regenerate the report from the corrected result source.': record each of the three evidence issues as incorporated, disputed with supporting evidence, or awaiting a specifically identified document; continue unrelated presentation work meanwhile; regenerate the report from the corrected result source.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "One status line per issue in the evidence records; the regenerated export.",
+   "required_evidence": "Evidence records; the export.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R040",
+   "text": "'1. **Find the current implementation.** Identify the active integration revision, source result, report generator, website results components, canonical design instructions, rule register, session handoff, and existing owner questionnaire.' 'The October 9 handoff is historical context, not evidence of the current live state.': first identify the current implementation: active integration revision, source result, report generator, website result components, canonical design instructions, rule register, session handoff and questionnaire; the October 9 handoff is historical context only.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A recorded list of those paths and the revision.",
+   "required_evidence": "Session notes / handoff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R041",
+   "text": "'3. **Create one shared information structure for website and PDF.** Order it as decision summary \u2192 site/constraints \u2192 option comparison \u2192 repeatable scenario sheets \u2192 supporting calculations and evidence.' 'Keep the complete product scope; let final length follow useful content.': one shared information structure for website and PDF: decision summary, site and constraints, option comparison, repeatable scenario sheets, supporting calculations and evidence; final length follows useful content, scope stays complete.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Website and PDF follow the same section order.",
+   "required_evidence": "Rendered pages and screenshots.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R042",
+   "text": "'4. **Separate audience needs.** Architects see results, material caveats, comparisons, drawings, and next actions.' 'The owner update contains feature completion, missing implementation, review scheduling, and internal test status.' 'Clearly disclose report exclusions without repeatedly narrating the build process.': separate audiences: architects see results, material caveats, comparisons, drawings and next actions; the owner update carries feature completion, missing implementation, review scheduling and internal test status; report exclusions are disclosed clearly without narrating the build process.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No build-process narration in the report; the owner update carries it.",
+   "required_evidence": "Rendered pages; the owner update.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R043",
+   "text": "'5. **Finish one meaningful spatial example.** A complete scenario needs a footprint placed on the site, relevant constraints, section/massing, and a reconciled schedule.' 'Preserve an explicit incomplete state until those exist.': finish one meaningful spatial example: a footprint placed on the site, relevant constraints, section or massing, and a reconciled schedule; until those exist the scenario keeps an explicit incomplete state.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T160"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "One scenario rendered with placed footprint, constraints, section or massing, reconciled schedule.",
+   "required_evidence": "Rendered pages; result data.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R044",
+   "text": "'Do not invent geometry to fill a layout.': never invent geometry to fill a layout; drawings come from calculated, source-based geometry.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Every drawn shape traces to result geometry.",
+   "required_evidence": "Result data vs drawing.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R045",
+   "text": "'6. **Return the revised export and corresponding website screenshots.** Include a brief change list, unresolved issues, tested revision, and links to the existing evidence records.' '6. **Return the revised export and corresponding website screenshots.** Include a brief change list, unresolved issues, tested revision, and links to the existing evidence records.': return the revised export and matching website screenshots with a brief change list, unresolved issues, the tested revision and links to the existing evidence records.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The return contains each item.",
+   "required_evidence": "The return to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R046",
+   "text": "'Do not claim the app was deployed unless deployment was authorized and actually verified.': never claim the app was deployed unless deployment was authorized and actually verified.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "No deployment claim in the return.",
+   "required_evidence": "The return to the owner.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R047",
+   "text": "'A main result should be visually stronger than its explanatory paragraph.' 'As an initial print template, try 28\u201332 pt for key metrics, 18\u201324 pt for the property title, 14\u201316 pt for section headings, 10\u201311 pt body text, and at least 9 pt for essential table text.' 'These are starting design choices, not legal or universal accessibility standards.': a main result is visually stronger than its explanation; initial print type scale 28-32 pt key metrics, 18-24 pt property title, 14-16 pt section headings, 10-11 pt body, at least 9 pt essential table text, as starting design choices (not legal or accessibility standards).",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered pages measured against the starting scale.",
+   "required_evidence": "Rendered pages; template source.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R048",
+   "text": "'Use consistent margins around 14\u201318 mm, a stable spacing scale, and generous separation between unrelated sections.' 'Adjust the grid to the adopted paper size; do not reduce fonts to force a page count.': consistent margins around 14-18 mm and a stable spacing scale, adjusted to the adopted paper size (question D1 open; A4 meanwhile); never shrink fonts to force a page count.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Template margins and spacing tokens.",
+   "required_evidence": "Template source; rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R049",
+   "text": "'Keep numeric values aligned and units in column headings where possible.' 'Use short headings and avoid duplicating a section title as its table caption.': numeric values aligned, units in column headings where possible, short headings, no table caption duplicating its section title.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered tables.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R050",
+   "text": "'Retain the existing six status meanings.' 'Keep status beside each affected output; shared status can be stated once for a clearly bounded group when its scope is unambiguous.' 'Do not remove uncertainty to imitate the competitor's confidence.': keep the six status meanings (D-090 R779 to R799) beside each affected output, a shared status stated once only for a clearly bounded group; uncertainty is never removed to imitate the competitor's confidence.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Every output carries one status.",
+   "required_evidence": "Rendered pages; the promotion check.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R051",
+   "text": "'Put the result first, the material qualification next, and the derivation in linked detail.' 'On the website, detail can expand; the PDF must contain or precisely reference the same essential evidence.': result first, material qualification next, derivation in linked detail; the website may expand detail; the PDF contains or precisely references the same essential evidence.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered pages and screenshots.",
+   "required_evidence": "Rendered pages and screenshots.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R052",
+   "text": "'Every map must have a distinct job.' 'Every chart must make a comparison easier.' 'A large diagram that merely repeats \u201cthree floors\u201d should not displace a useful site drawing.': every map has a distinct job, every chart makes a comparison easier; a large diagram that only repeats 'three floors' does not displace a useful site drawing.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered pages.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R053",
+   "text": "'Show real source-based geometry, useful line weights, anchored dimensions, readable street/lot labels, north arrow, and scale.' 'Mark illustrative geometry distinctly.': drawings show real source-based geometry with useful line weights, anchored dimensions, readable street and lot labels, north arrow and scale; illustrative geometry is marked distinctly.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered drawings.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R054",
+   "text": "'Keep missing data and incomplete software honest without filling the report with repeated \u201cnot yet\u201d prose.': missing data and incomplete software stay honest without repeated 'not yet' prose.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered pages.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R055",
+   "text": "'For a *hypothetical lot-70-only calculation*, subject to the unresolved zoning-lot basis:' 'Use the existing HPD measurement basis and full sensitivity calculation in the supporting detail.' 'These examples reorganize the current figures; they do not validate them.': concise result wording follows the review's two examples (allowance block; apartment-estimate block) with the existing HPD measurement basis and full sensitivity calculation in the supporting detail; the examples reorganize current figures and validate none of them.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Rendered result blocks.",
+   "required_evidence": "Rendered pages.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R056",
+   "text": "'Render and inspect **every exported page** at readable size.' 'Check all tables, captions, dimensions, page breaks, headers, footers, and whitespace; a text extraction alone does not verify layout.': render and inspect every exported page at readable size (tables, captions, dimensions, page breaks, headers, footers, whitespace); text extraction alone does not verify layout.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "An every-page inspection record with page images.",
+   "required_evidence": "Inspection record and images.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R057",
+   "text": "'Check the website at representative desktop and mobile sizes.' 'Confirm the same figures, labels, caveats, and source references appear in both outputs.': check the website at representative desktop and mobile sizes; the same figures, labels, caveats and source references appear in website and PDF.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Screenshots at desktop and mobile sizes compared with the PDF.",
+   "required_evidence": "Screenshots and comparison record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R058",
+   "text": "'Verify that each result and diagram comes from the same result revision and scenario.' 'Distinguish allowance, scheduled area, demonstrated site fit, preliminary apartment estimate, and legal unit limit.': each result and diagram comes from the same result revision and scenario; allowance, scheduled area, demonstrated site fit, preliminary apartment estimate and legal unit limit stay distinct.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP",
+     "M5-T162"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A test or check tying every rendered figure to one result revision.",
+   "required_evidence": "Test and record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R059",
+   "text": "'Check that all eleven required options remain accounted for and unavailable options cannot be mistaken for evaluated alternatives.': all eleven required options remain accounted for and unavailable options cannot be mistaken for evaluated alternatives.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A test over the comparison output.",
+   "required_evidence": "Test and rendered page.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R060",
+   "text": "'Click the actual PDF evidence links and check the destinations, not merely that an annotation exists.' 'Give references such as \u201citem 3\u201d a precise page/anchor destination.': open the actual PDF evidence links and check destinations; internal references such as 'item 3' get a precise page or anchor destination.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A link-destination check over the exported PDF.",
+   "required_evidence": "Check output.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R061",
+   "text": "'Confirm that legal source facts are not marked unknown solely because a software feature is unfinished.': legal source facts are not marked unknown solely because a software feature is unfinished; genuinely unresolved site facts stay unresolved.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Review of every 'unknown' in the export against its cause.",
+   "required_evidence": "Review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R062",
+   "text": "'Use a short reader check: can an architect identify the calculation basis, main results, whether site fit is demonstrated, the major unresolved issue, and the next action within about a minute? This is a proposed usability target, not a claim of a completed user study.' 'Use a short reader check: can an architect identify the calculation basis, main results, whether site fit is demonstrated, the major unresolved issue, and the next action within about a minute? This is a proposed usability target, not a claim of a completed user study.': a short reader check: can an architect find the calculation basis, main results, whether site fit is demonstrated, the major unresolved issue and the next action within about a minute (a proposed target, not a completed user study).",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "A recorded reader check by an independent reviewer.",
+   "required_evidence": "Review record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R063",
+   "text": "'Record what passed and what remains incomplete.' 'A passing export test does not establish professional zoning approval.': record what passed and what remains incomplete; a passing export test does not establish professional zoning approval.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "harness",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The return lists passed and incomplete items.",
+   "required_evidence": "The return.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R064",
+   "text": "'Use the existing review process and attach evidence to the tested revision.' 'Do not create another broad audit framework.': use the existing review process with evidence attached to the tested revision; no new broad audit framework.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Reviews run through the existing gates.",
+   "required_evidence": "Gate records.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R065",
+   "text": "'Update the existing canonical design contract and permanent Claude project instructions with a short pointer to it.' 'Preserve prior owner decisions and avoid duplicating competing design documents.': update the existing canonical design contract (docs/design/ARCHITECT_PRESENTATION_CONTRACT.md) and add a short pointer in the permanent project instructions; preserve prior owner decisions; no competing design document.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The contract revision and the pointer in the diff.",
+   "required_evidence": "Task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R066",
+   "text": "'Persist these requirements: architect-facing results first; complete report scope retained; material uncertainty beside results; internal progress kept in the owner update; source/geometry consistency; every-page visual inspection.': persist in that contract: architect-facing results first; complete report scope retained; material uncertainty beside results; internal progress in the owner update; source and geometry consistency; every-page visual inspection.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "The six points present in the contract.",
+   "required_evidence": "Task diff.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R067",
+   "text": "'Checkpoint the actual implementation paths, tested revision, last reviewed export, unresolved evidence requests, and next action.' 'A future session should load those current records instead of reconstructing the design from chat history.': checkpoint the implementation paths, tested revision, last reviewed export, unresolved evidence requests and next action so a future session loads current records instead of chat history.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Handoff and session notes carry these.",
+   "required_evidence": "Handoff and session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R068",
+   "text": "'Put genuine owner choices or requests for unavailable documents in the **existing questionnaire MD**.' 'Do not ask the owner to determine a publicly researchable zoning fact or approve a guessed boundary.': genuine owner choices and requests for unavailable documents go in the existing questionnaire; the owner is never asked to determine a publicly researchable zoning fact or approve a guessed boundary.",
+   "source_ref": "source-001.md#attached-brief-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-11"
+   },
+   "dependencies": [],
+   "required_harness": "Questionnaire entries only for genuine owner items.",
+   "required_evidence": "The questionnaire.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  }
+ ]
+}

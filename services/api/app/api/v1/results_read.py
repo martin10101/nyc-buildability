@@ -392,6 +392,7 @@ async def post_results(
             prepared_outline=inputs.prepared_outline,
             site_geometry=inputs.site_geometry,
             special_density_statement=req.special_density_statement,
+            zoning_lot_index=inputs.zoning_lot_index,
             building_defaults=building_defaults,
             user_choices=frozenset(user_choices),
             env=None,

@@ -368,9 +368,29 @@ def test_f8_open_items_short_effect_and_full_reason() -> None:
     html = build_report_html(benchmark())
     text = visible_text(html)
     assert "Effect on the answer" in text
-    assert "No legal apartment limit is shown." in text
+    # After M5-T157 the standard-residence limit is shown (a Conditional ceiling); the effect
+    # follows the document instead of the old fixed "No legal apartment limit is shown." sentence.
+    assert (
+        "The legal apartment limit is shown as a conditional ceiling for standard residences; "
+        "it is not known for qualifying affordable housing or qualifying senior housing."
+    ) in text
+    assert "No legal apartment limit is shown." not in text
     assert "rear yard is not known beyond the corner area" in text
     assert "class=\"reason-row\"" in html
+
+
+def test_db232_zoning_lot_open_item_is_first() -> None:
+    # DB-232 / D-094 R029/R030: on the benchmark (a recorded zoning lot description names lot 1) the
+    # property-specific zoning-lot concern is the FIRST open item, and the decision summary prefers
+    # it. The reason names lot 1 and the resolver names the City Register file.
+    doc = benchmark()
+    items = readers.open_items(doc)
+    assert items[0]["title"] == "Zoning lot"
+    assert items[0]["number"] == 1
+    assert "lot 1" in items[0]["reason"]
+    assert "2022000059134" in items[0]["resolves"]
+    decision = readers.decision_open_items(doc)
+    assert decision[0]["title"] == "Zoning lot"
 
 
 def test_a3_not_checked_items_have_no_redundant_detail() -> None:

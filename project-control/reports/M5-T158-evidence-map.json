@@ -1,0 +1,145 @@
+{
+ "task_id": "M5-T158",
+ "material_commits": [
+  "10e5c55d (builder part A: ACRIS index connector, classifier, fixtures, flag, study-inputs seam, registry draft)",
+  "aba5e87f (builder part B: the zoning-lot condition on results, scope row, first open item, web label, register, regenerated fixtures)",
+  "8d767dcb (builder part B: three consumer tests (scope correction 1))",
+  "1e43857e (orchestrator: NB-01 revision 3)",
+  "7f47fa05 (orchestrator: NB-01 review entry; backlog and research-queue status lines)",
+  "2a7cc7f0 (orchestrator: NB-05 revision-3 review entry (NB-05 revision 3 itself landed in 55c2d745 with scope correction 2))",
+  "a68901be (builder correction C: limiter reset, per-state emit tests, structural guard, NOT_READ route test)"
+ ],
+ "claim_seam_head": "41c6778f8491d4a2af15d01a8291bdf1440a8c71",
+ "files_changed": [
+  "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+  "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+  "apps/web/src/lib/architect/three-answers.ts",
+  "docs/DISCOVERY_BACKLOG.md",
+  "docs/RESEARCH_REQUESTS.md",
+  "docs/SOURCE_ACCESS_REGISTRY.md",
+  "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+  "docs/research/evidence-records/NB-05-special-density-area.json",
+  "docs/research/source-registry-drafts/acris-index.json",
+  "docs/zoning-rule-review/HISTORY.md",
+  "docs/zoning-rule-review/REGISTER.md",
+  "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+  "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+  "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+  "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+  "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+  "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+  "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+  "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+  "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+  "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+  "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+  "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
+  "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+  "project-control/reports/M5-T158-producer-report.md",
+  "services/api/app/api/v1/results_read.py",
+  "services/api/app/api/v1/study_inputs.py",
+  "services/api/app/config.py",
+  "services/api/app/connectors/acris_index_soda.py",
+  "services/api/app/drawings/kit/scope.py",
+  "services/api/app/drawings/report/readers.py",
+  "services/api/app/profile/zoning_lot_index.py",
+  "services/api/app/rules/review_register/register.json",
+  "services/api/app/scenario/three_answers/result_way_bridge.py",
+  "services/api/app/scenario/three_answers/result_way_conditions.py",
+  "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+  "services/api/app/scenario/three_answers/result_way_inputs.py",
+  "services/api/app/scenario/three_answers/result_ways.py",
+  "services/api/app/scenario/three_answers/three_way_document.py",
+  "services/api/tests/api/test_results_read_api.py",
+  "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+  "services/api/tests/connectors/test_acris_index_soda.py",
+  "services/api/tests/connectors/test_benchmark_215_16_northern_fixtures.py",
+  "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+  "services/api/tests/drawings/report/test_report_pages.py",
+  "services/api/tests/fixtures/benchmark_215_16_northern/MANIFEST.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern/README.md",
+  "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_doc_control_codes_7isb-wh4c.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_legals_8h5j-fqxa_good_through.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern/acris_index_master_bnx9-e6tj_subject_docs.json",
+  "services/api/tests/journey/test_215_16_northern_journey.py",
+  "services/api/tests/profile/test_zoning_lot_index.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+  "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+  "services/api/tests/test_lane_flags.py"
+ ],
+ "what_did_not_change": "No figure on the benchmark (FAR 2.0/2.4, 20,150/24,180 sq ft, unit limit 29); no rule file under rulesets/; no workflow, dependency or deployment file; production stays NOT_CHECKED with the new flag off.",
+ "known_limits": [
+  "An index entry is not the instrument: NB-01 stays access_blocked and the zoning lot is never concluded.",
+  "NONE_FOUND is not a title search: a DECL-only zoning lot, a former-lot ZONE after a split, or a cross-block development is not caught (disclosed in the record and the registry draft).",
+  "The report's page-1 summary still prints the generic zoning-lot sentence beside the new first open item; replacing it is the redesign task (D-094 plan P-3).",
+  "Security advisories for enabling the flag in production are backlog DB-237 (WATCH)."
+ ],
+ "checks_at_material_head": [
+  "ruff: All checks passed",
+  "One-process full api suite at a68901be: 9385 passed, 8 skipped (orchestrator); web vitest at 1e43857e: 128 files, 2641 passed",
+  "research_record_check --check: PASS, all six records current; register check PASSED"
+ ],
+ "requirements": {
+  "D-090-R229": [
+   "An index that cannot be read gives NOT_READ (never 'none found'), and the figures carry a 'could not be read' zoning-lot condition (connector failure-path tests; test_db232_connector_failure_route_answers_200_with_could_not_be_read)."
+  ],
+  "D-090-R240": [
+   "No user input is filled: with no provider bound the state is NOT_CHECKED and the output is unchanged (test_db232_not_checked_adds_no_scope_row_or_condition; test_route_body_identical_whether_or_not_index_bound)."
+  ],
+  "D-090-R241": [
+   "Expected values come from the recorded index rows and NB-01's evidence (G1 and G4 worked them independently); regenerated fixtures are explained line by line in the producer report."
+  ],
+  "D-090-R255": [
+   "The zoning-lot concern comes from the city's recorded-document index (evidence), labelled a draft reading; no user assumption is turned into a fact; the zoning lot is never concluded."
+  ],
+  "D-090-R520": [
+   "The standard unit limit stays a Conditional 29 and now carries the property-specific zoning-lot condition (exactly one) on the benchmark."
+  ],
+  "D-090-R570": [
+   "Values withheld before stay withheld (coverage by portion, building A, rear yard beyond the corner, setback, qualifying limits, existing floor area, remaining capacity 'Not confirmed'); no combined lot area and no remainder from 39,934 appear (journey guard)."
+  ],
+  "D-090-R584": [
+   "The live binding sits behind a new default-off flag (INTERNAL_ZONING_LOT_INDEX_ENABLED); production is unchanged (G5)."
+  ],
+  "D-090-R588": [
+   "Scope unchanged: every figure and option remains; the task adds a condition, a scope row and an open item."
+  ],
+  "D-090-R689": [
+   "Reuses NB-01 (revisions 1-2 from M0-T190) and the October 10 evidence pack; revision 3 adds the connector captures and corrects E1's URL."
+  ],
+  "D-090-R783": [
+   "Every affected figure keeps one status: Conditional; nothing is labelled Verified."
+  ],
+  "D-093-R007": [
+   "No unresolved property number is changed or resolved: lot area, zoning-lot scope, existing floor area, rear yard and unit count keep their values and states; the zoning lot stays 'Not confirmed'."
+  ],
+  "D-093-R038": [
+   "NB-01 revision 3 is one concise record with primary evidence for each index capture (E8-E10: authority, URL, dataset id, dates, excerpt, saved copy, SHA-256); research_record_check passes."
+  ],
+  "D-093-R050": [
+   "G1 (data-contract-verifier) opened the evidence pack, worked the benchmark state before reading the code, replayed connector and classifier itself and checked the live index (still lists the ZONE against lots 1 and 70); its entry is in NB-01 review.agent_reviews (revision 3, agrees). NB-05 revision 3 was delta-reviewed the same way."
+  ],
+  "D-093-R051": [
+   "Boundaries tested: each classifier state, DECL/CERT only, partial_lot P, another block, mixed documents, every connector failure, NOT_CHECKED identity, the per-state emitted wording, and a structural guard over every lot-area figure; mutation proofs by the builder (three rounds) and by G4."
+  ],
+  "D-093-R057": [
+   "Northern Boulevard question 1: the three 2022 instruments are known only from index entries (CERT, ZONE, DECL against lots 1 and 70); the instruments themselves are unread (NB-01 access_blocked); the program states that concern on every lot-area figure."
+  ],
+  "D-094-R029": [
+   "Every lot-area figure on the benchmark, including the 20,150 sq ft allowance and the unit limit, carries the condition 'If lot 70 alone is the zoning lot ... filed on this lot together with lot 1 ... City Register file 2022000059134 ... not read', and the report's first open item is 'Zoning lot'. The page-1 headline wording itself is the redesign task (P-3)."
+  ],
+  "D-094-R030": [
+   "The property-specific condition and the scope row ('Not confirmed', naming lot 1) now accompany the figures; the generic page-1 sentence remains until the redesign replaces it (P-3), so it is no longer the only treatment."
+  ],
+  "D-094-R031": [
+   "NB-01 keeps the evidence pack's distinctions: index facts in observed_facts, the draft reading DB232-R1 in interpretation, the unread instruments as access_blocked."
+  ],
+  "D-094-R032": [
+   "No remaining-capacity figure and no subtraction from the 39,934 sq ft DOB field anywhere (journey test asserts '39,934' and '39934' absent from the whole document); remaining capacity stays 'Not confirmed'."
+  ]
+ }
+}

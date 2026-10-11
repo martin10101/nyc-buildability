@@ -24,7 +24,7 @@ is unknown exactly when it is None - never a zero and never a default.
 from __future__ import annotations
 
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 __all__ = [
@@ -49,6 +49,11 @@ __all__ = [
     "UNIT_STANDARD_KEY",
     "WORK_ORDER_DISTRICT",
     "WORK_OWED",
+    "ZONING_LOT_NONE_FOUND",
+    "ZONING_LOT_NOT_CHECKED",
+    "ZONING_LOT_NOT_READ",
+    "ZONING_LOT_OTHER_LOTS_NAMED",
+    "ZONING_LOT_SINGLE_LOT_ONLY",
     "AnswerWays",
     "AreaAgreement",
     "Checked",
@@ -71,7 +76,23 @@ __all__ = [
     "WayRecord",
     "WholeAnswerNotAvailable",
     "Withheld",
+    "ZoningLotCitation",
 ]
+
+
+# ---------------------------------------------------------------------------
+# The ACRIS recorded-document index citation (backlog DB-232, part B). A scenario-local projection
+# of ``app.profile.zoning_lot_index.ZoningLotIndex``, built by the bridge, so this module stays
+# decoupled from the connector / classifier. Every text is pre-rendered here into the plain form the
+# wording needs (lot labels, human dates). The five states mirror the classifier's; an index entry
+# never establishes an instrument's contents (D-093), so the figures are labelled conditional and
+# the zoning lot is never concluded.
+# ---------------------------------------------------------------------------
+ZONING_LOT_NOT_CHECKED = "not_checked"
+ZONING_LOT_NOT_READ = "not_read"
+ZONING_LOT_NONE_FOUND = "none_found"
+ZONING_LOT_SINGLE_LOT_ONLY = "single_lot_only"
+ZONING_LOT_OTHER_LOTS_NAMED = "other_lots_named"
 
 
 class LotType(Enum):
@@ -110,14 +131,17 @@ class AreaAgreement(Enum):
 
 
 class DensityKnowledge(Enum):
-    """What is known about a special density area (gap K11). There is no data source today
-    and the ZR 12-10 definition is owed; a user's statement supports only a conditional
-    result and is never stored as a fact (R255)."""
+    """What is known about a special density area (gap K11; task M5-T157 reads it from the record,
+    ZR 12-10). The record (:mod:`special_density_geography`) wins over a user's statement; where the
+    record and a statement disagree the limit is withheld with both sides named
+    (``RECORD_AND_STATEMENT_DISAGREE``); with no usable record a user's statement that the lot is
+    not in one still supports only a conditional result and is never stored as a fact (R255)."""
 
     NOT_GIVEN = "not_given"
     EVIDENCE_NOT_IN_ONE = "evidence_not_in_one"
     EVIDENCE_IN_ONE = "evidence_in_one"
     USER_STATEMENT_NOT_IN_ONE = "user_statement_not_in_one"
+    RECORD_AND_STATEMENT_DISAGREE = "record_and_statement_disagree"
 
 
 class ResultFamily(Enum):
@@ -200,6 +224,41 @@ class LotAreaFigures:
 
 
 @dataclass(frozen=True)
+class ZoningLotCitation:
+    """What the ACRIS recorded-document index contributes to the result ways (backlog DB-232).
+
+    ``state`` is one of the five ``ZONING_LOT_*`` constants. The lot labels are plain words
+    ("lot 70", "lot 1") and the dates are plain English ("February 8, 2022"), built by the bridge.
+    ``figures_conditional`` is True exactly in ``other_lots_named`` and ``not_read`` - the two
+    states in which every lot-area figure and building alternative carries the zoning-lot condition
+    (owner row D-093-R062). The default is ``not_checked`` (no provider bound), which carries no
+    condition and emits no scope row, so every existing output stays byte-identical."""
+
+    state: str = ZONING_LOT_NOT_CHECKED
+    subject_lot_label: str | None = None
+    # Plain-words phrases pre-rendered by the bridge (e.g. "lot 1", "block 7335, lot 1"), so the
+    # decision module itself joins no list and holds no number.
+    other_same_block_phrase: str = ""
+    other_block_phrase: str = ""
+    zone_crfn: str | None = None
+    zone_recorded_date: str | None = None
+    single_lot_recorded_date: str | None = None
+    as_of_date: str | None = None
+    has_declaration: bool = False
+    has_certificate: bool = False
+
+    @property
+    def figures_conditional(self) -> bool:
+        return self.state in (ZONING_LOT_OTHER_LOTS_NAMED, ZONING_LOT_NOT_READ)
+
+    @property
+    def shows_scope_row(self) -> bool:
+        """The scope row (zoning_lot 'Not confirmed') is emitted in every state except
+        not_checked (the production default, where nothing was read)."""
+        return self.state != ZONING_LOT_NOT_CHECKED
+
+
+@dataclass(frozen=True)
 class ResultWayInputs:
     """Everything the module decides from. No field has a default that stands for a fact;
     the tri-state fields must be supplied explicitly as read / not-read / not-checked.
@@ -230,6 +289,11 @@ class ResultWayInputs:
     special_density: DensityKnowledge
     large_lot_threshold_met: bool | None
     overlay_support: Mapping[ResultFamily, OverlayResultSupport] | None = None
+    # The ACRIS recorded-document index citation (backlog DB-232). Defaults to a not_checked
+    # citation (no provider bound - the production default), which adds no condition and emits no
+    # scope row, so every existing result stays byte-identical. The bridge builds it from the
+    # study-inputs zoning_lot_index when a provider is bound.
+    zoning_lot: ZoningLotCitation = field(default_factory=ZoningLotCitation)
 
 
 # ---------------------------------------------------------------------------

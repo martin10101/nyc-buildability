@@ -23,10 +23,13 @@ from pathlib import Path
 
 import pytest
 
+from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs
 from app.contracts.study_contracts import validate_results_document
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
+from app.profile.zoning_lot_index import classify_zoning_lot_index
+from app.resilience.transport import TransportResponse
 from app.scenario.three_answers.result_way_engine_bridge import (
     run_engine_and_result_ways_from_evidence,
 )
@@ -78,6 +81,39 @@ def _carriers():
     return profile, prepared, geometry
 
 
+_ACRIS_PACK = (
+    _REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "benchmark_215_16_northern"
+)
+_ACRIS_SUBJECT_IDS = sorted([
+    "2018013000919001", "2018013000919002", "2022020201551001", "2022020201551002",
+    "2022031600431001", "2024011000700001", "2024011000700002",
+])
+_ACRIS_ZDC_IDS = sorted(["2022020201551001", "2022020201551002", "2022031600431001"])
+
+
+def _benchmark_zoning_lot_index():
+    """The recorded benchmark's zoning-lot index (backlog DB-232): the ACRIS connector replayed over
+    the recorded pack (no network), then classified (OTHER_LOTS_NAMED, lot 1), built exactly as the
+    journey test builds it so the evidence entry reproduces the committed fixture byte-for-byte."""
+    routes = {
+        _acris.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+        _acris.build_master_url(_ACRIS_SUBJECT_IDS, limit=1000, offset=0):
+            "acris_index_master_bnx9-e6tj_subject_docs.json",
+        _acris.build_legals_by_documents_url(_ACRIS_ZDC_IDS, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+        _acris.build_good_through_url(): "acris_index_legals_8h5j-fqxa_good_through.json",
+    }
+
+    def transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        return TransportResponse(200, (_ACRIS_PACK / routes[url]).read_text("utf-8"))
+
+    result = _acris.fetch_zoning_lot_index(
+        "4073340070", transport=transport, sleep=lambda _s: None, correlation_id="wiring-acris",
+    )
+    return classify_zoning_lot_index(result)
+
+
 def _emit_from_evidence(monkeypatch):
     """Run the EVIDENCE entry on the recorded benchmark lot (M5-T137): the five engine conditions
     come from the SAME evidence the decision step gathers, built exactly as the journey test builds
@@ -92,7 +128,9 @@ def _emit_from_evidence(monkeypatch):
     return run_engine_and_result_ways_from_evidence(
         evaluator_inputs=doc, study=study, results_id=_RESULTS_ID, computed_at=_COMPUTED_AT,
         housing_program="standard_residence", property_profile=profile, prepared_outline=prepared,
-        site_geometry=geometry, special_density_statement=None, env=_LANE_ON,
+        site_geometry=geometry, special_density_statement=None,
+        zoning_lot_index=_benchmark_zoning_lot_index(),  # DB-232: OTHER_LOTS_NAMED (lot 1)
+        env=_LANE_ON,
     )
 
 

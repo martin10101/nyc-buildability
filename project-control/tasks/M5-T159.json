@@ -1,0 +1,140 @@
+{
+  "task_id": "M5-T159",
+  "title": "D-094 P-1: the report's law links go to the exact Zoning Resolution section, never the homepage; a section with no capture prints as plain text",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Replace the fixed homepage link on the report's evidence page with the exact section URL taken from the repository's law captures (request_url), print a section with no capture as plain text, and test every link target.",
+  "business_reason": "The owner's reviewer found every law link in report v2 pointing at the Zoning Resolution homepage (D-094 R027); the cause is a fixed constant at page_evidence.py:21 (planner, D-094 work order section 2d).",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11b/workorder-D094-presentation-draft.md",
+    "services/api/app/rules/snapshots.py",
+    "apps/web/src/lib/architect/source-links.ts",
+    "services/api/app/rules/review_register/register.json"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/law_links.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/sources.py",
+    "services/api/tests/drawings/report/test_report_law_links.py",
+    "project-control/reports/M5-T159-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T190"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/law_links.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/sources.py",
+    "services/api/tests/drawings/report/test_report_law_links.py",
+    "project-control/reports/M5-T159-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/rulesets/",
+    ".github/",
+    "render.yaml",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    ".claude/",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/tests/drawings/report/test_report_pages.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the report's evidence page cites ZR sections",
+      "when": "the HTML is built",
+      "then": "every law href is an official Zoning Resolution article/chapter/section URL whose last path segment equals the cited section; no href is the site homepage"
+    },
+    {
+      "id": "S2",
+      "given": "a cited sub-paragraph such as 23-52(b)",
+      "when": "it is linked",
+      "then": "the link goes to the section page 23-52 and the visible text keeps 23-52(b)"
+    },
+    {
+      "id": "S3",
+      "given": "a cited section with no law capture in the repository",
+      "when": "it is linked",
+      "then": "it prints as plain text with no link (never a guessed URL)"
+    },
+    {
+      "id": "S4",
+      "given": "any generated law URL",
+      "when": "it is checked",
+      "then": "it passes the same host/path rules as the website's source-links allowlist (https, zoningresolution.planning.nyc.gov, no query, no credentials, no port)"
+    },
+    {
+      "id": "S5",
+      "given": "ZR 12-10",
+      "when": "it is linked",
+      "then": "it links to the section page; an anchor is added only where the capture records one"
+    },
+    {
+      "id": "S6",
+      "given": "every existing report test and the journey fixture",
+      "when": "the suite runs",
+      "then": "only the link targets change; no figure, label or other text moves"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Internal 'see item N' links and the full link-destination check of the exported PDF are later work (report v3, P-3/P-7); this task covers the law links only.",
+    "Wave-23 builders change readers.py and the report-page tests; this task must not touch them."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T05:24:09.886355+00:00",
+  "updated_at": "2026-10-11T06:23:30.487440+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R584"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R027"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T05:24:09.886587+00:00",
+  "path_notes": "Work order: /root/project/lanes-runtime/owner-docs/session-2026-10-11b/workorder-D094-presentation-draft.md (P-1). Runs beside M5-T157 and M5-T158 with no shared file.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings/report tests/rules"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T05:25:23.818106+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-11T06:14:36.478764+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; tests made fixture-derived after G3/G4; G3 and G4 delta PASS at 0330d598; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T06:23:30.487248+00:00"
+}

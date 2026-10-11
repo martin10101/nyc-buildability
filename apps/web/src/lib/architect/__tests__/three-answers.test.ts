@@ -524,13 +524,22 @@ describe("the contract's local-exception rule: a one-result condition stays with
     };
   }
 
-  it("on the plain benchmark both conditions are shared (fan-out >= 2) and named for the shared list", () => {
+  it("on the plain benchmark the area, zoning-lot and K20 conditions are all shared (DB-232)", () => {
     const doc = loadResultsFixture("recorded_215_16_northern_journey");
     const index = conditionIndex(doc);
-    for (const info of index.values()) expect(info.count).toBeGreaterThanOrEqual(2);
     const shared = sharedConditionsView(doc);
-    expect(shared.length).toBe(index.size);
-    expect(shared.map(condition => condition.name)).toEqual(["Condition 1", "Condition 2"]);
+    // DB-232: the property-specific zoning-lot condition is now on the floor-area figures AND the
+    // legal dwelling-unit limit (replacing M5-T157's generic unit-limit-only one), so all three
+    // lot-area conditions are shared across two or more results.
+    expect(shared.length).toBe(3);
+    expect(shared.map(condition => condition.name)).toEqual(["Condition 1", "Condition 2", "Condition 3"]);
+    for (const condition of shared) {
+      expect(index.get(condition.text)?.count ?? 0).toBeGreaterThanOrEqual(2);
+    }
+    // Nothing is local on the plain benchmark now: every condition appears on more than one result.
+    const local = [...index.values()].filter(info => info.count === 1);
+    expect(local.length).toBe(0);
+    expect(index.size).toBe(3);
   });
 
   it("the density condition (one result) is a LOCAL exception: shown in full, not in the shared list", () => {
@@ -542,13 +551,14 @@ describe("the contract's local-exception rule: a one-result condition stays with
     if (!legalRow) throw new Error("the legal-limit row is missing");
     expect(legalRow.localConditions).toEqual([DENSITY_CONDITION]);
     expect(legalRow.sharedConditionNames).toEqual([]);
-    // the shared list holds the two shared conditions and NOT the density condition.
+    // the shared list holds the three shared lot-area conditions (area, zoning-lot, K20; DB-232)
+    // and NOT the density condition, which stays local to the one result it applies to.
     const shared = sharedConditionsView(doc);
     expect(shared.some(condition => condition.text === DENSITY_CONDITION)).toBe(false);
-    expect(shared.length).toBe(2);
-    // the headline still refers to the two shared conditions by name.
+    expect(shared.length).toBe(3);
+    // the headline still refers to the shared conditions by name.
     if (view.headline.kind !== "value") throw new Error("expected a value headline");
-    expect(view.headline.shown.sharedConditionNames).toEqual(["Condition 1", "Condition 2"]);
+    expect(view.headline.shown.sharedConditionNames).toEqual(["Condition 1", "Condition 2", "Condition 3"]);
     expect(view.headline.shown.localConditions).toEqual([]);
   });
 });

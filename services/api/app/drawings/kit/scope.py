@@ -59,6 +59,8 @@ ASSUMPTION_KEY_NAMES: dict[str, str] = {
     "street_line_intersection_angle_degrees": "Street-line intersection angle",
     "housing_program": "Housing program",
     "floor_to_floor_ft": "Floor-to-floor height",
+    # backlog DB-232: the ACRIS recorded-document zoning-lot concern.
+    "zoning_lot": "Zoning lot",
 }
 
 #: Plain words for a boolean assumption value (the schema's ``value`` may be a

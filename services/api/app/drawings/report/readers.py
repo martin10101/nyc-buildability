@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import formatting, labels
+from . import formatting, labels, unit_limit_text
 
 __all__ = [
     "answer_block",
@@ -36,6 +36,7 @@ __all__ = [
     "withheld_values",
     "worked_buildings",
     "zoning_line",
+    "zoning_lot_basis",
 ]
 
 ANSWER_NAMES = ("floor_area_allowance", "permitted_envelope", "building_option")
@@ -261,18 +262,25 @@ def _coverage_block(results: Mapping) -> Mapping:
 
 # Short, structural effect text per open-item category (F8) and the order they
 # appear in, by effect on the main answers.
+# The phrase that appears ONLY in the ACRIS zoning-lot-index condition (backlog DB-232), matching
+# the scenario conditions module's ZONING_LOT_INDEX_MARKER, so the open item is built only when a
+# shown figure carries that condition (other_lots_named / not_read) - never for the generic
+# zoning-lot condition on the unit limit or any other condition. A test holds the two in step.
+_ZONING_LOT_CONDITION_MARKER = "register of recorded documents"
+
 _EFFECTS = {
+    "zoning_lot": "The floor area, the apartment limit and the building option are worked for this "
+                  "tax lot alone; recorded documents may name it with another lot.",
     "lot_area": "The floor-area figures depend on it; the recorded area and the tax-map outline "
                 "disagree.",
     "coverage": "The square-foot coverage figure is withheld.",
     "rear_yard": "The rear yard is not known beyond the corner area.",
     "placement": "Where the building sits on the lot is not worked out.",
-    "legal_unit_limit": "No legal apartment limit is shown.",
     "setback": "The setback above the base is not worked out.",
     "street_wall": "The street wall is not checked.",
     "parking": "Parking, loading and bicycle requirements are not checked.",
 }
-_ORDER = ["lot_area", "coverage", "rear_yard", "placement", "legal_unit_limit",
+_ORDER = ["zoning_lot", "lot_area", "coverage", "rear_yard", "placement", "legal_unit_limit",
           "setback", "street_wall", "parking"]
 _CHECK_WORD = "A check not yet made against an independently worked example."
 
@@ -327,6 +335,11 @@ def open_items(results: Mapping) -> list[dict]:
             "status_label": label,
         }
 
+    zoning_lot = zoning_lot_basis(results)
+    if zoning_lot:
+        # (DB-232) the property-specific zoning-lot concern, ordered FIRST (owner D-094 R029/R030):
+        # the figures carry a condition that recorded documents may name this lot with another.
+        put("zoning_lot", "Zoning lot", zoning_lot[0], zoning_lot[1], labels.CONDITIONAL)
     basis = lot_area_basis(results)
     if basis:
         # The full lot-area condition sentence is stated once, on the Site and
@@ -336,8 +349,14 @@ def open_items(results: Mapping) -> list[dict]:
     for name in ANSWER_NAMES:
         for row in withheld_values(answer_block(results, name)):
             category = _category(row["key"])
-            title = "Legal apartment limit" if category == "legal_unit_limit" else row["label"]
-            put(category, title, row["reason"], row["resolved_by"], row["status_label"])
+            # The legal-apartment-limit item is built from the whole document (shown
+            # and withheld limits together) below, not from each withheld row alone.
+            if category == "legal_unit_limit":
+                continue
+            put(category, row["label"], row["reason"], row["resolved_by"], row["status_label"])
+    limit_item = unit_limit_text.legal_unit_limit_item(results)
+    if limit_item is not None:
+        by_category["legal_unit_limit"] = limit_item
     coverage = _coverage_block(results)
     if coverage.get("status") == "withheld":
         put("coverage", coverage.get("label") or "Maximum lot coverage", coverage.get("reason"),
@@ -362,7 +381,8 @@ def decision_open_items(results: Mapping) -> list[dict]:
     items = open_items(results)
     by_cat = {item["category"]: item for item in items}
     picks: list[dict] = []
-    for preferred in (["lot_area"], ["rear_yard", "placement"], ["legal_unit_limit"]):
+    # (DB-232) the zoning-lot concern is preferred first when present (owner D-094 R029/R030).
+    for preferred in (["zoning_lot", "lot_area"], ["rear_yard", "placement"], ["legal_unit_limit"]):
         for category in preferred:
             if category in by_cat and by_cat[category] not in picks:
                 picks.append(by_cat[category])
@@ -404,6 +424,40 @@ def lot_area_basis(results: Mapping) -> str | None:
                 text = condition.get("assumption")
                 if text:
                     return str(text)
+    return None
+
+
+def zoning_lot_basis(results: Mapping) -> tuple[str, str] | None:
+    """The ACRIS zoning-lot condition (backlog DB-232) carried on a shown figure, as (assumption,
+    settled_by), or None when no shown figure carries it. Detected by the marker phrase so it is
+    never confused with the generic zoning-lot condition on the unit limit or any other condition.
+    The figures carry it only in other_lots_named / not_read, so None means the figures are not
+    conditional on the recorded-document index (no open item)."""
+    def _match(conditions) -> tuple[str, str] | None:
+        for condition in conditions or []:
+            if not isinstance(condition, Mapping):
+                continue
+            assumption = condition.get("assumption")
+            if (
+                condition.get("kind") == "unchecked_condition"
+                and isinstance(assumption, str)
+                and _ZONING_LOT_CONDITION_MARKER in assumption
+            ):
+                return assumption, str(condition.get("settled_by") or "")
+        return None
+
+    for name in ANSWER_NAMES:
+        for row in present_values(answer_block(results, name)):
+            hit = _match(row.get("conditions"))
+            if hit is not None:
+                return hit
+    for building in results.get("building_alternatives", []) or []:
+        if not isinstance(building, Mapping):
+            continue
+        way = building.get("way")
+        hit = _match(way.get("conditions") if isinstance(way, Mapping) else [])
+        if hit is not None:
+            return hit
     return None
 
 

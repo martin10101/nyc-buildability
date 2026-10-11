@@ -1,0 +1,255 @@
+{
+ "schema": "directive_verification/v2",
+ "directive_id": "D-094",
+ "authority_note": "Producer (orchestrator) never verifies; directive-compliance-verifier owns verification rows. No completion claim exists at capture time.",
+ "verified_by": null,
+ "verified_at": null,
+ "task_verifications": [
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T157",
+   "applicable_requirement_ids": [
+    "D-094-R033",
+    "D-094-R034",
+    "D-094-R035"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0",
+   "reviewed_manifest_sha256": "0265bd18d7120458ee6714a3a840c2be5a6bbb9589711741cd4f42ea8ec0062d",
+   "requirements": [
+    {
+     "id": "D-094-R033",
+     "state": "PASS",
+     "evidence": [
+      "I opened the primary captures: zr-12-10-special-density-areas verbatim = \"(a) the Manhattan Core; and (b) the Special Downtown Brooklyn District\"; zr-12-10-manhattan-core = \"Manhattan Community Districts 1,2,3,4,5,6,7 and 8\"; zr-12-10-special-downtown-brooklyn-district = designated \"DB\".",
+      "The three LawCapture digests pinned in special_density_geography.py (e8029ab3\u2026, 2c04132a\u2026, ae66c93e\u2026) EQUAL sha256 of each snapshot's verbatim excerpt (I recomputed all three).",
+      "Nothing stays open (the exact PLUTO token enumeration is a separate corroboration, OQ-5, not this external fact).",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
+    },
+    {
+     "id": "D-094-R034",
+     "state": "PASS",
+     "evidence": [
+      "decide_special_density resolves the source fact from the record (PLUTO cd/borocode/spdist columns) rather than a user declaration; the Queens benchmark reads NOT IN (cd 411, spdist null), confirmed live against official PLUTO.",
+      "A record that cannot be read is withheld as \"not known\" distinct from a legal unknown, and the implementation limitation (Appendix A token not captured, OQ-5) is recorded separately in NB-05 searches[]/conditions, not promoted.",
+      "Open: only the recorded OQ-5 implementation limit, appropriately carried as a condition.",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
+    },
+    {
+     "id": "D-094-R035",
+     "state": "PASS",
+     "evidence": [
+      "The 29 is way=\"conditional\" with an always-present unchecked zoning-lot condition (\"the city's special-density record is kept per tax lot, while the dwelling-unit limit is set on the zoning lot (ZR 23-52)\"); \"entitlement\" appears in zero emitted texts, fixture, SVG, DXF or calc doc; calc doc says \"never settled.\"",
+      "Resolving geography does not establish the limit: zoning-lot basis/area/use/exemptions remain conditions.",
+      "Open for later work: DB-232 (M5-T158) adds the property-specific zoning-lot condition; the 29 stays Conditional until those inputs are confirmed.",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
+    }
+   ],
+   "verified_at": "2026-10-11T06:25:43+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T158",
+   "applicable_requirement_ids": [
+    "D-094-R029",
+    "D-094-R030",
+    "D-094-R031",
+    "D-094-R032"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2",
+   "reviewed_manifest_sha256": "0277de793709b282edf2951309990e97d1945d213bc8ab043d4bd115dd67f71c",
+   "requirements": [
+    {
+     "id": "D-094-R029",
+     "state": "PASS",
+     "evidence": [
+      "Journey test asserts 20,150 carries the condition naming \"lot 1\", \"February 8, 2022\" and settled_by \"2022000059134\", with way \"conditional\"; building B carries the marker too.",
+      "report_pages test_db232_zoning_lot_open_item_is_first asserts the first open item is \"Zoning lot\" (number 1, reason names lot 1) \u2014 prominence near the headline (I ran it, PASS).",
+      "OPEN: the exact page-1 headline summary sentence rewording is the redesign task P-3 (page_decision_summary.py is out of this packet's allowed paths).",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
+    },
+    {
+     "id": "D-094-R030",
+     "state": "PASS",
+     "evidence": [
+      "The generic unit-limit condition is replaced by the property-specific one (journey asserts \"whole zoning lot\" absent); the scope row, first open item and figure conditions are new property-specific treatments, so the generic sentence is no longer the only treatment.",
+      "The condition marker \"register of recorded documents\" distinguishes it from the generic sentence.",
+      "OPEN: the page-1 generic summary sentence itself remains until P-3 replaces it (acknowledged in the evidence map), but the row's requirement \u2014 no longer the only treatment \u2014 is met.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
+    },
+    {
+     "id": "D-094-R031",
+     "state": "PASS",
+     "evidence": [
+      "NB-01 rev 3 keeps the evidence pack's distinctions: index facts in observed_facts, draft reading DB232-R1 in interpretation, unread instruments as access_blocked.",
+      "The October-10 evidence pack and its saved copies are reused and digest-matched.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
+    },
+    {
+     "id": "D-094-R032",
+     "state": "PASS",
+     "evidence": [
+      "Journey asserts \"39,934\"/\"39934\" absent everywhere; no remaining-capacity figure is computed by subtracting lot 1 from the DOB field.",
+      "Remaining capacity stays \"Not confirmed\"; no replacement figure is established.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
+    }
+   ],
+   "verified_at": "2026-10-11T09:31:02+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T159",
+   "applicable_requirement_ids": [
+    "D-094-R027"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "fc71429314b7c087dd2043d92b6ce686a0e85af4",
+   "reviewed_manifest_sha256": "0edb5fb5058e102dffcea3bb706a102a23af551e2692f4ae0b45a1aff8c931e1",
+   "requirements": [
+    {
+     "id": "D-094-R027",
+     "state": "PASS",
+     "evidence": [
+      "Obligation: every law link resolves to its exact current section (not the homepage); affected results connect to review-register entries; destinations checked in the exported PDF. I rendered the evidence page myself from `packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json` through the real `build_report_html`: 12 law hrefs, every one an exact section-page URL (article-ii/chapter-3/23-22, /23-52, /23-432) equal to the captures' own `source.request_url`; the homepage is ABSENT from the href set.",
+      "I opened the captures directly: zr-23-22/zr-23-52/zr-23-432 carry official `article/chapter/section` request_urls and zr-12-10 carries `/article-i/chapter-2/12-10`; zr-11-25 carries only `https://zr.planning.nyc.gov/entityprint/pdf/node/18433` (wrong host), so 11-25 prints as plain text \u2014 I confirmed in the rendered HTML that label `11-25` appears with no anchor, and 23-52(b) keeps its sub-paragraph label while linking to section page 23-52. S3 fail-closed behavior reproduced.",
+      "Focused suite `tests/drawings/report/test_report_law_links.py` = 22 passed at the frozen head (lanes venv). The oracle is fixture-derived and independent of the module under test (`_capture_section_url` scans the capture files directly); this is the G3/G4 fixture-derived rework. G3 and G4 each ran their own homepage/query-rejection mutations and the guards failed as required.",
+      "STAYS OPEN for report v3 (correctly deferred by the packet risks + evidence-map, not a defect here): the exported-PDF link-destination harness (the row's required_harness/required_evidence, link-check record R060) and connecting affected results to their existing review-register entries. This task delivers the HTML law links only; the PDF-destination check and register linkage are unverified and owed.",
+      "Verifier's carry-forward condition met at fc714293: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0edb5fb5), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T159-DCV.md."
+     ],
+     "reviewed_sha": "fc71429314b7c087dd2043d92b6ce686a0e85af4"
+    }
+   ],
+   "verified_at": "2026-10-11T06:23:29+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T160",
+   "applicable_requirement_ids": [
+    "D-094-R043"
+   ],
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a",
+   "reviewed_manifest_sha256": "f3017c96d34d3678fede34c012a57e00d86aff4c7f242a6127fa770362a40a4c",
+   "requirements": [
+    {
+     "id": "D-094-R043",
+     "state": "PASS",
+     "evidence": [
+      "M5-T160's share is the \"relevant constraints\" of the one meaningful spatial example; the record researches them and I verified each against the primary captures: street wall = 35-631(b) via the overlay chain 34-11\u219234-24(b)(1)\u219235-63\u219235-631 (residential-only) and 35-01\u219235-63 (mixed), 70% of each frontage within 8 ft of the street line, with 35-631(a) confirmed inapplicable (R8\u2013R12 Manhattan Core only).",
+      "Setback: 23-432 R6B table row = 30/45/55 ft (I pulled the structured row); 23-432/23-433/35-632(a) trigger a setback only for street wall above the 45 ft maximum base height, so a building at or below it (incl. the 30 ft benchmark) needs none \u2014 depth 10 ft wide / 15 ft narrow applies only above 45 ft.",
+      "Side yards: 23-335(b) requires none for R6B residences other than single/two-family detached; 34-232 removes it for any residential building in C1\u2013C6; optional with a 5 ft minimum. All faithful to the captured text.",
+      "What stays open: the placed footprint, section/massing and reconciled schedule of the full spatial example are later tasks (D-094 plan P-6.1\u2013P-6.3); the record keeps an explicit incomplete state (research_status interpretation_awaiting_review, promotion.requested_label null, conditions unresolved for prevailing-street-wall-frontage adjacency and the operative street-line position).",
+      "Verifier's carry-forward condition met at 54dde64c: the task's allowed-path files are identical to those verified at ddf844ca (content identity f3017c96), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T160-DCV.md."
+     ],
+     "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a"
+    }
+   ],
+   "verified_at": "2026-10-11T06:11:07+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T161",
+   "applicable_requirement_ids": [
+    "D-094-R034",
+    "D-094-R035"
+   ],
+   "producer": "frontend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2",
+   "reviewed_manifest_sha256": "11ababc1f0a636401b3ffbb2d96408dfc2cef6a85c087198375478907f6bd735",
+   "requirements": [
+    {
+     "id": "D-094-R034",
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-001.md:119-121 (\"Current ZR 12-10 defines these areas as Manhattan Core and Special Downtown Brooklyn. This Queens property is outside those geographies. Resolve that source fact through the normal rule/evidence process. If the application cannot yet use it, record the implementation limitation separately.\").",
+      "NB-05 (revision 3) resolves the fact through the evidence process: E1/E2 ZR 12-10 snapshots (special density areas = Manhattan Core [CD 1-8] + Special Downtown Brooklyn) with sha256 + saved copies that exist at the frozen head, and MapPLUTO lot 70 Borough QN / SPDist1 null \u2192 NOT in a special density area; the browser journey shows this as a Conditional 29 at the first press, independent of any user declaration.",
+      "The implementation limitation (the e2e harness carries no ACRIS zoning-lot index \u2192 generic zoning-lot condition) is recorded separately in the evidence map known_limits and producer report \u00a71/\u00a77.",
+      "Nothing stays open for this task's share.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
+    },
+    {
+     "id": "D-094-R035",
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-001.md:121 (\"This does not by itself establish the property's legal unit limit\u2026 Do not promote the earlier conditional arithmetic example of 29 units to a confirmed site entitlement.\"); classification prohibition.",
+      "The spec asserts 29 ONLY as a Conditional ceiling (answer-conditional-marker \"Conditional\") carrying \"If this tax lot is the whole zoning lot\", never settled; existing guards kept \u2014 options.innerText not.toMatch(/feasible|complies|legally correct/i) (line 168) and dialog.innerText not.toContain(\"maximum for this property\").",
+      "I confirmed in result_ways.py that the standard way returns Conditional with an always-present, never-removed zoning-lot condition (plus area/K20), so the 29 cannot render as a confirmed entitlement.",
+      "Nothing stays open (the zoning-lot/area/K20 inputs stay unresolved and are preserved as conditions).",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
+    }
+   ],
+   "verified_at": "2026-10-11T09:31:04+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T162",
+   "applicable_requirement_ids": [
+    "D-094-R057",
+    "D-094-R058"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237",
+   "reviewed_manifest_sha256": "febee0f897ff96c8069bfc82944973c1a4f306f5092eb1de9d29c03d2908a637",
+   "requirements": [
+    {
+     "id": "D-094-R057",
+     "state": "PASS",
+     "evidence": [
+      "The report HTML is the single shared source both the PDF print and the website preview render; the task removes the contradiction where the PDF denied a figure page 8 shows.",
+      "test_s5_guard_no_denial_while_a_limit_is_shown builds the real HTML and asserts neither \"No legal apartment limit is shown.\" nor \"the legal unit limit is withheld\" appears, on the decision-summary slice and the open-items slice (I ran it green).",
+      "The full R057 harness \u2014 rendering website at desktop/mobile sizes and confirming identical figures/labels/caveats/source refs in both rendered outputs \u2014 is not this task's deliverable and I cannot render it; it stays with CI/the orchestrator at the accept head.",
+      "The page-1 answer table still lacks a legal-unit-limit row (DB-239, report redesign P-3) stays open.",
+      "Verifier's carry-forward condition met at b01f09c3: the task's allowed-path files are identical to those verified at b11e327b (content identity febee0f8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T162-DCV.md."
+     ],
+     "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237"
+    },
+    {
+     "id": "D-094-R058",
+     "state": "PASS",
+     "evidence": [
+      "The legal unit limit is stated accurately and apart from the apartment estimate: shown for standard residences as a conditional ceiling only when its own state is conditional, otherwise \"shown for\" plainly (unit_limit_text.legal_unit_limit_item lines 133-146; test_way_* pass).",
+      "Qualifying affordable and qualifying senior are kept distinct, each with its own reason and resolver read verbatim from the document (reason/resolve built per withheld row, lines 147-162; S1 test asserts both programs' strings).",
+      "The five result families stay distinct: this change moves no allowance, scheduled-area, site-fit or estimate text (G3 HTML diff: only the legal-limit item and coverage F moved).",
+      "The on-page-1 distinctness of the legal unit limit (its own answer-table row) stays open to DB-239 / P-3.",
+      "Verifier's carry-forward condition met at b01f09c3: the task's allowed-path files are identical to those verified at b11e327b (content identity febee0f8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T162-DCV.md."
+     ],
+     "reviewed_sha": "b01f09c3e056f00f775898b14fc11950f1588237"
+    }
+   ],
+   "verified_at": "2026-10-11T10:33:52+00:00"
+  }
+ ]
+}

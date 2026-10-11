@@ -19,8 +19,10 @@ from app.profile.site_facts import PLUTO_SOURCE_ID
 from app.scenario.three_answers.result_way_facts import (
     DATASET_LABEL,
     gather_recorded_facts,
+    gather_special_density_record,
 )
 from app.scenario.three_answers.result_way_inputs import Recorded
+from app.scenario.three_answers.special_density_geography import SpecialDensityArea
 
 _BBL = "4073340070"
 _RETRIEVED = "2026-09-30T06:20:00Z"
@@ -157,3 +159,56 @@ def test_each_fact_carries_its_dataset_columns_lot_id_and_fetch_record():
 ])
 def test_overlay_state_table(state_profile, expected):
     assert _state(_profile(state_profile), "commercial_overlay") is expected
+
+
+# --------------------------------------------------------------------------- M5-T157 record read
+# gather_special_density_record reads cd, borocode and spdist1/2/3, classifies them (never guessing)
+# and folds them with the pure rule (ZR 12-10). Expected decisions come from the ZR definitions and
+# the PLUTO coding, never from the module.
+def _area(profile) -> SpecialDensityArea:
+    return gather_special_density_record(profile).decision.area
+
+
+def test_special_density_record_queens_benchmark_is_not_in():
+    # Queens cd 411, borough code 4, no special district served: outside both areas -> not in one.
+    profile = _profile({"cd": "411", "borocode": "4"})
+    record = gather_special_density_record(profile)
+    assert record.decision.area is SpecialDensityArea.NOT_IN_SPECIAL_DENSITY_AREA
+    assert record.community_district == 411 and record.borough_code == 4
+    assert record.all_special_district_columns_read is True
+    assert record.dataset == DATASET_LABEL  # the provenance is carried from the fetch
+
+
+def test_special_density_record_manhattan_core_is_in():
+    # Manhattan cd 105, borough code 1: in the Manhattan Core -> in a special density area.
+    assert _area(_profile({"cd": "105", "borocode": "1"})) is (
+        SpecialDensityArea.IN_SPECIAL_DENSITY_AREA
+    )
+
+
+def test_special_density_record_db_special_district_is_in():
+    # A recorded "DB" special purpose district (the Special Downtown Brooklyn District).
+    assert _area(_profile({"cd": "302", "borocode": "3", "spdist1": "DB"})) is (
+        SpecialDensityArea.IN_SPECIAL_DENSITY_AREA
+    )
+
+
+def test_special_density_record_split_spdist_value_carries_db():
+    # A split value "XX/DB" (co-equal districts joined by "/") carries the "DB" token -> in one.
+    assert _area(_profile({"cd": "302", "borocode": "3", "spdist1": "XX/DB"})) is (
+        SpecialDensityArea.IN_SPECIAL_DENSITY_AREA
+    )
+
+
+def test_special_density_record_no_cd_read_is_not_known():
+    # No cd served and no special district: the Manhattan Core question cannot be answered -> not
+    # known. A column that was not read is never read as "no".
+    assert _area(_profile({"borocode": "4"})) is SpecialDensityArea.NOT_KNOWN
+
+
+def test_special_density_record_nothing_fetched_is_not_known():
+    # No PLUTO fetch is recorded (fetched=False), so every column (cd, borocode, the
+    # special-district columns) is "not read": the question cannot be answered -> not known.
+    assert _area(_profile({"cd": "411", "borocode": "4"}, fetched=False)) is (
+        SpecialDensityArea.NOT_KNOWN
+    )

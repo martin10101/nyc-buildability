@@ -1,0 +1,282 @@
+{
+  "task_id": "M5-T158",
+  "title": "DB-232: the zoning-lot warning from the city's recorded-document index (ACRIS): where a recorded zoning lot description names the lot with another lot on the same block, every lot-area figure carries a zoning-lot condition; flag only, the zoning lot is never concluded",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Read the ACRIS index (Legals, Master; metadata only) through a new fail-closed connector, classify the lot's recorded zoning-lot documents into five states, and carry a property-specific zoning-lot condition on every lot-area figure and building alternative when a zoning lot description names another lot on the same block or the index cannot be read; add the scope row and the first open item; update NB-01 (revision 3) and the review register in the same change.",
+  "business_reason": "The owner's reviewer found the benchmark's 20,150 sq ft shown without its property-specific zoning-lot concern (lots 1 and 70; D-094 R029); the generic sentence is not enough once the city's index names both lots (record NB-01; backlog DB-232).",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11a/workorder-DB-232-draft.md",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/owner-research/2026-10-10-215-16-northern-evidence",
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "docs/zoning-rule-review/GUIDE.md"
+  ],
+  "outputs": [
+    "services/api/app/connectors/acris_index_soda.py",
+    "services/api/app/profile/zoning_lot_index.py",
+    "services/api/tests/connectors/test_acris_index_soda.py",
+    "services/api/tests/profile/test_zoning_lot_index.py",
+    "docs/research/source-registry-drafts/acris-index.json",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "services/api/tests/fixtures/benchmark_215_16_northern",
+    "services/api/tests/connectors/test_benchmark_215_16_northern_fixtures.py",
+    "services/api/app/config.py",
+    "services/api/tests/test_lane_flags.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_conditions.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/drawings/kit/scope.py",
+    "services/api/app/drawings/report/readers.py",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "docs/zoning-rule-review",
+    "services/api/app/rules/review_register/register.json",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/DISCOVERY_BACKLOG.md",
+    "project-control/reports/M5-T158-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T190"
+  ],
+  "allowed_paths": [
+    "services/api/app/connectors/acris_index_soda.py",
+    "services/api/app/profile/zoning_lot_index.py",
+    "services/api/tests/connectors/test_acris_index_soda.py",
+    "services/api/tests/profile/test_zoning_lot_index.py",
+    "docs/research/source-registry-drafts/acris-index.json",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "services/api/tests/fixtures/benchmark_215_16_northern",
+    "services/api/tests/connectors/test_benchmark_215_16_northern_fixtures.py",
+    "services/api/app/config.py",
+    "services/api/tests/test_lane_flags.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_conditions.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/drawings/kit/scope.py",
+    "services/api/app/drawings/report/readers.py",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "docs/zoning-rule-review",
+    "services/api/app/rules/review_register/register.json",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/DISCOVERY_BACKLOG.md",
+    "project-control/reports/M5-T158-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "docs/research/evidence-records/NB-05-special-density-area.json"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/rulesets/",
+    ".github/",
+    "render.yaml",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    ".claude/",
+    "services/api/requirements.txt"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the recorded benchmark replay: a ZONE (zoning lot description) indexed against lot 70 and lot 1 on block 7334, with a DECL and a CERT on the same lots",
+      "when": "the results are read",
+      "then": "state OTHER_LOTS_NAMED naming 4073340001; the four floor-area values, the standard unit limit, coverage and rear yard where shown, and building B carry one zoning-lot condition naming lot 1 and City Register file 2022000059134; numbers unchanged; DECL and CERT listed as reminders; scope row zoning_lot 'Not confirmed'; the report's first open item is 'Zoning lot'"
+    },
+    {
+      "id": "S2",
+      "given": "a ZONE indexed against the subject lot alone (synthetic, labelled)",
+      "when": "the results are read",
+      "then": "SINGLE_LOT_ONLY: no new condition; the scope sentence says it lists a description filed on this lot alone, not read"
+    },
+    {
+      "id": "S3",
+      "given": "no documents, or deeds and mortgages only",
+      "when": "the results are read",
+      "then": "NONE_FOUND: no new condition; the scope sentence names the as-of date and says this is not a title search; never worded as 'no zoning-lot issue'"
+    },
+    {
+      "id": "S4",
+      "given": "the index cannot be read (timeout; 503 after retries; HTTP 400 no-such-column; page budget reached; a subject document with no Master row)",
+      "when": "the results are read",
+      "then": "NOT_READ: the zoning-lot condition is added ('could not be read'); the route still answers 200; never 'none found'"
+    },
+    {
+      "id": "S5",
+      "given": "a ZONE indexed against the subject and a lot on another block (synthetic)",
+      "when": "the results are read",
+      "then": "no same-block warning; the other-block lot is listed for checking only; a mixed document triggers only on same-block lots"
+    },
+    {
+      "id": "S6",
+      "given": "a DECL or CERT on several lots with no ZONE; or a ZONE whose subject row is partial_lot P",
+      "when": "the results are read",
+      "then": "DECL/CERT alone: reminder only, no condition; partial_lot P on a ZONE: the figures carry the condition"
+    },
+    {
+      "id": "S7",
+      "given": "no provider bound (the new flag off, the production default)",
+      "when": "the results are read",
+      "then": "NOT_CHECKED: the results document is byte-identical to the output before this task"
+    },
+    {
+      "id": "S8",
+      "given": "state OTHER_LOTS_NAMED or NOT_READ",
+      "when": "any value citing 4073340070:lot_area or any building alternative is shown",
+      "then": "it carries the zoning-lot condition; no combined lot area and no remainder computed from the 39,934 sq ft DOB field appear anywhere (guard test)"
+    },
+    {
+      "id": "S9",
+      "given": "the connector",
+      "when": "it builds requests and parses replies",
+      "then": "the BBL is normalized before any request; no request asks for document_amt or the Parties dataset; ZONE/DECL/CERT descriptions are pinned and checked against the recorded 7isb-wh4c copy; tests run offline by exact-URL replay"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "An index entry is not the instrument; nothing here establishes the zoning lot (NB-01 stays access_blocked).",
+    "Plan P-2 decided 'a reminder only; no records check' and the plan lists ACRIS as 'flag only, per P-2': this task reads index metadata to make the reminder property-specific and never concludes the zoning lot or computes transfers (reading recorded for the directive check).",
+    "Zoning lots declared only by a DECL, cross-block developments and condominium/air-rights lots are not caught; NONE_FOUND is not a title search.",
+    "Shares result-way files, the journey fixture, snapshots and web tests with M5-T157: part B starts only after M5-T157's commits are on the branch; fixtures regenerated once after both."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T04:59:18.302039+00:00",
+  "updated_at": "2026-10-11T09:31:04.149479+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R241",
+        "D-090-R255",
+        "D-090-R520",
+        "D-090-R570",
+        "D-090-R584",
+        "D-090-R588",
+        "D-090-R689",
+        "D-090-R783"
+      ]
+    },
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R007",
+        "D-093-R038",
+        "D-093-R050",
+        "D-093-R051",
+        "D-093-R057"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R029",
+        "D-094-R030",
+        "D-094-R031",
+        "D-094-R032"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T04:59:18.302240+00:00",
+  "path_notes": "Work order: /root/project/lanes-runtime/owner-docs/session-2026-10-11a/workorder-DB-232-draft.md. Part A (connector, classifier, fixtures, registry draft, study-inputs seam, flag) may run beside M5-T157; part B (result ways, scope row, report open item, web label, regenerated fixtures, register) only after M5-T157 is integrated. NB-01 revision 3 by the orchestrator. Research and verification (D-093) applies. Lands with DB-231 in one wave.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/connectors/test_acris_index_soda.py tests/profile/test_zoning_lot_index.py tests/connectors/test_benchmark_215_16_northern_fixtures.py tests/scenario/three_answers tests/journey tests/drawings tests/cad tests/api",
+    "python3 tools/research_record_check.py --check",
+    "python services/api/app/rules/review_register/render_review_register.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T05:00:25.423372+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; part A builder dispatched (connector, classifier, fixtures, seam); part B after M5-T157"
+    },
+    {
+      "at": "2026-10-11T08:30:47.197101+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built in parts A and B, corrected in round C; G1, G3, G4, G5 PASS (deltas and carries at a68901be); review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T06:47:31+00:00",
+      "actor": "orchestrator",
+      "change": "Added three consumer test files that pin the pre-DB-232 benchmark output (the committed three-way fixture through the engine entry; the live route against the committed first-option blocks; the panel's shared-condition count). The builder found them, left them unedited (out of scope) and reported the one-line remedy for each. No row binding changes."
+    },
+    {
+      "at": "2026-10-11T07:54:05+00:00",
+      "actor": "orchestrator",
+      "change": "Added NB-05: part B changed three of its linked code files (result_way_bridge.py, result_ways.py, result_way_engine_bridge.py: the unit limit's zoning-lot condition becomes the property-specific one in two states), so the record reads code_current False; D-093 requires the record to be revised with the code that changes its linked logic (orchestrator writes revision 3; G1 re-reviews). Found by the M0-T192 builder."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T09:31:04.149317+00:00"
+}

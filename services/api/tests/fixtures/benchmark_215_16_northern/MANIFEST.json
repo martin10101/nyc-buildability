@@ -16,7 +16,8 @@
     "2026-09-30T06:14:26Z https://data.cityofnewyork.us/resource/pkdm-hqz6.json?bbl=4073340070 -> HTTP 503 'service-unavailable' (not stored; the request was repeated later and the stored file is the 200 response)",
     "2026-09-30T06:21:36Z https://data.cityofnewyork.us/resource/ic3t-wcy2.json?bin__=4616079&%24select=job__,doc__,borough,house__,street_name,block,lot,bin__,bbl,job_type,job_status,job_status_descrp,latest_action_date,pre__filing_date,approved,fully_permitted,signoff_date,building_type,building_class,existing_occupancy,proposed_occupancy,existing_zoning_sqft,proposed_zoning_sqft,enlargement_sq_footage,total_construction_floor_area,existingno_of_stories,proposed_no_of_stories,existing_height,proposed_height,existing_dwelling_units,proposed_dwelling_units,street_frontage,zoning_dist1,zoning_dist2,zoning_dist3,special_district_1,special_district_2,landmarked,little_e,loft_board,job_description,dobrundate -> HTTP 503 'service-unavailable' (not stored; the request was repeated later and the stored file is the 200 response)",
     "The DOB job queries were first captured without $select (full rows); those bodies carried applicant/owner/filing-representative names and are not committed. The stored bodies use a $select of property, job, floor-area, height, unit, zoning and flag columns only (same documented per-BIN / per-BBL shape, as in tests/fixtures/dob_legacy).",
-    "ic3t-wcy2 requests hit the 60 s client timeout three times (the first full-row BIN 4157401 attempt shortly before 2026-09-30T06:13:12Z, and the $select attempts at 06:17:18Z and 06:18:21Z); the stored ic3t-wcy2 bodies were captured with a 180 s timeout. No body was stored for a timed-out attempt."
+    "ic3t-wcy2 requests hit the 60 s client timeout three times (the first full-row BIN 4157401 attempt shortly before 2026-09-30T06:13:12Z, and the $select attempts at 06:17:18Z and 06:18:21Z); the stored ic3t-wcy2 bodies were captured with a 180 s timeout. No body was stored for a timed-out attempt.",
+    "M5-T158 / DB-232 (2026-10-11): the five acris_index_* files were added for the new ACRIS index connector. The four live files (Q1-Q4) were captured 2026-10-11T05:19-05:21Z through app.connectors.acris_index_soda's own URL builders (recording transport), bodies stored byte-for-byte; a confirmatory second GET at 05:21Z re-hashed each to the same sha256 and read the http_date/Last-Modified headers. acris_index_doc_control_codes_7isb-wh4c.json is a byte copy of the evidence pack's data/acris_codes.json (retrieved 2026-10-10 by the owner research), not re-fetched, because there is no live codes call. No synthetic variants are stored in this pack; synthetic classifier inputs are built inline in the tests and are labelled there."
   ],
   "files": [
     {
@@ -482,6 +483,86 @@
       "bytes": 158,
       "sha256": "e7a8fac5071b2af020da1fb332fe8b4a111f3fe3c26102b3f3a4cc81f01cd729",
       "purpose": "Zoning Tax Lot Database row: zoning_district_1 R6B, commercial_overlay_1 C2-2, zoning map 11A."
+    },
+    {
+      "file": "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+      "kind": "recorded_official",
+      "dataset_id": "8h5j-fqxa",
+      "source_id": "nyc-acris-index-metadata",
+      "connector": "app.connectors.acris_index_soda.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0)",
+      "documented_in": "docs/research/source-registry-drafts/acris-index.json (nyc-acris-index-metadata); docs/SOURCE_ACCESS_REGISTRY.md section 11.4",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?borough=4&block=7334&lot=70&$order=document_id&$limit=1000&$offset=0",
+      "retrieved_at": "2026-10-11T05:19:57Z",
+      "http_date": "Sun, 11 Oct 2026 05:21:20 GMT",
+      "last_modified": "Thu, 08 Oct 2026 20:07:34 GMT",
+      "http_status": 200,
+      "bytes": 2080,
+      "sha256": "4340109ffeb1d593ad15c0a086742e730301dbbc4c8a5b6d31a51b308ffe637a",
+      "purpose": "DB-232 Q1: ACRIS Real Property Legals for borough 4, block 7334, lot 70 (7 document ids, index metadata only). Same 7 rows as the B-01 file acris_legals_8h5j-fqxa_bbl_4-7334-70.json; different bytes/sha only because this connector adds $order=document_id for stable paging (so the row order differs)."
+    },
+    {
+      "file": "acris_index_master_bnx9-e6tj_subject_docs.json",
+      "kind": "recorded_official",
+      "dataset_id": "bnx9-e6tj",
+      "source_id": "nyc-acris-index-metadata",
+      "connector": "app.connectors.acris_index_soda.build_master_url(['2018013000919001','2018013000919002','2022020201551001','2022020201551002','2022031600431001','2024011000700001','2024011000700002'], limit=1000, offset=0)",
+      "documented_in": "docs/research/source-registry-drafts/acris-index.json (nyc-acris-index-metadata); docs/SOURCE_ACCESS_REGISTRY.md section 11.4",
+      "url": "https://data.cityofnewyork.us/resource/bnx9-e6tj.json?$where=document_id%20in%28%272018013000919001%27%2C%272018013000919002%27%2C%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%2C%272024011000700001%27%2C%272024011000700002%27%29&$select=document_id%2Cdoc_type%2Cdocument_date%2Crecorded_datetime%2Ccrfn%2Cgood_through_date&$order=document_id&$limit=1000&$offset=0",
+      "retrieved_at": "2026-10-11T05:19:57Z",
+      "http_date": "Sun, 11 Oct 2026 05:21:20 GMT",
+      "last_modified": "Thu, 08 Oct 2026 20:08:51 GMT",
+      "http_status": 200,
+      "bytes": 1478,
+      "sha256": "81cd75bf2db3150256629f02a33f5275bcbac660e191a3fea213dbf556153ec8",
+      "purpose": "DB-232 Q2: ACRIS Real Property Master for the 7 subject document ids: CERT 2022020201551001 (CRFN 2022000059133), ZONE 2022020201551002 (CRFN 2022000059134), DECL 2022031600431001 (CRFN 2022000121661), plus DEED/PREL 2018 and MTGE/AL&R 2024. The $select omits document_amt; the Parties dataset is never queried."
+    },
+    {
+      "file": "acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+      "kind": "recorded_official",
+      "dataset_id": "8h5j-fqxa",
+      "source_id": "nyc-acris-index-metadata",
+      "connector": "app.connectors.acris_index_soda.build_legals_by_documents_url(['2022020201551001','2022020201551002','2022031600431001'], limit=1000, offset=0)",
+      "documented_in": "docs/research/source-registry-drafts/acris-index.json (nyc-acris-index-metadata); docs/SOURCE_ACCESS_REGISTRY.md section 11.4",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?$where=document_id%20in%28%272022020201551001%27%2C%272022020201551002%27%2C%272022031600431001%27%29&$order=document_id,lot&$limit=1000&$offset=0",
+      "retrieved_at": "2026-10-11T05:19:57Z",
+      "http_date": "Sun, 11 Oct 2026 05:21:20 GMT",
+      "last_modified": "Thu, 08 Oct 2026 20:07:34 GMT",
+      "http_status": 200,
+      "bytes": 1780,
+      "sha256": "d8b5c868a1e16aafdc5905815cc2a86c120c6843af6327abdcc61f8cd100f158",
+      "purpose": "DB-232 Q3: ACRIS Real Property Legals for the ZONE/DECL/CERT document ids only, giving every lot each is indexed against: each of the three is indexed against both lot 1 (4073340001) and lot 70 (4073340070) on block 7334, all partial_lot E (entire)."
+    },
+    {
+      "file": "acris_index_legals_8h5j-fqxa_good_through.json",
+      "kind": "recorded_official",
+      "dataset_id": "8h5j-fqxa",
+      "source_id": "nyc-acris-index-metadata",
+      "connector": "app.connectors.acris_index_soda.build_good_through_url()",
+      "documented_in": "docs/research/source-registry-drafts/acris-index.json (nyc-acris-index-metadata); docs/SOURCE_ACCESS_REGISTRY.md section 11.4",
+      "url": "https://data.cityofnewyork.us/resource/8h5j-fqxa.json?$select=max%28good_through_date%29",
+      "retrieved_at": "2026-10-11T05:19:58Z",
+      "http_date": "Sun, 11 Oct 2026 05:21:21 GMT",
+      "last_modified": "Thu, 08 Oct 2026 20:07:34 GMT",
+      "http_status": 200,
+      "bytes": 54,
+      "sha256": "9b2e2a01fe269e9f77bab6aa4092ee2601907a6908d963ba6eebfd5052e47ca3",
+      "purpose": "DB-232 Q4: the ACRIS Legals maximum good_through_date = 2026-09-30 (the index 'up to date through' date). Byte-identical to the evidence pack's acris_global_goodthrough.json."
+    },
+    {
+      "file": "acris_index_doc_control_codes_7isb-wh4c.json",
+      "kind": "recorded_official",
+      "dataset_id": "7isb-wh4c",
+      "source_id": "nyc-acris-index-metadata",
+      "connector": null,
+      "documented_in": "docs/research/source-registry-drafts/acris-index.json (nyc-acris-index-metadata); NB-01 E3. There is NO live codes call: app.connectors.acris_index_soda.DOCUMENT_TYPE_DESCRIPTIONS pins ZONE/DECL/CERT and a contract test checks them against this recorded copy.",
+      "url": "https://data.cityofnewyork.us/resource/7isb-wh4c.json",
+      "retrieved_at": "2026-10-10T18:46:00Z",
+      "http_date": null,
+      "last_modified": "Wed, 05 Aug 2026 13:49:57 GMT",
+      "http_status": 200,
+      "bytes": 24004,
+      "sha256": "518363532df753ac364ce47c5d62dfbdbaf609b598845bfcfe2ec83b9739c625",
+      "purpose": "ACRIS Document Control Codes (126 rows): ZONE='ZONING LOT DESCRIPTION', DECL='DECLARATION', CERT='CERTIFICATE'. A byte copy of the evidence pack's acris_codes.json (NB-01 E3), captured 2026-10-10 by the owner research; not re-fetched."
     }
   ]
 }

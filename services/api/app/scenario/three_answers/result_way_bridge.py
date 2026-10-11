@@ -51,15 +51,26 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from app.profile.zoning_lot_index import ZoningLotIndex, ZoningLotIndexState
 from app.spatial import lot_reach as _lot_reach
 from app.spatial.corner_reach_area import CornerPortionAreas, measure_corner_reach_area
 from app.spatial.site_geometry.outline import PreparedOutline
 from app.spatial.site_geometry.results import SiteGeometry
 
 from .result_way_bridge_overlay import overlay_support_for
-from .result_way_facts import RecordedConditions, gather_recorded_facts
+from .result_way_facts import (
+    RecordedConditions,
+    SpecialDensityRecord,
+    gather_recorded_facts,
+    gather_special_density_record,
+)
 from .result_way_inputs import (
     CORNER_PORTION_WITHIN_100_FT,
+    ZONING_LOT_NONE_FOUND,
+    ZONING_LOT_NOT_CHECKED,
+    ZONING_LOT_NOT_READ,
+    ZONING_LOT_OTHER_LOTS_NAMED,
+    ZONING_LOT_SINGLE_LOT_ONLY,
     AreaAgreement,
     Checked,
     CornerReach,
@@ -73,8 +84,10 @@ from .result_way_inputs import (
     ResultWayInputs,
     ResultWays,
     StreetReach,
+    ZoningLotCitation,
 )
 from .result_ways import decide_result_ways
+from .special_density_geography import SpecialDensityArea
 
 __all__ = [
     "LARGE_LOT_THRESHOLD",
@@ -87,7 +100,84 @@ __all__ = [
     "large_lot_answer",
     "measure_corner_areas",
     "read_site_inputs",
+    "zoning_lot_citation",
 ]
+
+# The scenario citation state for each classifier state (backlog DB-232).
+_CITATION_STATE_BY_INDEX = {
+    ZoningLotIndexState.NOT_CHECKED: ZONING_LOT_NOT_CHECKED,
+    ZoningLotIndexState.NOT_READ: ZONING_LOT_NOT_READ,
+    ZoningLotIndexState.NONE_FOUND: ZONING_LOT_NONE_FOUND,
+    ZoningLotIndexState.SINGLE_LOT_ONLY: ZONING_LOT_SINGLE_LOT_ONLY,
+    ZoningLotIndexState.OTHER_LOTS_NAMED: ZONING_LOT_OTHER_LOTS_NAMED,
+}
+
+_MONTHS = (
+    "January", "February", "March", "April", "May", "June", "July", "August", "September",
+    "October", "November", "December",
+)
+
+
+def _human_date(iso: str | None) -> str | None:
+    """A plain-English date ("2022-02-08" -> "February 8, 2022"), or None. Windows-safe (no
+    platform-specific strftime directive)."""
+    if not iso:
+        return None
+    try:
+        year, month, day = iso[:10].split("-")
+        return f"{_MONTHS[int(month) - 1]} {int(day)}, {int(year)}"
+    except (ValueError, IndexError):
+        return None
+
+
+def _lot_label(lot_number: str) -> str:
+    try:
+        return f"lot {int(lot_number)}"
+    except (TypeError, ValueError):
+        return f"lot {lot_number}"
+
+
+def _join_lots(items: list[str]) -> str:
+    """Join plain-word lot labels: "a", "a and b", "a, b, and c". Lives in the bridge (not the
+    decision module), so the decision module holds no list-index literal."""
+    if len(items) == 1:
+        return items[0]
+    if len(items) == 2:
+        return f"{items[0]} and {items[1]}"
+    return ", ".join(items[:-1]) + f", and {items[-1]}"
+
+
+def zoning_lot_citation(index: ZoningLotIndex | None) -> ZoningLotCitation:
+    """Project the classifier's :class:`~app.profile.zoning_lot_index.ZoningLotIndex` into the
+    scenario-local :class:`ZoningLotCitation` (plain lot labels and dates), so the decision module
+    and the emitter stay decoupled from the connector / classifier. None (no provider bound) ->
+    the not_checked default, which adds no condition and emits no scope row.
+
+    When more than one ZONE document names other lots, the condition cites the FIRST (the module
+    never picks a 'latest'); every named lot is still aggregated into the lot lists."""
+    if index is None:
+        return ZoningLotCitation()
+    state = _CITATION_STATE_BY_INDEX.get(index.state, ZONING_LOT_NOT_CHECKED)
+    subject_label = _lot_label(index.subject_bbl[6:10]) if index.subject_bbl else None
+    other_same = [_lot_label(lot.lot) for lot in index.other_same_block_lots]
+    other_block = [
+        f"block {int(lot.block)}, {_lot_label(lot.lot)}" for lot in index.other_block_lots
+    ]
+    zone = index.zone_documents[0] if index.zone_documents else None
+    zone_recorded = _human_date(zone.recorded_datetime) if zone is not None else None
+    reminders = {doc.doc_type for doc in index.reminder_documents}
+    return ZoningLotCitation(
+        state=state,
+        subject_lot_label=subject_label,
+        other_same_block_phrase=_join_lots(other_same) if other_same else "",
+        other_block_phrase=_join_lots(other_block) if other_block else "",
+        zone_crfn=zone.crfn if zone is not None else None,
+        zone_recorded_date=zone_recorded,
+        single_lot_recorded_date=zone_recorded,
+        as_of_date=_human_date(index.as_of_date),
+        has_declaration="DECL" in reminders,
+        has_certificate="CERT" in reminders,
+    )
 
 # The ONE zoning figure of reading O17, held once with its capture id and quoted words (the
 # captured ZR 23-362(b)(1) threshold). It is compared with the recorded lot area; it is never a
@@ -149,6 +239,7 @@ class GatheredResult:
     source_facts: tuple[SourceFact, ...]
     held_back: tuple[str, ...]
     corner_areas: CornerPortionAreas | None = None
+    special_density_record: SpecialDensityRecord | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -309,20 +400,46 @@ def large_lot_answer(recorded_sq_ft: float | None) -> LargeLotAnswer:
 
 
 # ---------------------------------------------------------------------------
-# (f) the special density area from a user's statement (never a fact)
+# (f) the special density area: the record (ZR 12-10) combined with a user's statement. The RECORD
+# wins over a statement; where they disagree the limit is withheld with both sides named; with no
+# usable record a statement that the lot is not in one keeps today's conditional behaviour, and a
+# statement is never stored as a fact (owner rule 1; R255). ONE decision drives both the shown way
+# and the engine condition (task M5-T157; the invariant test holds that line).
 # ---------------------------------------------------------------------------
-def _density(special_density_statement: bool | None) -> tuple[DensityKnowledge, tuple[str, ...]]:
-    """The special-density knowledge from a user's statement. None is "not given"; True is the
-    user's statement that the lot is NOT in a special density area (the only statement the work
-    order gives a path for); a statement that it IS in one is not decided and is held back."""
-    if special_density_statement is None:
-        return DensityKnowledge.NOT_GIVEN, ()
-    if special_density_statement is True:
+def _density(
+    record: SpecialDensityArea, special_density_statement: bool | None,
+) -> tuple[DensityKnowledge, tuple[str, ...]]:
+    """Combine the recorded special-density decision with a user's statement into the ONE density
+    knowledge. ``special_density_statement`` is None (no statement), True (the user states the lot
+    is NOT in one) or False (the user states the lot IS in one). The record wins; a disagreement is
+    withheld with both sides named (``RECORD_AND_STATEMENT_DISAGREE``); with no usable record the
+    statement keeps today's behaviour (not-in-one -> conditional; in-one or none -> withheld)."""
+    says_not_in_one = special_density_statement is True
+    says_in_one = special_density_statement is False
+    if record is SpecialDensityArea.IN_SPECIAL_DENSITY_AREA:
+        if says_not_in_one:
+            return DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, (
+                "The city's record places this lot in a special density area while the statement "
+                "says it is not; the legal dwelling-unit limit is withheld until that is settled.",
+            )
+        return DensityKnowledge.EVIDENCE_IN_ONE, ()
+    if record is SpecialDensityArea.NOT_IN_SPECIAL_DENSITY_AREA:
+        if says_in_one:
+            return DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, (
+                "The city's record places this lot outside a special density area while the "
+                "statement says it is in one; the legal dwelling-unit limit is withheld until that "
+                "is settled.",
+            )
+        return DensityKnowledge.EVIDENCE_NOT_IN_ONE, ()
+    # No usable record: today's statement behaviour stays.
+    if says_not_in_one:
         return DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, ()
-    return DensityKnowledge.NOT_GIVEN, (
-        "A statement that the lot is in a special density area is not yet handled, so the special "
-        "density area is carried as not given.",
-    )
+    if says_in_one:
+        return DensityKnowledge.NOT_GIVEN, (
+            "A statement that the lot is in a special density area is not yet handled, and the "
+            "record does not settle it, so the special density area is carried as not given.",
+        )
+    return DensityKnowledge.NOT_GIVEN, ()
 
 
 # ---------------------------------------------------------------------------
@@ -336,6 +453,7 @@ def gather_result_ways(
     geometry: SiteGeometry | None,
     housing_kind: str | None,
     special_density_statement: bool | None = None,
+    zoning_lot_index: ZoningLotIndex | None = None,
 ) -> GatheredResult:
     """Gather a lot's recorded facts, build the decision module's input, decide the ways, and
     return the ways beside the gathered facts and their provenance.
@@ -354,11 +472,14 @@ def gather_result_ways(
     held.extend(site_held)
 
     recorded = gather_recorded_facts(profile)
+    special_density_record = gather_special_density_record(profile)
     reach = _reach_for(outline, geometry)
     outline_area = outline.polygon.area if outline is not None else None
     area, area_statement = compare_lot_area(recorded_area, outline_area)
     large_lot = large_lot_answer(recorded_area)
-    density, density_held = _density(special_density_statement)
+    density, density_held = _density(
+        special_density_record.decision.area, special_density_statement
+    )
     held.extend(density_held)
 
     overlay_support = None
@@ -386,6 +507,8 @@ def gather_result_ways(
         special_density=density,
         large_lot_threshold_met=large_lot.met,
         overlay_support=overlay_support,
+        # (DB-232) the ACRIS recorded-document index citation; None -> not_checked (byte-identical).
+        zoning_lot=zoning_lot_citation(zoning_lot_index),
     )
     ways = decide_result_ways(inputs)
     corner_areas = measure_corner_areas(outline, geometry)
@@ -398,4 +521,5 @@ def gather_result_ways(
         source_facts=source_facts,
         held_back=tuple(held),
         corner_areas=corner_areas,
+        special_density_record=special_density_record,
     )

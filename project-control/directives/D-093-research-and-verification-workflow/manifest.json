@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T01:35:36+00:00",
  "created_at": "2026-10-11T01:35:36+00:00",
- "updated_at": "2026-10-11T01:38:58+00:00",
+ "updated_at": "2026-10-11T09:31:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c8f060296942bb7658849ea2c9ec8a06077b06ca",
  "capture_head_sha": null,
@@ -95,10 +95,11 @@
   "D-093-R071",
   "D-093-R072",
   "D-093-R073",
-  "D-093-R074"
+  "D-093-R074",
+  "D-093-R075"
  ],
- "requirements_id_digest_sha256": "796fbc274a4b27b8369acb868957ba593209329e867785bcdcff3ba6c7fe87fc",
- "requirements_content_digest_sha256": "b1cb2879b3c6d3979b945e2d8de5fe0e8f75d007fdb94c0df992e7bee84a2bb3",
+ "requirements_id_digest_sha256": "a9156a61278a20fde68a0efd42cbf434e58d2d56f502ea1a540cfdf2352133ed",
+ "requirements_content_digest_sha256": "49bb8596ea8fa7bd08e6f3140c7b9390e92382f5b820910d08430eec935ce6a9",
  "sources": [
   {
    "file": "source-001.md",
@@ -114,15 +115,31 @@
    "recorded_at": "2026-10-11T01:35:37+00:00",
    "content_digest_sha256": "d5cd38eedb064dbed6427fc18b7ea28f728bf74b1b1341f444f87c655381835c",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "recorded_at": "2026-10-11T07:43:01+00:00",
+   "content_digest_sha256": "a215a417d229f823d2dbb25f51b64c52e94657b34da9d73609990b8ccf492867",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
-  "source-002-amendment.md"
+  "source-002-amendment.md",
+  "source-003-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [
-  "M0-T190"
+  "M0-T190",
+  "M0-T191",
+  "M5-T157",
+  "M5-T158",
+  "M5-T160",
+  "M0-T192",
+  "M5-T161",
+  "M5-T162"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -155,6 +172,54 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T190 (research and verification workflow installed) to R003, R006, R007, R008, R010, R011, R012, R013, R014, R015, R016, R017, R018, R019, R020, R021, R022, R023, R024, R025, R026, R027, R029, R030, R031, R032, R033, R034, R035, R036, R037, R038, R039, R040, R041, R042, R043, R044, R045, R046, R047, R048, R049, R050, R051, R052, R053, R054, R055, R056, R057, R058, R059, R060, R061, R062, R064, R065, R066, R067, R068, R069, R070, R071, R073, R074 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T03:04:33+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T191 (delegated-agent loading correction) to R029, R032, R034, R068 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T03:04:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T157 (special density area from the record (DB-231)) to R050, R051, R061, R064 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T04:59:18+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T158 (zoning-lot warning from the ACRIS index (DB-232)) to R007, R038, R050, R051, R057 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T05:27:04+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T160 (research record NB-06: street wall, setback trigger, side yards (D-094 P-6.0)) to R038, R050 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T07:43:01+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-003 (session 01TpXJN7, transcript 72bfc3c3: the owner's 'fix it permanently' correction) and requirements D-093-R075 to R075, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T07:43:26+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T192 (research-record check: governing review by revision and parsed time (D-093 R075)) to R075 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T08:46:29+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T161 (the flag-on results browser journey follows the record-driven special density (CI repair after M5-T157)) to R051 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T09:31:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T162 (report wording follows the shown legal unit limit (after M5-T157)) to R007 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

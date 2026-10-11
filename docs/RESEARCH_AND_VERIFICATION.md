@@ -138,8 +138,11 @@ for code and tests. For a record or a changed reading, the reviewer must:
 Repeating the builder's explanation is not an independent review. If no independent reviewer is
 available, the review is reported as pending.
 
-**Dispatch clause.** A delegated agent does not see this conversation. Every builder or reviewer
-brief whose work meets section 2 carries, in its own words or verbatim:
+**Dispatch clause.** A delegated agent does not see this conversation, and it inherits the
+instruction files its parent session loaded when that session started, not the files on disk now
+(observed 2026-10-11, `project-control/reports/M0-T191-delegated-agents.md`): a session started
+before a rule changed passes the old rules on. Every builder or reviewer brief whose work meets
+section 2 therefore carries, in its own words or verbatim:
 
 > Research and verification (D-093) applies. Follow `.claude/rules/research-and-verification.md`
 > and `docs/RESEARCH_AND_VERIFICATION.md`. The affected evidence records are: <record paths>. Open
@@ -191,8 +194,10 @@ request (with its tests, `tools/test_research_record_check.py`).
 
 ## 9. Session continuity
 
-- **Start, resume, clear, compaction.** Instruction files load on every start and are re-read from
-  disk after a compaction. The existing SessionStart hook `.claude/hooks/directive_reminder.py`
+- **Start, resume, clear, compaction.** Instruction files load on every start and are attached
+  again after a compaction (observed 2026-10-11; whether a file changed during the session is picked
+  up at that point was not tested). A delegated agent gets its parent session's start-time set
+  (section 6). The existing SessionStart hook `.claude/hooks/directive_reminder.py`
   (project settings, every source) adds one bounded line naming the rule with its digest, this
   procedure, the records folder and the handoff's first line. The private after-compaction hook
   (local settings) prints the latest CHECKPOINT of the session's notes. A hook supplies context; it

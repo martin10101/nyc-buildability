@@ -251,12 +251,16 @@ describe("S3/S14 — shared conditions once, named, with the open-items list (ru
     const doc = loadResultsFixture(BENCHMARK);
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const block = screen.getByTestId("shared-conditions");
-    expect(within(block).getAllByTestId("shared-condition")).toHaveLength(2);
+    // DB-232: three conditions are shared across the lot-area figures - the area, the property-
+    // specific zoning-lot condition and the K20 unchecked conditions.
+    expect(within(block).getAllByTestId("shared-condition")).toHaveLength(3);
     const labels = within(block)
       .getAllByTestId("shared-condition-label")
       .map(label => label.textContent);
-    expect(labels).toEqual(["Condition 1", "Condition 2"]);
+    expect(labels).toEqual(["Condition 1", "Condition 2", "Condition 3"]);
     expect(block.textContent ?? "").not.toMatch(/\bC\d\b/);
+    // the zoning-lot concern is among the shared conditions (owner D-094 R029/R030).
+    expect(block.textContent ?? "").toContain("zoning lot");
   });
 
   it("shows a short 'What needs resolving' list — at most three — each with what settles it", () => {

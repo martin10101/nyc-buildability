@@ -24,6 +24,7 @@ prints is a professional verification.
 | [NB-03](NB-03-rear-yard-short-block.json) | Is the short-block rear-yard provision (ZR 23-344(b)) applicable, and how do the neighbouring line classifications affect the alternative (23-344(c)(3))? | interpretation_awaiting_review |
 | [NB-04](NB-04-lot-dimensions-basis.json) | Which lot dimensions come from printed tax-map labels and which from GIS, and what must the named 2017 survey settle? | conflicting_evidence |
 | [NB-05](NB-05-special-density-area.json) | Is the lot in a special density area, and what stays conditional in the dwelling-unit count? | answered_from_primary_source |
+| [NB-06](NB-06-street-wall-setback-side-yard.json) | 215-16 Northern Boulevard: where must the street wall sit along each frontage (and does the C2-2 overlay change it for a residential-only vs a mixed building), does ZR 23-433 require a setback at or below the maximum base height, and is a side yard required in R6B? | interpretation_awaiting_review |
 
 The status column is copied from each record's `conclusion.research_status`; the record wins.
 

@@ -484,12 +484,13 @@ the MapPLUTO outlines and neighbours, the ACRIS index entries, the DOB filings, 
 "short dimension of a block" and ZR 23-344(b). Detail, and what is still unverified:
 `docs/research/owner-research/2026-10-10-215-16-northern-evidence/VERIFICATION.md`.
 
-**What it unlocks (queued, not done).** Backlog rows DB-230 to DB-232: the short-block rear-yard rule and the
-neighbouring-line classification; resolving the special density area from the lot's borough and special district;
-and a warning when recorded zoning-lot documents name more than one tax lot. Until then the report's numbers stay
-as they are (D-050).
+**What it unlocks.** Backlog rows DB-230 to DB-232. Done: the special density area is read from the lot's
+borough, community district and special district (DB-231, M5-T157; the unit limit shows as a Conditional 29). In
+review: a warning when recorded zoning-lot documents name more than one tax lot (DB-232, M5-T158). Still queued: the
+short-block rear-yard rule and the neighbouring-line classification (DB-230). Other report numbers stay as they are
+(D-050).
 
-**Evidence records (D-093, 2026-10-11).** One record per question, with sources, measurement basis, status and the code each affects: [NB-01](research/evidence-records/NB-01-zoning-lot-instruments.json) zoning-lot instruments (access blocked), [NB-02](research/evidence-records/NB-02-proposed-zfa-scope.json) scope of the 39,934 sq ft (searched, not found), [NB-03](research/evidence-records/NB-03-rear-yard-short-block.json) rear yard along the short block (reading awaiting review), [NB-04](research/evidence-records/NB-04-lot-dimensions-basis.json) dimensions and bases (conflicting evidence), [NB-05](research/evidence-records/NB-05-special-density-area.json) special density area (answered from the law and the record; the unit count stays conditional).
+**Evidence records (D-093, 2026-10-11).** One record per question, with sources, measurement basis, status and the code each affects: [NB-01](research/evidence-records/NB-01-zoning-lot-instruments.json) zoning-lot instruments (access blocked), [NB-02](research/evidence-records/NB-02-proposed-zfa-scope.json) scope of the 39,934 sq ft (searched, not found), [NB-03](research/evidence-records/NB-03-rear-yard-short-block.json) rear yard along the short block (reading awaiting review), [NB-04](research/evidence-records/NB-04-lot-dimensions-basis.json) dimensions and bases (conflicting evidence), [NB-05](research/evidence-records/NB-05-special-density-area.json) special density area (answered from the law and the record; the unit count stays conditional), [NB-06](research/evidence-records/NB-06-street-wall-setback-side-yard.json) street wall, setback trigger and side yards (reading awaiting review).
 
 **Residual OPEN.** The contents of the zoning-lot instruments and the 2018 deed; the approved ZD1/PW1 of
 NB 440608941; the 2017 survey; the "ALLEY" label across lots 1 and 70 on the tax map.

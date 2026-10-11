@@ -8,6 +8,8 @@ carries no figures.
 
 from __future__ import annotations
 
+import re
+
 __all__ = [
     "LAW_SITE_TITLE",
     "map_source_title",
@@ -17,6 +19,7 @@ __all__ = [
     "readable_source_title",
     "readable_zr_reference",
     "zr_section_number",
+    "zr_section_page_number",
 ]
 
 LAW_SITE_TITLE = "New York City Zoning Resolution (official text)"
@@ -94,9 +97,24 @@ def readable_source_title(kind: object, ref: object) -> str:
 
 
 def zr_section_number(section: object) -> str:
-    """``"ZR 23-22"`` -> ``"23-22"`` (the bare section number)."""
+    """``"ZR 23-22"`` -> ``"23-22"`` (the bare section number, sub-paragraph kept)."""
     text = str(section or "").strip()
     return text[2:].strip() if text.upper().startswith("ZR") else text
+
+
+# A section PAGE number is the leading ``<n>-<n>`` of a citation, with any
+# sub-paragraph (``(b)``, ``(a)(2)`` ...) dropped - the granularity of a captured
+# ZR section page and of the section URL. A citation with no section number
+# (e.g. an appendix) yields "".
+_SECTION_PAGE_RE = re.compile(r"\d{1,3}-\d{1,4}")
+
+
+def zr_section_page_number(section: object) -> str:
+    """``"ZR 23-52(b)"`` -> ``"23-52"``; ``"12-10"`` -> ``"12-10"``; a value with no
+    section number -> ``""``. Used to resolve the section PAGE (not the visible
+    label, which keeps the sub-paragraph)."""
+    match = _SECTION_PAGE_RE.match(zr_section_number(section))
+    return match.group(0) if match else ""
 
 
 def readable_zr_reference(section: object) -> str:

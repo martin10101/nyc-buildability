@@ -44,8 +44,10 @@ from pathlib import Path
 
 import pytest
 
+from app.api.v1.study_read import get_rate_limiter
 from app.cad.results_dxf import ResultsDxf, render_results_dxf
 from app.cad.results_dxf_notes import ascii_text
+from app.connectors import acris_index_soda as _acris
 from app.connectors.geoclient_address import SOURCE_ID, resolve_address
 from app.contracts.evaluator_inputs import build_evaluator_inputs
 from app.contracts.study_contracts import (
@@ -56,6 +58,8 @@ from app.contracts.study_contracts import (
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.drawings.kit import Drawing, render_site_plan
 from app.profile.builder import build_property_profile
+from app.profile.zoning_lot_index import classify_zoning_lot_index
+from app.resilience.transport import TransportResponse
 from app.scenario.three_answers.result_way_engine_bridge import (
     run_engine_and_result_ways_from_evidence,
 )
@@ -128,6 +132,52 @@ def _no_network(monkeypatch):
     monkeypatch.setattr(http.client.HTTPConnection, "connect", _blocked)
     monkeypatch.setattr(http.client.HTTPSConnection, "connect", _blocked)
     monkeypatch.setattr(socket, "create_connection", _blocked)
+
+
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """The study-read route's per-caller limiter is process-wide module state (30 req / 60 s). This
+    module's recorded read makes one /study call through the route (via _northern_setup); reset the
+    limiter around every test so a trailing window from an earlier route-hitting module does not
+    429 that single call (G3 F1 test-isolation fix; same shape as the _reset_rate_limiter fixtures
+    in tests/contracts/test_study_setup_bridge.py and tests/profile/test_zoning_lot_index.py)."""
+    get_rate_limiter().reset()
+    yield
+    get_rate_limiter().reset()
+
+
+_ACRIS_PACK = (
+    _REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "benchmark_215_16_northern"
+)
+_ACRIS_SUBJECT_IDS = sorted([
+    "2018013000919001", "2018013000919002", "2022020201551001", "2022020201551002",
+    "2022031600431001", "2024011000700001", "2024011000700002",
+])
+_ACRIS_ZONE_DECL_CERT_IDS = sorted(["2022020201551001", "2022020201551002", "2022031600431001"])
+
+
+def _benchmark_zoning_lot_index():
+    """The recorded benchmark's zoning-lot index (backlog DB-232): the ACRIS connector replayed
+    over the recorded pack (no network), then classified. For lot 70 this is OTHER_LOTS_NAMED
+    (lot 1 is named on the same block), so the lot-area figures carry the zoning-lot condition."""
+    routes = {
+        _acris.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+        _acris.build_master_url(_ACRIS_SUBJECT_IDS, limit=1000, offset=0):
+            "acris_index_master_bnx9-e6tj_subject_docs.json",
+        _acris.build_legals_by_documents_url(_ACRIS_ZONE_DECL_CERT_IDS, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+        _acris.build_good_through_url(): "acris_index_legals_8h5j-fqxa_good_through.json",
+    }
+
+    def transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        return TransportResponse(200, (_ACRIS_PACK / routes[url]).read_text("utf-8"))
+
+    result = _acris.fetch_zoning_lot_index(
+        NORTHERN_BBL, transport=transport, sleep=lambda _s: None,
+        correlation_id="journey-acris",
+    )
+    return classify_zoning_lot_index(result)
 
 
 def _benchmark_identity_bbl() -> str:
@@ -209,6 +259,7 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
         prepared_outline=prepared,
         site_geometry=geometry,
         special_density_statement=None,  # no statement about the special density area was made
+        zoning_lot_index=_benchmark_zoning_lot_index(),  # DB-232: OTHER_LOTS_NAMED (lot 1)
         env=_LANE_ON,
     )
     document = emitted.document
@@ -222,8 +273,15 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     scope = document["scope"]
     assert scope["lot"]["bbl"] == study["property"]["bbl"] == entry_bbl
     emitted = [a["key"] for a in scope["assumptions"]]
-    assert set(emitted) == set(ASSUMPTION_KEYS)
-    assert len(emitted) == len(set(emitted)) == 12  # PR #417 body: all 12 assumed inputs
+    # DB-232: the ACRIS zoning_lot scope row is appended to the 12 engine assumptions -> 13.
+    assert set(emitted) == set(ASSUMPTION_KEYS) | {"zoning_lot"}
+    assert len(emitted) == len(set(emitted)) == 13
+    zoning_lot_row = next(a for a in scope["assumptions"] if a["key"] == "zoning_lot")
+    assert zoning_lot_row["value"] == "Not confirmed"
+    assert zoning_lot_row["unit"] is None
+    assert zoning_lot_row["basis"] == "city_records"
+    assert "lot 1" in zoning_lot_row["statement"]
+    assert "not a title search" in zoning_lot_row["statement"]
 
     # The front-lot-line assumption is the Northern Boulevard corner disclosure; its value
     # and the other frontage's length are read from the study facts, never retyped.
@@ -251,9 +309,11 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert district["value"] is False and district["basis"] == "city_records"
     assert "does not read" not in district["statement"]
     density = rows["special_density_area"]
-    assert density["statement"].startswith("Whether the lot is in a special density area is not")
-    # not known shows the words, never the stand-in the engine received (no "Yes" on the drawings)
-    assert density["value"] == "Not known" and density["unit"] is None
+    # M5-T157: the record (Queens cd 411) places the lot OUTSIDE both special density areas, so the
+    # scope line reads the city record and the legal unit limit is shown as a conditional ceiling.
+    assert density["basis"] == "city_records" and density["value"] is False
+    assert "outside both special density areas" in density["statement"]
+    assert "conditional ceiling" in density["statement"]
     angle = rows["street_line_intersection_angle_degrees"]
     assert angle["basis"] == "approximate_tax_map" and "89.7 degrees" in angle["statement"]
     # W11 (a): coverage is withheld and agrees with the by-portion block (the two lot areas
@@ -269,6 +329,29 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     area = next(v for v in allowance["values"] if v["key"] == "max_residential_floor_area")
     assert area["value"] == _benchmark_value("max_residential_floor_area") == 20150
     assert allowance["value_states"]["max_residential_floor_area"]["way"] == "conditional"
+    # DB-232 (D-094 R029): 20,150 carries the property-specific zoning-lot condition naming lot 1
+    # and City Register file 2022000059134; the number is unchanged.
+    fa_conditions = allowance["value_states"]["max_residential_floor_area"]["conditions"]
+    zl = next(c for c in fa_conditions if "register of recorded documents" in c["assumption"])
+    assert zl["kind"] == "unchecked_condition"
+    assert "lot 1" in zl["assumption"] and "February 8, 2022" in zl["assumption"]
+    assert "2022000059134" in zl["settled_by"]
+    # R032: no remainder from the 39,934 sq ft DOB field appears anywhere in the document.
+    blob = json.dumps(document)
+    assert "39,934" not in blob and "39934" not in blob
+    # M5-T157 (S6): the record places the lot OUTSIDE both special density areas, so the legal
+    # dwelling-unit limit is shown as a CONDITIONAL ceiling - 20,150 / 680 = 29.63 -> 29 (ZR 23-52),
+    # labelled conditional, kept apart from the apartment estimate (which stays reserved below).
+    unit = next(v for v in allowance["values"] if v["key"] == "legal_unit_limit_standard")
+    assert unit["value"] == 29
+    unit_conditions = allowance["value_states"]["legal_unit_limit_standard"]["conditions"]
+    assert allowance["value_states"]["legal_unit_limit_standard"]["way"] == "conditional"
+    # DB-232: the unit limit carries exactly ONE zoning-lot condition - the property-specific ACRIS
+    # one REPLACES the generic M5-T157 one in OTHER_LOTS_NAMED (never two).
+    zoning_lot_conditions = [c for c in unit_conditions if "zoning lot" in c["assumption"]]
+    assert len(zoning_lot_conditions) == 1
+    assert "register of recorded documents" in zoning_lot_conditions[0]["assumption"]
+    assert "whole zoning lot" not in zoning_lot_conditions[0]["assumption"]  # not the generic one
 
     # The three-way honesty on the benchmark: coverage and the rear yard are withheld (no value
     # object, a withheld way entry), the building option is a whole not-available answer, and the
@@ -304,11 +387,46 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert [a["building"] for a in alternatives] == ["B"]
     building_b = alternatives[0]
     assert building_b["way"]["way"] == "conditional"
+    # DB-232: building B reuses the floor-area conditions, so it carries the zoning-lot condition.
+    assert any(
+        "register of recorded documents" in c["assumption"]
+        for c in building_b["way"]["conditions"]
+    )
     assert building_b["storey_count"] == 3
     assert building_b["capacity_estimate"]["label"] == "Preliminary capacity estimate"
     # W11 (c): the label is a short name; the reasoning why the plan fits is in fit_note.
     assert building_b["label"] == "Building B: the fewest storeys reaching the minimum base height"
     assert "fits the lot coverage" in building_b["fit_note"]
+
+    # C3 (G4 F2): a STRUCTURAL guard, not anchored to any one key or to the frozen-fixture count -
+    # enumerate EVERY shown value whose citations include the benchmark lot-area source and EVERY
+    # building alternative, and assert each carries EXACTLY ONE zoning-lot index condition (the
+    # marker "register of recorded documents"). A future lot-area figure added without the condition
+    # fails
+    # here even though the named-key assertions above (which name only specific keys) would miss it.
+    # The loop does not depend on how many such values exist, but must not be vacuous.
+    _lot_area_source = f"{entry_bbl}:lot_area"
+    _marker = "register of recorded documents"
+
+    def _index_conditions(conditions):
+        return [c for c in conditions if _marker in c["assumption"]]
+
+    lot_area_values_checked = 0
+    for answer in document["answers"].values():
+        if answer.get("status") != "available":
+            continue
+        states = answer.get("value_states", {})
+        for value in answer["values"]:
+            if not any(src.get("ref") == _lot_area_source for src in value.get("sources", [])):
+                continue
+            state = states[value["key"]]
+            assert state["way"] == "conditional", value["key"]
+            assert len(_index_conditions(state["conditions"])) == 1, value["key"]
+            lot_area_values_checked += 1
+    assert lot_area_values_checked >= 1  # non-vacuous: at least one shown value cites the lot area
+    for alt in document["building_alternatives"]:
+        assert len(_index_conditions(alt["way"].get("conditions", []))) == 1, alt["building"]
+
     coverage_portion = document["coverage_by_portion"]
     assert coverage_portion["status"] == "withheld"
     assert coverage_portion["gap_kind"] == "missing_information"

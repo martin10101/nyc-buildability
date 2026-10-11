@@ -25,9 +25,13 @@ from pathlib import Path
 
 import pytest
 
+from app.api.v1.study_read import get_rate_limiter
+from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
 from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
+from app.profile.zoning_lot_index import classify_zoning_lot_index, not_read
+from app.resilience.transport import TransportResponse
 from app.scenario.three_answers import (
     BuildingDefaults,
     ResultsContractError,
@@ -35,12 +39,13 @@ from app.scenario.three_answers import (
     validate_results_document,
 )
 from app.scenario.three_answers.engine_conditions import (
-    DensityStatement,
+    DensityDecision,
     Derived,
     Presence,
     Source,
     derive_conditions,
 )
+from app.scenario.three_answers.result_way_bridge import zoning_lot_citation
 from app.scenario.three_answers.result_way_engine_bridge import (
     run_engine_and_result_ways,
     run_engine_and_result_ways_from_evidence,
@@ -89,6 +94,13 @@ from app.spatial.site_geometry.outline import prepare_outline
 from tests.api.test_study_read_api import _TEST_ONLY_OPTION
 from tests.contracts.test_evaluator_inputs import _benchmark_identity_address
 from tests.contracts.test_study_setup_bridge import _LANE_ON, _OPTION_ID, _REVISION, _northern_setup
+from tests.profile.test_zoning_lot_index import (
+    OTHER_BLOCK_LOT,
+    SUBJECT_BBL,
+    SUBJECT_ENTIRE,
+    _doc,
+    _result,
+)
 from tests.spatial._northern_replay import (
     DCM_ENVELOPE,
     replay_dcm_page,
@@ -105,7 +117,7 @@ from .test_result_ways_lib import (
     plain_inputs,
     support_all,
 )
-from .test_three_answers_benchmark import _ON, _benchmark_inputs
+from .test_three_answers_benchmark import _ON, _benchmark_inputs, _benchmark_scope_inputs
 
 _REPO_ROOT = Path(__file__).resolve().parents[5]
 _CASES = _REPO_ROOT / "docs" / "reference-cases" / "R6B" / "cases"
@@ -129,6 +141,18 @@ def _ref_value(case: str, row_id: str):
     return _ref_rows(case)[row_id]["expected"]["value"]
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """The study-read route's per-caller limiter is process-wide module state (30 req / 60 s).
+    _benchmark_adapter makes one /study call through the route (via _northern_setup); reset the
+    limiter around every test so a trailing window does not make that call 429 (G3 F1 test-isolation
+    fix; same shape as the fixtures in tests/contracts/test_study_setup_bridge.py and
+    tests/profile/test_zoning_lot_index.py)."""
+    get_rate_limiter().reset()
+    yield
+    get_rate_limiter().reset()
+
+
 # --------------------------------------------------------------------------- the benchmark emit
 def _carriers():
     lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
@@ -139,8 +163,38 @@ def _carriers():
     return profile, prepared, geometry
 
 
+_ACRIS_PACK = Path(__file__).resolve().parents[2] / "fixtures" / "benchmark_215_16_northern"
+_ACRIS_SUBJECT_IDS = sorted([
+    "2018013000919001", "2018013000919002", "2022020201551001", "2022020201551002",
+    "2022031600431001", "2024011000700001", "2024011000700002",
+])
+_ACRIS_ZDC_IDS = sorted(["2022020201551001", "2022020201551002", "2022031600431001"])
+
+
+def _benchmark_zoning_lot_index():
+    """The recorded benchmark's zoning-lot index (backlog DB-232): the ACRIS connector replayed
+    over the recorded pack (no network), then classified (OTHER_LOTS_NAMED, lot 1)."""
+    routes = {
+        _acris.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+        _acris.build_master_url(_ACRIS_SUBJECT_IDS, limit=1000, offset=0):
+            "acris_index_master_bnx9-e6tj_subject_docs.json",
+        _acris.build_legals_by_documents_url(_ACRIS_ZDC_IDS, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+        _acris.build_good_through_url(): "acris_index_legals_8h5j-fqxa_good_through.json",
+    }
+
+    def transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        return TransportResponse(200, (_ACRIS_PACK / routes[url]).read_text("utf-8"))
+
+    result = _acris.fetch_zoning_lot_index(
+        "4073340070", transport=transport, sleep=lambda _s: None, correlation_id="emit-acris",
+    )
+    return classify_zoning_lot_index(result)
+
+
 def _benchmark_adapter(mp, *, special_density_statement=None, profile_on=True, geometry_on=True,
-                       env=None):
+                       env=None, with_zoning_lot=True):
     def _blocked(*_a, **_k):
         raise AssertionError("network I/O attempted in a recorded-data test")
 
@@ -164,6 +218,8 @@ def _benchmark_adapter(mp, *, special_density_statement=None, profile_on=True, g
     )
     return run_engine_and_result_ways(
         inputs, evaluator_inputs=doc, special_density_statement=special_density_statement,
+        # DB-232: OTHER_LOTS_NAMED (lot 1) by default; None exercises the NOT_CHECKED path.
+        zoning_lot_index=_benchmark_zoning_lot_index() if with_zoning_lot else None,
         env=_LANE_ON if env is None else env,
     )
 
@@ -174,6 +230,120 @@ def benchmark():
     with pytest.MonkeyPatch.context() as mp:
         res = _benchmark_adapter(mp)
     return res
+
+
+def test_db232_not_checked_adds_no_scope_row_or_condition():
+    """DB-232: with no zoning-lot provider bound (NOT_CHECKED, the production default) the emitter
+    adds no zoning_lot scope row and no zoning-lot condition - the pre-wiring slice."""
+    with pytest.MonkeyPatch.context() as mp:
+        res = _benchmark_adapter(mp, with_zoning_lot=False)
+    doc = res.document
+    assert "zoning_lot" not in [a["key"] for a in doc["scope"]["assumptions"]]
+    fa = doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_floor_area"]
+    assert not any(
+        "register of recorded documents" in c["assumption"] for c in fa.get("conditions", [])
+    )
+
+
+# ----------------------------------------------------- DB-232 non-benchmark states (C2, G4 F1)
+# One emit/document-level test per non-benchmark classifier state (NOT_READ, NONE_FOUND,
+# SINGLE_LOT_ONLY, another-block). The benchmark exercises OTHER_LOTS_NAMED end to end and
+# test_db232_not_checked_adds_no_scope_row_or_condition covers NOT_CHECKED; before this round no
+# test drove the per-state scope sentence (three_way_document._zoning_lot_scope_statement) nor the
+# NOT_READ condition at the document level, so a reword/regression in those templates (NONE_FOUND
+# saying 'no zoning-lot issue', or the NOT_READ condition dropping at emit) would pass CI. The
+# index is built from the classifier over the labelled SYNTHETIC rows of
+# tests/profile/test_zoning_lot_index.py; expected wording comes from NB-01 (revision 3) and the
+# rule text, never a program run.
+def _emit_with_index(index):
+    """Emit a made-up interior R6B lot (5,355 sq ft, the area agreeing, the K20 conditions
+    checked-and-absent) with the classifier ``index`` threaded through BOTH the decision ways (the
+    figure condition) and the emit (the scope row), so each non-benchmark state runs end to end at
+    the document level with no benchmark-fixture dependency."""
+    citation = zoning_lot_citation(index)
+    engine_inputs = _benchmark_inputs(
+        lot_area_sq_ft=5355.0, lot_type="interior", overlay_present=False,
+        lot_area_fact_id="pluto:made-up:lotarea", scope_inputs=_benchmark_scope_inputs(),
+    )
+    engine_doc = generate_results(engine_inputs, env=_ON).document
+    way_inputs = plain_inputs(
+        lot_type=LotType.INTERIOR, area=LotAreaFigures(5355.0, AreaAgreement.AGREES, 5355.0),
+        zoning_lot=citation, **k20(True),
+    )
+    return emit_three_way_document(engine_doc, decide_result_ways(way_inputs), zoning_lot=citation)
+
+
+def _zoning_lot_row(doc: dict) -> dict:
+    return next(a for a in doc["scope"]["assumptions"] if a["key"] == "zoning_lot")
+
+
+def _fa_state(doc: dict) -> dict:
+    return _states(doc["answers"]["floor_area_allowance"])["max_residential_floor_area"]
+
+
+def _has_index_condition(state: dict) -> bool:
+    return any(
+        "register of recorded documents" in c["assumption"] for c in state.get("conditions", [])
+    )
+
+
+def test_db232_emit_not_read_adds_could_not_be_read_condition_on_the_lot_area_figures():
+    """C2 / S4: NOT_READ (the connector failed closed) adds the property-specific 'could not be
+    read' zoning-lot condition to the lot-area figure (way conditional, exactly one index condition)
+    and the scope row stays 'Not confirmed'; the figure is still shown, and nothing is worded as
+    'none found'."""
+    emitted = _emit_with_index(not_read(SUBJECT_BBL, reason="timeout", as_of_date="2026-09-30"))
+    row = _zoning_lot_row(emitted)
+    assert row["value"] == "Not confirmed"
+    assert "could not be read" in row["statement"]
+    state = _fa_state(emitted)
+    assert state["way"] == "conditional"
+    index_conditions = [
+        c for c in state["conditions"] if "register of recorded documents" in c["assumption"]
+    ]
+    assert len(index_conditions) == 1
+    assert "could not be read" in index_conditions[0]["assumption"]
+    blob = json.dumps(emitted).lower()
+    assert "none found" not in blob and "no zoning-lot issue" not in blob
+
+
+def test_db232_emit_none_found_names_as_of_not_a_title_search_never_clears_the_lot():
+    """C2 / S3: NONE_FOUND (no ZONE indexed) adds NO figure condition; the scope sentence names the
+    index as-of date and says it is not a title search, keeps the value 'Not confirmed', and never
+    clears the zoning lot ('no zoning-lot issue'). Synthetic empty index; as-of 2026-09-30 is the
+    NB-01 E2 dataset good-through date."""
+    emitted = _emit_with_index(classify_zoning_lot_index(_result([])))
+    row = _zoning_lot_row(emitted)
+    assert row["value"] == "Not confirmed"  # the zoning lot is never marked confirmed/clear
+    assert "September 30, 2026" in row["statement"]  # the as-of date (synthetic _result default)
+    assert "not a title search" in row["statement"]
+    assert not _has_index_condition(_fa_state(emitted))
+    assert "no zoning-lot issue" not in json.dumps(emitted).lower()
+
+
+def test_db232_emit_single_lot_only_says_filed_on_this_lot_alone_and_not_read_no_condition():
+    """C2 / S2: a ZONE indexed against the subject lot ALONE (synthetic, entire) is SINGLE_LOT_ONLY:
+    no figure condition; the scope sentence says a description is filed on this lot alone and was
+    not read."""
+    zone = _doc("Z1", "ZONE", [SUBJECT_ENTIRE], crfn="CRFN-Z1")
+    emitted = _emit_with_index(classify_zoning_lot_index(_result([zone])))
+    row = _zoning_lot_row(emitted)
+    assert row["value"] == "Not confirmed"
+    assert "filed on this lot alone" in row["statement"]
+    assert "not read" in row["statement"]
+    assert not _has_index_condition(_fa_state(emitted))
+
+
+def test_db232_emit_another_block_lists_the_other_lot_to_check_no_same_block_condition():
+    """C2 / S5: a ZONE indexed against the subject AND a lot on ANOTHER block (synthetic) stays
+    SINGLE_LOT_ONLY with no same-block warning: no figure condition; the other-block lot is listed
+    with 'check what it covers'."""
+    zone = _doc("Z1", "ZONE", [SUBJECT_ENTIRE, OTHER_BLOCK_LOT], crfn="CRFN-Z1")
+    emitted = _emit_with_index(classify_zoning_lot_index(_result([zone])))
+    row = _zoning_lot_row(emitted)
+    assert "another block" in row["statement"]
+    assert "check what it covers" in row["statement"]
+    assert not _has_index_condition(_fa_state(emitted))
 
 
 # --------------------------------------------------------------------------- made-up emit path
@@ -275,13 +445,21 @@ def test_s2_five_results_placed_per_owner_decision(benchmark):
     ):
         assert key in _states(fa)
         assert key not in _states(env)
-    placed = {
-        "rear_yard", "setback_above_base", "legal_unit_limit_standard",
+    # rear_yard, setback and the qualifying unit limits carry no number of their own, so they never
+    # appear in any answer's values[]. M5-T157: the standard legal unit limit IS shown (29, the
+    # record places the lot outside both areas), so it is a value object of floor_area_allowance -
+    # and only there, never in another answer.
+    never_in_values = {
+        "rear_yard", "setback_above_base",
         "legal_unit_limit_qualifying_affordable", "legal_unit_limit_qualifying_senior",
     }
-    for answer in doc["answers"].values():
+    for name, answer in doc["answers"].items():
         if answer.get("status") == "available":
-            assert not ({v["key"] for v in answer["values"]} & placed)
+            keys = {v["key"] for v in answer["values"]}
+            assert not (keys & never_in_values)
+            if name != "floor_area_allowance":
+                assert "legal_unit_limit_standard" not in keys
+    assert "legal_unit_limit_standard" in {v["key"] for v in fa["values"]}
 
 
 # =========================================================================== S3
@@ -377,8 +555,10 @@ def test_s5_no_withheld_result_carries_a_number_anywhere(benchmark):
 
     result_numbers = _all_result_numbers(doc)
     assert 10075.0 not in result_numbers  # a floor plate / floor area of the withheld option
-    assert 29.0 not in result_numbers  # the withheld unit figure
     assert 100.0 not in result_numbers  # the withheld coverage percent
+    # M5-T157: the legal unit limit is NO LONGER withheld on the benchmark (the record places the
+    # lot outside both special density areas), so 29 is a SHOWN conditional ceiling - it appears.
+    assert 29.0 in result_numbers
 
     # RED PROOF (one per block): the engine's own blocks DO carry those numbers, so leaving any one
     # as the engine made it makes its number reappear and this test would fail.
@@ -444,29 +624,40 @@ def test_s7_conditional_values_name_their_assumptions(benchmark):
 
 
 # =========================================================================== S8
-def test_s8_user_density_statement_is_conditional_only():
-    """S8 / R255: with the user's statement that the lot is not in a special density area the
-    legal_unit_limit_standard is a conditional value_states entry naming that statement, never
-    settled; without it, withheld; a statement that contradicts the record (it IS in one) is held
-    back, so the limit stays withheld. Run through the adapter on the benchmark lot."""
-    with pytest.MonkeyPatch.context() as mp:
-        with_stmt = _benchmark_adapter(mp, special_density_statement=True)
+def test_s8_record_outside_one_is_a_conditional_ceiling_statement_never_overrides():
+    """S8 / M5-T157 (R2/R3): the benchmark lot's record places it OUTSIDE both special density areas
+    (Queens cd 411), so the legal_unit_limit_standard is a CONDITIONAL ceiling naming the zoning-lot
+    assumption, never settled - with no statement and with a statement that agrees. A statement that
+    DISAGREES with the record (it IS in one) never overrides it: the limit is withheld with both
+    sides named. Run through the adapter on the benchmark lot."""
     with pytest.MonkeyPatch.context() as mp:
         without = _benchmark_adapter(mp, special_density_statement=None)
     with pytest.MonkeyPatch.context() as mp:
-        contradicts = _benchmark_adapter(mp, special_density_statement=False)
+        agrees = _benchmark_adapter(mp, special_density_statement=True)
+    with pytest.MonkeyPatch.context() as mp:
+        disagrees = _benchmark_adapter(mp, special_density_statement=False)
 
-    fa_with = with_stmt.document["answers"]["floor_area_allowance"]
-    std = _states(fa_with)["legal_unit_limit_standard"]
-    assert std["way"] == "conditional"
-    assert any(c["kind"] == "user_statement" for c in std["conditions"])
-    # the statement is not stored as a sourced fact anywhere in the document
-    assert "as the user states" in json.dumps(std)
-    without_fa = without.document["answers"]["floor_area_allowance"]
-    assert _states(without_fa)["legal_unit_limit_standard"]["way"] == "withheld"
-    contra_fa = contradicts.document["answers"]["floor_area_allowance"]
-    assert _states(contra_fa)["legal_unit_limit_standard"]["way"] == "withheld"
-    assert contradicts.gathered.held_back  # the contradicting statement is held back (R255)
+    # no statement: the record alone shows the conditional ceiling with the zoning-lot condition
+    without_std = _states(without.document["answers"]["floor_area_allowance"])[
+        "legal_unit_limit_standard"
+    ]
+    assert without_std["way"] == "conditional"
+    assert any(c["kind"] == "unchecked_condition" for c in without_std["conditions"])
+    assert any("zoning lot" in c["assumption"] for c in without_std["conditions"])
+    assert "user_statement" not in json.dumps(without_std["conditions"])
+    # a statement that agrees with the record: still the conditional ceiling (the record wins)
+    agrees_std = _states(agrees.document["answers"]["floor_area_allowance"])[
+        "legal_unit_limit_standard"
+    ]
+    assert agrees_std["way"] == "conditional"
+    # a statement that disagrees with the record: withheld, both sides named (missing information)
+    disagrees_std = _states(disagrees.document["answers"]["floor_area_allowance"])[
+        "legal_unit_limit_standard"
+    ]
+    assert disagrees_std["way"] == "withheld"
+    assert disagrees_std["gap_kind"] == "missing_information"
+    assert "disagree" in disagrees_std["reason"]
+    assert disagrees.gathered.held_back  # the disagreement is held back and named (R255)
 
 
 # =========================================================================== S9
@@ -889,10 +1080,13 @@ def test_s137_shown_values_and_withheld_set_unchanged_through_evidence(evidence_
                     ("max_building_height_qualifying_affordable_or_senior", 65.0)):
         assert _value(env, key)["value"] == ft
         assert _states(env)[key]["way"] == "conditional"
-    # the withheld set is unchanged
+    # the withheld set: coverage, rear yard and the building option stay withheld. M5-T157: the
+    # legal unit limit is now SHOWN as a conditional ceiling (the record places the lot outside both
+    # special density areas); the apartment estimate stays reserved (kept apart, owner R392/R569).
     assert _states(env)["max_lot_coverage"]["way"] == "withheld"
     assert _states(env)["rear_yard"]["way"] == "withheld"
-    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
+    assert _value(fa, "legal_unit_limit_standard")["value"] == 29
     assert doc["answers"]["building_option"]["status"] == "not_available"
     assert doc["unit_estimate"]["status"] == "not_available"
 
@@ -918,10 +1112,11 @@ def test_s137_scope_lines_say_where_each_condition_comes_from(evidence_benchmark
     assert angle["value"] == 89.7 and angle["basis"] == "approximate_tax_map"
     assert "89.7 degrees" in angle["statement"]
     density = rows["special_density_area"]
-    assert density["statement"].lower().startswith("whether the lot is in a special density area")
-    # a not-known condition shows the WORDS, never the stand-in the engine received (no "Yes")
-    assert density["value"] == "Not known" and density["unit"] is None
-    assert not isinstance(density["value"], bool)
+    # M5-T157: the benchmark record places the lot OUTSIDE both special density areas, so the scope
+    # line reads the record (city_records) and says the limit is shown as a conditional ceiling.
+    assert density["basis"] == "city_records" and density["value"] is False
+    assert "outside both special density areas" in density["statement"]
+    assert "conditional ceiling" in density["statement"]
     # no scope line claims the program does not read something it reads
     for row in doc["scope"]["assumptions"]:
         assert "does not read" not in row["statement"]
@@ -941,10 +1136,11 @@ def test_s137_invariant_over_the_benchmark_states(evidence_benchmark):
     with pytest.MonkeyPatch.context() as mp:
         with_stmt = _evidence(mp, special_density_statement=True)
     _assert_no_shown_result_rests_on_a_stand_in(with_stmt.document)
-    # the density is now the user's statement, so the unit limit may be shown (conditional)
+    # M5-T157: the record places the benchmark lot outside both areas, so the unit limit is shown
+    # (conditional) from the record; a statement that agrees does not change the record source.
     fa = with_stmt.document["answers"]["floor_area_allowance"]
     assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
-    assert _scope_rows(with_stmt.document)["special_density_area"]["basis"] == "entered"
+    assert _scope_rows(with_stmt.document)["special_density_area"]["basis"] == "city_records"
     with pytest.MonkeyPatch.context() as mp:
         no_geom = _evidence(mp, geometry_on=False)
     _assert_no_shown_result_rests_on_a_stand_in(no_geom.document)
@@ -976,7 +1172,7 @@ def test_s137_invariant_special_district_not_read_withholds_everything():
         overlay_presence=Presence.NOT_READ, overlay_code=None,
         special_district_presence=Presence.NOT_READ,
         is_corner=True, reach_ft=None, angle_deg=None,
-        density_statement=DensityStatement.NONE,
+        density_decision=DensityDecision.NOT_KNOWN,
     )
     emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
     assert _shown_result_keys(emitted) == set()
@@ -1006,7 +1202,7 @@ def test_s137_interior_lot_scope_says_not_applicable():
         overlay_presence=Presence.ABSENT, overlay_code=None,
         special_district_presence=Presence.ABSENT,
         is_corner=False, reach_ft=None, angle_deg=None,
-        density_statement=DensityStatement.NONE,
+        density_decision=DensityDecision.NOT_KNOWN,
     )
     emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
     rows = _scope_rows(emitted)
@@ -1081,7 +1277,10 @@ def test_s137_scope_texts_are_plain_and_true():
             Derived(136.0, Source.NOT_KNOWN),
         ],
         "special_density_area": [
+            Derived(False, Source.RECORDED),
+            Derived(True, Source.RECORDED),
             Derived(False, Source.USER_STATEMENT),
+            Derived(True, Source.RECORD_STATEMENT_DISAGREE),
             Derived(True, Source.NOT_KNOWN),
         ],
     }
@@ -1093,7 +1292,7 @@ def test_s137_scope_texts_are_plain_and_true():
         "orchestrator", "not captured", "is captured", "captured text", "gap k", "gap-",
         "stand-in", "module",
     )
-    assert len(texts) == 16
+    assert len(texts) == 19  # M5-T157: the special-density branch now has five variants
     for text in texts:
         low = text.lower()
         for token in forbidden:

@@ -194,13 +194,22 @@ def test_t4_recorded_lot_three_ways(monkeypatch) -> None:
         assert _states(env)[key]["way"] == "conditional"
         assert f"{int(ft)} ft" in heights_text, key
 
-    # withheld set: coverage (L5 not known), rear yard, building option, the legal unit limit
+    # withheld set: coverage (L5 not known), rear yard, building option
     assert _ref_rows("real-lot")["L5"]["expected"]["kind"] == "not_known"
     assert _states(env)["max_lot_coverage"]["way"] == "withheld"
     assert _states(env)["rear_yard"]["way"] == "withheld"
-    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
+    # M5-T157 (S6): the record places the lot OUTSIDE both special density areas (Queens cd 411),
+    # so the legal dwelling-unit limit is a CONDITIONAL ceiling - 20,150 / 680 = 29.63 -> 29
+    # (ZR 23-52; real-lot#L6), labelled conditional, kept apart from the apartment estimate.
+    assert _ref_value("real-lot", "L6") == 29
+    assert _value(fa, "legal_unit_limit_standard")["value"] == 29
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
+    assert any(
+        "zoning lot" in c["assumption"]
+        for c in _states(fa)["legal_unit_limit_standard"]["conditions"]
+    )
     assert doc["answers"]["building_option"]["status"] == "not_available"
-    assert doc["unit_estimate"]["status"] == "not_available"
+    assert doc["unit_estimate"]["status"] == "not_available"  # the apartment estimate stays apart
 
     # no height is ever "the maximum for this property"; no result number is a zero
     blob = json.dumps(doc).lower()
@@ -226,8 +235,11 @@ def test_t4_emitted_document_hides_the_inner_engine_figures(monkeypatch) -> None
 # =========================================================================== T5 (made-up lots)
 def test_t5_made_up_interior_lot_p5(monkeypatch) -> None:
     """T5 / S5 / S9: a made-up R6B interior lot of 5,355 sq ft (table B, P5). The floor area is
-    10,710 (conditional through the entry: the K20 conditions are not checked); the legal unit
-    limit is withheld without a density statement. Expected values from interior-lots.json."""
+    10,710 (conditional through the entry: the K20 conditions are not checked). M5-T157: the made-up
+    lot keeps the benchmark's recorded community district (Queens cd 411, only the overlay and
+    special-district columns are dropped), so its record places it OUTSIDE both special density
+    areas and the legal unit limit is a conditional ceiling - 10,710 / 680 = 15.75 -> 16 (P5-units).
+    Expected values from interior-lots.json."""
     _enable(monkeypatch)
     geometry, prepared = _interior_geometry(51.0, 105.0)
     assert geometry.lot_type.kind == "interior"
@@ -238,7 +250,10 @@ def test_t5_made_up_interior_lot_p5(monkeypatch) -> None:
         "interior-lots", "P5-floor-area"
     ) == 10710
     assert _states(fa)["max_residential_floor_area"]["way"] == "conditional"
-    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
+    assert _value(fa, "legal_unit_limit_standard")["value"] == _ref_value(
+        "interior-lots", "P5-units"
+    ) == 16
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
     assert 0.0 not in _result_numbers(doc)
 
 
@@ -391,13 +406,14 @@ def test_s14_provider_cannot_produce_inputs_is_a_typed_503(monkeypatch) -> None:
 
 # =========================================================================== T8 (contradiction)
 def test_t8_statement_contradicting_the_record_does_not_override_it(monkeypatch) -> None:
-    """T8 / S8 / R255: a caller statement that the lot IS in a special density area (the program
-    cannot act on it) is held back, so the legal unit limit stays withheld; the statement is never
-    stored as a fact. A 200 (the rest of the document is unchanged)."""
+    """T8 / S8 / M5-T157 R2: the benchmark record places the lot OUTSIDE both special density areas;
+    a caller statement that the lot IS in one DISAGREES with the record. A statement never overrides
+    the record: the legal unit limit is withheld as missing information with both sides named, and
+    the statement is never stored as a fact. A 200 (the rest of the document is unchanged)."""
     _enable(monkeypatch)
     _no_network(monkeypatch)
-    # special_density_statement False = "the lot is in a special density area" (not the one the
-    # program acts on); it is held back and the unit limit stays withheld.
+    # special_density_statement False = "the lot is in a special density area"; the record says it
+    # is outside one, so the two disagree and the unit limit is withheld (not overridden).
     response = _post(
         app_with(benchmark_provider()),
         {"housing_program": "standard_residence", "special_density_statement": False},
@@ -405,7 +421,10 @@ def test_t8_statement_contradicting_the_record_does_not_override_it(monkeypatch)
     assert response.status_code == 200
     doc = response.json()
     fa = doc["answers"]["floor_area_allowance"]
-    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
+    std = _states(fa)["legal_unit_limit_standard"]
+    assert std["way"] == "withheld"
+    assert std["gap_kind"] == "missing_information"
+    assert "disagree" in std["reason"] and "does not override" in std["reason"]
     # the statement is never returned as a sourced fact
     assert "special_density_statement" not in json.dumps(doc)
 
@@ -444,17 +463,23 @@ def test_s13_interior_lot_with_geometry_through_route_and_entry(monkeypatch) -> 
     assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
 
 
-def test_s13_interior_lot_without_the_statement_withholds_the_unit_limit(monkeypatch) -> None:
-    """S13 companion: without the user's density statement the interior lot's legal unit limit is
-    withheld and the figure 16 appears nowhere (no shown value rests on a stand-in)."""
+def test_s13_interior_lot_without_the_statement_is_a_conditional_ceiling_from_the_record(
+    monkeypatch,
+) -> None:
+    """S13 companion / M5-T157 (R5, the 'S4 withheld' inversion): without any density statement the
+    interior lot's legal unit limit is now SHOWN as a conditional ceiling (16) - the made-up lot's
+    record (Queens cd 411) places it outside both special density areas, so the record decides even
+    with no statement. The condition names the zoning lot, never a user statement."""
     _enable(monkeypatch)
     geometry, prepared = _interior_geometry(51.0, 105.0)
     provider = _made_up_provider(5355, geometry, prepared)
     doc = _post(app_with(provider), {"housing_program": "standard_residence"}).json()
     fa = doc["answers"]["floor_area_allowance"]
-    assert _value(fa, "legal_unit_limit_standard") is None
-    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
-    assert 16.0 not in _result_numbers(doc)
+    assert _value(fa, "legal_unit_limit_standard")["value"] == 16
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
+    conds = _states(fa)["legal_unit_limit_standard"]["conditions"]
+    assert any("zoning lot" in c["assumption"] for c in conds)
+    assert all(c["kind"] != "user_statement" for c in conds)
 
 
 # =========================================================================== provider inert check

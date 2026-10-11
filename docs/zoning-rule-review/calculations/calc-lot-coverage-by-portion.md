@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: lot_coverage
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 7 (last changed 2026-10-10)
+- Revision: 9 (last changed 2026-10-11)
 - Combines rule entries: `r6b-lot-coverage`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `0125e46ac41fea6d50dde5e5096bb27eb955813492c51ec7913fba6168cae927`
+- Combined code identity: `51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713`
 - Modules:
-  - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
+  - `services/api/app/scenario/three_answers/result_ways.py` (`ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3`)
   - `services/api/app/scenario/three_answers/geometry.py` (`9f43f9f30019194f8d83d473b7fed328fdaad316bf70877cd68c668964a60d13`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
@@ -80,15 +80,15 @@ Planned, not built:
 
 ## Automated test result
 
-- Status: Not run
-- Code identity tested: `34494afc68e6c10d85ef6fcf02a66420ab31d1c19f26133c250fd3de698c6cc1`
-- Commit tested: `42fc2ae11e6b90084972e7ca32816cc50b8a085a`
-- Date tested: 2026-10-10
+- Status: Passed
+- Code identity tested: `51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713`
+- Commit tested: `10e5c55d1a02f6f18a5c6a2bdc16f01b05751312`
+- Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-lot-coverage-by-portion.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

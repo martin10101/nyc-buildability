@@ -30,13 +30,16 @@ from app.api.v1.results_read import (
     get_results_study_inputs_provider,
 )
 from app.api.v1.results_request import ResultsRequestError, build_option, read_results_request
-from app.api.v1.study_inputs import assemble_study_inputs
+from app.api.v1.study_inputs import acris_zoning_lot_index_provider, assemble_study_inputs
 from app.api.v1.study_setup_document import build_study_setup_document
 from app.config import INTERNAL_RESULTS_ENABLED_ENV_VAR
+from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs
 from app.contracts.study_contracts import StudyContractError, validate_study_document
 from app.contracts.study_setup_bridge import StudySetupBridgeError, study_from_study_setup
 from app.main import create_app
+from app.profile.zoning_lot_index import ZoningLotIndexState, classify_zoning_lot_index
+from app.resilience.transport import TransportResponse
 from app.scenario.three_answers.result_way_engine_bridge import (
     FLOOR_TO_FLOOR_KEY,
     HOUSING_PROGRAM_KEY,
@@ -97,11 +100,51 @@ def _benchmark_carriers():
     return prepared, geometry
 
 
-def benchmark_provider(*, profile_on=True, geometry_on=True, outline_on=True, address=True):
+_ACRIS_PACK = (
+    _REPO_ROOT / "services" / "api" / "tests" / "fixtures" / "benchmark_215_16_northern"
+)
+_ACRIS_SUBJECT_IDS = sorted([
+    "2018013000919001", "2018013000919002", "2022020201551001", "2022020201551002",
+    "2022031600431001", "2024011000700001", "2024011000700002",
+])
+_ACRIS_ZDC_IDS = sorted(["2022020201551001", "2022020201551002", "2022031600431001"])
+
+
+def _benchmark_zoning_lot_index():
+    """The recorded benchmark's zoning-lot index (backlog DB-232): the ACRIS connector replayed over
+    the recorded pack (no network), then classified (OTHER_LOTS_NAMED, lot 1), so the live route
+    reproduces the committed fixture - the same index the journey/emit tests inject."""
+    routes = {
+        _acris.build_legals_by_lot_url(4, 7334, 70, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_lot_4-7334-70.json",
+        _acris.build_master_url(_ACRIS_SUBJECT_IDS, limit=1000, offset=0):
+            "acris_index_master_bnx9-e6tj_subject_docs.json",
+        _acris.build_legals_by_documents_url(_ACRIS_ZDC_IDS, limit=1000, offset=0):
+            "acris_index_legals_8h5j-fqxa_zone_decl_cert.json",
+        _acris.build_good_through_url(): "acris_index_legals_8h5j-fqxa_good_through.json",
+    }
+
+    def transport(url: str, headers: dict, timeout: float) -> TransportResponse:
+        return TransportResponse(200, (_ACRIS_PACK / routes[url]).read_text("utf-8"))
+
+    result = _acris.fetch_zoning_lot_index(
+        "4073340070", transport=transport, sleep=lambda _s: None, correlation_id="route-acris",
+    )
+    return classify_zoning_lot_index(result)
+
+
+def benchmark_provider(
+    *, profile_on=True, geometry_on=True, outline_on=True, address=True, with_zoning_lot=False,
+):
     """A results study-inputs provider over the recorded benchmark pack. ``assemble_study_inputs``
     builds the property profile from the recorded PLUTO body and threads the recorded B-03
     geometry; the flags drop a carrier so the missing-evidence states can be driven. The confirmed
-    address is the benchmark pack identity (a corner lot needs it to pick the front lot line)."""
+    address is the benchmark pack identity (a corner lot needs it to pick the front lot line).
+
+    ``with_zoning_lot`` is OFF by default - this provider mirrors PRODUCTION / the e2e harness,
+    where the live ACRIS binding is behind INTERNAL_ZONING_LOT_INDEX_ENABLED (default OFF), so the
+    default study inputs read NOT_CHECKED (DB-232). The live-route reproduction test turns it on to
+    thread the recorded zoning-lot index (OTHER_LOTS_NAMED) and reproduce the committed fixture."""
     prepared, geometry = _benchmark_carriers()
     addr = _benchmark_identity_address() if address else None
 
@@ -112,6 +155,7 @@ def benchmark_provider(*, profile_on=True, geometry_on=True, outline_on=True, ad
             address=addr,
             site_geometry=geometry if geometry_on else None,
             prepared_outline=prepared if outline_on else None,
+            zoning_lot_index=_benchmark_zoning_lot_index() if with_zoning_lot else None,
         )
         if not profile_on:
             import dataclasses
@@ -239,6 +283,8 @@ def _reference_document(provider, body: dict) -> dict:
         property_profile=inputs.property_profile, prepared_outline=inputs.prepared_outline,
         site_geometry=inputs.site_geometry,
         special_density_statement=req.special_density_statement,
+        # Mirror the route exactly (DB-232): it threads inputs.zoning_lot_index to the entry.
+        zoning_lot_index=inputs.zoning_lot_index,
         building_defaults=defaults, user_choices=frozenset(choices), env=None,
     )
     return emitted.document
@@ -312,7 +358,12 @@ def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     with its preliminary capacity estimate (building A absent). The route's first-building-option
     blocks are byte-equal to the committed document's."""
     _no_network(monkeypatch)
-    response = _post(app_with(benchmark_provider()), {"housing_program": "standard_residence"})
+    # DB-232: thread the recorded zoning-lot index so the live route reproduces the committed
+    # fixture (OTHER_LOTS_NAMED); production stays NOT_CHECKED behind the default-off flag.
+    response = _post(
+        app_with(benchmark_provider(with_zoning_lot=True)),
+        {"housing_program": "standard_residence"},
+    )
     assert response.status_code == 200
     doc = response.json()
     committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
@@ -322,6 +373,12 @@ def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
     building_b = doc["building_alternatives"][0]
     assert building_b["way"]["way"] == "conditional"
+    # DB-232: building B carries the property-specific zoning-lot condition (reused from the
+    # floor-area way) when the index names another lot.
+    assert any(
+        "register of recorded documents" in c["assumption"]
+        for c in building_b["way"]["conditions"]
+    )
     assert building_b["capacity_estimate"]["label"] == "Preliminary capacity estimate"
     assert doc["coverage_by_portion"]["status"] == "withheld"
     assert "footprint_sqft" not in doc["coverage_by_portion"]  # no number on a withheld result
@@ -330,6 +387,56 @@ def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     assert doc["answers"]["permitted_envelope"]["value_states"]["max_lot_coverage"]["reason"] == (
         doc["coverage_by_portion"]["reason"]
     )
+
+
+# ======================================================= DB-232 NOT_READ live route (C4, G4 F3)
+def _failing_503_transport(url, headers, timeout):
+    """A replay transport that returns HTTP 503 for every ACRIS request (a 5xx persisting through
+    the connector's bounded retry budget), so the zoning-lot connector fails closed."""
+    return TransportResponse(503, "")
+
+
+def _not_read_benchmark_provider():
+    """A results study-inputs provider over the recorded benchmark pack whose zoning-lot index comes
+    from the PRODUCTION acris_zoning_lot_index_provider reacting to a FAILING ACRIS connector: the
+    5xx failure maps to NOT_READ (study_inputs.py), never a 503 and never NONE_FOUND. Everything
+    else mirrors benchmark_provider; the index is built once (the retries sleep)."""
+    prepared, geometry = _benchmark_carriers()
+    addr = _benchmark_identity_address()
+    index = acris_zoning_lot_index_provider(transport=_failing_503_transport)(NORTHERN_BBL, "c4")
+    assert index.state is ZoningLotIndexState.NOT_READ  # the connector failure mapped to NOT_READ
+
+    def provide(bbl, correlation_id, *, selected=None):
+        return assemble_study_inputs(
+            replay_pluto(), env=LANE_B_ON, address=addr,
+            site_geometry=geometry, prepared_outline=prepared, zoning_lot_index=index,
+        )
+
+    return provide
+
+
+def test_db232_connector_failure_route_answers_200_with_could_not_be_read(enabled, monkeypatch):
+    """C4 / S4: when the bound zoning-lot connector FAILS (HTTP 503 through the retry budget) the
+    route still answers 200 and the floor-area figure carries exactly one 'could not be read'
+    zoning-lot condition; the scope row stays 'Not confirmed' and nothing is worded as 'none
+    found'."""
+    _no_network(monkeypatch)
+    response = _post(
+        app_with(_not_read_benchmark_provider()), {"housing_program": "standard_residence"}
+    )
+    assert response.status_code == 200
+    doc = response.json()
+    fa_state = doc["answers"]["floor_area_allowance"]["value_states"]["max_residential_floor_area"]
+    assert fa_state["way"] == "conditional"
+    index_conditions = [
+        c for c in fa_state["conditions"] if "register of recorded documents" in c["assumption"]
+    ]
+    assert len(index_conditions) == 1
+    assert "could not be read" in index_conditions[0]["assumption"]
+    zoning_row = next(a for a in doc["scope"]["assumptions"] if a["key"] == "zoning_lot")
+    assert zoning_row["value"] == "Not confirmed"
+    assert "could not be read" in zoning_row["statement"]
+    assert "none found" not in json.dumps(doc).lower()
 
 
 def test_m5t146_live_route_entered_floor_to_floor_works_building_b_at_that_height(

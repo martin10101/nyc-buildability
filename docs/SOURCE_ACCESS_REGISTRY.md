@@ -391,8 +391,12 @@ AVAILABLE) and metadata linkage (ACRIS index, DOB filing metadata, AVAILABLE).
 | Authentication | None; optional Socrata app token |
 | Published quota / rate limits | Socrata platform baseline (governance rule 5) |
 | Linkage | **Legals = BBL→document_id join** (`borough/block/lot` + `document_id`, ~22.7M rows); Master = document metadata (`document_id, crfn, doc_type, dates, reel_yr/reel_nbr/reel_pg`). **No image URL in any column** |
-| Terms / attribution | NYC Open Data terms; provenance official; DOF. Use for citation/linkage only — never presented as the image |
-| Last policy verification | 2026-08-05 (M2-T014, `api/views` for both) |
+| Connector | `services/api/app/connectors/acris_index_soda.py` (source id `nyc-acris-index-metadata`, task M5-T158 / DB-232; draft `docs/research/source-registry-drafts/acris-index.json`). Reads the recorded-document index for one lot via Q1 Legals-by-lot → Q2 Master-by-document-ids → Q3 Legals-by-ZONE/DECL/CERT-ids → Q4 `max(good_through_date)`. The pure classifier `app/profile/zoning_lot_index.py` applies draft rule DB232-R1 and **never concludes the zoning lot** |
+| What is read | Legals: `document_id, borough, block, lot, partial_lot` (P=partial/E=entire), `good_through_date`. Master: `document_id, doc_type, document_date, recorded_datetime, crfn, good_through_date`. Document Control Codes `7isb-wh4c`: `ZONE/DECL/CERT` descriptions, **pinned in code** (no live codes call; a contract test checks them against a recorded copy) |
+| What is NEVER read | `document_amt` (a Master `$select` omits it); the **Parties** dataset (grantor/grantee names); the Master `recorded_borough` (reads "1" on these Queens documents; unused); the document **image** (viewer-gated, §11.5) |
+| Fail-closed behaviour | BBL validated before any request. The classifier state is **NOT_READ** (never "none found") on: retries exhausted (429/5xx/timeout), an unparsable body or missing required field, the page budget reached, or a subject document with no Master row. The query `no-such-column` 400 is typed schema drift and is not retried. The live binding is gated by `INTERNAL_ZONING_LOT_INDEX_ENABLED` (default **OFF**), so production reads nothing and the state stays NOT_CHECKED |
+| Terms / attribution | NYC Open Data terms; provenance official; DOF. Use for citation/linkage only — never presented as the image. An index entry does not establish an instrument's contents (D-093; NB-01 `access_blocked`) |
+| Last policy verification | 2026-08-05 (M2-T014, `api/views` for both); connector built and index re-verified live 2026-10-11 (M5-T158; max `good_through_date` 2026-09-30) |
 | Suitability | Metadata/linkage: YES. Document image: NO (see §11.5) |
 
 ### 11.5 ACRIS document IMAGES — NO AUTHORIZED PROGRAMMATIC ACCESS (SR-S5)

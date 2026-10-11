@@ -16,7 +16,7 @@ import sys
 
 from app.scenario.three_answers.engine_conditions import (
     WITHIN_100_FT,
-    DensityStatement,
+    DensityDecision,
     Presence,
     Source,
     angle_when_not_measured_degrees,
@@ -163,17 +163,41 @@ def test_angle_stand_in_is_past_the_waiver_limit():
 
 
 # --------------------------------------------------------------------------- special density area
+def test_density_recorded_not_in_one_gives_not_in_one_from_the_record():
+    # The record places the lot outside both special density areas, so the engine is given "not in
+    # one" (the dwelling-unit rule applies and the limit is shown); the source is the city record.
+    derived = special_density(DensityDecision.RECORDED_NOT_IN_ONE)
+    assert derived.engine_value is False
+    assert derived.source is Source.RECORDED
+
+
+def test_density_recorded_in_one_withholds_from_the_record():
+    # The record places the lot in a special density area, so the engine is given "in one" (the
+    # rule is not applicable and the limit is withheld); the source is the city record.
+    derived = special_density(DensityDecision.RECORDED_IN_ONE)
+    assert derived.engine_value is True
+    assert derived.source is Source.RECORDED
+
+
 def test_density_user_statement_not_in_one_is_no_as_a_statement():
-    derived = special_density(DensityStatement.NOT_IN_ONE)
+    derived = special_density(DensityDecision.USER_STATEMENT_NOT_IN_ONE)
     assert derived.engine_value is False
     assert derived.source is Source.USER_STATEMENT
 
 
-def test_density_no_statement_uses_the_inside_one_stand_in():
+def test_density_record_statement_disagree_withholds():
+    # A disagreement between the record and a statement: the engine is given "in one" so the limit
+    # is withheld; the source names the disagreement (neither side wins).
+    derived = special_density(DensityDecision.RECORD_STATEMENT_DISAGREE)
+    assert derived.engine_value is True
+    assert derived.source is Source.RECORD_STATEMENT_DISAGREE
+
+
+def test_density_not_known_uses_the_inside_one_stand_in():
     # The stand-in direction: "inside one" makes the dwelling-unit rule not applicable
     # (r6b_dwelling_units.rule.json applicability), so the limit is withheld. Flipping it to False
     # (the mutation) would let the engine emit a dwelling-unit figure.
-    derived = special_density(DensityStatement.NONE)
+    derived = special_density(DensityDecision.NOT_KNOWN)
     assert derived.engine_value is True
     assert derived.source is Source.NOT_KNOWN
 
@@ -187,7 +211,7 @@ def test_derive_conditions_keys_and_benchmark_values():
         is_corner=True,
         reach_ft=144.60,
         angle_deg=89.7,
-        density_statement=DensityStatement.NONE,
+        density_decision=DensityDecision.NOT_KNOWN,
     )
     assert set(conds) == {
         "overlay_present",

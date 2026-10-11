@@ -1,0 +1,151 @@
+{
+  "task_id": "M5-T161",
+  "title": "CI repair after M5-T157 (DB-231): the flag-on results browser journey follows the record-driven special density: the legal unit limit shows as a conditional 29 with the zoning-lot condition from the first press, and the user's statement no longer decides it",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Update the ONE stale browser test apps/web/e2e/results.flag-on.spec.ts (the M5-T140 flag-on results journey) to the behaviour M5-T157 (DB-231) shipped and its own vitest journey test already pins: for 215-16 Northern Boulevard the city's record places the lot outside both special density areas, so from the FIRST press the legal dwelling-unit limit for standard residences shows as a Conditional 29 (reference row L6) carrying the zoning-lot condition, never settled and never withheld; making the special-density statement (it agrees with the record) changes nothing and the user's statement is never named as the condition. Replace the earlier 'withheld with no number before the statement' check (line ~172, which reads innerText and may pass vacuously because the row sits behind a closed Details disclosure) with a check that cannot pass vacuously. Test file only: if the real route does not behave this way, STOP and report; no product change.",
+  "business_reason": "CI's web-e2e job has failed at every non-cancelled run on the wave-23 branch since 2bbfed94 (2026-10-11 05:48 UTC) on results.flag-on.spec.ts:216 (expects 'special density area'); the spec was in M5-T157's allowed paths and was not updated. D-090-R639 requires every full suite to pass in CI on the exact head accepted or merged, so the wave cannot merge and no further task may be accepted until it is green.",
+  "inputs": [
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "project-control/reports/M5-T157-producer-report.md",
+    "apps/web/playwright.config.ts",
+    "apps/web/e2e/harness/fixture_api.py"
+  ],
+  "outputs": [
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "project-control/reports/M5-T161-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T157"
+  ],
+  "allowed_paths": [
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "project-control/reports/M5-T161-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/",
+    "services/",
+    "packages/",
+    "docs/",
+    "apps/web/playwright.config.ts",
+    "apps/web/e2e/harness/",
+    ".github/",
+    "render.yaml",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the flag-on results journey for BBL 4073340070 over the real results route and the recorded fixture API",
+      "when": "the first results show (no special-density statement made)",
+      "then": "the floor-area allowance answer shows the legal dwelling-unit limit for standard residences as the reference row L6 value (29) in units, marked Conditional, with the zoning-lot condition text ('If this tax lot is the whole zoning lot'); the check reads the rendered text in a way that cannot pass while the row is hidden"
+    },
+    {
+      "id": "S2",
+      "given": "the same journey",
+      "when": "the user makes the special-density statement and presses again",
+      "then": "the legal unit limit is unchanged (29, Conditional, the zoning-lot condition) and no line names the user's statement as its condition ('as the user states' absent)"
+    },
+    {
+      "id": "S3",
+      "given": "every press of the journey",
+      "when": "the dialog text is read",
+      "then": "29 units is never shown as settled, nothing is called the maximum for this property, feasible or compliant (existing guards kept)"
+    },
+    {
+      "id": "S4",
+      "given": "the rest of the journey (14-foot floor height, housing-program names, keyboard close and every other existing assertion)",
+      "when": "the spec runs",
+      "then": "those assertions stay as they are; only the special-density part and its comments change"
+    },
+    {
+      "id": "S5",
+      "given": "the changed assertions",
+      "when": "the first-press check is mutated back to the pre-M5-T157 expectation (withheld, no number) or the statement-condition text is required",
+      "then": "the spec fails; and with the corrected spec, `results.flag-on.spec.ts` passes locally and the CI web-e2e job passes on the integration head"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "If the real route still withholds the limit at the first press, the product (not the test) disagrees with M5-T157's design: the builder stops and reports; no product file may change in this task.",
+    "Ports 3000, 3001 and 8000 hold the owner's preview; the orchestrator stops it before the builder's browser run and restarts it afterwards."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T08:46:28.502690+00:00",
+  "updated_at": "2026-10-11T09:31:05.725721+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R255",
+        "D-090-R520",
+        "D-090-R584",
+        "D-090-R639"
+      ]
+    },
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R051"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R034",
+        "D-094-R035"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T08:46:28.502925+00:00",
+  "path_notes": "Defect found at resume (session notes session-2026-10-11c, 08:43 UTC): CI web-e2e red since 2bbfed94; one test. Runs beside the M5-T158 rule check (read-only) with no shared file.",
+  "documented_test_commands": [
+    "cd apps/web && npm run lint && npm run typecheck",
+    "cd apps/web && CI=true npx playwright test e2e/results.flag-on.spec.ts (lanes venv first on PATH, PYTHONPATH as in the CI web-e2e job; ports 3000/3001/8000 free first)"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T08:46:31.729556+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-11T09:02:05.186851+00:00",
+      "agent": "frontend-engineer",
+      "percent": 80,
+      "status": "claimed",
+      "message": "builder commit 9b8d1df9 integrated as f2f76654 (2 files, LF digests equal); reviews G3 and G4 dispatched"
+    },
+    {
+      "at": "2026-10-11T09:13:47.656424+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; G3 and G4 PASS at 5e3e8e68; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T09:31:05.725530+00:00"
+}

@@ -64,18 +64,20 @@ describe("validateResultsDocument — shape of the blocks the panel reads [WIRIN
   });
 
   it("S21: refuses a document in which a key is withheld AND present among the shown values", () => {
-    // The journey floor-area answer withholds `legal_unit_limit_standard`. Add it as a SHOWN
-    // value with a number: the server erred, and the website must refuse the whole document so a
-    // number is never shown for a withheld result (R556, R570).
+    // The journey floor-area answer withholds `legal_unit_limit_qualifying_affordable` (M5-T157:
+    // the standard legal unit limit is now a shown conditional ceiling, so this proof uses the
+    // qualifying-affordable limit, still withheld). Add it as a SHOWN value with a number: the
+    // server erred, and the website must refuse the whole document so a number is never shown for a
+    // withheld result (R556, R570).
     const body = probe(doc => {
       const allowance = doc.answers.floor_area_allowance;
       if (allowance.status !== "available" || !allowance.value_states) {
         throw new Error("fixture changed: allowance must carry value_states");
       }
-      expect(allowance.value_states.legal_unit_limit_standard?.way).toBe("withheld");
+      expect(allowance.value_states.legal_unit_limit_qualifying_affordable?.way).toBe("withheld");
       allowance.values.push({
-        key: "legal_unit_limit_standard",
-        label: "Legal dwelling-unit limit, standard residences",
+        key: "legal_unit_limit_qualifying_affordable",
+        label: "Legal dwelling-unit limit, qualifying affordable housing",
         value: 29,
         unit: "dwelling_units",
         zr_sections: ["ZR 23-52"],
@@ -87,7 +89,9 @@ describe("validateResultsDocument — shape of the blocks the panel reads [WIRIN
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(
-        result.problems.some(p => p.includes("legal_unit_limit_standard") && p.includes("withheld")),
+        result.problems.some(
+          p => p.includes("legal_unit_limit_qualifying_affordable") && p.includes("withheld"),
+        ),
       ).toBe(true);
     }
   });

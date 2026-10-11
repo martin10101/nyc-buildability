@@ -1,0 +1,292 @@
+{
+  "task_id": "M5-T157",
+  "title": "DB-231: the special density area is read from the city's record (Manhattan Community Districts 1 to 8, the Special Downtown Brooklyn District), so the legal unit limit shows as a conditional ceiling where the record allows; not known stays not known",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Derive the special-density-area condition from the recorded community district and special-district fields (ZR 12-10), combine it with any user statement without letting a statement override the record, drive the engine and the decision from one decision, and show the legal unit limit as a conditional ceiling (never settled) where the lot is recorded outside both special density areas; update the review register and evidence record NB-05 in the same change.",
+  "business_reason": "The apartment limit is withheld today only because the program cannot read a fact the city's record already holds (backlog DB-231; record NB-05; owner rows R520 and R689).",
+  "inputs": [
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11a/workorder-DB-231-draft.md",
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "docs/zoning-rule-review/GUIDE.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/special_density_geography.py",
+    "services/api/app/scenario/three_answers/result_way_facts.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/engine_conditions.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/tests/scenario/three_answers/test_special_density_geography.py",
+    "services/api/tests/scenario/three_answers/test_result_way_facts.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_engine_conditions.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_engine_wording_m5_t152.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/kit/test_report_frame.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/src/test-support/results-two-buildings.ts",
+    "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+    "apps/web/src/lib/architect/__tests__/first-building-options.test.ts",
+    "apps/web/src/lib/architect/__tests__/result-identity.test.ts",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/lib/__tests__/results-api.test.ts",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+    "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+    "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+    "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+    "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+    "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+    "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+    "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+    "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+    "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "project-control/reports/M5-T157-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T190"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/special_density_geography.py",
+    "services/api/app/scenario/three_answers/result_way_facts.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/engine_conditions.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
+    "services/api/app/api/v1/results_request.py",
+    "services/api/tests/scenario/three_answers/test_special_density_geography.py",
+    "services/api/tests/scenario/three_answers/test_result_way_facts.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_engine_conditions.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_engine_wording_m5_t152.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/kit/test_report_frame.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/first-building-options.test.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/src/test-support/results-two-buildings.ts",
+    "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+    "apps/web/src/lib/architect/__tests__/first-building-options.test.ts",
+    "apps/web/src/lib/architect/__tests__/result-identity.test.ts",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/lib/architect/__tests__/presented-notices.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/lib/__tests__/results-api.test.ts",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+    "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+    "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+    "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+    "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+    "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
+    "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
+    "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
+    "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
+    "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "project-control/reports/M5-T157-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/rulesets/",
+    ".github/",
+    "render.yaml",
+    "apps/web/package.json",
+    "apps/web/package-lock.json",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "recorded community district 101 to 108 (Manhattan Core), or any special-district token DB",
+      "when": "the record is read",
+      "then": "in a special density area: no unit factor applies, the limit stays withheld as today"
+    },
+    {
+      "id": "S2",
+      "given": "a lot recorded outside Manhattan Community Districts 1 to 8 and with every special-district column read and none DB (for example Queens cd 411; Manhattan cd 109; Marble Hill cd 207)",
+      "when": "the record is read",
+      "then": "not in a special density area; the unit limit is computed with the factor 680 and the 0.75 rounding and shown as a conditional ceiling with the zoning-lot condition, never settled"
+    },
+    {
+      "id": "S3",
+      "given": "the special-district columns not read, or the community district not usable for a Manhattan lot, or a contradiction (cd 105 with borough code 3), or cd 164",
+      "when": "the record is read",
+      "then": "not known; the limit stays withheld; no default stands for a fact"
+    },
+    {
+      "id": "S4",
+      "given": "each of the nine record-by-statement combinations",
+      "when": "the decision runs",
+      "then": "a statement never overrides the record; a disagreement is withheld with both sides named; the engine is given 'not in one' if and only if the limit is shown (invariant test)"
+    },
+    {
+      "id": "S5",
+      "given": "made-up recorded-not-in-one lots",
+      "when": "the limit is computed through the route",
+      "then": "20,230 / 680 = 29.75 gives 30; 20,228 / 680 = 29.747 gives 29 (expected values from ZR 23-52, not a program run)"
+    },
+    {
+      "id": "S6",
+      "given": "the benchmark 215-16 Northern Boulevard",
+      "when": "the journey runs",
+      "then": "the legal unit limit reads 29 as a conditional ceiling, labelled Conditional, kept apart from the apartment estimate; fixtures and snapshots regenerated, every changed expectation explained"
+    },
+    {
+      "id": "S7",
+      "given": "the review register and record NB-05",
+      "when": "the register check and the record check run",
+      "then": "the affected calculation entries carry a new revision, code identity, history event and test log; NB-05 revision 2 links the new code and regression tests; both checks pass"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "PLUTO lists a special district only if it covers at least 10% of the tax lot; a DB sliver can read as none (stated in the condition).",
+    "The record is per tax lot; the law asks about the zoning lot (NB-01); DB-232 lands in the same wave.",
+    "Many expected outputs change (journey fixture, drawings, DXF, web tests); every change must be explained."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T03:04:34.641429+00:00",
+  "updated_at": "2026-10-11T06:25:45.746953+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R229",
+        "D-090-R240",
+        "D-090-R241",
+        "D-090-R255",
+        "D-090-R392",
+        "D-090-R520",
+        "D-090-R569",
+        "D-090-R570",
+        "D-090-R584",
+        "D-090-R588",
+        "D-090-R689",
+        "D-090-R783"
+      ]
+    },
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R050",
+        "D-093-R051",
+        "D-093-R061",
+        "D-093-R064"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R033",
+        "D-094-R034",
+        "D-094-R035"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T03:04:34.641672+00:00",
+  "path_notes": "Work order draft: /root/project/lanes-runtime/owner-docs/session-2026-10-11a/workorder-DB-231-draft.md. Research and verification (D-093) applies. Lands with DB-232 in one wave; never merged alone.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers tests/api/test_results_read_law_examples.py tests/journey tests/rules/test_zoning_rule_review_register_calculations.py",
+    "python3 tools/research_record_check.py --check",
+    "python services/api/app/rules/review_register/render_review_register.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T03:04:40.242619+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched from the work order draft"
+    },
+    {
+      "at": "2026-10-11T06:14:36.180508+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and integrated; NB-05 revision 2 reviewed (agrees); G1, G3 PASS (carried to 0330d598), G4 PASS after the sibling test fix; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-11T04:53:05+00:00",
+      "actor": "orchestrator",
+      "change": "Bound D-094-R033 (ZR 12-10 special density areas, external fact), R034 (resolve the special-density geography through the rule and evidence process; implementation limits recorded separately) and R035 (this does not establish the legal unit limit; the conditional 29-unit example is never promoted) from the owner's forwarded report-v2 review (D-094 source-001). They restate this task's objective (DB-231, record NB-05); no new path, no new scenario. Bound before the builder is re-dispatched."
+    },
+    {
+      "at": "2026-10-11T05:29:21+00:00",
+      "actor": "orchestrator",
+      "change": "Added services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py: a direct consumer of the changed behaviour (it runs the benchmark through run_engine_and_result_ways); two of its tests assert the old withheld unit limit and fail. The builder found it, did not edit it (out of scope), and reported the exact remedy. No row binding changes."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T06:25:45.746786+00:00"
+}

@@ -91,6 +91,28 @@
             }
           ],
           "exception_label": null
+        },
+        {
+          "key": "legal_unit_limit_standard",
+          "label": "Legal dwelling-unit limit, standard residences (new all-residential building): 20,150 ÷ 680 = 29.63 (dwelling-unit factor 680 square feet per dwelling unit; rounds up only at .75 or more)",
+          "value": 29.0,
+          "unit": "dwelling_units",
+          "zr_sections": [
+            "ZR 23-52",
+            "ZR 23-52(b)",
+            "ZR 11-25"
+          ],
+          "sources": [
+            {
+              "kind": "rule_table",
+              "ref": "r6b-dwelling-units@0.1.0-draft"
+            },
+            {
+              "kind": "zoning_resolution",
+              "ref": "ZR 23-52"
+            }
+          ],
+          "exception_label": null
         }
       ],
       "measurement": {
@@ -105,6 +127,11 @@
               "kind": "contradicted_record",
               "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
               "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If lot 70 alone is the zoning lot. The city's register of recorded documents lists a zoning lot description recorded on February 8, 2022 that is filed on this lot together with lot 1 on the same block, so the zoning lot may include lot 1. The documents themselves were not read.",
+              "settled_by": "Reading the recorded zoning lot description (City Register file 2022000059134) with the declaration and certificate filed with it, and a title and zoning-lot review."
             },
             {
               "kind": "unchecked_condition",
@@ -123,6 +150,11 @@
             },
             {
               "kind": "unchecked_condition",
+              "assumption": "If lot 70 alone is the zoning lot. The city's register of recorded documents lists a zoning lot description recorded on February 8, 2022 that is filed on this lot together with lot 1 on the same block, so the zoning lot may include lot 1. The documents themselves were not read.",
+              "settled_by": "Reading the recorded zoning lot description (City Register file 2022000059134) with the declaration and certificate filed with it, and a title and zoning-lot review."
+            },
+            {
+              "kind": "unchecked_condition",
               "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
               "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
             }
@@ -135,6 +167,11 @@
               "kind": "contradicted_record",
               "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
               "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If lot 70 alone is the zoning lot. The city's register of recorded documents lists a zoning lot description recorded on February 8, 2022 that is filed on this lot together with lot 1 on the same block, so the zoning lot may include lot 1. The documents themselves were not read.",
+              "settled_by": "Reading the recorded zoning lot description (City Register file 2022000059134) with the declaration and certificate filed with it, and a title and zoning-lot review."
             },
             {
               "kind": "unchecked_condition",
@@ -153,20 +190,34 @@
             },
             {
               "kind": "unchecked_condition",
+              "assumption": "If lot 70 alone is the zoning lot. The city's register of recorded documents lists a zoning lot description recorded on February 8, 2022 that is filed on this lot together with lot 1 on the same block, so the zoning lot may include lot 1. The documents themselves were not read.",
+              "settled_by": "Reading the recorded zoning lot description (City Register file 2022000059134) with the declaration and certificate filed with it, and a title and zoning-lot review."
+            },
+            {
+              "kind": "unchecked_condition",
               "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
               "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
             }
           ]
         },
         "legal_unit_limit_standard": {
-          "way": "withheld",
-          "label": "Legal dwelling-unit limit, standard residences (new all-residential building)",
-          "reason": "There is no evidence of whether this lot is in a special density area, where the dwelling-unit formula does not apply, and how the legal dwelling-unit limit is shown once that is known has not been worked out and checked against an independently worked example, so the legal dwelling-unit limit is not known; a user's statement that the lot is not in a special density area would show it only as a conditional result.",
-          "gap_kind": "work_owed",
-          "resolved_by": "Working out how the legal dwelling-unit limit is shown from sourced evidence of the special density area and checking it against an independently worked example; a user's statement that the lot is not in a special density area would show it as a conditional result.",
-          "zr_sections": [
-            "ZR 23-52",
-            "ZR 12-10"
+          "way": "conditional",
+          "conditions": [
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If lot 70 alone is the zoning lot. The city's register of recorded documents lists a zoning lot description recorded on February 8, 2022 that is filed on this lot together with lot 1 on the same block, so the zoning lot may include lot 1. The documents themselves were not read.",
+              "settled_by": "Reading the recorded zoning lot description (City Register file 2022000059134) with the declaration and certificate filed with it, and a title and zoning-lot review."
+            },
+            {
+              "kind": "contradicted_record",
+              "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
+              "settled_by": "A survey, or deed dimensions, naming the document"
+            },
+            {
+              "kind": "unchecked_condition",
+              "assumption": "If none of these conditions, which were not checked, applies to this lot: waterfront rules, airport height limits, transit easements, a lot close to a district line",
+              "settled_by": "Finding a source for each of these conditions and confirming each is absent for this lot"
+            }
           ]
         },
         "legal_unit_limit_qualifying_affordable": {
@@ -649,6 +700,11 @@
       "rule_id": "r6b-lot-coverage",
       "version": "0.1.0-draft",
       "status": "needs_review"
+    },
+    {
+      "rule_id": "r6b-dwelling-units",
+      "version": "0.1.0-draft",
+      "status": "needs_review"
     }
   ],
   "draft": true,
@@ -696,10 +752,10 @@
       },
       {
         "key": "special_density_area",
-        "value": "Not known",
+        "value": false,
         "unit": null,
-        "basis": "assumed",
-        "statement": "Whether the lot is in a special density area is not known; it is taken to be in one for the calculation, so the legal dwelling-unit limit that depends on it is withheld."
+        "basis": "city_records",
+        "statement": "The city's records place this lot outside both special density areas (the Manhattan Core and the Special Downtown Brooklyn District, ZR 12-10), so the legal dwelling-unit limit is shown as a conditional ceiling on the zoning lot."
       },
       {
         "key": "lot_type",
@@ -756,6 +812,13 @@
         "unit": "feet",
         "basis": "default",
         "statement": "A 10-foot floor-to-floor height is used as the default."
+      },
+      {
+        "key": "zoning_lot",
+        "value": "Not confirmed",
+        "unit": null,
+        "basis": "city_records",
+        "statement": "The city's register of recorded documents lists a zoning lot description filed on this lot together with lot 1 on the same block (recorded February 8, 2022), so the zoning lot may include it; the documents were not read. This is not a title search; the app does not verify the zoning lot."
       }
     ]
   },
@@ -815,6 +878,11 @@
             "kind": "contradicted_record",
             "assumption": "If the recorded lot area of 10,075 sq ft is confirmed (the recorded figure and the tax-map outline area of 10,387.99 sq ft disagree; neither is chosen automatically)",
             "settled_by": "A survey, or deed dimensions, naming the document"
+          },
+          {
+            "kind": "unchecked_condition",
+            "assumption": "If lot 70 alone is the zoning lot. The city's register of recorded documents lists a zoning lot description recorded on February 8, 2022 that is filed on this lot together with lot 1 on the same block, so the zoning lot may include lot 1. The documents themselves were not read.",
+            "settled_by": "Reading the recorded zoning lot description (City Register file 2022000059134) with the declaration and certificate filed with it, and a title and zoning-lot review."
           },
           {
             "kind": "unchecked_condition",
