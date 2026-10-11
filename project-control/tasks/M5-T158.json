@@ -192,8 +192,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "An index entry is not the instrument; nothing here establishes the zoning lot (NB-01 stays access_blocked).",
     "Plan P-2 decided 'a reminder only; no records check' and the plan lists ACRIS as 'flag only, per P-2': this task reads index metadata to make the reminder property-specific and never concludes the zoning lot or computes transfers (reading recorded for the directive check).",
@@ -202,7 +202,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T04:59:18.302039+00:00",
-  "updated_at": "2026-10-11T08:30:55.179414+00:00",
+  "updated_at": "2026-10-11T09:31:04.149479+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -276,5 +276,7 @@
       "actor": "orchestrator",
       "change": "Added NB-05: part B changed three of its linked code files (result_way_bridge.py, result_ways.py, result_way_engine_bridge.py: the unit limit's zoning-lot condition becomes the property-specific one in two states), so the record reads code_current False; D-093 requires the record to be revised with the code that changes its linked logic (orchestrator writes revision 3; G1 re-reviews). Found by the M0-T192 builder."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T09:31:04.149317+00:00"
 }

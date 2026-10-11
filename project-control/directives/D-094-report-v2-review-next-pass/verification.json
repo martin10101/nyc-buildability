@@ -65,36 +65,57 @@
     "D-094-R032"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2",
+   "reviewed_manifest_sha256": "0277de793709b282edf2951309990e97d1945d213bc8ab043d4bd115dd67f71c",
    "requirements": [
     {
      "id": "D-094-R029",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Journey test asserts 20,150 carries the condition naming \"lot 1\", \"February 8, 2022\" and settled_by \"2022000059134\", with way \"conditional\"; building B carries the marker too.",
+      "report_pages test_db232_zoning_lot_open_item_is_first asserts the first open item is \"Zoning lot\" (number 1, reason names lot 1) \u2014 prominence near the headline (I ran it, PASS).",
+      "OPEN: the exact page-1 headline summary sentence rewording is the redesign task P-3 (page_decision_summary.py is out of this packet's allowed paths).",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-094-R030",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The generic unit-limit condition is replaced by the property-specific one (journey asserts \"whole zoning lot\" absent); the scope row, first open item and figure conditions are new property-specific treatments, so the generic sentence is no longer the only treatment.",
+      "The condition marker \"register of recorded documents\" distinguishes it from the generic sentence.",
+      "OPEN: the page-1 generic summary sentence itself remains until P-3 replaces it (acknowledged in the evidence map), but the row's requirement \u2014 no longer the only treatment \u2014 is met.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-094-R031",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "NB-01 rev 3 keeps the evidence pack's distinctions: index facts in observed_facts, draft reading DB232-R1 in interpretation, unread instruments as access_blocked.",
+      "The October-10 evidence pack and its saved copies are reused and digest-matched.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-094-R032",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Journey asserts \"39,934\"/\"39934\" absent everywhere; no remaining-capacity figure is computed by subtracting lot 1 from the DOB field.",
+      "Remaining capacity stays \"Not confirmed\"; no replacement figure is established.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T09:31:02+00:00"
   },
   {
    "directive_id": "D-094",
@@ -158,24 +179,37 @@
     "D-094-R035"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2",
+   "reviewed_manifest_sha256": "11ababc1f0a636401b3ffbb2d96408dfc2cef6a85c087198375478907f6bd735",
    "requirements": [
     {
      "id": "D-094-R034",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-001.md:119-121 (\"Current ZR 12-10 defines these areas as Manhattan Core and Special Downtown Brooklyn. This Queens property is outside those geographies. Resolve that source fact through the normal rule/evidence process. If the application cannot yet use it, record the implementation limitation separately.\").",
+      "NB-05 (revision 3) resolves the fact through the evidence process: E1/E2 ZR 12-10 snapshots (special density areas = Manhattan Core [CD 1-8] + Special Downtown Brooklyn) with sha256 + saved copies that exist at the frozen head, and MapPLUTO lot 70 Borough QN / SPDist1 null \u2192 NOT in a special density area; the browser journey shows this as a Conditional 29 at the first press, independent of any user declaration.",
+      "The implementation limitation (the e2e harness carries no ACRIS zoning-lot index \u2192 generic zoning-lot condition) is recorded separately in the evidence map known_limits and producer report \u00a71/\u00a77.",
+      "Nothing stays open for this task's share.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-094-R035",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-001.md:121 (\"This does not by itself establish the property's legal unit limit\u2026 Do not promote the earlier conditional arithmetic example of 29 units to a confirmed site entitlement.\"); classification prohibition.",
+      "The spec asserts 29 ONLY as a Conditional ceiling (answer-conditional-marker \"Conditional\") carrying \"If this tax lot is the whole zoning lot\", never settled; existing guards kept \u2014 options.innerText not.toMatch(/feasible|complies|legally correct/i) (line 168) and dialog.innerText not.toContain(\"maximum for this property\").",
+      "I confirmed in result_ways.py that the standard way returns Conditional with an always-present, never-removed zoning-lot condition (plus area/K20), so the 29 cannot render as a confirmed entitlement.",
+      "Nothing stays open (the zoning-lot/area/K20 inputs stay unresolved and are preserved as conditions).",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T09:31:04+00:00"
   }
  ]
 }

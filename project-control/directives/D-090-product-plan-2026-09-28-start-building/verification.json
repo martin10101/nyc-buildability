@@ -7444,72 +7444,123 @@
     "D-090-R783"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2",
+   "reviewed_manifest_sha256": "0277de793709b282edf2951309990e97d1945d213bc8ab043d4bd115dd67f71c",
    "requirements": [
     {
      "id": "D-090-R229",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "config.py internal_zoning_lot_index_enabled fails safe (absent/unknown -> False); classifier has the 5 states with NOT_READ when the index fails closed.",
+      "result_way_conditions._not_read_condition emits \"could not be read \u2026 not known\", never \"none found\"; test_db232_connector_failure_route_answers_200_with_could_not_be_read (which I ran, PASS) gets 200, exactly one such condition, and asserts \"none found\" absent from the whole document.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R240",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "With no provider bound the state is NOT_CHECKED (config default off); test_route_body_identical_whether_or_not_index_bound asserts the study-read body is byte-identical bound vs unbound (I ran it, PASS).",
+      "test_db232_not_checked_adds_no_scope_row_or_condition shows NOT_CHECKED adds no scope row or figure condition; the condition never fills a figure, it marks it conditional / \"Not confirmed\".",
+      "Nothing stays open for this task.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R241",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Benchmark values are derived from NB-01's recorded index rows (E8/E9 saved-copy sha256 MATCH the committed fixtures, verified by me) and independently reworked by G1 and G4, not from the saved fixture.",
+      "The journey structural guard enumerates every lot_area-sourced value with a non-vacuous counter (lot_area_values_checked>=1) and mutation proofs break->fail->restore \u2014 correctness does not rest on matching a prior snapshot.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R255",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The concern comes from the ACRIS recorded-document index (evidence), labelled draft reading DB232-R1; zoning_lot_condition uses KIND_UNCHECKED_CONDITION, never contradicted_record, and the wording says the documents \"were not read\".",
+      "NB-01 stays research_status access_blocked; no user assumption is stored or shown as a verified fact.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R520",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Journey test asserts the standard unit limit value == 29 and way == \"conditional\" (a conditional ceiling), unchanged.",
+      "It carries exactly ONE zoning-lot condition and asserts the generic \"whole zoning lot\" wording is absent (the property-specific one replaced it, never two); the 680/affordable-35/senior path (NB-05) is untouched, all code_identity hashes MATCH.",
+      "The affordable 35 / senior-none ceilings are primarily M5-T157's share; for this task the standard 29 ceiling is retained and conditional \u2014 nothing stays open here.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R570",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Journey test asserts \"39,934\" and \"39934\" are absent from the entire document; coverage-by-portion, rear yard beyond the corner and building A stay withheld.",
+      "No combined lot area and no substitute number appears in a withheld slot; scope row is \"Not confirmed\".",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The live ACRIS binding sits behind INTERNAL_ZONING_LOT_INDEX_ENABLED (default off, fail-safe); test_lane_flags covers name/posture/default-off (I ran it, PASS).",
+      "Production stays NOT_CHECKED and byte-identical; G5 PASS; frozen-head CI api/web jobs green.",
+      "The production-enablement security review (advisories, backlog DB-237) stays open but turns nothing on \u2014 nothing of this row stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R588",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The journey document still carries every option and figure (allowance, unit limit, coverage, rear yard, building A/B); the task only adds a condition, a scope row and the first open item.",
+      "No step narrows scope to the results screen or one option.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R689",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "NB-01 revisions 1-2 (from M0-T190) and the 2026-10-10 evidence pack are reused; revision 3 adds E8-E10 connector captures and corrects E1's URL.",
+      "NB-01 review history shows revisions 1/2/3 all \"agrees\"; research_record_check --check PASS.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R783",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The affected figures each keep way == \"conditional\"; the scope row is \"Not confirmed\"; nothing new is labelled Verified.",
+      "The ACRIS concern adds no Verified status and establishes no conclusion.",
+      "The full six-label legend/mapping is M5-T151 / the PDF legend (R783 also binds M5-T151); that broader mapping stays open, not this task's share.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at b54b6194 (content identity 0277de79), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T158-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T09:31:02+00:00"
   },
   {
    "directive_id": "D-090",
@@ -7548,36 +7599,61 @@
     "D-090-R639"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2",
+   "reviewed_manifest_sha256": "11ababc1f0a636401b3ffbb2d96408dfc2cef6a85c087198375478907f6bd735",
    "requirements": [
     {
      "id": "D-090-R255",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-035-amendment.md:16 (\"Facts and legal eligibility must come from evidence. A user assumption can support a clearly labeled conditional scenario, but must not become a verified fact.\").",
+      "This task's share: the browser journey asserts the city's RECORD decides the special density area and that the user's agreeing statement changes nothing (same Conditional 29), and that no line names the statement \u2014 spec line 244 `expect(dialog).not.toContainText(\"as the user states\")`.",
+      "I confirmed in product source result_way_bridge.py `_density` that a usable NOT_IN record yields EVIDENCE_NOT_IN_ONE, and result_ways.py puts \"as the user states\" ONLY in the USER_STATEMENT_NOT_IN_ONE (no-record) branch, so it is never shown here; the limit is marked Conditional, never a verified fact.",
+      "Nothing stays open for this task's share (the deciding behaviour is M5-T157's accepted work; this is a test assertion over it).",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R520",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-055-amendment.md (\"29 for standard residences\", \"35 for qualifying affordable housing\", \"These remain conditional ceilings\").",
+      "Spec reads UNIT_LIMIT_STANDARD = Number(rowValue(\"L6\")) from docs/reference-cases/R6B/cases/real-lot.json; I confirmed row L6 expected.value = 29 (dwelling units) \u2014 asserted as `${UNIT_LIMIT_STANDARD} units`, never hard-coded.",
+      "The standard limit is asserted with answer-conditional-marker \"Conditional\" (a conditional ceiling, never settled); the qualifying-affordable/senior rows are Withheld in this journey and are not this spec's subject.",
+      "Open: the 35/affordable and no-senior-factor figures are not exercised in THIS browser spec (withheld this milestone); for this task's share the standard conditional-29 retention is satisfied, nothing further owed here.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R584",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-060-amendment.md (\"Keep the existing activation restrictions.\"); classification hold.",
+      "Material commit f2f76654 touches exactly two files (apps/web/e2e/results.flag-on.spec.ts, project-control/reports/M5-T161-producer-report.md); no flag, render.yaml, product or config file changed, so production switch defaults are unchanged.",
+      "The \"flag-on\" spec name is a Playwright test-project route (testMatch), not a production switch; no hidden feature is turned on by this test-only change.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     },
     {
      "id": "D-090-R639",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner text traced to source-064-amendment.md (\"All required full-suite and security checks must pass in CI for the exact code being accepted or merged\u2026\").",
+      "The repair is real: CI web-e2e was failure at claim head 8cc9a3a0 (run 38126000985) and b54b6194 (38125073082) with the stale spec blob 2541dc9e; at reviewed head 5e3e8e68 run 38126925965 = 21/21 jobs success, incl. web-e2e, web (lint+typecheck+build), api and security jobs.",
+      "The fixed spec blob d5ba312c is byte-identical at f2f76654 (material), 5e3e8e68 (reviewed), eb110032 (submit) and 5cf8acdc (frozen), so the green CI at 5e3e8e68 covers exactly the frozen-head spec identity.",
+      "Open: the frozen-head CI run 38127632651 is still in_progress; acceptance MUST read a green full-suite + security CI run at the actual live accept head before this task is accepted (see carry-forward (4)).",
+      "Verifier's carry-forward condition met at 06644b03: the task's allowed-path files are identical to those verified at 5cf8acdc (content identity 11ababc1), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T161-DCV.md."
+     ],
+     "reviewed_sha": "06644b0392d7f223b8169f17cc60366c7d2279a2"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T09:31:04+00:00"
   }
  ]
 }
