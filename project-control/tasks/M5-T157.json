@@ -203,8 +203,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "PLUTO lists a special district only if it covers at least 10% of the tax lot; a DB sliver can read as none (stated in the condition).",
     "The record is per tax lot; the law asks about the zoning lot (NB-01); DB-232 lands in the same wave.",
@@ -212,7 +212,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T03:04:34.641429+00:00",
-  "updated_at": "2026-10-11T06:14:45.109514+00:00",
+  "updated_at": "2026-10-11T06:25:45.746953+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -286,5 +286,7 @@
       "actor": "orchestrator",
       "change": "Added services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py: a direct consumer of the changed behaviour (it runs the benchmark through run_engine_and_result_ways); two of its tests assert the old withheld unit limit and fail. The builder found it, did not edit it (out of scope), and reported the exact remedy. No row binding changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T06:25:45.746786+00:00"
 }

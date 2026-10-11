@@ -830,36 +830,57 @@
     "D-093-R064"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0",
+   "reviewed_manifest_sha256": "0265bd18d7120458ee6714a3a840c2be5a6bbb9589711741cd4f42ea8ec0062d",
    "requirements": [
     {
      "id": "D-093-R050",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The G1 data-contract-verifier return (frozen in the review record and in NB-05 agent_reviews rev 2, verdict \"agrees\") opened the ZR 12-10 and 23-52 captures and the F08 PLUTO dictionary, worked 20,150/680 and the boundaries BEFORE reading code, and ran a live Socrata/ArcGIS probe \u2014 independent of the builder's explanation.",
+      "I independently reproduced the same: opened the three ZR 12-10 snapshots + ZR 23-52 and re-derived the arithmetic, corroborating the review.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
     },
     {
      "id": "D-093-R051",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Boundaries are tested, not formula-copied: 0.75 rounding both sides (29.75\u219230, 29.747\u219229, 15.75\u219216 \u2014 all reproduced by me), all record\u00d7statement combinations, and the engine/shown invariant; mutation proofs recorded by builder and G4.",
+      "The made-up lots are explicitly \"never a real lot\" (law-examples header) and the 29/16 figures stay Conditional, never relabelled as a verified real-site result.",
+      "Nothing stays open.",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
     },
     {
      "id": "D-093-R061",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Northern Boulevard Q5 answered yes: the special-density geography is resolved from the record (Queens cd 411, spdist null \u2192 not in one, confirmed live for BBL 4073340070) while the unit count stays Conditional on the zoning lot and lot area (NB-05 conditions; always-present zoning-lot condition in the fixture).",
+      "result_ways emits the standard limit as conditional with that zoning-lot condition first.",
+      "Open for later work: the property-specific zoning-lot confirmation (which tax lots make up the zoning lot, NB-01) is added by DB-232 (M5-T158) in the same wave; only the generic always-present condition is present now.",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
     },
     {
      "id": "D-093-R064",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The review records show reviews ran in read-only sessions: G4 in a /tmp detached worktree created and removed, mutations restored; G1/G3 via git plumbing; \"No ports touched.\"",
+      "No owner session was cleared; ports 3000/3001/8000 were not stopped.",
+      "Open caveat: this rests on the reviewers' attestations in the record (I cannot observe the sessions directly) \u2014 see section (6).",
+      "Verifier's carry-forward condition met at 97ee9656: the task's allowed-path files are identical to those verified at 2ca80696 (content identity 0265bd18), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (6 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T157-DCV.md."
+     ],
+     "reviewed_sha": "97ee9656e8e3ccc38986926ec9a9599a23bfb4a0"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T06:25:43+00:00"
   },
   {
    "directive_id": "D-093",
