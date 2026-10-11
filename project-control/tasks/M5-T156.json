@@ -118,14 +118,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "The drawings and the provider arrive from the two other tasks: this builder starts after both are integrated on the branch.",
     "Adding a sheet moves page numbers: the browser test's page assertions are updated, none weakened."
   ],
   "blockers": [],
   "created_at": "2026-10-10T18:56:13.637484+00:00",
-  "updated_at": "2026-10-10T18:56:19.349937+00:00",
+  "updated_at": "2026-10-11T00:27:58.515888+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -157,6 +157,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; the builder starts after M5-T154 and M5-T155 are integrated on the branch"
+    },
+    {
+      "at": "2026-10-11T00:27:58.515771+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built, three reworks, three corrections (incl. the true-size print); G3, G4 and the visual review PASS; delta reviews PASS at 6c8c9f7d; review record and evidence map written"
     }
   ]
 }

@@ -113,14 +113,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "Gaps between tax lots also include rail lines, parks or unmapped land: only a gap crossed by a named street centre line is labelled as that street.",
     "Label placement on angled streets may collide: the overlap test of S4 fails closed."
   ],
   "blockers": [],
   "created_at": "2026-10-10T18:56:11.640231+00:00",
-  "updated_at": "2026-10-10T22:19:47.786664+00:00",
+  "updated_at": "2026-10-11T00:27:58.260543+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -147,6 +147,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-11T00:27:58.260443+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built, three reworks, scope correction 1; G3, G4 and the visual review PASS with corrections applied; delta reviews PASS at 6c8c9f7d; review record and evidence map written"
     }
   ],
   "scope_corrections": [

@@ -1,0 +1,50 @@
+{
+ "task_id": "M5-T154",
+ "material_commits": [
+  "c322e676 (the window connector, map document 1.1.0, the provider, the recorded pack)",
+  "82965bf1 (the contract test follows 1.1.0 (scope correction 1))",
+  "69e5c29f (corrections after review: call-counting switch test, pack integrity test, loader containment)",
+  "50839a9c (the producer's later returns in its report)"
+ ],
+ "claim_seam_head": "f68c60267c983c756f314c2b03628279a1bfc63a",
+ "files_changed": [
+  "packages/contracts/fixtures/invalid/map_context/street_mapped_width_not_a_number.json",
+  "packages/contracts/fixtures/valid/map_context/synthetic_window_1_1_0.json",
+  "packages/contracts/schemas/v1/map_context.schema.json",
+  "project-control/reports/M5-T154-producer-report.md",
+  "services/api/app/_contract_schemas/v1/map_context.schema.json",
+  "services/api/app/api/v1/report_context.py",
+  "services/api/app/connectors/mappluto_window_arcgis.py",
+  "services/api/app/contracts/map_context.py",
+  "services/api/tests/api/test_report_context_provider.py",
+  "services/api/tests/connectors/test_mappluto_window_arcgis.py",
+  "services/api/tests/contracts/test_map_context_contract.py",
+  "services/api/tests/contracts/test_map_context_window.py",
+  "services/api/tests/fixtures/benchmark_215_16_northern_window/.gitattributes",
+  "services/api/tests/fixtures/benchmark_215_16_northern_window/MANIFEST.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern_window/README.md",
+  "services/api/tests/fixtures/benchmark_215_16_northern_window/building_footprints_window_4073340070_plus400ft.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern_window/dcm_street_centerline_window_4073340070_plus1000ft.json",
+  "services/api/tests/fixtures/benchmark_215_16_northern_window/mappluto_window_lots_4073340070_plus400ft.json",
+  "services/api/tests/spatial/_northern_window_replay.py"
+ ],
+ "what_did_not_change": "The parent MapPLUTO, footprint and street connectors are byte-identical to main; no rule, legal figure, package or production switch; the live provider stays behind LIVE_SPATIAL_PROVIDER_ENABLED (off).",
+ "known_limits": [
+  "The zoning-district layer is not fetched in a window (backlog DB-229); the report draws no zoning map.",
+  "Benchmark replay only: the footprint layer's last-edited date comes from the base pack's metadata (data review, observation 1)."
+ ],
+ "checks_at_material_head": [
+  "CI at 6c8c9f7d: all 46 checks success (CI runs 38097919683 pull request and 38097916934 push: web-e2e with the whole Playwright suite, api, control-plane, dependency security; secret-scan and context-budget success); reviewers' focused runs at 6c8c9f7d: 5097 passed, 6 skipped (code), 4482 passed (QA); overflow check n = 0 on the true-size print."
+ ],
+ "requirements": {
+  "D-090-R843": [
+   "This task's share: the data a site plan needs for its adjoining context (neighbouring lots, existing buildings, street centre lines with names and mapped widths), each with its source and date in the provenance: services/api/tests/contracts/test_map_context_window.py: test_document_is_schema_valid_1_1_0_with_all_layers; a missing layer is marked not available with its reason, so the drawing can state the limitation: services/api/tests/api/test_report_context_provider.py: test_a_refusing_fetcher_makes_only_that_layer_unavailable."
+  ],
+  "D-090-R936": [
+   "The surroundings an architect needs are fetched and recorded for the benchmark lot: 200 neighbouring lots, 263 buildings, 35 street segments with names; lot 1 shares the 99.98 ft line: services/api/tests/contracts/test_map_context_window.py: test_independent_window_check; the G1 data review (project-control/reports/M5-T154-reviews.md) cross-checked lots 1, 11, 61 and 70 live against MapPLUTO and the DOF tax map."
+  ],
+  "D-090-R937": [
+   "The streets window (lot plus 1,000 ft) for the neighbourhood map and the lots window (lot plus 400 ft) for the block close-up, each with source and last-edited date in provenance: services/api/tests/contracts/test_map_context_window.py: test_document_is_schema_valid_1_1_0_with_all_layers."
+  ]
+ }
+}

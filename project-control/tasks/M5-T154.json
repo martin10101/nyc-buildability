@@ -120,14 +120,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 90,
   "risks": [
     "The live services may page or throttle the window query: the recording uses the connectors' interactive caps and the tests replay only.",
     "MapPLUTO lots meeting the window may include a condominium base lot or a lot split across the window edge: entries keep the source outline unchanged."
   ],
   "blockers": [],
   "created_at": "2026-10-10T18:56:09.656444+00:00",
-  "updated_at": "2026-10-10T19:41:44.385912+00:00",
+  "updated_at": "2026-10-11T00:27:58.031551+00:00",
   "directive_refs": [
     {
       "directive_id": "D-090",
@@ -154,6 +154,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-11T00:27:58.031448+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; scope correction 1; G1, G3, G4, G5 PASS with corrections applied; delta reviews PASS at 6c8c9f7d; review record and evidence map written"
     }
   ],
   "scope_corrections": [
