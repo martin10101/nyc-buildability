@@ -1,0 +1,44 @@
+{
+ "task_id": "M5-T161",
+ "material_commits": [
+  "f2f76654 (builder (cherry-pick of 9b8d1df9): the flag-on results browser journey follows the record-driven special density; producer report)"
+ ],
+ "claim_seam_head": "8cc9a3a06729369ab162002c705759777f77b7ea",
+ "files_changed": [
+  "apps/web/e2e/results.flag-on.spec.ts",
+  "project-control/reports/M5-T161-producer-report.md"
+ ],
+ "what_did_not_change": "No product, fixture, harness, Playwright configuration or other test file; only the special-density part of apps/web/e2e/results.flag-on.spec.ts and its comments; every other assertion of the journey unchanged.",
+ "known_limits": [
+  "The e2e harness binds no zoning-lot index, so the browser journey shows the generic zoning-lot condition; the property-specific ACRIS condition is pinned by the vitest journey test over the recorded fixture (M5-T158) and stays off in production.",
+  "Four tasks of this wave were accepted while this test was red (M5-T160, M5-T159, M5-T157, M0-T192; CI not read, D-090-R639); recorded in the session notes and the handoff; accepted is terminal in the ledger."
+ ],
+ "checks_at_material_head": [
+  "builder: npm run lint 0, npm run typecheck 0; playwright e2e/results.flag-on.spec.ts unmodified 1 failed at line 216 (reproduces CI), modified 2 passed; mutation A (old first-press expectation) failed at line 184, mutation B (old 'special density area' wording) failed at line 246; restored 2 passed; ports 3000/3001/8000 free before and after",
+  "browser test changed: apps/web/e2e/results.flag-on.spec.ts, the M5-T140 flag-on journey (first press and after the statement)",
+  "CI run 38126925965 at 5e3e8e68 (the reviewed head; same spec bytes as the submit head): 21 of 21 jobs success, web-e2e Playwright 169 passed (vitest 128 files passed), api, web, control-plane and security jobs green"
+ ],
+ "requirements": {
+  "D-090-R255": [
+   "The journey asserts that the user's special-density statement changes nothing (same Conditional 29 and zoning-lot condition after a fresh press) and that no line names the statement ('as the user states' absent): the city's record decides."
+  ],
+  "D-090-R520": [
+   "The journey asserts the standard legal dwelling-unit limit as reference row L6 (29) units, marked Conditional, at the first press and after the statement; never settled."
+  ],
+  "D-090-R584": [
+   "Test-only change: no flag, configuration or product file changed; production switches stay off."
+  ],
+  "D-090-R639": [
+   "CI's web-e2e job, red on the wave-23 branch since 2bbfed94 on results.flag-on.spec.ts:216, is repaired by updating that one stale spec; CI run 38126925965 at 5e3e8e68 (the reviewed head; same spec bytes as the submit head): 21 of 21 jobs success, web-e2e Playwright 169 passed (vitest 128 files passed), api, web, control-plane and security jobs green. Accepts in this wave wait for green CI at the accept head."
+  ],
+  "D-093-R051": [
+   "The changed assertions test the deciding boundary (record read, statement agreeing) with the expected value from reference row L6, not a program run; the old check passed vacuously because it read innerText of a folded row; the new checks open the disclosure and require the row visible; both mutations fail."
+  ],
+  "D-094-R034": [
+   "The browser journey shows the Queens lot resolved from the record as outside the special density areas (a conditional 29 at the first press, before and independent of any user declaration)."
+  ],
+  "D-094-R035": [
+   "The 29 is asserted only as a Conditional ceiling with the zoning-lot condition; the existing guards (never the property's maximum, nothing feasible or compliant) are kept."
+  ]
+ }
+}
