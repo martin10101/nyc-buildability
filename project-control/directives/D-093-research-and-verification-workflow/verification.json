@@ -917,24 +917,37 @@
     "D-093-R050"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a",
+   "reviewed_manifest_sha256": "f3017c96d34d3678fede34c012a57e00d86aff4c7f242a6127fa770362a40a4c",
    "requirements": [
     {
      "id": "D-093-R038",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "NB-06 is one concise research_record/v1 record (keys: question, evidence, meaning_and_applicability, measurement_basis, conclusion, searches, implementation, review, freshness, promotion); question carries scope (property BBL 4073340070, lot_scope zoning_lot_unconfirmed, site_scope building, time_scope current_law).",
+      "Primary evidence = 16 items, each with authority, title, url, reference/section id, page, document_date, retrieved date, excerpt, saved_copy and sha256; permitted source material is saved under docs/research/zr-snapshots/v1/ (the established evidence location) plus the DCM data file.",
+      "I recomputed the sha256 of all 16 saved copies from the frozen-head blobs: every one is a RAW match to the declared digest; `python3 tools/research_record_check.py --check` \u2192 exit 0, NB-06 structurally valid.",
+      "Nothing of R038 stays open: the record is complete and provenance-matched.",
+      "Verifier's carry-forward condition met at 54dde64c: the task's allowed-path files are identical to those verified at ddf844ca (content identity f3017c96), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T160-DCV.md."
+     ],
+     "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a"
     },
     {
      "id": "D-093-R050",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "An independent reviewer (data-contract-verifier, \u2260 producer official-source-researcher) performed G1; its full return is in project-control/reports/M5-T160-reviews.md and its entry is copied into review.agent_reviews of the record.",
+      "The reviewer opened the decisive captures and worked Q1/Q2/Q3 from them before reading the record's interpretation, and caught a real reading error (round-1 Finding 1: conditions[0] wrongly named the 35-631(a) line-up and glossed \"prevailing street wall frontage\" with the 23-431(a) eligibility test); it is not a restatement of the builder.",
+      "Revision 2 fixed F1 (added E16 = ZR 12-10 prevailing-street-wall-frontage, named the 23-431(a) fallback) and the reviewer re-verified in a delta review (verdict agrees, PASS at b544a4b3).",
+      "Nothing of R050 stays open for this task; professional/legal verification remains a separate ADR-007 matter, correctly not claimed.",
+      "Verifier's carry-forward condition met at 54dde64c: the task's allowed-path files are identical to those verified at ddf844ca (content identity f3017c96), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T160-DCV.md."
+     ],
+     "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T06:11:07+00:00"
   }
  ]
 }

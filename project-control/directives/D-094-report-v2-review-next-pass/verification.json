@@ -107,18 +107,25 @@
     "D-094-R043"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a",
+   "reviewed_manifest_sha256": "f3017c96d34d3678fede34c012a57e00d86aff4c7f242a6127fa770362a40a4c",
    "requirements": [
     {
      "id": "D-094-R043",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "M5-T160's share is the \"relevant constraints\" of the one meaningful spatial example; the record researches them and I verified each against the primary captures: street wall = 35-631(b) via the overlay chain 34-11\u219234-24(b)(1)\u219235-63\u219235-631 (residential-only) and 35-01\u219235-63 (mixed), 70% of each frontage within 8 ft of the street line, with 35-631(a) confirmed inapplicable (R8\u2013R12 Manhattan Core only).",
+      "Setback: 23-432 R6B table row = 30/45/55 ft (I pulled the structured row); 23-432/23-433/35-632(a) trigger a setback only for street wall above the 45 ft maximum base height, so a building at or below it (incl. the 30 ft benchmark) needs none \u2014 depth 10 ft wide / 15 ft narrow applies only above 45 ft.",
+      "Side yards: 23-335(b) requires none for R6B residences other than single/two-family detached; 34-232 removes it for any residential building in C1\u2013C6; optional with a 5 ft minimum. All faithful to the captured text.",
+      "What stays open: the placed footprint, section/massing and reconciled schedule of the full spatial example are later tasks (D-094 plan P-6.1\u2013P-6.3); the record keeps an explicit incomplete state (research_status interpretation_awaiting_review, promotion.requested_label null, conditions unresolved for prevailing-street-wall-frontage adjacency and the operative street-line position).",
+      "Verifier's carry-forward condition met at 54dde64c: the task's allowed-path files are identical to those verified at ddf844ca (content identity f3017c96), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (3 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M5-T160-DCV.md."
+     ],
+     "reviewed_sha": "54dde64cb37fff770fd756604cd282ff3906f09a"
     }
-   ]
+   ],
+   "verified_at": "2026-10-11T06:11:07+00:00"
   }
  ]
 }
