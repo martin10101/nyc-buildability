@@ -71,20 +71,20 @@
     "G1",
     "G2"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "A reading of law is an unreviewed draft (ADR-007); the record certifies nothing.",
     "Street widths follow the D-052 policy; an unresolved width keeps the dependent reading unresolved."
   ],
   "blockers": [],
   "created_at": "2026-10-11T05:27:03.867480+00:00",
-  "updated_at": "2026-10-11T05:27:04.315181+00:00",
+  "updated_at": "2026-10-11T05:28:15.391472+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -106,5 +106,14 @@
   "documented_test_commands": [
     "python3 tools/research_record_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T05:28:15.391366+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one researcher dispatched"
+    }
+  ]
 }
