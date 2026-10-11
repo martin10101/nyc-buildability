@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 9 (last changed 2026-10-10)
+- Revision: 10 (last changed 2026-10-11)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `9d78119686d169efb7052662e2b26e6872844f511b5bfc26a42bc5419ecc9326`
+- Combined code identity: `1f610dfd27bb128d12b5f7f6755741dc90951266adeaa2f1e72e5c17cc614fa5`
 - Modules:
-  - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
+  - `services/api/app/scenario/three_answers/result_ways.py` (`09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72`)
   - `services/api/app/scenario/three_answers/three_way_document.py` (`003a7e61b9fb983c9a20ebeb8b492f84165ef473956deb5a612cb52b6e4f62c8`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
@@ -59,7 +59,7 @@ The independent example (step P6, two sealed-folder readers) is set beside the p
 | 2 | Footprint / lot coverage by portion | no single whole-lot figure: corner portion about 9,997.5 sq ft at 100% plus interior strip about 390 sq ft at 80%, footprint about 10,310 sq ft (the two readings differ in the decimals) (step-p6-worked#real-lot-coverage-by-portion) | withheld - no footprint square-foot figure: the recorded lot area (10,075 sq ft) and the tax-map outline area (10,387.99 sq ft) disagree; the law is given by portion (corner 100% within 100 ft, interior 80%) [withheld] | a side is missing |
 | 3 | Each floor's area and height | real building A: 1 storey about 10,310 sq ft at 10 ft (below the 30 ft minimum base); real building B: 3 storeys of 6,716.67 sq ft at 30 ft (step-p6-worked#real-building-a, step-p6-worked#real-building-b) | building B: 3 storeys of 6,716.67 sq ft at 30 ft (conditional on the recorded lot area), matching the independent building B; building A is named in buildings_not_worked (its footprint is withheld because the two lot areas disagree), not worked [available_conditional] | a side is missing |
 | 4 | Total floor area | real building B total 20,150 sq ft (the whole allowance used); made-up building B total 20,000 sq ft (step-p6-worked#real-building-b) | building B total 20,150 sq ft (the whole allowance used), conditional on the recorded lot area [available_conditional] | agree |
-| 5 | Applicable legal unit limit | 29 dwelling units (20,150 / 680 = 29.63 -> 29) (real-lot#L6, step-p6-worked#real-unit-limit) | withheld - the engine computes 29 internally, but the document withholds the limit pending special-density evidence and an independent check [withheld] | a side is missing |
+| 5 | Applicable legal unit limit | 29 dwelling units (20,150 / 680 = 29.63 -> 29) (real-lot#L6, step-p6-worked#real-unit-limit) | 29 dwelling units, shown as a conditional ceiling - the record places the lot outside both special density areas (ZR 12-10), so 20,150 / 680 = 29.63 -> 29 is shown conditional on the zoning lot [conditional] | agree |
 | 6 | Separate preliminary apartment estimate | real building B: 20,150 x 0.60 / 700 = 17.27 (17-18) and x 0.75 / 700 = 21.59 (21-22); the 0.60-0.75 share and 700 sq ft size are each a preliminary assumption (step-p6-worked#real-estimate-b) | building B: 20,150 x 0.60 / 700 = 17.27 and x 0.75 / 700 = 21.59, labelled 'Preliminary capacity estimate', conditional; the 0.60-0.75 share and 700 sq ft size are each a preliminary assumption, shown but not yet changeable (DB-213 a) [available_conditional] | agree |
 
 ### Step 1: Property inputs
@@ -98,9 +98,9 @@ The independent example (step P6, two sealed-folder readers) is set beside the p
 
 - Component: `calc-legal-dwelling-unit-limit`
 - Independent expected answer: 29 dwelling units (20,150 / 680 = 29.63 -> 29)
-- Program's actual answer and standing: withheld - the engine computes 29 internally, but the document withholds the limit pending special-density evidence and an independent check (withheld; source: fixture legal_unit_limit_standard; engine r6b-dwelling-units rule)
-- Verdict: side_missing
-- The engine's arithmetic matches the independent 29, but the published document withholds the limit (ZR 23-52(a)(1) special-density area unknown).
+- Program's actual answer and standing: 29 dwelling units, shown as a conditional ceiling - the record places the lot outside both special density areas (ZR 12-10), so 20,150 / 680 = 29.63 -> 29 is shown conditional on the zoning lot (conditional; source: fixture legal_unit_limit_standard; engine r6b-dwelling-units rule)
+- Verdict: agree
+- The engine's arithmetic (29) matches the independent 29, and the document now shows it as a conditional ceiling because the record places the lot outside both special density areas (ZR 12-10); the standing condition names the zoning lot (the record is per tax lot).
 
 ### Step 6: Separate preliminary apartment estimate
 
@@ -119,7 +119,6 @@ Disagreements:
 
 Missing facts:
 - [code not built] (program result(s): building_option, floor_stack, unit_estimate) The single-answer building option, floor stack and unit estimate are not shown as single results (reason_kind rule_not_implemented); each worked building's floor schedule and preliminary estimate are given in building_alternatives, where building B is listed (3 storeys of 6,716.67 sq ft, 20,150 sq ft, 30 ft, conditional) with its estimate (17.27 to 21.59). The engine's own single-answer generator is not built. - would be settled by: Building the single-answer generators, or the owner's choice to report the list (DB-210 point b).
-- [code not built] (program result(s): legal_unit_limit_standard) The legal dwelling-unit limit is withheld: the program's own gap_kind is work_owed and its reason is that how the limit is shown 'has not been worked out and checked against an independently worked example'. The law is read (ZR 23-52(a)(1); the special density areas are the Manhattan Core and the Special Downtown Brooklyn District, step-p1#special-density-areas-list) and the cases read this Queens lot as outside both (step-p3#manhattan-core: 'not in the Manhattan Core'; step-p3#special-downtown-brooklyn-district: 'outside ... on the recorded facts'), while the program lacks the connected evidence and the checked conditional display - so the kind is code not built, not unresolved law. The engine computes 29 internally. - would be settled by: Connecting the sourced special-density evidence (the cases) and building the checked conditional display in the decision layer (result_ways.py / three_way_document.py).
 - [a missing fact about the property] (program result(s): rear_yard) The rear yard beyond the corner, the adjoining lot-line types, the neighbouring street walls and the ground elevations are not known (step-p6#real-lot-missing-facts); the program's rear_yard gap_kind is missing_information. - would be settled by: A survey, a deed, or a record of the neighbouring lots and buildings.
 
 ## What the program does today versus what is planned
@@ -135,15 +134,15 @@ Planned, not built:
 
 ## Automated test result
 
-- Status: Not run
-- Code identity tested: `2ed063ce11573a720d5d508d659c364b760387b63abf46b48ebd7cc391854de2`
-- Commit tested: `42fc2ae11e6b90084972e7ca32816cc50b8a085a`
-- Date tested: 2026-10-10
+- Status: Passed
+- Code identity tested: `1f610dfd27bb128d12b5f7f6755741dc90951266adeaa2f1e72e5c17cc614fa5`
+- Commit tested: `d46369705676eee33b1882f637c545cf444c4ae8`
+- Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-first-building-option-complete.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

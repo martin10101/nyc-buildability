@@ -110,14 +110,17 @@ class AreaAgreement(Enum):
 
 
 class DensityKnowledge(Enum):
-    """What is known about a special density area (gap K11). There is no data source today
-    and the ZR 12-10 definition is owed; a user's statement supports only a conditional
-    result and is never stored as a fact (R255)."""
+    """What is known about a special density area (gap K11; task M5-T157 reads it from the record,
+    ZR 12-10). The record (:mod:`special_density_geography`) wins over a user's statement; where the
+    record and a statement disagree the limit is withheld with both sides named
+    (``RECORD_AND_STATEMENT_DISAGREE``); with no usable record a user's statement that the lot is
+    not in one still supports only a conditional result and is never stored as a fact (R255)."""
 
     NOT_GIVEN = "not_given"
     EVIDENCE_NOT_IN_ONE = "evidence_not_in_one"
     EVIDENCE_IN_ONE = "evidence_in_one"
     USER_STATEMENT_NOT_IN_ONE = "user_statement_not_in_one"
+    RECORD_AND_STATEMENT_DISAGREE = "record_and_statement_disagree"
 
 
 class ResultFamily(Enum):

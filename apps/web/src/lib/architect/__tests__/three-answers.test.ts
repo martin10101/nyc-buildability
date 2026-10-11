@@ -524,13 +524,21 @@ describe("the contract's local-exception rule: a one-result condition stays with
     };
   }
 
-  it("on the plain benchmark both conditions are shared (fan-out >= 2) and named for the shared list", () => {
+  it("on the plain benchmark the area and K20 conditions are shared; the unit-limit zoning-lot condition is local (M5-T157)", () => {
     const doc = loadResultsFixture("recorded_215_16_northern_journey");
     const index = conditionIndex(doc);
-    for (const info of index.values()) expect(info.count).toBeGreaterThanOrEqual(2);
     const shared = sharedConditionsView(doc);
-    expect(shared.length).toBe(index.size);
+    // two conditions are shared across two or more results, named for the shared list
+    expect(shared.length).toBe(2);
     expect(shared.map(condition => condition.name)).toEqual(["Condition 1", "Condition 2"]);
+    for (const condition of shared) {
+      expect(index.get(condition.text)?.count ?? 0).toBeGreaterThanOrEqual(2);
+    }
+    // M5-T157: the legal dwelling-unit limit adds a zoning-lot condition on ONE result (count 1),
+    // which is a LOCAL exception and is NOT in the shared list.
+    const local = [...index.values()].filter(info => info.count === 1);
+    expect(local.length).toBe(1);
+    expect(index.size).toBe(3);
   });
 
   it("the density condition (one result) is a LOCAL exception: shown in full, not in the shared list", () => {

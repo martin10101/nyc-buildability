@@ -10,6 +10,8 @@ import re
 
 import pytest
 
+from app.scenario.three_answers.engine_conditions import special_density
+from app.scenario.three_answers.result_way_engine_bridge import _density_decision
 from app.scenario.three_answers.result_way_inputs import (
     AreaAgreement,
     Checked,
@@ -97,14 +99,44 @@ def test_f3_density_evidence_in_one_withholds_the_unit_limit():
     assert "special density area" in ways.unit_limit_standard.way.reason
 
 
-# EVIDENCE_NOT_IN_ONE (builder open combination 1; the G3 reviewer CONFIRMED it): gap K11 gives
-# no settled or conditional path for recorded evidence of absence, so it is withheld as work
-# owed (reading O10: anything neither the work order nor the readings decide is withheld).
-def test_density_evidence_not_in_one_is_withheld_as_work_owed_o10():
+# EVIDENCE_NOT_IN_ONE (M5-T157, R3): the record places the lot OUTSIDE both special density areas,
+# so the legal dwelling-unit limit is SHOWN as a conditional ceiling - never settled - with the
+# always-present zoning-lot condition (the record is per tax lot; the law asks about the zoning
+# lot).
+def test_density_evidence_not_in_one_is_a_conditional_ceiling_with_the_zoning_lot_condition():
     ways = decide_result_ways(plain_inputs(
         special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE, **k20(True)))
-    assert is_withheld(ways.unit_limit_standard)
-    assert ways.unit_limit_standard.way.gap_kind == "work_owed"
+    unit = ways.unit_limit_standard
+    assert is_conditional(unit) and not is_settled(unit)
+    assert "unchecked_condition" in condition_kinds(unit)
+    zoning = next(c for c in unit.way.conditions if "zoning lot" in c.assumption)
+    assert "tax lot" in zoning.assumption and zoning.settled_by
+
+
+# RECORD_AND_STATEMENT_DISAGREE (M5-T157, R2): the record and a statement disagree, so the limit is
+# withheld as missing information with both sides named; a statement never overrides the record.
+def test_density_record_and_statement_disagree_withholds_missing_information():
+    ways = decide_result_ways(plain_inputs(
+        special_density=DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, **k20(True)))
+    unit = ways.unit_limit_standard
+    assert is_withheld(unit)
+    assert unit.way.gap_kind == "missing_information"
+    assert "disagree" in unit.way.reason
+    assert "does not override" in unit.way.reason
+
+
+# --------------------------------------------------------------------------- M5-T157 the invariant
+# R2: the engine is given "not in one" (special_density_area False) IF AND ONLY IF the legal
+# dwelling-unit limit is SHOWN (its way is not withheld). Both are driven from the ONE density
+# decision: result_ways decides the way, and result_way_engine_bridge._density_decision +
+# engine_conditions.special_density decide the engine value. The two can never disagree.
+@pytest.mark.parametrize("knowledge", list(DensityKnowledge))
+def test_m5t157_engine_not_in_one_iff_the_unit_limit_is_shown(knowledge):
+    ways = decide_result_ways(plain_inputs(special_density=knowledge, **k20(True)))
+    way = ways.unit_limit_standard
+    engine_value = special_density(_density_decision(knowledge)).engine_value
+    shown = not is_withheld(way)
+    assert (engine_value is False) == shown, (knowledge, engine_value, way.way.way)
 
 
 # --------------------------------------------------------------------------- G4-F4 overlay not read
@@ -458,6 +490,8 @@ def _wide_text_battery():
                      special_density=DensityKnowledge.EVIDENCE_IN_ONE, **k20(True)),
         plain_inputs(lot_type=LotType.INTERIOR,
                      special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE, **k20(True)),
+        plain_inputs(lot_type=LotType.INTERIOR,
+                     special_density=DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, **k20(True)),
         plain_inputs(**k20(False)),
         plain_inputs(reach=c2_reach(), **k20(True)),
     ]

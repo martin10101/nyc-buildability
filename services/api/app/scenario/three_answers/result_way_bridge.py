@@ -57,7 +57,12 @@ from app.spatial.site_geometry.outline import PreparedOutline
 from app.spatial.site_geometry.results import SiteGeometry
 
 from .result_way_bridge_overlay import overlay_support_for
-from .result_way_facts import RecordedConditions, gather_recorded_facts
+from .result_way_facts import (
+    RecordedConditions,
+    SpecialDensityRecord,
+    gather_recorded_facts,
+    gather_special_density_record,
+)
 from .result_way_inputs import (
     CORNER_PORTION_WITHIN_100_FT,
     AreaAgreement,
@@ -75,6 +80,7 @@ from .result_way_inputs import (
     StreetReach,
 )
 from .result_ways import decide_result_ways
+from .special_density_geography import SpecialDensityArea
 
 __all__ = [
     "LARGE_LOT_THRESHOLD",
@@ -149,6 +155,7 @@ class GatheredResult:
     source_facts: tuple[SourceFact, ...]
     held_back: tuple[str, ...]
     corner_areas: CornerPortionAreas | None = None
+    special_density_record: SpecialDensityRecord | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -309,20 +316,46 @@ def large_lot_answer(recorded_sq_ft: float | None) -> LargeLotAnswer:
 
 
 # ---------------------------------------------------------------------------
-# (f) the special density area from a user's statement (never a fact)
+# (f) the special density area: the record (ZR 12-10) combined with a user's statement. The RECORD
+# wins over a statement; where they disagree the limit is withheld with both sides named; with no
+# usable record a statement that the lot is not in one keeps today's conditional behaviour, and a
+# statement is never stored as a fact (owner rule 1; R255). ONE decision drives both the shown way
+# and the engine condition (task M5-T157; the invariant test holds that line).
 # ---------------------------------------------------------------------------
-def _density(special_density_statement: bool | None) -> tuple[DensityKnowledge, tuple[str, ...]]:
-    """The special-density knowledge from a user's statement. None is "not given"; True is the
-    user's statement that the lot is NOT in a special density area (the only statement the work
-    order gives a path for); a statement that it IS in one is not decided and is held back."""
-    if special_density_statement is None:
-        return DensityKnowledge.NOT_GIVEN, ()
-    if special_density_statement is True:
+def _density(
+    record: SpecialDensityArea, special_density_statement: bool | None,
+) -> tuple[DensityKnowledge, tuple[str, ...]]:
+    """Combine the recorded special-density decision with a user's statement into the ONE density
+    knowledge. ``special_density_statement`` is None (no statement), True (the user states the lot
+    is NOT in one) or False (the user states the lot IS in one). The record wins; a disagreement is
+    withheld with both sides named (``RECORD_AND_STATEMENT_DISAGREE``); with no usable record the
+    statement keeps today's behaviour (not-in-one -> conditional; in-one or none -> withheld)."""
+    says_not_in_one = special_density_statement is True
+    says_in_one = special_density_statement is False
+    if record is SpecialDensityArea.IN_SPECIAL_DENSITY_AREA:
+        if says_not_in_one:
+            return DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, (
+                "The city's record places this lot in a special density area while the statement "
+                "says it is not; the legal dwelling-unit limit is withheld until that is settled.",
+            )
+        return DensityKnowledge.EVIDENCE_IN_ONE, ()
+    if record is SpecialDensityArea.NOT_IN_SPECIAL_DENSITY_AREA:
+        if says_in_one:
+            return DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, (
+                "The city's record places this lot outside a special density area while the "
+                "statement says it is in one; the legal dwelling-unit limit is withheld until that "
+                "is settled.",
+            )
+        return DensityKnowledge.EVIDENCE_NOT_IN_ONE, ()
+    # No usable record: today's statement behaviour stays.
+    if says_not_in_one:
         return DensityKnowledge.USER_STATEMENT_NOT_IN_ONE, ()
-    return DensityKnowledge.NOT_GIVEN, (
-        "A statement that the lot is in a special density area is not yet handled, so the special "
-        "density area is carried as not given.",
-    )
+    if says_in_one:
+        return DensityKnowledge.NOT_GIVEN, (
+            "A statement that the lot is in a special density area is not yet handled, and the "
+            "record does not settle it, so the special density area is carried as not given.",
+        )
+    return DensityKnowledge.NOT_GIVEN, ()
 
 
 # ---------------------------------------------------------------------------
@@ -354,11 +387,14 @@ def gather_result_ways(
     held.extend(site_held)
 
     recorded = gather_recorded_facts(profile)
+    special_density_record = gather_special_density_record(profile)
     reach = _reach_for(outline, geometry)
     outline_area = outline.polygon.area if outline is not None else None
     area, area_statement = compare_lot_area(recorded_area, outline_area)
     large_lot = large_lot_answer(recorded_area)
-    density, density_held = _density(special_density_statement)
+    density, density_held = _density(
+        special_density_record.decision.area, special_density_statement
+    )
     held.extend(density_held)
 
     overlay_support = None
@@ -398,4 +434,5 @@ def gather_result_ways(
         source_facts=source_facts,
         held_back=tuple(held),
         corner_areas=corner_areas,
+        special_density_record=special_density_record,
     )

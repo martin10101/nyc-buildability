@@ -30,8 +30,12 @@ line). Each direction is proved from the rule files in the producer report:
   there is no corner measurement the engine is given "not within 100 feet" (the rear-yard waiver
   then does not apply) and an angle past the waiver's limit; when the lot is not a corner lot the
   same, recorded as not applicable (there is no corner).
-* The special density area is a user's statement, used as a statement; no statement -> the engine
-  is given "inside one", which makes the dwelling-unit rule not applicable so the limit is withheld.
+* The special density area is the ONE decision the record (ZR 12-10) and any user's statement are
+  combined into (task M5-T157): the record read as "not in one", or a user's statement to the same
+  effect where the record is silent, gives the engine "not in one" so the dwelling-unit rule applies
+  and the limit is shown; "in one" (recorded), a disagreement, or "not known" gives the engine
+  "inside one" so the rule is not applicable and the limit is withheld. The engine is given "not in
+  one" if and only if the limit is shown (the invariant test holds that line).
 """
 
 from __future__ import annotations
@@ -43,7 +47,7 @@ __all__ = [
     "CONDITION_KEYS",
     "WITHIN_100_FT",
     "Derived",
-    "DensityStatement",
+    "DensityDecision",
     "Presence",
     "Source",
     "angle_when_not_measured_degrees",
@@ -60,13 +64,18 @@ class Presence(Enum):
     NOT_READ = "not_read"
 
 
-class DensityStatement(Enum):
-    """What the user stated about the special density area. ``NONE`` means no statement was made;
-    ``NOT_IN_ONE`` is the user's statement that the lot is NOT in a special density area (the only
-    statement the program has a path for). A statement is a statement, never a recorded fact."""
+class DensityDecision(Enum):
+    """The ONE special-density decision (task M5-T157), the record (ZR 12-10) combined with any
+    user's statement by the decision step. Each maps to the engine's ``special_density_area`` value
+    and the scope line's source: ``RECORDED_NOT_IN_ONE`` and ``USER_STATEMENT_NOT_IN_ONE`` give the
+    engine "not in one" (the limit is shown); ``RECORDED_IN_ONE``, ``RECORD_STATEMENT_DISAGREE`` and
+    ``NOT_KNOWN`` give it "in one" (the limit is withheld). A statement is never a recorded fact."""
 
-    NOT_IN_ONE = "not_in_one"
-    NONE = "no_statement"
+    RECORDED_NOT_IN_ONE = "recorded_not_in_one"
+    RECORDED_IN_ONE = "recorded_in_one"
+    USER_STATEMENT_NOT_IN_ONE = "user_statement_not_in_one"
+    RECORD_STATEMENT_DISAGREE = "record_statement_disagree"
+    NOT_KNOWN = "not_known"
 
 
 class Source(Enum):
@@ -75,6 +84,7 @@ class Source(Enum):
     RECORDED = "recorded"
     MEASURED = "measured"
     USER_STATEMENT = "user_statement"
+    RECORD_STATEMENT_DISAGREE = "record_statement_disagree"
     NOT_KNOWN = "not_known"
     NOT_APPLICABLE = "not_applicable"
 
@@ -168,13 +178,20 @@ def within_100_and_angle(
     )
 
 
-def special_density(statement: DensityStatement) -> Derived:
-    """special_density_area from the user's statement. The statement that the lot is not in a
-    special density area gives "no" as the user's statement; no statement gives "inside one"
-    (the dwelling-unit rule is then not applicable, so the limit is withheld), recorded as not
-    known. The statement is never recorded as a fact."""
-    if statement is DensityStatement.NOT_IN_ONE:
+def special_density(decision: DensityDecision) -> Derived:
+    """special_density_area from the ONE special-density decision (task M5-T157). The engine is
+    given "not in one" (False) for a record read outside both areas, or a user's statement to that
+    effect where the record is silent; "in one" (True) for a record inside one, a disagreement, or
+    a not-known record (then the dwelling-unit rule is not applicable, so the limit is withheld).
+    The source carried for the scope line says where the decision came from."""
+    if decision is DensityDecision.RECORDED_NOT_IN_ONE:
+        return Derived(False, Source.RECORDED)
+    if decision is DensityDecision.RECORDED_IN_ONE:
+        return Derived(True, Source.RECORDED)
+    if decision is DensityDecision.USER_STATEMENT_NOT_IN_ONE:
         return Derived(False, Source.USER_STATEMENT)
+    if decision is DensityDecision.RECORD_STATEMENT_DISAGREE:
+        return Derived(True, Source.RECORD_STATEMENT_DISAGREE)
     return Derived(True, Source.NOT_KNOWN)
 
 
@@ -186,7 +203,7 @@ def derive_conditions(
     is_corner: bool | None,
     reach_ft: float | None,
     angle_deg: float | None,
-    density_statement: DensityStatement,
+    density_decision: DensityDecision,
 ) -> dict[str, Derived]:
     """Derive all five engine conditions from the plain evidence states, keyed by the scope key
     each emits. The caller (the evidence entry) reads the engine value of each to build the engine's
@@ -199,5 +216,5 @@ def derive_conditions(
         "special_district_present": special_district(special_district_presence),
         "within_100_ft_of_street_line_intersection": within,
         "street_line_intersection_angle_degrees": angle,
-        "special_density_area": special_density(density_statement),
+        "special_density_area": special_density(density_decision),
     }

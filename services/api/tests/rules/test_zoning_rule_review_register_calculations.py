@@ -134,21 +134,23 @@ def test_calc_floor_area_recomputed_matches_independent():
     assert c["example"]["agrees"] is True  # 20,150 (independent) == 20,150 (program)
 
 
-def test_calc_unit_limit_engine_computes_29_document_withholds():
-    # The engine computes 29 internally (the r6b-dwelling-units rule); the document withholds the
-    # legal dwelling-unit limit. The page says BOTH.
+def test_calc_unit_limit_engine_computes_29_document_shows_a_conditional_ceiling():
+    # M5-T157: the engine computes 29 through the r6b-dwelling-units rule, and the document now
+    # SHOWS it as a conditional ceiling (the record places the benchmark lot outside both special
+    # density areas). The independent expected (real-lot#L6 = 29) matches the shown 29, so agrees.
     reg = _registry()
     c = BY_ID["calc-legal-dwelling-unit-limit"]
     result = reg.evaluate("r6b-dwelling-units", c["example"]["inputs"])
     assert result.outputs["max_dwelling_units"] == 29.0
     assert c["example"]["actual"]["engine_values"]["max_dwelling_units"] == 29
-    assert c["example"]["actual"]["state"] == "withheld"
+    assert c["example"]["actual"]["state"] == "conditional"
+    assert c["example"]["actual"]["values"]["max_dwelling_units"] == 29
     assert c["example"]["expected"]["values"]["max_dwelling_units"] == 29  # real-lot#L6
-    assert c["example"]["agrees"] is None  # the document withholds it; never a forced match
-    # the document really withholds the standard legal unit limit
+    assert c["example"]["agrees"] is True  # shown 29 (conditional) == independent 29
+    # the document really shows the standard legal unit limit as a conditional ceiling
     vs = _fixture()["answers"]["floor_area_allowance"]["value_states"]["legal_unit_limit_standard"]
-    assert vs["way"] == "withheld"
-    assert "special density area" in vs["reason"]
+    assert vs["way"] == "conditional"
+    assert any("zoning lot" in cnd["assumption"] for cnd in vs["conditions"])
 
 
 def test_engine_sample_stack_differs_from_independent_two_buildings():
@@ -198,8 +200,11 @@ def test_document_actuals_match_the_recorded_fixture():
 # --------------------------------------------------------------------------
 def test_built_step_agrees_withheld_steps_side_missing():
     assert BY_ID["calc-floor-area-allowance"]["example"]["agrees"] is True
+    # M5-T157: the legal dwelling-unit limit is now SHOWN (conditional 29) and matches the
+    # independent reference, so it agrees; the still-withheld / not-built steps keep agrees null.
+    assert BY_ID["calc-legal-dwelling-unit-limit"]["example"]["agrees"] is True
     for cid in ("calc-lot-coverage-by-portion", "calc-building-option-floor-stack",
-                "calc-legal-dwelling-unit-limit", "calc-preliminary-apartment-estimate"):
+                "calc-preliminary-apartment-estimate"):
         assert BY_ID[cid]["example"]["agrees"] is None, cid
 
 
@@ -481,21 +486,25 @@ def test_every_listed_withheld_gap_kind_agrees_with_the_program():
     assert _gap_kind_mismatches(c["closing"], blocks) == []
     named = {k for row in c["closing"]["disagreements"] + c["closing"]["missing_facts"]
              for k in row["program_results"]}
-    want = {"legal_unit_limit_standard", "max_lot_coverage", "building_option", "rear_yard"}
+    # M5-T157: the legal dwelling-unit limit is no longer a withheld gap (it is shown as a
+    # conditional ceiling), so the still-withheld results the closing lists are these:
+    want = {"max_lot_coverage", "building_option", "rear_yard"}
     assert want <= named
-    # the corrected row: the legal unit limit is code not built (gap_kind work_owed)
-    lul = [r for r in c["closing"]["missing_facts"]
-           if "legal_unit_limit_standard" in r["program_results"]]
-    assert lul and lul[0]["kind"] == "code not built"
+    assert "legal_unit_limit_standard" not in named
+    # the coverage row is a missing fact about the property (gap_kind missing_information)
+    cov = [r for r in c["closing"]["disagreements"] + c["closing"]["missing_facts"]
+           if "max_lot_coverage" in r["program_results"]]
+    assert cov and cov[0]["kind"] == "a missing fact about the property"
 
 
 def test_a_mismatched_gap_kind_is_caught():
-    # mutation proof (a deep copy, not the committed file): mislabel the withheld legal unit
-    # limit as 'unresolved law' and the enforcement catches it against the program's work_owed kind.
+    # mutation proof (a deep copy, not the committed file): mislabel the withheld building option
+    # ('code not built') as 'unresolved law' and the enforcement catches it against the program's
+    # rule_not_implemented kind (M5-T157: the legal unit limit is no longer a withheld gap).
     blocks = _result_blocks(_fixture())
     c = copy.deepcopy(BY_ID["calc-first-building-option-complete"])
     for r in c["closing"]["missing_facts"]:
-        if "legal_unit_limit_standard" in r["program_results"]:
+        if "building_option" in r["program_results"]:
             r["kind"] = "unresolved law"
     assert _gap_kind_mismatches(c["closing"], blocks) != []
 
@@ -590,9 +599,11 @@ def test_a_step_whose_side_changes_without_its_verdict_is_caught():
 
 def test_a_withheld_step_cannot_read_differ():
     comp = copy.deepcopy(BY_ID[COMPARISON_ID])
-    # step 5 is withheld/side_missing; forcing it to 'differ' is refused (nothing to compare).
-    assert comp["steps"][4]["actual"]["state"] == "withheld"
-    comp["steps"][4]["verdict"] = "differ"
+    # step 2 (the footprint / lot-coverage-by-portion) is withheld/side_missing; forcing it to
+    # 'differ' is refused (nothing to compare). M5-T157: step 5 is no longer withheld (the legal
+    # unit limit is shown conditional), so the guard is exercised on the still-withheld step 2.
+    assert comp["steps"][1]["actual"]["state"] == "withheld"
+    comp["steps"][1]["verdict"] = "differ"
     assert any("side_missing" in m for m in calc.step_verdict_errors(comp))
 
 

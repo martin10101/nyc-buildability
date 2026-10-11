@@ -35,7 +35,7 @@ from app.scenario.three_answers import (
     validate_results_document,
 )
 from app.scenario.three_answers.engine_conditions import (
-    DensityStatement,
+    DensityDecision,
     Derived,
     Presence,
     Source,
@@ -275,13 +275,21 @@ def test_s2_five_results_placed_per_owner_decision(benchmark):
     ):
         assert key in _states(fa)
         assert key not in _states(env)
-    placed = {
-        "rear_yard", "setback_above_base", "legal_unit_limit_standard",
+    # rear_yard, setback and the qualifying unit limits carry no number of their own, so they never
+    # appear in any answer's values[]. M5-T157: the standard legal unit limit IS shown (29, the
+    # record places the lot outside both areas), so it is a value object of floor_area_allowance -
+    # and only there, never in another answer.
+    never_in_values = {
+        "rear_yard", "setback_above_base",
         "legal_unit_limit_qualifying_affordable", "legal_unit_limit_qualifying_senior",
     }
-    for answer in doc["answers"].values():
+    for name, answer in doc["answers"].items():
         if answer.get("status") == "available":
-            assert not ({v["key"] for v in answer["values"]} & placed)
+            keys = {v["key"] for v in answer["values"]}
+            assert not (keys & never_in_values)
+            if name != "floor_area_allowance":
+                assert "legal_unit_limit_standard" not in keys
+    assert "legal_unit_limit_standard" in {v["key"] for v in fa["values"]}
 
 
 # =========================================================================== S3
@@ -377,8 +385,10 @@ def test_s5_no_withheld_result_carries_a_number_anywhere(benchmark):
 
     result_numbers = _all_result_numbers(doc)
     assert 10075.0 not in result_numbers  # a floor plate / floor area of the withheld option
-    assert 29.0 not in result_numbers  # the withheld unit figure
     assert 100.0 not in result_numbers  # the withheld coverage percent
+    # M5-T157: the legal unit limit is NO LONGER withheld on the benchmark (the record places the
+    # lot outside both special density areas), so 29 is a SHOWN conditional ceiling - it appears.
+    assert 29.0 in result_numbers
 
     # RED PROOF (one per block): the engine's own blocks DO carry those numbers, so leaving any one
     # as the engine made it makes its number reappear and this test would fail.
@@ -444,29 +454,40 @@ def test_s7_conditional_values_name_their_assumptions(benchmark):
 
 
 # =========================================================================== S8
-def test_s8_user_density_statement_is_conditional_only():
-    """S8 / R255: with the user's statement that the lot is not in a special density area the
-    legal_unit_limit_standard is a conditional value_states entry naming that statement, never
-    settled; without it, withheld; a statement that contradicts the record (it IS in one) is held
-    back, so the limit stays withheld. Run through the adapter on the benchmark lot."""
-    with pytest.MonkeyPatch.context() as mp:
-        with_stmt = _benchmark_adapter(mp, special_density_statement=True)
+def test_s8_record_outside_one_is_a_conditional_ceiling_statement_never_overrides():
+    """S8 / M5-T157 (R2/R3): the benchmark lot's record places it OUTSIDE both special density areas
+    (Queens cd 411), so the legal_unit_limit_standard is a CONDITIONAL ceiling naming the zoning-lot
+    assumption, never settled - with no statement and with a statement that agrees. A statement that
+    DISAGREES with the record (it IS in one) never overrides it: the limit is withheld with both
+    sides named. Run through the adapter on the benchmark lot."""
     with pytest.MonkeyPatch.context() as mp:
         without = _benchmark_adapter(mp, special_density_statement=None)
     with pytest.MonkeyPatch.context() as mp:
-        contradicts = _benchmark_adapter(mp, special_density_statement=False)
+        agrees = _benchmark_adapter(mp, special_density_statement=True)
+    with pytest.MonkeyPatch.context() as mp:
+        disagrees = _benchmark_adapter(mp, special_density_statement=False)
 
-    fa_with = with_stmt.document["answers"]["floor_area_allowance"]
-    std = _states(fa_with)["legal_unit_limit_standard"]
-    assert std["way"] == "conditional"
-    assert any(c["kind"] == "user_statement" for c in std["conditions"])
-    # the statement is not stored as a sourced fact anywhere in the document
-    assert "as the user states" in json.dumps(std)
-    without_fa = without.document["answers"]["floor_area_allowance"]
-    assert _states(without_fa)["legal_unit_limit_standard"]["way"] == "withheld"
-    contra_fa = contradicts.document["answers"]["floor_area_allowance"]
-    assert _states(contra_fa)["legal_unit_limit_standard"]["way"] == "withheld"
-    assert contradicts.gathered.held_back  # the contradicting statement is held back (R255)
+    # no statement: the record alone shows the conditional ceiling with the zoning-lot condition
+    without_std = _states(without.document["answers"]["floor_area_allowance"])[
+        "legal_unit_limit_standard"
+    ]
+    assert without_std["way"] == "conditional"
+    assert any(c["kind"] == "unchecked_condition" for c in without_std["conditions"])
+    assert any("zoning lot" in c["assumption"] for c in without_std["conditions"])
+    assert "user_statement" not in json.dumps(without_std["conditions"])
+    # a statement that agrees with the record: still the conditional ceiling (the record wins)
+    agrees_std = _states(agrees.document["answers"]["floor_area_allowance"])[
+        "legal_unit_limit_standard"
+    ]
+    assert agrees_std["way"] == "conditional"
+    # a statement that disagrees with the record: withheld, both sides named (missing information)
+    disagrees_std = _states(disagrees.document["answers"]["floor_area_allowance"])[
+        "legal_unit_limit_standard"
+    ]
+    assert disagrees_std["way"] == "withheld"
+    assert disagrees_std["gap_kind"] == "missing_information"
+    assert "disagree" in disagrees_std["reason"]
+    assert disagrees.gathered.held_back  # the disagreement is held back and named (R255)
 
 
 # =========================================================================== S9
@@ -889,10 +910,13 @@ def test_s137_shown_values_and_withheld_set_unchanged_through_evidence(evidence_
                     ("max_building_height_qualifying_affordable_or_senior", 65.0)):
         assert _value(env, key)["value"] == ft
         assert _states(env)[key]["way"] == "conditional"
-    # the withheld set is unchanged
+    # the withheld set: coverage, rear yard and the building option stay withheld. M5-T157: the
+    # legal unit limit is now SHOWN as a conditional ceiling (the record places the lot outside both
+    # special density areas); the apartment estimate stays reserved (kept apart, owner R392/R569).
     assert _states(env)["max_lot_coverage"]["way"] == "withheld"
     assert _states(env)["rear_yard"]["way"] == "withheld"
-    assert _states(fa)["legal_unit_limit_standard"]["way"] == "withheld"
+    assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
+    assert _value(fa, "legal_unit_limit_standard")["value"] == 29
     assert doc["answers"]["building_option"]["status"] == "not_available"
     assert doc["unit_estimate"]["status"] == "not_available"
 
@@ -918,10 +942,11 @@ def test_s137_scope_lines_say_where_each_condition_comes_from(evidence_benchmark
     assert angle["value"] == 89.7 and angle["basis"] == "approximate_tax_map"
     assert "89.7 degrees" in angle["statement"]
     density = rows["special_density_area"]
-    assert density["statement"].lower().startswith("whether the lot is in a special density area")
-    # a not-known condition shows the WORDS, never the stand-in the engine received (no "Yes")
-    assert density["value"] == "Not known" and density["unit"] is None
-    assert not isinstance(density["value"], bool)
+    # M5-T157: the benchmark record places the lot OUTSIDE both special density areas, so the scope
+    # line reads the record (city_records) and says the limit is shown as a conditional ceiling.
+    assert density["basis"] == "city_records" and density["value"] is False
+    assert "outside both special density areas" in density["statement"]
+    assert "conditional ceiling" in density["statement"]
     # no scope line claims the program does not read something it reads
     for row in doc["scope"]["assumptions"]:
         assert "does not read" not in row["statement"]
@@ -941,10 +966,11 @@ def test_s137_invariant_over_the_benchmark_states(evidence_benchmark):
     with pytest.MonkeyPatch.context() as mp:
         with_stmt = _evidence(mp, special_density_statement=True)
     _assert_no_shown_result_rests_on_a_stand_in(with_stmt.document)
-    # the density is now the user's statement, so the unit limit may be shown (conditional)
+    # M5-T157: the record places the benchmark lot outside both areas, so the unit limit is shown
+    # (conditional) from the record; a statement that agrees does not change the record source.
     fa = with_stmt.document["answers"]["floor_area_allowance"]
     assert _states(fa)["legal_unit_limit_standard"]["way"] == "conditional"
-    assert _scope_rows(with_stmt.document)["special_density_area"]["basis"] == "entered"
+    assert _scope_rows(with_stmt.document)["special_density_area"]["basis"] == "city_records"
     with pytest.MonkeyPatch.context() as mp:
         no_geom = _evidence(mp, geometry_on=False)
     _assert_no_shown_result_rests_on_a_stand_in(no_geom.document)
@@ -976,7 +1002,7 @@ def test_s137_invariant_special_district_not_read_withholds_everything():
         overlay_presence=Presence.NOT_READ, overlay_code=None,
         special_district_presence=Presence.NOT_READ,
         is_corner=True, reach_ft=None, angle_deg=None,
-        density_statement=DensityStatement.NONE,
+        density_decision=DensityDecision.NOT_KNOWN,
     )
     emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
     assert _shown_result_keys(emitted) == set()
@@ -1006,7 +1032,7 @@ def test_s137_interior_lot_scope_says_not_applicable():
         overlay_presence=Presence.ABSENT, overlay_code=None,
         special_district_presence=Presence.ABSENT,
         is_corner=False, reach_ft=None, angle_deg=None,
-        density_statement=DensityStatement.NONE,
+        density_decision=DensityDecision.NOT_KNOWN,
     )
     emitted = emit_three_way_document(engine_doc, ways, condition_sources=conditions)
     rows = _scope_rows(emitted)
@@ -1081,7 +1107,10 @@ def test_s137_scope_texts_are_plain_and_true():
             Derived(136.0, Source.NOT_KNOWN),
         ],
         "special_density_area": [
+            Derived(False, Source.RECORDED),
+            Derived(True, Source.RECORDED),
             Derived(False, Source.USER_STATEMENT),
+            Derived(True, Source.RECORD_STATEMENT_DISAGREE),
             Derived(True, Source.NOT_KNOWN),
         ],
     }
@@ -1093,7 +1122,7 @@ def test_s137_scope_texts_are_plain_and_true():
         "orchestrator", "not captured", "is captured", "captured text", "gap k", "gap-",
         "stand-in", "module",
     )
-    assert len(texts) == 16
+    assert len(texts) == 19  # M5-T157: the special-density branch now has five variants
     for text in texts:
         low = text.lower()
         for token in forbidden:

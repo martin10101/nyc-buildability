@@ -109,21 +109,28 @@ describe("journey cards leg: 215-16 Northern recorded-data (D-090-R137)", () => 
     expect(row).not.toMatch(/\d+%/);
   });
 
-  it("S4: the legal dwelling-unit limit shows withheld on the allowance card, with no number", () => {
+  it("S4 (M5-T157): the legal dwelling-unit limit shows as a conditional ceiling (29) on the allowance card", () => {
+    // The record places the benchmark lot outside both special density areas, so the limit is
+    // SHOWN as a conditional ceiling - 20,150 / 680 = 29.63 -> 29 - never settled, with the
+    // zoning-lot condition. (The former 'withheld' assertion inverts, R5.)
     const { doc } = journey();
     const allowance = doc.answers.floor_area_allowance;
     if (allowance.status !== "available" || !allowance.value_states) throw new Error("fixture changed");
     const limit = allowance.value_states.legal_unit_limit_standard;
-    if (!limit || limit.way !== "withheld") throw new Error("fixture changed");
+    if (!limit || limit.way !== "conditional") throw new Error("fixture changed");
+    const value = allowance.values.find(v => v.key === "legal_unit_limit_standard");
+    if (!value || value.value !== 29) throw new Error("fixture changed: the limit must read 29");
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
     const card = screen.getByTestId("answer-floor_area_allowance");
     const row = within(card)
-      .getAllByTestId("answer-withheld-value")
-      .find(entry => (entry.querySelector("dt")?.textContent ?? "") === limit.label);
-    if (!row) throw new Error("the legal-limit withheld row is missing");
-    const reason = within(row).getByTestId("answer-withheld-reason");
-    expect(reason.textContent).toBe(`Not known — ${limit.reason}`);
-    expect(reason.textContent ?? "").not.toMatch(/\d/);
+      .getAllByTestId("answer-value")
+      .find(entry => (entry.querySelector("dt")?.textContent ?? "").includes("Legal dwelling-unit limit"));
+    if (!row) throw new Error("the legal-limit value row is missing");
+    expect(row.textContent).toContain("29");
+    // it is conditional, never settled, and names the zoning-lot condition in full with the value
+    expect(row.textContent ?? "").toContain("zoning lot");
+    // the apartment estimate is the building options' job, kept apart from this legal limit
+    expect(card.textContent ?? "").not.toContain("17.27 to 21.59");
   });
 
   it("the building-option card reads the scheduled area, never 'Not available' or a machine field (V11 (2))", () => {

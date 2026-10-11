@@ -240,17 +240,22 @@ _TABLE = [
     ("US3_evidence_in_one", lambda: plain_inputs(
         special_density=DensityKnowledge.EVIDENCE_IN_ONE, **k20(True)),
      "legal_unit_limit_standard", WAY_W, "work_owed",
-     ["Evidence records this lot in a special density area"], []),
+     ["The city's record places this lot in a special density area"], []),
     ("US4_not_given", lambda: plain_inputs(
         special_density=DensityKnowledge.NOT_GIVEN, **k20(True)),
      "legal_unit_limit_standard", WAY_W, "work_owed",
      ["There is no evidence", "where the dwelling-unit formula does not apply",
       "has not been worked out", "conditional result"], []),
+    # M5-T157 (R3): the record places the lot OUTSIDE both special density areas, so the limit is
+    # SHOWN as a conditional ceiling (never withheld, never settled) - the way, not the reason.
     ("US5_evidence_not_in_one", lambda: plain_inputs(
         special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE, **k20(True)),
-     "legal_unit_limit_standard", WAY_W, "work_owed",
-     ["Evidence records this lot outside a special density area", "has not been worked out"],
-     ["There is no evidence", "no evidence"]),
+     "legal_unit_limit_standard", WAY_C, None, [], []),
+    # M5-T157 (R2): the record and a statement disagree -> withheld as missing information.
+    ("US6_record_statement_disagree", lambda: plain_inputs(
+        special_density=DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE, **k20(True)),
+     "legal_unit_limit_standard", WAY_W, "missing_information",
+     ["disagree", "does not override"], []),
     # --- unit limit qualifying ---
     ("UA1_affordable", lambda: plain_inputs(**k20(True)),
      "legal_unit_limit_qualifying_affordable", WAY_W, "work_owed",
@@ -290,23 +295,23 @@ def test_every_input_state_of_every_result(
 
 
 # ===== the two states the owner's reviewer named (S1, S2), plus the other two O20 states =====
-def test_s1_evidence_not_in_one_names_the_evidence_not_the_absence_of_it():
-    """S1 / reading O19. Evidence records the lot OUTSIDE a special density area. The standard
-    unit limit stays withheld (owed work); the reason states that evidence and NEVER 'there is no
-    evidence'; the 'resolved by' names the owed work and NEVER asks for a fact the state holds.
-    This test FAILS on the module at the claim head (the reason there is the 'not given' text)."""
+def test_s1_evidence_not_in_one_is_a_conditional_ceiling_on_the_zoning_lot():
+    """S1 / M5-T157 R3. The record places the lot OUTSIDE both special density areas, so the
+    standard unit limit is SHOWN as a conditional ceiling - never settled - with the
+    always-present zoning-lot condition (the record is per tax lot; ZR 23-52 sets the limit on the
+    zoning lot). It is an unchecked condition (the zoning-lot composition was not checked), never a
+    user statement."""
     way = _focal(
         decide_result_ways(plain_inputs(
             special_density=DensityKnowledge.EVIDENCE_NOT_IN_ONE, **k20(True))),
         "legal_unit_limit_standard",
     )
-    assert isinstance(way, Withheld)
-    assert way.gap_kind == "work_owed"
-    assert "Evidence records this lot outside a special density area" in way.reason
-    assert "no evidence" not in way.reason.lower()
-    # the 'resolved by' names the owed work, not a bare fact the state already holds
-    assert "sourced fact" not in way.resolved_by.lower()
-    assert "worked example" in way.resolved_by
+    assert isinstance(way, Conditional)
+    kinds = {c.kind for c in way.conditions}
+    assert "unchecked_condition" in kinds
+    assert "user_statement" not in kinds
+    zoning = next(c for c in way.conditions if "zoning lot" in c.assumption)
+    assert "tax lot" in zoning.assumption and zoning.settled_by
 
 
 def test_s2_corner_angle_fails_distance_holds_names_the_angle_not_the_distance():
@@ -558,7 +563,8 @@ _EXPECTED_WAY_SIGNATURE = {
     "US2_user_statement": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo C Wo Wo",
     "US3_evidence_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "US4_not_given": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
-    "US5_evidence_not_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
+    "US5_evidence_not_in_one": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo C Wo Wo",
+    "US6_record_statement_disagree": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wm Wo Wo",
     "UA1_affordable": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "USR1_senior": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",
     "BO1_option": "S S S S S S S S S S Wo Wo Wo Wo Wo Wm Wo Wo Wo Wo",

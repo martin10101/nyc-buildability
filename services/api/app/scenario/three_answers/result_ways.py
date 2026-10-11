@@ -56,6 +56,7 @@ from .result_way_inputs import (
     COVERAGE_KEY,
     FLOOR_AREA_KEYS,
     HEIGHT_KEYS,
+    KIND_UNCHECKED_CONDITION,
     KIND_USER_STATEMENT,
     LABELS,
     MISSING_INFORMATION,
@@ -111,6 +112,26 @@ __all__ = [
     "Withheld",
     "decide_result_ways",
 ]
+
+
+def _zoning_lot_condition() -> Condition:
+    """The always-present zoning-lot assumption behind a legal dwelling-unit limit shown from the
+    record (task M5-T157, R3). The city's special-density record is read per TAX LOT, while ZR 23-52
+    sets the limit on the ZONING LOT, so the limit holds only where this tax lot is the whole zoning
+    lot. It is an unchecked condition (the zoning-lot composition was not checked); it is never
+    removed, so the limit is shown as a conditional ceiling, never settled."""
+    return Condition(
+        kind=KIND_UNCHECKED_CONDITION,
+        assumption=(
+            "If this tax lot is the whole zoning lot: the city's special-density record is kept "
+            "per tax lot, while the dwelling-unit limit is set on the zoning lot (ZR 23-52), so a "
+            "zoning lot made of more than one tax lot could change this limit"
+        ),
+        settled_by=(
+            "Confirming the zoning lot (which tax lots make it up) from a survey, deed or "
+            "zoning-lot declaration"
+        ),
+    )
 
 
 def _building_option_withheld() -> bool:
@@ -437,6 +458,15 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
             zr_sections=zr,
         )
     density = inp.special_density
+    if density is DensityKnowledge.EVIDENCE_NOT_IN_ONE:
+        # (M5-T157, R3) the record places the lot OUTSIDE both special density areas, so the legal
+        # dwelling-unit limit is SHOWN as a conditional ceiling - never settled. The always-present
+        # condition names the zoning-lot scope: the city's special-density record is per TAX LOT,
+        # while ZR 23-52 sets the limit on the ZONING LOT, so the figure holds only where this tax
+        # lot is the whole zoning lot. The area and K20 conditions follow where they apply.
+        zoning_lot = _zoning_lot_condition()
+        rest = [c for c in (area_condition(inp), k20_condition(inp)) if c is not None]
+        return Conditional(conditions=(zoning_lot, *rest))
     if density is DensityKnowledge.USER_STATEMENT_NOT_IN_ONE:
         statement = Condition(
             kind=KIND_USER_STATEMENT,
@@ -451,8 +481,9 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
         return Withheld(
             label=label,
             reason=(
-                "Evidence records this lot in a special density area, where the dwelling-unit "
-                "formula does not apply, so the legal dwelling-unit limit is not known."
+                "The city's record places this lot in a special density area, where the "
+                "dwelling-unit formula does not apply, so the legal dwelling-unit limit is not "
+                "known."
             ),
             gap_kind=WORK_OWED,
             resolved_by=(
@@ -461,24 +492,22 @@ def _unit_standard_way(inp: ResultWayInputs, blanket: Blanket | None) -> WayReco
             ),
             zr_sections=zr,
         )
-    if density is DensityKnowledge.EVIDENCE_NOT_IN_ONE:
-        # (O19) evidence records the lot OUTSIDE a special density area. The work order decides
-        # nothing for this state (reading O10), so it stays withheld as owed work. The reason
-        # states the evidence the state already holds; the 'resolved by' names the owed work and
-        # never asks for a fact the state has.
+    if density is DensityKnowledge.RECORD_AND_STATEMENT_DISAGREE:
+        # (M5-T157, R2) the record and a user's statement disagree about whether the lot is in a
+        # special density area. A statement never overrides the record; the disagreement is withheld
+        # with both sides named (missing information), not resolved either way.
         return Withheld(
             label=label,
             reason=(
-                "Evidence records this lot outside a special density area; how the legal "
-                "dwelling-unit limit is shown on that evidence has not been worked out and "
-                "checked against an independently worked example, so the legal dwelling-unit "
-                "limit is not known."
+                "The city's record and the statement entered for this run disagree about whether "
+                "this lot is in a special density area, which decides whether the dwelling-unit "
+                "formula applies (ZR 23-52(a)(1)), so the legal dwelling-unit limit is not known. "
+                "A statement does not override the city's record."
             ),
-            gap_kind=WORK_OWED,
+            gap_kind=MISSING_INFORMATION,
             resolved_by=(
-                "Working out how the legal dwelling-unit limit is shown for a lot recorded "
-                "outside a special density area and checking it against an independently worked "
-                "example."
+                "A sourced fact or document that settles whether the lot is in a special density "
+                "area, reconciling the city's record and the statement."
             ),
             zr_sections=zr,
         )

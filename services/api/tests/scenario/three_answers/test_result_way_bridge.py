@@ -146,11 +146,12 @@ _HEIGHT_KEYS = (
     "max_base_height_qualifying_affordable_or_senior",
     "max_building_height_qualifying_affordable_or_senior",
 )
+# M5-T157: the benchmark lot's record places it OUTSIDE both special density areas (Queens cd 411),
+# so legal_unit_limit_standard is now a CONDITIONAL ceiling, not withheld.
 _WITHHELD_ON_BENCHMARK = (
     "max_lot_coverage", "rear_yard", "setback_above_base",
     "achieved_zoning_floor_area", "building_floors", "building_height", "floor_plate_area",
-    "legal_unit_limit_standard", "legal_unit_limit_qualifying_affordable",
-    "legal_unit_limit_qualifying_senior",
+    "legal_unit_limit_qualifying_affordable", "legal_unit_limit_qualifying_senior",
 )
 
 
@@ -194,6 +195,12 @@ def test_benchmark_lot_s1(monkeypatch, benchmark_geom):
     assert "103.93 ft" in coverage.reason and "215 Place" in coverage.reason
     for key in _WITHHELD_ON_BENCHMARK:
         assert isinstance(_way(res.ways, key), Withheld), key
+    # M5-T157: the record places the lot outside both special density areas, so the legal unit limit
+    # is a conditional ceiling with the always-present zoning-lot condition, never settled.
+    unit = _way(res.ways, "legal_unit_limit_standard")
+    assert isinstance(unit, Conditional)
+    assert any("zoning lot" in c.assumption for c in unit.conditions)
+    assert res.special_density_record.decision.area.value == "not_in_special_density_area"
     # never a zero: no way carries a number
     for row in res.ways.result_ways():
         assert "value" not in row.way.to_value_state(), row.key
@@ -237,13 +244,14 @@ def test_large_lot_answer_o17():
 
 
 # --------------------------------------------------------------------------- S5 a user's statement
-def test_user_statement_is_not_a_fact_s5(benchmark_geom):
-    """S5 / work order H9: a user's statement that the lot is not in a special density area makes
-    the legal unit limit a conditional result naming that statement; without it the result is
-    withheld; the statement appears in NO recorded fact."""
+def test_user_statement_never_overrides_the_record_s5(benchmark_geom):
+    """S5 / M5-T157 R2: the benchmark lot's record places it outside both special density areas, so
+    the record decides. Without a statement and with a statement that agrees the legal unit limit is
+    a conditional ceiling (the record's zoning-lot condition, never the user's statement); a
+    statement that disagrees withholds it and names both sides; the statement is never a fact."""
     profile, prepared, geometry = benchmark_geom
     doc = _eval_doc()
-    with_stmt = gather_result_ways(
+    with_agreeing = gather_result_ways(
         evaluator_inputs=doc, profile=profile, outline=prepared, geometry=geometry,
         housing_kind="standard_residence", special_density_statement=True,
     )
@@ -251,12 +259,23 @@ def test_user_statement_is_not_a_fact_s5(benchmark_geom):
         evaluator_inputs=doc, profile=profile, outline=prepared, geometry=geometry,
         housing_kind="standard_residence", special_density_statement=None,
     )
-    unit = _way(with_stmt.ways, "legal_unit_limit_standard")
-    assert isinstance(unit, Conditional)
-    assert any(c.kind == KIND_USER_STATEMENT for c in unit.conditions)
-    assert isinstance(_way(without.ways, "legal_unit_limit_standard"), Withheld)
+    disagreeing = gather_result_ways(
+        evaluator_inputs=doc, profile=profile, outline=prepared, geometry=geometry,
+        housing_kind="standard_residence", special_density_statement=False,
+    )
+    # the record decides: conditional ceiling on the zoning lot, never the user_statement kind
+    for res in (with_agreeing, without):
+        unit = _way(res.ways, "legal_unit_limit_standard")
+        assert isinstance(unit, Conditional)
+        assert all(c.kind != KIND_USER_STATEMENT for c in unit.conditions)
+        assert any("zoning lot" in c.assumption for c in unit.conditions)
+    # a statement that disagrees with the record is withheld (missing information), never overrides
+    disagree_unit = _way(disagreeing.ways, "legal_unit_limit_standard")
+    assert isinstance(disagree_unit, Withheld)
+    assert disagree_unit.gap_kind == "missing_information"
+    assert disagreeing.held_back
     # the statement is never stored as a recorded fact
-    for fact in with_stmt.recorded.facts():
+    for fact in with_agreeing.recorded.facts():
         assert "density" not in fact.statement.lower()
         assert "states" not in fact.statement.lower()
 

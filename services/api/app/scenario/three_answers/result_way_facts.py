@@ -44,12 +44,19 @@ from typing import Any
 from app.profile.site_facts import read_pluto_value
 
 from .result_way_inputs import Recorded
+from .special_density_geography import (
+    SpecialDensityDecision,
+    SpecialDensityInputs,
+    decide_special_density,
+)
 
 __all__ = [
     "DATASET_LABEL",
     "RecordedConditions",
     "RecordedFact",
+    "SpecialDensityRecord",
     "gather_recorded_facts",
+    "gather_special_density_record",
 ]
 
 # The dataset every one of these facts comes from, in plain words (provenance, never a claim
@@ -261,6 +268,107 @@ def _fact(
         query_ref=source.get("query_ref") if isinstance(source, Mapping) else None,
         code=code,
         unusable_reason=_unusable_reason(readings),
+    )
+
+
+# ---------------------------------------------------------------------------
+# The special density area read from the record (ZR 12-10; task M5-T157, DB-231). This reads the
+# community district, the borough code and the special-purpose-district columns, classifies them
+# (the same four column states as every other fact: a usable value, served empty, not fetched, or
+# untrusted - never guessed), and folds them with the pure rule. "Not read" is never "no".
+# ---------------------------------------------------------------------------
+_SPECIAL_DISTRICT_COLUMNS = ("spdist1", "spdist2", "spdist3")
+
+
+@dataclass(frozen=True)
+class SpecialDensityRecord:
+    """The special density area read from the record: the pure fold's ``decision`` (the ONE
+    IN / NOT IN / NOT KNOWN the decision step and the engine condition are both driven from), the
+    plain ``statement`` shown beside the results, and the classified values and provenance the
+    report traces (never a claim about the law for a lot)."""
+
+    decision: SpecialDensityDecision
+    statement: str
+    community_district: int | None
+    borough_code: int | None
+    special_district_tokens: tuple[str, ...]
+    all_special_district_columns_read: bool
+    columns: tuple[str, ...]
+    bbl: str | None
+    dataset: str | None
+    dataset_id: str | None
+    dataset_version: str | None
+    retrieved_at: str | None
+    query_ref: str | None
+
+
+def _read_integer_column(profile: Mapping[str, Any] | None, column: str) -> int | None:
+    """One PLUTO column read as a usable integer, or None when it was not read, was rejected by the
+    trust rules, was served empty, or did not serve an integer value. A value is never guessed."""
+    reading, _source = _read_column(profile, column)
+    if reading.state is not _ColState.VALUE:
+        return None
+    try:
+        return int(str(reading.value).strip())
+    except (TypeError, ValueError):
+        return None
+
+
+def _special_district_tokens(
+    readings: list[tuple[_ColReading, Mapping | None]],
+) -> tuple[tuple[str, ...], bool]:
+    """The upper-cased special-purpose-district tokens from every column that served a value (each
+    value split on "/" - the dictionary joins co-equal districts that way), and whether every
+    column was read (no column not-fetched or untrusted). A served-empty column is read with no
+    token; a not-fetched or untrusted column means the record was not fully read."""
+    tokens: list[str] = []
+    all_read = True
+    for reading, _source in readings:
+        if reading.state is _ColState.VALUE and _nonempty_text(reading.value):
+            tokens.extend(
+                part.strip().upper() for part in str(reading.value).split("/") if part.strip()
+            )
+        elif reading.state in (_ColState.NOT_FETCHED, _ColState.UNTRUSTED):
+            all_read = False
+    return tuple(tokens), all_read
+
+
+def gather_special_density_record(profile: Mapping[str, Any] | None) -> SpecialDensityRecord:
+    """Read the special density area from the record (ZR 12-10; reading O14). Reads the community
+    district, the borough code and the three special-purpose-district columns, classifies them
+    (never guessing a value), folds them with :func:`decide_special_density`, and returns the ONE
+    decision with its provenance. None means no profile was read, so every column is not read."""
+    bbl = _bbl_of(profile)
+    community_district = _read_integer_column(profile, "cd")
+    borough_code = _read_integer_column(profile, "borocode")
+    spdist_readings = [_read_column(profile, column) for column in _SPECIAL_DISTRICT_COLUMNS]
+    tokens, all_read = _special_district_tokens(spdist_readings)
+    decision = decide_special_density(
+        SpecialDensityInputs(
+            community_district=community_district,
+            borough_code=borough_code,
+            special_district_tokens=tokens,
+            all_special_district_columns_read=all_read,
+        )
+    )
+    columns = ("cd", "borocode", *_SPECIAL_DISTRICT_COLUMNS)
+    source = _first_source(
+        [_read_column(profile, "cd"), _read_column(profile, "borocode"), *spdist_readings]
+    )
+    return SpecialDensityRecord(
+        decision=decision,
+        statement=decision.reason,
+        community_district=community_district,
+        borough_code=borough_code,
+        special_district_tokens=tokens,
+        all_special_district_columns_read=all_read,
+        columns=columns,
+        bbl=bbl,
+        dataset=DATASET_LABEL if source is not None else None,
+        dataset_id=_DATASET_ID if source is not None else None,
+        dataset_version=source.get("dataset_version") if isinstance(source, Mapping) else None,
+        retrieved_at=source.get("retrieved_at") if isinstance(source, Mapping) else None,
+        query_ref=source.get("query_ref") if isinstance(source, Mapping) else None,
     )
 
 

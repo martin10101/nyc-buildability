@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: dwelling_units
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 3 (last changed 2026-10-09)
+- Revision: 4 (last changed 2026-10-11)
 - Combines rule entries: `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `860dd8729758f3e62959b3f8b4f7736f008646dd2be95e7c5b9f7ed12377ed48`
+- Combined code identity: `ec3a1792694fab76797f606be8b777c615100a8c02f578aa191511829d36db43`
 - Modules:
   - `services/api/app/scenario/three_answers/dwelling_units.py` (`57abec65ce2e2ad961fefcc995c5c41d62e760dc46111ab6df1f0050e16d2c8a`)
-  - `services/api/app/scenario/three_answers/result_ways.py` (`8cf693a8c05da8349f4ec2277fe31e161211e6979b55f843f2965d20691b490f`)
+  - `services/api/app/scenario/three_answers/result_ways.py` (`09d0009d2245dd9558d4a678fc675d2a2707b674d7e832818475590d43af9a72`)
 
 ## Law
 
@@ -30,16 +30,16 @@ An entry with no rule file is fingerprinted by the LF-normalized sha256 of its c
 
 ## Where it applies
 
-The legal ceiling on dwelling units: the maximum residential floor area divided by the ZR 23-52(b) factor 680, with the fraction counted as one unit only at three-quarters or more. The engine computes 29 for the benchmark lot (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit because there is no evidence of whether the lot is in a special density area (ZR 23-52(a)(1)) and the shown form was not checked against an independent example.
+The legal ceiling on dwelling units: the maximum residential floor area divided by the ZR 23-52(b) factor 680, with the fraction counted as one unit only at three-quarters or more. For the benchmark lot the record (Queens community district 411) places it OUTSIDE both special density areas (ZR 12-10 / 23-52(a)(1)), so the engine computes 20,150 / 680 = 29.63 -> 29 and the document shows it as a CONDITIONAL ceiling - never settled - with an always-present condition that the city's record is per tax lot while the limit is set on the zoning lot.
 
 ## Exceptions and limits
 
-- In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)). The law is read and the cases read this Queens lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district); the program has not connected that evidence or built the checked conditional display (gap_kind work_owed = code not built), so it withholds the limit.
+- In a special density area the dwelling-unit formula does not apply (ZR 23-52(a)(1)). The program reads the special density area from the city's record (ZR 12-10: the Manhattan Core is Manhattan Community Districts 1-8; the Special Downtown Brooklyn District is the letters "DB"); a lot recorded outside both areas shows the limit as a conditional ceiling, a lot recorded inside one withholds it, and a record that cannot be read (or that disagrees with a statement) withholds it.
 - Qualifying senior housing has no factor (ZR 23-52(a)(2)); qualifying affordable housing is a separate labelled limit.
 
 ## How the program reads it
 
-max dwelling units = maximum residential floor area / 680; a fraction of .75 or more counts as one unit, otherwise it is dropped. The engine computes 20,150 / 680 = 29.63 -> 29 through the r6b-dwelling-units rule, but the document withholds the limit pending special-density evidence and an independent check.
+max dwelling units = maximum residential floor area / 680; a fraction of .75 or more counts as one unit, otherwise it is dropped. The engine computes 20,150 / 680 = 29.63 -> 29 through the r6b-dwelling-units rule, and the document now shows it as a conditional ceiling because the record places the lot outside both special density areas; it stays conditional on the zoning lot (the record is per tax lot).
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -63,35 +63,35 @@ The benchmark lot's legal dwelling-unit ceiling.
 - Basis of the expected answer (reference_case): real-lot#L6 = 29 (20,150 / 680 = 29.63; the fraction below .75 is dropped); step-p6-worked#real-unit-limit restates 29 as the current answer for step 5 of the six-step comparison.
 - Independent record(s) cited: real-lot#L6, step-p6-worked#real-unit-limit
 - Who prepared the expected answer: worked independently by sealed-folder AI agents (step P6: two readers) and the earlier reference cases; not checked by a professional
-- Program's actual answer: none
-- Standing of the program's answer: withheld
+- Program's actual answer: max_dwelling_units = 29
+- Standing of the program's answer: conditional
 - What the engine computes (the document withholds it): dwelling_units_before_rounding = 29.63235294117647; max_dwelling_units = 29
-  - The engine computes 29 internally through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29), but the document withholds the legal dwelling-unit limit (fixture legal_unit_limit_standard way=withheld, gap_kind work_owed): the program has not connected the special-density evidence or built the checked conditional display. The law is read and the cases read this lot as outside both special density areas (step-p3#manhattan-core, step-p3#special-downtown-brooklyn-district), so the withhold is code not built, not unresolved law.
-- Do they agree? not determined - a side is withheld/not built, or the two readings differ
+  - The engine computes 29 through the r6b-dwelling-units rule (20,150 / 680 = 29.63 -> 29) and the document now SHOWS it as a conditional ceiling (fixture legal_unit_limit_standard way=conditional) because the record (Queens cd 411) places the lot outside both special density areas (ZR 12-10: step-p3#manhattan-core 'not in the Manhattan Core'; step-p3#special-downtown-brooklyn-district 'outside ... on the recorded facts'). The always-present condition names the zoning lot (the record is per tax lot). The independent reference reads the same 29.
+- Do they agree? yes - the program's answer matches the independent expected answer
 
 ## What the program does today versus what is planned
 
 Implemented and tested:
-- The limit 29 (20,150 / 680 = 29.63 -> 29) is recomputed through the r6b-dwelling-units rule and equals the independent real-lot#L6 and step-p6-worked#real-unit-limit (test: test_calc_unit_limit_engine_computes_29_document_withholds).
-- The document withholds legal_unit_limit_standard with the special-density reason (test: test_document_actuals_match_the_recorded_fixture).
+- The limit 29 (20,150 / 680 = 29.63 -> 29) is recomputed through the r6b-dwelling-units rule and equals the independent real-lot#L6 and step-p6-worked#real-unit-limit (test: test_calc_unit_limit_engine_computes_29_document_shows_a_conditional_ceiling).
+- The document shows legal_unit_limit_standard as a conditional ceiling with the zoning-lot condition (test: test_calc_unit_limit_engine_computes_29_document_shows_a_conditional_ceiling, test_document_actuals_match_the_recorded_fixture).
 
 In the program but no test checks it:
 - (none recorded)
 
 Planned, not built:
-- How the legal dwelling-unit limit is shown once the special-density area is known is not built; a user's statement would show it as a conditional result.
+- How the legal dwelling-unit limit is shown for a lot recorded INSIDE a special density area is not built (the formula does not apply there, ZR 23-52(a)(1)); nor are the conversion, mixed-building and qualifying affordable / senior cases.
 
 ## Automated test result
 
 - Status: Passed
-- Code identity tested: `860dd8729758f3e62959b3f8b4f7736f008646dd2be95e7c5b9f7ed12377ed48`
-- Commit tested: `423aa189fdb8fd7f16aead0dfec3af50e5bcbd66`
-- Date tested: 2026-10-09
+- Code identity tested: `ec3a1792694fab76797f606be8b777c615100a8c02f578aa191511829d36db43`
+- Commit tested: `d46369705676eee33b1882f637c545cf444c4ae8`
+- Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-legal-dwelling-unit-limit.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`2d18e4127768d26950baa29f27937bd6fc07dc1ff6560ba80e049599d31accf0`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
@@ -119,9 +119,9 @@ Planned, not built:
 
 ## Gaps and unresolved questions
 
-- The withhold is code not built (the program's own gap_kind is work_owed): the connected special-density evidence and the checked conditional display are not built; r6b-dwelling-units covers the formula only. It is not unresolved law - the law is read and the cases settle the lot's status.
+- The limit is shown as a conditional ceiling for a lot recorded outside both special density areas; a lot recorded inside one, a record that cannot be read, a conversion or a mixed building, and the qualifying affordable / senior cases are not shown. PLUTO lists a special purpose district only where it covers at least 10% of the tax lot, so a sliver can read as none; the record is per tax lot while the law asks about the zoning lot (the standing condition).
 
-- Coverage gap: The legal dwelling-unit-limit decision is withheld as code not built (work_owed): the program has not connected the special-density evidence (the cases read the lot outside both areas) or built the checked conditional display; r6b-dwelling-units covers the formula only.
+- Coverage gap: The legal dwelling-unit limit is shown as a conditional ceiling from the recorded special-density area (ZR 12-10) for a lot outside both areas; the inside-one, unreadable-record, conversion, mixed-building and qualifying-housing cases remain, with the zoning-lot vs tax-lot and 10%-sliver caveats carried in the condition.
 
 ## Human review
 

@@ -32,6 +32,7 @@ _SCOPE_BASIS_BY_SOURCE = {
     Source.RECORDED: "city_records",
     Source.MEASURED: "approximate_tax_map",
     Source.USER_STATEMENT: "entered",
+    Source.RECORD_STATEMENT_DISAGREE: "assumed",
     Source.NOT_KNOWN: "assumed",
     Source.NOT_APPLICABLE: "assumed",
 }
@@ -45,6 +46,7 @@ _SCOPE_BASIS_BY_SOURCE = {
 _NOT_KNOWN_VALUE = "Not known"
 _NOT_APPLICABLE_VALUE = "Not applicable"
 _WORDS_VALUE_BY_SOURCE = {
+    Source.RECORD_STATEMENT_DISAGREE: _NOT_KNOWN_VALUE,
     Source.NOT_KNOWN: _NOT_KNOWN_VALUE,
     Source.NOT_APPLICABLE: _NOT_APPLICABLE_VALUE,
 }
@@ -149,10 +151,28 @@ def _scope_statement(key: str, derived: Derived) -> str:
             "depends on it is withheld."
         )
     # special_density_area
+    if source is Source.RECORDED:
+        if derived.engine_value:
+            return (
+                "The city's records place this lot in a special density area (ZR 12-10), where "
+                "the dwelling-unit formula does not apply, so the legal dwelling-unit limit is "
+                "withheld."
+            )
+        return (
+            "The city's records place this lot outside both special density areas (the Manhattan "
+            "Core and the Special Downtown Brooklyn District, ZR 12-10), so the legal "
+            "dwelling-unit limit is shown as a conditional ceiling on the zoning lot."
+        )
     if source is Source.USER_STATEMENT:
         return (
             "The lot is taken to be outside a special density area because that was stated for "
             "this run; it is a statement, not a recorded fact."
+        )
+    if source is Source.RECORD_STATEMENT_DISAGREE:
+        return (
+            "The city's record and the statement entered for this run disagree about whether the "
+            "lot is in a special density area, so the legal dwelling-unit limit is withheld until "
+            "that is settled."
         )
     return (
         "Whether the lot is in a special density area is not known; it is taken to be in one for "

@@ -42,7 +42,9 @@ describe("collectConditions (scenario S7)", () => {
     // Listed once: the ids and the texts are each distinct.
     expect(new Set(shared.map(c => c.id)).size).toBe(shared.length);
     expect(new Set(shared.map(c => c.text)).size).toBe(shared.length);
-    expect(shared.length).toBe(2); // the benchmark repeats two conditions across many results
+    // M5-T157: the benchmark now carries three distinct conditions - the area and K20 conditions
+    // (across many results) and the legal unit limit's zoning-lot condition (on that result alone).
+    expect(shared.length).toBe(3);
 
     // None lost: the shared set equals the document's distinct condition lines, computed here.
     expect(new Set(shared.map(c => c.text))).toEqual(distinctConditionTexts(doc));

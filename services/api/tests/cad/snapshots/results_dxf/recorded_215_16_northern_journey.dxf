@@ -361,7 +361,7 @@ A-ANNO-NOTE
 40
 2.458939
 1
-Special density area Not known assumed Whether the lot is in a special density area is not known; it is taken to be in one for the calculation, so the legal dwelling-unit limit that depends on it is withheld.
+Special density area No city_records The city's records place this lot outside both special density areas (the Manhattan Core and the Special Downtown Brooklyn District, ZR 12-10), so the legal dwelling-unit limit is shown as a conditional ceiling on the zoning lot.
 0
 TEXT
 8

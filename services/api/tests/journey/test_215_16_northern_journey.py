@@ -251,9 +251,11 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     assert district["value"] is False and district["basis"] == "city_records"
     assert "does not read" not in district["statement"]
     density = rows["special_density_area"]
-    assert density["statement"].startswith("Whether the lot is in a special density area is not")
-    # not known shows the words, never the stand-in the engine received (no "Yes" on the drawings)
-    assert density["value"] == "Not known" and density["unit"] is None
+    # M5-T157: the record (Queens cd 411) places the lot OUTSIDE both special density areas, so the
+    # scope line reads the city record and the legal unit limit is shown as a conditional ceiling.
+    assert density["basis"] == "city_records" and density["value"] is False
+    assert "outside both special density areas" in density["statement"]
+    assert "conditional ceiling" in density["statement"]
     angle = rows["street_line_intersection_angle_degrees"]
     assert angle["basis"] == "approximate_tax_map" and "89.7 degrees" in angle["statement"]
     # W11 (a): coverage is withheld and agrees with the by-portion block (the two lot areas
@@ -269,6 +271,16 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     area = next(v for v in allowance["values"] if v["key"] == "max_residential_floor_area")
     assert area["value"] == _benchmark_value("max_residential_floor_area") == 20150
     assert allowance["value_states"]["max_residential_floor_area"]["way"] == "conditional"
+    # M5-T157 (S6): the record places the lot OUTSIDE both special density areas, so the legal
+    # dwelling-unit limit is shown as a CONDITIONAL ceiling - 20,150 / 680 = 29.63 -> 29 (ZR 23-52),
+    # labelled conditional, kept apart from the apartment estimate (which stays reserved below).
+    unit = next(v for v in allowance["values"] if v["key"] == "legal_unit_limit_standard")
+    assert unit["value"] == 29
+    assert allowance["value_states"]["legal_unit_limit_standard"]["way"] == "conditional"
+    assert any(
+        "zoning lot" in c["assumption"]
+        for c in allowance["value_states"]["legal_unit_limit_standard"]["conditions"]
+    )
 
     # The three-way honesty on the benchmark: coverage and the rear yard are withheld (no value
     # object, a withheld way entry), the building option is a whole not-available answer, and the

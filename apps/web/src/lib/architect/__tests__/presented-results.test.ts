@@ -34,11 +34,18 @@ describe("presentedResults kinds on the benchmark (scenario S6)", () => {
     expect(byId(results, "floor_area_allowance.max_residential_far").resultKind).toBe("allowance");
   });
 
-  it("tags the withheld legal unit limits as allowance, shown not-known with no digit", () => {
+  it("tags the standard legal unit limit as allowance, shown as a conditional value (M5-T157)", () => {
+    // M5-T157: the record places the benchmark lot outside both special density areas, so the
+    // standard legal unit limit is SHOWN as a conditional ceiling (29), never withheld.
     const limit = byId(results, "floor_area_allowance.legal_unit_limit_standard");
     expect(limit.resultKind).toBe("allowance");
-    expect(limit.display.kind).toBe("not_known");
-    expect(limit.status.kind).toBe("not_known");
+    expect(limit.display.kind).toBe("value");
+    expect(limit.status.kind).toBe("conditional");
+    // the still-withheld qualifying limits stay not-known with no digit
+    const qualifying = byId(results, "floor_area_allowance.legal_unit_limit_qualifying_affordable");
+    expect(qualifying.resultKind).toBe("allowance");
+    expect(qualifying.display.kind).toBe("not_known");
+    expect(qualifying.status.kind).toBe("not_known");
   });
 
   it("tags the heights as envelope", () => {
