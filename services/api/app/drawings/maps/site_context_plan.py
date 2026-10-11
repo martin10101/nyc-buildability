@@ -610,6 +610,23 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Draw
                                  with_widths=False, label_focus=False, street_filter=border)
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
                                mode="summary")
+    if frame == "summary_close":
+        # The COMPACT close frame for page 1 (M5-T166 rework 1, G3/G4 F1): the same
+        # close COMPOSITION as the page-3 frame - the subject and its edge-sharing
+        # neighbours dominate the tight view - at the 88 mm page-1 column. The 88 mm
+        # column is too narrow to carry a dimension label at >= 8.5 pt with its basis
+        # words, so NO dimension lines are drawn here (the large close frame on page 3
+        # carries them); never a bare number. Street widths and neighbour labels are
+        # dropped too, keeping the page-1 word budget. No yard/setback area (R008/R017).
+        close_view = close_frame_view(context.subject_lot, context.streets)
+        fr = fit_view(close_view, SUMMARY_PLAN, SUMMARY_PLAN_MARGIN, alpha=alpha, top_band=0.0)
+        rect = viewport(SUMMARY_PLAN, FRAME_INSET)
+        border = bordering_street_names(context.subject_lot.outline, context.streets,
+                                        SITE_SUMMARY_BORDER_FT)
+        sheet = draw_block_scene(context, fr, rect, SUMMARY_PLAN, title=None, with_edges=False,
+                                 with_widths=False, label_focus=False, street_filter=border)
+        return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
+                               mode="summary")
     if frame == "wide":
         fr = fit_view(view, WIDE_PLAN, WIDE_PLAN_MARGIN, alpha=alpha, top_band=0.0)
         rect = viewport(WIDE_PLAN, FRAME_INSET)

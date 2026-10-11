@@ -46,10 +46,11 @@ _SURROUNDINGS_UNAVAILABLE = (
 class Surroundings:
     """The resolved site-context maps for one report. ``available`` is true only
     when the one-outline check passed and the drawings drew. ``neighbourhood`` and
-    ``block`` are the COMPACT summary-frame thumbnails for the one-page location
-    sheet; ``summary_plan`` is the compact site plan beside page 1's answers; and
-    ``report_plan`` is the full-size site plan shown once, on the constraints
-    sheet. The same full-size drawing is never printed twice."""
+    ``block`` are the wide-frame thumbnails built for the location sheet (only the
+    neighbourhood locator is printed now); ``summary_plan`` is the COMPACT CLOSE
+    frame (the close composition at the 88 mm column) beside page 1's answers; and
+    ``report_plan`` is the large close frame shown once, on the constraints sheet.
+    The same drawing is never printed twice (M5-T166)."""
 
     available: bool
     reason: str | None = None
@@ -116,8 +117,8 @@ def _subject_outline(map_context: Mapping) -> object:
 
 def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     """Decide whether the report may show the surroundings and render the maps when
-    it may (ruling Y5). The location sheet and page 1 take COMPACT summary-frame
-    drawings; the constraints sheet takes the one full-size plan. A missing map
+    it may (ruling Y5). The location sheet takes the wide locator; page 1 takes the
+    COMPACT CLOSE frame; the constraints sheet takes the large close frame. A missing map
     document, a failed one-outline check or maps that do not draw all yield
     ``available=False`` with a short limitation line - never a partial or mismatched
     picture (S2, S6)."""
@@ -131,11 +132,12 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
 
     # Page 2 is the neighbourhood locator only (D-094 R014/R074); the block close-up
     # is still built here (restorable) but not printed (render shows the locator). Page 1
-    # takes the compact close frame; the constraints sheet takes the large close frame -
-    # the subject and its edge-sharing neighbours dominated, dimensioned (M5-T166).
+    # takes the COMPACT close frame (the close composition at the 88 mm column; M5-T166
+    # rework 1, G3/G4 F1); the constraints sheet takes the large close frame - the
+    # subject and its edge-sharing neighbours dominate, dimensioned on page 3 (M5-T166).
     neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "wide")
     block = embed("render_block_map", map_caption.BLOCK_LAYERS, "wide")
-    summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary")
+    summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary_close")
     report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "close")
     drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
     if not drawn:

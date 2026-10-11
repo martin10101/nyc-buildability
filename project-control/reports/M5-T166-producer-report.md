@@ -138,3 +138,73 @@ close frame is a new, un-snapshotted drawing.
   frame draws no yard, setback or zoning-lot geometry depending on them (R008/R017), so no
   unresolved input is turned into a drawn figure.
 - Nothing here is a professional verification.
+
+## Rework 1 (G3/G4 F1: the page-1 graphic is the compact close frame)
+
+Base reset to `8f713e6a6312a1cdcb6ae5eb941c2bd4e3a887db` (my cherry-pick `09ac564e` + M5-T165
+integrated as `4617c720` + other wave-24 records). All three reviews (G3 code, G4 QA, G1 data)
+PASSed with the same REQUIRED F1; the orchestrator kept the objective and ordered this change.
+
+**What changed.** Page 1's site graphic is now the COMPACT CLOSE frame, not the old summary frame.
+A new frame `summary_close` in `site_context_plan.py` draws the same close COMPOSITION as the
+page-3 frame (`close_frame_view` — the subject and its edge-sharing neighbours dominate the tight
+view) but at the 88 mm page-1 column (`SUMMARY_PLAN` sizing, `mode="summary"` furniture).
+`page_location.py` now embeds `frame="summary_close"` for `summary_plan` (the swap is maps side
+only; `builder.py` and `page_decision_summary.py` wrap the SVG they are given, unchanged). The 88 mm
+column is too narrow for a legible basis label at >= 8.5 pt, so the compact frame draws NO dimension
+line and NO dimension label at all (the large page-3 close frame carries them) — never a bare
+number. Street widths and neighbour labels are dropped too, keeping the word budget.
+`close_frame_dimensions.py` is unchanged, so NB-04 revision 2's code identity is untouched (I did
+not edit NB-04; its review block is the orchestrator's to append).
+
+**Files changed:** `site_context_plan.py` (new `summary_close` branch + docstrings),
+`page_location.py` (embed `summary_close` + docstrings), `test_location_sheet.py`
+(`test_page1_carries_the_summary_frame_site_plan` → `test_page1_carries_the_compact_close_frame_site_plan`,
+pinning the compact close frame via `embed_map` identity and forbidding any dimension label; new
+`test_page1_compact_close_frame_states` for the three input states).
+
+**NOT edited (routed to the orchestrator):** `page_decision_summary.py` (an M5-T165 file) still
+carries the wording "the existing compact summary frame" (docstring) and a comment naming the
+"summary frame" for the page-1 graphic; these now misname the frame but are outside this task's
+allowed paths — the orchestrator should route the wording fix to the M5-T165 builder.
+
+**Page-1 word counts (visible_text, decision-summary section):**
+
+| measurement | before (summary frame) | after (compact close frame) | cap |
+|---|---|---|---|
+| standing test `build_report_html(benchmark())` (no map_context) | 190 | 190 | 200 (M5-T165) |
+| real report `build_report_html(benchmark(), map_context=…)` | 208 | 208 | — (not a standing test) |
+
+The standing CI cap is measured WITHOUT a map document, so the page-1 map graphic does not appear
+there (page 1 falls back to the kit site plan): the swap leaves it at 190, well under 200. With a
+map document the page-1 section is 208 both before and after — the compact close frame carries the
+SAME labels as the summary frame did (street names, `Lot 70`, north arrow, scale bar), so the swap
+is word-neutral; the 208 is the pre-existing results-text size (M5-T165's page 1), not caused by the
+graphic, and no standing test caps the with-maps page-1 section. I did not take page 1 over any cap.
+
+**State table (page-1 frame):**
+
+| state | outcome | test |
+|---|---|---|
+| map document present + one-outline check passes | page 1 = compact close frame (`summary_close`) | `test_page1_carries_the_compact_close_frame_site_plan`, `test_page1_compact_close_frame_states` (a) |
+| no map document | surroundings unavailable; `summary_plan is None`; page 1 falls back | `test_page1_compact_close_frame_states` (b) |
+| one-outline check fails (outline moved 0.5 ft) | surroundings dropped; `summary_plan is None` | `test_page1_compact_close_frame_states` (c) |
+| compact frame, dimensions | none drawn (no line, no label) — never a bare number | the two assertions in `test_page1_carries_…` |
+
+**Checks (direct exit codes; lanes venv):**
+- `ruff check .` (services/api) → exit 0.
+- `pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py` → exit 0, **1783 passed, 6 skipped** (includes M5-T165's now-filled page-1 tests).
+- `tools/research_record_check.py --check` → exit 0 (NB-04 conflicting_evidence unchanged, code_current=True, review_state=stale pending the orchestrator's rev-2 review entry).
+- `tools/modularity_check.py --check` → exit 0 (failures 0; site_context_plan.py still under the warn threshold).
+- e2e/browser not run; no server; ports 3000/3001/8000 untouched.
+
+**Mutation proof (each reverted; page-1 tests green afterwards):**
+1. Put the summary frame back on page 1 (`page_location.py` embed `"summary"`) → both page-1 pins
+   FAILED (`page1_svg == embed(summary_close)` false; it equals `embed(summary)`).
+2. Enable edges on the `summary_close` branch (`with_edges=True`) → the compact frame drew four
+   bare-number labels ("99.98 ft" … at 8.00 pt, no basis) and
+   `test_page1_carries_the_compact_close_frame_site_plan` FAILED on `'data-role="dimension"' not in
+   page1_svg`. (The literal "drop the basis words" mutation is N/A: the compact frame carries no
+   basis label by design; this mutation proves the stronger "never a bare number" invariant.)
+
+No snapshot `.svg` file changed in this rework.
