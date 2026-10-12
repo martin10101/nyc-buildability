@@ -510,3 +510,25 @@ to build).
   Known open points shown in it: on the close-up one dimension label sits on its own line and one lot label touches a
   line, and the constraints table sits alone on page 4 (both in the close-up's third fix); "tax-map outline" wording
   on later pages (fixed in the rear-yard step). It is a draft of work in progress, not the finished PDF #1.
+
+## 26. "Why does this look like such a mess, words everywhere, lines covered" (2026-10-12, with a screenshot of the draft's close-up)
+
+- **Developer (answered):** the drawing tried to say too much: every measurement repeated "map outline, not surveyed"
+  (the developer's own design rule, not the reviewer's); labels were placed onto lines (one on its own dimension line,
+  "Lot 11" against a line, the bottom label across buildings), because the automatic check ignored a label's own line
+  and the building shapes; no white background behind words; neighbours' addresses and every neighbouring building
+  drawn. Recommended: state the source once under the drawing with figure-only labels; every label beside its line on
+  a white background; neighbours' addresses off (lot numbers stay); lighter neighbours; a check by eye on the printed
+  page. Asked as question K1 (basis once under the drawing). Recorded as D-094 row R115.
+
+## 27. "Ok fix it" (2026-10-12)
+
+- **Recorded:** D-094 row R116 (K1 answered yes). The design rule now states the basis once under the drawing.
+- **Done:** the close-up was rebuilt: one note "All dimensions: city map outline, not surveyed."; labels "103.88 ft",
+  "99.98 ft", "101.71 ft" on white backgrounds beside their lines; no line touches any word (a test checks every label
+  against every line, its own included); no neighbour addresses; lighter neighbours; the small constraints table no
+  longer alone on a page (now with the other tables on page 3; the drawing on page 4). The data, code, test and visual
+  reviewers all passed it. A second draft PDF was sent (`215-16-Northern-Boulevard-report-draft-2-2026-10-12.pdf`).
+- **Still minor (advisory):** the 215 Place name and its width label sit apart; "101.71 ft" and "Lot 11" are close;
+  legend and scale-bar text slightly under 8.5 pt; the report is 10 pages (the large drawing has its own page); the
+  "tax-map outline" wording on page 3 goes with the rear-yard step.
