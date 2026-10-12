@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 114,
+ "requirement_count": 115,
  "producer": "orchestrator",
- "updated_at": "2026-10-12T03:23:58+00:00",
+ "updated_at": "2026-10-12T05:53:47+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3697,6 +3697,37 @@
    "dependencies": [],
    "required_harness": "project-control/master_plan.json at the commit that updates it: every milestone's status and summary agree with the ledger's task statuses at that head; the report programme is named with each item's state; tools/validate_product_map.py and the ledger status command still read it.",
    "required_evidence": "The commit updating project-control/master_plan.json, citing D-094-R114.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-12; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R115",
+   "text": "'Why does this look lile such aess words everywhere lines coverd etc': the constraints close-up (and every report drawing like it) must read cleanly: far fewer words on the drawing (no repeated basis phrase on every label; no labels a reader does not need) and no text crossed, covered or touched by any line or fill.",
+   "source_ref": "source-010-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-12"
+   },
+   "dependencies": [],
+   "required_harness": "A printed-page check by eye (the visual reviewer at print size, before the owner sees it) finds no label touching a line or fill and no repeated basis phrase; an automated test fails if any drawn line or fill crosses any label's box, the label's own dimension and witness lines included.",
+   "required_evidence": "The reworked close-up in the next print sent to the owner, the visual review of it, and the collision test.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
