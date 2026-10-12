@@ -491,3 +491,22 @@ to build).
   sample-like report still needs (planned, not planned, or waiting on an owner decision) and the owner questions that
   shape the PDF. An independent auditor checked every count and statement against the ledger: pass, with three small
   wording notes, all applied. No task, hold or owner decision was changed by the update.
+
+## 24. "So from 1 to 100 how long till we have the sample pdf ready" (2026-10-12)
+
+- **Developer (answered, a first estimate):** about 25 to 30 out of 100. Mostly in place: the city data for a lot, this
+  district's zoning rules, the calculation engine, the report generator, and for the test lot one fully worked building
+  with its legal limits, estimate and drawings. Missing: most of the sample's bulk (eleven option chapters, about 72 of
+  its 88 pages, against one being finished here), the zoning law the other options need, and whole sections not
+  started (tax abatement, comparable sales, financials, site-facts page, contents, aerial and zoning maps). The current
+  redesign pass would bring it to about 35 to 40. Fastest next gains: options 2 and 3, parking and side yards, and the
+  owner's answers on A1, A2 and which sample sections stay. A calendar estimate from the observed pace was offered.
+
+## 25. "What about a partial pdf like the sample we made before but obviously with the new improvements can u make that?" (2026-10-12)
+
+- **Done:** the report was printed from the current work branch (10 pages, A4) with the street address, as the earlier
+  PDF was, and sent to the owner: `215-16-Northern-Boulevard-report-draft-2026-10-12.pdf` (private copy under the
+  session folder `owner/`). It shows the new page 1 (the whole decision summary on one page) and the new close-up.
+  Known open points shown in it: on the close-up one dimension label sits on its own line and one lot label touches a
+  line, and the constraints table sits alone on page 4 (both in the close-up's third fix); "tax-map outline" wording
+  on later pages (fixed in the rear-yard step). It is a draft of work in progress, not the finished PDF #1.
