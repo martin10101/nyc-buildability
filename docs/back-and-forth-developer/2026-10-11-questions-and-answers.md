@@ -460,3 +460,34 @@ to build).
 - **Not done yet:** the close-up's third fix, page 1's and the close-up's acceptance, the website's page-1 parity, the
   wave's pull request, and the first PDF for the owner.
 - **At the handoff:** nothing kept running; unfinished work saved for the next session (see the handoff).
+
+## 22. "Where are the questions located?" and "a detailed non-technical report ... what still needs to be done" for the sample PDF (2026-10-12, after the handoff)
+
+- **Developer (answered):** the open questions are in the private questionnaire on the build server,
+  `/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md` (not in the public repository): D1 paper size, C1 what
+  Verified requires, C2 labels on the website, A1 footprint, A2 which buildings, F1 the zoning-lot documents, J1-J5,
+  B1-B6 (B6 = how the PDF file is made and stored).
+- **The report (shortened):** today's draft is 10 pages for one lot and one worked building; the sample is 88 pages and
+  eleven options. Done: the report's six page types; this session's accepted pieces (zoning-law library, results
+  format, short-block rear-yard reference case); page 1 rebuilt and reviewed. Left in the current redesign pass, in
+  order: finish the close-up map; accept page 1 and the close-up; website page 1; PDF #1 with before/after pictures;
+  the short-block rear yard in the engine and the "tax map" wording sweep (PDF #2); setback, street wall and side
+  yard; comparison first and one evidence appendix (PDF #3); Building B placed and fully worked (footprint, section,
+  schedule, two-zone picture); the website catching up; the final PDF of the pass; architect-entered facts. Not yet
+  planned for a sample-like report: options 2-11 worked; Building A (waits on A1); one chapter per option; editable
+  estimate and apartment mix; parking, loading and bicycle parking; the full zoning table, flood zone, E-designation,
+  FRESH; a site-facts page, contents page and limitations list; city overview map, aerial photo and zoning map; street
+  photos (owner adds later); tax abatement, comparable sales, financial inputs (held), 3D massing (undecided); print
+  polish; other lots. Ours is already stronger on: legal limits apart from estimates, labels and law links, the
+  zoning-lot flag, the visible lot-area conflict, a rear yard not overstated. Decisions only the owner can make: D1,
+  C1, A1, A2, F1, B6, and the not-yet-asked choices (options 4-11 timing, tax abatement, comparable-sales method, the
+  financial hold, 3D massing, aerial photo and zoning map). The developer noted the master plan file was out of date.
+
+## 23. "So,can u bring it up to date" (the master plan; 2026-10-12)
+
+- **Done:** recorded as D-094 row R114; the master plan (`project-control/master_plan.json`) now matches the ledger:
+  every milestone's status, task counts and open tasks; the current milestone moved to the scenario-engine-and-report
+  milestone; a new "report programme" section lists the remaining steps of this pass by wave, the work the full
+  sample-like report still needs (planned, not planned, or waiting on an owner decision) and the owner questions that
+  shape the PDF. An independent auditor checked every count and statement against the ledger: pass, with three small
+  wording notes, all applied. No task, hold or owner decision was changed by the update.
