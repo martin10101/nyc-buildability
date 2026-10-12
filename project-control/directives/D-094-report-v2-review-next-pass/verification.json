@@ -1374,7 +1374,9 @@
     "D-094-R052",
     "D-094-R053",
     "D-094-R074",
-    "D-094-R077"
+    "D-094-R077",
+    "D-094-R115",
+    "D-094-R116"
    ],
    "producer": "geospatial-engineer",
    "verifier": "",
@@ -1426,6 +1428,18 @@
     },
     {
      "id": "D-094-R077",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R115",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R116",
      "state": "pending",
      "evidence": [],
      "reviewed_sha": null
