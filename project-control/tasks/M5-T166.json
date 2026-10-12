@@ -194,14 +194,14 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 40,
   "risks": [
     "Map drawings needed 3-4 rounds in wave 22; labels at print size are the usual failure.",
     "A CSS need would collide with M5-T165's layout.py: relay it, never edit it."
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:42.622669+00:00",
-  "updated_at": "2026-10-11T20:43:49.972082+00:00",
+  "updated_at": "2026-10-12T05:58:39.981178+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -236,6 +236,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-12T05:58:39.981074+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 40,
+      "status": "claimed",
+      "message": "rework 1 integrated and delta-reviewed; rework 2 integrated; scope corrected for the owner's K1 answer; rework 3 dispatched fresh from the saved patch"
     }
   ],
   "scope_corrections": [
