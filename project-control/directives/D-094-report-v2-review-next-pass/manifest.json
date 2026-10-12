@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-12T05:53:47+00:00",
+ "updated_at": "2026-10-12T05:57:39+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -136,10 +136,11 @@
   "D-094-R112",
   "D-094-R113",
   "D-094-R114",
-  "D-094-R115"
+  "D-094-R115",
+  "D-094-R116"
  ],
- "requirements_id_digest_sha256": "8fd605f93680df55a7b1bc2c32b76576b5ae76088523aea0bb4a439e8e3f539c",
- "requirements_content_digest_sha256": "ecb7205ca8dceca3ed5c1d9db942367c153a84513fe61a5731ef2df10a3e44b3",
+ "requirements_id_digest_sha256": "b1ce27d7b9b6dcfd4f2edbe4adf5ae8d84ef6f45e9cf400869aa9c81f89279bc",
+ "requirements_content_digest_sha256": "1626ca576c09843c72e2c4a250a8c188006245e444fd2ae77c16a503c266d1b2",
  "sources": [
   {
    "file": "source-001.md",
@@ -219,6 +220,14 @@
    "recorded_at": "2026-10-12T05:53:47+00:00",
    "content_digest_sha256": "18e8be7f57bab274235ab2b0c3d772c2870838ff0c9dfb50dcbd83eacec0fda0",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-011-amendment.md",
+   "kind": "amendment",
+   "sequence": 11,
+   "recorded_at": "2026-10-12T05:57:39+00:00",
+   "content_digest_sha256": "94c3290e45147364ea6ce038c534e89fb066e0ffe7c118f65c48653528bc8d2a",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -230,7 +239,8 @@
   "source-007-amendment.md",
   "source-008-amendment.md",
   "source-009-amendment.md",
-  "source-010-amendment.md"
+  "source-010-amendment.md",
+  "source-011-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -420,6 +430,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-010 (the owner's correction of the close-up's clutter) and requirements D-094-R115 to R115, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-12T05:57:39+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-011 (the owner's go-ahead for the close-up fix (K1 yes)) and requirements D-094-R116 to R116, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

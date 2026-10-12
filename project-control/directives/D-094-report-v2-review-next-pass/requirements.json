@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 115,
+ "requirement_count": 116,
  "producer": "orchestrator",
- "updated_at": "2026-10-12T05:53:47+00:00",
+ "updated_at": "2026-10-12T05:57:39+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3728,6 +3728,39 @@
    "dependencies": [],
    "required_harness": "A printed-page check by eye (the visual reviewer at print size, before the owner sees it) finds no label touching a line or fill and no repeated basis phrase; an automated test fails if any drawn line or fill crosses any label's box, the label's own dimension and witness lines included.",
    "required_evidence": "The reworked close-up in the next print sent to the owner, the visual review of it, and the collision test.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-12; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R116",
+   "text": "'Ok fix it': the owner approves the recommended close-up fix and answers K1 yes: the measurement basis is stated once under the drawing with short labels on the drawing; every label sits beside its line with a white background; the neighbours' street addresses come off the close-up (lot numbers stay); neighbouring buildings are lighter; the page is checked by eye before the owner sees it again.",
+   "source_ref": "source-011-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-12"
+   },
+   "dependencies": [
+    "D-094-R115"
+   ],
+   "required_harness": "The next print sent to the owner shows the close-up with one basis note under the drawing, figure-only labels, no word touching a line or fill, no neighbour addresses, lighter neighbours; the design contract's sentence matches; the visual reviewer's check by eye at print size passes.",
+   "required_evidence": "The reworked close-up (M5-T166), the contract sentence change, the visual review, and the print sent to the owner.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
