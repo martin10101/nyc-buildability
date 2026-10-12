@@ -1,14 +1,15 @@
 {
  "project": "NYC Buildability",
- "version": 2,
+ "version": 3,
  "delivery_mode": "full_production",
- "current_milestone": "M4",
+ "current_milestone": "M5",
  "milestones": [
   {
    "id": "M0",
    "name": "Engineering control plane and cloud foundation",
    "status": "active",
-   "depends_on": []
+   "depends_on": [],
+   "summary": "Control plane, governance and tooling: 170/195 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Still open (ledger): M0-T007 blocked; M0-T008 blocked; M0-T021 awaiting_gate; M0-T026 backlog; M0-T032 backlog; M0-T034 awaiting_gate; M0-T037 backlog; M0-T080 in_progress; M0-T081 backlog; M0-T082 backlog; M0-T083 backlog; M0-T084 backlog; M0-T085 backlog; M0-T109 awaiting_gate; M0-T133 rework; M0-T135 backlog; M0-T137 backlog; M0-T145 awaiting_gate; M0-T153 claimed; M0-T154 backlog; M0-T155 claimed; M0-T162 claimed; M0-T163 claimed; M0-T164 claimed; M0-T175 in_progress. Most open items are dormant governance/supervisor work (D-023, D-024, D-033) and the two cloud-foundation tasks M0-T007/M0-T008 are blocked on B-001 (durable storage); the D-090 lane-bootstrap tasks M0-T162/M0-T164 of 2026-09-30 are claimed but dormant. The report programme's own governance tasks (contract change M0-T193, visual baseline M0-T194) are accepted; the final report-pass export M0-T195 is planned (report_programme below)."
   },
   {
    "id": "M1",
@@ -17,7 +18,7 @@
    "depends_on": [
     "M0"
    ],
-   "summary": "9/9 tasks accepted (M1-T001..T009). Official-source registry + connector framework delivered."
+   "summary": "Official-source registry and connector framework: 9/9 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Complete."
   },
   {
    "id": "M2",
@@ -26,16 +27,16 @@
    "depends_on": [
     "M1"
    ],
-   "summary": "13/16 tasks accepted (M2-T001..T013). M2-T014/T015/T016 survey-planning tasks remain HELD (owner survey-dispatch hold), not accepted."
+   "summary": "Citywide property intelligence: 21/22 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). The survey packets M2-T014/T015/T016 are accepted; open: M2-T019 backlog (survey-review HTTP routes and production store, blocked on B-001 durable storage)."
   },
   {
    "id": "M3",
    "name": "Versioned legal corpus",
-   "status": "planned",
+   "status": "active",
    "depends_on": [
     "M1"
    ],
-   "summary": "Versioned legal corpus. 0/5 accepted. Five-task chain contracted under D-002 (carried from PR #93, superseded): M3-T001 (source-authority hierarchy + coverage matrix + registry channels + legal-source-manifest + DOCUMENT_EVIDENCE_POLICY + construction-code-release-scope draft) is first-wave lane 1; M3-T002 immutable source capture + versioning; M3-T003 Document Evidence Verification Engine; M3-T004 cross-reference closure graph; M3-T005 DOB construction-code + amendment overlay. Dependency order T001->T002->T003->T004; T005 needs T001+T002+T003+B-001+B-011. M3-T002/T003/T005 acceptance blocked by B-001 (durable storage) while open; M3-T005 also by B-011 (construction-code scope). M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6."
+   "summary": "Versioned legal corpus: 2/6 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Accepted: M3-T001 (source hierarchy, coverage matrix, manifest) and M3-T006 (zoning-law library, first pass, 2026-10-11: the R6B section catalogue with every cross-reference, 6 sections handled / 67 not, the eleven options' sections, pitfalls, research log). Open: M3-T002 backlog; M3-T003 backlog; M3-T004 backlog; M3-T005 backlog (immutable capture, document-evidence engine, cross-reference closure graph, construction-code overlay; capture/storage tasks wait on B-001). The library's capture list (5 sections, 8 terms) is DB-243."
   },
   {
    "id": "M4",
@@ -44,16 +45,17 @@
    "depends_on": [
     "M3"
    ],
-   "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 = exact Decimal/legal-units arithmetic foundation (D-002 first-wave lane 2; DF-2/B-014), deterministic engineering acceptable independent of G6. The PR #91 yard/coverage footprint proposal (which sketched M4-T007..T010) is SUPERSEDED and, being downstream of accepted M3-T004 + canonical zoning-lot model (Area C), will be re-proposed at fresh IDs after those land; it does not reserve M4-T007. D-045 CITYWIDE RULE-COVERAGE CAMPAIGN (owner directive 2026-09-13, integrated per D-045-R010): M4 now carries the full-coverage waves - A1 height/setback families R1-R4 + R6-R12 (D-045-R001), A2 geometry-dependent mechanics with their data inputs (R002) incl. the B2 street-width connector (R003), A3 contextual/Quality Housing + bonus programs (R004), C-district families (R005), M-district families (R006), and A4 special-purpose + waterfront as LATER waves (R007). Sequencing R008: one reviewed family at a time, bounded gated tasks citing D-045:<rid>, never a monolithic all-districts task; orchestrator wave order A1 -> A2+B2 -> A3 -> C -> M -> A4. Preservation R009 unchanged: DRAFT/needs_review until G6 qualified legal review (Section 20), no compliance declarations, section-G dependency policy for any new package, un-named gap-list rows stay owner-triage candidates. First campaign task: M4-T012 (A1 wave 1, R1+R2 series height/setback families, the numeric-limit families matching the R5 pilot discipline without the A2 geometry dependency)."
+   "summary": "Rule engineering and review: 32/38 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). The D-045 citywide rule-coverage campaign and the R6B benchmark rules run here (draft rules with law links; ADR-007: interpretations ship as labelled unreviewed drafts, professional review advisory). Open: M4-T001 awaiting_gate; M4-T002 awaiting_gate; M4-T003 awaiting_gate; M4-T004 awaiting_gate; M4-T005 awaiting_gate; M4-T006 awaiting_gate: the July rules-engine foundation chain merged as draft engineering and never accepted; their gate records predate ADR-007."
   },
   {
    "id": "M5",
    "name": "Scenario and optimization engine",
-   "status": "planned",
+   "status": "active",
    "depends_on": [
     "M2",
     "M4"
-   ]
+   ],
+   "summary": "Scenario engine, results and the feasibility report: 162/168 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). THE ACTIVE FRONTIER. Delivered: the three-answer results (allowance, envelope, building option), the first building option (Building B, R6B benchmark), the results contract to 1.5.0, the report generator in six page types (D-090 wave 21) and its redesign pass for the owner's reviewer (D-094, wave 24 in progress). Open: M5-T001 awaiting_gate; M5-T110 claimed; M5-T125 claimed; M5-T165 claimed; M5-T166 claimed; M5-T171 ready (M5-T001 is the July scenario foundation, awaiting gate; M5-T110 and M5-T125 are claims of September with no recent progress). The report work toward the owner's sample-comparable PDF is listed in report_programme."
   },
   {
    "id": "M6",
@@ -61,7 +63,8 @@
    "status": "planned",
    "depends_on": [
     "M5"
-   ]
+   ],
+   "summary": "Operations, validation and production launch: 0/1 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Not started: open M6-T001 backlog. The production PDF export (server-made file and stored copies) waits for owner question B6; every production switch stays off until the owner's production approval (Tier D)."
   },
   {
    "id": "M7",
@@ -69,9 +72,272 @@
    "status": "planned",
    "depends_on": [
     "M6"
-   ]
+   ],
+   "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-09-13T05:45:00+00:00",
- "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T005 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3."
+ "updated_at": "2026-10-12T03:26:00+00:00",
+ "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
+ "report_programme": {
+  "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
+  "state_vocabulary": "done (accepted), in_progress, planned (named task, not yet contracted), not_planned (no task), owner_decision (waits on an owner answer or a decision not yet asked)",
+  "current_pass": {
+   "name": "D-094 report redesign pass (work order v3 = session-2026-10-11c/workorder-D094-v2.md + session-2026-10-11d/workorder-D094-v3-delta.md, private)",
+   "done": [
+    "M0-T194 visual before set",
+    "M0-T193 design contract change of 2026-10-11",
+    "M5-T163 rear-yard record NB-03 rev 2",
+    "M5-T164 results contract 1.5.0",
+    "M5-T168 lint gap",
+    "M3-T006 zoning-law library",
+    "M5-T176 short-block rear-yard reference case"
+   ],
+   "steps": [
+    {
+     "wave": 24,
+     "item": "page 1 rebuilt: the decision summary on one page",
+     "ids": [
+      "M5-T165"
+     ],
+     "state": "in_progress"
+    },
+    {
+     "wave": 24,
+     "item": "one locator and a dimensioned close-up (pages 2-3); no orphaned table",
+     "ids": [
+      "M5-T166"
+     ],
+     "state": "in_progress"
+    },
+    {
+     "wave": 24,
+     "item": "website page-1 parity",
+     "ids": [
+      "M5-T171"
+     ],
+     "state": "planned",
+     "waits_for": [
+      "M5-T165"
+     ]
+    },
+    {
+     "wave": 24,
+     "item": "wave PR and PDF #1 from main with before/after pictures (R083)",
+     "state": "planned"
+    },
+    {
+     "wave": 25,
+     "item": "the report reads the 1.5.0 constraint rows, input facts and lines",
+     "ids": [
+      "M5-T175"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 25,
+     "item": "rear yard on a short block (ZR 23-344(b), (c)(3)) in the engine; the GIS-wording sweep DB-245",
+     "ids": [
+      "M5-T167"
+     ],
+     "state": "planned",
+     "waits_for": [
+      "M5-T165",
+      "M5-T166",
+      "M5-T171",
+      "M5-T175"
+     ]
+    },
+    {
+     "wave": 25,
+     "item": "independent worked example of Building B's placement (step P8)",
+     "ids": [
+      "M5-T177"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 26,
+     "item": "setback, street wall and side yard from NB-06",
+     "ids": [
+      "M5-T170"
+     ],
+     "state": "planned",
+     "waits_for": [
+      "M5-T167",
+      "M5-T175"
+     ]
+    },
+    {
+     "wave": 26,
+     "item": "option comparison first, one evidence appendix, run identity",
+     "ids": [
+      "M5-T169"
+     ],
+     "state": "planned",
+     "waits_for": [
+      "M5-T165",
+      "M5-T170",
+      "M5-T175"
+     ]
+    },
+    {
+     "wave": 27,
+     "item": "illustrative placement of Building B and its area allocation",
+     "ids": [
+      "M5-T172"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 27,
+     "item": "scenario sheet: dimensioned footprint, section, reconciled schedule, two-zone area illustration",
+     "ids": [
+      "M5-T173"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 28,
+     "item": "website parity for the remaining sections",
+     "ids": [
+      "M5-T174"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 28,
+     "item": "final export of the pass: PDF, before/after pictures, reader check",
+     "ids": [
+      "M0-T195"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 28,
+     "item": "architect-entered facts feed the results (then the survey reader on real surveys, no id yet)",
+     "ids": [
+      "M5-T178"
+     ],
+     "state": "planned"
+    }
+   ]
+  },
+  "after_this_pass": [
+   {
+    "item": "options 2-11 worked (law each still lacks: side yards 23-335, community facility 24-11/24-111, the affordable-housing program 23-154, mixed buildings 35-30..35-33 and overlay 33-121, shops 32-131/32-161, parking 25-xx and the transit zone, shared housing; what 'split lot' means for option 8)",
+    "state": "not_planned",
+    "refs": [
+     "docs/zoning-law-library/options-sections.md",
+     "DB-243"
+    ]
+   },
+   {
+    "item": "the wide building (Building A)",
+    "state": "owner_decision",
+    "refs": [
+     "owner question A1"
+    ]
+   },
+   {
+    "item": "which buildings the results show when two can be worked",
+    "state": "owner_decision",
+    "refs": [
+     "owner question A2"
+    ]
+   },
+   {
+    "item": "one chapter per option (description, summary, section, floor schedule, gross and net area)",
+    "state": "not_planned"
+   },
+   {
+    "item": "apartment estimate assumptions editable on screen; apartment mix",
+    "state": "not_planned",
+    "refs": [
+     "DB-213"
+    ]
+   },
+   {
+    "item": "parking, loading and bicycle parking (applicability line per option before any option is shown as feasible; counts later)",
+    "state": "not_planned",
+    "refs": [
+     "DB-180"
+    ]
+   },
+   {
+    "item": "full zoning parameter table (courts, overlay uses, commercial floor area); flood zone, E-designation, FRESH",
+    "state": "not_planned"
+   },
+   {
+    "item": "site-facts page incl. the block description; contents page; limitations list",
+    "state": "not_planned"
+   },
+   {
+    "item": "city overview map and aerial photo; zoning map",
+    "state": "not_planned",
+    "refs": [
+     "DB-228",
+     "DB-229"
+    ]
+   },
+   {
+    "item": "street photos",
+    "state": "owner_decision",
+    "refs": [
+     "owner answer E1: the owner adds them later"
+    ]
+   },
+   {
+    "item": "tax abatement; comparable sales (selection method undecided)",
+    "state": "owner_decision"
+   },
+   {
+    "item": "financial inputs",
+    "state": "owner_decision",
+    "refs": [
+     "held by the owner"
+    ]
+   },
+   {
+    "item": "3D massing in the report",
+    "state": "owner_decision",
+    "refs": [
+     "not asked yet; D-087 released 3D massing in the program"
+    ]
+   },
+   {
+    "item": "print polish: drawing furniture below 8.5 pt; cosmetic notes",
+    "state": "not_planned",
+    "refs": [
+     "DB-246",
+     "DB-225"
+    ]
+   },
+   {
+    "item": "lots other than the test lot (a lot without geometry; the lot-area agreement tolerance)",
+    "state": "not_planned",
+    "refs": [
+     "DB-203",
+     "DB-173"
+    ]
+   },
+   {
+    "item": "production PDF export and stored reports",
+    "state": "owner_decision",
+    "refs": [
+     "owner question B6"
+    ]
+   }
+  ],
+  "owner_questions_that_shape_the_pdf": [
+   "D1 paper size (A4 meanwhile; Letter recommended, the sample's size)",
+   "C1 what Verified requires",
+   "C2 the six labels on the website",
+   "A1 footprint figure",
+   "A2 which buildings to show",
+   "F1 the zoning-lot documents",
+   "B6 PDF converter and storage",
+   "not asked yet: options 4-11 timing, tax abatement, comparable-sales method, the financial hold, 3D massing in the report, aerial photo and zoning map"
+  ],
+  "questionnaire": "/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md (private, build server)"
+ }
 }
