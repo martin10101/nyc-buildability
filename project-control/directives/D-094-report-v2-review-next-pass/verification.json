@@ -1511,36 +1511,61 @@
     "D-094-R079"
    ],
    "producer": "rules-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "26832596ead05a75232e1833ae7fd21c98e927fc",
+   "reviewed_manifest_sha256": "2fbe086ba6100ed335820609034f14811b680e79d6b346215147a710df85ba50",
    "requirements": [
     {
      "id": "D-094-R036",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Share = the independent evaluation of ZR 23-344(b) AND the R6\u2013R12 adjoining-side-line provision 23-344(c)(3) against the actual zoning-lot/boundary evidence; the \"update the diagram and conclusion\" clause is report/engine work owned by other tasks.",
+      "The case short-block-rear-yard carries rows for 23-344(b) (b-what-measured\u2026b-block-boundary, M1\u2013M10, real-lot-*) and for 23-344(c)(3) (c-1-vs-c-3, M7, M8, real-lot-z1/z2-rear-yard, real-lot-beyond-100-sliver, real-lot-missing-facts), evaluating the real lot under Z1 (lot 70 alone) and Z2 (lots 70+1) on each measurement basis from block-7334 outlines, DCM centrelines, PLUTO rows and tax-map labels.",
+      "I verified the quotes against the captures: zr-23-344.snapshot.json verbatim_excerpt contains the (b) and (c)(1)/(c)(2)/(c)(3) text exactly (content_digest 91f94915\u2026 matches the citation), and zr-12-10-short-dimension-of-a-block (digest 3ec2dadd\u2026) matches. Both readings reach these on the same basis.",
+      "Stays open for later work: the rear-yard diagram+conclusion update and the engine (M5-T167), which consumes this case \u2014 outside M5-T176.",
+      "Verifier's carry-forward condition met at 26832596: the task's allowed-path files are identical to those verified at 6e5a5287 (content identity 2fbe086b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (11 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T176-DCV.md."
+     ],
+     "reviewed_sha": "26832596ead05a75232e1833ae7fd21c98e927fc"
     },
     {
      "id": "D-094-R037",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Share = the reference rows may record no unconditional zero rear yard and must not treat the corner test as the only exception.",
+      "real-lot-z1-rear-yard and real-lot-z2-rear-yard are kind=not_known with value=None; each names its conditions (measurement basis, zoning lot, neighbour lot-line kind) and quotes ZR 23-344; what_it_does_not_establish states the 23-344(a) corner test is never worded as the only exception.",
+      "The GIS figures (e.g. 203.13 ft, reach 99.97 ft) carry a basis and are never used to infer an unconditional zero rear yard; on the GIS/centreline basis the frontage is NOT a short dimension, so the row stays not_known. The real_lot_rear_yard_errors guard plus mutation test test_an_unconditional_no_rear_yard_in_a_real_lot_row_is_refused reproduce green (an injected unconditional \"no rear yard\" is refused).",
+      "Nothing stays open in this task's share.",
+      "Verifier's carry-forward condition met at 26832596: the task's allowed-path files are identical to those verified at 6e5a5287 (content identity 2fbe086b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (11 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T176-DCV.md."
+     ],
+     "reviewed_sha": "26832596ead05a75232e1833ae7fd21c98e927fc"
     },
     {
      "id": "D-094-R044",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Share = invent no geometry; every figure traces to source with a basis. This task produces no drawing/layout (none in allowed_paths).",
+      "11 quantities across the real-lot rows each carry exactly one of the nine QUANTITY_BASES (administrative_record / printed_tax_map / gis / derived); quantity_basis_errors plus its mutation tests (missing basis, second basis) reproduce green; program_result_errors == [] (no program-run value).",
+      "Where the two readings' figures differ (215 St\u2013215 Pl centreline 260.02 ft reading 1 vs 261.0 ft reading 2) both are kept and real-lot-short-dimension stays NOT SETTLED; the ten made-up cases M1\u2013M10 are labelled made-up, not property measurements.",
+      "Nothing stays open in this task's share (R044's drawing-geometry thrust is exercised by the drawing tasks M5-T164/M5-T166).",
+      "Verifier's carry-forward condition met at 26832596: the task's allowed-path files are identical to those verified at 6e5a5287 (content identity 2fbe086b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (11 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T176-DCV.md."
+     ],
+     "reviewed_sha": "26832596ead05a75232e1833ae7fd21c98e927fc"
     },
     {
      "id": "D-094-R079",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Share = an explicit, independently worked applicability check of ZR 23-344(b) (short-block-frontage) beside the 100-ft point test, before completion; the exemption not presented as established.",
+      "The case IS that applicability check: what (b) measures; \"< 230 feet\" strict (b-less-than-230, confirmed by M1 229.99 yes / M2 230.00 no / M3 230.01 no); measuring \"within 100 feet\" (not_known); what can bound a block; M1\u2013M10; and the real lot under Z1/Z2 on each basis \u2014 set beside the 100-ft corner (a) test (fit-b-on-corner-lot, fit-multiple-apply, real-lot rows naming both (a) and (b)/(c)).",
+      "The exemption is NOT established: real-lot-z1/z2-rear-yard stay not_known on unresolved measurement basis; NB-03 (read only, revision 2) is research_status \"interpretation_awaiting_review\". Two independent readings (provenance 15 and 16) underlie it.",
+      "Stays open for later work: the engine change (M5-T167), the report's rear-yard item, and NB-03's independent review/promotion \u2014 owned by M5-T163/M5-T164/M5-T165/M5-T167.",
+      "Verifier's carry-forward condition met at 26832596: the task's allowed-path files are identical to those verified at 6e5a5287 (content identity 2fbe086b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (11 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T176-DCV.md."
+     ],
+     "reviewed_sha": "26832596ead05a75232e1833ae7fd21c98e927fc"
     }
-   ]
+   ],
+   "verified_at": "2026-10-12T00:07:36+00:00"
   }
  ]
 }

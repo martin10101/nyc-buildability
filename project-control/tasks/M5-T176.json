@@ -111,15 +111,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The readings may disagree on the measurement basis of the block dimension; then the real-lot rows stay NOT SETTLED and M5-T167 shows not known.",
     "The sealed folder lives on the private build server: the case records its inputs by name and digest, never the third-party text in bulk."
   ],
   "blockers": [],
   "created_at": "2026-10-11T22:26:04.432252+00:00",
-  "updated_at": "2026-10-11T23:44:32.362918+00:00",
+  "updated_at": "2026-10-12T00:07:37.137420+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -171,5 +171,7 @@
       "actor": "orchestrator",
       "change": "Added services/api/tests/rules/reference_cases/test_r6b_reference_cases.py. The packet makes the case id part of r6b_reference_cases_lib.py CASE_IDS (S5 and the lib's own rule), and test_r6b_reference_cases.py::test_each_case_has_a_data_file_and_a_page pins the whole CASE_IDS tuple literally (line 45), so adding the case reddens it; the contract missed this consumer (the orchestrator's contract-seam miss, found by the producer and routed per the consumer-sweep rule). The only change allowed in that file is appending 'short-block-rear-yard' to the pinned tuple. No row binding, scenario or other path changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-12T00:07:37.137221+00:00"
 }
