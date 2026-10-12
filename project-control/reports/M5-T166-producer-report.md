@@ -268,3 +268,103 @@ The record check reads code_current=True, review_state=stale (expected pending t
 (single on-edge candidate) made `test_s2_no_dimension_label_crosses_a_drawn_line` FAIL — the strict
 guard refuses the on-line placement (`DimensionPlacementError`), so the test does not pass. Restored;
 `close_frame_dimensions.py` re-hashes to the identity recorded in NB-04.
+
+---
+
+## Rework 3 (2026-10-12) — the close-up reads cleanly (owner K1 / D-094 R115/R116)
+
+Built on top of `task/wave24-report-v3` head `d91c95cd` + the saved unfinished rework-3 patch (base
+`cd6d7fc3`, 7 files: pass-1/pass-2 reorder of the dimension draw so a label never strikes its own
+line; the constraints-section reorder; the two added tests). I read that patch critically and own the
+result; the clutter fixes the owner asked for (basis-once, white backgrounds, no neighbour addresses,
+lighter neighbours) were NOT in it and are this rework.
+
+**What changed (allowed paths only):**
+- `close_frame_dimensions.py` — **figure-only labels** (`"103.88 ft"`), never the basis words. New
+  constants `GIS_BASIS_NOTE` ("All dimensions: city map outline, not surveyed.") and `GIS_BASIS_TAG`
+  ("map outline"). New `edge_bases` arg: a drawing that MIXES bases tags each label (`"103.88 ft, <tag>"`);
+  one basis stays figure-only. Dimension labels are placed with a white background (`halo=True`).
+- `context_scene.py` — `place(halo=...)` draws a white rect behind the label (in the label's own
+  rotated frame) before the text; `draw_clipped_area(opacity=...)` wraps an area in a lighter group;
+  `compose_context(basis_note=...)` renders the single-basis note once, centred in the band directly
+  under the close-frame viewport, at 8.5 pt. Close-frame height KEPT at full size (see "Page count").
+- `site_context_plan.py` — `draw_block_scene(close_style=True)` for the page-3 and page-1 close frames:
+  white backgrounds on every scene label, neighbour buildings drawn lighter (`opacity 0.45`, legend
+  entry kept), neighbour **addresses dropped** (lot numbers stay). The page-3 frame passes the basis
+  note; the compact page-1 frame has no dimensions, so no note.
+- `page_site_context.py` — kept the patch's **reorder** (lot-area basis + both tables, then the frame
+  last) so no 4-row table is ever alone on a page.
+- `ARCHITECT_PRESENTATION_CONTRACT.md` — the two S17 sentences only (page-2 close-up sentence; the gis
+  wording line), dated 2026-10-12 / question K1. Nothing else changed.
+- `NB-04` — `implementation.code_identity[close_frame_dimensions.py]` = new LF sha256
+  `5dba6cf8e8307111b80fbd25bffe3c62964166572efd9a7e9347dbaeffb79dea`; `last_changed` 2026-10-12; the
+  four gis edge `scope` strings corrected to the figure-only rendering (value + basis unchanged;
+  D-093 accuracy). `research_status` and the whole `review` block UNCHANGED (reviewer re-stamps).
+
+**My own print** (`make_after_report.py` → HTML; `apps/web/scripts/print-report-pdf.mjs` → PDF via its
+own headless Chromium; `pdftoppm -r 300`; no server; ports 3000/3001/8000 untouched; the temporary
+`apps/web/node_modules` symlink into `/root/project/w-wave20` was removed with `rm` before commit).
+**10 pages.** Pages 1–4 at 300 dpi, read as a reader:
+- **Page 1 (decision summary).** The compact close frame shows "Lot 70" on a white background among
+  clearly **lighter** neighbour buildings; "NORTHERN BOULEVARD" and "215 PLACE" named on white
+  backgrounds; no neighbour addresses; caption "The lot among its neighbours (city map; not surveyed)."
+  The page-1 wrapper and 88 mm column are unchanged.
+- **Page 2 (Where is the lot?).** The neighbourhood locator only — street names, Subject-lot/Street
+  legend, north arrow, scale bar, sources caption. Clean.
+- **Page 3 (What constrains the design?).** Lot-area basis paragraph, the 3×2 Height-limits table, and
+  the 4-row Constraints table — all three together, no orphan. (Lower ~55 % of the page is blank; see
+  "Page count".)
+- **Page 4 (the large close frame).** Each edge carries a **figure-only** label — "103.88 ft" (top),
+  "99.98 ft" (both sides, vertical), "101.71 ft" (bottom) — on a white background, sitting BESIDE its
+  dimension line with a clear gap (the right-side "99.98 ft" is no longer struck through; "Lot 11" no
+  longer touches the bottom line). The basis note **"All dimensions: city map outline, not surveyed."**
+  appears once, centred directly under the frame. "Lot 70/1/11/61" are lot numbers only (no addresses),
+  each on a white background. Street names + mapped widths on white backgrounds. Neighbour buildings
+  are faint grey so the coral subject dominates. North arrow, scale bar, full legend incl. "No building
+  placed". No tax-map value, no rear-yard/setback area. The owner's "words everywhere, lines covered"
+  mess is gone.
+
+**Page count — the 9-page target was NOT reached; one part STOPPED (brief item 6).** The hard
+requirement (the 4-row table not alone on a page) is met by the reorder. Reaching 9 pages is not
+possible within this task's allowed paths: `.constraints-sheet` has `break-before: page` and the close
+frame is a `figure` with `break-inside: avoid`, so the frame cannot split; the lot-area basis + both
+tables already take ~128 mm of the 269 mm A4 content height, leaving ~141 mm, while the frame block is
+~160 mm. Shrinking the frame to fit (~340 pt) would push a dimension label below the ~416 pt placement
+floor — i.e. shrink a font / drop a dimension, which the brief forbids (I verified a 440 pt trim still
+rendered 10 pages, then reverted it). Fitting the section on one page needs the report row/page-break
+CSS in `services/api/app/drawings/report/layout.py` (an M5-T165 file, forbidden to this task): per brief
+item 6 I STOP that part and report it for the orchestrator/M5-T165 builder.
+
+**State table (rework-3 requirements):**
+
+| Requirement | State |
+|---|---|
+| S1 basis once under drawing, figure-only labels, mixed-bases code path + test | Built, tested |
+| S14 no line/fill touches any label (own lines incl.); white background; fail-not-shrink | Built, tested |
+| S15 no neighbour addresses (lot numbers stay); lighter neighbours; page-1 compact too | Built, tested |
+| Rework-3 patch (label off own line; "Lot 11" clear; reorder, no orphan) | Integrated, tested |
+| S17 contract — the two named sentences | Done |
+| 9-page target | NOT reached — needs forbidden report `layout.py` (STOPPED, item 6) |
+
+**Checks (direct exit codes; lanes venv; cd back after each):**
+- `cd services/api && python -m ruff check .` → **exit 0** ("All checks passed!").
+- `python -m pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/scenario/three_answers/test_result_ways.py` → **exit 0, 1812 passed, 6 skipped**.
+- `python3 tools/research_record_check.py --check` → **exit 0** (NB-04 code_current=True, review_state=stale — expected pending the reviewer re-stamp).
+- `python3 tools/modularity_check.py --check` → **exit 0** (only unrelated warn signals).
+- e2e/browser not run; the PDF used puppeteer's own headless Chromium; ports untouched.
+
+**Mutation proofs (each applied, shown failing, then reverted; suite green after):**
+1. Dropped the own witness/dimension lines from the label avoid set (`base_avoid = avoid_lines`) →
+   `test_s2_no_line_crosses_any_label_own_dimension_line_included` FAILED: "a dimension/witness line
+   passes through dimension label '99.98 ft'".
+2. Put the basis back on every label (`"<fig>, <basis>"`) → `test_s1_each_label_shows_only_the_figure`
+   and `test_s1_basis_is_stated_once_in_a_note_under_the_drawing` both FAILED (basis words on the label).
+3. Drew neighbour addresses again (`with_address=True`) → `test_s15_no_neighbour_addresses_but_lot_numbers_stay`
+   FAILED: found '45-12 215 PLACE', '45-11 215 STREET'. After revert, `close_frame_dimensions.py`
+   re-hashes to `5dba6cf8…` (the NB-04 identity).
+
+**Surprised me / disclosed:** (a) the saved patch implemented only defects 1–2; all the clutter fixes
+the owner named were still owed. (b) The 9-page target is blocked by report CSS outside this task's
+scope, not by the drawing — this is a genuine STOP, not a skipped item. (c) I corrected four NB-04
+`scope` strings beyond `code_identity` so the record matches the K1 rendering (values/bases unchanged);
+if the reviewer prefers the edit limited strictly to `code_identity`, those four strings revert trivially.

@@ -31,7 +31,12 @@ from app.drawings.kit.sheet import Sheet
 from app.drawings.kit.styles import TYPOGRAPHY
 from app.drawings.kit.svg import element, path_data, polyline_data, text_element
 
-from .close_frame_dimensions import DIMENSION_MIN_PT, draw_edge_dimensions
+from .close_frame_dimensions import (
+    DIMENSION_MIN_PT,
+    GIS_BASIS_NOTE,
+    dimension_line_segments,
+    draw_edge_dimensions,
+)
 from .context_scene import (
     CLOSE_PLAN,
     CLOSE_PLAN_MARGIN,
@@ -124,6 +129,9 @@ SITE_STREET_REACH_FT = 140.0
 # edge-sharing neighbours DOMINATE and there is room for dimension lanes (M5-T166).
 CLOSE_PAD_FT = 52.0
 CLOSE_STREET_REACH_FT = 85.0
+# Neighbouring buildings are drawn this much lighter on the close frames so the
+# subject lot and its dimensions dominate (D-094 R115/R116; S15).
+NEIGHBOUR_BUILDING_OPACITY = 0.45
 FRONTAGE_STREET_MAX_FT = 90.0  # a street this far outward names a frontage edge
 EDGE_MIN_LABEL_FT = 6.0        # shorter edges are left undimensioned
 STREET_LABEL_MIN_RUN_PT = 26.0  # a street piece shorter than this (on screen) is not labelled
@@ -304,7 +312,7 @@ def _draw_street_areas(sheet: Sheet, lots: Sequence[Polygon], street_lines, fr: 
 
 
 def _draw_lots_and_buildings(sheet: Sheet, context: MapContext, fr: ViewFrame, rect: _Box,
-                             street_lines) -> None:
+                             street_lines, *, light_neighbours: bool = False) -> None:
     lots = context.tax_lots.lots if isinstance(context.tax_lots, TaxLotLayer) else ()
     all_lots = [context.subject_lot.outline, *(lot.outline for lot in lots)]
     _draw_street_areas(sheet, all_lots, street_lines, fr, rect, _data_region(context, fr))
@@ -314,6 +322,8 @@ def _draw_lots_and_buildings(sheet: Sheet, context: MapContext, fr: ViewFrame, r
                                  lot.outline.source, rect)
     subj = context.subject_lot
     subj_sp = make_valid(ShapelyPolygon(subj.outline.exterior))
+    # the close frames draw neighbours' buildings lighter so the subject dominates (S15).
+    fp_opacity = NEIGHBOUR_BUILDING_OPACITY if light_neighbours else None
     on_subject = []  # existing buildings on the subject lot (drawn as a dashed outline on top)
     if isinstance(context.buildings, BuildingLayer):
         for fp in context.buildings.footprints:
@@ -322,9 +332,9 @@ def _draw_lots_and_buildings(sheet: Sheet, context: MapContext, fr: ViewFrame, r
             fp_sp = make_valid(ShapelyPolygon(fp.outline.exterior))
             if fp_sp.area > 0.0 and fp_sp.intersection(subj_sp).area > 0.5 * fp_sp.area:
                 on_subject.append(fp)
-            else:  # a neighbour's building: grey hatch
+            else:  # a neighbour's building: grey hatch (lighter on the close frames)
                 draw_clipped_area(sheet, project_polygon(fp.outline, fr), "building_footprint",
-                                  fp.source, rect)
+                                  fp.source, rect, opacity=fp_opacity)
     # the subject fill goes ABOVE the neighbour buildings (T155-C1), then the
     # subject's own existing building as a dashed outline, then the crisp border.
     draw_clipped_area(sheet, project_polygon(subj.outline, fr), "subject_lot",
@@ -351,7 +361,8 @@ def _subject_box(subject: SubjectLot, fr: ViewFrame) -> Box:
 
 def _label_streets(sheet: Sheet, streets: StreetLayer, fr: ViewFrame, rect: _Box, size: float,
                    *, with_width: bool, data_region=None, only: set[str] | None = None,
-                   street_lines=None, avoid_boxes=(), min_pt: float = 0.0) -> None:
+                   street_lines=None, avoid_boxes=(), min_pt: float = 0.0,
+                   halo: bool = False) -> None:
     best: dict[str, tuple] = {}
     for street in streets.streets:
         if only is not None and street.name not in only:
@@ -368,17 +379,17 @@ def _label_streets(sheet: Sheet, streets: StreetLayer, fr: ViewFrame, rect: _Box
         place(sheet, line_candidates(piece, size), street.name.upper(), size=size,
               source=street.name_source, role="street", anchor="middle", style="italic",
               rect=rect, avoid_lines=street_lines, own=street.name, avoid_boxes=avoid_boxes,
-              cross_max_len=2.6 * size)
+              cross_max_len=2.6 * size, halo=halo)
         if with_width and street.mapped_width_ft is not None:
             wtext = f"{format_number(street.mapped_width_ft)} ft mapped width"
             place(sheet, line_candidates(piece, width_size), wtext, size=width_size,
                   source=street.mapped_width_source, role="street_width", anchor="middle",
                   style="italic", rect=rect, avoid_lines=street_lines, own=street.name,
-                  avoid_boxes=avoid_boxes, cross_max_len=2.6 * size)
+                  avoid_boxes=avoid_boxes, cross_max_len=2.6 * size, halo=halo)
 
 
 def _subject_label(sheet: Sheet, subject: SubjectLot, fr: ViewFrame, rect: _Box, size: float,
-                   street_lines) -> None:
+                   street_lines, *, halo: bool = False) -> None:
     """"Lot <n>" sitting ON or immediately beside the subject lot, never across a
     street (T156-C2 a). Dropped if it cannot fit without crossing a street - the
     coral marker then stands alone."""
@@ -389,26 +400,29 @@ def _subject_label(sheet: Sheet, subject: SubjectLot, fr: ViewFrame, rect: _Box,
     steps = [0.0, size + 1.0, -(size + 1.0), 2.0 * size, -2.0 * size]
     place(sheet, [(cx, cy + s, 0.0) for s in steps], f"Lot {number}", size=size,
           source=subject.bbl_source, role="lot_number", anchor="middle", rect=rect,
-          avoid_lines=street_lines, own=None)
+          avoid_lines=street_lines, own=None, halo=halo)
 
 
 def _neighbour_label(sheet: Sheet, lot: NeighbourLot, fr: ViewFrame, rect: _Box, size: float,
-                     street_lines, avoid_boxes, *, min_pt: float = 0.0) -> None:
-    """"Lot <n>" (and the address) placed WELL INSIDE the neighbour, clear of the
-    streets and of the subject marker (T155 cosmetic fix 3; T156-C2)."""
+                     street_lines, avoid_boxes, *, min_pt: float = 0.0,
+                     with_address: bool = True, halo: bool = False) -> None:
+    """"Lot <n>" (and, unless ``with_address`` is off, the address) placed WELL
+    INSIDE the neighbour, clear of the streets and of the subject marker (T155
+    cosmetic fix 3; T156-C2). The close frames drop the neighbour address to cut
+    clutter - only the lot number stays (S15)."""
     number = _lot_number(lot.bbl)
     cx, cy = fr.px(geo.centroid(lot.outline.exterior))
     if number is not None and lot.bbl_source is not None:
         steps = [0.0, 2.6 * size, -2.6 * size, 5.2 * size]
         place(sheet, [(cx, cy + s, 0.0) for s in steps], f"Lot {number}", size=size,
               source=lot.bbl_source, role="lot_number", anchor="middle", rect=rect, pad=2.5,
-              avoid_lines=street_lines, own=None, avoid_boxes=avoid_boxes)
-    if lot.address is not None and lot.address_source is not None:
+              avoid_lines=street_lines, own=None, avoid_boxes=avoid_boxes, halo=halo)
+    if with_address and lot.address is not None and lot.address_source is not None:
         asz = max(7.0, min_pt, size - 1.0)
         steps = [size + 2.0, 3.6 * size, -(size + 2.0), 6.0 * size]
         place(sheet, [(cx, cy + s, 0.0) for s in steps], lot.address, size=asz,
               source=lot.address_source, role="lot_address", anchor="middle", rect=rect, pad=2.5,
-              avoid_lines=street_lines, own=None, avoid_boxes=avoid_boxes)
+              avoid_lines=street_lines, own=None, avoid_boxes=avoid_boxes, halo=halo)
 
 
 def _draw_edge_lengths(sheet: Sheet, subject: SubjectLot, fr: ViewFrame, rect: _Box,
@@ -452,42 +466,53 @@ def draw_block_scene(
     context: MapContext, fr: ViewFrame, rect: _Box, region: _Box, *,
     title: str | None, with_edges: bool, with_widths: bool, label_focus: bool,
     street_filter: set[str] | None = None, dimension_style: str = "simple",
-    min_label_pt: float = 0.0,
+    min_label_pt: float = 0.0, close_style: bool = False,
 ) -> Sheet:
     """The shared coloured scene: even street areas (named gaps only), the subject
     coloured above the existing building, neighbours as thin outlines, buildings
     grey, street names in their street. Labels only the subject (and, when
     ``label_focus``, its edge-sharing neighbours), never across a street.
-    ``dimension_style='close'`` draws basis-naming dimension lines (M5-T166);
+    ``dimension_style='close'`` draws figure-only dimension lines (M5-T166);
     ``min_label_pt`` raises every scene label to at least that size (the close
-    frame keeps all labels at >= 8.5 pt, failing rather than shrinking)."""
+    frame keeps all labels at >= 8.5 pt, failing rather than shrinking).
+    ``close_style`` (the page-3 and page-1 close frames) puts every scene label on
+    a white background, draws neighbouring buildings lighter, and drops neighbour
+    addresses so the subject and its dimensions dominate (S14, S15)."""
     assert isinstance(context.streets, StreetLayer)
     sheet = Sheet()
     data_region = _data_region(context, fr)
     street_lines = _street_lines_screen(context.streets, fr, rect, data_region)
-    _draw_lots_and_buildings(sheet, context, fr, rect, street_lines)
+    _draw_lots_and_buildings(sheet, context, fr, rect, street_lines,
+                             light_neighbours=close_style)
     marker_box = _subject_box(context.subject_lot, fr)
     subj = context.subject_lot
     # On the close frame the dimensions are the focus: place them FIRST so they win
     # the lanes outside the lot, then fit the street/neighbour labels around them.
+    dim_lines: list = []
     if with_edges and dimension_style == "close":
         # A dimension is anchored to the edge it measures and sits in the lane just
         # outside it, so it may run parallel to that edge's own fronting street; it is
         # placed first and the street names then avoid its boxes. Its label is kept
-        # clear of every drawn lot boundary and street line (rework 2, visual G3 F5).
-        draw_edge_dimensions(sheet, subj.outline, fr, rect,
-                             size=max(DIMENSION_MIN_PT, min_label_pt),
-                             avoid_lines=street_lines + dimension_avoid_lines(context, fr, rect))
+        # clear of every drawn lot boundary and street line (rework 2, visual G3 F5),
+        # and the lot/street/width labels then also avoid the dimension and witness
+        # lines so no dimension line runs along a label (rework 3, defect 2).
+        boundary_avoid = street_lines + dimension_avoid_lines(context, fr, rect)
+        dims = draw_edge_dimensions(sheet, subj.outline, fr, rect,
+                                    size=max(DIMENSION_MIN_PT, min_label_pt),
+                                    avoid_lines=boundary_avoid)
+        dim_lines = dimension_line_segments(dims)
+    label_lines = street_lines + dim_lines
     size = max(TYPOGRAPHY.label_pt + 1.0, min_label_pt)
     _label_streets(sheet, context.streets, fr, rect, size, with_width=with_widths,
-                   data_region=data_region, only=street_filter, street_lines=street_lines,
-                   avoid_boxes=(marker_box,), min_pt=min_label_pt)
+                   data_region=data_region, only=street_filter, street_lines=label_lines,
+                   avoid_boxes=(marker_box,), min_pt=min_label_pt, halo=close_style)
     subj_label_pt = max(TYPOGRAPHY.label_pt + 2.0, min_label_pt)
-    _subject_label(sheet, subj, fr, rect, subj_label_pt, street_lines)
+    _subject_label(sheet, subj, fr, rect, subj_label_pt, label_lines, halo=close_style)
     if label_focus:
         for lot in edge_sharing_lots(context):
             _neighbour_label(sheet, lot, fr, rect, max(TYPOGRAPHY.label_pt, min_label_pt),
-                             street_lines, (marker_box,), min_pt=min_label_pt)
+                             label_lines, (marker_box,), min_pt=min_label_pt,
+                             with_address=not close_style, halo=close_style)
     if with_edges and dimension_style != "close":
         _draw_edge_lengths(sheet, subj, fr, rect, street_lines)
     draw_frame(sheet, rect)
@@ -650,8 +675,12 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Draw
         rect = viewport(SUMMARY_PLAN, FRAME_INSET)
         border = bordering_street_names(context.subject_lot.outline, context.streets,
                                         SITE_SUMMARY_BORDER_FT)
+        # close_style: the page-1 compact close frame gets the same white label
+        # backgrounds and lighter neighbouring buildings as the large page-3 frame
+        # (S14, S15); it carries no dimensions, so no basis note (K1).
         sheet = draw_block_scene(context, fr, rect, SUMMARY_PLAN, title=None, with_edges=False,
-                                 with_widths=False, label_focus=False, street_filter=border)
+                                 with_widths=False, label_focus=False, street_filter=border,
+                                 close_style=True)
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
                                mode="summary")
     if frame == "wide":
@@ -672,9 +701,11 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Draw
         rect = viewport(CLOSE_PLAN)
         sheet = draw_block_scene(context, fr, rect, CLOSE_PLAN, title=title, with_edges=True,
                                  with_widths=True, label_focus=True, dimension_style="close",
-                                 min_label_pt=DIMENSION_MIN_PT)
+                                 min_label_pt=DIMENSION_MIN_PT, close_style=True)
+        # The dimensions all share the gis basis, so it is stated ONCE in a note under
+        # the drawing and each label shows only the figure (owner K1, D-094 R116).
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
-                               mode="close", not_placed_legend=True)
+                               mode="close", not_placed_legend=True, basis_note=GIS_BASIS_NOTE)
     report = frame == "report"
     region, margin = ((REPORT_PLAN, REPORT_PLAN_MARGIN) if report else (PLAN, PLAN_MARGIN))
     fr = fit_view(view, region, margin, alpha=alpha, top_band=TITLE_BAND_PT)

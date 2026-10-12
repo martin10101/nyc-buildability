@@ -123,6 +123,14 @@ WIDE_FURN_TOP = 250.0
 # big enough for dimension lanes with labels at >= 8.5 pt. At most 182 mm (515.9 pt)
 # wide; the subject and its edge-sharing neighbours dominate; the furniture strip
 # (north arrow + scale bar + legend, with the 'No building placed' entry) sits below.
+# The frame is kept at full legible size: shrinking it toward one A4 page does NOT
+# reach 9 pages (the lot-area basis + both tables already take ~128 mm, so the frame
+# would have to drop to ~340 pt - well below the ~416 pt floor where a dimension label
+# can no longer be placed at >= 8.5 pt, and the build fails rather than shrinks). The
+# section is instead REORDERED (tables before the frame) so no 4-row table is ever left
+# alone on a page; the frame, the dominant visual, takes the next page. Fitting the
+# whole section on one page would need the report row/page-break CSS in the M5-T165
+# report layout, which is out of this task's scope (see page_site_context.render).
 CLOSE_CANVAS_W = REPORT_CANVAS_W
 CLOSE_PLAN = (8.0, 8.0, 504.0, 392.0)
 CLOSE_PLAN_MARGIN = 18.0
@@ -317,13 +325,30 @@ def box_crosses_lines(box: Box, named_lines, own: str | None, pad: float = 0.0,
 # --------------------------------------------------------------------------- #
 # Label placement (drop a label rather than overlap/cross -> clean frames).
 # --------------------------------------------------------------------------- #
+def _label_background(x: float, y: float, text: str, size: float, anchor: str,
+                      rotate: float, pad: float = 0.6) -> str:
+    """A white rectangle behind one label, in the label's own (possibly rotated)
+    frame, so no drawn line or fill shows through the text (D-094 R115; S14). The
+    rect covers ``text_box``'s local extent about the baseline ``(x, y)`` and
+    carries the same ``rotate`` as the text, so it stays tight on rotated labels."""
+    width = len(text) * size * TYPOGRAPHY.char_width_em
+    left = {"start": 0.0, "middle": -width / 2.0, "end": -width}[anchor]
+    transform = f"rotate({num(rotate)} {num(x)} {num(y)})" if rotate else None
+    return element("rect", [
+        ("x", x + left - pad), ("y", y - 0.8 * size - pad),
+        ("width", width + 2.0 * pad), ("height", 1.05 * size + 2.0 * pad),
+        ("transform", transform), ("fill", "#FFFFFF"), ("stroke", "none"),
+        ("data-role", "label-background")])
+
+
 def place(sheet: Sheet, candidates, text, *, size, source, role, anchor="start", style=None,
           rect: _Box | None = None, pad: float = 1.0, avoid_lines=None, own: str | None = None,
-          avoid_boxes=(), cross_max_len: float = 1.0) -> Box | None:
+          avoid_boxes=(), cross_max_len: float = 1.0, halo: bool = False) -> Box | None:
     """Place ``text`` at the first candidate whose box (a) is inside ``rect``,
     (b) does not overlap a placed label or any box in ``avoid_boxes``, and (c) is
     not run along by a street in ``avoid_lines`` other than ``own`` for more than
-    ``cross_max_len`` points. Returns the placed Box, or ``None`` (dropped)."""
+    ``cross_max_len`` points. With ``halo`` a white background is drawn behind the
+    text first (S14). Returns the placed Box, or ``None`` (dropped)."""
     for x, y, rot in candidates:
         box = text_box(x, y, text, size, anchor, rot)
         if rect is not None and not box_in_rect(box, rect):
@@ -335,6 +360,8 @@ def place(sheet: Sheet, candidates, text, *, size, source, role, anchor="start",
         if avoid_lines is not None and box_crosses_lines(box, avoid_lines, own, pad=0.5,
                                                          max_len=cross_max_len):
             continue
+        if halo:  # the white background goes BEHIND the text (appended first).
+            sheet.parts.append(_label_background(x, y, text, size, anchor, rot))
         sheet.label([(x, y, rot)], text, size=size, source=source, role=role, anchor=anchor,
                     style=style)
         return box
@@ -402,9 +429,21 @@ def project_polygon(polygon: Polygon, fr: ViewFrame):
     return [[fr.px(p) for p in ring] for ring in polygon.rings]
 
 
-def draw_clipped_area(sheet: Sheet, rings, kind: str, source: str, rect: _Box) -> None:
+def draw_clipped_area(sheet: Sheet, rings, kind: str, source: str, rect: _Box,
+                      *, opacity: float | None = None) -> None:
+    start = len(sheet.parts)
     for poly in clip_polygon_to_rect([tuple(r) for r in rings], rect):
         sheet.area(path_data(poly), kind, [("data-source", source)])
+    # ``opacity`` draws this area LIGHTER by wrapping its fill (and hatch) in a group
+    # (the close frame draws neighbouring buildings lighter so the subject dominates;
+    # S15). The kind is still registered above, so the legend keeps the entry.
+    if opacity is not None and len(sheet.parts) > start:
+        body = sheet.parts[start:]
+        del sheet.parts[start:]
+        sheet.parts.append(
+            f'<g data-role="lighter-neighbour-building" opacity="{num(opacity)}">')
+        sheet.parts.extend(body)
+        sheet.parts.append("</g>")
 
 
 def draw_clipped_outline(sheet: Sheet, rings, kind: str, source: str, rect: _Box) -> None:
@@ -507,14 +546,25 @@ def _not_placed_legend_row(x: float, top: float) -> tuple[list[str], float]:
     return parts, y + 16.0
 
 
+def _basis_note_part(text: str) -> str:
+    """The single-basis note stated ONCE directly under the close frame (owner K1,
+    D-094 R116): centred in the clear band between the drawing frame and the
+    furniture strip, at >= 8.5 pt, carrying no number so it needs no source."""
+    y = CLOSE_PLAN[3] - FRAME_INSET + 8.5  # just below the viewport frame line
+    return text_element(CLOSE_CANVAS_W / 2.0, y, text, size=8.5, source=None,
+                        role="dimension-basis", anchor="middle")
+
+
 def compose_context(drawing: str, title: str, sheet: Sheet, frame: ViewFrame,
                     notes: Sequence[MapNote], *, mode: str = "sheet",
-                    not_placed_legend: bool = False) -> Drawing:
+                    not_placed_legend: bool = False, basis_note: str | None = None) -> Drawing:
     """Assemble the scene plus the furniture (north arrow rotated to grid north).
     ``mode`` is 'report', 'sheet', 'summary', 'wide' or 'close' (the large page-3
     constraints close frame, which carries the 'No building placed' legend entry
-    when ``not_placed_legend`` is set)."""
+    when ``not_placed_legend`` is set, and - when ``basis_note`` is given - states
+    its dimensions' shared measurement basis once in a note under the drawing)."""
     if mode == "close":
+        note_part = [_basis_note_part(basis_note)] if basis_note else []
         panel, north_bottom = _north(REPORT_NORTH_CX, CLOSE_FURN_TOP, frame.north_deg)
         bar_parts, bar_labels = scale_bar(REPORT_SCALE_X, CLOSE_FURN_TOP + 16.0, frame.k, 150.0)
         legend_parts, legend_bottom = legend_flow(
@@ -524,7 +574,7 @@ def compose_context(drawing: str, title: str, sheet: Sheet, frame: ViewFrame,
             legend_parts = legend_parts + extra
         furn_bottom = max(north_bottom, legend_bottom, CLOSE_FURN_TOP + 46.0)
         height = min(CLOSE_MAX_H_PT, furn_bottom + 8.0)
-        body = sheet.parts + panel + bar_parts + legend_parts
+        body = sheet.parts + note_part + panel + bar_parts + legend_parts
         svg = svg_document(width=CLOSE_CANVAS_W, height=height, drawing=drawing, title=title,
                            defs=hatch_defs(sheet.kinds), body=body)
         note_labels = [Label(n.text, n.source, "note") for n in notes]

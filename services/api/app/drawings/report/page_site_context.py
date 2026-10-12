@@ -128,11 +128,15 @@ def render(
     # The 'What constrains the design?' sheet follows, on its own printed page. The
     # 'No building placed' state is a legend entry on the close frame now (M5-T166 S8);
     # the plain not-placed sentence stays on the scenario sheet only.
-    constraints_block: list[object] = [
-        el("h2", QUESTION),
-        _lot_area_basis(results),
-        _site_outline(results, site_plan),
-    ]
+    # Order (rework 3 addition). The close frame cannot be shrunk below ~416 pt without
+    # a dimension label falling under 8.5 pt, and the section's content (lot-area basis,
+    # two tables, the large frame) totals more than one A4 page, so the frame cannot
+    # share a page with every table. Printed frame-first (contract order), the 4-row
+    # constraint table lands ALONE on an otherwise blank page after the frame. So the
+    # section is reordered (the addition's sanctioned alternative): the two constraint
+    # tables sit together with the lot-area basis, and the large frame - the page's
+    # dominant visual - takes the next page; no block is left alone on a blank page.
+    constraints_block: list[object] = [el("h2", QUESTION), _lot_area_basis(results)]
     heights = _heights_table(results)
     if heights is not None:
         constraints_block += [el("h3", "Height limits"), heights]
@@ -143,6 +147,7 @@ def render(
             _constraint_rows(results, item_number),
             caption="Zoning constraints for this lot",
         ),
+        _site_outline(results, site_plan),
     ]
     children.append(el("div", *constraints_block, class_="constraints-sheet"))
     return str(el("section", *children, class_="report-page", id="site-and-context"))

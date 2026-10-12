@@ -3,7 +3,7 @@
  "record_id": "NB-04",
  "title": "215-16 Northern Boulevard: which dimensions are printed, recorded or GIS, and what the 2017 survey settles",
  "revision": 2,
- "last_changed": "2026-10-11",
+ "last_changed": "2026-10-12",
  "question": {
   "text": "Which dimensions of lot 70 come from printed tax-map labels, administrative records and GIS, and what must the named 2017 survey settle?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -158,28 +158,28 @@
     "value": "103.87921",
     "units": "ft (US survey)",
     "basis": "gis",
-    "scope": "existing; tax lot outline; drawn on the close frame as '103.88 ft, map outline, not surveyed'"
+    "scope": "existing; tax lot outline; drawn on the close frame as '103.88 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
    },
    {
     "name": "lot 70 outline edge shared with lot 1",
     "value": "99.97647",
     "units": "ft (US survey)",
     "basis": "gis",
-    "scope": "existing; tax lot outline; E4 adjacent_shared_lengths 70-1; drawn on the close frame as '99.98 ft, map outline, not surveyed'"
+    "scope": "existing; tax lot outline; E4 adjacent_shared_lengths 70-1; drawn on the close frame as '99.98 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
    },
    {
     "name": "lot 70 outline edge opposite the lot-1 boundary",
     "value": "99.97605",
     "units": "ft (US survey)",
     "basis": "gis",
-    "scope": "existing; tax lot outline; E4 lot-70 edge, not shared with a neighbour; drawn on the close frame as '99.98 ft, map outline, not surveyed'"
+    "scope": "existing; tax lot outline; E4 lot-70 edge, not shared with a neighbour; drawn on the close frame as '99.98 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
    },
    {
     "name": "lot 70 outline edge shared with lot 11",
     "value": "101.70896",
     "units": "ft (US survey)",
     "basis": "gis",
-    "scope": "existing; tax lot outline; E4 adjacent_shared_lengths 70-11; drawn on the close frame as '101.71 ft, map outline, not surveyed'"
+    "scope": "existing; tax lot outline; E4 adjacent_shared_lengths 70-11; drawn on the close frame as '101.71 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
    },
    {
     "name": "Northern Boulevard frontage",
@@ -270,7 +270,7 @@
   "code_identity": {
    "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
    "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8",
-   "services/api/app/drawings/maps/close_frame_dimensions.py": "e25fa02627f9ab4e849fcb55195adb16e5a85e225da6d4d12a958fe541e9e4b8"
+   "services/api/app/drawings/maps/close_frame_dimensions.py": "5dba6cf8e8307111b80fbd25bffe3c62964166572efd9a7e9347dbaeffb79dea"
   },
   "worked_example": {
    "inputs": "Recorded area 10075 sq ft; GIS outline 10387.99 sq ft.",

@@ -141,3 +141,19 @@ def test_s12_six_sections_and_page_one_wrapper_untouched() -> None:
     # the page-1 wrapper (class summary-figure, its short caption) is unchanged.
     assert 'class="summary-figure"' in decision
     assert "The lot among its neighbours (city map; not surveyed)." in decision
+
+
+def test_the_frame_is_the_last_block_so_no_table_is_orphaned() -> None:
+    # rework 3 addition: the close frame cannot be shrunk below ~416 pt (a dimension
+    # label would fall under 8.5 pt), and the constraints section is more than one A4
+    # page, so the large frame is placed AFTER the two constraint tables. The tables sit
+    # together with the lot-area basis; the frame - the dominant visual - takes its own
+    # page. This prevents the 4-row constraint table being orphaned alone on a blank
+    # page after the frame. (A true page-break check needs a browser and runs in the
+    # print / visual H2 check, not this HTML unit test; here the block ORDER is pinned.)
+    site = _site_section(_report_with_maps())
+    body = site[site.index("What constrains the design?"):]
+    assert 'data-drawing="site_context_plan"' in body  # the close frame is on this page
+    frame_at = body.index('data-drawing="site_context_plan"')
+    assert body.index("Height limits for this lot") < frame_at
+    assert body.index("Zoning constraints for this lot") < frame_at
