@@ -426,3 +426,37 @@ to build).
   slower than it looks.
 - **At the handoff (owner, about 21:27 UTC: "dont start any new tesk finish up"):** nothing new was started; the
   running helpers were stopped and their unfinished work saved for the next session (see the handoff).
+
+## 19. "So, what does the new library do?" (answered by about 23:37 UTC, 2026-10-11)
+
+- **Developer (answered):** the zoning-law library (accepted that evening) is a set of documents, not program code; it
+  changes no number in the report or on the website. It holds: every Zoning Resolution section the R6B benchmark's
+  rules rely on (73 so far) and every section those sections point to, each pointer marked followed or not followed
+  yet with the reason (162 pointers); which sections the program actually calculates (6) and which it does not yet
+  (67); the sections each of the eleven development options depends on; a pitfall checklist from Buildings
+  Department bulletins and determinations, Board of Standards and Appeals decisions and City Planning guidance; and a
+  research log (what was searched, what could not be reached, and what still needs capturing: 5 sections and 8
+  defined terms). It is labelled an unreviewed draft.
+- **Confirmed by it:** the height rule handles only the base-height table (23-432), not the street-wall (23-431) and
+  setback (23-433) sections; that gap is queued for the envelope-constraints task.
+
+## 20. "What is this for?" about a permission prompt, then "Ok send it again I will approve" (about 23:45 to 23:48 UTC)
+
+- **Developer (answered):** the page-1 builder had asked to delete `apps/web/node_modules` in its own private copy.
+  That was a shortcut (a link) to the web tools in the main wave folder, made only so the builder could print and
+  check its own page; deleting it removes the link, never the real tools, and keeps a stray file out of the commit.
+  Safe to allow.
+- **Done:** the orchestrator removed the link itself by its full path; the builder's copy was clean and the real tools
+  untouched.
+
+## 21. "At a clean seam do session handoff" (about 00:27 UTC, 2026-10-12)
+
+- **Where things stood:** accepted this session: the zoning-law library, the results format 1.5.0, and the short-block
+  rear-yard reference case (two independent readings of ZR 23-344(b) and (c)(3); every disagreement left not
+  settled). Page 1 rebuilt and on the wave branch: the whole decision summary fits page 1 (key figures large, each
+  on one line; status visible; the legal ceiling 29 beside the estimate 17-22 with the distinction line; three
+  uncertainties); its re-checks were finishing. The close-up map (page 3) was in its third fix (one label drawn on
+  its own dimension line; the constraints table alone on a page) when the session stopped.
+- **Not done yet:** the close-up's third fix, page 1's and the close-up's acceptance, the website's page-1 parity, the
+  wave's pull request, and the first PDF for the owner.
+- **At the handoff:** nothing kept running; unfinished work saved for the next session (see the handoff).
