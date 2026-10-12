@@ -142,16 +142,23 @@ def _answers_table(results: Mapping, ident: Mapping) -> raw:
     worked = readers.worked_buildings(results)
     if worked:
         area_disp = worked[0].get("scheduled_display")
-        # key figure: the scheduled floor area (one value field); detail: the fixed
-        # "Scheduled floor area: N sq ft; site fit unverified" wording (X5), kept whole.
-        if area_disp:
-            scheduled_key = f"{area_disp} sq ft"
-            scheduled_detail = labels.scheduled_floor_area_line(area_disp)
+        storeys = worked[0].get("storey_count")
+        height = worked[0].get("height_display")
+        # key figure: a NON-DUPLICATIVE field of the scheduled building - its storey count
+        # (or height), read from the document - so page 1 does not show the floor-area number
+        # as a giant headline value twice (the allowance already shows it, R2b). The floor
+        # area stays, verbatim, inside the fixed "Scheduled floor area: N sq ft; site fit
+        # unverified" wording (X5), which is the detail; nothing is recomputed.
+        if storeys:
+            scheduled_key, scheduled_basis = f"{storeys} storeys", height
+        elif height:
+            scheduled_key, scheduled_basis = height, None
         else:
-            scheduled_key, scheduled_detail = None, "Scheduled building not available"
-        scheduled_basis = None
-        if worked[0].get("storey_count") and worked[0].get("height_display"):
-            scheduled_basis = f"{worked[0]['storey_count']} storeys; {worked[0]['height_display']}"
+            scheduled_key, scheduled_basis = (f"{area_disp} sq ft" if area_disp else None), None
+        scheduled_detail = (
+            labels.scheduled_floor_area_line(area_disp) if area_disp
+            else "Scheduled building not available"
+        )
         scheduled_label = worked[0]["status_label"]
     else:
         scheduled_key, scheduled_detail, scheduled_basis, scheduled_label = (
@@ -166,13 +173,18 @@ def _answers_table(results: Mapping, ident: Mapping) -> raw:
         ("Scheduled building",
          _answer_cell(scheduled_key, scheduled_detail, scheduled_basis), scheduled_label),
     ]
+    # Two columns, not three: the status label sits with the answer NAME, which frees the
+    # Result column to the width the key figure needs so the number keeps its unit on one
+    # line beside the 88 mm site figure (visual G3 rework 2; it cannot fit a third column).
     body = [
-        el("tr", el("th", name), el("td", cell), el("td", label_chip(label)))
+        el("tr",
+           el("th", el("div", name, class_="answer-name"), label_chip(label)),
+           el("td", cell))
         for name, cell, label in rows
     ]
     return el(
         "table",
-        el("thead", el("tr", el("th", "Answer"), el("th", "Result"), el("th", "Status"))),
+        el("thead", el("tr", el("th", "Answer"), el("th", "Result"))),
         el("tbody", *body),
         class_="answers-table",
     )

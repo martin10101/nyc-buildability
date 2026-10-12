@@ -118,10 +118,16 @@ a {{ color: {action}; }}
 /* The decision-summary row must fit the printable width: the answers table takes
    the remaining space and its cells wrap, the figure stays 88 mm, so nothing
    overflows and the whole body prints at its true size (correction 2). */
-.summary {{ display: flex; gap: 6mm; align-items: flex-start; }}
+.summary {{ display: flex; gap: 4mm; align-items: flex-start; }}
 .summary-answers {{ flex: 1 1 auto; min-width: 0; }}
 .summary-figure {{ flex: 0 0 88mm; }}
 .summary-figure figcaption {{ white-space: normal; }}
+/* Two columns: the Answer name (with its status label below it) takes a fixed narrow
+   column and the Result column takes the rest, so a key figure keeps its number and unit
+   on one line in the space beside the 88 mm figure (visual G3 rework 2). */
+.answers-table {{ table-layout: fixed; }}
+.answers-table th:first-child, .answers-table td:first-child {{ width: 24mm; }}
+.answer-name {{ margin: 0 0 1mm; }}
 .answers-table td, .answers-table th {{ vertical-align: top; overflow-wrap: break-word;
   padding-top: 1mm; padding-bottom: 1mm; }}
 .answers-table .identity-line, .answers-table .answer-detail {{ line-height: 1.3; }}

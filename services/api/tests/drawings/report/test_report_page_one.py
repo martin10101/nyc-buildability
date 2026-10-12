@@ -170,6 +170,34 @@ def test_rework1_answers_table_and_figure_fit_printable_width() -> None:
     )
 
 
+# ============================================================= visual G3 rework 2
+def test_rework2_key_figure_keeps_its_number_with_its_unit() -> None:
+    # Each key figure keeps its number WITH its unit in the one headline string (the unit is
+    # never banished to the detail), and the Result column is given the width to keep it on one
+    # line: the Answer column is a fixed narrow column and the table is fixed-layout, so the
+    # Result column takes the rest of the space beside the 88 mm figure (visual G3 rework 2).
+    page = _page_one_html(benchmark())
+    figures = re.findall(r'<div class="answer-figure">([^<]*)</div>', page)
+    assert "20,150 sq ft" in figures  # the area number keeps its "sq ft", not split off
+    for figure_text in figures:
+        if any(ch.isdigit() for ch in figure_text):
+            assert re.search(r"[A-Za-z]", figure_text), f"a number stands unitless: {figure_text!r}"
+    css = layout.report_css("H", "F")
+    assert re.search(r"\.answers-table\s*\{[^}]*table-layout:\s*fixed", css)
+    assert re.search(r"\.answers-table th:first-child[^{]*\{[^}]*width:\s*\d+mm", css)
+
+
+def test_rework2_no_duplicate_headline_figure_on_page_one() -> None:
+    # No value is the 30 pt headline figure of two rows unless the document assigns the same
+    # value to two different answers. The scheduled row shows a field of its own ("3 storeys"),
+    # not the allowance's "20,150 sq ft" again, so the three key figures are distinct and the
+    # same giant number never prints twice (visual G3 rework 2).
+    page = _page_one_html(benchmark())
+    figures = re.findall(r'<div class="answer-figure">([^<]*)</div>', page)
+    assert len(figures) == len(set(figures)), f"a key figure repeats as a headline: {figures}"
+    assert figures.count("20,150 sq ft") == 1
+
+
 # =========================================================================== S4
 def test_s4_ceiling_and_estimate_sit_in_one_block_with_the_token_line() -> None:
     # the token distinction line equals the contract's quoted line (byte-for-byte).

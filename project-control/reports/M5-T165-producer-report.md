@@ -237,3 +237,56 @@ FAILED (200 + 6 ≥ 182). Both restored → green.
 point sizes are by eye. NB-01 unchanged this rework (no code path touched); review_state stays stale
 pending G1. Every unresolved input stays unresolved (zoning lot Conditional, lot area Conditional,
 rear yard an Unresolved open check).
+
+## Rework 2 (visual G3 delta advisories; base c2413c5d)
+
+Fixed the two visual ADVISORY items from the delta re-check (page 1 PASS, advisories 1-2). Only
+`page_decision_summary.py`, `layout.py` and `test_report_page_one.py` changed. Checked by printing
+page 1 at 200 dpi (make_after_report.py with the map pack, print-report-pdf.mjs, pdftoppm); no
+server/ports; the node_modules link was removed before committing.
+
+**What changed and why**
+- **Key figures on one line (advisory 1).** I measured "20,150 sq ft" at bold 30 pt = ~60 mm, but
+  the answers area beside the pinned 88 mm figure is only ~88 mm, so a 3-column Answer|Result|Status
+  table leaves the Result column ~39 mm and the figure wraps "20,150" / "sq ft". The orchestrator's
+  hint ("trim the Status width") can't be met by narrowing alone (even minimal columns leave Result
+  < 60 mm). So the answers table is now TWO columns: the status label moves beside the answer NAME
+  (Answer|Result), which frees the Result column to ~66 mm. All three key figures now sit on one line
+  ("20,150 sq ft", "Up to 55 ft", "3 storeys"). CSS: `table-layout: fixed`, a 24 mm Answer column,
+  `.answer-name` for the name above the chip, and the `.summary` gap 6→4 mm. No font was shrunk; the
+  `.answer-figure` is still 30 pt with no `white-space: nowrap` (test_correction2 holds). No test
+  pinned the 3-column structure or the "Status" header.
+- **Scheduled row no longer repeats the allowance (advisory 2).** The "Scheduled building" key figure
+  is now a non-duplicative field of the building itself - its storey count "3 storeys" (read from the
+  document; height as a fallback) - so page 1 no longer prints "20,150 sq ft" as a giant 30 pt value
+  twice. The floor area stays verbatim inside the fixed detail "Scheduled floor area: 20,150 sq ft;
+  site fit unverified" (body size); the height "30 ft" is the basis line. Nothing is recomputed.
+
+**Page-1 description (my 200 dpi print, 10 pages total).** Page 1 holds the whole decision summary:
+identity + register index-entry sentence; standing label; "What can I potentially build?"; a
+two-column answers table - left column each answer name with its "Conditional" chip below it, right
+column the 30 pt key figure on ONE line ("20,150 sq ft"; "Up to 55 ft"; "3 storeys") with its body
+detail, assumption line and (floor-area) allowance phrase; the compact close frame on the right;
+"Legal ceiling 29" (Conditional) beside "Estimate 17-22" (Provisional, links #estimate-B) + the
+distinction line; the three uncertainties; the scope line. Page 2 starts "Site and context" - the
+decision summary does not spill. The giant "20,150 sq ft" now prints once.
+
+**New tests.** `test_rework2_key_figure_keeps_its_number_with_its_unit` (each key figure keeps its
+unit; Answer column fixed-width + table-layout fixed so Result gets the width for one line) and
+`test_rework2_no_duplicate_headline_figure_on_page_one` (the three key figures are distinct;
+"20,150 sq ft" prints once). S1/S7 still hold; page 1 = 188 words, total 2314.
+
+**Checks (direct exit codes).** ruff = 0. pytest -q tests/drawings tests/cad tests/journey tests/api
+tests/scenario/three_answers/test_result_ways.py = 0 (3019 passed, 6 skipped). node
+presentation-tokens.mjs --check = 0; node --test = 0 (10/10). research_record_check --check = 0
+(NB-01 code_current=True, review_state=current; unchanged this rework). modularity_check --check = 0.
+
+**Mutation.** Scheduled key figure reverted to the duplicate "20,150 sq ft" →
+`test_rework2_no_duplicate_headline_figure_on_page_one` FAILED (figures ['20,150 sq ft','Up to 55
+ft','20,150 sq ft'], 3 != 2 distinct). Restored byte-identical → green.
+
+**What I could not check / note.** No live website/preview or browser; printed point sizes by eye.
+The 2-column table is a slightly larger change than "trim the widths", made because "20,150 sq ft"
+at 30 pt geometrically cannot fit a 3-column Result beside the 88 mm figure; the side-by-side
+answers|figure layout and the summary-figure wrapper/caption (S14) are unchanged. NB-01 untouched.
+Every unresolved input stays unresolved.
