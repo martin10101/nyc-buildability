@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 113,
+ "requirement_count": 114,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T22:26:05+00:00",
+ "updated_at": "2026-10-12T03:23:58+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3670,6 +3670,37 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured 2026-10-11; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R114",
+   "text": "'So,can u bring it up to date': bring the master plan (project-control/master_plan.json) up to date: milestone statuses and summaries reconciled with the ledger and the work under way, the current-milestone pointer and date current, and the report programme toward the sample-comparable PDF named (the remaining steps of the current redesign pass, then the work the full report needs after it, each planned, not yet planned, or waiting on an owner decision), as the orchestrator's status report of 2026-10-12 said it lacked.",
+   "source_ref": "source-009-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-12"
+   },
+   "dependencies": [],
+   "required_harness": "project-control/master_plan.json at the commit that updates it: every milestone's status and summary agree with the ledger's task statuses at that head; the report programme is named with each item's state; tools/validate_product_map.py and the ledger status command still read it.",
+   "required_evidence": "The commit updating project-control/master_plan.json, citing D-094-R114.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-12; not yet implemented or verified.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
