@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 116,
+ "requirement_count": 117,
  "producer": "orchestrator",
- "updated_at": "2026-10-12T05:58:38+00:00",
+ "updated_at": "2026-10-13T05:31:19+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3767,6 +3767,37 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured 2026-10-12; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R117",
+   "text": "'Yes': the owner approves the recommendation of question L1: one short living-files map loaded at the start of every session (each file Claude must keep up to date, what goes in it, the exact moment it must be updated, and how to check it was done), replacing the scattered one-liners it covers so the session start does not grow; and a short checklist at every handoff confirming each file was updated.",
+   "source_ref": "source-012-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-13"
+   },
+   "dependencies": [],
+   "required_harness": "The map file is always loaded (no paths frontmatter) and names every living file including the question-and-answer log and the master plan; tools/context_budget_check.py reports the eager total not larger than before the change; the session-handoff profile carries the checklist; the next handoff shows the checklist ticked.",
+   "required_evidence": "The governance task's commit (the map, the replaced lines, the profile checklist) and the context-budget report before and after.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-13; not yet implemented or verified.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
