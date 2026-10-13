@@ -78,14 +78,14 @@
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The rule is loaded by sessions started after the merge to main; a session started earlier passes its old instruction snapshot to helpers (M0-T191): the next briefs name the map explicitly until then."
   ],
   "blockers": [],
   "created_at": "2026-10-13T05:36:35.023201+00:00",
-  "updated_at": "2026-10-13T06:04:53.332906+00:00",
+  "updated_at": "2026-10-13T06:22:54.281939+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -139,5 +139,7 @@
       "actor": "orchestrator",
       "change": "G3 (code-reviewer, PASS with required correction F1): the objective and S2 said the eager total of tools/context_budget_check.py does not grow; it grows by 105 bytes (44767 -> 44872), offset by the 107-byte memory-index trim outside git, so the whole session start shrinks by 2 bytes. Objective and S2 reworded to the whole-session-start measure, with the caveat that neither number is guarded (no size cap; memory outside git). S4 reworded to one checklist item per map line plus the memory index, reported as a 'Living files:' line in the handoff's section 3 (G3 A2-A4). Old S2 'then': 'the after total is not larger than the before total; the check exits 0 (no retired/superseded section, no duplicate)'. Old S4 'then': 'it carries a living-files checklist, one item per map line, to be confirmed and reported in the handoff before HANDOFF READY'."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-13T06:22:54.281746+00:00"
 }

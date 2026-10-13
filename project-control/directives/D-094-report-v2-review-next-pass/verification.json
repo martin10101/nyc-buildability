@@ -1588,18 +1588,25 @@
     "D-094-R117"
    ],
    "producer": "orchestrator",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c7ad7bf1b3d6eb53ad5f9f8082b418489b6881e9",
+   "reviewed_manifest_sha256": "d3711e5da0aaa02b58cf833228f3cc71e2ca3aca76694a2fbc8c57f28c7694be",
    "requirements": [
     {
      "id": "D-094-R117",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Owner's primary words are \"Yes\" to question L1 (source-012-amendment.md#owner-message-verbatim, raw SHA-256 85a39ab3...; Q&A log \u00a728-29 at ea225229 records the question and this answer); the row text in requirements.json matches.",
+      "The map .claude/rules/living-files.md exists, is eager (line 1 has no paths frontmatter; context_budget_check.py lists it as eager, 1647B/18L), and names every living file (questionnaire, Q&A log + private copy, directives, research records + zoning-rule register + owner RQ queue, discovery backlog, master plan, program/coding lessons + working knowledge, session notes, handoff, session brief), each with the exact moment to update it; \"how to check\" is delegated to the handoff checklist it points to on line 3.",
+      "The removed PROGRAM_KNOWLEDGE.md one-liners lose no duty: backlog D-069, owner-research D-050-R002/R005/R006, loop-run pointer (shortened, same target), and the header append duty are all carried in the map; the two handoff lines (D-090-R941, D-070/D-094-R109-R113) are moved word-for-word into .claude/session-handoff-profile.md:104-109 (I diffed the removed lines against the profile text: identical), and the profile checklist has one item per map line (9) plus the memory index.",
+      "Session-start size: context_budget_check.py gives eager total 44872B (PASS, exit 0), i.e. +105B vs the claim head 44767B; the memory index questionnaire line shrank 239B->132B (I measured both) = -107B, net -2B whole session start. The owner's own \u00a728 framing of \"session start\" includes the memory index, so \"doesn't get bigger\" is met in the owner's sense; the record (G3 F1 correction, producer report caveat, Q&A \u00a729) discloses this exactly. STAYS OPEN: the net-neutral promise is unguarded (no size cap per D-093-R074; memory index is outside git), so future eager regrowth or memory re-expansion is silent, and the map only takes effect for sessions started after it reaches main (packet risk / M0-T191 snapshot); question B1 (moving further instruction-file parts) remains open beyond the lines this map replaced.",
+      "Verifier's carry-forward condition met at c7ad7bf1: the task's allowed-path files are identical to those verified at 59b2ce35 (content identity d3711e5d), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer). DCV report: project-control/reports/M0-T196-DCV.md."
+     ],
+     "reviewed_sha": "c7ad7bf1b3d6eb53ad5f9f8082b418489b6881e9"
     }
-   ]
+   ],
+   "verified_at": "2026-10-13T06:22:53+00:00"
   }
  ]
 }
