@@ -3,7 +3,7 @@
   "title": "Living-files map (owner L1, D-094-R117): one always-loaded map of the files Claude must keep up to date (what goes in each, the moment it must be updated), replacing the scattered one-liners it covers so the session start does not grow, plus a handoff checklist in the session-handoff profile",
   "task_type": "governance",
   "milestone_id": "M0",
-  "objective": "New always-loaded rule .claude/rules/living-files.md (no paths frontmatter): each living file (the owner questionnaire, the question-and-answer log and its private copy, the directive registry, the research records and the owner research queue, the zoning-rule review register, the discovery backlog, the master plan, the program and coding lessons, the session notes, the handoff and the session brief), what goes in it and the exact moment it must be updated. PROGRAM_KNOWLEDGE.md loses the one-liners the map replaces (the backlog duty D-069, the owner-research queue D-050, the owner-invoked handoff D-090 R941, the planned handoff D-070, the append duty in its header) and its loop-run pointer is shortened; nothing else changes. The session-handoff profile gains a living-files checklist confirmed before HANDOFF READY. The eager total reported by tools/context_budget_check.py is not larger than before the change (the owner was told the session start would not grow). No owner-worded text is edited (CLAUDE.md principles, the D-093 rule, the owner's working guidance).",
+  "objective": "New always-loaded rule .claude/rules/living-files.md (no paths frontmatter): each living file (the owner questionnaire, the question-and-answer log and its private copy, the directive registry, the research records and the owner research queue, the zoning-rule review register, the discovery backlog, the master plan, the program and coding lessons, the session notes, the handoff and the session brief), what goes in it and the exact moment it must be updated. PROGRAM_KNOWLEDGE.md loses the one-liners the map replaces (the backlog duty D-069, the owner-research queue D-050, the owner-invoked handoff D-090 R941, the planned handoff D-070, the append duty in its header) and its loop-run pointer is shortened; nothing else changes. The session-handoff profile gains a living-files checklist confirmed before HANDOFF READY, and carries the two handoff lines word for word. The whole session start (the eager project instructions reported by tools/context_budget_check.py plus the memory index) is not larger than before (the owner was told the session start would not grow); both numbers are recorded before and after, with the caveat that neither is guarded against later regrowth (the tool has no size cap; the memory index is outside git). No owner-worded text is edited (CLAUDE.md principles, the D-093 rule, the owner's working guidance).",
   "business_reason": "D-094-R117: the owner found that files set up for Claude to keep up to date (questionnaire, research, long-term observations) are not reliably updated between sessions; one map plus a handoff checklist makes the duty explicit and checkable without growing the session start.",
   "inputs": [
     ".claude/rules/PROGRAM_KNOWLEDGE.md",
@@ -45,9 +45,9 @@
     },
     {
       "id": "S2",
-      "given": "the eager total before (the claim head) and after the change",
-      "when": "tools/context_budget_check.py reports both",
-      "then": "the after total is not larger than the before total; the check exits 0 (no retired/superseded section, no duplicate)"
+      "given": "the eager project-instruction total (tools/context_budget_check.py) and the memory index, before (the claim head) and after the change",
+      "when": "both are measured",
+      "then": "their sum after is not larger than before; both numbers are recorded in the producer report with the caveat that the tool has no size cap and the memory index is outside git, so neither guards later regrowth; the check exits 0 (no retired/superseded section, no duplicate)"
     },
     {
       "id": "S3",
@@ -59,7 +59,7 @@
       "id": "S4",
       "given": ".claude/session-handoff-profile.md",
       "when": "it is read",
-      "then": "it carries a living-files checklist, one item per map line, to be confirmed and reported in the handoff before HANDOFF READY"
+      "then": "it carries a living-files checklist with one item per map line (and one for the memory index), whose result is written as a 'Living files:' line in the handoff's section 3 before HANDOFF READY"
     },
     {
       "id": "S5",
@@ -96,7 +96,7 @@
   ],
   "directive_regime_version": "1.0",
   "directive_regime_entered_at": "2026-10-13T05:36:35.023448+00:00",
-  "path_notes": "Orchestrator-produced governance task (as M0-T193). The always-loaded rule file is new; no placeholder is seeded so that no placeholder text is ever loaded into a session.",
+  "path_notes": "Orchestrator-produced governance task (as M0-T193). The always-loaded rule file is new; no placeholder is seeded so that no placeholder text is ever loaded into a session. Scope correction 2026-10-13 per G3 F1 (code-reviewer): S2 and the objective state the whole-session-start measure (eager project instructions plus the memory index) instead of the eager total alone, which grows by 105 bytes offset by the 107-byte memory-index trim; S4 asks one checklist item per map line (G3 A2-A4).",
   "documented_test_commands": [
     "python3 tools/context_budget_check.py",
     "python3 tools/validate_directive_compliance.py --check",
@@ -117,6 +117,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "map, replacements and checklist written (material commit d0d4fe157); G3 review next"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-13T05:46:55+00:00",
+      "actor": "orchestrator",
+      "change": "G3 (code-reviewer, PASS with required correction F1): the objective and S2 said the eager total of tools/context_budget_check.py does not grow; it grows by 105 bytes (44767 -> 44872), offset by the 107-byte memory-index trim outside git, so the whole session start shrinks by 2 bytes. Objective and S2 reworded to the whole-session-start measure, with the caveat that neither number is guarded (no size cap; memory outside git). S4 reworded to one checklist item per map line plus the memory index, reported as a 'Living files:' line in the handoff's section 3 (G3 A2-A4). Old S2 'then': 'the after total is not larger than the before total; the check exits 0 (no retired/superseded section, no duplicate)'. Old S4 'then': 'it carries a living-files checklist, one item per map line, to be confirmed and reported in the handoff before HANDOFF READY'."
     }
   ]
 }
