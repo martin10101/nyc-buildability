@@ -80,3 +80,16 @@ checkout of these files).
 - Expansion-planning hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2) remains in force.
 - Dependency admissions follow `docs/DEPENDENCY_SECURITY_POLICY.md` (no new packages as a side
   effect of anything).
+
+## Living-files checklist (before HANDOFF READY; owner L1, D-094-R117)
+Confirm each line of `.claude/rules/living-files.md` for THIS session and write the result in the handoff's section 3
+("Living files: all updated", or the exact line not done and why). Never report HANDOFF READY with an unexplained gap.
+- Every owner question asked in chat is in `OWNER_QUESTIONS.md`; answered ones are marked with date and directive row.
+- The question-and-answer log has a section for every owner question or request of this session; the repository file and
+  its private copy are equal (`cmp`).
+- Every substantive owner instruction of this session is captured; `tools/validate_directive_compliance.py --check` exit 0.
+- Research records touched this session: `tools/research_record_check.py --check` exit 0.
+- A dated backlog sweep line exists for every contract or merge seam of this session.
+- After a wave merge or a new contract: `project-control/master_plan.json` counts equal the ledger.
+- Lessons found this session are one-liners in PROGRAM_KNOWLEDGE / CODING_RULES / WORKING_KNOWLEDGE.
+- SESSION_NOTES has a STATE line per seam, dispatch and owner message, and a closing CHECKPOINT.
