@@ -73,19 +73,19 @@
     "G2",
     "G3"
   ],
-  "producer_agent": null,
+  "producer_agent": "orchestrator",
   "reviewer_agents": [
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The rule is loaded by sessions started after the merge to main; a session started earlier passes its old instruction snapshot to helpers (M0-T191): the next briefs name the map explicitly until then."
   ],
   "blockers": [],
   "created_at": "2026-10-13T05:36:35.023201+00:00",
-  "updated_at": "2026-10-13T05:36:35.440224+00:00",
+  "updated_at": "2026-10-13T05:36:38.146493+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -102,5 +102,14 @@
     "python3 tools/validate_directive_compliance.py --check",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-13T05:36:38.146387+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the orchestrator writes the map"
+    }
+  ]
 }
