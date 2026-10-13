@@ -79,13 +79,13 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 70,
+  "progress_percent": 90,
   "risks": [
     "The rule is loaded by sessions started after the merge to main; a session started earlier passes its old instruction snapshot to helpers (M0-T191): the next briefs name the map explicitly until then."
   ],
   "blockers": [],
   "created_at": "2026-10-13T05:36:35.023201+00:00",
-  "updated_at": "2026-10-13T05:47:38.026606+00:00",
+  "updated_at": "2026-10-13T05:56:39.048162+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -124,6 +124,13 @@
       "percent": 70,
       "status": "claimed",
       "message": "G3 PASS with required correction F1; scope corrected (objective, S2, S4; G0 not re-recorded: the CLI refuses an administrative gate by the producer, and the orchestrator produces this task); checklist one item per map line; delta attestation next"
+    },
+    {
+      "at": "2026-10-13T05:56:39.048039+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "claimed",
+      "message": "G3 PASS (delta at 2426f9f6); review record and evidence map written; submit at the next CI-green head"
     }
   ],
   "scope_corrections": [

@@ -1,0 +1,31 @@
+{
+ "task_id": "M0-T196",
+ "material_commits": [
+  "d0d4fe15 (orchestrator (governance): the living-files map .claude/rules/living-files.md (always loaded); PROGRAM_KNOWLEDGE.md one-liners replaced; the session-handoff profile checklist; producer report)",
+  "411b623c (orchestrator: every duty of the replaced lines kept (backlog at replans, never duplicating; research queue PushNotification); the two handoff lines word for word in the profile; wording tightened (net -2 bytes with the memory index))",
+  "2426f9f6 ([ORCH-CORRECTED per G3 F1, A2-A4]: checklist one item per map line plus the memory index; the producer report's no-guard caveat)"
+ ],
+ "claim_seam_head": "4c1458b8a",
+ "files_changed": [
+  ".claude/rules/PROGRAM_KNOWLEDGE.md",
+  ".claude/rules/living-files.md",
+  ".claude/session-handoff-profile.md",
+  "project-control/reports/M0-T196-producer-report.md"
+ ],
+ "what_did_not_change": "CLAUDE.md, the D-093 rule, CODING_RULES.md and the hold notice are byte-unchanged; PROGRAM_KNOWLEDGE.md changed only in its header, the four replaced one-liners and the shortened loop-run pointer; no product, test, tool or document file.",
+ "known_limits": [
+  "The repository's eager total alone grows by 105 bytes (44767 -> 44872); the whole session start shrinks by 2 bytes only because the memory-index line was shortened by 107 bytes outside git; neither number is guarded against later regrowth (no size cap, D-093-R074; the memory index is not checked by any tool).",
+  "Sessions load the map only after the change reaches the branch they start on (main after the wave merge); a session started earlier passes its old instruction snapshot to helpers (M0-T191).",
+  "G0 was not re-recorded after the scope correction: the CLI refuses an administrative gate recorded by the task's own producer, and the orchestrator produces this governance task."
+ ],
+ "checks_at_material_head": [
+  "orchestrator: python3 tools/context_budget_check.py exit 0 at every commit (eager 44767 -> 44872 bytes); scripts/lanes/check_lane_paths.py --coverage PASS; tools/validate_directive_compliance.py --check exit 0 at each seam",
+  "G3 code-reviewer PASS at 411b623c with required correction F1 (the eager-total wording) and advisories A2-A4; delta PASS at 2426f9f6 (F1 resolved, A2-A4 addressed; the eager files byte-unchanged since the first PASS)",
+  "CI run 38353336147 at 2426f9f6 (after the last material commit): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R117": [
+   "One always-loaded living-files map, .claude/rules/living-files.md (no paths frontmatter), names each file Claude must keep up to date (the questionnaire, the question-and-answer log and its private copy, the directive registry, the research records with the zoning-rule register and the owner research queue, the discovery backlog, the master plan, the program and coding lessons and working knowledge, the session notes, the handoff and the session brief) with what goes in it and the moment it must be updated; it replaces the PROGRAM_KNOWLEDGE.md one-liners it covers, so the whole session start does not grow (net -2 bytes with the memory index; caveat recorded); the session-handoff profile carries a checklist with one item per map line, reported as a 'Living files:' line in the handoff's section 3 before HANDOFF READY (G3 PASS with delta)."
+  ]
+ }
+}
