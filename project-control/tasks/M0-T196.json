@@ -79,13 +79,13 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The rule is loaded by sessions started after the merge to main; a session started earlier passes its old instruction snapshot to helpers (M0-T191): the next briefs name the map explicitly until then."
   ],
   "blockers": [],
   "created_at": "2026-10-13T05:36:35.023201+00:00",
-  "updated_at": "2026-10-13T05:36:38.146493+00:00",
+  "updated_at": "2026-10-13T05:36:39.781700+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -110,6 +110,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; the orchestrator writes the map"
+    },
+    {
+      "at": "2026-10-13T05:36:39.781572+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "map, replacements and checklist written (material commit d0d4fe157); G3 review next"
     }
   ]
 }
