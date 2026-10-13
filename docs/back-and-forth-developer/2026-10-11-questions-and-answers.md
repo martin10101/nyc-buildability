@@ -532,3 +532,28 @@ to build).
 - **Still minor (advisory):** the 215 Place name and its width label sit apart; "101.71 ft" and "Lot 11" are close;
   legend and scale-bar text slightly under 8.5 pt; the report is 10 pages (the large drawing has its own page); the
   "tax-map outline" wording on page 3 goes with the rear-yard step.
+
+## 28. How does Claude know, between sessions, which files to keep up to date? (2026-10-13)
+
+- **Owner (shortened):** each new session costs many tokens at the start; does Claude read a plain map of which file is
+  for what (the questionnaire, research, long-term observations), since information is not reliably added to those
+  files in later sessions?
+- **Developer (answered):** no single map existed. Every session loads about 12,000 tokens of instructions (CLAUDE.md,
+  four always-on rule files, the memory index) plus the handoff and brief its prompt names. The duties were scattered
+  one-liners: the questionnaire and research records were covered; the findings list by one line (two sweeps were
+  skipped in an earlier session); the question-and-answer log had no standing instruction (known only from the
+  handoff); the master plan said who may change it, not when (a month stale). Recommended (question L1): one short
+  living-files map loaded every session, replacing those one-liners so the session start does not grow, plus a
+  handoff checklist.
+
+## 29. "Yes" (2026-10-13)
+
+- **Recorded:** D-094 row R117; L1 answered.
+- **Done (governance task, reviewed):** `.claude/rules/living-files.md` lists each file to keep up to date, what goes in
+  it and the exact moment (questionnaire; this log and its private copy; owner instructions; research records, the
+  zoning-rule register and the owner research queue; the findings list; the master plan; lessons; session notes;
+  handoff and brief). The one-liners it replaces were removed (two handoff rules moved word for word into the handoff
+  instructions). Session start: the repository part grows by 105 bytes, the memory index shrinks by 107: 2 bytes
+  smaller overall (an independent reviewer required this to be stated exactly, with the caveat that nothing guards it).
+  Every handoff now confirms each file was updated and writes the result in the handoff. It applies to sessions
+  started after the change reaches the main version.
