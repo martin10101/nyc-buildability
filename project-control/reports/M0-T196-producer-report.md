@@ -19,6 +19,10 @@
 - Difference: +105 bytes in the eager project instructions; the memory index line shortened by 107 bytes
   (outside the repository) brings the whole session start to -2 bytes: it does not grow.
 
+Caveat (G3 F1): the repository's eager total alone grows by 105 bytes; the whole session start shrinks by 2 bytes only
+because of the memory-index trim, which is outside git. Neither number is guarded against later regrowth:
+`tools/context_budget_check.py` has no size cap (owner, D-093-R074) and the memory index is not checked by any tool.
+
 ## Where each removed line went (nothing dropped)
 - Backlog (D-069): the map's DISCOVERY_BACKLOG line, now with "and replan" and "never duplicating ledger/blockers".
 - Owner research (D-050 R002/R005/R006): the map's research line, incl. commit+push same step, seam line + PushNotification.
