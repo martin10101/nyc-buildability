@@ -93,3 +93,11 @@ Confirm each line of `.claude/rules/living-files.md` for THIS session and write 
 - After a wave merge or a new contract: `project-control/master_plan.json` counts equal the ledger.
 - Lessons found this session are one-liners in PROGRAM_KNOWLEDGE / CODING_RULES / WORKING_KNOWLEDGE.
 - SESSION_NOTES has a STATE line per seam, dispatch and owner message, and a closing CHECKPOINT.
+
+Handoff rules carried here from PROGRAM_KNOWLEDGE (unchanged wording):
+- Owner handoff = NOTHING keeps running (D-090-R941): save each helper's unfinished work into the session
+  folder (`git diff --binary`), stop it, record where it is; overrides the skill's let-helpers-finish line.
+- D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
+  packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
+  only launches (no resume checks, D-094 R109-R113; same full handoff and prompt); crash/forced
+  turnover = the only fallback, and the only case for the reconcile checks.

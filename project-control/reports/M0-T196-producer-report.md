@@ -14,10 +14,18 @@
   the map.
 
 ## Session-start size (the owner was told it would not grow)
-- Eager project instructions before (claim head): `---- eager total: 44767B  515L  ~11135 tok  (no cap: owner D-093-R074)`
-- After: `---- eager total: 44872B  518L  ~11163 tok  (no cap: owner D-093-R074)`
-- Difference: +105 bytes in the eager project instructions; with the memory index line shortened by 107 bytes the
-  session start changes by -2 bytes.
+- Eager project instructions before (claim head): `---- eager total: 44767B  515L  ~11135 tok`
+- After: `---- eager total: 44872B  516L  ~11163 tok  (no cap: owner D-093-R074)`
+- Difference: +105 bytes in the eager project instructions; the memory index line shortened by 107 bytes
+  (outside the repository) brings the whole session start to -2 bytes: it does not grow.
+
+## Where each removed line went (nothing dropped)
+- Backlog (D-069): the map's DISCOVERY_BACKLOG line, now with "and replan" and "never duplicating ledger/blockers".
+- Owner research (D-050 R002/R005/R006): the map's research line, incl. commit+push same step, seam line + PushNotification.
+- Owner-invoked handoff (D-090 R941) and planned handoff (D-070): short form in the map's handoff line; the two original
+  lines word for word in `.claude/session-handoff-profile.md` ("Handoff rules carried here"), read at every handoff.
+- Append duty in the PROGRAM_KNOWLEDGE header: the map's lessons line.
+- Loop-run pointer: shortened, same target (`docs/WORKING_KNOWLEDGE.md`).
 
 ## Checks
 - `python3 tools/context_budget_check.py` exit 0 (no retired/superseded section; no duplicate).
