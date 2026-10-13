@@ -557,3 +557,9 @@ to build).
   smaller overall (an independent reviewer required this to be stated exactly, with the caveat that nothing guards it).
   Every handoff now confirms each file was updated and writes the result in the handoff. It applies to sessions
   started after the change reaches the main version.
+
+## 30. /session-handoff (2026-10-13, about 08:10 UTC)
+
+- **Done:** handoff seq 166 written (the first with a "Living files:" line from the new checklist). Nothing was running.
+  Next session: records, submit, rule checks and acceptance for page 1 (M5-T165) and the close-up (M5-T166); then the
+  website page-1 parity task, the wave pull request and the first official PDF with before/after pictures.
