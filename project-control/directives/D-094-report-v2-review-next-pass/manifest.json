@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T01:24:51+00:00",
+ "updated_at": "2026-10-14T01:27:08+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -144,7 +144,7 @@
   "D-094-R120"
  ],
  "requirements_id_digest_sha256": "c9eb6c1538fb59f357e25b1699b0def3fa658475c13bb604f2f57c5bda8406f1",
- "requirements_content_digest_sha256": "d63843cd24c757603ceabaa8493aae67401666d732c82cfffd1ea23bdda44315",
+ "requirements_content_digest_sha256": "bdcfaac5f6e14f1cb86589db4b112c66ccada79a90adfd61a1e297f2279e263a",
  "sources": [
   {
    "file": "source-001.md",
@@ -282,7 +282,8 @@
   "M5-T166",
   "M5-T171",
   "M5-T176",
-  "M0-T196"
+  "M0-T196",
+  "M3-T007"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -483,6 +484,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-013 (the owner's instruction to read the handoff and run ten helpers at once tonight) and requirements D-094-R118 to R120, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T01:27:08+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T007 (zoning-law library, second pass: the remaining options (documents only)) to R102, R104, R119 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

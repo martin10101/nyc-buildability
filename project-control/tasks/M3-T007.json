@@ -1,0 +1,161 @@
+{
+  "task_id": "M3-T007",
+  "title": "Zoning-law library, second pass (documents only): for each remaining development option (2-3, 5, 6-7, 8, 9, 10, 11) the Zoning Resolution sections that decide it, read from the official text, with what the program handles, what it does not, and what stays not sure",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "Write a documents-only second pass of the zoning-law library under docs/zoning-law-library/options/ (extends planned milestone M3; builds no code, no rule, no capture): one file per option family - options 2-3 (qualifying affordable and senior housing, the Universal Affordability Preference), 5 (ground-floor shops with residences above: overlay use permission, overlay floor area, mixed-building floor area, height and street wall), 6-7 (community facility: floor area, coverage, height, setback, yards, the mixed-building combination), 8 (split lot: the two readings of options-sections.md kept apart - two buildings on one zoning lot, and a zoning lot divided by a district boundary - and what the owner's sample shows, by pointer only), 9 (shared housing: use, density, standards), 10 (parking and the transit zones, plus one parking / loading / bicycle-parking applicability line for every option, DB-180), 11 (which add-ons may be combined and the combination ceilings). Each file gives, per Zoning Resolution section: section id, title, official URL, the last-amended date the official page shows, capture state (the snapshot file in docs/research/zr-snapshots/v1/ or NOT CAPTURED), handled state (the rule file under services/api/app/rules/rulesets/ or NOT HANDLED); then a reading that states the applicable rule, the definitions it relies on, exceptions, overlay and special-district effects, the measurement basis, the zoning-lot scope, the facts about a lot the program would need and where each could come from, and every point that is not sure with its next step. options-sections.md gains, per option, a pointer to its file and an updated state for each item it marks NOT CAPTURED or not sure (resolved with a cited official source, or restated as open). research-log.md records every search. Every file carries the unreviewed-draft label (ADR-007); nothing is Verified; no option is called compliant, buildable, feasible or preferred; no eligibility is decided; no figure for the benchmark lot is computed.",
+  "business_reason": "All eleven options stay in scope (owner, D-090 R248-R265; D-094 source-002) but the master plan marks options 2-11 not planned because the law each still lacks has not been read. The first pass (M3-T006) listed what each option needs and left sections NOT CAPTURED or not sure (23-154, the community-facility envelope, the shared-housing sections, the meaning of split lot). The owner asked for research helpers on the remaining options' rules (D-094 R104) and approved ten helpers tonight (R119). This pass turns the list into readings a rules task can be contracted from.",
+  "inputs": [
+    "docs/zoning-law-library/",
+    "services/api/app/rules/rulesets/",
+    "services/api/app/drawings/report/options.py",
+    "docs/research/zr-snapshots/v1/",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "docs/SOURCE_AUTHORITY_POLICY.md",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "docs/plans/FEASIBILITY_REPORT_SECTION_MAP_2026-10-06.md"
+  ],
+  "outputs": [
+    "docs/zoning-law-library/options/README.md",
+    "docs/zoning-law-library/options/option-02-03-affordable-and-senior-housing.md",
+    "docs/zoning-law-library/options/option-05-shops-with-residences.md",
+    "docs/zoning-law-library/options/option-06-07-community-facility.md",
+    "docs/zoning-law-library/options/option-08-split-lot.md",
+    "docs/zoning-law-library/options/option-09-shared-housing.md",
+    "docs/zoning-law-library/options/option-10-parking-and-transit-zone.md",
+    "docs/zoning-law-library/options/option-11-combinations.md",
+    "docs/zoning-law-library/options/research-log.md",
+    "docs/zoning-law-library/options-sections.md",
+    "project-control/reports/M3-T007-producer-report.md"
+  ],
+  "dependencies": [
+    "M3-T006"
+  ],
+  "allowed_paths": [
+    "docs/zoning-law-library/options/README.md",
+    "docs/zoning-law-library/options/option-02-03-affordable-and-senior-housing.md",
+    "docs/zoning-law-library/options/option-05-shops-with-residences.md",
+    "docs/zoning-law-library/options/option-06-07-community-facility.md",
+    "docs/zoning-law-library/options/option-08-split-lot.md",
+    "docs/zoning-law-library/options/option-09-shared-housing.md",
+    "docs/zoning-law-library/options/option-10-parking-and-transit-zone.md",
+    "docs/zoning-law-library/options/option-11-combinations.md",
+    "docs/zoning-law-library/options/research-log.md",
+    "docs/zoning-law-library/options-sections.md",
+    "project-control/reports/M3-T007-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    "docs/design/",
+    "docs/research/",
+    "docs/reference-cases/",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/zoning-rule-review/",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md",
+    "docs/SOURCE_AUTHORITY_POLICY.md",
+    "docs/zoning-law-library/README.md",
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "docs/zoning-law-library/coverage.md",
+    "docs/zoning-law-library/cross-reference-closure.md",
+    "docs/zoning-law-library/pitfalls.md",
+    "docs/zoning-law-library/research-log.md",
+    "tools/",
+    ".github/",
+    ".claude/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "every Zoning Resolution section an option file relies on",
+      "when": "the file is read",
+      "then": "the section has its id, title, official URL, the last-amended date shown on the official page, a capture state that matches docs/research/zr-snapshots/v1/ (the snapshot file, or NOT CAPTURED), and a handled state that names the exact rule file or NOT HANDLED"
+    },
+    {
+      "id": "S2",
+      "given": "each option file",
+      "when": "its reading is read",
+      "then": "it states the applicable rule, the definitions relied on, exceptions, overlay and special-district effects, the measurement basis, the zoning-lot scope and the lot facts the program would need with a possible source for each; every point the producer is not sure of says not sure with its next step"
+    },
+    {
+      "id": "S3",
+      "given": "each item options-sections.md marks NOT CAPTURED or not sure for options 2 to 11",
+      "when": "options-sections.md and the option's file are read",
+      "then": "the item is resolved with a cited official source read for this pass, or restated as still open with the exact missing item and its next step; none is silently dropped"
+    },
+    {
+      "id": "S4",
+      "given": "option 8",
+      "when": "its file is read",
+      "then": "the two readings (two buildings on one zoning lot; a zoning lot divided by a district boundary) are kept apart, each with its sections; what the owner's sample shows is given by pointer only (page number, no copied text); the question which reading the owner intends stays open unless the owner has answered it"
+    },
+    {
+      "id": "S5",
+      "given": "every option, 1 to 11",
+      "when": "option-10-parking-and-transit-zone.md is read",
+      "then": "it has one parking, loading and bicycle-parking applicability line per option naming the sections that decide it, with the transit-zone membership of the benchmark lot stated as a recorded value with its source, or as not known with the search made"
+    },
+    {
+      "id": "S6",
+      "given": "every search the pass rests on",
+      "when": "options/research-log.md is read",
+      "then": "each has the source, the query or URL, found / not found / access blocked, the missing item and the next step; an access block is recorded, never evaded"
+    },
+    {
+      "id": "S7",
+      "given": "the task's diff",
+      "when": "it is listed",
+      "then": "it touches only the allowed paths; no file quotes more than one short passage per cited item; no third-party document is copied; no code, rule, capture, evidence record or review-register file changes"
+    },
+    {
+      "id": "S8",
+      "given": "every file of the pass",
+      "when": "it is searched for status words",
+      "then": "each carries the unreviewed-draft label; nothing is labelled Verified; no option is called compliant, buildable, feasible, optimal or preferred; no eligibility (affordable, senior, shared housing) is decided; no floor area, height, unit count or parking count is computed for the benchmark lot"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "zoningresolution.planning.nyc.gov pages can time out or refuse non-browser fetches (23-154 returned HTTP 403 in the first pass): use the documented print/PDF channel, record a block with the URL, never evade.",
+    "The 2024 City of Yes amendments renumbered sections: every section number is taken from the official page read for this pass, never from memory or from an older document.",
+    "Readings of eligibility programs are legal determinations the program does not make: state the conditions, decide nothing.",
+    "Public repository: pointers and at most one short quote per item; the competitor's sample is cited by page number only.",
+    "A reading here changes no result, rule or label; a later rules task works its own independent example before any result changes (D-093)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T01:27:08.026461+00:00",
+  "updated_at": "2026-10-14T01:27:08.489875+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R102",
+        "D-094-R104",
+        "D-094-R119"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T01:27:08.026723+00:00",
+  "path_notes": "Lane L (library), disjoint from the report lane: a new folder docs/zoning-law-library/options/ plus options-sections.md, owned by no other task in flight; docs/** is covered by Lane C's ownership rule (no OWNERSHIP.yaml change). Research helper returns are saved in the session folder outside git and cited in options/research-log.md.",
+  "documented_test_commands": [
+    "python3 scripts/lanes/check_lane_paths.py --coverage",
+    "git diff --stat"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

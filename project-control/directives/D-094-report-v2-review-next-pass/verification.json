@@ -1607,6 +1607,40 @@
     }
    ],
    "verified_at": "2026-10-13T06:22:53+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M3-T007",
+   "applicable_requirement_ids": [
+    "D-094-R102",
+    "D-094-R104",
+    "D-094-R119"
+   ],
+   "producer": "legal-corpus-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-094-R102",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R104",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R119",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
