@@ -312,7 +312,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "DB-245 rank-label scope growth: a CONSISTENT rename of the measurement-rank display label requires profile/measurement.py:65 and kit/scope.py:88 (missed by DB-245's enumeration and the refresh) because the kit comment keeps the card, the drawing caption and the evidence page in step; leaving them out leaves 'approximate tax map' on the site-plan caption/scope line against 'city map outline' on the evidence page. The exact rename set, the rank-label wording, and whether to touch profile/kit are pinned at G0.",
     "test_result_ways_facts_area_overlay.py:142 asserts the engine's 'tax-map outline' rendered wording and was absent from the refresh scope; renaming result_way_conditions.py reddens it. It is now in allowed_paths; sweep all consumers of the renamed strings.",
@@ -324,7 +324,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T19:36:20.882932+00:00",
-  "updated_at": "2026-10-14T19:36:25.419924+00:00",
+  "updated_at": "2026-10-14T20:18:45.365332+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -362,6 +362,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed on the wave-25 branch; the builder starts from the claim head"
+    },
+    {
+      "at": "2026-10-14T20:18:45.365192+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 1 (increment A: the G-6 zoning-lot isolation behind facades and the block-frontage measure; the rest follows in round 2); the builder's commit integrated as 474c8ee3 (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
