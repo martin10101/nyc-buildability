@@ -204,7 +204,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:13.796408+00:00",
-  "updated_at": "2026-10-14T17:37:06.661485+00:00",
+  "updated_at": "2026-10-14T18:30:35.814826+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -254,6 +254,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "rework 1 (wiring into the live report; page 1's rear-yard uncertainty reads the 1.5.0 row): 1819 passed; 17 of 18 renders byte-identical (the 1.5.0 example changes as intended); the builder's commit integrated as c11b4e03 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T18:30:35.814698+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rework 2 (the visual review's three required corrections, the code review's advisories, S13-S16; reviewed by the same four at the builder commit 03c989ba: all PASS); the builder's commit integrated as 046c717d (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
