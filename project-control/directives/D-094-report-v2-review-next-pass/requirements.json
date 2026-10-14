@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 143,
+ "requirement_count": 145,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T19:41:35+00:00",
+ "updated_at": "2026-10-14T21:00:04+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -4661,6 +4661,72 @@
    ],
    "required_harness": "The report programme names this milestone as the next one and lists the tasks that lead to it in order; owner updates measure progress against it.",
    "required_evidence": "project-control/master_plan.json report_programme and the owner updates after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R144",
+   "text": "'/session-handoff': from this message the session starts no further task and launches no helper; every running helper's unfinished work is saved into the session folder and the helper is stopped (D-090 R941).",
+   "source_ref": "source-020-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R125"
+   ],
+   "required_harness": "The session notes show no dispatch after this message, the stop of the running builder and where its unfinished work was saved.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-14c/SESSION_NOTES.md` and its folder `unfinished-M5-T167-round2/`.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R145",
+   "text": "'/session-handoff': the session writes the handoff (docs/SESSION_HANDOFF.md and the session brief) and gives the owner the copy-in prompt for the next session.",
+   "source_ref": "source-020-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R127"
+   ],
+   "required_harness": "The handoff file and the brief exist with the exact next action; the prompt is printed in the reply.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md` (main checkout) and `NEXT-SESSION-BRIEF.md` in the session folder.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",

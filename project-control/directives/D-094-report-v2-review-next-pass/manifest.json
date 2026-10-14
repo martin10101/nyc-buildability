@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T19:41:35+00:00",
+ "updated_at": "2026-10-14T21:00:04+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -164,10 +164,12 @@
   "D-094-R140",
   "D-094-R141",
   "D-094-R142",
-  "D-094-R143"
+  "D-094-R143",
+  "D-094-R144",
+  "D-094-R145"
  ],
- "requirements_id_digest_sha256": "01a4d8f14582fe62fa887072f5ab64cdd8dcedc874eec52c619d9dab683bf4bd",
- "requirements_content_digest_sha256": "cd3e7e8545422e7ae779740ae065050abd09f12465e2db8c3c1be680c9536bff",
+ "requirements_id_digest_sha256": "5fbe3989b130507542053c9466eaa126c100ce1f6bd1f25ae755f020b8c4abc1",
+ "requirements_content_digest_sha256": "91d2431c3303bbc2c8602e0f7af433febcbf7b112d51c360f88391bccef11305",
  "sources": [
   {
    "file": "source-001.md",
@@ -319,6 +321,14 @@
    "recorded_at": "2026-10-14T17:45:24+00:00",
    "content_digest_sha256": "c51f0ca7b0d341e83d137f85c0280665ffabe7aaae2a0dee1311ff0b05b75529",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-020-amendment.md",
+   "kind": "amendment",
+   "sequence": 20,
+   "recorded_at": "2026-10-14T21:00:04+00:00",
+   "content_digest_sha256": "6b6d5f7549ad7a6318aefc849f4cacf0e3dc2c190291c96bd43cd3480317a5d5",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -339,7 +349,8 @@
   "source-016-amendment.md",
   "source-017-amendment.md",
   "source-018-amendment.md",
-  "source-019-amendment.md"
+  "source-019-amendment.md",
+  "source-020-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -645,6 +656,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M3-T009 (capture the community-facility ZR sections (Article II Chapter 4 + 22-13); documents only) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T21:00:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-020 (the owner's request for a session handoff) and requirements D-094-R144 to R145, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
