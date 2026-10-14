@@ -193,15 +193,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 90,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "Map drawings needed 3-4 rounds in wave 22; labels at print size are the usual failure.",
     "A CSS need would collide with M5-T165's layout.py: relay it, never edit it."
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:42.622669+00:00",
-  "updated_at": "2026-10-14T01:52:18.250862+00:00",
+  "updated_at": "2026-10-14T02:00:39.628846+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
