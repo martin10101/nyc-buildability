@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T21:00:04+00:00",
+ "updated_at": "2026-10-14T22:02:36+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -166,10 +166,19 @@
   "D-094-R142",
   "D-094-R143",
   "D-094-R144",
-  "D-094-R145"
+  "D-094-R145",
+  "D-094-R146",
+  "D-094-R147",
+  "D-094-R148",
+  "D-094-R149",
+  "D-094-R150",
+  "D-094-R151",
+  "D-094-R152",
+  "D-094-R153",
+  "D-094-R154"
  ],
- "requirements_id_digest_sha256": "5fbe3989b130507542053c9466eaa126c100ce1f6bd1f25ae755f020b8c4abc1",
- "requirements_content_digest_sha256": "91d2431c3303bbc2c8602e0f7af433febcbf7b112d51c360f88391bccef11305",
+ "requirements_id_digest_sha256": "4e8782b08b21a0aa0f4ea7a9d4537ba54cc1db1dfc437ec12a3626f5669dfb8b",
+ "requirements_content_digest_sha256": "ec8eb1a41635dbeb892354a0bed5788d85692b97098ec6250953c14692002c7c",
  "sources": [
   {
    "file": "source-001.md",
@@ -329,6 +338,14 @@
    "recorded_at": "2026-10-14T21:00:04+00:00",
    "content_digest_sha256": "6b6d5f7549ad7a6318aefc849f4cacf0e3dc2c190291c96bd43cd3480317a5d5",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-021-amendment.md",
+   "kind": "amendment",
+   "sequence": 21,
+   "recorded_at": "2026-10-14T22:02:36+00:00",
+   "content_digest_sha256": "eaf4e54e3be53d24d246aa92b663b834de11186aeb7b3712e9c2341a574cb7f5",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -350,7 +367,8 @@
   "source-017-amendment.md",
   "source-018-amendment.md",
   "source-019-amendment.md",
-  "source-020-amendment.md"
+  "source-020-amendment.md",
+  "source-021-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -662,6 +680,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-020 (the owner's request for a session handoff) and requirements D-094-R144 to R145, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T22:02:36+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-021 (the resume after handoff seq 169 and the forwarded outside review of the main print and the before/after comparison of 2026-10-14) and requirements D-094-R146 to R154, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

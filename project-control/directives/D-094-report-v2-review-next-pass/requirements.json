@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 145,
+ "requirement_count": 154,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T21:00:04+00:00",
+ "updated_at": "2026-10-14T22:02:36+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -4731,6 +4731,292 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R146",
+   "text": "'Next action: handoff section 4 (read CI at the wave-25 branch head; M5-T167 round 2 by a fresh builder from the saved diff, which also turns the branch green; then submit and accept M3-T009; then the M5-T167 reviews).' 'Research and verification (D-093) applies; put its dispatch clause in every brief and name the reference cases.' 'Every helper brief says: all parts in ONE hand-back.' 'Do not repeat completed work.': resume at handoff seq 169 section 4 in order: read CI at the wave-25 branch head; M5-T167 round 2 by a fresh builder from the saved diff (which also turns the branch green); submit and accept M3-T009; the M5-T167 reviews; every brief carries the D-093 dispatch clause and names docs/reference-cases/R6B/cases/; every helper returns all parts in one hand-back; completed work is not repeated.",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes of session-2026-10-14d show these steps in this order with their times, and each brief contains the D-093 clause, the reference-case path and the one-hand-back line.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-14d/SESSION_NOTES.md` and the briefs in that folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R147",
+   "text": "'The PDF design has improved, but this is largely the same report you sent earlier today.' 'I reviewed all 16 pages across both files.' 'The improvement since October 11 is real.' 'The summary emphasizes results, the apartment ceiling and estimate appear together, and the enlarged site drawing is easier to read.' 'The comparison documents those changes clearly.' 'Its baseline is October 11, so it includes improvements we already reviewed.': the reviewer read both files sent on 2026-10-14 (the 10-page print from main 30762409 and the 6-page before/after) and finds the presentation improvement since 11 October real (results-led summary, ceiling beside estimate, larger site drawing) and shown clearly by the comparison; but the comparison's baseline (main b4704161 of 11 October) includes improvements the owner had already reviewed, so the next comparison is made against the last print the owner received.",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The next before/after sent to the owner names its baseline as the last print the owner received (main 30762409 of 2026-10-14, or a later one if sent) and shows only changes since then.",
+   "required_evidence": "The next before/after file and the update that sends it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R148",
+   "text": "'There is very little new since your latest preview.' 'I compared the actual rendered pages: 9 of the 10 are visually identical.' 'Page 7 now correctly removes \u201cContext maps\u201d from the missing-features list.' 'That fixes the inconsistency we identified.': since the branch preview the owner had seen, only page 7 changed (confirmed: pages 1-6 and 8-10 PNG-identical, page 7 differs); the reviewer confirms the page-7 'Context maps' correction (R137).",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "Owner updates say plainly which pages changed since the last print the owner saw, and say so when a print adds nothing new.",
+   "required_evidence": "The owner updates after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R149",
+   "text": "'The filename says \u201cmain,\u201d but the PDF alone cannot establish whether code was merged, tested, or deployed. :codex-file-citation{path=\"sandbox:/workspace/scratch/6ebdb379b68e/upload/215-16-Northern-Boulevard-report-main-2026-10-14.pdf\" purpose=\"source\"}': a file name or a print alone does not show whether code was merged, tested or deployed: each print sent to the owner comes with plain statements and links: what is merged on main (the pull request), the CI run read green at that head, and that nothing is deployed to production (every production switch is off).",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The next update that sends a print links the merged pull request and the green CI run at the printed head and states the deployment state.",
+   "required_evidence": "That update and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R150",
+   "text": "'The website comparison needs correcting.' 'On page 6 of the comparison document, the \u201cbefore\u201d and \u201cafter\u201d screenshots are exactly the same image\u2014I checked the embedded files.' 'This could mean the screen is unchanged or the wrong screenshot was included.' 'Either way, it provides no evidence that the website received the redesign.': correct the comparison document sent on 2026-10-14: its website page shows one picture twice (confirmed by digest; cause: the capture shows only the first screen, which wave 24 did not change; the new block sits below it). The corrected page shows genuine pictures captured from each named revision's running build, scrolled to the changed part, and says plainly that the first screen is unchanged; the corrected file is sent to the owner.",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "Each picture of the corrected page is captured from a build at its named revision (capture log with the revision); the before and after pictures of the changed part differ by digest; the unchanged first screen is labelled unchanged.",
+   "required_evidence": "The corrected comparison file, its capture logs and the update that sends it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R151",
+   "text": "'The visible screen still gives substantial space to assumptions while results sit farther down. :codex-file-citation{path=\"sandbox:/workspace/scratch/6ebdb379b68e/upload/215-16-Northern-Boulevard-before-after-2026-10-14.pdf\" purpose=\"source\"}': the website's Results window gives its first screen to assumptions while the results sit further down: the website redesign is unfinished; the results (the legal ceiling beside the apartment estimate, with the zoning-lot concern) lead the first screen, assumptions after, in the order of report page 1 (R073, R081 parity; the presentation contract).",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R150"
+   ],
+   "required_harness": "A browser test asserts the ceiling-and-estimate block lies within the first screen at the six widths; before/after pictures of the first screen.",
+   "required_evidence": "The accepted website task, its browser test and the before/after pictures.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R152",
+   "text": "'Keep the improvements and move to the unfinished work.' 'Page 5 still leads with five limitation paragraphs; page 6 still shows the same three-floor stack without a footprint fitted to the site.' 'The area-allocation illustration is absent, and the additional rear-yard checks remain unapplied.': keep the improvements (no regression) and do the unfinished work: page 5 puts the eleven-option comparison first and the limitations after, short (R075); page 6 shows a footprint fitted to the site instead of the bare three-storey stack (R076, R082, R135); the two-zone area illustration (R087 to R098); the short-block rear-yard checks applied and printed (R136, M5-T167).",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R135",
+    "D-094-R136"
+   ],
+   "required_harness": "The next print's page 5 begins with the comparison table, the scenario sheet shows the fitted footprint and the area illustration, and the rear-yard item reads the engine's result; the before/after shows no regression of the pages the reviewer accepted.",
+   "required_evidence": "The accepted tasks and the print that shows them.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R153",
+   "text": "'His next deliverable should demonstrate those calculations and drawings, plus genuine website screenshots.': the next deliverable to the owner demonstrates those calculations and drawings (fitted footprint, reconciled schedule, area illustration, rear-yard result) together with genuine website screenshots of the changed parts.",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R152"
+   ],
+   "required_harness": "The next deliverable contains the print pages and website pictures that show each item, captured from the named revision.",
+   "required_evidence": "The deliverable files and the update that sends them.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R154",
+   "text": "'I would acknowledge the PDF presentation progress while keeping the website redesign and worked scenario marked incomplete.': records and owner updates acknowledge the PDF presentation progress and keep the website redesign and the worked scenario marked incomplete until their tasks are accepted with evidence (R138, R139).",
+   "source_ref": "source-021-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff and the progress record list the website redesign and the worked scenario as unfinished until accepted.",
+   "required_evidence": "docs/SESSION_HANDOFF.md, project-control/master_plan.json report_programme and the owner updates after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
