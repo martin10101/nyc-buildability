@@ -141,7 +141,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T22:35:27.178037+00:00",
-  "updated_at": "2026-10-14T23:07:41.822050+00:00",
+  "updated_at": "2026-10-14T23:36:24.657774+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -187,6 +187,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "round 1 measured on the real preview (six-after-1bec7065/positions.txt) and in CI run 38651131040: assumptions left the first screen, but the ceiling and estimate sit just below the visible window at 768-1920 and too low on phones (5 new-spec cases red); the new spec's 13 results requests exhausted the results route's 30-request limit and reddened the unedited results.flag-on.spec.ts:68; round 2 dispatched to a fresh builder (prompt-builder-M5-T181-round2.md)"
+    },
+    {
+      "at": "2026-10-14T23:36:24.657681+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 2: allowance beside the ceiling and estimate (2-up from a 640 px container), the status strip after the results, a smaller heading on phones; the new spec makes 2 results requests and asserts each value's bottom inside the window; pre-integration check READY_TO_INTEGRATE; the builder's commit integrated as 965de3d5 (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
