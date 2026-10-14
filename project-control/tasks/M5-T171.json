@@ -103,15 +103,15 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "human-journey-reviewer",
     "visual-quality-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "ready",
-  "progress_percent": 5,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The screen statuses stay until question C2 is answered.",
     "The existing web design keeps the 29 on the allowance card apart from the estimate (DB-214 N2); parity pairs ceiling+estimate in a new additive block. three-answers.ts and first-building-options.ts are read-only, so the allowance card is untouched; only three-answers-panel.test.tsx's DB-214 N2 wording is reconciled in-scope.",
@@ -120,7 +120,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:44.523757+00:00",
-  "updated_at": "2026-10-14T02:28:29.860888+00:00",
+  "updated_at": "2026-10-14T02:53:12.341621+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -148,6 +148,15 @@
       "at": "2026-10-14T02:28:28+00:00",
       "actor": "orchestrator",
       "change": "Scope correction before any claim or build (packet check by a read-only helper against the page 1 that M5-T165 built; session 2026-10-14): the estimate's chip reads 'Provisional' as on report page 1 (the packet said 'preliminary'); the lot-area line is quoted exactly as page 1 composes it (the multiplication sign U+00D7; 'alone' only while the zoning lot is unconfirmed); the block is additive and uses its own test ids (the allowance card keeps its 29; three-answers.ts stays read-only); four more files are forbidden as the work order lists them (the journey test and the results-contract checks, benchmark consumers of another task); S1, S4 and S6 reworded to say so; S7 added (every committed results document, incl. the 1.5.0 examples, renders; an absent figure shows no figure) and S8 added (the forbidden suites stay green unedited). No row, gate, reviewer, dependency or writable path changes."
+    }
+  ],
+  "progress_log": [
+    {
+      "at": "2026-10-14T02:53:12.341505+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed after M5-T165 was accepted; the builder mirrors the accepted page 1"
     }
   ]
 }
