@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-04",
  "title": "215-16 Northern Boulevard: which dimensions are printed, recorded or GIS, and what the 2017 survey settles",
- "revision": 2,
- "last_changed": "2026-10-12",
+ "revision": 3,
+ "last_changed": "2026-10-14",
  "question": {
   "text": "Which dimensions of lot 70 come from printed tax-map labels, administrative records and GIS, and what must the named 2017 survey settle?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -270,7 +270,7 @@
   "code_identity": {
    "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
    "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8",
-   "services/api/app/drawings/maps/close_frame_dimensions.py": "5dba6cf8e8307111b80fbd25bffe3c62964166572efd9a7e9347dbaeffb79dea"
+   "services/api/app/drawings/maps/close_frame_dimensions.py": "8394b3e605728f14afc1544f8a6d5dec659a9fde0cd4e9c358822e83814529e8"
   },
   "worked_example": {
    "inputs": "Recorded area 10075 sq ft; GIS outline 10387.99 sq ft.",

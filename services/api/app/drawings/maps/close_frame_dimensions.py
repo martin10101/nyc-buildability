@@ -29,7 +29,7 @@ import math
 from dataclasses import dataclass
 
 from app.drawings.kit import geometry as geo
-from app.drawings.kit.labels import Box, format_feet
+from app.drawings.kit.labels import Box, format_feet, format_number
 from app.drawings.kit.sheet import Sheet
 from app.drawings.kit.styles import style_for
 from app.drawings.kit.svg import element, num
@@ -43,10 +43,14 @@ __all__ = [
     "GIS_BASIS_NOTE",
     "GIS_BASIS_TAG",
     "MIN_LABELLED_EDGE_FT",
+    "OTHER_BASIS_WORDS",
     "DimensionPlacementError",
     "DrawnDimension",
+    "DrawnFact",
     "dimension_line_segments",
     "draw_edge_dimensions",
+    "draw_other_basis_dimensions",
+    "other_basis_label",
 ]
 
 _Box = tuple[float, float, float, float]
@@ -202,3 +206,93 @@ def dimension_line_segments(dims: list[DrawnDimension]):
         out += [("dimension", [d.a_px, d.dim_a]), ("dimension", [d.b_px, d.dim_b]),
                 ("dimension", [d.dim_a, d.dim_b])]
     return out
+
+
+# --------------------------------------------------------------------------- #
+# The input_facts' other-basis lot dimensions, drawn BESIDE the map-outline ones
+# (D-094 R015; NB-04). The close frame draws the gis (city map outline) edges;
+# when the document carries input_facts on OTHER bases (a printed-tax-map frontage,
+# a recorded area, a GIS outline area), each is drawn with its OWN basis named, so
+# a reader sees the bases apart. Two bases are NEVER merged into one figure
+# (NB-04 'double_count_risk'); a GIS value reads "map outline", never "tax map".
+# --------------------------------------------------------------------------- #
+# The SHORT plain-word basis each label carries on a drawing (design contract
+# wording, 2026-10-11). gis is "map outline" on a drawing (never "tax map"), a
+# recorded value a "city record", a printed tax-map figure a "printed tax map".
+OTHER_BASIS_WORDS = {
+    "law": "zoning law",
+    "deed": "deed",
+    "survey": "survey",
+    "printed_tax_map": "printed tax map",
+    "approved_plan": "approved plan",
+    "filing_attribute": "building filing",
+    "administrative_record": "city record",
+    "gis": "map outline",
+    "derived": "worked from other values",
+}
+_AREA_UNITS = {"sq_ft", "sq ft", "square_feet", "sqft"}
+
+
+@dataclass(frozen=True)
+class DrawnFact:
+    """One drawn other-basis lot dimension: the input fact's key, numeric value,
+    unit and quantity basis, the plain-word ``basis_label`` on the drawing, the
+    placed ``text`` ("<figure>, <basis>") and its ``label_box``. One fact, one
+    basis - two bases are never merged into one label (S5)."""
+
+    key: str
+    value: float
+    unit: str
+    basis: str
+    basis_label: str
+    text: str
+    label_box: Box
+
+
+def _fact_figure(value: object, unit: object) -> str:
+    if str(unit) in _AREA_UNITS:
+        return f"{format_number(value)} sq ft"
+    return format_feet(value)
+
+
+def other_basis_label(fact: dict) -> str:
+    """One input fact as a FIGURE plus its OWN basis, e.g. "100.5 ft, printed tax
+    map" or "9,800 sq ft, city record". Each label names exactly one basis; two
+    bases are never merged into one figure (D-094 R015; NB-04)."""
+    basis = str(fact.get("basis"))
+    word = OTHER_BASIS_WORDS.get(basis, basis)
+    return f"{_fact_figure(fact.get('value'), fact.get('unit'))}, {word}"
+
+
+def draw_other_basis_dimensions(
+    sheet: Sheet, facts, rect: _Box, *, x: float | None = None, y: float | None = None,
+    size: float = DIMENSION_MIN_PT, avoid_lines=None,
+) -> list[DrawnFact]:
+    """Draw the ``input_facts``' OTHER-basis lot dimensions BESIDE the map-outline
+    dimensions (D-094 R015): ONE label per fact, each naming its own basis, stacked
+    in a clear band so each basis reads distinctly. Nothing is averaged or merged
+    (NB-04); a GIS value reads "map outline", never "tax map". Each label prints at
+    at least ``size`` pt on a white background; it FAILS rather than shrinks or
+    merges (presentation contract section 6). Returns the drawn facts."""
+    x0 = x if x is not None else rect[0] + 6.0
+    top = y if y is not None else rect[1] + 6.0
+    drawn: list[DrawnFact] = []
+    for i, fact in enumerate(facts or []):
+        text = other_basis_label(fact)
+        cy = top + i * (size + 4.0)
+        # The stacked position first, then nudges down/right so a label finds a
+        # clear spot (it fails rather than shrinks, never merges; S5).
+        cands = [(x0, cy, 0.0)]
+        cands += [(x0, cy + j * (size + 4.0), 0.0) for j in range(len(facts), len(facts) + 8)]
+        cands += [(x0 + 90.0, cy + j * (size + 4.0), 0.0) for j in range(0, 8)]
+        box = place(sheet, cands, text, size=size,
+                    source=f"input_fact:{fact.get('key')}", role="other-basis-dimension",
+                    anchor="start", rect=rect, pad=1.0, avoid_lines=avoid_lines, own=None,
+                    cross_max_len=2.0 * size, halo=True)
+        if box is None:
+            raise DimensionPlacementError(
+                f"other-basis dimension {text!r} does not fit at {size} pt without a collision")
+        basis = str(fact.get("basis"))
+        drawn.append(DrawnFact(str(fact.get("key")), fact.get("value"), str(fact.get("unit")),
+                               basis, OTHER_BASIS_WORDS.get(basis, basis), text, box))
+    return drawn

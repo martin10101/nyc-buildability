@@ -37,6 +37,7 @@ from .close_frame_dimensions import (
     dimension_line_segments,
     draw_edge_dimensions,
 )
+from .constraint_overlay import draw_site_constraints
 from .context_scene import (
     CLOSE_PLAN,
     CLOSE_PLAN_MARGIN,
@@ -467,6 +468,7 @@ def draw_block_scene(
     title: str | None, with_edges: bool, with_widths: bool, label_focus: bool,
     street_filter: set[str] | None = None, dimension_style: str = "simple",
     min_label_pt: float = 0.0, close_style: bool = False,
+    constraint_lines=None, input_facts=None,
 ) -> Sheet:
     """The shared coloured scene: even street areas (named gaps only), the subject
     coloured above the existing building, neighbours as thin outlines, buildings
@@ -515,6 +517,18 @@ def draw_block_scene(
                              with_address=not close_style, halo=close_style)
     if with_edges and dimension_style != "close":
         _draw_edge_lengths(sheet, subj, fr, rect, street_lines)
+    # The constraint-line overlay + input_facts' other-basis dimensions (M5-T175):
+    # drawn only where constraint_lines/input_facts are passed; the body lives in
+    # constraint_overlay.py (near-zero SLOC here; DB-250). Without them the scene is
+    # byte-identical (S1). Overlay labels avoid the street and dimension lines.
+    if constraint_lines or input_facts:
+        # The large close frame (dimension_style='close') carries the overlay labels
+        # and the other-basis dimensions; the compact page-1 thumbnail draws the
+        # constraint geometry only, named by the legend (it drops dimension labels).
+        draw_site_constraints(sheet, context, fr, rect, constraint_lines=constraint_lines,
+                              input_facts=input_facts,
+                              size=max(DIMENSION_MIN_PT, min_label_pt), avoid_lines=label_lines,
+                              with_labels=dimension_style == "close")
     draw_frame(sheet, rect)
     if title is not None:
         draw_title(sheet, title, subtitle_from_bbl(subj.bbl), subj.bbl_source, region)
@@ -636,9 +650,13 @@ def unavailable_layer(name: str, layer: object, source: str) -> Unavailable | No
 # --------------------------------------------------------------------------- #
 # The site context plan.
 # --------------------------------------------------------------------------- #
-def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Drawing | Unavailable:
+def draw_site_context_plan(context: MapContext, *, frame: str = "sheet",
+                           constraint_lines=None, input_facts=None) -> Drawing | Unavailable:
     """The site plan among its surroundings. Needs the tax lots, the streets and
-    the building footprints; any one unavailable returns Unavailable (S6)."""
+    the building footprints; any one unavailable returns Unavailable (S6).
+    ``constraint_lines`` / ``input_facts`` (results contract 1.5.0) are drawn only on
+    the close frames; both default to None, so existing callers are byte-identical
+    (S1) and the overlay body lives in constraint_overlay.py (M5-T175)."""
     drawing = "site_context_plan"
     for name, layer, source in (
         ("tax_lots", context.tax_lots, "/map_context/tax_lots"),
@@ -680,7 +698,8 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Draw
         # (S14, S15); it carries no dimensions, so no basis note (K1).
         sheet = draw_block_scene(context, fr, rect, SUMMARY_PLAN, title=None, with_edges=False,
                                  with_widths=False, label_focus=False, street_filter=border,
-                                 close_style=True)
+                                 close_style=True, constraint_lines=constraint_lines,
+                                 input_facts=input_facts)
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
                                mode="summary")
     if frame == "wide":
@@ -701,7 +720,8 @@ def draw_site_context_plan(context: MapContext, *, frame: str = "sheet") -> Draw
         rect = viewport(CLOSE_PLAN)
         sheet = draw_block_scene(context, fr, rect, CLOSE_PLAN, title=title, with_edges=True,
                                  with_widths=True, label_focus=True, dimension_style="close",
-                                 min_label_pt=DIMENSION_MIN_PT, close_style=True)
+                                 min_label_pt=DIMENSION_MIN_PT, close_style=True,
+                                 constraint_lines=constraint_lines, input_facts=input_facts)
         # The dimensions all share the gis basis, so it is stated ONCE in a note under
         # the drawing and each label shows only the figure (owner K1, D-094 R116).
         return compose_context(drawing, title, sheet, fr, summary_notes(frontage_name),
