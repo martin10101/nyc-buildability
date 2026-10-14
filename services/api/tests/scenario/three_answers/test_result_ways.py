@@ -95,6 +95,11 @@ def test_only_task_m5_t130_bridge_and_facts_modules_import_the_decision_module()
         # run_engine_and_result_ways_from_evidence (ruling R1), whose name contains 'result_way';
         # its body reader (results_request.py) still never names it.
         "results_read.py",
+        # M5-T167 G-6 engine-side zoning-lot isolation: the zoning-lot cluster moved out of
+        # result_way_bridge.py / three_way_document.py into these two focused modules behind
+        # compatibility facades, so they name the decision module exactly as the files they split.
+        "result_way_zoning_lot.py",
+        "three_way_zoning_lot.py",
     }
     offenders = [
         str(path) for path in _APP_ROOT.rglob("*.py")
