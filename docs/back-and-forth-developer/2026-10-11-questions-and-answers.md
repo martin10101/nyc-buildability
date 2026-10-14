@@ -626,3 +626,15 @@ to build).
   helpers as the standing limit or per session), N5 (option 6 as one mixed building or two), P1 to P3 (the City's own
   aerial photo; a zoning map drawn from the City's map data or the printed sheet; a city overview map with or without
   neighbourhood areas).
+
+## 36. "I asked you a question earlier i still didn't get a response" (2026-10-14, about 03:26 UTC)
+
+- **What happened:** the answer to section 35 had been written in the middle of a long working reply, between steps, and
+  the owner did not see it. It was given again at once, updated, as its own short answer: what the pass is, what was
+  accepted that night (page 1, the close-up, the law library's second pass), what was almost done (the placement worked
+  example, in its last check), what was built and being reviewed (the website's first screen), what was being built
+  (the report reading the newer results data; the affordable-housing law texts), the next visible result (the wave
+  merged into the main version and the first new PDF printed from it with before-and-after pictures), and that ten of
+  about seventeen pieces of the pass were done, none blocked.
+- **Lesson kept:** an answer to the owner goes at the end of a reply or in a reply of its own, never between working
+  steps.
