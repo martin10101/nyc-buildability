@@ -56,3 +56,9 @@
   included: test_result_ways.py scans file TEXT (a page-1 docstring reddened api + exact-production-install, wave 24).
 - DO put every test that pins a tuple or list the task extends (e.g. test_r6b_reference_cases.py pins CASE_IDS
   literally) into the packet's allowed paths at the contract seam; a missed pin costs a scope correction (M5-T176).
+- DO make a new browser spec ask the results route at most ~3 times (show results once, then setViewportSize and
+  re-measure): results_read.py allows 30 requests per window for ALL specs; 13 extra reddened results.flag-on:68 (M5-T181).
+- DON'T accept 'fits in the first screen' from CSS reasoning: measure on the real preview (capture_six.mjs) and assert
+  the value's bottom inside the dialog's visible area; toBeInViewport passes on a sliver (M5-T181 r1 missed by 30 px).
+- DO list a benchmark regeneration's consumer tests in the contract (wiring S12, register S13 date, constraint_rows and
+  report_benchmark benchmark cases, web results-contract-checks pin): M5-T167 needed scope correction 2 for them.

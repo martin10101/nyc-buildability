@@ -103,7 +103,9 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - A packet that adds a drawing module must also list the files that carry its data into the live report (maps
   `__init__.py`, `drawings_embed.py`, `page_location.py`): M5-T175's first round stopped at the boundary (2026-10-14).
 - Website review pictures: the Results-window capture shows only the first screen; photograph a new block by its
-  test id at the six widths (`session-2026-10-14b/capture_block.mjs`) before the visual review (M5-T171 G3).
+  test id at the six widths (`session-2026-10-14b/capture_block.mjs`) before the visual review (M5-T171 G3). A
+  before/after of a change below the fold scrolls both builds to one shared anchor and prints digests; equal digests
+  are labelled 'unchanged' (the owner's reviewer caught a duplicate picture, D-094 R150, 2026-10-14).
 - Builder briefs never dictate the co-author model line: say 'the lines your own instructions give' (a dictated
   'Opus 5.5' trailer on an opus-4-8 helper's commit was flagged by a rule check, 2026-10-14).
 
