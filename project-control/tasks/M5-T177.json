@@ -126,8 +126,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The readings may differ on the placement basis or the offsets; then those rows stay NOT SETTLED and any later report/drawing shows not known.",
     "20,150/3 = 6,716.67 but 100.76 x 66.66 = 6,716.66: the +/- 0.5 is the readers' agreement tolerance, not an engine tolerance - the reference-case engine compares each step exactly, so the plate and the footprint are separate rows/quantities each pinned to its own exact recompute; do not force one figure.",
@@ -136,7 +136,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:28:31.276385+00:00",
-  "updated_at": "2026-10-14T03:14:54.593183+00:00",
+  "updated_at": "2026-10-14T03:37:23.938001+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -183,5 +183,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T03:37:23.937814+00:00"
 }

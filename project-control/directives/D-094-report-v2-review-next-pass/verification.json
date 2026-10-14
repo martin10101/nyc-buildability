@@ -1844,48 +1844,85 @@
     "D-094-R092"
    ],
    "producer": "rules-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c1da693228923b06586e019334cb78620118feda",
+   "reviewed_manifest_sha256": "a7f71996ec4f247ba3e4e1768c957538345d8050712111949d54b9b137d42064",
    "requirements": [
     {
      "id": "D-094-R043",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim confirmed: source-001.md line 137 \"5. Finish one meaningful spatial example... footprint placed on the site, relevant constraints, section/massing, and a reconciled schedule. Preserve an explicit incomplete state...\"; row text in requirements.json (line 1359) matches and carries M5-T177.",
+      "This task's share is met: placement-building-b.json places Building B's footprint on lot 70 (rows footprint-tax-map 6,716.66 sq ft and placement-tax-map), on the printed-tax-map basis under Z1, with the constraints both readings reach (lot-coverage-max 100%/80% by portion).",
+      "The explicit-incomplete state is preserved: rows physical-plate-not-checked, lot-coverage-whole-lot, and rear-yard are kind=not_known with a stated kind of gap (verified by step_p8.must_stay_not_known_errors and its passing mutation test).",
+      "OPEN for later work: the section/massing and the reconciled floor schedule are M5-T172 (engine) and M5-T173 (drawing); they are not in this task.",
+      "Verifier's carry-forward condition met at c1da6932: the task's allowed-path files are identical to those verified at bff54ded (content identity a7f71996), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T177-DCV.md."
+     ],
+     "reviewed_sha": "c1da693228923b06586e019334cb78620118feda"
     },
     {
      "id": "D-094-R044",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim confirmed: source-001.md line 137 \"Do not invent geometry to fill a layout.\"; row (requirements.json line 1392) matches and carries M5-T177.",
+      "No geometry is invented: every figure cites the two sealed readings and a measurement basis; no value comes from a program run (check.program_result_errors == [] reproduced; reference-case suite 144 passed, render --check byte-identical).",
+      "Where the readings differ, the row is NOT SETTLED and bases are never merged: gis-conflict-check stays not_known (tax 100.76/66.66/33.34 vs GIS 103.88/64.66/35.31 kept side by side), and the whole-lot coverage share is kept per basis (66.66% tax / 64.66% GIS).",
+      "The work order's draft \"33.32 (map outline)\" back clearance is given by neither reading and was correctly NOT recorded (the case records 35.31 from both readings); logged as backlog DB-260. Nothing stays open for this task's share.",
+      "Verifier's carry-forward condition met at c1da6932: the task's allowed-path files are identical to those verified at bff54ded (content identity a7f71996), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T177-DCV.md."
+     ],
+     "reviewed_sha": "c1da693228923b06586e019334cb78620118feda"
     },
     {
      "id": "D-094-R076",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim confirmed: source-002-amendment.md line 35 \"Page 5 Three large stacked rectangles... provide no building footprint, placement, circulation, or apartment arrangement.\"; row (requirements.json line 2431) matches and carries M5-T177.",
+      "This task's share supplies the missing footprint and placement as a worked example: 100.76 ft on Northern Boulevard x 66.66 ft deep = 6,716.66 sq ft, touching the Northern Boulevard, 215 Place and lot-1 lines at 0 ft and clearing the back line by 33.34 ft, each on the printed-tax-map basis under Z1.",
+      "Both figures appear in both readings (return-reading-P8-1/2.md: 100.76, 66.66, 33.34 present; placement touches at 0 ft), satisfying the \"value only where both agree on the same basis\" rule.",
+      "OPEN for later work: drawing the diagram on page 5 and showing where circulation/apartments would go (labelled by status) is M0-T193 / M5-T173; no detailed apartment layout is produced (owner goal honoured).",
+      "Verifier's carry-forward condition met at c1da6932: the task's allowed-path files are identical to those verified at bff54ded (content identity a7f71996), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T177-DCV.md."
+     ],
+     "reviewed_sha": "c1da693228923b06586e019334cb78620118feda"
     },
     {
      "id": "D-094-R082",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim confirmed: source-002-amendment.md line 48 \"Finish one meaningful scenario: a dimensioned footprint on the site, a section, and a reconciled floor schedule. Clearly identify every constraint still untested.\"; row (requirements.json line 2638) matches and carries M5-T177.",
+      "This task's share provides the dimensioned footprint for the one scenario (footprint-tax-map, placement-tax-map with explicit dimensions and basis) and names every untested constraint: the not_known rows each state their kind of gap (missing fact about the property, or unresolved law), plus rows both-readers-did-not-have and real-lot-missing-facts.",
+      "placement_basis_errors reproduced empty: no placement/coverage row omits its basis or the Z1 condition (S6 mutation test passes).",
+      "OPEN for later work: the section and the reconciled floor schedule are M5-T173; they are not in this task.",
+      "Verifier's carry-forward condition met at c1da6932: the task's allowed-path files are identical to those verified at bff54ded (content identity a7f71996), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T177-DCV.md."
+     ],
+     "reviewed_sha": "c1da693228923b06586e019334cb78620118feda"
     },
     {
      "id": "D-094-R091",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim confirmed: source-003-amendment.md line 26 \"Use one explicitly stated percentage from the existing 60-75% assumption. Keep the drawing and calculations consistent, and show the assumed percentage beside it.\"; row (requirements.json line 2937) matches and carries M5-T177.",
+      "This task's share uses exactly one stated percentage, 60% (the low end of 60-75%): area-allocation records apartment 12,090.00 sq ft / other 8,060.00 sq ft of 20,150, and 4,030.00 / 2,686.67 per storey; apartment + other = total and per-storey sum = the plate 6,716.67.",
+      "Every arithmetic step recomputes exactly (lib.recompute_row_errors == []; the +1 mutation on the apartment figure is caught by test_a_changed_allocation_apartment_figure_is_caught); both readings give 12,090/8,060/4,030/2,686.67.",
+      "OPEN for later work: making the drawn apartment-share proportions equal the stated percentage and showing it beside the drawing is the later drawing task (M5-T164 / M0-T193); only the calculation side is in this task.",
+      "Verifier's carry-forward condition met at c1da6932: the task's allowed-path files are identical to those verified at bff54ded (content identity a7f71996), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T177-DCV.md."
+     ],
+     "reviewed_sha": "c1da693228923b06586e019334cb78620118feda"
     },
     {
      "id": "D-094-R092",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim confirmed: source-003-amendment.md line 27 \"Check that the estimate and drawing use compatible area measurements. Do not automatically treat zoning floor area as the physical floorplate area.\"; row (requirements.json line 2973) matches and carries M5-T177.",
+      "Compatible measures: the allocation is worked on the proposed building's residential floor area (the estimate's measure); zoning floor area is NOT treated as the physical plate \u2014 the plate row carries the label \"plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked\" (step_p8.plate_label_errors == []; the dropped-label mutation is refused).",
+      "The footprint figure (6,716.66) and the plate (6,716.67) are separate quantities, each pinned to its own exact recompute (0.01 apart, within +/-0.5), never forced into one; physical-plate-not-checked stays not_known.",
+      "Every quantity names exactly one of the nine bases (step_p8.quantity_basis_errors == []; QUANTITY_BASES == tools/research_record_check.py set; missing/invalid-basis mutations refused). Nothing stays open for this task's share.",
+      "Verifier's carry-forward condition met at c1da6932: the task's allowed-path files are identical to those verified at bff54ded (content identity a7f71996), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (13 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier; G4 qa-engineer). DCV report: project-control/reports/M5-T177-DCV.md."
+     ],
+     "reviewed_sha": "c1da693228923b06586e019334cb78620118feda"
     }
-   ]
+   ],
+   "verified_at": "2026-10-14T03:37:23+00:00"
   },
   {
    "directive_id": "D-094",
