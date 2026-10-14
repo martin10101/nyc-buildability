@@ -7,6 +7,83 @@ number, title and Last Amended date is taken from the page read now, not from th
 Worktree `/root/project/nyc-buildability/.claude/worktrees/agent-af20321c166ac7653`; reset to the claim
 head `654ea3fade56e075f7bb447eb2f87d0b88fb38a4` on `task/wave24-report-v3` before work.
 
+## REWORK 1 (2026-10-14) — G1 findings F1–F4 (producer: official-source-researcher, AI agent)
+
+Reset to the branch head `11c932b5d0984149868b61de8eb489e840bb53b5` (task/wave24-report-v3, carrying round 1 as
+05e4ccb4d). Web = the official host `zoningresolution.planning.nyc.gov` only, one request per resource,
+pauses between, no refusal evaded. Nothing labelled Verified; no rule, no reading for a lot, no derived number.
+
+**F1 (REQUIRED) — zr-27-16 top-level outline letters corrected to the print/PDF.** Re-read the section
+print/PDF myself: GET `https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/22711` at
+2026-10-14T17:26:35Z → HTTP 200, application/pdf, 72,972 bytes, sha256
+`1832c6480a9d04b0cb0e1c62465ffaedd9d77e2d849c5cd17744cbe1e7dc56be` (a different render than the round-1
+pin `054aacd…`; the PDF is regenerated per request, identical printed letters). `pdftotext -layout`
+confirms a single continuous top-level list: (a) Location, (b) Distribution, (c) Bedroom mix, (d) Size,
+(e) Records, (f) Restrictive declaration, (g) Housing standards, (h) Insurance, (i) Duration of
+obligations, (j) One MIH site, (k) Guidelines. Round 1 had derived the top-level letters from the HTML
+`<ol>` markup, which restarts the lettering at "Bedroom mix". Relabelled exactly eight top-level letters
+(a→c, b→d, c→e, d→f, e→g, f→h, g→i, h→j); no word, no defined-term marker, no nested label changed.
+Recomputed `content_digest_sha256`: `ee3de193…` → `02144575596b2987e0adb70de40fa19eff895dd8b4a32471317dba64346b3ad7`.
+Corrected the file's `cross_check.method`, `verbatim_excerpt_composition`, and added a notes entry; corrected
+the round-1 Method claim inline (below). Loads through the production loader; digest matches.
+
+**F2 (RENAME) — §12-10 senior term renamed to the official SINGULAR.** The official defined term is
+singular "affordable independent residence for seniors". `git mv` of the canonical and the bundled file
+`zr-12-10-affordable-independent-residences-for-seniors.snapshot.json` →
+`zr-12-10-affordable-independent-residence-for-seniors.snapshot.json`; `snapshot_id` set to the singular to
+match the stem; the stale title-discrepancy note updated to record the resolution. The `verbatim_excerpt`
+is unchanged (it keeps the ZR's own plural usage inside the definition), so `content_digest_sha256` is
+unchanged (`05677e98…`). Grep for the plural id across the repo before editing: it appeared ONLY in this
+task's own files — the two snapshot copies (renamed), this producer report (updated), and the task packet
+`project-control/tasks/M3-T008.json` (the orchestrator corrects the packet as a scope correction, per the
+brief). No rule, test, code, library doc, or other snapshot referenced it, so the rename is safe. No plural
+file remains in canonical or bundle.
+
+**F3 (POINTER CAPTURE) — Appendix F written as a pinned pointer.** New file
+`docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json` (+ bundled copy), in the `zr_section_snapshot/v1`
+keys (mirrors the accepted `zr-appendix-i` appendix shape; standard 15-key set; the production loader loads
+it). Landing page: GET
+`…/appendix-f-mandatory-inclusionary-housing-areas-and-former-inclusionary-housing-designated-areas` (node
+21424) at 2026-10-14T17:27:19Z → HTTP 200, 330,627 bytes, raw_html_sha256
+`f721b91a5eb7e281092ae2e6c0d7d086fd8c5b0a5afc9120fa5619b19c776c61` (byte-identical to round 1's independent
+fetch; page title / data-section-number "APPENDIX F – Mandatory Inclusionary Housing Areas and former
+Inclusionary Housing Designated Areas"; Last Amended 9/24/2026). Official PDF asset: GET
+`…/sites/default/files/appendix/21424/APPENDIX%20F%20%E2%80%93%20…Designated%20Areas.pdf` at
+2026-10-14T17:29:54Z → HTTP 200, application/pdf, 10,311,823 bytes, raw_pdf_sha256
+`8802b66346f533d75ea351bb237b8333ddce64d754e7762027ee096ef233dd23` (static asset, so sha256 is PINNED,
+in `cross_check`). `verbatim_excerpt` = only the prose the landing page prints (heading, the internal
+"(9/24/26)" marker, the one-sentence introduction, and the five borough sub-page titles verbatim with the
+page's own dash characters); `content_digest_sha256`
+`28b7e55ead6d851824f5430f1ea417c6df41c024264a498aea585981d25a8321`. The page body's maps-by-zoning-map
+TABLE and the appendix MAPS are NOT transcribed — the notes record that they live in the pinned PDF asset
+and the five borough sub-pages, and that nothing is derived. (Supersedes the round-1 "Appendix F — NO FILE
+WRITTEN" section below.)
+
+**F4 (per-term Last Amended re-read) — confirmed, no change.** One GET of the §12-10 whole page
+`https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10` (node 18523) at 2026-10-14T17:30:16Z
+→ HTTP 200, 1,316,687 bytes, sha256 `f2309e6cb1d651290e9a05022c6ad58609226eeb0a8a6fc8130c74b605e797ef`
+(byte-identical to round 1). Each term's own article header reads "General Definition | Last Amended |
+12/5/2024": AIRS (node 21509) and long-term care facility (node 21590) are both **12/5/2024**, matching the
+files' `section_last_amended` 2024-12-05. No date correction needed; the `zr-12-10-long-term-care-facility`
+file is byte-unchanged.
+
+**Rework 1 checks (lanes venv, PYTHONDONTWRITEBYTECODE=1, direct exit codes):**
+`sync_zr_snapshots.py --check` → EXIT 0 ("200 file(s)"); from services/api, PYTHONPATH set,
+`pytest -q -p no:cacheprovider tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py`
+→ 28 passed, EXIT 0; from root `tools/research_record_check.py --check` → PASS, EXIT 0;
+`scripts/lanes/check_lane_paths.py --coverage` → PASS, EXIT 0 (10402 files). Own self-check over the three
+changed/new files (canonical + bundle): loader OK, `content_digest_sha256 == sha256(verbatim_excerpt)`,
+`extraction_status` extracted_draft, `raw_html_verified` false, `snapshot_id == stem`, no affirmative
+"Verified" label (every occurrence is the negated ADR-007 phrase). No server started; ports 3000/3001/8000
+untouched.
+
+**Rework 1 changed-file LF sha256 (`tr -d '\r' < f | sha256sum`; canonical == bundled for each):**
+```
+zr-27-16.snapshot.json                                        3c1917925717bccd5d7b1f0aa5dfb7427a8793152018ee82e880666792d82bea
+zr-12-10-affordable-independent-residence-for-seniors.snapshot.json  9477fb65b89eb90a1d048fd930754267da926b94db58e8bfdf8d536a124ea044
+zr-appendix-f.snapshot.json                                   0a7952bd26c7adb509283e67d689e9ad54f16c73870594f61640c16edaa40008
+```
+
 ## Method (same shape as accepted M5-T163)
 
 For each Chapter-7 section: one direct HTTPS GET of the official HTML (`curl -A Mozilla/5.0`), the
@@ -17,7 +94,13 @@ list item; defined terms `<strong><em>` → `#term#` with the render's inner spa
 labels (a)/(1)/(i) cycling every three `<ol>` depths, matching the print/PDF render; whitespace
 normalised, figures omitted, no word changed). `content_digest_sha256 = sha256(verbatim_excerpt)`. Each
 excerpt was cross-checked block-by-block against the print/PDF text layer (pdftotext); every block was
-found verbatim. A pause of a few seconds separated requests; no run of three refusals occurred.
+found verbatim. **[CORRECTED IN REWORK 1 — G1 finding F1: this holds for the PROSE of every block, but for
+zr-27-16 the TOP-LEVEL outline letters were taken from the HTML `<ol>` markup (which RESTARTS the
+lettering at "Bedroom mix") and were NOT confirmed against the print/PDF; the official print prints one
+continuous list (a) Location … (k) Guidelines. Rework 1 relabelled the eight top-level letters to the
+print's glyphs and recomputed that file's digest. The round-1 "outline labels … matching the print/PDF
+render" and "every block … verbatim" claims are therefore corrected for zr-27-16's labels. See the
+Rework 1 section at the top.]** A pause of a few seconds separated requests; no run of three refusals occurred.
 `extraction_status` is `extracted_draft` and `raw_html_verified` is `false` on every file (no
 second-agent re-read). For the two §12-10 terms both print/PDF channels were unavailable (documented
 DB-167 fallback — see below), so the canonical §12-10 HTML (node 18523, sha256-pinned) is the source.
@@ -61,11 +144,14 @@ zr-27-151.snapshot.json                                              699b1ed8efb
 zr-27-16.snapshot.json                                               39d624db076cce26c1d78a9db7734b8c337dd371f61f2270ec9484e1ad50b39b
 zr-27-161.snapshot.json                                              bc5f4b9d79da7ecc0410a9a009a610ac75bb5e9d2d396bb90320ab339b4f269c
 zr-27-162.snapshot.json                                              59f6c8e455a5eec152ea63c1f3e72323dfa81544ddb6b3acdd343fdeb7b82422
-zr-12-10-affordable-independent-residences-for-seniors.snapshot.json 2e2bfa4a34121bef91e9f46d6edcce9f0f673950072fb36ad787e9d0079a8613
+zr-12-10-affordable-independent-residences-for-seniors.snapshot.json 2e2bfa4a34121bef91e9f46d6edcce9f0f673950072fb36ad787e9d0079a8613 [RENAMED+UPDATED IN REWORK 1 → zr-12-10-affordable-independent-residence-for-seniors.snapshot.json, new LF sha256 9477fb65…; see top]
 zr-12-10-long-term-care-facility.snapshot.json                       01e73cd2981b1b3348c751d21ae1ad63fb6ba7a280d45428ef4db5cd9b1bd5a7
 ```
 
 ## Not captured — reported for the orchestrator to correct the packet
+**[SUPERSEDED BY REWORK 1 (see top): Appendix F is now captured as a pinned pointer
+(zr-appendix-f.snapshot.json, F3), and the §12-10 senior term was renamed to the official singular (F2).
+The two items below are the round-1 record.]**
 
 - **Appendix F — NO FILE WRITTEN.** The packet path `/appendix-f` returns **HTTP 404** (57,403 bytes,
   fetched 03:20:03Z). Appendix F does exist and is referenced in the captured text (`27-133`: "…are
