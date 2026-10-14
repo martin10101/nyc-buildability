@@ -111,7 +111,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The screen statuses stay until question C2 is answered.",
     "The existing web design keeps the 29 on the allowance card apart from the estimate (DB-214 N2); parity pairs ceiling+estimate in a new additive block. three-answers.ts and first-building-options.ts are read-only, so the allowance card is untouched; only three-answers-panel.test.tsx's DB-214 N2 wording is reconciled in-scope.",
@@ -120,7 +120,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:44.523757+00:00",
-  "updated_at": "2026-10-14T02:53:12.341621+00:00",
+  "updated_at": "2026-10-14T03:24:10.034151+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -157,6 +157,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed after M5-T165 was accepted; the builder mirrors the accepted page 1"
+    },
+    {
+      "at": "2026-10-14T03:24:10.034047+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "the additive ceiling-and-estimate block beside the answers, mirroring report page 1; the builder's commit integrated as 2f69ee16 (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
