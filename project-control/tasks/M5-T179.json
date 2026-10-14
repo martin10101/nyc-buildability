@@ -89,15 +89,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Another test may pin the old scope-note text for a report built with maps: the builder runs the whole tests/drawings suite and reports any test outside the allowed paths that needs a change (a scope correction, never a silent edit).",
     "M5-T175 (in flight) also proves byte-identity of the benchmark report with maps against its claim head: this task integrates AFTER M5-T175's rework 2 is integrated and its delta reviews returned, so neither proof is confused."
   ],
   "blockers": [],
   "created_at": "2026-10-14T17:50:20.686294+00:00",
-  "updated_at": "2026-10-14T18:38:49.828961+00:00",
+  "updated_at": "2026-10-14T18:59:20.595527+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -145,5 +145,7 @@
       "actor": "orchestrator",
       "change": "Scope correction after the build round (the builder's return, session 2026-10-14c; the packet's risk 1): the whole drawings suite has one failure, test_report_pages.py::test_q3_coverage_and_maps_with_and_without_a_map_document, whose last line asserts 'Context maps' in the visible text of the report WITH maps; since the coverage inventory left page 1 (M5-T165) the only place that text appeared was the wrong page-7 scope note, so the assertion pinned the defect. test_report_pages.py is added to the allowed paths (no task in flight lists it) for that one assertion: the report with maps does NOT list 'Context maps' among the exclusions. No row, gate, reviewer or dependency changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T18:59:20.595343+00:00"
 }

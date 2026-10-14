@@ -194,8 +194,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "site_context_plan.py is 597 SLOC, 3 under the 600 WARN line (DB-250): even a thin hook can cross WARN/material-growth. Keep the hook minimal; the overlay drawing lives in constraint_overlay.py. modularity_check runs in the self-check.",
     "The 1.4.0 fall-back must reproduce BOTH the short page-3 state column strings ('Not known', 'Not worked out yet', 'Not checked', 'by portion') AND the longer open-item effect texts exactly; conflating them would redden the forbidden benchmark tests (test_constraints_page.py, test_report_pages.py, test_location_sheet.py, test_report_read_context.py).",
@@ -204,7 +204,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:13.796408+00:00",
-  "updated_at": "2026-10-14T18:38:34.765228+00:00",
+  "updated_at": "2026-10-14T18:59:18.874638+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -281,5 +281,7 @@
       "actor": "orchestrator",
       "change": "Second scope correction, after the four reviews pinned at 11c932b5d (session 2026-10-14c): G1 data contract PASS, G3 code PASS with two advisories, G4 QA PASS with two advisories, G3 visual PASS WITH THREE REQUIRED CORRECTIONS, all on the close frame when a constraint line is drawn (the benchmark draws none, so its pages are byte-identical): the legend grows a row and its last entry is clipped over the sources caption; the legend names the reused 'Setback line' kind for the drawn rear-yard line; the committed example's rear-yard line runs about 60 ft past its own lot outline and is drawn across the street. Decisions: the four constraint kinds get their own entries in the style table (kit/styles.py added to the allowed paths, with its test file, additive only: every existing output stays byte-identical), so the legend names what is drawn (S13); the legend fits (S13); an established line is drawn only inside the lot outline, wholly outside draws nothing (S5 reworded, S14); an overlay failure keeps the map without the overlay and a short note instead of dropping the whole map (the code review's advisories; S15); page 1 does not repeat the title, and a direct test for a not_known (c)(3) check row (the QA advisory; S16). The synthetic example's own inconsistencies (the line past its outline; input_facts unequal to its lot_area) are recorded for M5-T167 and the fixture's next edit (backlog). No row, gate, reviewer or dependency changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T18:59:18.874469+00:00"
 }
