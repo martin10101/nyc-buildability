@@ -1,0 +1,81 @@
+{
+ "task_id": "M5-T175",
+ "material_commits": [
+  "f66e8212 (builder, round 1 (cherry-pick of 826bf88a): constraint_text.py reads the 1.5.0 rear-yard, envelope and constraint rows with an exact 1.4.0 fall-back; page 3's rows read it (the hard-coded state dict removed, #issue-<n> links); close_frame_dimensions.py adds the other-basis lot dimensions; constraint_overlay.py draws established constraint lines; the thin hook in site_context_plan.py; NB-04 revision 3; tests)",
+  "c11b4e03 (builder, rework 1 (cherry-pick of b8615008): the overlay and the other-basis dimensions wired into the live report (maps/__init__.py, drawings_embed.py, page_location.py); page 1's rear-yard uncertainty reads the 1.5.0 combined row (page_decision_summary.py); live-path tests)",
+  "046c717d (builder, rework 2 (cherry-pick of 03c989ba): the visual review's three required corrections and the code review's advisories: the constraint kinds get their own style-table entries so the legend names what is drawn; the close frame grows to fit the overlay legend; established lines clipped to the lot outline; an overlay failure keeps the map with a short note; page 1 does not repeat the title; a direct not_known (c)(3) test)"
+ ],
+ "claim_seam_head": "654ea3fade56e075f7bb447eb2f87d0b88fb38a4",
+ "files_changed": [
+  "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+  "project-control/reports/M5-T175-producer-report.md",
+  "services/api/app/drawings/kit/styles.py",
+  "services/api/app/drawings/maps/__init__.py",
+  "services/api/app/drawings/maps/close_frame_dimensions.py",
+  "services/api/app/drawings/maps/constraint_overlay.py",
+  "services/api/app/drawings/maps/site_context_plan.py",
+  "services/api/app/drawings/report/constraint_text.py",
+  "services/api/app/drawings/report/drawings_embed.py",
+  "services/api/app/drawings/report/page_decision_summary.py",
+  "services/api/app/drawings/report/page_location.py",
+  "services/api/app/drawings/report/page_site_context.py",
+  "services/api/tests/drawings/kit/test_style_table.py",
+  "services/api/tests/drawings/maps/test_constraint_overlay.py",
+  "services/api/tests/drawings/report/test_constraint_rows.py"
+ ],
+ "what_did_not_change": "Every report and drawing for a document without the 1.5.0 blocks is byte-identical to the claim head (all valid 1.4.0 fixtures, the benchmark with and without its map context, the five site-context SVGs, the DXF snapshots); the benchmark pages print unchanged, because its results carry no constraint lines yet. No results fixture, schema, engine, rule, reference case or other evidence record changed; readers.py is untouched (the appendix open item moved to M5-T167).",
+ "known_limits": [
+  "The benchmark property's report does not change yet: the engine emits no 1.5.0 rear-yard rows or constraint lines until M5-T167; the new behaviour is proven on the committed 1.5.0 examples.",
+  "The appendix open item still prints the 1.4.0 'not yet checked' rear-yard wording; it moved to M5-T167 (scope correction of 2026-10-14).",
+  "The committed 1.5.0 example is not self-consistent (its line runs past its own lot outline; its input_facts differ from its lot areas): backlog DB-262, QUEUED M5-T167.",
+  "Review advisories left open (backlog DB-263): the clipped line is mostly hidden under its own label box; the frame growth is a string rewrite of the finished SVG with a fixed furniture line; the page-1 title strip has no word boundary; the legend-fit test measures against the frame height, not the caption; the label-placement failure is tested through a monkeypatch only."
+ ],
+ "checks_at_material_head": [
+  "producer (rework 2): ruff 0; tests/drawings tests/cad and the two report-read API tests 1828 passed; the task's files 51 passed; research_record_check, modularity_check and lane coverage PASS; S1 byte-identity 17 of 18 outputs identical (the one intended difference) and the DXF snapshots identical; three mutation proofs",
+  "G1 data-contract-verifier: PASS at 11c932b5d (fields and enums equal the 1.5.0 schema; established-only drawing; endpoints on the document's vertices; NB-04 revision 3's code identity) and PASS on the rework-2 commit 03c989ba (the clip on the outline within 0.0 ft, interior vertices kept; the new style kinds one-to-one with the schema's constraint kinds)",
+  "G3 code-reviewer: PASS at 11c932b5d with two advisories (an overlay failure dropped the whole map), PASS on 03c989ba (both resolved; S1 re-proved; clip degenerate cases reproduced; the retry only on an overlay failure)",
+  "G3 visual-quality-reviewer: PASS with three required corrections at 11c932b5d (legend clipped; legend named the reused 'Setback line'; the example's line drawn across the street), PASS on 03c989ba (all three met, the page-1 advisory met; benchmark pages byte-identical)",
+  "G4 qa-engineer: PASS at 11c932b5d (1819 passed; own S1 proof; four mutations) and PASS on 03c989ba (1828 passed; S13-S16 tests assert; three mutations; own S1 proof)",
+  "orchestrator (G2): the three material commits touch only the packet's allowed paths (after the scope corrections of 2026-10-14); LF sha256 equal to the builder's returns at each cherry-pick; the rework-2 files' blob ids at 046c717d equal those of the reviewed builder commit 03c989ba",
+  "CI run 38615796574 at 90f11548 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R015": [
+   "The dedicated constraints close frame now draws, for a results document carrying 1.5.0 constraint lines, each established line on the subject lot with its own legend entry, and the other-basis lot dimensions (each labelled with its basis) beside the map-outline dimensions, anchored to the lot edges (S5, S12, S13, S14; tests in tests/drawings/maps/test_constraint_overlay.py and tests/drawings/report/test_constraint_rows.py).",
+   "Open: the benchmark's results carry no constraint lines until M5-T167 emits them, so its close frame does not change yet."
+  ],
+  "D-094-R017": [
+   "A constraint line or area is drawn only when its state is established; not_established and not_known items carry and draw nothing, and the legend omits them (S4; mutation proofs by the builder and the QA reviewer); an established line is drawn only inside the lot outline (S14)."
+  ],
+  "D-094-R036": [
+   "This task's share: the report reads the engine's rear_yard.checks and rear_yard.combined rows (state, way, text, conditions, ZR sections) on page 1 and on page 3, so the diagram and the conclusion come from one engine row (S2, S12, S16); a document without them keeps the 1.4.0 open-check wording.",
+   "Open: the engine evaluation of 23-344(b) and (c)(3) and the appendix item are M5-T167's."
+  ],
+  "D-094-R037": [
+   "The report prints the combined row's own text labelled Conditional with ZR 23-344 linked and never an unconditional 'no rear yard'; without the 1.5.0 row it says the short-block and adjoining-line checks are not yet applied, so the corner test is never presented as the only exception (S2, S16; G1 and visual reviews)."
+  ],
+  "D-094-R038": [
+   "The data path, not just the wording: page 3's hard-coded state dict is removed and every constraint row reads its own state, way and text from the results document through constraint_text.py (S1, S2, S3, S7), and the live report receives the document's constraint lines and input facts (S12).",
+   "Open: the benchmark regeneration from the corrected engine output is M5-T167's."
+  ],
+  "D-094-R044": [
+   "No invented geometry: lines are drawn only from the document's established geometry through a pure translation into the map frame, clipped to the lot outline (clipped ends on the outline within 0.01 ft, interior vertices exact; a line wholly outside draws nothing), as the data-contract reviewer computed on the committed example (S5, S14)."
+  ],
+  "D-094-R052": [
+   "The close frame keeps its one job (the constraints close-up): it adds only the established constraint lines and the other-basis dimensions, its legend lists only what is drawn and fits the frame (S13), and the benchmark pages print byte-identical."
+  ],
+  "D-094-R053": [
+   "The drawn constraint uses its own distinct style and legend entry, its label carries the state and the ZR section at 8.5 pt or more with no collision (S6, S13), the other-basis dimensions name their basis, and hatched illustrative copies stay distinguishable (S6)."
+  ],
+  "D-094-R060": [
+   "Every internal #issue-<n> link the report emits resolves to an id='issue-<n>' anchor of the assumptions page, and page 3's rear-yard row links its numbered open item (S9 tests); the visual reviewer's renders confirmed the links resolve."
+  ],
+  "D-094-R061": [
+   "A 1.5.0 row's own state is shown: a not_known row prints only its own reason and no number (S3, S16), so an unknown appears only where the document says not known; the 1.4.0 wording says plainly that the engine has not yet applied the check (owed by M5-T167), not that the law is unknown."
+  ],
+  "D-094-R079": [
+   "The page-1 uncertainty and the page-3 row show the engine's 23-344(b) applicability result, labelled and linked to ZR 23-344, whenever the document carries it (S2, S16).",
+   "Open: the explicit engine check itself is M5-T167's."
+  ]
+ }
+}

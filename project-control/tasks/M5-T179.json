@@ -89,15 +89,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "Another test may pin the old scope-note text for a report built with maps: the builder runs the whole tests/drawings suite and reports any test outside the allowed paths that needs a change (a scope correction, never a silent edit).",
     "M5-T175 (in flight) also proves byte-identity of the benchmark report with maps against its claim head: this task integrates AFTER M5-T175's rework 2 is integrated and its delta reviews returned, so neither proof is confused."
   ],
   "blockers": [],
   "created_at": "2026-10-14T17:50:20.686294+00:00",
-  "updated_at": "2026-10-14T18:23:10.508895+00:00",
+  "updated_at": "2026-10-14T18:38:49.828961+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -130,6 +130,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "built (maps_present passed to the appendix scope note; the q3 assertion corrected under the scope correction of 2026-10-14); the builder's commit integrated as d36341bc (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T18:38:47.286211+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [

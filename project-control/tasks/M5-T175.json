@@ -194,8 +194,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "site_context_plan.py is 597 SLOC, 3 under the 600 WARN line (DB-250): even a thin hook can cross WARN/material-growth. Keep the hook minimal; the overlay drawing lives in constraint_overlay.py. modularity_check runs in the self-check.",
     "The 1.4.0 fall-back must reproduce BOTH the short page-3 state column strings ('Not known', 'Not worked out yet', 'Not checked', 'by portion') AND the longer open-item effect texts exactly; conflating them would redden the forbidden benchmark tests (test_constraints_page.py, test_report_pages.py, test_location_sheet.py, test_report_read_context.py).",
@@ -204,7 +204,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:13.796408+00:00",
-  "updated_at": "2026-10-14T18:30:35.814826+00:00",
+  "updated_at": "2026-10-14T18:38:34.765228+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -261,6 +261,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "rework 2 (the visual review's three required corrections, the code review's advisories, S13-S16; reviewed by the same four at the builder commit 03c989ba: all PASS); the builder's commit integrated as 046c717d (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T18:38:29.940491+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [
