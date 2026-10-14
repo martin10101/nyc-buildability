@@ -1,0 +1,45 @@
+{
+ "task_id": "M3-T007",
+ "material_commits": [
+  "9730b3e6 (producer (cherry-pick of 63fc2b19): the zoning-law library, second pass: eight option documents and a research log under docs/zoning-law-library/options/, and the second-pass blocks of options-sections.md, built from ten read-only research returns, the settled R6B reference cases and the producer's own checks)"
+ ],
+ "claim_seam_head": "3008e989ac9025aac20f95796d4bafa5008e6c18",
+ "files_changed": [
+  "docs/zoning-law-library/options-sections.md",
+  "docs/zoning-law-library/options/README.md",
+  "docs/zoning-law-library/options/option-02-03-affordable-and-senior-housing.md",
+  "docs/zoning-law-library/options/option-05-shops-with-residences.md",
+  "docs/zoning-law-library/options/option-06-07-community-facility.md",
+  "docs/zoning-law-library/options/option-08-split-lot.md",
+  "docs/zoning-law-library/options/option-09-shared-housing.md",
+  "docs/zoning-law-library/options/option-10-parking-and-transit-zone.md",
+  "docs/zoning-law-library/options/option-11-combinations.md",
+  "docs/zoning-law-library/options/research-log.md",
+  "project-control/reports/M3-T007-producer-report.md"
+ ],
+ "what_did_not_change": "No snapshot, evidence record, registry, coverage matrix, reference case, review register, rule, service, web or contract file; the first pass's other files (README.md, benchmark-r6b-sections.json, coverage.md, cross-reference-closure.md, pitfalls.md, research-log.md) are not edited (their three wrong labels are backlog DB-252).",
+ "known_limits": [
+  "The pass is an unreviewed draft discovery aid (ADR-007): it decides no eligibility and computes no floor area, height, unit count or parking count for the benchmark lot.",
+  "Many sections the options need are read on the official site but not captured (backlog DB-253: Article II Chapters 4 and 7, Article VII Chapter 7, the rooming-unit sections, 32-421, 33-26, the parking sections); ZR 23-154 still answers HTTP 403 (recorded, not evaded).",
+  "How much of the lot the mapped C2-2 overlay covers is not known and nothing is assumed (the 150-ft default of 76-131 is not applied); whether an overlay edge is a district boundary for Article VII Chapter 7 is not settled by the text.",
+  "Owner questions the pass leaves open: N1 (what split lot means), N2 and N3 (shared housing; options 9 and 10), N4 (what option 11 combines), N5 (option 6 as one mixed building or two; the G1 reviewer ruled it an owner decision).",
+  "The G1 reviewers' five advisories are not applied (backlog DB-258); none changes a recorded value."
+ ],
+ "checks_at_material_head": [
+  "producer: the diff is the 11 allowed paths only; every section cited as captured exists in the snapshot folder; the cited rule files exist; status-word search clean; lane coverage PASS",
+  "orchestrator (G2): the material commit touches exactly the packet's 11 allowed paths; LF sha256 of every file equal to the producer's return at the cherry-pick; the 11 files' blob ids at the submit head equal those at 9730b3e6; every library file of the pass carries the unreviewed-draft label; record check and lane coverage PASS",
+  "G1 data-contract-verifier, two independent reviewers at 9730b3e6, each on half of the files: both PASS, no required finding; 0 capture-state and 0 handled-state mismatches against their own listings of the snapshot and rule folders; the decisive sections read by the reviewers themselves (snapshots and official pages); the pass agrees with the reference cases step-p5-worked, step-p4-worked and overlay-reading",
+  "CI run 38501250522 at e27bc2a0 (descendant of the reviewed head 9730b3e6; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R102": [
+   "The zoning-law library continues as its own documents-only line of work beside the report lane, sharing no file with it: the second pass adds, under docs/zoning-law-library/options/, the law each remaining option needs (options 2-3 affordable and senior housing, 5 shops with residences, 6-7 community facility, 8 split lot in its two readings, 9 shared housing, 10 parking and the transit zones with one applicability line for every option 1 to 11, 11 combinations), each with its section table (id, title, official link, last-amended date, capture state, handled state), a reading, the open points with their next steps, and a research log; options-sections.md gains the second-pass blocks."
+  ],
+  "D-094-R104": [
+   "Research helpers that only read fed the work: ten read-only research returns (seven law readings, the sample's options, word-for-word follow-ups, three open legal questions; kept outside git in the session folder of 2026-10-14) were written up by one builder; no research helper wrote in the repository, one helper built (three are allowed) and no two helpers shared a file (session notes of 2026-10-14)."
+  ],
+  "D-094-R119": [
+   "The task was contracted and built in the night's session for which the owner approved ten helpers at once: its session notes show at most ten helpers running at once, one of them building, every one on a tracked task or read-only preparation for one."
+  ]
+ }
+}
