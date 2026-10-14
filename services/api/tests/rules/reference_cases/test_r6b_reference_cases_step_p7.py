@@ -45,7 +45,11 @@ CID = "short-block-rear-yard"
 
 # The prior cases' rows, pinned at the claim head: this task adds a case and must not
 # touch any existing one. The digest proves byte-stability without git.
-PRIOR_ROWS_DIGEST = "4285ac72268598eb054fa0485b23a7bafa2b455c336a973ca75ecbf264b77583"
+# Moved by M5-T177: adding the step-P8 case placement-building-b puts it into this
+# "prior" set (CASE_IDS minus short-block-rear-yard), so the blob grew by that case's
+# rows and the digest changed; no other case's rows changed (the 10 pre-existing
+# non-short-block cases still hash to the prior pin 4285ac72..., proving byte-stability).
+PRIOR_ROWS_DIGEST = "2b9232078c6f90a36fe87b55a4493b8fce71dd7b7decfe028f5aecc6a482b4ee"
 
 
 def _row(rid):

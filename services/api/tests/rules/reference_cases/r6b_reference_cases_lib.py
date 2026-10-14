@@ -45,7 +45,7 @@ SNAPSHOT_DIR = REPO_ROOT / "docs" / "research" / "zr-snapshots" / "v1"
 CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
     "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
-    "step-p6-worked", "short-block-rear-yard",
+    "step-p6-worked", "short-block-rear-yard", "placement-building-b",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -128,6 +128,21 @@ REQUIRED_BASE_IDS = {
         "real-lot-front-lot-line", "real-lot-reach", "real-lot-z1-rear-yard",
         "real-lot-z2-rear-yard", "real-lot-beyond-100-sliver",
         "real-lot-missing-facts", "both-readers-did-not-have", "m5-t167-scenario-map",
+    ],
+    # The step-P8 case (placement-building-b): the two readings of where the
+    # three-storey Building B sits on lot 70 under Z1 and how its floor area divides.
+    # The plate (plate) and the physical plate not checked (physical-plate-not-checked);
+    # the footprint on the printed-tax-map basis (footprint-tax-map); the placement and
+    # offsets (placement-tax-map); the city-map (GIS) outline conflict check
+    # (gis-conflict-check); the lot coverage maximum by portion (lot-coverage-max) and
+    # the whole-lot coverage not known (lot-coverage-whole-lot); the rear yard not known
+    # (rear-yard); the area allocation at the stated 60% share (area-allocation); the
+    # texts both readers did not have (both-readers-did-not-have) and the missing facts
+    # about the real lot (real-lot-missing-facts).
+    "placement-building-b": [
+        "plate", "physical-plate-not-checked", "footprint-tax-map", "placement-tax-map",
+        "gis-conflict-check", "lot-coverage-max", "lot-coverage-whole-lot", "rear-yard",
+        "area-allocation", "both-readers-did-not-have", "real-lot-missing-facts",
     ],
 }
 
