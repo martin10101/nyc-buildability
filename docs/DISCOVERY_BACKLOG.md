@@ -634,3 +634,5 @@ Sweep 2026-10-14 (contract seam of M5-T175 and M3-T008, the claim of M5-T171, th
 Sweep 2026-10-14 (contract seam of M5-T179 after the owner's forwarded review, D-094 source-019; wave 24 not yet merged): DB-262 added at M5-T175's second scope correction (QUEUED M5-T167). The page-7 'Context maps' defect is the new task M5-T179, not a backlog row. No other open or watch row changed.
 
 Sweep 2026-10-14 (wave-24 merge seam, before the pull request to main; M5-T171, M3-T008, M5-T175 and M5-T179 accepted this session): DB-239 RESOLVED by M5-T165 (accepted; page 1 shows the legal ceiling beside the estimate). DB-262 (QUEUED M5-T167) and DB-263 (OPEN: the overlay polish before the benchmark prints an established line) added this session. DB-245 stays QUEUED(M5-T167); DB-261 stays QUEUED(M5-T174); DB-259 and DB-260 unchanged. No other open or watch row changed.
+
+Sweep 2026-10-14 (contract seam of M5-T167 on task/wave25-rear-yard-short-block after the wave-24 merge): DB-245 and DB-262 are in M5-T167's scope (scenarios S22, S24, S25); DB-230 is the task itself; DB-263 stays OPEN (the overlay polish, not M5-T167's files); no other open or watch row changed.
