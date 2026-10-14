@@ -118,7 +118,11 @@ _NOT_CHECKED_BASE = (
     "The street wall",
     "Parking, loading and bicycle requirements",
 )
-_NOT_CHECKED_REAR_YARD = "The rear yard beyond the corner"
+# M5-T167 step 6: the rear yard is no longer a not-checked item of the first-building-option
+# method. The engine now applies ZR 23-344 (the document's rear_yard block, (a)/(b)/(c)(3)), so
+# the rear-yard reading is shown at the lot level and the building method lists only what it does
+# not address (placement, street wall, parking). The old "The rear yard beyond the corner"
+# placeholder is removed (it was the pre-check wording).
 
 # The two buildings of the step-P6 method, named the same in both lists (ruling W14): a building is
 # in exactly one of building_alternatives and buildings_not_worked.
@@ -504,11 +508,9 @@ def _fit_note(inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str | 
 
 
 def _not_checked(inp: FirstOptionInputs) -> list[str]:
-    rows: list[str] = []
-    if inp.lot_type == "corner":
-        rows.append(_NOT_CHECKED_REAR_YARD)
-    rows.extend(_NOT_CHECKED_BASE)
-    return rows
+    # The rear yard is no longer listed here (M5-T167 step 6): it is applied by the engine's
+    # ZR 23-344 rear_yard block and shown at the lot level, not a not-checked item of this method.
+    return list(_NOT_CHECKED_BASE)
 
 
 def _estimate(estimate: PreliminaryApartmentEstimate) -> dict:

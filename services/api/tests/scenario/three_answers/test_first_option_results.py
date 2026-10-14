@@ -146,7 +146,14 @@ def test_s9_benchmark_building_b_conditional() -> None:
     assert "8,060 sq ft" in b["fit_note"]
     assert "8,060" not in b["label"]
     assert math.isclose(b["footprint_area_sqft"], 8060.0, abs_tol=0.5) is False
-    assert b["not_checked"][0] == "The rear yard beyond the corner"
+    # M5-T167 step 6: the rear yard is no longer a not-checked item of this method (the engine
+    # applies ZR 23-344 at the lot level); the method lists only placement, street wall, parking.
+    assert b["not_checked"] == [
+        "Where the plan sits on the lot",
+        "The street wall",
+        "Parking, loading and bicycle requirements",
+    ]
+    assert "The rear yard beyond the corner" not in b["not_checked"]
     _no_feasibility_language(b)
 
 
@@ -238,7 +245,7 @@ def test_s13_interior_lot_areas_agree_shows_footprint_and_building_a() -> None:
         a["unused_floor_area_sqft"], _num(block_a["unused_floor_area_sqft"]), abs_tol=_TOL
     )
     assert a["below_min_base"] is True  # 20 ft < 30 ft
-    assert "The rear yard beyond the corner" not in a["not_checked"]  # not a corner lot
+    assert "The rear yard beyond the corner" not in a["not_checked"]  # removed everywhere (M5-T167)
     assert "fit_note" not in a  # building A's footprint is the coverage footprint; no bound
     assert a["label"] == "Building A: the widest footprint"
     _no_feasibility_language(blocks.building_alternatives[0])

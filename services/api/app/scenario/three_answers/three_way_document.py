@@ -55,6 +55,7 @@ from .first_option_results import (
     max_lot_coverage_value_state,
     portions_measurable,
 )
+from .rear_yard_checks import RearYardAnalysis
 from .result_way_inputs import (
     COVERAGE_KEY,
     KIND_CONTRADICTED_RECORD,
@@ -95,6 +96,7 @@ __all__ = [
     "BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "BUILDING_OPTION_POINTS_TO_ALTERNATIVES",
     "CONTRACT_VERSION_FIRST_OPTION",
+    "CONTRACT_VERSION_REAR_YARD",
     "CONTRACT_VERSION_THREE_WAY",
     "FLOOR_PLATES_FOLLOW_FIRST_OPTION",
     "FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION",
@@ -114,6 +116,10 @@ CONTRACT_VERSION_THREE_WAY = "1.3.0"
 # The additive version the document declares once it carries a first-building-option block
 # (building_alternatives and/or coverage_by_portion), M5-T146 task 1.
 CONTRACT_VERSION_FIRST_OPTION = "1.4.0"
+# The additive version the document declares once it carries a 1.5.0 block (rear_yard and/or
+# input_facts; M5-T167 steps 3-4). A document carrying none keeps its version; one carrying any
+# declares 1.5.0 (the schema's reverse version binding).
+CONTRACT_VERSION_REAR_YARD = "1.5.0"
 
 # The single building_option answer, wherever the first option is applied, stays not_available and
 # points to BOTH lists (ruling W3/W14; no number and no substitute, R556/R570). It says this ALSO
@@ -725,10 +731,17 @@ def emit_three_way_document(
     lot_area: LotAreaFigures | None = None,
     lot_outline_available: bool | None = None,
     zoning_lot: ZoningLotCitation | None = None,
+    rear_yard_analysis: RearYardAnalysis | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
     number, and returns a strictly schema-valid document (the way-layer rule runs after the schema).
+
+    ``rear_yard_analysis`` (M5-T167 steps 3-4), when the evidence entry threads it, attaches the
+    additive contract-1.5.0 rear_yard block (the ZR 23-344 (a)/(b)/(c)(3) checks and the combined
+    row), the input_facts, and the rear-yard constraint lines, and bumps the declared version to
+    1.5.0. When None (every other caller and the direct-transform tests) nothing is attached and the
+    document is byte-identical to the 1.3.0/1.4.0 emit - the whole 1.5.0 emission is opt-in.
 
     ``condition_sources`` (M5-T137, reading O36), when the evidence entry hands it, says for each of
     the engine's five lot conditions where it comes from; the transform then rewrites those five
@@ -813,9 +826,30 @@ def emit_three_way_document(
     # by-portion areas when threaded (ruling W1/W13: AGREE shows the footprint and building A).
     _apply_first_option(doc, ways, document, corner_areas=corner_areas, lot_area=lot_area)
 
+    # The additive contract-1.5.0 rear-yard emission (M5-T167 steps 3-4). Opt-in: only when the
+    # evidence entry threads an analysis. Absent -> the document keeps its 1.3.0/1.4.0 version.
+    _apply_rear_yard(doc, rear_yard_analysis)
+
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)
     return doc
+
+
+def _apply_rear_yard(doc: dict, analysis: RearYardAnalysis | None) -> None:
+    """Attach the additive 1.5.0 rear_yard block, input_facts and rear-yard constraint lines, and
+    declare 1.5.0 (M5-T167 steps 3-4). The constraint lines go on the geometry block only when it is
+    drawn (available); the rear-yard answer itself is the top-level rear_yard block. None -> no-op,
+    so every pre-1.5.0 emit stays byte-identical."""
+    if analysis is None:
+        return
+    doc["rear_yard"] = analysis.rear_yard
+    if analysis.input_facts:
+        doc["input_facts"] = list(analysis.input_facts)
+    if analysis.constraint_lines:
+        geometry = doc.get("geometry")
+        if isinstance(geometry, dict) and geometry.get("status") == "available":
+            geometry["constraint_lines"] = list(analysis.constraint_lines)
+    doc["contract_version"] = CONTRACT_VERSION_REAR_YARD
 
 
 def _assert_no_qualifying_unit_value(doc: dict) -> None:

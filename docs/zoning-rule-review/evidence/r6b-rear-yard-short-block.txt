@@ -1,1 +1,64 @@
-Placeholder (M5-T167): r6b short-block rear-yard review evidence; exact name confirmed at G0.
+r6b-rear-yard-corner-waiver - short-block (ZR 23-344(b)) and adjoining-side-line (ZR 23-344(c)(3)) review evidence
+=================================================================================================================
+
+Task M5-T167. A labelled, unreviewed draft reading (ADR-007). It is not a determination by the
+Department of Buildings and no human verdict is entered here.
+
+Scope
+-----
+This note records the evidence behind broadening the r6b-rear-yard-corner-waiver register entry from
+ZR 23-344 paragraph (a) alone to the whole ZR 23-344 rear-yard reading the engine now makes:
+paragraph (a) the corner-area waiver (the draft DSL rule r6b_rear_yard_corner_waiver.rule.json),
+paragraph (b) the short dimension of a block, and paragraph (c)(3) the adjoining zoning lot's side
+lot line. Paragraphs (b) and (c)(3) are evaluated in the scenario engine
+(services/api/app/scenario/three_answers/rear_yard_checks.py), not in the DSL rule.
+
+Law captured and quoted (snapshots under docs/research/zr-snapshots/v1/)
+-----------------------------------------------------------------------
+- ZR 23-344(b) (zr-23-344): "whenever a #front lot line# of a #zoning lot# coincides with the
+  #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100
+  feet of such #street line#".
+- ZR 12-10 "short dimension of a block" (zr-12-10-short-dimension-of-a-block): "shall be a #block#
+  frontage where the dimension between any two #streets# bounding the #block# measures less than
+  230 feet". The threshold is strict: a dimension of exactly 230.00 feet is not a short dimension.
+- ZR 23-344(c)(3) (zr-23-344): "In R6 through R12 Districts, no #rear yard# shall be required where
+  such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#".
+- ZR 12-10 definitions relied on: front lot line, street line, side lot line, rear lot line, block.
+
+The two independent readings (reference case, not a program run)
+---------------------------------------------------------------
+docs/reference-cases/R6B/short-block-rear-yard.md and cases/short-block-rear-yard.json carry two
+independent step-P7 readings of ZR 23-344(b)/(c)(3) worked by AI helpers from a sealed folder; their
+agreement alone is not proof. The settled points both readings reach:
+- What (b) measures and that "less than 230 feet" is strict (made-up cases M1 229.99 applies; M2
+  230.00 and M3 230.01 do not).
+- (b) can apply to a corner lot; more than one 23-344 modification can apply to one lot; where (b)
+  and (c) overlap the captured text sets no priority (left as a conflict).
+The points both readings leave not settled (unresolved law or a missing fact):
+- The measurement basis for the short dimension (street line vs centreline vs lot line) is not fixed
+  by the captured text.
+- "within 100 feet" and the exactly-100.00-foot edge are not fixed by the captured text.
+- Whether R6B counts within "R6 through R12" for (c)(3) is held by reading 2 subject to professional
+  confirmation (the captured text does not enumerate the letter-suffix districts).
+
+The real lot (215-16 Northern Boulevard, block 7334, lot 70), from the reference case
+------------------------------------------------------------------------------------
+- (a) applies within 100 feet of the corner: the two street lines meet at about 89.7 degrees and the
+  lot reaches about 144.60 feet from the corner, so (a) covers only the part within 100 feet of it.
+- (b) is NOT KNOWN: the measurement basis is unresolved law (reference row b-measurement-basis), so
+  the short-dimension test is not known whatever the measured separation.
+- (c)(3) is NOT KNOWN: the neighbouring zoning lots' lot-line kinds are not recorded for this lot.
+- The combined rear-yard row is NOT KNOWN and shown as a conditional reading - never an unconditional
+  "no rear yard" - under both zoning-lot readings (Z1 lot 70 alone, Z2 lots 70 and 1 together),
+  naming and linking ZR 23-344(b) and (c)(3) besides the corner waiver (a).
+
+What the engine encodes (M5-T167)
+---------------------------------
+rear_yard_checks.py holds the strict ZR 12-10 230-foot captured threshold and the three checks
+((a)/(b)/(c)(3)), combined into the contract-1.5.0 rear_yard block. Every text is a plain, labelled
+draft reading. No default stands for a fact: a missing reach, angle, separation, district or
+neighbour record holds its result back as not known. Expected outcomes are the R6B reference case,
+never a program run. The deterministic checks are in
+services/api/tests/scenario/three_answers/test_rear_yard_short_block.py.
+
+Record: docs/research/evidence-records/NB-03-rear-yard-short-block.json (revision 3).

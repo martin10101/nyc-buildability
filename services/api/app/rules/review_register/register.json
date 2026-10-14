@@ -2555,7 +2555,7 @@
       "rule_file": "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
       "rule_version": "0.1.0-draft",
       "rule_file_sha256": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4",
-      "title": "R6B district - no rear yard required within 100 feet of the point of intersection of two street lines intersecting at 135 degrees or less (ZR 23-344 paragraph (a))",
+      "title": "R6B district - the ZR 23-344 rear-yard modifications read in the engine: paragraph (a) (no rear yard within 100 feet of the point where two street lines meet at 135 degrees or less), paragraph (b) (the short dimension of a block) and paragraph (c)(3) (the adjoining zoning lot's side lot line)",
       "family": "residential_rear_yard_corner_waiver",
       "law": [
         {
@@ -2579,12 +2579,12 @@
       ],
       "applicable_from": "2024-12-05",
       "applicable_to": null,
-      "applies_where": "R6B districts, for the rear-yard waiver near a corner: whether a point is within 100 feet of the intersection of two street lines that meet at 135 degrees or less.",
+      "applies_where": "R6B districts, for the ZR 23-344 rear-yard modifications: paragraph (a), whether a point is within 100 feet of the intersection of two street lines that meet at 135 degrees or less; paragraph (b), whether the lot's front lot line is on the short dimension of a block (the distance between the two streets bounding the block is less than 230 feet); and paragraph (c)(3), the adjoining zoning lot's side lot line beyond 100 feet of a street line. Paragraph (a) is the draft DSL rule; (b) and (c)(3) are read in the engine's rear-yard analysis (rear_yard_checks.py).",
       "exceptions": [
         "The waiver only covers the area within 100 feet of the intersection; it says nothing about the rest of the lot.",
         "A commercial overlay is not captured, and a special district sends the result for professional review."
       ],
-      "interpretation": "The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) the rear yard is carried as a value-state: on the benchmark lot, where a commercial overlay is recorded, it is withheld (not known) pending an independent reading of the overlay rear-yard rule, and the rear-yard drawing note follows the withheld result rather than stating that no rear yard is required.",
+      "interpretation": "The engine now reads the ZR 23-344 rear-yard modifications as three checks (M5-T167): paragraph (a), within 100 feet of the point where two street lines meet at 135 degrees or less no rear yard is required (the draft DSL rule returns 0 there); paragraph (b), the short dimension of a block; and paragraph (c)(3), the adjoining zoning lot's side lot line beyond 100 feet of a street line. R6B inherits ZR 23-344 through the suffix provision ZR 11-25. In the results document's contract-1.5.0 form the rear yard is carried as a combined row with its three checks: on the benchmark lot (a) applies within 100 feet of the corner, while (b) is not known because the Zoning Resolution does not fix the measurement basis for the short dimension (reference row b-measurement-basis) and (c)(3) is not known because the adjoining zoning lots' lot-line classification is not captured. The combined row is therefore not known and is shown as a conditional reading, never an unconditional 'no rear yard'; it names and links ZR 23-344(b) and (c)(3) besides the corner waiver (a). The expected outcomes are the R6B reference case, not a program run.",
       "example": {
         "description": "A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a point within 100 feet of that corner (not a real address).",
         "inputs": {
@@ -2646,8 +2646,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 2,
-      "last_changed": "2026-10-08",
+      "revision": 3,
+      "last_changed": "2026-10-14",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -2903,6 +2903,15 @@
       "event": "implementation_changed",
       "summary": "The results document's three-way form carries the rear yard as a withheld value-state on the benchmark lot and makes the drawing note follow it (M5-T136); the rule's reading of the law is unchanged.",
       "by": "rules-engineer (M5-T136)"
+    },
+    {
+      "seq": 27,
+      "date": "2026-10-14",
+      "entry_id": "r6b-rear-yard-corner-waiver",
+      "revision": 3,
+      "event": "interpretation_changed",
+      "summary": "interpretation_changed (M5-T167): the title and interpretation are broadened to the whole ZR 23-344 rear-yard reading the engine now makes - paragraph (a) the corner waiver (the draft DSL rule), paragraph (b) the short dimension of a block and paragraph (c)(3) the adjoining zoning lot's side lot line. The stale 'withheld (not known) pending the overlay reading' text is replaced: on the benchmark the combined rear-yard row is not known and shown as a conditional reading (never an unconditional 'no rear yard'), because the measurement basis for (b) is unresolved law and the neighbours' side lot lines are not captured; ZR 23-344(b) and (c)(3) are named and linked besides (a). No rule-file change - the (a) draft DSL rule and its digest are unchanged; (b)/(c)(3) are read in the engine's rear_yard_checks.py.",
+      "by": "M5-T167 (backend-engineer, an AI agent)"
     }
   ],
   "calculations": [
@@ -3643,14 +3652,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70"
+          "sha256": "2caaebaa2815bf145eabfbd115588e77c3eb05971d30fb7685886a7674765f77"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4",
+      "code_identity_sha256": "1af34fa428b23d27a2dbc5b9dea2abcaf2905c1c7e2e609af888b82a93d34556",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -3704,7 +3713,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3716,8 +3725,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 10,
-      "last_changed": "2026-10-11",
+      "revision": 11,
+      "last_changed": "2026-10-14",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3843,7 +3852,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70"
+          "sha256": "2caaebaa2815bf145eabfbd115588e77c3eb05971d30fb7685886a7674765f77"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3862,7 +3871,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "88d99e2bd064275baa0b05f42ffebb7cd42590cf66b3fca5b7aa9edd34a12680",
+      "code_identity_sha256": "4f05b238cd9938510c6d9e48776bb6f97264b97f9dba2aa6e72dd74412c5c74a",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3953,7 +3962,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3965,8 +3974,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 11,
-      "last_changed": "2026-10-11",
+      "revision": 12,
+      "last_changed": "2026-10-14",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -4629,6 +4638,24 @@
       "event": "implementation_changed",
       "summary": "implementation_changed: result_ways.py / three_way_document.py changed (M5-T158, DB-232: a property-specific zoning-lot condition from the ACRIS recorded-document index is carried on every lot-area figure and building alternative when a recorded zoning lot description names another lot on the same block or the index cannot be read; the zoning lot is never concluded); the code module(s), combined code identity and the recorded automated-test run are resynced.",
       "by": "M5-T158 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 50,
+      "date": "2026-10-14",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 11,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T167: the engine-side zoning-lot isolation moved _zoning_lot_scope_statement and _apply_zoning_lot_scope_row out behind a facade, and the additive contract-1.5.0 ZR 23-344 rear_yard block and input_facts are threaded through emit_three_way_document), so its code module and the combined code identity are resynced; the recorded automated-test run reads 'Not run' until it is run again at the new identity. The benchmark preliminary estimate (17.27 to 21.59) is unchanged - the rear-yard emission is additive and does not touch the estimate.",
+      "by": "M5-T167 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 51,
+      "date": "2026-10-14",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 12,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T167: the engine-side zoning-lot isolation behind a facade and the additive contract-1.5.0 ZR 23-344 rear_yard block and input_facts threaded through emit_three_way_document), so its code module and the combined code identity are resynced; the recorded automated-test run reads 'Not run' until it is run again at the new identity. The six-step actual sides come from the committed benchmark document; the first-building-option steps (building B's floor schedule, total floor area and estimate; building A withheld) are unchanged, so no step verdict moves.",
+      "by": "M5-T167 (backend-engineer, an AI agent)"
     }
   ],
   "coverage_gaps": [

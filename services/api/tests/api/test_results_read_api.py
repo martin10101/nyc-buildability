@@ -367,7 +367,13 @@ def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     assert response.status_code == 200
     doc = response.json()
     committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
-    assert committed["contract_version"] == doc["contract_version"] == "1.4.0"
+    # M5-T167: the committed journey now declares 1.5.0 - the journey path threads the DCM street
+    # window, so the additive ZR 23-344 rear_yard block and input_facts are emitted. The live route
+    # does not thread that window yet, so it stays 1.4.0 and emits no 1.5.0 block; the shared
+    # 1.4.0-core blocks this test pins (building_alternatives, coverage_by_portion) are byte-equal.
+    assert doc["contract_version"] == "1.4.0"
+    assert committed["contract_version"] == "1.5.0"
+    assert "rear_yard" not in doc and "input_facts" not in doc
     assert doc["building_alternatives"] == committed["building_alternatives"]
     assert doc["coverage_by_portion"] == committed["coverage_by_portion"]
     assert [a["building"] for a in doc["building_alternatives"]] == ["B"]

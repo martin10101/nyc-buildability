@@ -1,4 +1,4 @@
-# R6B district - no rear yard required within 100 feet of the point of intersection of two street lines intersecting at 135 degrees or less (ZR 23-344 paragraph (a))
+# R6B district - the ZR 23-344 rear-yard modifications read in the engine: paragraph (a) (no rear yard within 100 feet of the point where two street lines meet at 135 degrees or less), paragraph (b) (the short dimension of a block) and paragraph (c)(3) (the adjoining zoning lot's side lot line)
 
 GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review_register/render_review_register.py` from `register.json`; edit the JSON and re-render. See `GUIDE.md`.
 
@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Family: residential_rear_yard_corner_waiver
 - Rule version: 0.1.0-draft
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-08)
+- Revision: 3 (last changed 2026-10-14)
 
 ## Law
 
@@ -19,7 +19,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 
 ## Where it applies
 
-R6B districts, for the rear-yard waiver near a corner: whether a point is within 100 feet of the intersection of two street lines that meet at 135 degrees or less.
+R6B districts, for the ZR 23-344 rear-yard modifications: paragraph (a), whether a point is within 100 feet of the intersection of two street lines that meet at 135 degrees or less; paragraph (b), whether the lot's front lot line is on the short dimension of a block (the distance between the two streets bounding the block is less than 230 feet); and paragraph (c)(3), the adjoining zoning lot's side lot line beyond 100 feet of a street line. Paragraph (a) is the draft DSL rule; (b) and (c)(3) are read in the engine's rear-yard analysis (rear_yard_checks.py).
 
 ## Exceptions and limits
 
@@ -28,7 +28,7 @@ R6B districts, for the rear-yard waiver near a corner: whether a point is within
 
 ## How the program reads it
 
-The program reports that no rear yard is required within 100 feet of the point where two street lines meet at 135 degrees or less (ZR 23-344(a)); within that area the required rear yard is 0. R6B inherits ZR 23-344 through the suffix provision ZR 11-25. In the results document's three-way form (M5-T136) the rear yard is carried as a value-state: on the benchmark lot, where a commercial overlay is recorded, it is withheld (not known) pending an independent reading of the overlay rear-yard rule, and the rear-yard drawing note follows the withheld result rather than stating that no rear yard is required.
+The engine now reads the ZR 23-344 rear-yard modifications as three checks (M5-T167): paragraph (a), within 100 feet of the point where two street lines meet at 135 degrees or less no rear yard is required (the draft DSL rule returns 0 there); paragraph (b), the short dimension of a block; and paragraph (c)(3), the adjoining zoning lot's side lot line beyond 100 feet of a street line. R6B inherits ZR 23-344 through the suffix provision ZR 11-25. In the results document's contract-1.5.0 form the rear yard is carried as a combined row with its three checks: on the benchmark lot (a) applies within 100 feet of the corner, while (b) is not known because the Zoning Resolution does not fix the measurement basis for the short dimension (reference row b-measurement-basis) and (c)(3) is not known because the adjoining zoning lots' lot-line classification is not captured. The combined row is therefore not known and is shown as a conditional reading, never an unconditional 'no rear yard'; it names and links ZR 23-344(b) and (c)(3) besides the corner waiver (a). The expected outcomes are the R6B reference case, not a program run.
 
 ## Example
 

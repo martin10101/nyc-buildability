@@ -1,5 +1,5 @@
 {
-  "contract_version": "1.4.0",
+  "contract_version": "1.5.0",
   "results_id": "res-215-16-northern-journey",
   "study_id": "study-215-16-northern-journey",
   "option_id": "opt-test",
@@ -678,7 +678,26 @@
       "status": "not_available",
       "reason": "No floor plate is drawn: no placement on the lot is worked for any building. The first-building alternatives worked for this lot are listed in building_alternatives, and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.",
       "reason_kind": "rule_not_implemented"
-    }
+    },
+    "constraint_lines": [
+      {
+        "kind": "rear_yard_100ft_line",
+        "state": "not_known",
+        "basis": "derived",
+        "zr_sections": [
+          "ZR 23-344"
+        ]
+      },
+      {
+        "kind": "corner_area",
+        "state": "not_known",
+        "basis": "derived",
+        "zr_sections": [
+          "ZR 23-344",
+          "ZR 12-10"
+        ]
+      }
+    ]
   },
   "rule_versions": [
     {
@@ -892,7 +911,6 @@
         ]
       },
       "not_checked": [
-        "The rear yard beyond the corner",
         "Where the plan sits on the lot",
         "The street wall",
         "Parking, loading and bicycle requirements"
@@ -922,6 +940,94 @@
       "reason": "Not shown as a square-foot figure: the recorded lot area and the area measured from the tax-map outline disagree, and the outline's area is a drawing measure, never used in a zoning calculation in its place. By portion the law allows up to 100 percent coverage on the corner-lot portion (the part within 100 feet of each intersecting street line) and up to 80 percent on the rest (ZR 23-362, ZR 12-10).",
       "gap_kind": "missing_information",
       "resolved_by": "A survey or deed dimensions that reconcile the recorded lot area with the tax-map outline."
+    }
+  ],
+  "rear_yard": {
+    "checks": [
+      {
+        "provision": "23-344(a)",
+        "zr_sections": [
+          "ZR 23-344"
+        ],
+        "state": "applies",
+        "inputs": [
+          {
+            "name": "Angle between the two street lines at the corner",
+            "value": 89.7,
+            "unit": "degrees",
+            "basis": "derived"
+          },
+          {
+            "name": "Farthest reach of the lot from the corner",
+            "value": 144.6,
+            "unit": "ft",
+            "basis": "derived"
+          }
+        ],
+        "text": "A labelled draft reading: the two street lines meet at about 89.7 degrees (not more than 135), so under ZR 23-344(a) no rear yard is required within 100 feet of the corner. The lot reaches about 144.6 feet from the corner, so (a) covers only the part within 100 feet of it. Not a determination by the Department of Buildings."
+      },
+      {
+        "provision": "23-344(b)",
+        "zr_sections": [
+          "ZR 23-344",
+          "ZR 12-10"
+        ],
+        "state": "not_known",
+        "text": "A labelled draft reading: whether the frontage is a short dimension of a block is not known: the Zoning Resolution does not fix whether the distance between the two streets bounding the block is measured between street lines, centrelines or lot lines, and on different readings it falls on different sides of 230 feet. No number is shown. Not a determination by the Department of Buildings."
+      },
+      {
+        "provision": "23-344(c)(3)",
+        "zr_sections": [
+          "ZR 23-344",
+          "ZR 12-10"
+        ],
+        "state": "not_known",
+        "text": "A labelled draft reading: in R6 through R12 districts, beyond 100 feet of a street line, whether a rear yard is required under ZR 23-344(c)(3) turns on whether the deemed rear lot line coincides with a side lot line of an adjoining zoning lot. The neighbouring zoning lots' lot-line kinds are not recorded for this lot, so this is not known. No number is shown. Not a determination by the Department of Buildings."
+      }
+    ],
+    "combined": {
+      "state": "not_known",
+      "way": "conditional",
+      "conditions": [
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If the distance between the two streets bounding the block is measured on the governing basis and is under 230 feet (ZR 23-344(b))",
+          "settled_by": "An express measurement basis in the Zoning Resolution or City Planning guidance, with a surveyed or certified street-line separation"
+        },
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If the neighbours' side lot lines are confirmed for ZR 23-344(c)(3) beyond 100 feet of a street line",
+          "settled_by": "Reading the adjoining zoning lots' recorded lot-line kinds"
+        },
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If the zoning lot is confirmed (whether this lot alone, or together with an adjoining lot, is one zoning lot)",
+          "settled_by": "Reading the recorded zoning-lot description"
+        }
+      ],
+      "text": "A conditional rear-yard reading under ZR 23-344.",
+      "zr_sections": [
+        "ZR 23-344",
+        "ZR 12-10"
+      ]
+    }
+  },
+  "input_facts": [
+    {
+      "key": "recorded_lot_area",
+      "value": 10075.0,
+      "unit": "sq_ft",
+      "basis": "administrative_record",
+      "source_title": "NYC Department of City Planning MapPLUTO, version 26v2",
+      "source_date": "2026-09-30"
+    },
+    {
+      "key": "lot_outline_area",
+      "value": 10387.99,
+      "unit": "sq_ft",
+      "basis": "gis",
+      "source_title": "NYC Department of City Planning MapPLUTO, version 26v2",
+      "source_date": "2026-09-30"
     }
   ]
 }

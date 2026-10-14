@@ -37,11 +37,13 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from app.contracts.evaluator_inputs import build_three_answer_inputs
+from app.spatial.site_geometry.block_frontage import measure_block_frontage
 
 from . import engine_conditions
 from .engine import ThreeAnswersResult, generate_results
 from .engine_conditions import DensityDecision, Presence
 from .inputs import BuildingDefaults, ThreeAnswerInputs
+from .rear_yard_checks import RearYardAnalysis, build_rear_yard_analysis
 from .result_way_bridge import GatheredResult, gather_result_ways
 from .result_way_inputs import DensityKnowledge, LotType, Recorded
 from .three_way_document import (
@@ -54,6 +56,7 @@ from .three_way_document import (
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from app.profile.zoning_lot_index import ZoningLotIndex
     from app.rules.registry import RuleRegistry
+    from app.spatial.site_geometry.inputs import StreetData
     from app.spatial.site_geometry.outline import PreparedOutline
     from app.spatial.site_geometry.results import SiteGeometry
 
@@ -128,6 +131,82 @@ class EngineResultWays:
     document: dict
 
 
+def _mappluto_source(profile: Mapping[str, Any] | None) -> tuple[str, str]:
+    """A plain source title and date for the recorded lot facts, read from the property profile's
+    MapPLUTO provenance (dataset version + retrieval date). Returns ('<title>', '') when no date is
+    available; the rear-yard builder then emits no input fact rather than invent provenance."""
+    title = "NYC Department of City Planning MapPLUTO"
+    if not isinstance(profile, Mapping):
+        return title, ""
+    prov = profile.get("provenance")
+    entry = prov[0] if isinstance(prov, list) and prov else None
+    if not isinstance(entry, Mapping):
+        return title, ""
+    version = entry.get("dataset_version")
+    if version:
+        title = f"{title}, version {version}"
+    retrieved = entry.get("retrieved_at") or entry.get("effective_date") or ""
+    return title, str(retrieved)[:10]
+
+
+def _lot_point(outline: PreparedOutline | None) -> tuple[float, float] | None:
+    if outline is None:
+        return None
+    centroid = outline.polygon.centroid
+    return (float(centroid.x), float(centroid.y))
+
+
+def _frontage_key(geometry: SiteGeometry | None) -> str | None:
+    """The lot's primary (longest confirmed) frontage street key for the block-frontage measure. A
+    best-effort key is safe: on a real lot the short-dimension (b) check is not known regardless of
+    the measure, because the measurement basis is unresolved law."""
+    if geometry is None or not geometry.frontages:
+        return None
+    confirmed = [f for f in geometry.frontages if f.length.value is not None]
+    pool = confirmed or list(geometry.frontages)
+    return max(pool, key=lambda f: f.length.value or 0.0).street_key
+
+
+def _rear_yard_analysis_for(
+    gathered: GatheredResult,
+    *,
+    street_data: StreetData | None,
+    outline: PreparedOutline | None,
+    geometry: SiteGeometry | None,
+    profile: Mapping[str, Any] | None,
+) -> RearYardAnalysis | None:
+    """Build the additive contract-1.5.0 rear-yard analysis. OPT-IN on a DCM street window being
+    supplied: the journey/benchmark path threads it, so its fixture declares 1.5.0; the live route
+    does not thread it yet, so it stays 1.4.0 and every other caller is byte-identical. A real lot's
+    (b) check is not known whatever the window found (the measurement basis is unresolved law)."""
+    if street_data is None:
+        return None
+    reach = gathered.inputs.reach
+    corner = reach.corner if reach is not None else None
+    corner_reach = corner.reach.value if corner is not None and corner.reach.known else None
+    corner_angle = corner.angle.value if corner is not None and corner.angle.known else None
+    street_reaches = (
+        [line.reach.value for line in reach.street_lines if line.reach.known]
+        if reach is not None else []
+    )
+    block_frontage = measure_block_frontage(
+        _frontage_key(geometry) or "", street_data, lot_point=_lot_point(outline),
+    )
+    title, date = _mappluto_source(profile)
+    area = gathered.inputs.area
+    return build_rear_yard_analysis(
+        corner_reach_ft=corner_reach,
+        corner_angle_deg=corner_angle,
+        operative_street_reach_ft=min(street_reaches) if street_reaches else None,
+        district=gathered.inputs.district,
+        block_frontage=block_frontage,
+        recorded_area_sqft=area.recorded_sq_ft if area is not None else None,
+        outline_area_sqft=area.outline_sq_ft if area is not None else None,
+        source_title=title,
+        source_date=date,
+    )
+
+
 def run_engine_and_result_ways(
     inputs: ThreeAnswerInputs,
     *,
@@ -187,6 +266,7 @@ def run_engine_and_result_ways_from_evidence(
     zoning_lot_index: ZoningLotIndex | None = None,
     building_defaults: BuildingDefaults | None = None,
     user_choices: frozenset[str] | None = None,
+    street_data: StreetData | None = None,
     registry: RuleRegistry | None = None,
     env: Mapping[str, str] | None = None,
 ) -> EngineResultWays:
@@ -268,11 +348,16 @@ def run_engine_and_result_ways_from_evidence(
     if outline_ring is not None:
         inputs = replace(inputs, lot_outline=outline_ring)
     engine_result = generate_results(inputs, registry=registry, env=env)
+    rear_yard_analysis = _rear_yard_analysis_for(
+        gathered, street_data=street_data, outline=prepared_outline,
+        geometry=site_geometry, profile=property_profile,
+    )
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         condition_sources=conditions, user_choices=user_choices,
         corner_areas=gathered.corner_areas, lot_area=gathered.inputs.area,
         lot_outline_available=outline_ring is not None,
         zoning_lot=gathered.inputs.zoning_lot,
+        rear_yard_analysis=rear_yard_analysis,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)
