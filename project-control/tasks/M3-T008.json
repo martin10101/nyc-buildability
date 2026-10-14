@@ -152,7 +152,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:18.322633+00:00",
-  "updated_at": "2026-10-14T17:27:53.826700+00:00",
+  "updated_at": "2026-10-14T17:48:59.247233+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -186,6 +186,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "integrated as 05e4ccb4 (cherry-pick of febd80b4; 21 files inside the allowed paths; LF sha256 equal to the return for all 21): 10 captures; Appendix F not captured (multi-page on the site); 23-154 still HTTP 403; next: the G1 review"
+    },
+    {
+      "at": "2026-10-14T17:48:59.247147+00:00",
+      "agent": "official-source-researcher",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rework 1 (F1 27-16 letters relabelled to the print; F2 renamed to the singular official title; F3 Appendix F pointer capture; F4 per-term dates re-read, unchanged); the builder's commit integrated as 7a794e61 (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
