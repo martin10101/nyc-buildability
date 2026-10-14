@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T04:11:51+00:00",
+ "updated_at": "2026-10-14T17:18:06+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -151,10 +151,11 @@
   "D-094-R127",
   "D-094-R128",
   "D-094-R129",
-  "D-094-R130"
+  "D-094-R130",
+  "D-094-R131"
  ],
- "requirements_id_digest_sha256": "41fd29582c045c1774994b72def5fe5a1065321898c7120e18625009a14a981c",
- "requirements_content_digest_sha256": "cb39f1aa6eec87337e19c8dd5af23136bb53a5bc93e7966571cca5abb00e2095",
+ "requirements_id_digest_sha256": "9916dfd88135147efd03b340725007012c37dfcbe2cb562c5d6c036a043bd004",
+ "requirements_content_digest_sha256": "1042dbd2f2b7ffa1bb7d4c37964b7051c1e33ceb290ed11672ca5a67bacf8473",
  "sources": [
   {
    "file": "source-001.md",
@@ -290,6 +291,14 @@
    "recorded_at": "2026-10-14T04:11:51+00:00",
    "content_digest_sha256": "ad510b3a6e8c49486d1857231a21448ae1b27e445258beb70525766dd2447ff1",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-018-amendment.md",
+   "kind": "amendment",
+   "sequence": 18,
+   "recorded_at": "2026-10-14T17:18:06+00:00",
+   "content_digest_sha256": "ebc8e291d643c48b47e83661c86f215589834654b62cf638dd552a22357e6f1d",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -308,7 +317,8 @@
   "source-014-amendment.md",
   "source-015-amendment.md",
   "source-016-amendment.md",
-  "source-017-amendment.md"
+  "source-017-amendment.md",
+  "source-018-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -581,6 +591,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-017 (the owner narrows the question-and-answer log to questions about building the app) and requirements D-094-R128 to R130, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T17:18:06+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-018 (the owner's resume after the handoff seq 168) and requirements D-094-R131 to R131, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

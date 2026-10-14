@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 130,
+ "requirement_count": 131,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T04:11:51+00:00",
+ "updated_at": "2026-10-14T17:18:06+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -4227,6 +4227,39 @@
    "dependencies": [],
    "required_harness": "No section added after this message records a status question; the session notes still record the owner message as a STATE line.",
    "required_evidence": "The log's sections after 2026-10-14 04:11 UTC and the session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R131",
+   "text": "'lets read sesen handoff md and go on i might have writen it wrong btw': the orchestrator reads docs/SESSION_HANDOFF.md (seq 168) and continues from its exact next action (section 4) in its order, inside its standing restrictions (section 5); nothing beyond the handoff's plan is authorized by this message.",
+   "source_ref": "source-018-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R125"
+   ],
+   "required_harness": "The session notes of session-2026-10-14c record the handoff read and each step of section 4 taken in order; no helper count above the handoff's limits.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-14c/SESSION_NOTES.md` STATE lines and the ledger on task/wave24-report-v3.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
