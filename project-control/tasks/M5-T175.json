@@ -45,12 +45,15 @@
     "services/api/tests/drawings/report/test_constraint_rows.py",
     "services/api/tests/drawings/maps/test_constraint_overlay.py",
     "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
-    "project-control/reports/M5-T175-producer-report.md"
+    "project-control/reports/M5-T175-producer-report.md",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_decision_summary.py"
   ],
   "forbidden_paths": [
     "services/api/app/drawings/report/readers.py",
     "services/api/app/drawings/report/zoning_lot_item.py",
-    "services/api/app/drawings/report/page_decision_summary.py",
     "services/api/app/drawings/report/page_assumptions.py",
     "services/api/app/drawings/report/open_items.py",
     "services/api/app/scenario/",
@@ -87,7 +90,7 @@
       "id": "S2",
       "given": "synthetic_rear_yard_constraints_contract_1_5_0.json (rear_yard.combined way=conditional)",
       "when": "the report is built",
-      "then": "the page-1 uncertainty, the page-3 row and the open item all show the combined row's own text, labelled Conditional, with its ZR section 23-344(b) linked; no number is printed"
+      "then": "the page-1 uncertainty and the page-3 row show the combined row's own text, labelled Conditional, with its ZR section 23-344(b) linked; no number is printed. The appendix open item's text is built in readers.py (an NB-01 code path, W25's NB-01 owner is M5-T167): it moves to M5-T167 (scope correction of 2026-10-14)"
     },
     {
       "id": "S3",
@@ -142,6 +145,12 @@
       "given": "page_site_context.py and the maps files",
       "when": "python tools/modularity_check.py --check runs",
       "then": "it passes; site_context_plan.py stays at or below its recorded SLOC + material-growth limit (the overlay body lives in constraint_overlay.py; site_context_plan.py gains only the thin hook)"
+    },
+    {
+      "id": "S12",
+      "given": "a results document carrying geometry.constraint_lines and input_facts (built in memory from M5-T164's committed 1.5.0 examples and the benchmark's recorded map context)",
+      "when": "the whole report is built through the live path (build_report_html and the map embed)",
+      "then": "the page-1 frame and the close frame draw the established lines and the other-basis dimensions exactly as the unit tests of constraint_overlay.py and close_frame_dimensions.py expect; a document without them renders byte-identical (S1 still holds for every valid 1.4.0 fixture and the benchmark); nothing is drawn for a line that is not established"
     }
   ],
   "required_gates": [
@@ -212,6 +221,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "first round integrated as f66e8212 (cherry-pick of 826bf88a; 9 files inside the allowed paths; LF sha256 equal to the return for 8, the report has none): the 1.5.0 reader, page-3 rows, overlay and other-basis dimensions built and unit-tested; not yet wired into the live report"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T03:39:51+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction after the first build round (the builder's return, session 2026-10-14b): the overlay (maps/constraint_overlay.py) and the other-basis close-frame dimensions are built and unit-tested but not wired into the live report, because the wiring files were outside the packet; and the page-1 rear-yard uncertainty is composed in page_decision_summary.py, which the packet forbade while M5-T165 was in flight (M5-T165 is accepted since 02:52 UTC). Added to the allowed paths: maps/__init__.py, report/drawings_embed.py, report/page_location.py and report/page_decision_summary.py (no other task in flight lists them). S2 narrowed: the appendix open item's text is built in readers.py, an NB-01 code path whose W25 owner is M5-T167, so that part moves to M5-T167. S12 added: the live report path draws what the unit tests prove. No row, gate, reviewer or dependency changes."
     }
   ]
 }
