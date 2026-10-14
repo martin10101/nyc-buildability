@@ -654,3 +654,17 @@ to build).
 - **Recorded:** D-094 rows R125 to R127. Nothing was launched after the message; the three running helpers (the second
   build round of the report's 1.5.0 reading, the review of the ten law captures, the rule check of the website's page 1)
   finished and their results were recorded; then the handoff and its prompt.
+
+## 39. "Ok lets talk for a sec how much progress did we make now and how long till we can make same as the 88page" (2026-10-14, after the handoff of 04:05 UTC)
+
+- **Progress, as answered:** the redesign pass has about 17 pieces; 11 are accepted (4 of them that night) and the
+  website page 1 has passed every check and waits only for its acceptance. Against the 88-page sample the report is 10
+  pages and covers option 1 (standard housing) in depth; options 2 to 11 are listed but not worked; no maps, aerial,
+  photos, per-option chapters or financials yet. Roughly a third of the sample's substance (a rough reading, not a
+  measured figure).
+- **Time, asked for and given as a first guess from the observed pace (about 4 to 5 pieces accepted in a long session
+  like that night's):** the redesign pass in about 2 to 3 more such sessions; content comparable to the sample (options
+  2 to 11 with their law, rules, engine work and chapters, the maps, the site-facts page, parking) about 40 to 60 more
+  pieces, about 10 to 15 sessions, roughly 2 to 4 weeks of steady work. What moves it most: the owner's open answers
+  (N1-N5, P1-P3, Q1-Q3), how hard each option's law is, and whether financials, tax abatement and comparable sales
+  join the scope.
