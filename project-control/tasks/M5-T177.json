@@ -127,7 +127,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The readings may differ on the placement basis or the offsets; then those rows stay NOT SETTLED and any later report/drawing shows not known.",
     "20,150/3 = 6,716.67 but 100.76 x 66.66 = 6,716.66: the +/- 0.5 is the readers' agreement tolerance, not an engine tolerance - the reference-case engine compares each step exactly, so the plate and the footprint are separate rows/quantities each pinned to its own exact recompute; do not force one figure.",
@@ -136,7 +136,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:28:31.276385+00:00",
-  "updated_at": "2026-10-14T02:28:34.545077+00:00",
+  "updated_at": "2026-10-14T03:02:43.245014+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -168,6 +168,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; the two sealed readings are saved and audited; the builder writes the case from them"
+    },
+    {
+      "at": "2026-10-14T03:02:43.244921+00:00",
+      "agent": "rules-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "the case placement-building-b written from the two sealed readings (11 rows); the builder's commit integrated as e3b0d8fa (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
