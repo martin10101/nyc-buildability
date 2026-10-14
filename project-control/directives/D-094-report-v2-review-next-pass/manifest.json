@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T02:28:31+00:00",
+ "updated_at": "2026-10-14T02:53:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -148,7 +148,7 @@
   "D-094-R124"
  ],
  "requirements_id_digest_sha256": "857ceb6252d787ca1e5b1790666454b27df32429844f951381af30933e7f8d23",
- "requirements_content_digest_sha256": "64f77b64b02370d6b216d1ed80cae6817ec5f2735a761a594efd01f79d6aa605",
+ "requirements_content_digest_sha256": "b20734d9154e764fa63d8cc6f1e7b08418caceffdee30dbb2553aa3477750e77",
  "sources": [
   {
    "file": "source-001.md",
@@ -306,7 +306,8 @@
   "M5-T176",
   "M0-T196",
   "M3-T007",
-  "M5-T177"
+  "M5-T177",
+  "M5-T175"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -531,6 +532,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T177 (step P8: independent worked example of Building B's placement and area allocation) to R043, R044, R076, R082, R091, R092 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T02:53:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T175 (report reads the 1.5.0 constraint rows, input facts and constraint lines) to R015, R017, R036, R037, R038, R044, R052, R053, R060, R061, R079 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
