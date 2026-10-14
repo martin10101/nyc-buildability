@@ -70,6 +70,29 @@ def test_table_covers_every_plan_kind_once():
     assert set(PLAN_KINDS) <= set(kinds)
 
 
+# The results-1.5.0 constraint kinds the site-overlay draws (M5-T175). Each has its
+# OWN style, so the legend names what is drawn and never reuses one kind's name.
+CONSTRAINT_KINDS = ("rear_yard_100ft_line", "corner_area", "street_wall_band", "setback_line")
+
+
+def test_constraint_kinds_have_their_own_legend_entries():
+    # Every constraint kind the overlay draws has its own legend entry with a distinct
+    # name, so the legend names the rear-yard line as such and never lists "Setback
+    # line" when no setback line is drawn (M5-T175 S13; visual G3 finding 2).
+    names = {kind: style_for(kind).label for kind in CONSTRAINT_KINDS}
+    for kind in CONSTRAINT_KINDS:
+        assert style_for(kind).in_legend
+        assert style_for(kind).label
+    assert len(set(names.values())) == len(CONSTRAINT_KINDS)  # four distinct names
+    assert names["rear_yard_100ft_line"] == "Rear-yard 100 ft line"
+    assert names["rear_yard_100ft_line"] != names["setback_line"]
+    # the geometry type matches how the overlay draws each kind (lines vs areas).
+    assert style_for("rear_yard_100ft_line").geometry == LINE
+    assert style_for("setback_line").geometry == LINE
+    assert style_for("corner_area").geometry == AREA
+    assert style_for("street_wall_band").geometry == AREA
+
+
 def test_uses_match_the_results_contract_vocabulary():
     bundled = resources.files("app._contract_schemas.v1").joinpath("results.schema.json")
     results = json.loads(bundled.read_text(encoding="utf-8"))

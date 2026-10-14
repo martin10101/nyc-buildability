@@ -152,6 +152,12 @@ def embed_floor_stack(alternative: Mapping, *, env=None) -> Embedded:
 
 
 _MAP_UNAVAILABLE = "This map is not shown here."
+# When the 1.5.0 constraint overlay cannot be drawn (a label that cannot be placed
+# at 8.5 pt raises by design, or a malformed established geometry), the site map is
+# kept WITHOUT the overlay and carries this short note rather than dropping the whole
+# map (M5-T175 S15; code-review advisories 1 and 2). Any OTHER map failure keeps the
+# old behaviour (one short line).
+_OVERLAY_DROPPED_NOTE = "A zoning line could not be drawn on this map; page 3 lists it."
 
 
 def embed_map(
@@ -180,16 +186,27 @@ def embed_map(
         overlay["constraint_lines"] = constraint_lines
     if input_facts is not None:
         overlay["input_facts"] = input_facts
+    note: tuple[str, ...] = ()
     try:
         result = fn(map_context, frame=frame, env=env, **overlay)
     except Exception:  # noqa: BLE001 - any kit failure means no map, never an error page
-        return Embedded(short_line=_MAP_UNAVAILABLE)
+        if not overlay:
+            return Embedded(short_line=_MAP_UNAVAILABLE)
+        # The failure may be the overlay's (a label that cannot be placed, or a
+        # malformed established geometry): keep the map by drawing it WITHOUT the
+        # overlay and carry one short note. If it fails without the overlay too, it is
+        # a genuine map failure - today's one short line (S15).
+        try:
+            result = fn(map_context, frame=frame, env=env)
+        except Exception:  # noqa: BLE001
+            return Embedded(short_line=_MAP_UNAVAILABLE)
+        note = (_OVERLAY_DROPPED_NOTE,)
     svg = getattr(result, "svg", None)
     if svg is None:
         reason = getattr(result, "reason", None)
         return Embedded(short_line=str(reason) if reason else _MAP_UNAVAILABLE)
     caption = map_caption.figure_caption(result, map_context, layers)
-    return Embedded(svg=size_svg_to_points(svg), caption=caption)
+    return Embedded(svg=size_svg_to_points(svg), caption=caption, notes=note)
 
 
 def allowance_bar_chart_svg(

@@ -213,7 +213,12 @@ def test_s12_live_report_draws_only_established_lines_and_other_basis_dimensions
     # only). Dropping the wiring (mutation 1) removes both.
     assert 'data-role="constraint-overlay"' in html
     assert 'data-kind="rear_yard_100ft_line"' in html
-    assert html.count("Rear-yard 100 ft line") == 1
+    # the rear-yard line now has its OWN legend entry (S13), so "Rear-yard 100 ft line"
+    # appears TWICE on the close frame: the drawing label once and the legend entry once.
+    assert html.count("Rear-yard 100 ft line") == 2
+    assert "Rear-yard 100 ft line, established" in html   # the drawing label, once
+    assert ">Rear-yard 100 ft line</text>" in html        # the legend names what is drawn
+    assert ">Setback line</text>" not in html             # never the reused kind (S13)
     # neither the not_established line (geometry present) nor the not_known corner_area
     # draws (R017/R044; mutation 3 draws the not_established one).
     assert 'data-kind="setback_line"' not in html
@@ -242,10 +247,13 @@ def test_s12_page_one_uncertainty_reads_the_1_5_0_conditional_rear_yard() -> Non
     page1 = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
     unc = page1[page1.index("What is still uncertain"):]
     unc = unc[:unc.index("</ul>")]
-    # the page-1 rear-yard uncertainty shows the combined row's OWN text (not the
+    # the page-1 rear-yard uncertainty shows the combined row's OWN reading (not the
     # open-check wording), labelled Conditional, with ZR 23-344 linked - the same reading
-    # the page-3 row shows, from the one wording source (mutation 2 reverts this).
-    assert combined["text"] in _visible(unc)
+    # the page-3 row shows, from the one wording source (mutation 2 reverts this). On
+    # page 1 the leading title is stripped (S16), so the body of the combined text shows
+    # without the "Rear yard Rear yard:" stutter.
+    assert "a conditional no-rear-yard reading under ZR 23-344(b)" in _visible(unc)
+    assert "Rear yard Rear yard" not in _visible(unc)
     assert "23-344(b)" in _visible(unc)
     assert constraint_text.REAR_YARD_OPEN_CHECK not in _visible(page1)
     assert 'href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344"' in unc
@@ -272,3 +280,108 @@ def test_s1_benchmark_page_one_rear_yard_uncertainty_is_unchanged() -> None:
     assert 'class="label-chip">Unresolved</span>' in unc
     # the engine's 1.5.0 combined-row text never appears on a 1.4.0 page 1.
     assert "A labelled draft reading, not a DOB determination." not in _visible(unc)
+
+
+# ========================================================================== S13
+# The overlay adds a legend entry on the close frame; the frame grows so the whole
+# legend, including 'No building placed', fits above the sources caption - a frame
+# without the overlay stays byte-identical (visual G3 finding 1).
+def _vb_height(svg: str) -> float:
+    return float(re.search(r'viewBox="0 0 [\d.]+ ([\d.]+)"', svg).group(1))
+
+
+def test_s13_overlay_legend_fits_and_the_plain_frame_is_unchanged() -> None:
+    from app.drawings.maps.adapter import load_map_context
+    from app.drawings.maps.site_context_plan import draw_site_context_plan
+
+    ctx = load_map_context(map_context())
+    doc = rear_yard_1_5_0()
+    with_overlay = draw_site_context_plan(
+        ctx, frame="close", constraint_lines=doc["geometry"]["constraint_lines"],
+        input_facts=doc["input_facts"])
+    plain = draw_site_context_plan(ctx, frame="close")
+    over_h, plain_h = _vb_height(with_overlay.svg), _vb_height(plain.svg)
+    # the overlay adds a legend row, so the frame grows (it was clipped at 470 before).
+    assert over_h > plain_h
+    # the 'No building placed' legend row sits fully WITHIN the grown frame height.
+    ny = float(re.search(
+        r'<text[^>]*\sy="([\d.]+)"[^>]*>No building placed', with_overlay.svg).group(1))
+    assert ny + 2.0 <= over_h
+    # the frame without the overlay is byte-identical to today (height unchanged at 470).
+    assert plain_h == 470.0
+
+
+# ========================================================================== S15
+# When the overlay cannot be drawn (a label that cannot be placed at 8.5 pt raises by
+# design, or a malformed established geometry), the site map is kept WITHOUT the overlay
+# and carries one short note; the whole map is never dropped (code-review advisories).
+_S15_NOTE = "A zoning line could not be drawn on this map; page 3 lists it."
+
+
+class _FakeMap:
+    svg = '<svg viewBox="0 0 10 10" width="10" height="10"></svg>'
+
+
+def _fake_render(exc):
+    """A site-context map fn that raises ``exc`` when the overlay is requested and
+    draws the plain map otherwise - i.e. the overlay is what fails, not the map."""
+    def render(mc, *, frame, env=None, **overlay):
+        if overlay:
+            raise exc
+        return _FakeMap()
+    return render
+
+
+def test_s15_overlay_failure_keeps_the_map_with_a_note(monkeypatch) -> None:
+    import app.drawings.maps as maps
+    from app.drawings.maps.constraint_overlay import ConstraintOverlayError
+    from app.drawings.report import drawings_embed, map_caption
+
+    monkeypatch.setattr(map_caption, "figure_caption", lambda *a, **k: "Sources: tax map")
+    # both overlay-failure kinds: a label that cannot be placed, and a malformed geometry.
+    for exc in (ConstraintOverlayError("no room"), ValueError("malformed geometry")):
+        monkeypatch.setattr(maps, "render_site_context_plan", _fake_render(exc), raising=False)
+        em = drawings_embed.embed_map(
+            "render_site_context_plan", {"map_context": {}}, layers=("tax_lots",),
+            frame="close", constraint_lines=[{"kind": "x"}], input_facts=[{"key": "y"}])
+        assert em.is_drawing  # the map is KEPT (not dropped to a short line)
+        assert _S15_NOTE in " ".join(em.notes)
+
+
+def test_s15_report_keeps_the_site_map_when_overlay_geometry_is_malformed() -> None:
+    doc = rear_yard_1_5_0()
+    # a malformed established geometry (non-numeric) makes the overlay raise; the live
+    # report keeps the site map (drawn without the overlay) and page 3 carries the note.
+    doc["geometry"]["constraint_lines"] = [{
+        "kind": "rear_yard_100ft_line", "state": "established", "basis": "derived",
+        "zr_sections": ["ZR 23-344"], "geometry": [[0.0, "bad"], [10.0, 10.0]]}]
+    html = _report_with_maps(doc)
+    assert "A zoning line could not be drawn on this map; page 3 lists it." in html
+    assert 'data-drawing="site_context_plan"' in html  # the base map is still drawn
+    assert 'data-role="constraint-overlay"' not in html  # the overlay itself is absent
+
+
+# ========================================================================== S16
+def test_s16_page_one_rear_yard_uncertainty_does_not_repeat_its_title() -> None:
+    doc = rear_yard_1_5_0()
+    html = build_report_html(doc)
+    page1 = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
+    unc = page1[page1.index("What is still uncertain"):]
+    unc = unc[:unc.index("</ul>")]
+    vis = _visible(unc)
+    # the title (the link label) is NOT repeated by the combined text (mutation: not
+    # stripping the leading title produces "Rear yard Rear yard:").
+    assert "Rear yard Rear yard" not in vis
+    # the reading still shows (its body after the stripped title).
+    assert "a conditional no-rear-yard reading under ZR 23-344(b)" in vis
+
+
+def test_s16_not_known_rear_yard_check_prints_no_number() -> None:
+    doc = rear_yard_1_5_0()
+    c3 = next(c for c in constraint_text.rear_yard_checks(doc)
+              if c.get("provision") == "23-344(c)(3)")
+    assert c3["state"] == "not_known"
+    assert "inputs" not in c3           # a not_known check carries no measured value
+    assert c3.get("text")               # it has its own reason text
+    # the check's text prints no ft / sq ft figure of its own.
+    assert not re.search(r"\d+(\.\d+)?\s*(ft|sq ft)", _visible(str(c3["text"])))

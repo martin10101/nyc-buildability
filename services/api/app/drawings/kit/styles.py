@@ -139,6 +139,21 @@ STYLE_TABLE: tuple[ShapeStyle, ...] = (
                None, "C-PROP-LINE", True, 7),
     ShapeStyle("dimension", "Dimension", LINE, None, "#333333", 0.5, (),
                None, "A-ANNO-DIMS", False, 8),
+    # Constraint lines and areas (M5-T175, D-094 R017/R044/R053): the results
+    # contract 1.5.0 geometry.constraint_lines drawn on the site close frame. Each
+    # kind has its OWN style so the legend (generated from the drawn kinds) names
+    # what is drawn - the rear-yard 100 ft line as such, the corner area and the
+    # street-wall band each distinctly - and never lists "Setback line" when no
+    # setback line is drawn (visual G3 finding 2; S13). Additive only: no existing
+    # drawing draws these kinds, so every existing output is byte-identical. The two
+    # AREA kinds carry a unique black-and-white hatch; the line kind a unique weight
+    # and dash. The drawing LABEL still carries the exact name, state and law.
+    ShapeStyle("rear_yard_100ft_line", "Rear-yard 100 ft line", LINE, None, "#009E73", 1.25,
+               (6.0, 2.0), None, "A-ZONE-RYRD-LINE", True, 3),
+    ShapeStyle("corner_area", "Corner area", AREA, "#FBE9F2", "#CC79A7", 0.75, (),
+               _hatch(135, 6.0, True, "#CC79A7"), "A-ZONE-CORNER", True, 6),
+    ShapeStyle("street_wall_band", "Street-wall band", AREA, "#FDEFD6", "#E69F00", 0.75, (),
+               _hatch(90, 6.0, True, "#E69F00"), "A-ZONE-SWALL-BAND", True, 2),
     # Location and zoning maps (task E-07, plan section 5c item 2) - context drawn
     # from city open data. Neutral washes so no map kind implies a use color, and
     # each carries a unique hatch so the map reads in black-and-white print. The

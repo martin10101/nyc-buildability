@@ -213,7 +213,12 @@ def _site_outline(results: Mapping, site_plan: Embedded) -> object:
     # own sources and dates (Y7); otherwise it is today's lot-only plan, whose one
     # caption is the kit's own "Lot outline: Approximate - tax map" inside the SVG
     # (D8). Only one of the two outlines is ever drawn (Y5).
-    return figure(site_plan, site_plan.caption or "")
+    drawn = figure(site_plan, site_plan.caption or "")
+    if site_plan.notes:
+        # The constraint overlay could not be drawn: the map is kept WITHOUT it and
+        # one short note says so and points to page 3 (M5-T175 S15).
+        return el("div", drawn, *[short_line(note) for note in site_plan.notes])
+    return drawn
 
 
 def render(

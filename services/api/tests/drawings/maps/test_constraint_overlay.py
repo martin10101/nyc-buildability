@@ -30,6 +30,7 @@ from app.drawings.maps.constraint_overlay import (
     overlay_offset,
 )
 from app.drawings.maps.context_scene import ViewFrame, fit_view, viewport
+from app.drawings.maps.model import Polygon
 
 from .context_support import cross_street_document
 
@@ -208,16 +209,88 @@ def test_offset_places_results_geometry_on_the_map_lot() -> None:
 
     lines = [{"kind": "rear_yard_100ft_line", "state": "established", "basis": "derived",
               "zr_sections": ["ZR 23-344"], "geometry": [[10.0, 20.0], [70.0, 20.0]]}]
-    # the large close frame carries the overlay geometry AND its label.
+    # the large close frame carries the overlay geometry AND its label; the rear-yard
+    # line now has its OWN style, so "Rear-yard 100 ft line" appears TWICE - once as the
+    # drawing label and once as the legend entry that names what is drawn (S13).
     close = draw_site_context_plan(ctx, frame="close", constraint_lines=lines,
                                    input_facts=input_facts())
     assert 'data-role="constraint-overlay"' in close.svg
-    assert close.svg.count("Rear-yard 100 ft line") == 1
+    assert close.svg.count("Rear-yard 100 ft line") == 2
+    assert "Rear-yard 100 ft line, established" in close.svg  # the drawing label, once
+    assert ">Rear-yard 100 ft line</text>" in close.svg       # the legend entry names it
+    assert ">Setback line</text>" not in close.svg            # never the reused kind (S13)
     assert "printed tax map" in close.svg
-    # the compact page-1 thumbnail carries the geometry but no overlay label.
+    # the compact page-1 thumbnail carries the geometry but no overlay label (and the
+    # summary frame has no legend), so the name appears nowhere there.
     compact = draw_site_context_plan(ctx, frame="summary_close", constraint_lines=lines,
                                      input_facts=input_facts())
     assert 'data-role="constraint-overlay"' in compact.svg
     assert compact.svg.count("Rear-yard 100 ft line") == 0
     # without the overlay args the frame draws no overlay (S1).
     assert 'data-role="constraint-overlay"' not in draw_site_context_plan(ctx, frame="close").svg
+
+
+# =========================================================================== S13
+def _lot_polygon() -> Polygon:
+    """The committed 1.5.0 example's lot outline as a Polygon (results-local feet)."""
+    ring = rear_yard_1_5_0()["geometry"]["lot_outline"][0]
+    return Polygon(rings=(tuple((float(p[0]), float(p[1])) for p in ring),),
+                   source="results:lot_outline")
+
+
+def test_s13_legend_names_the_drawn_rear_yard_line_never_setback() -> None:
+    # The legend is generated from the drawn kinds; the rear-yard line has its OWN
+    # style, so the legend names "Rear-yard 100 ft line" and never the reused "Setback
+    # line" that is not drawn (S13; visual G3 finding 2; mutation 2 reverts this).
+    from app.drawings.maps.adapter import load_map_context
+    from app.drawings.maps.site_context_plan import draw_site_context_plan
+
+    ctx = load_map_context(cross_street_document())
+    lines = [{"kind": "rear_yard_100ft_line", "state": "established", "basis": "derived",
+              "zr_sections": ["ZR 23-344"], "geometry": [[10.0, 20.0], [70.0, 20.0]]}]
+    close = draw_site_context_plan(ctx, frame="close", constraint_lines=lines)
+    assert ">Rear-yard 100 ft line</text>" in close.svg
+    assert ">Setback line</text>" not in close.svg
+
+
+# =========================================================================== S14
+def test_s14_established_line_is_drawn_only_inside_the_lot() -> None:
+    # The committed example's rear-yard line runs x 0 -> 182.5 while the lot ends near
+    # x 123; it is drawn only within the lot outline (the clipped ends lie on the
+    # outline within 0.01 ft) and never reaches the far end across the street. Removing
+    # the clip (mutation 1) lets the drawn line reach x 182.5.
+    from shapely.geometry import Point as SPoint
+    from shapely.geometry import Polygon as SPolygon
+
+    fr, rect = _frame_and_rect(offset=(0.0, 0.0))
+    poly = _lot_polygon()
+    sheet = Sheet()
+    drawn = draw_constraint_overlay(sheet, constraint_lines(), fr, rect,
+                                    offset=(0.0, 0.0), clip_polygon=poly)
+    assert [d.kind for d in drawn] == ["rear_yard_100ft_line"]
+    pts = drawn[0].source_points
+    xs = [p[0] for p in pts]
+    assert max(xs) < 130.0          # stays inside the lot's x-extent, never 182.5
+    sp = SPolygon([(p[0], p[1]) for p in poly.exterior])
+    for p in pts:                    # every drawn point lies on or inside the lot
+        assert sp.distance(SPoint(p)) <= 0.01
+    # the clipped ends rest ON the lot boundary within 0.01 ft (S5/S14).
+    assert sp.boundary.distance(SPoint(pts[0])) <= 0.01
+    assert sp.boundary.distance(SPoint(pts[-1])) <= 0.01
+    # without the clip the SAME line reaches the document's far endpoint (mutation 1).
+    bare = Sheet()
+    bare_drawn = draw_constraint_overlay(bare, constraint_lines(), fr, rect, offset=(0.0, 0.0))
+    assert max(p[0] for p in bare_drawn[0].source_points) >= 182.0
+
+
+def test_s14_a_line_wholly_outside_the_lot_draws_nothing() -> None:
+    # An established line entirely outside the lot (beyond its max x ~123, max y ~121)
+    # draws nothing - no geometry, no legend entry (S5/S14).
+    fr, rect = _frame_and_rect(offset=(0.0, 0.0))
+    poly = _lot_polygon()
+    sheet = Sheet()
+    lines = [{"kind": "rear_yard_100ft_line", "state": "established", "basis": "derived",
+              "zr_sections": ["ZR 23-344"], "geometry": [[200.0, 200.0], [300.0, 200.0]]}]
+    drawn = draw_constraint_overlay(sheet, lines, fr, rect, offset=(0.0, 0.0), clip_polygon=poly)
+    assert drawn == []
+    assert sheet.parts == [] and sheet.kinds == []

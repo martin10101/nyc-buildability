@@ -304,7 +304,14 @@ def _uncertainty_line(row: Mapping, results: Mapping) -> raw:
             # (Conditional) - exactly as the page-3 row does, from the one wording source
             # (constraint_text; D-094 R037/R079; S2). Never an unconditional "no rear
             # yard"; the combined row carries no measurement number.
-            children.append(el("span", str(combined.get("text") or "")))
+            # On page 1 the title is the link label, so a combined text that begins with
+            # the title is stripped of it to avoid "Rear yard Rear yard:" (S16; visual G3
+            # finding 4). Page 3 keeps the full text - there title and text are separate
+            # columns, so no stutter occurs.
+            text = str(combined.get("text") or "")
+            if text.startswith(row["title"]):
+                text = text[len(row["title"]):].lstrip(": ")
+            children.append(el("span", text))
             children += _rear_yard_section_links(combined.get("zr_sections"))
             children.append(label_chip(labels.label_for_way(combined.get("way"))))
             return el("li", *children)
