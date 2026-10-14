@@ -609,3 +609,20 @@ to build).
   example (M5-T177) was contracted so its builder can start.
 - **New question for the owner (in the questionnaire, does not stop the work):** M2, whether ten at once should be
   the standing limit or stay a per-session approval.
+
+## 35. "Btw can you simply explain what part of the work we are doing and how progress is going" (2026-10-14, about 02:52 UTC)
+
+- **Answered at once, in plain words:** we are in the report redesign pass: turning the PDF into a clear decision
+  document like the owner's sample, one page type at a time. Finished and checked that night: the rebuilt page 1
+  (M5-T165) and the close-up site drawing (M5-T166), both accepted after their independent rule checks; the law
+  library's second pass (M3-T007) passed its review and its rule check. Being built: the worked example of where the
+  building sits on the lot (M5-T177). Starting next: the website's first screen to match page 1 (M5-T171), the report
+  reading the newer results data (M5-T175), and saving the official law texts for the affordable-housing options
+  (M3-T008). Still ahead in the pass: the option comparison, the setback and street-wall rules, the building placed on
+  the lot with a section drawing, then the final PDF with before-and-after pictures.
+- **Progress as told:** of about seventeen pieces in this pass, seven were done before that night and three more
+  were finishing; no piece was blocked.
+- **Questions put to the owner earlier in the same session (in the questionnaire; none stops the work):** M2 (ten
+  helpers as the standing limit or per session), N5 (option 6 as one mixed building or two), P1 to P3 (the City's own
+  aerial photo; a zoning map drawn from the City's map data or the printed sheet; a city overview map with or without
+  neighbourhood areas).
