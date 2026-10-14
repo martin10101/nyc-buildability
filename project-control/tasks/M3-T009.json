@@ -158,7 +158,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The ZR print/PDF big pages 504 and per-term print/PDF can 403 (DB-167): use the documented fallback (direct HTML GET, browser UA, sha256-pinned) and disclose it in cross_check/notes; never evade.",
     "The 2024 City of Yes amendments renumbered sections: take every section number, title and Last Amended date from the official page read for this pass.",
@@ -168,7 +168,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T19:41:35.105159+00:00",
-  "updated_at": "2026-10-14T19:41:38.684784+00:00",
+  "updated_at": "2026-10-14T20:12:25.143257+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -195,6 +195,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one capture task at a time, so the official site is never loaded by several runs"
+    },
+    {
+      "at": "2026-10-14T20:12:25.143124+00:00",
+      "agent": "official-source-researcher",
+      "percent": 60,
+      "status": "claimed",
+      "message": "built (15 captures: 22-13 and Article II Chapter 4; list letters from the print); the builder's commit integrated as ccf8e24b (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
