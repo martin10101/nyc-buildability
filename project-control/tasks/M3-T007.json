@@ -129,7 +129,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "zoningresolution.planning.nyc.gov pages can time out or refuse non-browser fetches (23-154 returned HTTP 403 in the first pass): use the documented print/PDF channel, record a block with the URL, never evade.",
     "The 2024 City of Yes amendments renumbered sections: every section number is taken from the official page read for this pass, never from memory or from an older document.",
@@ -139,7 +139,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T01:27:08.026461+00:00",
-  "updated_at": "2026-10-14T01:27:11.441577+00:00",
+  "updated_at": "2026-10-14T02:13:33.412666+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -165,6 +165,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; read-only research helpers dispatched first"
+    },
+    {
+      "at": "2026-10-14T02:13:33.412544+00:00",
+      "agent": "legal-corpus-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "built from ten research returns and the settled reference cases; the builder's commit integrated as 9730b3e6 (LF sha256 equal to its return); next: the G1 review of the sources, G2, records, submit"
     }
   ]
 }
