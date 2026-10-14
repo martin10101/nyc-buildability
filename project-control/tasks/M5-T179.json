@@ -26,7 +26,8 @@
     "services/api/app/drawings/report/builder.py",
     "services/api/app/drawings/report/page_assumptions.py",
     "services/api/tests/drawings/report/test_report_scope_note_maps.py",
-    "project-control/reports/M5-T179-producer-report.md"
+    "project-control/reports/M5-T179-producer-report.md",
+    "services/api/tests/drawings/report/test_report_pages.py"
   ],
   "forbidden_paths": [
     "services/api/app/drawings/report/coverage.py",
@@ -38,7 +39,6 @@
     "services/api/app/drawings/report/drawings_embed.py",
     "services/api/app/drawings/maps/",
     "services/api/app/drawings/kit/",
-    "services/api/tests/drawings/report/test_report_pages.py",
     "services/api/tests/drawings/report/test_constraint_rows.py",
     "packages/contracts/",
     "services/api/app/scenario/",
@@ -123,6 +123,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; the builder passes maps_present to the appendix scope note and adds the test"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T18:01:30+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction after the build round (the builder's return, session 2026-10-14c; the packet's risk 1): the whole drawings suite has one failure, test_report_pages.py::test_q3_coverage_and_maps_with_and_without_a_map_document, whose last line asserts 'Context maps' in the visible text of the report WITH maps; since the coverage inventory left page 1 (M5-T165) the only place that text appeared was the wrong page-7 scope note, so the assertion pinned the defect. test_report_pages.py is added to the allowed paths (no task in flight lists it) for that one assertion: the report with maps does NOT list 'Context maps' among the exclusions. No row, gate, reviewer or dependency changes."
     }
   ]
 }
