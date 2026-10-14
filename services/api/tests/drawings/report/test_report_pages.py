@@ -649,7 +649,9 @@ def test_q3_coverage_and_maps_with_and_without_a_map_document() -> None:
     site = with_maps[start:with_maps.index('id="option-comparison"')]
     assert "<svg" in site
     text = visible_text(with_maps)
-    assert "Context maps" in text  # in the coverage inventory
+    # the appendix scope note now reads maps_present (M5-T179): with maps printed,
+    # 'Context maps' is not listed among the report's exclusions.
+    assert "Context maps" not in text
 
 
 # =============================================== drawing frame (ruling X9); run once integrated
