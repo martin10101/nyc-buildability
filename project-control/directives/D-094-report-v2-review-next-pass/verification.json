@@ -1788,30 +1788,49 @@
     "D-094-R119"
    ],
    "producer": "legal-corpus-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "654ea3fade56e075f7bb447eb2f87d0b88fb38a4",
+   "reviewed_manifest_sha256": "ab8ca8a8e4c1d5a79f85d8ba8211b606c9bfbe76cf16d61f0ceaae65e3a770e1",
    "requirements": [
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The zoning-law library continues as its own documents-only second line of work (task M3-T007), disjoint from the report lane: at the frozen head docs/zoning-law-library/options/ holds README.md + eight option files (02-03, 05, 06-07, 08, 09, 10, 11) + research-log.md, and options-sections.md gains second-pass blocks for options 2,3,5,6,7,8,9,10,11.",
+      "Each option file carries the unreviewed-draft/ADR-007 label and a section table with id, title, official URL, last-amended date, capture state (snapshot file or NOT CAPTURED) and handled state (rule file or NOT HANDLED), then a reading (applicable rule, definitions, exceptions, overlay/special-district effects, measurement basis, zoning-lot scope, lot facts with sources) and every not-sure point with a next step; I read option-02-03 and README in full to confirm this structure.",
+      "I reproduced primary evidence: the claimed-captured snapshots (zr-23-22, zr-23-432, zr-23-52, zr-33-121, zr-35-31/32/33, zr-32-131/161, zr-11-25, zr-23-20, zr-12-10-qualifying-*) all exist and the claimed-absent families (zr-24-*, zr-22-1*, zr-23-154, zr-32-421, zr-77-*, transit-zone-inner) are truly absent; the decisive 23-22 R6B row in zr-23-22.snapshot.json is standard 2.00 / qualifying 2.40 with no footnote, matching the file verbatim; research-log.md records the \u00a723-154 HTTP-403 block twice, never evaded.",
+      "The material commit 9730b3e6 touches only the 11 allowed paths (all under docs/zoning-law-library/ plus the producer report), sharing no file with the report lane. Stays open for later work: the first-pass library-root files (coverage.md, cross-reference-closure.md, pitfalls.md) are M3-T006's scope and out of this task's edit set, and contracting the follow-on rules task plus capturing the NOT CAPTURED sections (backlog DB-253) remain future work.",
+      "Verifier's carry-forward condition met at 654ea3fa: the task's allowed-path files are identical to those verified at 98198b43 (content identity ab8ca8a8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (two independent reviewers, each on half of the files); G2 orchestrator self-check). DCV report: project-control/reports/M3-T007-DCV.md."
+     ],
+     "reviewed_sha": "654ea3fade56e075f7bb447eb2f87d0b88fb38a4"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Read-only research helpers fed the work: ten saved read-only returns are in the session folder (/root/project/lanes-runtime/owner-docs/session-2026-10-14a/research/return-H{A,B,C,D,E,F,G,S,X1,X2}.md) \u2014 seven law readings, the sample's options (HS), the verbatim follow-ups (HX1) and the three open legal questions (HX2) \u2014 matching the evidence-map's \"ten read-only research returns.\"",
+      "The session notes (2026-10-14) show these helpers dispatched \"all read-only; 0 building\"; only one helper ever built (the M3-T007 builder, agent ad76f4537916bbd49, in its own isolation worktree reset to 680cbe77), so R104's sub-limits of at most 3 building and never sharing files are honored (1 builder, no shared repo file).",
+      "The builder return confirms a single commit 63fc2b19 cherry-picked as 9730b3e6 touching only the 11 allowed paths; I reproduced its LF sha256 for options-sections.md (42a96d87\u2026) and option-02-03 (e77fa94f\u2026) at the frozen head and both match, so the integrated content is byte-identical to the helper-fed build.",
+      "How R104's eight relates to R119's ten: R104 set the standing ceiling at 8 at once (beyond-5 read-only); the run used up to 10, which exceeds R104's 8 but is authorized because R119 lifted the headcount to 10 for this one night \u2014 see R119. Stays open: nothing for this task; R104 remains a standing authorization whose 8-cap returns once tonight's session ends.",
+      "Verifier's carry-forward condition met at 654ea3fa: the task's allowed-path files are identical to those verified at 98198b43 (content identity ab8ca8a8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (two independent reviewers, each on half of the files); G2 orchestrator self-check). DCV report: project-control/reports/M3-T007-DCV.md."
+     ],
+     "reviewed_sha": "654ea3fade56e075f7bb447eb2f87d0b88fb38a4"
     },
     {
      "id": "D-094-R119",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The task was contracted (f9e43daa) and built on the night of 2026-10-14, the night for which the owner approved up to ten helpers at once (source-013, verbatim: \"i want to lunch 10 subagents\"); R119's required_harness is the testable condition and the session notes meet it.",
+      "The dispatch lines show the maximum concurrency was exactly ten helpers running at once (01:30, 01:38, 01:40, 01:41) and never more than ten; the building count was at most one at any moment (never more than three); and no two helpers shared a repo file (research helpers and packet/evidence/P8 readers wrote only their returns or private scratch dirs, per the logged audits; the sole repo writer was the M3-T007 builder in its own worktree).",
+      "Every running helper's work was a tracked task or read-only preparation for one: research returns feed M3-T007, packet checks prepare M5-T165/166/167/171/175/177, the P8 readers prepare M5-T177, the builder is M3-T007 itself.",
+      "Plainly, R104's eight and R119's ten stand in sequence: R104 is the standing eight-at-once ceiling (beyond-5 read-only), and R119 temporarily raised only the headcount to ten for the single night of 2026-10-14 while keeping R104's at-most-three-building and no-shared-files sub-limits; the observed run (up to ten, one building, no shared files) sits inside R119 and inside R104's unchanged sub-limits. Stays open: nothing for this task; R119's ten-helper allowance expires with tonight's session and reverts to R104's eight.",
+      "Verifier's carry-forward condition met at 654ea3fa: the task's allowed-path files are identical to those verified at 98198b43 (content identity ab8ca8a8), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (23 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (two independent reviewers, each on half of the files); G2 orchestrator self-check). DCV report: project-control/reports/M3-T007-DCV.md."
+     ],
+     "reviewed_sha": "654ea3fade56e075f7bb447eb2f87d0b88fb38a4"
     }
-   ]
+   ],
+   "verified_at": "2026-10-14T03:02:18+00:00"
   },
   {
    "directive_id": "D-094",
