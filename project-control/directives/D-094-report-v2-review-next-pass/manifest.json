@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T17:45:24+00:00",
+ "updated_at": "2026-10-14T17:50:21+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -167,7 +167,7 @@
   "D-094-R143"
  ],
  "requirements_id_digest_sha256": "01a4d8f14582fe62fa887072f5ab64cdd8dcedc874eec52c619d9dab683bf4bd",
- "requirements_content_digest_sha256": "df5c0e73169ef4ade340a7a5a8e4ff8868600a08db22282470f7729a8d92379b",
+ "requirements_content_digest_sha256": "ac5261694f186ca7999d8d373ff9eebb2f4ef702e962e5f20ebc7892111a29d3",
  "sources": [
   {
    "file": "source-001.md",
@@ -363,7 +363,8 @@
   "M3-T007",
   "M5-T177",
   "M5-T175",
-  "M3-T008"
+  "M3-T008",
+  "M5-T179"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -624,6 +625,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-019 (the owner forwards an outside reviewer's assessment of the 2026-10-14 preview print and the handoff) and requirements D-094-R132 to R143, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T17:50:21+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T179 (page 7's scope note says context maps are in the report when the maps are printed) to R083, R137 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
