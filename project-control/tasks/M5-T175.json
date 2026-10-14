@@ -49,7 +49,9 @@
     "services/api/app/drawings/maps/__init__.py",
     "services/api/app/drawings/report/drawings_embed.py",
     "services/api/app/drawings/report/page_location.py",
-    "services/api/app/drawings/report/page_decision_summary.py"
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/kit/styles.py",
+    "services/api/tests/drawings/kit/test_style_table.py"
   ],
   "forbidden_paths": [
     "services/api/app/drawings/report/readers.py",
@@ -108,7 +110,7 @@
       "id": "S5",
       "given": "the fixture's input_facts (printed_tax_map, administrative_record, gis) and the established rear_yard_100ft_line",
       "when": "the close frame and overlay are built",
-      "then": "each dimension carries its own basis label beside the map-outline dimension, nothing is averaged or merged, and the drawn line's endpoints lie on the document's vertices within 0.01 ft"
+      "then": "each dimension carries its own basis label beside the map-outline dimension, nothing is averaged or merged; the drawn part of an established line lies on the document's line (its own vertices, through the pure translation, within 0.01 ft) and inside or on the lot outline: a line that runs past the lot outline is drawn only within it (the clipped ends lie on the outline within 0.01 ft), and a line wholly outside the lot draws nothing (scope correction 2 of 2026-10-14)"
     },
     {
       "id": "S6",
@@ -151,6 +153,30 @@
       "given": "a results document carrying geometry.constraint_lines and input_facts (built in memory from M5-T164's committed 1.5.0 examples and the benchmark's recorded map context)",
       "when": "the whole report is built through the live path (build_report_html and the map embed)",
       "then": "the page-1 frame and the close frame draw the established lines and the other-basis dimensions exactly as the unit tests of constraint_overlay.py and close_frame_dimensions.py expect; a document without them renders byte-identical (S1 still holds for every valid 1.4.0 fixture and the benchmark); nothing is drawn for a line that is not established"
+    },
+    {
+      "id": "S13",
+      "given": "a close frame that draws an established constraint line or area",
+      "when": "the legend is built",
+      "then": "the legend names each drawn constraint by its own kind (for example the rear-yard 100 ft line), never a reused kind that is not drawn; every legend row fits above the sources caption with nothing clipped or overlapping, as on a frame without the overlay"
+    },
+    {
+      "id": "S14",
+      "given": "the committed 1.5.0 rear-yard example, whose established rear-yard line runs from x 0 to x 182.5 while its lot outline ends near x 123",
+      "when": "the close frame is drawn",
+      "then": "the line is drawn only inside the lot outline and does not cross the street; the label and legend are unchanged"
+    },
+    {
+      "id": "S15",
+      "given": "an overlay that cannot be drawn (a label that cannot be placed at 8.5 pt, or a malformed established geometry)",
+      "when": "the report is built",
+      "then": "the site map is still drawn without the overlay, and a short visible note says a zoning line could not be drawn on this map and points to page 3; the whole map is never dropped because of the overlay"
+    },
+    {
+      "id": "S16",
+      "given": "a 1.5.0 combined rear-yard row whose text begins with its own title",
+      "when": "page 1 is built",
+      "then": "the uncertainty line does not repeat the title ('Rear yard Rear yard:'); a not_known 23-344(c)(3) check row on page 3 prints no number, only its own text (asserted directly)"
     }
   ],
   "required_gates": [
@@ -235,6 +261,11 @@
       "at": "2026-10-14T03:39:51+00:00",
       "actor": "orchestrator",
       "change": "Scope correction after the first build round (the builder's return, session 2026-10-14b): the overlay (maps/constraint_overlay.py) and the other-basis close-frame dimensions are built and unit-tested but not wired into the live report, because the wiring files were outside the packet; and the page-1 rear-yard uncertainty is composed in page_decision_summary.py, which the packet forbade while M5-T165 was in flight (M5-T165 is accepted since 02:52 UTC). Added to the allowed paths: maps/__init__.py, report/drawings_embed.py, report/page_location.py and report/page_decision_summary.py (no other task in flight lists them). S2 narrowed: the appendix open item's text is built in readers.py, an NB-01 code path whose W25 owner is M5-T167, so that part moves to M5-T167. S12 added: the live report path draws what the unit tests prove. No row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-14T17:37:05+00:00",
+      "actor": "orchestrator",
+      "change": "Second scope correction, after the four reviews pinned at 11c932b5d (session 2026-10-14c): G1 data contract PASS, G3 code PASS with two advisories, G4 QA PASS with two advisories, G3 visual PASS WITH THREE REQUIRED CORRECTIONS, all on the close frame when a constraint line is drawn (the benchmark draws none, so its pages are byte-identical): the legend grows a row and its last entry is clipped over the sources caption; the legend names the reused 'Setback line' kind for the drawn rear-yard line; the committed example's rear-yard line runs about 60 ft past its own lot outline and is drawn across the street. Decisions: the four constraint kinds get their own entries in the style table (kit/styles.py added to the allowed paths, with its test file, additive only: every existing output stays byte-identical), so the legend names what is drawn (S13); the legend fits (S13); an established line is drawn only inside the lot outline, wholly outside draws nothing (S5 reworded, S14); an overlay failure keeps the map without the overlay and a short note instead of dropping the whole map (the code review's advisories; S15); page 1 does not repeat the title, and a direct test for a not_known (c)(3) check row (the QA advisory; S16). The synthetic example's own inconsistencies (the line past its outline; input_facts unequal to its lot_area) are recorded for M5-T167 and the fixture's next edit (backlog). No row, gate, reviewer or dependency changes."
     }
   ]
 }
