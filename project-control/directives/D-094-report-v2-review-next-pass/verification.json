@@ -2066,24 +2066,37 @@
     "D-094-R104"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "7a5f63bee97b581ccce64f614dce19250b09524e",
+   "reviewed_manifest_sha256": "a4b2c32e73431f5d00660782a335442bb8ea709755bc3ffde13695f260389fbe",
    "requirements": [
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The row (classification decision, source-004-amendment.md#owner-message-verbatim) directs starting the zoning-law library in the next session as a documents-only line beside the report; THIS TASK'S SHARE is the affordable/senior-housing capture subset, and it is present and well-formed at the frozen head.",
+      "I independently checked all 11 captures (zr-27-111, -27-131, -27-133, -27-14, -27-151, -27-16, -27-161, -27-162, zr-appendix-f, zr-12-10-affordable-independent-residence-for-seniors, zr-12-10-long-term-care-facility): every file is snapshot_schema \"zr_section_snapshot/v1\", content_digest_sha256 == sha256(verbatim_excerpt), extraction_status \"extracted_draft\", raw_html_verified false, snapshot_id == filename stem, and its services/api/app/_zr_snapshots/v1 bundled copy is byte-identical to the canonical file; the production loader (app.rules.snapshots load_snapshot_file / SnapshotStore().load()) loaded all 11 with no error.",
+      "Provenance holds: each request_url is the official zoningresolution.planning.nyc.gov page (article-ii/chapter-7 sections; the appendix-f landing page; article-i/chapter-2/12-10 for the two terms), the 8 sections and Appendix F carry a pinned raw_pdf_sha256, the two 12-10 terms carry the disclosed DB-167 504/403 HTML fallback in cross_check.method, every \"Verified\" occurrence is the negated ADR-007 phrase (nothing labelled Verified), the renamed plural senior file is absent from both trees, and no 23-154 snapshot exists while its 2026-10-14T03:26:00Z HTTP 403 re-attempt is recorded in the producer report.",
+      "Stays open for later (not this task): the other DB-253 capture subsets (B community-facility, C1 split-lot/courts, C2 rooming/shops/parking); updating the library doc's NOT CAPTURED flags (docs/zoning-law-library/ is a forbidden path here); any rule citing these sections (a later rule task under D-093); ZR 23-154 stays access-blocked and owed; and R102's wider parts (handoff tells the next session, the handled/not-handled list, the pitfall list) are carried by M3-T006 and M3-T007 (both accepted), not by M3-T008.",
+      "Verifier's carry-forward condition met at 7a5f63be: the task's allowed-path files are identical to those verified at b51e794d (content identity a4b2c32e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (5 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (round 1 FAIL, then a fresh data-contract-verifier's delta PASS); G2 orchestrator self-check). DCV report: project-control/reports/M3-T008-DCV.md."
+     ],
+     "reviewed_sha": "7a5f63bee97b581ccce64f614dce19250b09524e"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The row (classification authorization, source-004-amendment.md) allows up to 8 helpers at once when the extras only read/research, at most 3 building, never sharing files; THIS TASK'S SHARE is that M3-T008's own execution honored those limits.",
+      "Session notes 2026-10-14b record M3-T008's builder (official-source-researcher af20321c166ac7653, own isolation worktree) running as one of at most 3 builders (\"3 building (M5-T171, M5-T175, M3-T008)\"), with helper totals of 6 then 8 in those windows \u2014 within \u22643 building and \u22648 helpers; session notes 2026-10-14c record the rework builder (a48dfa7f8b2) as the sole builder (\"DISPATCHED 5 (limit 5; 1 building, 4 reviewing)\", \"Running 6 (limit 8 when the extra only researches): 1 building\").",
+      "M3-T008's reviewers (G1 round-1 data-contract-verifier, G1 delta data-contract-verifier, and this DCV) are read-only; the task's files (ZR snapshots) are disjoint from the concurrent builders' files (M5-T171 apps/web; M5-T175 report/maps; M5-T179 report pages), and the packet path_notes require disjoint snapshot filenames \u2014 so no two helpers shared a file.",
+      "Stays open for later: nothing of this task's share stays open; R104 is a standing authorization that continues to govern later library/research work (it is not a per-task deliverable).",
+      "Verifier's carry-forward condition met at 7a5f63be: the task's allowed-path files are identical to those verified at b51e794d (content identity a4b2c32e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (5 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier (round 1 FAIL, then a fresh data-contract-verifier's delta PASS); G2 orchestrator self-check). DCV report: project-control/reports/M3-T008-DCV.md."
+     ],
+     "reviewed_sha": "7a5f63bee97b581ccce64f614dce19250b09524e"
     }
-   ]
+   ],
+   "verified_at": "2026-10-14T18:22:55+00:00"
   },
   {
    "directive_id": "D-094",
