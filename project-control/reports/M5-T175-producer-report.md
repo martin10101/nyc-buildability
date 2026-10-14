@@ -193,3 +193,126 @@ packet path_notes: it renders document values only) — the G1 reviewer may deci
 - Primary sources: I re-read NB-04's cited evidence (tax maps, PLUTO, MapPLUTO, DOF
   transaction 76338, ZR 12-10) and NB-03/NB-06 as read-only; I did not re-fetch any live
   source (freshness is NB-04's own `checked_on` 2026-10-10). No professional/legal review.
+
+---
+
+# Rework 1 — the overlay and other-basis dimensions wired into the live report; page 1 reads the 1.5.0 row
+
+Producer: backend-engineer (an AI agent). Worktree:
+`/root/project/nyc-buildability/.claude/worktrees/agent-a7fdf6d94b592c2ef`.
+Reset to the scope-correction head `79e2bfb9c644713b095c963643f9a0306b3fd732` (it
+carries the first round as commit `f66e8212`) before work. This round closes the first
+round's two disclosed limitations (A and B); the first round's reader, page-3 rows,
+overlay and other-basis dimensions are unchanged.
+
+## What changed and why
+
+**A. Wiring (the live report now draws what the unit tests prove; S12).** The first
+round built the overlay and the other-basis close-frame dimensions and hooked them into
+`site_context_plan.draw_site_context_plan`, but the report never passed the document's
+`geometry.constraint_lines` / `input_facts` down to it, so the live render drew nothing.
+Three files thread the data through, with the fewest lines and no change to
+`site_context_plan.py` (it is above its size warning, DB-250):
+
+1. `maps/__init__.py` — `render_site_context_plan` gains `constraint_lines=None,
+   input_facts=None` and forwards them to `draw_site_context_plan` (every other caller is
+   byte-identical).
+2. `report/drawings_embed.py` — `embed_map` gains the same two kwargs and forwards them to
+   the map function ONLY when they are not None, so the neighbourhood/block maps (which do
+   not accept them) and every overlay-free render are byte-identical.
+3. `report/page_location.py` — `resolve` reads `geometry.constraint_lines` and
+   `input_facts` defensively (`_overlay_data`) and passes them to the two site-context
+   embeds (the page-1 `summary_close` thumbnail and the page-3 `close` frame); the
+   neighbourhood/block locators get nothing. A 1.4.0 document yields `(None, None)`.
+
+**B. Page 1 reads the 1.5.0 combined rear-yard row (S2).** `page_decision_summary.py`'s
+rear-yard uncertainty line now reads `constraint_text.rear_yard_combined(results)` — the
+SAME wording source the page-3 row uses. For a document carrying the 1.5.0 combined row it
+shows the row's OWN text, its ZR sections linked (`_rear_yard_section_links` via
+`law_links`, 23-344/12-10), and the label from its way (Conditional); no measurement
+number. For a 1.4.0 (and earlier) document `rear_yard_combined` is None, so the line keeps
+the open-check reference byte-identical (title + ZR 23-344 link + Unresolved). The appendix
+open item (`readers.py`) is NOT this task's — it moved to M5-T167 (scope correction).
+
+**C. Tests (in the task's own test files).** `tests/drawings/report/test_constraint_rows.py`
+gains the live-path S12 coverage, the benchmark's recorded map context helper, and a 1.4.0
+page-1 guard (four tests). No new results fixture; the S12 document is the committed 1.5.0
+example rendered WITH the benchmark's recorded window pack (same lot, bbl 4073340070, so
+the one-outline check passes).
+
+## Live-path test table — every state has its own outcome and its own test
+
+| Through the live path (`build_report_html` + map embed) | Outcome | Test |
+|---|---|---|
+| 1.5.0 established `rear_yard_100ft_line` | drawn on the site frames; the large close frame labels it once | `test_s12_live_report_draws_only_established_lines_and_other_basis_dimensions` |
+| 1.5.0 `not_established` line WITH geometry | draws nothing (R017 is the guard, not missing geometry) | same test (`data-kind="setback_line"` absent) |
+| 1.5.0 `not_known` `corner_area` (no geometry) | draws nothing | same test (`data-kind="corner_area"` absent) |
+| 1.5.0 `input_facts` other bases | printed-tax-map + recorded-area dimensions drawn, each basis named | same test (`"printed tax map"`, `"city record"`) |
+| 1.4.0 document WITH map context | no overlay, no other-basis dimension (byte-identical) | `test_s12_1_4_0_report_with_maps_draws_no_overlay` |
+| 1.5.0 conditional combined rear yard, page 1 | combined text, ZR 23-344 linked, Conditional, no number | `test_s12_page_one_uncertainty_reads_the_1_5_0_conditional_rear_yard` |
+| 1.4.0 document, page 1 | open-check reference unchanged (title + ZR 23-344 + Unresolved) | `test_s1_benchmark_page_one_rear_yard_uncertainty_is_unchanged` |
+
+## Byte-identity proof for the 1.4.0 output (S1, re-run vs the claim head)
+
+Script `/tmp/claude-0/M5-T175-rw1/render_report.py` rendered, in a detached worktree at the
+claim head `654ea3fade56e075f7bb447eb2f87d0b88fb38a4` and in this worktree, the report HTML
+for every valid results fixture (12), the benchmark report WITH its recorded map context
+(1), and the five `site_context_plan` map SVGs (close, summary_close, report, summary,
+wide). sha256 (LF-normalized) compared:
+
+- 18 render outputs total; **17 byte-identical** to the claim head.
+- The ONLY difference is `report::synthetic_rear_yard_constraints_contract_1_5_0.json`
+  (`4a6ccc2e…` → `ea6cce1e…`) — the one fixture carrying the 1.5.0 blocks, whose page-3 rows
+  (first round) AND page-1 uncertainty (this round) now read the engine's own rows (intended).
+- Byte-identical: all 11 other fixtures' report HTML, the benchmark report-with-maps, and
+  ALL five site_context_plan map SVGs — the wiring draws nothing without the 1.5.0 data.
+
+The within-test S1 guards (`test_s1_benchmark_1_4_0_rows_are_the_fallback_unchanged`,
+`test_s1_benchmark_page_one_rear_yard_uncertainty_is_unchanged`) pin the benchmark's page-3
+rows and page-1 rear-yard uncertainty to the exact 1.4.0 output.
+
+## Commands, exit codes and counts (rework 1)
+
+- `cd services/api && python -m ruff check .` → **exit 0** ("All checks passed!").
+- `cd services/api && python -m pytest -q -p no:cacheprovider tests/drawings tests/cad
+  tests/api/test_report_read_api.py tests/api/test_report_read_context.py` → **exit 0**:
+  **1819 passed, 6 skipped** in 148.04s (1815 + the 4 new live-path/page-1 tests; every
+  forbidden/benchmark test green, unedited).
+- New/changed test file alone: `pytest … test_constraint_rows.py test_constraint_overlay.py`
+  → **exit 0**: 21 passed (12 report rows incl. the 4 new + 9 overlay).
+- `python3 tools/research_record_check.py --check` → **exit 0**: NB-04
+  `status=conflicting_evidence code_current=True review_state=stale`; "PASS". No code path
+  NB-04 lists changed this round (close_frame_dimensions.py is untouched), so NB-04 is
+  unchanged (revision 3 still records the current code identity).
+- `python3 tools/modularity_check.py --check` → **exit 0**: failures 0 (warnings only).
+  `site_context_plan.py` is untouched (609 SLOC, unchanged); the wiring additions to
+  `__init__.py` / `drawings_embed.py` / `page_location.py` / `page_decision_summary.py`
+  cross no threshold.
+- `python3 scripts/lanes/check_lane_paths.py --coverage` → **exit 0**:
+  "LANE COVERAGE PASS: 10392 file(s), each owned by exactly one lane."
+
+Browser/e2e tests were NOT run and no server was started (ports 3000/3001/8000 untouched).
+
+## Mutation outputs (applied, failing test kept, reverted, re-run green)
+
+1. **Dropped the wiring** (`resolve` passes `constraint_lines=None, input_facts=None`):
+   `test_s12_live_report_draws_only_established_lines_and_other_basis_dimensions` **FAILED**
+   (`'data-role="constraint-overlay"'` absent from the live report). Reverted.
+2. **Gave page 1 the 1.4.0 open-check text for a 1.5.0 conditional row** (forced
+   `combined = None` in `_uncertainty_line`): `test_s12_page_one_uncertainty_reads_the_1_5_0_conditional_rear_yard`
+   **FAILED** (combined text absent; the line reverted to "Rear yard · ZR 23-344 ·
+   Unresolved"). Reverted.
+3. **Drew a not_established line through the live path** (removed the `state == established`
+   guard in `draw_constraint_overlay`): the same S12 live test **FAILED**
+   (`data-kind="setback_line"` appeared in the report). Reverted.
+
+After reverting all three, ruff and both task test files are green again (21 passed).
+
+## What I could not check (rework 1)
+
+- The LIVE preview/browser rendering of the wired overlay (no server, thin-client). The
+  live render is proven by `build_report_html` with the benchmark's recorded map context
+  (an in-memory pack), not by a running preview; the on-page visual quality of the overlay
+  labels/legend at print size is a visual-quality-reviewer / H2 render check.
+- Primary sources: no file NB-04 lists changed this round, so I relied on NB-04's existing
+  revision 3 (first round) and re-fetched no live source. No professional/legal review.

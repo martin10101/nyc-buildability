@@ -155,14 +155,19 @@ _MAP_UNAVAILABLE = "This map is not shown here."
 
 
 def embed_map(
-    fn_name: str, map_context: Mapping, *, layers: tuple[str, ...], frame: str = "report", env=None
+    fn_name: str, map_context: Mapping, *, layers: tuple[str, ...], frame: str = "report", env=None,
+    constraint_lines=None, input_facts=None,
 ) -> Embedded:
     """A site-context, block or neighbourhood map, captioned in plain words with a
     short "Sources: ..." line (the layers it shows, each with its edit date once)
     and the drawing's own notes (:mod:`.map_caption`, rulings Y7/X6). ``frame`` is
     ``"report"`` (the full-size plan) or ``"summary"`` (the compact page-1 /
-    location-sheet thumbnail). An Unavailable, missing keyword or kit failure prints
-    one short line, never an error (S6)."""
+    location-sheet thumbnail). ``constraint_lines`` / ``input_facts`` (results
+    contract 1.5.0) are forwarded ONLY to the site-context map, which draws the
+    established overlay on its close frames (M5-T175); they are omitted from the call
+    otherwise, so the neighbourhood/block maps and every overlay-free render are
+    byte-identical (S1). An Unavailable, missing keyword or kit failure prints one
+    short line, never an error (S6)."""
     from app.drawings import maps
 
     from . import map_caption
@@ -170,8 +175,13 @@ def embed_map(
     fn = getattr(maps, fn_name, None)
     if fn is None or not _frame_supported(fn):
         return Embedded(short_line=_MAP_UNAVAILABLE)
+    overlay = {}
+    if constraint_lines is not None:
+        overlay["constraint_lines"] = constraint_lines
+    if input_facts is not None:
+        overlay["input_facts"] = input_facts
     try:
-        result = fn(map_context, frame=frame, env=env)
+        result = fn(map_context, frame=frame, env=env, **overlay)
     except Exception:  # noqa: BLE001 - any kit failure means no map, never an error page
         return Embedded(short_line=_MAP_UNAVAILABLE)
     svg = getattr(result, "svg", None)

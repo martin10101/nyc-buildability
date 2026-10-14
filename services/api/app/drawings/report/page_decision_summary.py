@@ -274,7 +274,21 @@ def _ceiling_estimate_block(results: Mapping, worked: list[dict]) -> raw:
     )
 
 
-def _uncertainty_line(row: Mapping) -> raw:
+def _rear_yard_section_links(sections: object) -> list[object]:
+    """Each ZR section of the rear-yard combined row as a link to its captured
+    official text (``law_links``), or the plain section text when no capture exists
+    - the same wording and linking the page-3 row shows (never a reconstructed URL)."""
+    parts: list[object] = []
+    for section in sections or []:
+        url = law_links.section_url(str(section))
+        if url:
+            parts.append(raw(f' <a href="{escape_attr(url)}">{escape(str(section))}</a>'))
+        else:
+            parts.append(raw(f" {escape(str(section))}"))
+    return parts
+
+
+def _uncertainty_line(row: Mapping, results: Mapping) -> raw:
     # Each uncertainty is ONE short reference: the title linked to its issue record
     # (#issue-<n>), then its label. The full effect wording lives in that issue record
     # on the appendix, so page 1 never repeats an 8+ word sentence found there (R2-F13).
@@ -283,9 +297,21 @@ def _uncertainty_line(row: Mapping) -> raw:
         raw(f'<a href="#issue-{escape_attr(number)}">{escape(row["title"])}</a> '),
     ]
     if row["category"] == "rear_yard":
-        # The rear-yard uncertainty links the law (ZR 23-344) through its existing
-        # capture; its open-check wording (names 23-344(b)/(c)(3), no conclusion) is the
-        # issue record's effect on the appendix.
+        combined = constraint_text.rear_yard_combined(results)
+        if combined is not None:
+            # A results contract 1.5.0 conditional rear yard reads the engine's OWN
+            # combined row - its own text, its ZR sections linked, labelled by its way
+            # (Conditional) - exactly as the page-3 row does, from the one wording source
+            # (constraint_text; D-094 R037/R079; S2). Never an unconditional "no rear
+            # yard"; the combined row carries no measurement number.
+            children.append(el("span", str(combined.get("text") or "")))
+            children += _rear_yard_section_links(combined.get("zr_sections"))
+            children.append(label_chip(labels.label_for_way(combined.get("way"))))
+            return el("li", *children)
+        # A 1.4.0 (and earlier) document keeps the open-check reference byte-identical
+        # (S1): the law section (ZR 23-344) linked through its existing capture; the
+        # open-check wording (names 23-344(b)/(c)(3), no conclusion) is the issue
+        # record's effect on the appendix.
         url = law_links.section_url(constraint_text.REAR_YARD_LAW_SECTION)
         if url:
             children.append(raw(
@@ -300,7 +326,7 @@ def _uncertainties(results: Mapping) -> raw:
     rows = readers.decision_open_items(results)
     if not rows:
         return el("p", "No uncertainties recorded.", class_="short-line")
-    items = [_uncertainty_line(row) for row in rows]
+    items = [_uncertainty_line(row, results) for row in rows]
     return el("div", el("h3", "What is still uncertain"), el("ul", *items), class_="uncertainties")
 
 

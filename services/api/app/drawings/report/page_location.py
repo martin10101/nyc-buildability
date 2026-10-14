@@ -115,6 +115,18 @@ def _subject_outline(map_context: Mapping) -> object:
     return subject.get("outline") if isinstance(subject, Mapping) else None
 
 
+def _overlay_data(results: Mapping) -> tuple[list | None, list | None]:
+    """The results contract 1.5.0 overlay inputs the site frame draws (M5-T175):
+    ``geometry.constraint_lines`` and ``input_facts``, read defensively. ``None``
+    for a 1.4.0 (and earlier) document, so the site frame draws nothing and is
+    byte-identical (S1)."""
+    geometry = results.get("geometry") if isinstance(results, Mapping) else None
+    lines = geometry.get("constraint_lines") if isinstance(geometry, Mapping) else None
+    facts = results.get("input_facts") if isinstance(results, Mapping) else None
+    return (lines if isinstance(lines, list) and lines else None,
+            facts if isinstance(facts, list) and facts else None)
+
+
 def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     """Decide whether the report may show the surroundings and render the maps when
     it may (ruling Y5). The location sheet takes the wide locator; page 1 takes the
@@ -127,18 +139,25 @@ def resolve(map_context: object, results: Mapping, *, env=None) -> Surroundings:
     if not outlines_match(_subject_outline(map_context), readers.results_lot_outline(results)):
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)
 
-    def embed(fn_name, layers, frame):
-        return drawings_embed.embed_map(fn_name, map_context, layers=layers, frame=frame, env=env)
+    def embed(fn_name, layers, frame, **overlay):
+        return drawings_embed.embed_map(fn_name, map_context, layers=layers, frame=frame, env=env,
+                                        **overlay)
 
     # Page 2 is the neighbourhood locator only (D-094 R014/R074); the block close-up
     # is still built here (restorable) but not printed (render shows the locator). Page 1
     # takes the COMPACT close frame (the close composition at the 88 mm column; M5-T166
     # rework 1, G3/G4 F1); the constraints sheet takes the large close frame - the
     # subject and its edge-sharing neighbours dominate, dimensioned on page 3 (M5-T166).
+    # Only the two site-context frames carry the 1.5.0 overlay (the established
+    # constraint lines + the other-basis dimensions); passing None leaves them, and the
+    # neighbourhood/block locators, byte-identical (M5-T175 rework 1; S1/S12).
+    constraint_lines, input_facts = _overlay_data(results)
+    overlay = {"constraint_lines": constraint_lines, "input_facts": input_facts}
     neighbourhood = embed("render_neighbourhood_map", map_caption.NEIGHBOURHOOD_LAYERS, "wide")
     block = embed("render_block_map", map_caption.BLOCK_LAYERS, "wide")
-    summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary_close")
-    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "close")
+    summary_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "summary_close",
+                         **overlay)
+    report_plan = embed("render_site_context_plan", map_caption.SITE_LAYERS, "close", **overlay)
     drawn = [m for m in (neighbourhood, block, summary_plan, report_plan) if m.is_drawing]
     if not drawn:
         return Surroundings(False, reason=_SURROUNDINGS_UNAVAILABLE)
