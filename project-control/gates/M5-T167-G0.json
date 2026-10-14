@@ -5,9 +5,9 @@
   "role": "administrative",
   "result": "PASS",
   "report_file": "project-control/reports/M5-T167-G0.md",
-  "reviewed_at": "2026-10-14T20:18:46.666508+00:00",
-  "content_manifest_sha256": "dda21029915a886006bf301a7a64f18383e3a70ac80da22592909271d2fc9233",
-  "reviewed_sha": "c1d2b81ffaddee88466207575c503dce722c5716",
+  "reviewed_at": "2026-10-14T23:26:40.633307+00:00",
+  "content_manifest_sha256": "1f00fe3115a4d323efddf119e3316d40c8df8d126b06338116f7551217b34d08",
+  "reviewed_sha": "f029e6e4cb07f90e0e006d435f9478681c6c7285",
   "history": [
     {
       "reviewer": "orchestrator",
@@ -15,7 +15,14 @@
       "result": "PASS",
       "report_file": "project-control/reports/M5-T167-G0.md",
       "reviewed_at": "2026-10-14T19:36:23.218243+00:00"
+    },
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T167-G0.md",
+      "reviewed_at": "2026-10-14T20:18:46.666508+00:00"
     }
   ],
-  "updated_at": "2026-10-14T20:18:47.647946+00:00"
+  "updated_at": "2026-10-14T23:26:41.650568+00:00"
 }
