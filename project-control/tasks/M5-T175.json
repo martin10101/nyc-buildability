@@ -178,7 +178,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:13.796408+00:00",
-  "updated_at": "2026-10-14T03:39:52.447526+00:00",
+  "updated_at": "2026-10-14T04:01:52.724398+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -221,6 +221,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "first round integrated as f66e8212 (cherry-pick of 826bf88a; 9 files inside the allowed paths; LF sha256 equal to the return for 8, the report has none): the 1.5.0 reader, page-3 rows, overlay and other-basis dimensions built and unit-tested; not yet wired into the live report"
+    },
+    {
+      "at": "2026-10-14T04:01:52.724270+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rework 1 (wiring into the live report; page 1's rear-yard uncertainty reads the 1.5.0 row): 1819 passed; 17 of 18 renders byte-identical (the 1.5.0 example changes as intended); the builder's commit integrated as c11b4e03 (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
