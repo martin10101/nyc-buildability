@@ -598,3 +598,14 @@ to build).
   once), N1 (what "split lot" means), N2 (shared housing under today's or the proposed law), N3 (options 9 and 10 may
   give the same answer), N4 (what "all programs combined" combines).
 - **Handoff:** seq 167, with the prompt for the next session.
+
+## 34. "Run 10 subagents so we get more work done" (2026-10-14, 02:22 UTC, typed after the handoff's prompt)
+
+- **Recorded:** D-094 row R124: up to ten helpers at once in this session. Three building at once stays (question M1
+  is still open), no two helpers share a file, heavy runs go one at a time.
+- **Started at once:** the independent rule checks of page 1 (M5-T165) and the close-up (M5-T166), and two
+  independent reviewers who open the official law text behind the zoning-law library's second pass (M3-T007).
+- **Prepared in the same step:** the website page-1 task (M5-T171) got its wording correction; the building-placement
+  example (M5-T177) was contracted so its builder can start.
+- **New question for the owner (in the questionnaire, does not stop the work):** M2, whether ten at once should be
+  the standing limit or stay a per-session approval.
