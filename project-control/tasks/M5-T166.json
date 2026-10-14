@@ -193,15 +193,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "Map drawings needed 3-4 rounds in wave 22; labels at print size are the usual failure.",
     "A CSS need would collide with M5-T165's layout.py: relay it, never edit it."
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:42.622669+00:00",
-  "updated_at": "2026-10-14T02:00:39.628846+00:00",
+  "updated_at": "2026-10-14T02:52:47.451086+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -258,5 +258,7 @@
       "actor": "orchestrator",
       "change": "Owner correction and go-ahead of 2026-10-12 (D-094 source-010/011, rows R115/R116; question K1 answered yes): the close-up states its measurement basis once under the drawing with figure-only labels; no line or fill touches any label (own lines included) and every label has a white background; neighbours' street addresses off the close-up (lot numbers stay); lighter neighbouring buildings; a check by eye on the printed page. Added docs/design/ARCHITECT_PRESENTATION_CONTRACT.md (only the two sentences of S17 change: the orchestrator's own 2026-10-11 wording that every dimension label names its basis); S1 reworded accordingly (old S1 'then': 'every dimension endpoint lies on its edge's vertices within 0.01 ft; each label names its basis; nothing is merged across bases; no tax-map value is drawn'); S14-S17 added; rows R115 and R116 bound."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T02:52:47.450899+00:00"
 }

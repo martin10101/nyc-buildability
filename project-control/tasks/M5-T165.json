@@ -209,15 +209,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The larger type scale may add a page; fonts are never shrunk to avoid it (PDF budgets are checked by eye in H2).",
     "readers.py is near its size line; the moves to zoning_lot_item.py and constraint_text.py keep it under 600 SLOC."
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:40.698256+00:00",
-  "updated_at": "2026-10-14T02:00:34.559388+00:00",
+  "updated_at": "2026-10-14T02:52:45.219110+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -288,5 +288,7 @@
       "actor": "orchestrator",
       "change": "S18 narrowed (orchestrator decision on G1/G3/G4 of 2026-10-11). As contracted S18 searched the whole report; all three reviewers found the remaining 'tax-map outline' / 'Approximate tax map' texts are written outside this task's allowed paths (app/scenario first_option_results.py and result_way_bridge.py, the recorded journey fixture, page_site_context.py, options.py) or are the engine's basis-rank display name readers.py _BASIS_NAMES['approximate_tax_map'], which the web screen shares (apps/web/src/lib/architect/three-answers.ts) and the DXF notes echo; renaming it in the PDF alone would split the PDF from the website (R041/R057). Those go to ONE GIS-wording sweep (backlog DB-245, queued to M5-T167's contract, which owns the engine and the benchmark regeneration). This task keeps S18 for every text it writes and the whole of page 1, and fixes the page-1 fallback site-plan caption (page_decision_summary.py) in its rework. Old S18: given 'the whole report text', then 'no text calls a GIS value or outline 'tax map' or 'tax-map outline''. No path, row binding or other scenario changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T02:52:45.218921+00:00"
 }
