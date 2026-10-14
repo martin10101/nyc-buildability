@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T02:01:30+00:00",
+ "updated_at": "2026-10-14T02:26:03+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -144,10 +144,11 @@
   "D-094-R120",
   "D-094-R121",
   "D-094-R122",
-  "D-094-R123"
+  "D-094-R123",
+  "D-094-R124"
  ],
- "requirements_id_digest_sha256": "25152a3825202db34a7ddb2ae3c280dbfe91fdedaa59555a5c8f7444a3bda037",
- "requirements_content_digest_sha256": "6bfb17e1187ddbe00366321919aaa3034dd5e5a3a6f3542ca73b9d346f928475",
+ "requirements_id_digest_sha256": "857ceb6252d787ca1e5b1790666454b27df32429844f951381af30933e7f8d23",
+ "requirements_content_digest_sha256": "2c35d6e32a234a9a2d82463f2b10c4313743143489b6e8715462edbec3c7680e",
  "sources": [
   {
    "file": "source-001.md",
@@ -259,6 +260,14 @@
    "recorded_at": "2026-10-14T02:01:30+00:00",
    "content_digest_sha256": "acfb63fe27083ffb9614111ccb0deffd896bc7a29c2be0e40fe6723bee7d2e7e",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-015-amendment.md",
+   "kind": "amendment",
+   "sequence": 15,
+   "recorded_at": "2026-10-14T02:26:03+00:00",
+   "content_digest_sha256": "0f5fef332ff4d402d36c25742bdb38d65518d0b06fa21939c94b6ea9b9490e10",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -274,7 +283,8 @@
   "source-011-amendment.md",
   "source-012-amendment.md",
   "source-013-amendment.md",
-  "source-014-amendment.md"
+  "source-014-amendment.md",
+  "source-015-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -508,6 +518,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-014 (the owner's request for a handoff at a clean seam) and requirements D-094-R121 to R123, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T02:26:03+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-015 (the owner's added line at the start of the session after handoff seq 167: run ten helpers) and requirements D-094-R124 to R124, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

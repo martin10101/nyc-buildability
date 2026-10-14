@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 123,
+ "requirement_count": 124,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T02:01:30+00:00",
+ "updated_at": "2026-10-14T02:26:03+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3986,6 +3986,40 @@
    "dependencies": [],
    "required_harness": "docs/SESSION_HANDOFF.md carries the new sequence number with the five things (where, done and unfinished, helpers and checks, the exact next action, holds and open decisions) and the copy-in prompt; the prompt is printed in the reply that reports the handoff.",
    "required_evidence": "docs/SESSION_HANDOFF.md (main checkout), the session brief in the private session folder, and the reply itself.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R124",
+   "text": "'Run 10 subagents so we get more work done': the owner approves up to ten helpers running at once in this session, so that more of the planned work is done in it. Every other limit stands: at most three building at once, no shared files, heavy runs and merges one at a time, no model override, no timers, no unattended merges, the gates unchanged.",
+   "source_ref": "source-015-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R104",
+    "D-094-R119"
+   ],
+   "required_harness": "The session notes' dispatch and return lines never show more than ten helpers running at once, never more than three of them building, and no two with a shared file; every piece of work they do is a tracked task or read-only preparation for one.",
+   "required_evidence": "The session notes of this session (folder session-2026-10-14b on the build server: dispatch and return lines) and the helper returns saved there.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
