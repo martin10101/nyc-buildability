@@ -64,20 +64,14 @@
     "services/api/app/scenario/three_answers/result_way_bridge.py",
     "services/api/app/scenario/three_answers/result_way_inputs.py",
     "services/api/app/scenario/three_answers/three_way_document.py",
-    "services/api/app/scenario/three_answers/three_way_scope_lines.py",
     "services/api/app/scenario/three_answers/geometry.py",
     "services/api/app/scenario/three_answers/first_option_results.py",
     "services/api/app/scenario/three_answers/result_way_conditions.py",
     "services/api/app/scenario/three_answers/inputs.py",
     "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
     "services/api/app/api/v1/study_inputs.py",
-    "services/api/app/profile/measurement.py",
-    "services/api/app/drawings/report/options.py",
     "services/api/app/drawings/report/readers.py",
     "services/api/app/drawings/report/page_site_context.py",
-    "services/api/app/drawings/kit/scope.py",
-    "services/api/app/cad/results_dxf_notes.py",
-    "apps/web/src/lib/architect/three-answers.ts",
     "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
     "services/api/app/rules/review_register/register.json",
     "docs/zoning-rule-review/REGISTER.md",
@@ -105,7 +99,6 @@
     "services/api/tests/scenario/three_answers/test_three_answers_benchmark.py",
     "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
     "services/api/tests/contracts/test_results_contract_1_5_0.py",
-    "services/api/tests/profile/test_measurement.py",
     "services/api/tests/api/test_e2e_harness_results_inputs.py",
     "services/api/tests/api/test_results_read_api.py",
     "services/api/tests/api/test_results_read_law_examples.py",
@@ -141,7 +134,14 @@
     "services/api/tests/drawings/maps/test_constraint_overlay.py",
     "services/api/tests/drawings/report/test_constraint_rows.py",
     "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
-    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json"
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "services/api/app/profile/measurement.py",
+    "services/api/app/drawings/kit/scope.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/cad/results_dxf_notes.py",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "services/api/tests/profile/test_measurement.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py"
   ],
   "acceptance_scenarios": [
     {
@@ -271,12 +271,6 @@
       "then": "it declares 1.5.0 and passes; test_results_contract_1_5_0.py's test_new_valid_fixture_is_journey_plus_only_the_new_blocks compares the synthetic and the journey after BOTH are stripped of their 1.5.0 blocks (shared 1.4.0 core), and :191 asserts the journey declares 1.5.0; every 1.4.0-pinning benchmark consumer is updated to 1.5.0 only where the engine output moved; the PROFILE/scenario 1.4.0 pins are untouched"
     },
     {
-      "id": "S22",
-      "given": "the whole report/website/CAD text and the measurement-rank display label (DB-245, ONE sweep)",
-      "when": "it is searched",
-      "then": "no GIS value or outline is called 'tax map'/'tax-map outline'; the rank display name is the G0-pinned 'city map outline' form consistently across the engine rendered texts, options.py, readers._BASIS_NAMES (:505), cad/results_dxf_notes.py (:67), web three-answers.ts (:592,:608) AND the sync twins profile/measurement.py (:65) and kit/scope.py (:88); the legitimate 'printed tax map' basis and the schema enum CODE approximate_tax_map are unchanged; test_report_pages test_s7 asserts the new wording; test_result_ways_facts_area_overlay.py:142 is updated; page_site_context.py takes no code edit (caption engine-sourced, regenerated with the benchmark)"
-    },
-    {
       "id": "S23",
       "given": "a 1.5.0 document carrying the rear_yard block (the appendix open-item text built in readers.py, moved from M5-T175)",
       "when": "the appendix open items are built",
@@ -369,6 +363,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "round 1 (increment A: the G-6 zoning-lot isolation behind facades and the block-frontage measure; the rest follows in round 2); the builder's commit integrated as 474c8ee3 (LF sha256 equal to its return); next: the independent reviews"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T20:18:45+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction after the first build round (the builder's return of 2026-10-14c, which delivered the G-6 isolation and the block-frontage measure and asked to split the rest): the DB-245 wording sweep (the city map outline never called 'tax map'; scenario S22 and its wording-only files: profile/measurement.py, kit/scope.py, report/options.py, cad/results_dxf_notes.py, web three-answers.ts, tests/profile/test_measurement.py, three_way_scope_lines.py) moves to its own planned task M5-T180, contracted after this task is accepted, because both regenerate the one benchmark file and the rear-yard result should be reviewed on its own. M5-T167 keeps steps 1 to 7 and the regeneration (the rear-yard checks, the 1.5.0 emission, the appendix item, the fixed texts, the register and records, the benchmark and the two synthetic examples re-derived, the strip-test rework). The removed files are forbidden to this task. No row, gate, reviewer or dependency changes."
     }
   ]
 }
