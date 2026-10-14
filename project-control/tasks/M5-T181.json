@@ -129,7 +129,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "Results window height is capped at min(690, viewport) by FloatingWorkspaceWindow (wide window min(1100, width) x min(690, height), centered). The ~690 px dialog bounds how much of the lead fits in the first screen; the lead (identity + strip + allowance + apartment-figures, ~480-520 px stacked) fits with margin, but the builder must CONFIRM in the CI Playwright run that ceiling-value and estimate-value land in the first screen at every desktop width. Do NOT change the shared window height in this task (it would move all tools: map, proposal, study, report, evidence, results, and floating-workspace-window.test.tsx); if a width cannot fit, raise the results-scoped-height open question rather than editing the shared component.",
     "M5-T167 file overlap (task-premise correction): M5-T167.json allowed_paths include apps/web/e2e/results-layout.flag-on.spec.ts, apps/web/e2e/results.flag-on.spec.ts, apps/web/e2e/report-print.flag-on.spec.ts and apps/web/e2e/harness/fixture_api.py \u2014 not only services/api, packages/contracts/fixtures, docs/research and docs/zoning-rule-review as the task framing assumed. M5-T181 avoids all four by forbidding them and adding a NEW spec file (results-first-screen.flag-on.spec.ts); the orchestrator must still ensure M5-T167's producer does not touch those e2e specs so the two tasks truly share no file (CLAUDE.md principle 10).",
@@ -141,7 +141,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T22:35:27.178037+00:00",
-  "updated_at": "2026-10-14T22:35:30.660591+00:00",
+  "updated_at": "2026-10-14T22:58:03.833634+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -173,6 +173,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed on the wave-25 branch beside M5-T167 (no shared file); the builder starts from the claim head"
+    },
+    {
+      "at": "2026-10-14T22:58:03.833534+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 1: the lead band (identity, status strip, allowance, ceiling beside estimate) above the unchanged 44:56 grid; pre-integration check READY_TO_INTEGRATE (lint, typecheck, 591 vitest re-run independently); the builder's commit integrated as 3edf9ae0 (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
