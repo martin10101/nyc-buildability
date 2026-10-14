@@ -346,7 +346,9 @@ def test_s13_entry_whose_decision_no_longer_applies_passes_the_check(tmp_path, m
     e["human_review"]["applies_to_current"] = False
     e["human_review"]["verdict"] = "Needs re-review"
     reg["history"].extend([
-        {"seq": len(reg["history"]) + 1, "date": "2026-10-12", "entry_id": "r6b-height",
+        # M5-T167: the real register history now ends at the r6b event dated 2026-10-14, so this
+        # sample's first date must sort at or after it (a test-data date, no behaviour change).
+        {"seq": len(reg["history"]) + 1, "date": "2026-10-15", "entry_id": "r6b-height",
          "revision": 1, "event": "human_verdict_recorded",
          "summary": "architect recorded Correct for revision 1 (sample)", "by": "Jane Roe RA"},
         {"seq": len(reg["history"]) + 2, "date": "2026-10-20", "entry_id": "r6b-height",

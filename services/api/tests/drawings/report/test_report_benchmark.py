@@ -108,14 +108,38 @@ def test_s7_repeat_count_stays_at_or_below_the_before_set() -> None:
 
 
 # ================================================= moved benchmark-text assertion (was :378)
-def test_benchmark_rear_yard_reads_as_the_open_check() -> None:
-    # Moved from test_report_pages.py:378. The benchmark's 1.4.0 rear-yard state now reads as
-    # the design-contract open check (R037, R079; NB-03): it names ZR 23-344(b) and (c)(3) as
-    # not yet checked and draws no conclusion. The old "corner area" wording is gone.
-    text = visible_text(build_report_html(benchmark()))
-    assert "rear yard is not known beyond the corner area" not in text
-    assert constraint_text.REAR_YARD_OPEN_CHECK in text
-    assert "23-344(b)" in text and "23-344(c)(3)" in text
+def test_benchmark_rear_yard_reads_as_the_applied_conditional_result() -> None:
+    # Was test_benchmark_rear_yard_reads_as_the_open_check. M5-T167 (scope correction 2,
+    # R039/R136): the regenerated benchmark now carries the engine's 1.5.0 rear_yard block,
+    # so the page-8 appendix rear-yard open item reads the APPLIED ZR 23-344 result, not the
+    # "not yet checked" open check. The expected result is the reference case's not-known /
+    # Conditional real-lot answer (docs/reference-cases/R6B/short-block-rear-yard.md,
+    # real-lot-z1/z2): labelled Conditional, naming ZR 23-344(b) and (c)(3) with the section
+    # linked, the conditions named, never an unconditional "no rear yard".
+    html = build_report_html(benchmark())
+    appendix = html[
+        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
+    ]
+    # the rear-yard open item is numbered by the reader; locate its row (not program wording).
+    number = {it["category"]: it["number"] for it in readers.open_items(benchmark())}["rear_yard"]
+    row = appendix[appendix.index(f'id="issue-{number}"'):]
+    row = row[:row.index("</tr>")]
+    row_text = visible_text(row)
+    # the applied conditional reading, no longer the open check; the old wording is gone.
+    assert "rear yard is not known beyond the corner area" not in row_text
+    assert constraint_text.REAR_YARD_OPEN_CHECK not in visible_text(appendix)
+    assert "is not yet checked" not in row_text
+    # names the short-block rule (b) and the adjoining-side-line rule (c)(3).
+    assert "23-344(b)" in row_text and "23-344(c)(3)" in row_text
+    # labelled Conditional (the engine's combined way), not the 1.4.0 open-check label.
+    assert 'class="label-chip">Conditional</span>' in row
+    # the conditions that settle it are named (the adjoining lots' lot lines).
+    assert "lot lines" in row_text
+    # never an unconditional "no rear yard".
+    low = row_text.lower()
+    assert "no rear yard" not in low or "no rear yard is required within 100 feet" in low
+    # ZR 23-344 is linked to its captured official text where the reading is shown (pages 1/3).
+    assert 'href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344"' in html
 
 
 # =========================================================================== S13

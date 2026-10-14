@@ -231,4 +231,86 @@ register fix and --check cannot pass without them. Please add them to allowed_pa
   gate re-runs them.
 - Nothing under `.claude/**` was written; no server/ports/Playwright. Scratch only under `/tmp/claude-0/M5-T167/`.
 
+# M5-T167 producer report (backend-engineer) — round 3
+
+Scope correction 2 (2026-10-14d) added the five benchmark-consumer tests the round-2 regeneration to
+1.5.0 left red; round 3 edits ONLY those five test files (plus this report), so the branch goes green.
+No production source changed. The round-2 commit 8fa1714c was cherry-picked onto the branch head
+04d9975f (clean apply, disjoint-peer bases); round 3 is one commit on top of it. Each changed
+assertion follows the R6B reference case, never a program run; the benchmark rear yard stays not
+known / Conditional, ZR 23-344(b) linked, never an unconditional "no rear yard".
+
+## Files changed and why the reference case supports each
+
+1. `services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py` (S12). `_carriers` now
+   returns its already-computed `streets`, and `_emit_from_evidence` threads `street_data=streets`,
+   mirroring the journey test (`test_215_16_northern_journey.py` line 263). With the DCM window
+   threaded the wiring path emits the SAME 1.5.0 benchmark the journey test wrote, so the byte-exact
+   fixture equality holds; the version assertion flips `1.4.0 -> 1.5.0`. This is a wiring/unchanged
+   proof (equality with the committed fixture), never a correctness claim — the rear-yard content is
+   pinned in the journey test from the reference case.
+2. `services/api/tests/rules/test_zoning_rule_review_register.py` (S13). The sample history event's
+   first date `2026-10-12 -> 2026-10-15` so it sorts at or after the real r6b event dated 2026-10-14
+   the round-2 register change added (the checker enforces history date order). A TEST-DATA date, no
+   behaviour change; the second sample date 2026-10-20 is kept.
+3. `services/api/tests/drawings/report/test_constraint_rows.py` — ONLY the two `test_s1_benchmark_*`
+   cases (the synthetic cases, the 182.5 line and S12 `..._1_4_0_report_with_maps_draws_no_overlay`,
+   stay byte-identical). They pinned the 1.4.0 fall-back (`has_results_rows(benchmark()) is False`;
+   `rear_yard_combined(benchmark()) is None`); the regenerated benchmark now carries the engine's
+   1.5.0 rear_yard combined row, so each is rewritten to assert the applied result the reference case
+   (short-block-rear-yard.md, real-lot-z1/z2) requires: the rear-yard row present, combined
+   `state=not_known`/`way=conditional`, its conditions naming ZR 23-344(b) and (c)(3), labelled
+   Conditional, ZR 23-344 linked and the open item linked, no number printed, never "no rear yard".
+4. `services/api/tests/drawings/report/test_report_benchmark.py` — ONLY
+   `test_benchmark_rear_yard_reads_as_the_open_check`, renamed
+   `..._reads_as_the_applied_conditional_result` (every other case kept). Page 8's appendix rear-yard
+   open item now reads the engine's applied ZR 23-344 result (R136), located by the reader's own item
+   number (not program wording): labelled Conditional, naming ZR 23-344(b) and (c)(3), the conditions
+   (the adjoining lots' lot lines) named, no open-check / "not yet checked" text, never "no rear
+   yard"; ZR 23-344 is linked in the report where the reading is shown (pages 1/3 — the appendix item
+   is a short plain-text summary by design, so the link is asserted on the whole HTML).
+5. `apps/web/src/lib/__tests__/results-contract-checks.test.ts` — the journey contract-version pin
+   `1.4.0 -> 1.5.0` (assertion + test title + the fixture docstring line); the synthetic 1.5.0 and
+   schema-only checks are untouched.
+
+## Checks (direct exit codes; lanes venv, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider; from services/api unless noted)
+
+- `python -m ruff check .` — **exit 0** ("All checks passed!").
+- `tests/rules` — **1159 passed, exit 0**. Tail: `/tmp/claude-0/M5-T167/round3-rules.log`.
+- WHOLE `python -m pytest -q -p no:cacheprovider` (the integration gate) — **9767 passed, 8 skipped,
+  exit 0** (round 2 was 9762 passed / 5 failed; the 5 are now green). Tail:
+  `/tmp/claude-0/M5-T167/round3-api-pytest.log`.
+- `.github/scripts/validate_contracts.py` — **Checked 23 schema file(s); 0 failure(s); exit 0**.
+- `pytest .github/scripts/tests` — **24 passed, exit 0**.
+- `render_review_register.py --check` — **PASSED (no issues), exit 0**.
+- `tools/research_record_check.py --check` — **PASS, exit 0** (6 records; NB-01/03/05 code_current True).
+- `tools/modularity_check.py --check` — **803 files, failures 0, warnings 33 (all pre-existing), exit 0**.
+- `scripts/lanes/check_lane_paths.py --coverage` — **PASS, 10483 files, exit 0**.
+- apps/web (worktree `npm ci` ok): `npm run lint` — **0 errors, 2 pre-existing warnings, exit 0**;
+  `npm run typecheck` — **exit 0**; `npx vitest run src/lib` — **67 files / 1297 passed, exit 0** (a
+  first run flaked on the unrelated dashboard "real ledger smoke" test under full-suite load; it
+  passes isolated (21/21) and on a clean re-run — not in this task's scope). Log:
+  `/tmp/claude-0/M5-T167/round3-web-vitest.log`.
+
+## Mutation proofs (two; both on test_report_benchmark.py's rewritten page-8 case; restored verified)
+
+- M1 (old open-check expectation reverted): flipping the appendix assertion back to
+  `REAR_YARD_OPEN_CHECK in visible_text(appendix)` **FAILS** on the 1.5.0 benchmark (the open-check
+  wording is gone from page 8) — proves the applied-result assertions are load-bearing. Restored
+  (backup == file).
+- M2 (reader says "no rear yard"): a scratch edit of `readers._rear_yard_open_effect` to emit
+  "…no rear yard is required on this lot." makes the negative assertion
+  `"no rear yard" not in low or "…within 100 feet" in low` **FAIL** — proves the no-unconditional-no-
+  rear-yard guard is load-bearing. Restored (backup == file; readers.py byte-identical to the cherry-
+  pick HEAD).
+
+## Assumptions / limitations
+
+- The page-8 appendix rear-yard open item carries no ZR 23-344 href itself (by design it is a short
+  plain-text summary within the word cap); the per-stat link is emitted where the combined row renders
+  (pages 1 and 3). The test therefore asserts the link on the whole report HTML and the "(b)/(c)(3)"
+  wording and Conditional chip on the located page-8 row.
+- No production source changed in round 3; modularity, register and record checks pass unchanged.
+- Nothing under `.claude/**` was written; no server/ports/Playwright. Scratch only under `/tmp/claude-0/M5-T167/`.
+
 END-OF-REPORT

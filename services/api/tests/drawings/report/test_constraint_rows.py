@@ -76,22 +76,35 @@ def _visible(markup: str) -> str:
 
 
 # =========================================================================== S1
-# A 1.4.0 (and earlier) document falls back to today's output UNCHANGED. The
-# benchmark carries no 1.5.0 block; its four page-3 rows are byte-for-byte the
-# 1.4.0 strings (mutation 1: a changed fall-back text reddens this).
-def test_s1_benchmark_1_4_0_rows_are_the_fallback_unchanged() -> None:
+# M5-T167 (scope correction 2, R039/R136): the regenerated benchmark now carries the
+# engine's 1.5.0 rear_yard block, so its page-3 rows take the results path and show the
+# applied result. The reference case (docs/reference-cases/R6B/short-block-rear-yard.md,
+# real-lot-z1/z2) says the rear yard is not known / Conditional, naming ZR 23-344(b) and
+# (c)(3); never an unconditional "no rear yard". (The synthetic cases below still pin the
+# 1.4.0 fall-back; a genuinely-1.4.0 document reaches them, not the benchmark.)
+def test_s1_benchmark_rear_yard_row_shows_the_applied_conditional_result() -> None:
     doc = benchmark()
-    assert constraint_text.has_results_rows(doc) is False
-    assert _rows_markup(doc) == [
-        ["Rear yard", "Not known (see item 4)",
-         '<span class="label-chip">Unresolved</span>'],
-        ["Setback above the base", "Not worked out yet (see item 7)",
-         '<span class="label-chip">Pending verification</span>'],
-        ["Maximum lot coverage", "Not a single figure; by portion (see item 3)",
-         '<span class="label-chip">Unresolved</span>'],
-        ["Street wall", "Not checked (see item 8)",
-         '<span class="label-chip">Pending verification</span>'],
-    ]
+    assert constraint_text.has_results_rows(doc) is True
+    combined = constraint_text.rear_yard_combined(doc)
+    assert combined["state"] == "not_known"
+    assert combined["way"] == "conditional"
+    # the combined conditions name the short-block rule (b) and the adjoining-side-line rule
+    # (c)(3), as the reference case requires - not a bare ZR 23-344.
+    conds = " ".join(c["assumption"] for c in combined["conditions"])
+    assert "23-344(b)" in conds and "23-344(c)(3)" in conds
+    row = _row_by_title(doc, "Rear yard")
+    assert row is not None
+    _title, cell, chip = row
+    assert combined["text"] in cell                       # the row's own text
+    assert 'class="label-chip">Conditional</span>' in chip
+    # ZR 23-344 is linked to its captured official text, and the row links its open item.
+    assert 'href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344"' in cell
+    assert ">ZR 23-344</a>" in cell
+    assert f'href="#issue-{_item_number(doc)["rear_yard"]}"' in cell
+    # no rear-yard MEASUREMENT number is printed, and never an unconditional "no rear yard".
+    assert not re.search(r"\d+(\.\d+)?\s*(ft|sq ft)", _visible(cell))
+    low = _visible(cell).lower()
+    assert "no rear yard" not in low or "no rear yard is required within 100 feet" in low
 
 
 def test_s1_a_1_5_0_document_with_no_rear_yard_or_envelope_falls_back() -> None:
@@ -264,22 +277,30 @@ def test_s12_page_one_uncertainty_reads_the_1_5_0_conditional_rear_yard() -> Non
     assert not re.search(r"\d+(\.\d+)?\s*(ft|sq ft)", _visible(unc))
 
 
-def test_s1_benchmark_page_one_rear_yard_uncertainty_is_unchanged() -> None:
-    # A 1.4.0 document keeps the page-1 rear-yard uncertainty byte-identical: the title
-    # linked to its issue record, ZR 23-344 linked, labelled Unresolved (the open-check
-    # reference). The 1.5.0 reading never reaches it (no combined row); mutation 2's
-    # open-check path is exactly this 1.4.0 output.
+def test_s1_benchmark_page_one_rear_yard_uncertainty_shows_the_conditional_reading() -> None:
+    # M5-T167 (scope correction 2): the regenerated benchmark carries the 1.5.0 rear_yard
+    # combined row, so the page-1 rear-yard uncertainty now shows that conditional reading
+    # (R037/R136), labelled Conditional, with ZR 23-344 linked - no longer the 1.4.0
+    # Unresolved open-check label. The expected result is the reference case's not-known /
+    # Conditional real-lot answer, never an unconditional "no rear yard".
     doc = benchmark()
-    assert constraint_text.rear_yard_combined(doc) is None
+    combined = constraint_text.rear_yard_combined(doc)
+    assert combined is not None and combined["way"] == "conditional"
     html = build_report_html(doc)
     page1 = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
     unc = page1[page1.index("What is still uncertain"):]
     unc = unc[:unc.index("</ul>")]
     assert ">Rear yard</a>" in unc
+    assert combined["text"] in unc                        # the combined row's own reading
     assert 'href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344"' in unc
-    assert 'class="label-chip">Unresolved</span>' in unc
-    # the engine's 1.5.0 combined-row text never appears on a 1.4.0 page 1.
-    assert "A labelled draft reading, not a DOB determination." not in _visible(unc)
+    assert 'class="label-chip">Conditional</span>' in unc
+    # no longer the 1.4.0 Unresolved open-check label, nor the open-check wording.
+    assert 'class="label-chip">Unresolved</span>' not in unc
+    assert constraint_text.REAR_YARD_OPEN_CHECK not in _visible(page1)
+    # never an unconditional "no rear yard"; no rear-yard measurement number printed.
+    low = _visible(unc).lower()
+    assert "no rear yard" not in low or "no rear yard is required within 100 feet" in low
+    assert not re.search(r"\d+(\.\d+)?\s*(ft|sq ft)", _visible(unc))
 
 
 # ========================================================================== S13
