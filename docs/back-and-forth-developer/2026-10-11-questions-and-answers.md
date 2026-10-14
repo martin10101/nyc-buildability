@@ -563,3 +563,24 @@ to build).
 - **Done:** handoff seq 166 written (the first with a "Living files:" line from the new checklist). Nothing was running.
   Next session: records, submit, rule checks and acceptance for page 1 (M5-T165) and the close-up (M5-T166); then the
   website page-1 parity task, the wave pull request and the first official PDF with before/after pictures.
+
+## 31. "read the session handoff, then ten helpers tonight" (2026-10-14, 01:18 UTC)
+
+- **Owner (shortened, spelling tidied):** read the session handoff; I need to use up my credits fast, so I want to launch
+  10 subagents to get a lot of work done tonight.
+- **Recorded:** D-094 rows R118 to R120 (read the handoff first; up to ten helpers at once tonight; tonight's usage is to
+  be spent on project work). Limits the message does not mention stand: at most three helpers building at once, no shared
+  files, heavy test runs and merges one at a time. Question M1 (may more than three build at once?) is in the
+  questionnaire; until answered, three.
+- **Done:** the handoff and the files it names were read. Ten read-only helpers were launched: seven read the Zoning
+  Resolution for the options that are not worked yet (affordable and senior housing; shops with residences; community
+  facility; split lot; shared housing; parking and the transit zone; combined programs) as a new documents-only task
+  (the zoning-law library, second pass), and three check the contract packets of the next three report tasks against
+  the code. The two finished report pages (page 1 and the close-up) are being prepared for acceptance.
+
+## 32. "This session is running outside, what does that mean? Does it mean you can't push to GitHub?" (2026-10-14)
+
+- **Developer (answered):** no, pushing to GitHub works. "Outside tmux" only means the session lives in the terminal
+  window it was started in: if that window closes or the connection drops, the session and its helpers stop; everything
+  already pushed stays. If the window stays open there is nothing to do. The owner also asked for answers to the point,
+  without long file reading first; recorded as a standing working note.
