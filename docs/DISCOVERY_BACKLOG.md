@@ -638,3 +638,5 @@ Sweep 2026-10-14 (wave-24 merge seam, before the pull request to main; M5-T171, 
 Sweep 2026-10-14 (contract seam of M5-T167 on task/wave25-rear-yard-short-block after the wave-24 merge): DB-245 and DB-262 are in M5-T167's scope (scenarios S22, S24, S25); DB-230 is the task itself; DB-263 stays OPEN (the overlay polish, not M5-T167's files); no other open or watch row changed.
 
 Sweep 2026-10-14 (contract seam of M3-T009, captures B, and the M5-T167 scope correction; recorded at the handoff of 2026-10-14c): DB-253 partly met (M3-T008 and M3-T009 captured the affordable/senior and community-facility subsets; the split-lot/courts and rooming/shops/parking subsets and the 22-13 children 22-131 to 22-135 stay owed); DB-245 QUEUED(M5-T180); no other open or watch row changed.
+
+Sweep 2026-10-14 (contract seam of M5-T181 on task/wave25-rear-yard-short-block, after the owner's forwarded review D-094 source-021): the website first-screen finding (R151) is the task itself (ledger, no backlog row); the comparison picture defect (R150) was corrected by the orchestrator and sent; DB-263 stays OPEN; no other open or watch row changed.

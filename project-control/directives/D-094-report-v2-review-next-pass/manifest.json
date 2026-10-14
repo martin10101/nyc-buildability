@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T22:02:36+00:00",
+ "updated_at": "2026-10-14T22:35:27+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -178,7 +178,7 @@
   "D-094-R154"
  ],
  "requirements_id_digest_sha256": "4e8782b08b21a0aa0f4ea7a9d4537ba54cc1db1dfc437ec12a3626f5669dfb8b",
- "requirements_content_digest_sha256": "ec8eb1a41635dbeb892354a0bed5788d85692b97098ec6250953c14692002c7c",
+ "requirements_content_digest_sha256": "86a96a7575a950f6c41a22100b7f15d13a0173a39ca45c8e40c4834cba05662d",
  "sources": [
   {
    "file": "source-001.md",
@@ -395,7 +395,8 @@
   "M3-T008",
   "M5-T179",
   "M5-T167",
-  "M3-T009"
+  "M3-T009",
+  "M5-T181"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -686,6 +687,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-021 (the resume after handoff seq 169 and the forwarded outside review of the main print and the before/after comparison of 2026-10-14) and requirements D-094-R146 to R154, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T22:35:27+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T181 (the Results window's first screen leads with the results; the assumed conditions below them (web only)) to R051, R057, R071, R073, R081, R083, R151 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

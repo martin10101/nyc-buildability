@@ -2314,6 +2314,68 @@
      "reviewed_sha": null
     }
    ]
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T181",
+   "applicable_requirement_ids": [
+    "D-094-R051",
+    "D-094-R057",
+    "D-094-R071",
+    "D-094-R073",
+    "D-094-R081",
+    "D-094-R083",
+    "D-094-R151"
+   ],
+   "producer": "frontend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-094-R051",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R057",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R071",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R073",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R081",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R083",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-094-R151",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

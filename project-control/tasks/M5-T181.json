@@ -1,0 +1,169 @@
+{
+  "task_id": "M5-T181",
+  "title": "Website first screen: the results lead the Results window (the floor-area allowance, then the legal ceiling beside the apartment estimate), the assumed conditions below them (D-094 R151)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "In the Results floating window, make the architect-facing results lead the first screen as on report page 1, and stop the \"Assumed conditions\" list from occupying the first screen. Add a full-width lead region to ThreeAnswersPanel that renders, in page-1 order, the identity, the one status strip, the Floor-area allowance card, and immediately below it the existing ApartmentFigures block (Legal ceiling 29 Conditional beside Estimate 17-22 Provisional with its distinction line). Keep the existing 44:56 detail grid (.ta-layout with three-answers-left / three-answers-right) BELOW the lead: its left column keeps permitted envelope, building option, FirstBuildingOptions and \"What needs resolving\"; its right column keeps ScopeSummary with all 13 assumed conditions still open (R119) \u2014 now beneath the results band instead of filling the first screen's right half. This is a placement/reading-order change only: no number, label, certainty word or fixed wording changes; three-answers.ts, ApartmentFigures.tsx, ScopeSummary.tsx and presentation-tokens.json stay untouched. Because the lead sits ABOVE an unchanged .ta-layout grid, the existing results-layout.flag-on.spec.ts S1 (44:56 via .ta-layout/three-answers-left) and S12 (identity + allowance headline in the first screen, focus on the heading) keep passing UNEDITED; the new first-screen coverage goes in a NEW spec file owned only by this task, so M5-T181 edits none of M5-T167's files.",
+  "business_reason": "Owner's outside reviewer, 2026-10-14, captured as D-094 R151 (obligation) in project-control/directives/D-094-report-v2-review-next-pass/source-021-amendment.md: \"The visible screen still gives substantial space to assumptions while results sit farther down,\" together with \"keeping the website redesign ... marked incomplete.\" The orchestrator's recorded reading of R151: the results must lead the first screen as on report page 1, and the independent visual review of M5-T171 (which had judged the ceiling/estimate block's place below the first screen ADVISORY) is superseded for this website task. The directive capture verified the defect directly: the apartment-figures block sits below the first screen at every width (top 1151-1583 px; preview notes 1296 px desktop / 1380 px phone at main 30762409), and the Results window's right 56fr column renders the full \"Assumed conditions\" list in the first screen. Contract authority: ARCHITECT_PRESENTATION_CONTRACT.md principle 1 (\"Architect-facing results come first; the material qualification next\"), the first-screen objective (section 2, line 124/175), and page-1 order (results in large type -> site graphic -> legal ceiling beside apartment estimate -> at most three uncertainties).",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "docs/design/presentation-tokens.json",
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/ApartmentFigures.tsx",
+    "apps/web/src/components/architect/answers/ScopeSummary.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/scope-summary.test.tsx",
+    "apps/web/src/components/architect/ResultsPanel.tsx",
+    "apps/web/src/components/architect/workspace/FloatingWorkspaceWindow.tsx",
+    "apps/web/e2e/results-layout.flag-on.spec.ts",
+    "project-control/tasks/M5-T171.json",
+    "project-control/tasks/M5-T167.json",
+    "project-control/directives/D-094-report-v2-review-next-pass/source-021-amendment.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-14d/web-after-30762409/notes.txt",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-14d/web-after-30762409/first-desktop.png",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-14d/web-after-30762409/first-phone.png",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-14b/return-T171-G3-visual-delta.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11c/workorder-D094-v2.md"
+  ],
+  "outputs": [
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/e2e/results-first-screen.flag-on.spec.ts",
+    "project-control/reports/M5-T181-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T171"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/e2e/results-first-screen.flag-on.spec.ts",
+    "project-control/reports/M5-T181-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/**",
+    "packages/**",
+    "docs/research/**",
+    "docs/zoning-rule-review/**",
+    "apps/web/e2e/results-layout.flag-on.spec.ts",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/lib/architect/apartment-figures.ts",
+    "apps/web/src/components/architect/answers/ApartmentFigures.tsx",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/ScopeSummary.tsx",
+    "apps/web/src/components/architect/answers/__tests__/apartment-figures.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/scope-summary.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/components/architect/workspace/FloatingWorkspaceWindow.tsx",
+    "docs/design/presentation-tokens.json",
+    "apps/web/src/app/globals.css"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the Results window after pressing 'Show results' at 768, 1024, 1440 and 1920 px (viewport height 900)",
+      "when": "the first screen is measured in the CI Playwright run",
+      "then": "three-answers-identity, answer-floor_area_allowance's answer-headline-number, apartment-figures-ceiling-value and apartment-figures-estimate-value are each toBeInViewport; page horizontal overflow <= 1; no clipped text inside the dialog; the ceiling and estimate cells do not overlap"
+    },
+    {
+      "id": "S2",
+      "given": "the Results window at 1440x900 (the R151 core: results lead, assumptions follow)",
+      "when": "the vertical layout is measured",
+      "then": "apartment-figures' bottom is at or above three-answers-scope's top (the results sit above the assumed conditions), and in the DOM apartment-figures precedes three-answers-scope; the assumed-conditions list no longer occupies the first screen's right half from the top"
+    },
+    {
+      "id": "S3",
+      "given": "the Results window at 390x844 and 320x844",
+      "when": "the first screen is measured",
+      "then": "answer-floor_area_allowance's answer-headline-number is toBeInViewport (keeps S12 intent); apartment-figures precedes three-answers-scope in the DOM; apartment-figures-ceiling-value's boundingBox top is less than 1.25x the viewport height (at most one short scroll); no sideways page scroll; no clipped text; the long address wraps and no value ellipsizes; the producer report states the measured top of apartment-figures-ceiling-value at 320x844 and 390x844 (read from the CI run)"
+    },
+    {
+      "id": "S4",
+      "given": "the benchmark results document rendered in ThreeAnswersPanel",
+      "when": "the composition is asserted in three-answers-panel.test.tsx",
+      "then": "the lead region renders in order identity -> status strip -> answer-floor_area_allowance -> apartment-figures; the detail grid's left column renders answer-permitted_envelope -> answer-building_option -> first-building-options -> shared-conditions and its right column renders three-answers-scope; apartment-figures precedes three-answers-scope in the DOM"
+    },
+    {
+      "id": "S5",
+      "given": "the rendered panel and its figures",
+      "when": "the content is searched (no-meaning-change check)",
+      "then": "no forbidden word appears (buildable, achievable, can be built); the legal ceiling 29 keeps its Conditional label and is never shown as settled; the estimate 17-22 keeps Provisional; the distinction line text is unchanged (ApartmentFigures, apartment-figures.ts and three-answers.ts untouched); presentation-tokens.json is not modified"
+    },
+    {
+      "id": "S6",
+      "given": "the forbidden suites run UNEDITED in CI at the M5-T181 head (journey-215-16-northern.test.tsx, scope-summary.test.tsx, apartment-figures.test.tsx, results.flag-on.spec.ts) and the existing results-layout.flag-on.spec.ts",
+      "when": "they execute",
+      "then": "all 13 assumed conditions still render (R119); results-layout.flag-on.spec.ts S1 (44:56 via .ta-layout/three-answers-left) and S12 (identity + allowance headline in the first screen, focus on the heading) still pass with no edit"
+    },
+    {
+      "id": "S7",
+      "given": "the new results-first-screen.flag-on.spec.ts at 320, 390, 768, 1024, 1440 and 1920 px (UX-07)",
+      "when": "each width renders",
+      "then": "page horizontal overflow <= 1 and no clipped text inside the dialog, using the M5-T149/M5-T171 clipped-text and overflow helper pattern defined locally in the new spec (it cannot import the non-exported helpers from the forbidden existing spec)"
+    },
+    {
+      "id": "S8",
+      "given": "the documented web checks run in apps/web without starting any server (builders never touch ports 3000/3001/8000)",
+      "when": "the builder self-checks run",
+      "then": "lint, typecheck and the touched vitest files pass; the Playwright spec result is read from CI only"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "human-journey-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Results window height is capped at min(690, viewport) by FloatingWorkspaceWindow (wide window min(1100, width) x min(690, height), centered). The ~690 px dialog bounds how much of the lead fits in the first screen; the lead (identity + strip + allowance + apartment-figures, ~480-520 px stacked) fits with margin, but the builder must CONFIRM in the CI Playwright run that ceiling-value and estimate-value land in the first screen at every desktop width. Do NOT change the shared window height in this task (it would move all tools: map, proposal, study, report, evidence, results, and floating-workspace-window.test.tsx); if a width cannot fit, raise the results-scoped-height open question rather than editing the shared component.",
+    "M5-T167 file overlap (task-premise correction): M5-T167.json allowed_paths include apps/web/e2e/results-layout.flag-on.spec.ts, apps/web/e2e/results.flag-on.spec.ts, apps/web/e2e/report-print.flag-on.spec.ts and apps/web/e2e/harness/fixture_api.py \u2014 not only services/api, packages/contracts/fixtures, docs/research and docs/zoning-rule-review as the task framing assumed. M5-T181 avoids all four by forbidding them and adding a NEW spec file (results-first-screen.flag-on.spec.ts); the orchestrator must still ensure M5-T167's producer does not touch those e2e specs so the two tasks truly share no file (CLAUDE.md principle 10).",
+    "Keeping the .ta-layout grid (so S1 stays green unedited) means the assumptions' right column still starts mid-first-screen on desktop; the results now lead ABOVE them (fixes R151's ordering: results no longer sit farther down than assumptions) but the assumptions are not pushed entirely below the fold. Full demotion would require restructuring the grid and editing the shared results-layout.flag-on.spec.ts S1 \u2014 which collides with M5-T167. Flagged as an open question.",
+    "Do NOT trim or cap the 13 assumed conditions: R119 keeps them open and the forbidden journey-215-16-northern.test.tsx (asserts 13 rows) and scope-summary.test.tsx pin all of them. The contract's 'at most three notices with a count' clause is the NOTICES cap (status strip / SharedConditions via capNotices), not the assumed-conditions list. Demote, never cap.",
+    "The new e2e spec must define its own routeApi/openResults helpers (the existing ones are not exported and their file is forbidden). Acceptable e2e duplication; note it in the producer report.",
+    "Container query: the lead region and the .ta-layout grid share the Results window's inline-size container (container-type is on the workspace window content, handed to results-panel.css), so the grid's @container (min-width:1000px) 44:56 switch is unaffected; any 2-up treatment of the lead must use the same container so it switches at the same 1000 px.",
+    "Pure placement change: moving the allowance AnswerCard and the ApartmentFigures JSX inside ThreeAnswersPanel must not alter their props or testids; ApartmentFigures.tsx and AnswerCard.tsx stay untouched (forbidden), so answer-floor_area_allowance, answer-headline-number, apartment-figures-ceiling-value and apartment-figures-estimate-value keep working for the existing queries."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T22:35:27.178037+00:00",
+  "updated_at": "2026-10-14T22:35:27.578441+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R051",
+        "D-094-R057",
+        "D-094-R071",
+        "D-094-R073",
+        "D-094-R081",
+        "D-094-R083",
+        "D-094-R151"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T22:35:27.178245+00:00",
+  "path_notes": "Web only; runs beside M5-T167 (services/api, packages/contracts/fixtures, docs/research, docs/zoning-rule-review and four apps/web/e2e files listed in M5-T167's packet) and shares no file with it: those four e2e files are forbidden here and the new first-screen coverage goes in the new spec file this task owns. Runs BEFORE M5-T174 (website parity for the remaining sections), which edits the same panel files later and builds on this lead band. Builders never touch ports 3000/3001/8000 and never start a server; Playwright runs in CI. Plan: two independent read-only plans and a judged synthesis (session-2026-10-14d/return-plan-T181-A.md, -B.md, return-plan-T181-spec.json; workflow wf_cca9eb2c-bcc). Open questions kept for the owner only if the after-pictures show the assumptions still crowd the first screen: demote-but-open (R119 stands) versus a cap; a Results-only window height.",
+  "documented_test_commands": [
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund",
+    "cd apps/web && npm run lint",
+    "cd apps/web && npm run typecheck",
+    "cd apps/web && npx vitest run src/components/architect/answers"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
