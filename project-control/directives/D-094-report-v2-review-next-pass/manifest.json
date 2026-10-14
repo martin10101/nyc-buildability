@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T02:26:03+00:00",
+ "updated_at": "2026-10-14T02:28:31+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -148,7 +148,7 @@
   "D-094-R124"
  ],
  "requirements_id_digest_sha256": "857ceb6252d787ca1e5b1790666454b27df32429844f951381af30933e7f8d23",
- "requirements_content_digest_sha256": "2c35d6e32a234a9a2d82463f2b10c4313743143489b6e8715462edbec3c7680e",
+ "requirements_content_digest_sha256": "64f77b64b02370d6b216d1ed80cae6817ec5f2735a761a594efd01f79d6aa605",
  "sources": [
   {
    "file": "source-001.md",
@@ -305,7 +305,8 @@
   "M5-T171",
   "M5-T176",
   "M0-T196",
-  "M3-T007"
+  "M3-T007",
+  "M5-T177"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -524,6 +525,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-015 (the owner's added line at the start of the session after handoff seq 167: run ten helpers) and requirements D-094-R124 to R124, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T02:28:31+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T177 (step P8: independent worked example of Building B's placement and area allocation) to R043, R044, R076, R082, R091, R092 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }
