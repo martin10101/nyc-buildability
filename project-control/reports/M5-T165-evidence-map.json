@@ -1,0 +1,167 @@
+{
+ "task_id": "M5-T165",
+ "material_commits": [
+  "4617c720 (builder: rebuilt page 1 to the 2026-10-11 contract (four kinds of content plus the named furniture), drove the print type scale from the TYPE tokens, moved the zoning-lot logic to new zoning_lot_item.py and the constraint effect texts to new constraint_text.py (rear yard becomes the open check, lot_area becomes 'city map outline'), added the tokens wording group, and recorded NB-01 revision 4.)",
+  "20801603 (orchestrator correction (ORCH-CORRECTED per CI run 38180930179): reworded the zoning_lot_item.py docstring so no app file outside the permitted list carries the literal 'result_way' (the test_result_ways text scan); docstring only, behaviour-identical; bumped NB-01's zoning_lot_item.py code identity to the new LF sha256.)",
+  "2767f6a1 (builder rework 1 (visual G3 FAIL): put the 28-32 pt headline on the key figure only, kept the status badges clear of the 88 mm site graphic so page 1 fits one page, and fixed the page-1 fallback caption to 'city map outline'.)",
+  "c2413c5d (orchestrator correction (ORCH-CORRECTED per G1 delta): appended the G1 data-contract-verifier's revision-4 AGENT REVIEW ENTRY to NB-01 (review block only; the record's implementation code_identity is untouched).)",
+  "fd649b66 (builder rework 2 (visual advisories): kept each page-1 key figure on one line and made the scheduled row's key figure its storey count, so '20,150 sq ft' prints as a headline figure only once.)"
+ ],
+ "claim_seam_head": "adc36fc7231552635c6696e037f275d600dec685",
+ "files_changed": [
+  "apps/web/scripts/presentation-tokens.mjs",
+  "docs/design/presentation-tokens.json",
+  "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+  "project-control/reports/M5-T165-producer-report.md",
+  "services/api/app/drawings/kit/presentation_tokens.py",
+  "services/api/app/drawings/report/constraint_text.py",
+  "services/api/app/drawings/report/layout.py",
+  "services/api/app/drawings/report/page_assumptions.py",
+  "services/api/app/drawings/report/page_decision_summary.py",
+  "services/api/app/drawings/report/page_scenario_sheet.py",
+  "services/api/app/drawings/report/readers.py",
+  "services/api/app/drawings/report/unit_limit_text.py",
+  "services/api/app/drawings/report/zoning_lot_item.py",
+  "services/api/tests/drawings/report/test_report_benchmark.py",
+  "services/api/tests/drawings/report/test_report_page_one.py",
+  "services/api/tests/drawings/report/test_report_pages.py",
+  "services/api/tests/drawings/test_presentation_tokens.py"
+ ],
+ "what_did_not_change": "Across the five material commits only the report/token/test files in allowed_paths, the NB-01 record and the producer report changed; no scenario engine, website component, rule file or results fixture was touched, open_items.py was not created (the optional path was left out to keep readers.py within its 40-symbol / 600-SLOC ceiling), and the forbidden suites test_report_law_links.py, test_location_sheet.py and the eleven-option test stayed green unedited. G3 rebuilt all twelve valid fixtures and found the only non-page-1 text changes are the rear-yard open-check wording, the lot_area 'city map outline' wording, the material-exclusions note moved to the appendix head, and added #issue/#estimate ids, with every other effect text byte-unchanged and the site-and-context section unchanged for every fixture.",
+ "known_limits": [
+  "S18 whole-report GIS-wording residual: the GIS outline is still called 'tax-map outline' / 'Approximate tax map' by the scenario engine (app/scenario/three_answers/first_option_results.py, result_way_bridge.py), report/options.py, the recorded_215_16_northern_journey.json fixture and the shared basis-rank display name readers._BASIS_NAMES['approximate_tax_map']; all outside this task's paths. Tracked: docs/DISCOVERY_BACKLOG.md DB-245, queued to M5-T167.",
+  "G3 advisory F3: page_assumptions._material_exclusions builds the 'Not yet' exclusions list without map_context, so 'Context maps' could be listed as excluded even when page 2 shows maps; latent, no fixture exercises maps-present. Tracked: docs/DISCOVERY_BACKLOG.md DB-256 (WATCH).",
+  "G3 advisory F4: the estimate label is the constant labels.PROVISIONAL rather than read from document state; contract-compliant and consistent with the scenario sheet. Tracked: DB-256 (WATCH).",
+  "G3 advisory F5: a 0-storey count would drop only its basis-adornment line (truthiness on optional display adornments); non-material. Tracked: DB-256 (WATCH).",
+  "G3 advisory F6: readers.py sits at exactly the 40-symbol S10 ceiling, so any further symbol must extract to another module. Tracked: DB-256 (WATCH).",
+  "R048 residual: the adopted paper size is owner question D1, still open; the template uses A4 meanwhile. Tracked: OWNER_QUESTIONS D1 (open).",
+  "Visual round-1 whole-report advisory: the sentence 'A check not yet made against an independently worked example.' still printed x3 (repeats improving toward zero); whole-report, not page 1. Tracked: DB-257 (WATCH; not recounted after the reworks).",
+  "R060 / H2 residual: printed point sizes, PDF page counts and the exported-PDF link-destination check are checked by eye in H2 / the every-page inspection; owed to the pass's final export task (M0-T195 in the plan, not yet contracted), not proven by this task's HTML tests."
+ ],
+ "checks_at_material_head": [
+  "builder (initial, services/api cwd, lanes venv, direct exit codes): ruff check . = 0; pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py = 1760 passed, 6 skipped; node presentation-tokens.mjs --check = 0; node --test presentation-tokens.test.mjs = 10 pass, 0 fail; research_record_check.py --check = 0 (NB-01 code_current=True, review_state=stale); modularity_check.py --check = 0.",
+  "builder rework 1: ruff = 0; pytest -q tests/drawings tests/cad tests/journey tests/api tests/scenario/three_answers/test_result_ways.py = 3015 passed, 6 skipped; node checks = 0 and 10/10; research_record_check = 0; modularity_check = 0; page 1 = 192 words, total 2318.",
+  "builder rework 2: ruff = 0; same pytest set = 3019 passed, 6 skipped; node checks = 0 and 10/10; research_record_check = 0 (NB-01 code_current=True, review_state=current); modularity_check = 0; page 1 = 188 words, total 2314.",
+  "G1 data-contract-verifier: PASS at 4617c720 (no required within-task finding; one out-of-path REQUIRED follow-up now DB-245, one advisory since resolved); delta PASS at 2767f6a1 (ruff 0; pytest tests/drawings/report tests/drawings/test_presentation_tokens.py tests/scenario/three_answers/test_result_ways.py tests/api/test_report_read_context.py = 161 passed); delta-2 PASS at fd649b66 (same subset = 163 passed); all 11 NB-01 code_paths' LF sha256 equal the rev-4 record.",
+  "G3 code-reviewer: PASS at 4617c720 (141 report+token pytest passed; ruff clean; research_record_check PASS; readers.py 573 lines / 490 SLOC / 40 symbols); delta PASS at 2767f6a1 (ruff 0; subset 161 passed); delta-2 PASS at fd649b66 (ruff 0; subset 163 passed); advisories F3-F6 remain, F1/F2/F7 resolved.",
+  "G4 qa-engineer: PASS with required corrections at 4617c720 (ruff 0; pytest tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py = 1782 passed, 6 skipped; pytest test_report_page_one.py test_report_benchmark.py -v = 22 passed; modularity 0; research_record_check 0; node 0 and 10/10; S1-S19 reproduced, S14 e2e could-not-check); delta PASS at 2767f6a1 (subset 161 passed); delta-2 PASS at fd649b66 (subset 163 passed); its one REQUIRED finding F1 resolved by the page-1 caption fix and the S18 narrowing to DB-245.",
+  "visual-quality-reviewer: FAIL at 5c96f92e (three REQUIRED page-1 findings: 30 pt on whole sentences, status badge clipped by the site graphic, decision summary spilled to a 2nd page); PASS at cd6d7fc3 after rework 1 (findings 1-3 resolved; two advisories); PASS at 68d417fe after rework 2 (both advisories resolved, address restored, decision summary fits one page). It rendered the PDF only, ran no server and counted no pytest."
+ ],
+ "requirements": {
+  "D-094-R011": [
+   "test: services/api/tests/drawings/report/test_report_page_one.py::test_s1_page_one_holds_the_four_kinds_and_the_named_furniture (page 1 holds exactly the four kinds plus the contract furniture).",
+   "visual-quality-reviewer, delta 2 at 68d417fe, 'M5-T165 (page 1) VERDICT: PASS': the whole decision summary fits one page, the result leads at headline size, address restored, 'Five-second hierarchy is strong'.",
+   "code-reviewer, round 1 PASS, 'Plain user text': benchmark page-1 visible text matches the contract page-1 spec (identity, answers plus assumption lines, ceiling/estimate, three uncertainties, scope line)."
+  ],
+  "D-094-R012": [
+   "test: test_report_page_one.py::test_s12_scope_line_on_page_one_and_exclusions_head_the_appendix; test_report_pages.py::test_f10_r012_coverage_inventory_leaves_the_report.",
+   "producer report section 1: the coverage/feature inventory left the report and a compact scope line on page 1 points to the material-exclusions block at the head of the appendix.",
+   "Met in part by this task: it removes the inventory from the report and keeps the scope note and the exclusions; the rule that the inventory belongs in the owner update is in the design contract change (M0-T193, accepted), and the owner updates carry it."
+  ],
+  "D-094-R013": [
+   "test: test_report_benchmark.py::test_s17_long_apartment_estimate_sentence_prints_once; test_report_pages.py::test_vc2_no_long_document_sentence_printed_twice (the long sentence prints once, on the scenario sheet).",
+   "test: test_report_page_one.py::test_s6_issue_links_and_the_estimate_link_resolve (page 1 shows 'Estimate 17-22' linking to #estimate-B).",
+   "data-contract-verifier round 1 COMMON-POINT 3 and code-reviewer/qa-engineer point 3 confirm S17 (test_vc2 2->1 is a true de-duplication)."
+  ],
+  "D-094-R029": [
+   "producer report section 2: '20,150 sq ft is a conditional tax-lot-only arithmetic allowance, not established remaining development rights.' sits beside the headline allowance.",
+   "test: test_report_page_one.py::test_s2_zoning_lot_sentence_names_the_register_index_entry (the lots-1-and-70 concern on page 1).",
+   "data-contract-verifier round 1 Share 2: the allowance assumption and distinction are assembled from document-read values, 20,150 not recomputed.",
+   "Met in part by this task (the PDF's first page); the website's first screen shows the same concern with M5-T171 (ready, not built)."
+  ],
+  "D-094-R030": [
+   "test: test_report_page_one.py::test_s2_zoning_lot_sentence_names_the_register_index_entry; test_s2_generic_line_only_in_the_not_checked_state_and_once.",
+   "data-contract-verifier round 1 Share 1: the property-specific index-entry sentence replaces the generic line, which shows only in the not-checked state and once; parsed by zoning_lot_item.py from the document's own condition."
+  ],
+  "D-094-R037": [
+   "test: test_report_page_one.py::test_s19_rear_yard_open_check_names_both_provisions_and_no_conclusion; test_report_benchmark.py::test_benchmark_rear_yard_reads_as_the_open_check.",
+   "file: services/api/app/drawings/report/constraint_text.py REAR_YARD_OPEN_CHECK / REAR_YARD_LAW_SECTION names ZR 23-344(b) and (c)(3) as not yet checked, draws no conclusion, links 23-344; no corner-only framing.",
+   "record NB-03: the reading is 'A labelled draft reading, not a DOB determination' (gaps a/b/e open); data-contract-verifier and qa-engineer both record 'R008 condition MET'."
+  ],
+  "D-094-R047": [
+   "test: test_report_page_one.py::test_s3_headline_is_28_to_32_pt_and_every_print_size_comes_from_tokens; test_presentation_tokens.py::test_font_token_equals_the_application_stack.",
+   "code-reviewer round 1 S3: every font-size in layout.py is interpolated from a TYPE token (headline 30 pt in 28-32, property-title 22, section-title 14, body 10.5, compact 9.5, source-note 8.5); the remaining literal pt are borders/weights/letter-spacing.",
+   "Met in part: this task sets the page-1 scale from the tokens (visual delta 2 PASS, figures one line each); the check of every printed page belongs to the pass's final export task (M0-T195 in the plan, not yet contracted)."
+  ],
+  "D-094-R048": [
+   "producer report rework 1/2: margins and spacing come from layout.py tokens; 'No font was shrunk below its token' (page count fell 11->10 by tightening, not shrinking).",
+   "visual-quality-reviewer delta 1/2: type tokens 22/30/14/10.5/9.5/8.5 pt, none below 8.5 pt, no font shrink.",
+   "Residual: the adopted paper size is owner question D1, still open; the template uses A4 meanwhile (see known_limits)."
+  ],
+  "D-094-R050": [
+   "test: test_presentation_tokens.py::test_status_words_are_settled_conditional_not_known_no_verified; test_report_page_one.py::test_s4_ceiling_and_estimate_sit_in_one_block_with_the_token_line.",
+   "data-contract-verifier round 1 COMMON-POINT 2 and qa-engineer S4: the six owner labels are kept; ceiling Conditional, estimate Provisional, each uncertainty labelled; uncertainty not removed.",
+   "visual-quality-reviewer delta 2: a status chip sits under each Answer label."
+  ],
+  "D-094-R051": [
+   "producer report section 2/4: result first, the assumption line next, the derivation linked to the full calculation on the scenario sheet (#estimate-B).",
+   "test: test_report_page_one.py::test_s6_issue_links_and_the_estimate_link_resolve; code-reviewer round 1 'Plain user text' page-1 ordering.",
+   "Met in part by this task (the PDF side); the website side is M5-T171 (ready, not built)."
+  ],
+  "D-094-R054": [
+   "test: test_report_benchmark.py::test_s7_repeat_count_stays_at_or_below_the_before_set; test_s7_page_one_section_is_within_the_word_cap.",
+   "producer report section 3: page-1 words 330->190 (final 188), whole body 2448->2355 (final 2314); repeats did not rise (2 distinct / 5 printings).",
+   "visual-quality-reviewer round 1: text shrank 7.6%, repeats fell 3->1 (one residual sentence x3, advisory, see known_limits)."
+  ],
+  "D-094-R055": [
+   "producer report section 2: the allowance block '10,075 sq ft recorded lot area x FAR 2.0, tax lot 70 alone' and the apartment-estimate block reorganise the review's two examples.",
+   "record NB-04: 10,075 is basis administrative_record (recorded lot area) and the GIS outline area is a drawing measure only; data-contract-verifier round 1 Share 2 confirms the assumption line is document-read, validating nothing.",
+   "Met in part: the full HPD-basis sensitivity calculation lives in the supporting detail on the scenario sheet (page_scenario_sheet.py / existing) which page 1 links to; this task re-derives nothing."
+  ],
+  "D-094-R060": [
+   "test: test_report_page_one.py::test_s6_issue_links_and_the_estimate_link_resolve (page-1 #issue-1/2/4 and #estimate-B resolve).",
+   "code-reviewer round 1 S6 and qa-engineer S6: 0 unresolved in-page href anchors across all 12 fixtures.",
+   "Met in part: R060's harness is a link-destination check over the EXPORTED PDF; that belongs to the pass's final export task (M0-T195 in the plan, not yet contracted)."
+  ],
+  "D-094-R070": [
+   "test: test_report_pages.py::test_db232_zoning_lot_open_item_is_first (the zoning-lot flag stays item 1 on page 1).",
+   "acceptance S8 / qa-engineer S8: the 29 derivation '20,150 / 680 = 29.63 -> 29' still prints in the evidence section; test_report_law_links.py stays green unedited.",
+   "Met in part: the page-6 flag, the page-8 calculation of the 29 and the specific law links are preserved, not re-authored here; the law links were built in wave 23 and their test (test_report_law_links.py) stays green unedited."
+  ],
+  "D-094-R071": [
+   "test: test_report_page_one.py::test_s4_no_forbidden_result_word_on_page_one (no buildable/achievable/can be built); test_s4_ceiling_and_estimate_sit_in_one_block_with_the_token_line (ceiling Conditional, never Provisional/settled).",
+   "file: docs/design/presentation-tokens.json wording.ceiling_estimate_distinction = 'The ceiling is a conditional zoning limit; ... neither is a demonstrated layout.'",
+   "data-contract-verifier/code-reviewer/qa-engineer point 2 agree the 29 is framed as a conditional ceiling, not apartments to build; the website guard is M5-T171."
+  ],
+  "D-094-R072": [
+   "test: test_report_benchmark.py::test_s7_total_report_is_within_the_word_cap (whole body <= baseline 2448); producer section 3 total 2448->2355->2314.",
+   "visual-quality-reviewer round 1: 'Text did not grow (shrank 7.6%).'",
+   "Met in part: this task delivers the no-text-growth half for page 1 and the body; the option-comparison page and the building diagram change in later tasks of the plan (M5-T169 and M5-T173, not yet contracted)."
+  ],
+  "D-094-R073": [
+   "test: test_report_page_one.py::test_s1_page_one_holds_the_four_kinds_and_the_named_furniture; test_s12_scope_line_on_page_one_and_exclusions_head_the_appendix (no feature inventory competing with the result).",
+   "visual-quality-reviewer delta 2 PASS: 'Five-second hierarchy is strong', the answer leads.",
+   "producer report section 1."
+  ],
+  "D-094-R078": [
+   "test: test_report_page_one.py::test_s4_ceiling_and_estimate_sit_in_one_block_with_the_token_line (one block holds both with the token distinction line, asserted byte-equal to the contract quote); test_presentation_tokens.py::test_wording_group_holds_the_three_contract_texts.",
+   "file: docs/design/presentation-tokens.json line 109 wording.ceiling_estimate_distinction (verified present).",
+   "data-contract-verifier round 1 Share 2 and visual-quality-reviewer round 1 'distinction line matches R078 verbatim'; neither figure presented as a demonstrated layout. Website parity is M5-T171."
+  ],
+  "D-094-R079": [
+   "test: test_report_page_one.py::test_s19_rear_yard_open_check_names_both_provisions_and_no_conclusion; test_report_benchmark.py::test_benchmark_rear_yard_reads_as_the_open_check.",
+   "file: constraint_text.py REAR_YARD_OPEN_CHECK states 23-344(b) (short-block) and (c)(3) as not yet applied, no conclusion; record NB-03 title/reading name (b) and (c)(3), a labelled draft reading (not established).",
+   "Met in part: this task shows the report-side open check only; the record, the contract shape and the reference case are done (M5-T163, M5-T164, M5-T176, accepted); the engine's own check with its three states is M5-T167 (planned, not yet contracted)."
+  ],
+  "D-094-R081": [
+   "test: test_report_page_one.py::test_s1_page_one_holds_the_four_kinds_and_the_named_furniture; test_s11_allowance_phrase_sits_beside_the_headline; test_s5_three_uncertainties_in_order_with_the_rear_yard_open_check.",
+   "visual-quality-reviewer delta 2 PASS: prominent results, assumptions beside them, one site graphic, three linked uncertainties on one page.",
+   "Met in part: the website first-page parity (R081 also binds M5-T171) is owed."
+  ],
+  "D-094-R085": [
+   "visual-quality-reviewer, delta 2 at 68d417fe, 'M5-T165 (page 1) VERDICT: PASS': the decision summary reads in one page, 'Five-second hierarchy is strong'.",
+   "test: test_report_benchmark.py::test_s7_page_one_section_is_within_the_word_cap (<=200; producer 188) - fewer words, not more.",
+   "Met in part: this is an evaluative row; the page-by-page reader check of the whole report belongs to the pass's final export task (M0-T195 in the plan, not yet contracted)."
+  ],
+  "D-094-R089": [
+   "file: docs/design/presentation-tokens.json lines 110-111 wording.area_zone_apartment = 'Apartment area' and area_zone_other = 'Other building area: core, circulation, walls and services' (verified present).",
+   "test: test_presentation_tokens.py::test_wording_group_holds_the_three_contract_texts; code-reviewer round 1 S16 and qa-engineer S16 confirm byte-equality with the contract quotes.",
+   "Met in part: this task only holds the two label tokens; drawing the two zones on the worked scenario sheet is the plan's scenario-sheet task (M5-T173, not yet contracted) and the website view M5-T174."
+  ],
+  "D-094-R090": [
+   "file: docs/design/presentation-tokens.json line 112 wording.area_illustration_caption = 'Illustrative area allocation-not a floor plan' (em dash U+2014; verified present).",
+   "test: test_presentation_tokens.py::test_wording_group_holds_the_three_contract_texts; code-reviewer round 1 S16 ('caption dash is U+2014').",
+   "Met in part: this task holds the caption token; the rendered caption on the scenario sheet is the plan's scenario-sheet task (M5-T173, not yet contracted) and the website view M5-T174."
+  ]
+ }
+}

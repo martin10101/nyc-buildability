@@ -1,0 +1,98 @@
+{
+ "task_id": "M5-T166",
+ "material_commits": [
+  "09ac564e (builder initial build: page 2 becomes the neighbourhood locator only (block close-up still built, not printed); page 3 becomes the large dimensioned close frame via the new close_frame_dimensions.py (4 edges >=6 ft labelled, 2.22 ft sliver undimensioned); compact 3x2 heights table; 'No building placed' legend; 'Map geometry only' dropped from map captions so it prints once; e2e location block set to one locator figure; NB-04 revision 2)",
+  "ca74a6a6 (builder rework 1: the page-1 graphic becomes the compact close frame (new summary_close frame at the 88 mm column, no dimension lines/labels there), resolving the G1/G3/G4 REQUIRED F1 page-1 scope finding)",
+  "aecc4261 (orchestrator [ORCH-CORRECTED per G1]: appends the data-contract-verifier's revision-2 review entry to NB-04 unchanged and sets its report path to the task reviews record; no code or quantity change)",
+  "98c2ad16 (orchestrator [ORCH-CORRECTED per G1 delta]: replaces NB-04's revision-2 review entry with the re-issued one listing all three code_paths so research_record_check reads review_state=current; verdict and findings unchanged)",
+  "cd6d7fc3 (builder rework 2: close-frame dimension placement now avoids every drawn lot boundary so no dimension label crosses a drawn line (visual finding 5, the 215-Place edge); adds the no-crossing and forced-collision tests; NB-04 close_frame_dimensions.py identity updated to e25fa026)",
+  "68d417fe (builder rework 3 (owner K1, D-094 R115/R116): figure-only labels with the basis stated once in a note under the drawing, white label backgrounds, no line/fill touching any label (own witness/dimension lines included), neighbour addresses dropped (lot numbers stay), lighter neighbour buildings, section reordered so the 4-row table is not orphaned; the two S17 contract sentences; NB-04 code identity 5dba6cf8 and four gis scope strings updated)",
+  "5e362d7f (orchestrator [ORCH-CORRECTED per G1 delta 2]: replaces NB-04's revision-2 review entry with the re-issued one at 68d417fe (close_frame_dimensions.py 5dba6cf8; the four scope strings judged accurate); no drawn output changes)"
+ ],
+ "claim_seam_head": "adc36fc7231552635c6696e037f275d600dec685",
+ "files_changed": [
+  "apps/web/e2e/report-print.flag-on.spec.ts",
+  "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+  "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+  "project-control/reports/M5-T166-producer-report.md",
+  "services/api/app/drawings/maps/close_frame_dimensions.py",
+  "services/api/app/drawings/maps/context_scene.py",
+  "services/api/app/drawings/maps/site_context_plan.py",
+  "services/api/app/drawings/report/map_caption.py",
+  "services/api/app/drawings/report/page_location.py",
+  "services/api/app/drawings/report/page_site_context.py",
+  "services/api/tests/api/test_report_read_context.py",
+  "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+  "services/api/tests/drawings/report/test_constraints_page.py",
+  "services/api/tests/drawings/report/test_location_sheet.py"
+ ],
+ "what_did_not_change": "No .svg snapshot file and no maps/__init__.py, maps/layout.py, test_site_context_plan.py, test_context_maps.py or test_snapshots.py appears in any of the seven material commits' file lists, so the unchanged frames and snapshots stay byte-identical (S9); block_map.py and every forbidden report file (report/layout.py, builder.py, readers.py, page_decision_summary.py, constraint_text.py, zoning_lot_item.py, test_report_pages.py, test_report_benchmark.py, test_report_page_one.py) are absent from all seven commits. Per the G1/G3/G4 returns NB-04's research_status (conflicting_evidence) and the two MapPLUTO connector identities are unchanged across the reworks; only close_frame_dimensions.py's recorded identity and the review block moved.",
+ "known_limits": [
+  "Legend 'No building placed' at 8.0 pt and scale-bar numerals at 7.5 pt sit below the 8.5 pt drawing-label floor (read acceptably; load-bearing dimension/street labels are at 8.5 pt) - tracked DB-246 (kit typography task); code-reviewer G3 advisory 2, qa-engineer G4 note, visual-quality-reviewer advisories 6/3.",
+  "Close-up polish, all legible with no collision: the 215 Place street name and its '60 ft mapped width' sit apart on the right while the other streets stack name-over-width; '101.71 ft' and 'Lot 11' sit close; the single-basis note is placed at a fixed height outside the collision-checked placer - tracked DB-249; visual-quality-reviewer VISUAL DELTA 2 advisories 1-2, code-reviewer G3 DELTA 2 advisory (b).",
+  "The close-up and its two tables cannot share a page without the page-break CSS in report/layout.py (an M5-T165 file, forbidden here), so pages 3-4 are each about half used and the report is 10 pages; the 9-page target was STOPPED and routed out - tracked DB-249; producer report 'Page count' STOP item 6, visual-quality-reviewer VISUAL DELTA 2 page-flow paragraph.",
+  "services/api/app/drawings/maps/site_context_plan.py is 597 SLOC, three under the 600 warn line - extract before further growth; tracked DB-250; code-reviewer G3 DELTA 2 advisory (a).",
+  "Outside page 1 the gis outline area is still worded 'the tax-map outline area of 10,387.99 sq ft' (p3 lot-area basis line, from the scenario engine, not this task's files) - tracked DB-245 QUEUED(M5-T167); visual-quality-reviewer VISUAL DELTA 2 note.",
+  "Unresolved research inputs stay unresolved: NB-01 access_blocked, NB-03 and NB-06 interpretation_awaiting_review, NB-04 conflicting_evidence (recorded 10,075 vs gis 10,387.99 sq ft); the close frame draws no yard, setback or zoning-lot geometry depending on them - tracked in the evidence records and the later engine tasks (M5-T167, M5-T170, M5-T176); G1/G3/G4 'unresolved inputs' lines.",
+  "M5-T165's test_report_pages.py (S7/S10 word budget, forbidden here) and apps/web/e2e/report-print.flag-on.spec.ts must read green in CI at the accept head; not run here under the thin-client rule - CI is the authority; code-reviewer G3 DELTA 2 advisory (c) and every reviewer's 'could not check'."
+ ],
+ "checks_at_material_head": [
+  "builder (producer report, rework 3 at 68d417fe; lanes venv): 'ruff check .' exit 0; 'pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/scenario/three_answers/test_result_ways.py' exit 0, 1812 passed, 6 skipped; 'research_record_check.py --check' exit 0 (NB-04 conflicting_evidence, code_current=True, review_state=stale pending the re-stamp); 'modularity_check.py --check' exit 0. Earlier rounds in the report: initial 1739 passed/6 skipped, rework 1 1783 passed/6 skipped, rework 2 1797 passed/6 skipped; three reverted mutation proofs each round.",
+  "orchestrator: integrated the three reworks and appended/re-issued the G1 reviewer's NB-04 revision-2 entry in the [ORCH-CORRECTED] commits aecc4261, 98c2ad16 and 5e362d7f; the sources record no separate orchestrator test-run count; the task is still 'claimed' (progress 40), not submitted, so no CI run is recorded at HEAD.",
+  "G1 data-contract-verifier: PASS. Initial at 7e09cc50 PASS WITH REQUIRED CORRECTIONS (F1 page-1, a routing/scope matter); pytest close_frame+constraints+location = 41 passed. DELTA at aecc4261 PASS, F1 RESOLVED: ruff exit 0, pytest 222 passed/4 skipped exit 0, record check exit 0 (scope proven to the two M5-T166 commits, patch-id 0242f0e0). DELTA 2 at 68d417fe PASS, no REQUIRED: ruff exit 0, pytest 247 passed/4 skipped exit 0, record check exit 0.",
+  "G3 code-reviewer: PASS. Initial at 7e09cc50 PASS with one REQUIRED (F1): 46 passed (close_frame+location+constraints+read_context), test_snapshots.py 20 passed, ruff clean, record check exit 0. DELTA at aecc4261 PASS, F1 RESOLVED: ruff exit 0, 222 passed/4 skipped. DELTA 2 at 68d417fe PASS, no REQUIRED: ruff exit 0, 247 passed/4 skipped.",
+  "G4 qa-engineer: PASS. Initial at 7e09cc50 PASS with one REQUIRED (F1): ruff exit 0, 'pytest -q tests/drawings tests/cad tests/api/test_report_read_context.py' 1739 passed/6 skipped (161.6 s), record check exit 0, modularity_check exit 0; S1-S13 each tested with its own probes plus a reverted mutation (PROBE G). DELTA at aecc4261 PASS, F1 RESOLVED: ruff exit 0, 222 passed/4 skipped. DELTA 2 at 68d417fe PASS, no REQUIRED: ruff exit 0, 247 passed/4 skipped.",
+  "visual-quality-reviewer: initial at 5c96f92e M5-T166 PASS WITH REQUIRED CORRECTIONS (finding 5 right-edge dimension label crossed by a neighbour boundary; finding 6 advisory 8.0/7.5 pt furniture). DELTA 1 at cd6d7fc3 ruled the 4-row constraints table orphaned alone on its own page (report 10 pages). DELTA 2 at 68d417fe M5-T166 PASS (advisories only): owner complaint FIXED, labels figure-only on white boxes beside their lines, basis stated once under the drawing, neighbours lighter, addresses off, no word touching a line or fill; report 10 pages, no orphan."
+ ],
+ "requirements": {
+  "D-094-R014": [
+   "Page 2 is the neighbourhood locator only and page 3 is the dimensioned close-up, two maps each answering a different question (the block close-up is built but not printed): test_constraints_page.py::test_s5_at_most_three_map_figures_each_a_distinct_job and test_location_sheet.py::test_location_page_is_the_locator_only; producer report 'What changed and why'.",
+   "No generated property photograph and no empty photo frame: test_location_sheet.py::test_s4_no_photo_no_empty_frame_no_photo_wording; visual-quality-reviewer VISUAL DELTA 2 (68d417fe) 'M5-T166 (pages 2-4) PASS', locator (p2) clean.",
+   "Met in part by this task: the two maps of pages 2-3 are its share; the rule itself is in the design contract change (M0-T193, accepted)."
+  ],
+  "D-094-R015": [
+   "close_frame_dimensions.py draws a dimension line anchored to each edge's own projected vertices, endpoints within 0.01 ft: test_site_context_close_frame.py::test_s1_dimension_endpoints_lie_on_their_edge_vertices.",
+   "The subject lot 70 and its edge-sharing neighbours 1/11/61 dominate and neighbours are drawn lighter: test_site_context_close_frame.py::test_s4_close_frame_contents and test_s15_neighbour_buildings_are_drawn_lighter_than_the_subject.",
+   "data-contract-verifier G1 DELTA REVIEW 2 (68d417fe) item 2 S1: the four edges are each traced to edge:/map_context/subject_lot/outline/0 index 0 to 3; visual-quality-reviewer VISUAL DELTA 2 PASS on the close frame."
+  ],
+  "D-094-R016": [
+   "page_site_context.py builds a compact 3x2 standard/qualifying-housing heights table from the document and removes the height rows from the constraint rows so no value is listed twice: test_constraints_page.py::test_s7_heights_table_is_three_by_two_from_the_document and test_s7_coverage_once_and_no_bare_not_shown.",
+   "code-reviewer G3 report (7e09cc50) 'WHAT I CHECKED' page_site_context.py (3x2 heights table from the document, no double-listing); visual-quality-reviewer initial PASS-on-substance ('compact 3x2 standard/qualifying-housing heights table')."
+  ],
+  "D-094-R044": [
+   "Every drawn figure is an edge length of the subject gis outline traced to the document (label_problems == empty list); no tax-map value is drawn: test_site_context_close_frame.py::test_s1_no_tax_map_value_is_drawn, and the 2.22 ft sliver is left undimensioned: test_an_edge_too_short_to_label_is_left_undimensioned.",
+   "No yard/setback/envelope geometry is invented for the unresolved analyses (R008/R017): test_site_context_close_frame.py::test_s4_no_yard_or_setback_area_is_drawn; code-reviewer G3 DELTA 2 (68d417fe) and data-contract-verifier G1 DELTA 2 (68d417fe) R008 lines confirm kinds_drawn excludes yard/court/setback_zone/setback_line/envelope.",
+   "The single-basis note is a fixed honesty string, not fabricated data: code-reviewer G3 DELTA 2 (68d417fe) item 2 S1; qa-engineer G4 DELTA 2 (68d417fe) 'Nothing invented'."
+  ],
+  "D-094-R052": [
+   "At most three map figures, each a distinct job (locator; page-1 compact close frame; page-3 large close frame), the block close-up dropped: test_constraints_page.py::test_s5_at_most_three_map_figures_each_a_distinct_job; qa-engineer G4 (7e09cc50) S5 PROBE D counted site_context_plan 2, neighbourhood_map 1, block_map 0.",
+   "Met in part by this task: it supplies the site close-up drawing; the building diagram the row also speaks of changes with the plan's scenario-sheet task (M5-T173, not yet contracted)."
+  ],
+  "D-094-R053": [
+   "Real source-based geometry with anchored dimensions, street names with mapped widths (Northern Boulevard 100 ft, 215 Place 60 ft), north arrow and scale bar: test_site_context_close_frame.py::test_s4_close_frame_contents; data-contract-verifier G1 (7e09cc50) item 2 traces the widths to /map_context/streets/entries/{34,19}/mapped_width_ft.",
+   "Readable labels at >=8.5 pt that fail rather than shrink: test_site_context_close_frame.py::test_s2_every_measured_label_is_at_least_8_5pt_no_collisions and test_s2_a_sub_minimum_size_fails_rather_than_shrink.",
+   "Met only in part: the legend 'No building placed' at 8.0 pt and scale-bar numerals at 7.5 pt stay below the 8.5 pt floor (read acceptably) - tracked DB-246 (kit typography task); visual-quality-reviewer VISUAL DELTA 2 advisory 3. 'Illustrative geometry marked distinctly' is not exercised here because the close frame draws no illustrative placement (that belongs to the engine/M5-T172)."
+  ],
+  "D-094-R074": [
+   "Pages 2-3: page 2 is the locator only and page 3 is the large dimensioned close frame, context maps not repeated: test_location_sheet.py::test_location_page_is_the_locator_only and test_constraints_page.py::test_s5_at_most_three_map_figures_each_a_distinct_job; producer report 'What changed and why'.",
+   "Dimensions anchored to the lot boundaries on the constraints close-up: test_site_context_close_frame.py::test_s1_dimension_endpoints_lie_on_their_edge_vertices; visual-quality-reviewer VISUAL DELTA 2 (68d417fe) page-flow paragraph (p3 close frame).",
+   "Met in part by this task: pages 2-3 are its share; the before-and-after pictures of the printed pages are made with the wave's PDF from main and the pass's final export task (M0-T195 in the plan, not yet contracted)."
+  ],
+  "D-094-R077": [
+   "Within this task's scope two repeated report explanations are reduced to one: 'Map geometry only...' is dropped from the map captions so it prints once: map_caption.py and test_constraints_page.py::test_s6_map_geometry_only_appears_once; the 'No building placed' sentence is taken off the site page so it stays once on the scenario sheet: test_constraints_page.py::test_s8_no_building_placed_legend_on_site_sentence_on_scenario and test_report_read_context.py::test_s7_report_shows_surroundings_with_the_recorded_pack (the not-placed sentence at line 68 still passes).",
+   "Met in part: this task edits pages 2-3 only; less repeated text on the later pages and one organised evidence appendix are the plan's option-comparison and appendix task (M5-T169, not yet contracted)."
+  ],
+  "D-094-R115": [
+   "Figure-only labels with the basis stated once in a note under the drawing (far fewer words, no repeated basis phrase): test_site_context_close_frame.py::test_s1_each_label_shows_only_the_figure and test_s1_basis_is_stated_once_in_a_note_under_the_drawing.",
+   "Automated collision test: no drawn line or fill crosses any label's box, the label's own dimension and witness lines included, and every label sits on a white background; a forced collision fails the build: test_site_context_close_frame.py::test_s2_no_line_crosses_any_label_own_dimension_line_included, test_s14_every_label_sits_on_a_white_background, test_s14_a_label_with_no_clear_place_fails_rather_than_shrinking.",
+   "By-eye print check at print size: visual-quality-reviewer VISUAL DELTA 2 (68d417fe) 'Owner complaint FIXED ... no word touches a line or fill'; producer report Rework 3 'My own print' pages 1-4.",
+   "Residual polish still true at HEAD (legible, no collision): 215 Place name/width offset, '101.71 ft' near 'Lot 11', the basis note placed outside the collision-checked placer - tracked DB-249; visual-quality-reviewer VISUAL DELTA 2 advisories 1-2."
+  ],
+  "D-094-R116": [
+   "Neighbour addresses dropped while lot numbers stay, neighbours drawn lighter, applied to the page-1 compact frame too: test_site_context_close_frame.py::test_s15_no_neighbour_addresses_but_lot_numbers_stay, test_s15_neighbour_buildings_are_drawn_lighter_than_the_subject, test_s14_s15_apply_to_the_page_one_compact_close_frame.",
+   "The two S17 contract sentences changed, dated 2026-10-12 and citing owner K1, nothing else in the contract moved: test_location_sheet.py::test_s9_presentation_contract_has_the_dated_entry; docs/design/ARCHITECT_PRESENTATION_CONTRACT.md (touched only by commit 68d417fe).",
+   "The by-eye check at print size passes: visual-quality-reviewer VISUAL DELTA 2 (68d417fe) 'M5-T166 (pages 2-4) PASS (advisories only)'.",
+   "The second draft PDF sent to the owner on 2026-10-12 shows the reworked close-up (private file on the build server: owner-docs/session-2026-10-11e/owner/215-16-Northern-Boulevard-report-draft-2-2026-10-12.pdf; question-and-answer log section 27). Left open: fitting the close-up and its tables on one page needs report/layout.py, a file of M5-T165 - tracked DB-249."
+  ]
+ }
+}
