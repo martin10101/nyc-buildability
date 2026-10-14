@@ -212,30 +212,48 @@ describe("S1 — the identity line comes first, and the two-column composition (
     expect(identity.textContent ?? "").not.toMatch(SNAKE_CASE);
   });
 
-  it("orders the left column: identity, strip, the three answers, building options, then conditions (V12)", () => {
+  it("S4: the results lead in a full-width band; the assumed conditions follow (D-094 R151)", () => {
     const doc = loadResultsFixture(BENCHMARK);
     render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    const lead = screen.getByTestId("three-answers-lead");
     const left = screen.getByTestId("three-answers-left");
     const right = screen.getByTestId("three-answers-right");
+    // The lead band sits BEFORE the detail grid, and the grid's left sits before its right.
+    expect(lead.compareDocumentPosition(left) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(left.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    // The contract's reading order (§2): the answers lead the first screen, the shared conditions and
-    // open items come last in the left column; the scope detail stays in the right column.
-    const sequence = [
-      within(left).getByTestId("three-answers-identity"),
-      within(left).getByTestId("three-answers-status-strip"),
-      within(left).getByTestId("answer-floor_area_allowance"),
+    // The lead leads with the results, in report page-1 order: identity, the one status strip, the
+    // floor-area allowance, then the legal ceiling beside the apartment estimate (apartment-figures).
+    const leadSequence = [
+      within(lead).getByTestId("three-answers-identity"),
+      within(lead).getByTestId("three-answers-status-strip"),
+      within(lead).getByTestId("answer-floor_area_allowance"),
+      within(lead).getByTestId("apartment-figures"),
+    ];
+    for (let index = 1; index < leadSequence.length; index += 1) {
+      const relation = leadSequence[index - 1].compareDocumentPosition(leadSequence[index]);
+      expect(relation & Node.DOCUMENT_POSITION_FOLLOWING, `lead item ${index} must follow ${index - 1}`).toBeTruthy();
+    }
+    // The detail grid's left column keeps the permitted envelope, the building option, the building
+    // options and then what needs resolving (the shared conditions), in that order.
+    const leftSequence = [
       within(left).getByTestId("answer-permitted_envelope"),
       within(left).getByTestId("answer-building_option"),
       within(left).getByTestId("first-building-options"),
       within(left).getByTestId("shared-conditions"),
     ];
-    for (let index = 1; index < sequence.length; index += 1) {
-      const relation = sequence[index - 1].compareDocumentPosition(sequence[index]);
-      expect(relation & Node.DOCUMENT_POSITION_FOLLOWING, `item ${index} must follow ${index - 1}`).toBeTruthy();
+    for (let index = 1; index < leftSequence.length; index += 1) {
+      const relation = leftSequence[index - 1].compareDocumentPosition(leftSequence[index]);
+      expect(relation & Node.DOCUMENT_POSITION_FOLLOWING, `left item ${index} must follow ${index - 1}`).toBeTruthy();
     }
-    // the assumed conditions / scope detail are in the RIGHT column.
-    expect(within(right).getByTestId("three-answers-scope")).toBeInTheDocument();
+    // The assumed conditions (scope) stay in the RIGHT column, and come AFTER the results in the DOM.
+    const scope = within(right).getByTestId("three-answers-scope");
+    expect(scope).toBeInTheDocument();
     expect(within(right).queryByTestId("first-building-options")).toBeNull();
+    // apartment-figures (the results band) precedes three-answers-scope (the assumed conditions).
+    const apartmentFigures = within(lead).getByTestId("apartment-figures");
+    expect(
+      apartmentFigures.compareDocumentPosition(scope) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("renders no identity line for a document that carries no scope", () => {

@@ -203,6 +203,18 @@
   font-weight: 600;
 }
 
+/* ---- The results lead band (D-094 R151 / M5-T181; presentation contract principle 1, page-1 order) ----
+   The results lead the first screen: a FULL-WIDTH band above the detail grid, holding the identity,
+   the one status strip, the Floor-area allowance and — directly below it — the legal ceiling beside
+   the apartment estimate (.af-figures), in the same order report page 1 leads with. The band shares
+   the Results window's size container with the grid below (container-type is on the window content),
+   so it stacks in the same reading order on a narrow screen. Its children carry their own spacing (the
+   identity and strip their bottom margins, the apartment-figures block its top margin), so the band
+   needs no rhythm of its own. No colour literal lives here — the band carries none. */
+.ta-lead {
+  display: block;
+}
+
 /* ---- The two-column layout (presentation contract §3; M5-T149 orchestrator addition) ----
    The window content is a size container (set by Part C's floating window). Below 1000 px the two
    regions stack in the same reading order; at 1000 px and up they sit side by side, the answers in
@@ -210,6 +222,8 @@
 
 .ta-layout {
   display: block;
+  /* M5-T181: the detail grid sits BELOW the full-width results lead band; separate them. */
+  margin-top: var(--space-4);
 }
 
 .ta-left,
