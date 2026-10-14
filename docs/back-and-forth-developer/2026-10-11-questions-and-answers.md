@@ -584,3 +584,17 @@ to build).
   window it was started in: if that window closes or the connection drops, the session and its helpers stop; everything
   already pushed stays. If the window stays open there is nothing to do. The owner also asked for answers to the point,
   without long file reading first; recorded as a standing working note.
+
+## 33. "/session-handoff only at a clean seam, don't launch any more tasks, let the 4 finish, then write the handoff and give me the prompt" (2026-10-14, about 02:00 UTC)
+
+- **Recorded:** D-094 rows R121 to R123. Nothing was launched after the message.
+- **Done before the handoff:** page 1 (M5-T165) and the close-up (M5-T166) were submitted with their review records and
+  all four review gates recorded; their independent rule check and acceptance are the next session's first step. The
+  zoning-law library's second pass (M3-T007) was written from ten research returns and the settled reference cases and
+  integrated; it is not reviewed yet. Two independent readers worked the building-placement example from a sealed folder
+  and agree on its main figures; its task (M5-T177) is not contracted yet. The next three report tasks were checked
+  against the code (M5-T171, M5-T175, M5-T167) and their corrected packets saved.
+- **New questions for the owner (in the questionnaire, none stops the work):** M1 (may more than three helpers build at
+  once), N1 (what "split lot" means), N2 (shared housing under today's or the proposed law), N3 (options 9 and 10 may
+  give the same answer), N4 (what "all programs combined" combines).
+- **Handoff:** seq 167, with the prompt for the next session.

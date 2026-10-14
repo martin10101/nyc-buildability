@@ -92,6 +92,14 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Report print WITHOUT the owner's preview (no server, no port): TestClient POST /report with the test providers
   (benchmark_provider(with_zoning_lot=True), recorded_pack_provider(window pack)), then apps/web/scripts/
   print-report-pdf.mjs on the HTML file; builders can check their own pages this way (wave 24).
+- Helpers hand back ONE 'PART k of N' and stop: every brief says ALL parts in ONE hand-back; ask a stopped helper for
+  the rest from the exact cut. A message to a FINISHED helper resumes it and it re-sends its whole report: message
+  only helpers still running (2026-10-14, seq 167: seven of fifteen returns arrived cut).
+- Law-research briefs name `docs/reference-cases/R6B/cases/` beside the snapshots: settled readings live there
+  (step-p5: transit zone, parking lines, mixed-building ceiling); capture state = a listing of the snapshot
+  folder, never the library index's flags (2026-10-14).
+- The dependency-age check fails closed when PyPI resets a connection ('cannot fetch PyPI metadata ... Connection
+  reset by peer'): read the failed step, see PyPI answer, rerun the failed job ONCE (run 38496479476).
 
 ## Key files / commands
 

@@ -36,7 +36,7 @@
    "depends_on": [
     "M1"
    ],
-   "summary": "Versioned legal corpus: 2/6 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Accepted: M3-T001 (source hierarchy, coverage matrix, manifest) and M3-T006 (zoning-law library, first pass, 2026-10-11: the R6B section catalogue with every cross-reference, 6 sections handled / 67 not, the eleven options' sections, pitfalls, research log). Open: M3-T002 backlog; M3-T003 backlog; M3-T004 backlog; M3-T005 backlog (immutable capture, document-evidence engine, cross-reference closure graph, construction-code overlay; capture/storage tasks wait on B-001). The library's capture list (5 sections, 8 terms) is DB-243."
+   "summary": "Versioned legal corpus: 2/7 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Accepted: M3-T001 (source hierarchy, coverage matrix, manifest) and M3-T006 (zoning-law library, first pass, 2026-10-11: the R6B section catalogue with every cross-reference, 6 sections handled / 67 not, the eleven options' sections, pitfalls, research log). Open: M3-T002 backlog; M3-T003 backlog; M3-T004 backlog; M3-T005 backlog (immutable capture, document-evidence engine, cross-reference closure graph, construction-code overlay; capture/storage tasks wait on B-001). The library's capture list (5 sections, 8 terms) is DB-243. M3-T007 claimed (zoning-law library, second pass, contracted 2026-10-14: the law the remaining options 2-3, 5, 6-7, 8, 9, 10 and 11 need, read from the official text by read-only research helpers and written up by one builder; documents only; the captures it lists are DB-253)."
   },
   {
    "id": "M4",
@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-13T06:23:31+00:00",
+ "updated_at": "2026-10-14T02:13:59+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -99,7 +99,8 @@
      "ids": [
       "M5-T165"
      ],
-     "state": "in_progress"
+     "state": "in_progress",
+     "note": "submitted 2026-10-14 with every review gate recorded; the rule check and acceptance are next"
     },
     {
      "wave": 24,
@@ -107,7 +108,8 @@
      "ids": [
       "M5-T166"
      ],
-     "state": "in_progress"
+     "state": "in_progress",
+     "note": "submitted 2026-10-14 with every review gate recorded; the rule check and acceptance are next"
     },
     {
      "wave": 24,
@@ -124,6 +126,14 @@
      "wave": 24,
      "item": "wave PR and PDF #1 from main with before/after pictures (R083)",
      "state": "planned"
+    },
+    {
+     "wave": 24,
+     "item": "zoning-law library, second pass: the law the remaining options need (documents only; beside the report lane)",
+     "ids": [
+      "M3-T007"
+     ],
+     "state": "in_progress"
     },
     {
      "wave": 25,
