@@ -1,0 +1,19 @@
+{
+  "task_id": "M5-T177",
+  "producer_agent": "rules-engineer",
+  "report_file": "project-control/reports/M5-T177-producer-report.md",
+  "submitted_at": "2026-10-14T03:14:51.106619+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T177-evidence-map.json",
+  "content_manifest_sha256": "a7f71996ec4f247ba3e4e1768c957538345d8050712111949d54b9b137d42064",
+  "reviewed_sha": "9bef0b7226364bb5324acbb56a0ce5d783d61f73",
+  "applicable_requirements": [
+    "D-094-R043",
+    "D-094-R044",
+    "D-094-R076",
+    "D-094-R082",
+    "D-094-R091",
+    "D-094-R092"
+  ],
+  "updated_at": "2026-10-14T03:14:51.992853+00:00"
+}
