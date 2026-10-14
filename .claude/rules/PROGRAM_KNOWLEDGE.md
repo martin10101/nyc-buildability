@@ -1,10 +1,7 @@
 # PROGRAM_KNOWLEDGE — compressed pointers (D-054 Tier 1; auto-injected every session)
 
-Hard-won program-wide knowledge as one-line pointers. APPEND when you discover something
-program-wide useful (any session, when discovered — not at session end). SIZE: the eager total
-is reported by tools/context_budget_check.py but no longer capped (owner removed the 10000-tok
-cap, D-093-R074, 2026-10-11; nothing was moved, question B1 stays open) — keep pointers short
-anyway. Current-section detail lives in docs/WORKING_KNOWLEDGE.md (Tier 2).
+Hard-won program-wide knowledge as one-line pointers. The eager total is not capped (owner,
+D-093-R074; question B1 open): keep pointers short. Detail: docs/WORKING_KNOWLEDGE.md (Tier 2).
 Pointers only — the ledger/registry stays authoritative; no secrets (public repo).
 
 ## Control-plane mechanics (proven arcs)
@@ -84,8 +81,6 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   FIRST step — a lint miss costs a CI round. Bash tool `cd` PERSISTS cwd — cd back.
 - A subagent inherits its PARENT session's start-time instruction snapshot, not the files on disk: a
   rule merged mid-session reaches helpers only through the brief (M0-T191; D-093 dispatch clause).
-- Owner handoff = NOTHING keeps running (D-090-R941): save each helper's unfinished work into the session
-  folder (`git diff --binary`), stop it, record where it is; overrides the skill's let-helpers-finish line.
 - Reviewers read-only, may land in PRIMARY checkout: pin HEAD in prompt (worktree-landed
   reviewers verify via .git plumbing), forbid writes, HOLD commits till the wave returns.
 - Shared checkout with the companion session: heads-up before commits both ways; peer sticks
@@ -94,6 +89,23 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - CI's lane-path check runs on every PR and enforces `lane-*` branches: a cross-lane `[ORCH-CORRECTED]` commit fails
   the control-plane job (#387 b70b869f). Put the correction on its own `task/` PR, merge it first, then
   rebuild the lane branch = reviewed head + one base merge (remerge-diff 0, patch-id unchanged, blobs same).
+- Report print WITHOUT the owner's preview (no server, no port): TestClient POST /report with the test providers
+  (benchmark_provider(with_zoning_lot=True), recorded_pack_provider(window pack)), then apps/web/scripts/
+  print-report-pdf.mjs on the HTML file; builders can check their own pages this way (wave 24).
+- Helpers hand back ONE 'PART k of N' and stop: every brief says ALL parts in ONE hand-back; ask a stopped helper for
+  the rest from the exact cut. A message to a FINISHED helper resumes it and it re-sends its whole report: message
+  only helpers still running (2026-10-14, seq 167: seven of fifteen returns arrived cut).
+- Law-research briefs name `docs/reference-cases/R6B/cases/` beside the snapshots: settled readings live there
+  (step-p5: transit zone, parking lines, mixed-building ceiling); capture state = a listing of the snapshot
+  folder, never the library index's flags (2026-10-14).
+- The dependency-age check fails closed when PyPI resets a connection ('cannot fetch PyPI metadata ... Connection
+  reset by peer'): read the failed step, see PyPI answer, rerun the failed job ONCE (run 38496479476).
+- A packet that adds a drawing module must also list the files that carry its data into the live report (maps
+  `__init__.py`, `drawings_embed.py`, `page_location.py`): M5-T175's first round stopped at the boundary (2026-10-14).
+- Website review pictures: the Results-window capture shows only the first screen; photograph a new block by its
+  test id at the six widths (`session-2026-10-14b/capture_block.mjs`) before the visual review (M5-T171 G3).
+- Builder briefs never dictate the co-author model line: say 'the lines your own instructions give' (a dictated
+  'Opus 5.5' trailer on an opus-4-8 helper's commit was flagged by a rule check, 2026-10-14).
 
 ## Key files / commands
 
@@ -128,27 +140,18 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   10 wide/15 narrow) → optional 23-73x sky-plane (un-suffixed R6–R10 only; 23-736 slopes
   2.7/5.6, alt 3.7/7.6) → 23-411/12/13 obstructions. C-districts: 33-121 overlay FAR (keyed
   by underlying R), 34-111 overlay governing rule, 34-112 equivalents table (C4-6→R10).
-- Owner research (Astra) = discovery aid ONLY (D-050-R002); RQ queue commits+pushes in the SAME
-  step (R006) and appends get a seam line + PushNotification (R005). Detail: Tier 2.
 
 ## Session habits
 
 - Never ask the owner for professional/legal review (ADR-007, D-090-R164): label + per-stat
   law link + say not-sure. Lane A merge yes/no is the orchestrator's call (R163).
-- D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
-  packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
-  only verifies+launches; crash/forced turnover = the only fallback.
+- Read CI green at the EXACT head before every gate, accept, merge and handoff (D-090 R639): wave 23
+  accepted four tasks on a red, unread web-e2e; `gh run list` + the failed jobs' logs first.
 
-- Discoveries → `docs/DISCOVERY_BACKLOG.md` (D-069, NOT injected): append product/domain
-  findings AT discovery; SWEEP OPEN/WATCH entries at every contract seam and replan; entries
-  end as QUEUED(task)/RESOLVED/WATCH, never deleted, never duplicating ledger/blockers.
 - Every wave: cite ruff pre-gate for api producers; budget ONE full validator run per seam;
   **D-064**: subagents+loop worker = opus-4-8 xhigh, main stays fable-5 (supersedes
   D-047/D-055/D-058/D-060 fable defaults); lean comms = CLAUDE.md p19.
-- Loop-run and Windows-PC notes (worker pins, the claim-seam worktree, audit-chain forks,
-  PS5.1, Fable exhaustion, the Opus 5.5 pin) moved to Tier 2 on 2026-10-06, unchanged, to make
-  room for the owner's working guidance in CLAUDE.md: `docs/WORKING_KNOWLEDGE.md`, section
-  "Loop-run and Windows-PC notes". Read it before launching or repairing the loop.
+- Loop-run and Windows-PC notes: `docs/WORKING_KNOWLEDGE.md` (read before launching or repairing the loop).
 - Own pushes cancel in-flight CI on the branch — hold pushes while a needed run executes.
 - Auto-mode classifier can block detached-launch/model-file/.claude writes: capture the
   owner's words as a directive, retry ONCE under it (D-055/56/57 arc) — never hammer/bypass.

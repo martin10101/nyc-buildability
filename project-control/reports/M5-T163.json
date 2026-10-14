@@ -1,0 +1,17 @@
+{
+  "task_id": "M5-T163",
+  "producer_agent": "official-source-researcher",
+  "report_file": "project-control/reports/M5-T163-producer-report.md",
+  "submitted_at": "2026-10-11T20:43:10.844978+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M5-T163-evidence-map.json",
+  "content_manifest_sha256": "fef93aff3d7bd2114c690bee7d8b7d830aea9a78bb302a56eaaaeb5ca4233fb9",
+  "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738",
+  "applicable_requirements": [
+    "D-094-R036",
+    "D-094-R037",
+    "D-094-R061",
+    "D-094-R079"
+  ],
+  "updated_at": "2026-10-11T20:43:11.538843+00:00"
+}

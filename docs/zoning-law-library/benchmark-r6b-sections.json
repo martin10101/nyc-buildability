@@ -1,0 +1,2588 @@
+{
+  "scope": "R6B residence district with a C2-2 commercial overlay; benchmark lot 215-16 Northern Boulevard (Queens); the ZR sections reachable from the R6B-applicable rulesets plus the eleven development options. First pass, documents only. Not professionally reviewed (ADR-007).",
+  "label": "Unreviewed draft: discovery aid; each item links its source; nothing here is professionally reviewed (ADR-007). Legal readings are drafts tied to the cited source text; \"not sure\" is stated where the producer is not sure.",
+  "generated_from": {
+    "commit": "aac892fcde5dc035848af9bf99f7cea0bc8edec2",
+    "snapshot_set": "docs/research/zr-snapshots/v1/",
+    "ruleset_dir": "services/api/app/rules/rulesets/",
+    "research_returns": [
+      "return-H1-closure.md",
+      "return-H3-dob.md",
+      "return-H4-bsa-dcp.md",
+      "return-H6-options.md"
+    ]
+  },
+  "coverage_status_vocabulary": "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md section 2. Producer mapping: partial = captured AND a rule file formally cites/computes it (unreviewed draft, full closure incomplete); not_evaluated = captured, in scope, no rule yet; not_applicable = captured but the district line / R1-R5 / tower / other-equivalency / special-geography body affirmatively excludes an R6B / C2-2 lot (title-only captures stay not_evaluated because applicability to a mapped special area is not resolved); missing = required for an option but NOT CAPTURED.",
+  "counts": {
+    "sections_total": 73,
+    "captured": 68,
+    "not_captured": 5,
+    "handled": 6,
+    "not_handled": 67,
+    "defined_terms_total": 38,
+    "defined_terms_captured": 30,
+    "defined_terms_not_captured": 8,
+    "cross_references_recorded": 162,
+    "cross_references_followed": 104,
+    "cross_references_not_followed": 58
+  },
+  "sections": [
+    {
+      "section_id": "11-25",
+      "title": "District Designations Appended with Suffixes",
+      "zr_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-11-25",
+        "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json",
+        "services/api/app/rules/rulesets/r6b_lot_coverage.rule.json",
+        "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json"
+      ],
+      "coverage_status": "partial",
+      "last_amended": "1994-06-29",
+      "scope_status": "terminal",
+      "notes": "Suffix inheritance: a district line reading \"R6 R7 R8 ...\" reaches R6B. Formally cited in three R6B rules citations[]. No numeric cross-reference."
+    },
+    {
+      "section_id": "23-22",
+      "title": "Floor Area Regulations for R6 Through R12 Districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-22",
+        "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "services/api/app/rules/rulesets/r6_r12_residential_far.rule.json",
+        "services/api/app/rules/rulesets/r6b_qualifying_housing_far.rule.json"
+      ],
+      "coverage_status": "partial",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "FAR table has an R6B row + a qualifying-affordable/senior column. Footnotes rely on the uncaptured 12-10 terms Mandatory Inclusionary Housing areas / UAP developments (see defined_terms). No numeric cross-reference in the captured text."
+    },
+    {
+      "section_id": "23-52",
+      "title": "Maximum Number of Dwelling Units",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-52",
+        "content_digest_sha256": "f48f1ddc189866ea7fae015edb983411c6de5032d0f9ce98a47cdca4d7b908ac"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json"
+      ],
+      "coverage_status": "partial",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Maximum dwelling units; (b) carries the 680 factor, also formally cited (23-52(b)). Relies on uncaptured 12-10 terms development/enlargement/conversion for the no-factor branch."
+    },
+    {
+      "section_id": "23-362",
+      "title": "Maximum lot coverage in R6 through R12 Districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-362",
+        "content_digest_sha256": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-363",
+          "captured": true
+        },
+        {
+          "section_id": "23-434",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "services/api/app/rules/rulesets/r6b_lot_coverage.rule.json"
+      ],
+      "coverage_status": "partial",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Max lot coverage R6-R12. r6b_lot_coverage.citations[] names 23-362 + 11-25; its prose also references 23-363/23-434/23-38[NC]/23-70[NC], which are not in citations[] and not computed."
+    },
+    {
+      "section_id": "23-432",
+      "title": "Height and setback requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-432",
+        "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-433",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "services/api/app/rules/rulesets/r6b_height.rule.json"
+      ],
+      "coverage_status": "partial",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Height/setback table (R6B: min base 30, max base 45, max bldg 55; qualifying 45/65). r6b_height computes ONLY this table. Its prose/interactions mention 23-431(a)/23-433/23-434/23-436/23-44/34-111/34-24(b)/35-53/35-631(b)/35-632(a) but citations[] is 23-432 alone."
+    },
+    {
+      "section_id": "23-344",
+      "title": "Additional rear yard modifications",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-344",
+        "content_digest_sha256": "91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-342",
+          "captured": true
+        },
+        {
+          "section_id": "23-343",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json"
+      ],
+      "coverage_status": "partial",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Additional rear-yard modifications; (a) is the within-100ft-of-corner point test computed by the waiver rule (citations[]: 23-344(a) + 11-25). (b) short-block-dimension and (c)/(d) adjoining-side-lot-line waivers are in the text but not computed. H1 live-checked the ZR portal 2026-10-11: it matches the snapshot (R1-R12; Last Amended 12/5/2024)."
+    },
+    {
+      "section_id": "23-431",
+      "title": "Street wall location requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-431",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-431",
+        "content_digest_sha256": "fb2d094dd06ce10b406485932357a39384a357db92a0a1670b56091c36698c69"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-413",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no rule computes street-wall placement; referenced only in r6b_height prose, not its citations[]"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Street-wall location: (a) line-up for R6B/R7B/R8B; (b) 70%-within-8ft(wide)/10ft(narrow). Load-bearing for the benchmark reading (NB-06) but NOT computed by any rule."
+    },
+    {
+      "section_id": "23-433",
+      "title": "Standard setback regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-433",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-433",
+        "content_digest_sha256": "4fecf4d26719a00ed0eaeb1e0e7e714f891e7fff154ded306b04e29167ef1afe"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-413",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no rule computes setback depth; referenced only in r6b_height/NB-06 prose, not citations[]"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Standard setback 10ft(wide)/15ft(narrow) between min and max base height; (c) optional beyond 50ft or <=65deg. The benchmark 3-storey/30ft option sits at the min base height, so no setback is triggered; the rule still does not compute it."
+    },
+    {
+      "section_id": "23-335",
+      "title": "Side yard requirements for R6 through R12 Districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-335",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-335",
+        "content_digest_sha256": "31b67b9d47eca82cb93e1b06db908b20f1ad7f159c2b4306d78248e5fb02fcf2"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: no rule file cites or computes side-yard requirements"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Side yard R6-R12: (a) detached 1-2 family need two 5ft side yards; (b) all other residences none. Needed by every residential option. Relies on uncaptured 12-10 detached/semi-detached/attached/zero-lot-line terms."
+    },
+    {
+      "section_id": "23-342",
+      "title": "Rear yard requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-342",
+        "content_digest_sha256": "1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-34",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: baseline rear yard not computed; referenced as context by r6b_rear_yard_corner_waiver, not its citations[]"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Baseline rear-yard requirement (the waiver in 23-344 modifies this). Relies on uncaptured 12-10 \"required yard\"."
+    },
+    {
+      "section_id": "23-343",
+      "title": "Rear yard equivalent requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-343",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-343",
+        "content_digest_sha256": "b4440929d887fa5eba92db8ad881bdf84b04d3283b988026ab58ff6865221680"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-311",
+          "captured": true
+        },
+        {
+          "section_id": "23-312",
+          "captured": true
+        },
+        {
+          "section_id": "23-34",
+          "captured": true
+        },
+        {
+          "section_id": "23-341",
+          "captured": true
+        },
+        {
+          "section_id": "23-434",
+          "captured": true
+        },
+        {
+          "section_id": "23-435",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: rear-yard-equivalent not computed; referenced as context by r6b_rear_yard_corner_waiver, not citations[]"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Rear-yard-equivalent provisions for through/corner lots."
+    },
+    {
+      "section_id": "23-363",
+      "title": "Special rules for certain interior or through lots",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-363",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-363",
+        "content_digest_sha256": "7ff320d2f18feec7cc53f609c066d09ac349a714b83c6dbd014e2cb51932ab34"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-342",
+          "captured": true
+        },
+        {
+          "section_id": "23-343",
+          "captured": true
+        },
+        {
+          "section_id": "23-361",
+          "captured": false,
+          "reason": "R1-R5 lot coverage; NOT CAPTURED; out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-362",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: interior/through-lot coverage increases not computed; referenced in r6b_lot_coverage prose, not citations[]"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Lot-coverage increases: (b) 100% within 100ft of a corner; (c) 100% on a short block dimension. 23-361 (R1-R5 lot coverage) is NOT CAPTURED and out of scope."
+    },
+    {
+      "section_id": "34-11",
+      "title": "General Provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-11",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-11",
+        "content_digest_sha256": "e54be53bf114e18e830ec36f526b2d2df6fcb4ce32d56f8327b2b172f071a3fc"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "34-21",
+          "captured": true
+        },
+        {
+          "section_id": "34-24",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay general-provisions routing not computed; mentioned in r6b_height prose only"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "C1/C2 general provisions; routes residential bulk to Article II Ch 3 except as modified by 34-24. Relies on the uncaptured 12-10 term \"bulk\"."
+    },
+    {
+      "section_id": "34-24",
+      "title": "Modification of Height and Setback Regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-24",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-24",
+        "content_digest_sha256": "0cc3f02617a47639611221737cd0cc7ebfec8a7754346a212e6af88fdfa55630"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "34-11",
+          "captured": true
+        },
+        {
+          "section_id": "35-62",
+          "captured": true
+        },
+        {
+          "section_id": "35-63",
+          "captured": true
+        },
+        {
+          "section_id": "35-71",
+          "captured": true
+        },
+        {
+          "section_id": "36-64",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay H&S modification not computed; mentioned in r6b_height prose only"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "(b)(1): R6-R12 equivalency applies the Section 35-63 modifications in a C overlay."
+    },
+    {
+      "section_id": "34-232",
+      "title": "Modification of side yard requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-232",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-232",
+        "content_digest_sha256": "9cf83f8d9c3fa6f594fa3be1e1d65651713c1809254fd08e60e527daa09c61b2"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-311",
+          "captured": true
+        },
+        {
+          "section_id": "23-312",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay side-yard modification not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Removes the side-yard requirement for any residential building in the overlay; optional open area >=5ft. Directly on NB-06 Q3."
+    },
+    {
+      "section_id": "35-01",
+      "title": "Applicability of This Chapter",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-01",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-01",
+        "content_digest_sha256": "2dcb74405c22d7065726ac4ae247b189c2afb1229306e983880cfcd03a00a869"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: Chapter-5 applicability not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Applies Chapter-5 bulk to a mixed building directly (incorporated by cross-reference). Relies on uncaptured 12-10 \"bulk\"/Commercial District/commercial use/community facility use/residential use."
+    },
+    {
+      "section_id": "35-63",
+      "title": "Height and Setback Requirements in Commercial Districts with R6 Through R12 Equivalency",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-63",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-63",
+        "content_digest_sha256": "77ff1923e3d3607202964541eb29e714b7cbaa9ab6dde7ddd9ccfbbd032ebe72"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "35-631",
+          "captured": true
+        },
+        {
+          "section_id": "35-632",
+          "captured": true
+        },
+        {
+          "section_id": "35-633",
+          "captured": true
+        },
+        {
+          "section_id": "35-64",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay R6-R12-equivalency H&S not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Height & setback in C districts with R6-R12 equivalency; the mixed-building pathway for the C2-2 overlay."
+    },
+    {
+      "section_id": "35-631",
+      "title": "Street wall location",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-631",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-631",
+        "content_digest_sha256": "816bc74770e48596144479c24adf382082d0ebf3392dabd0ef5745f844a928f9"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-431",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay street-wall location not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "(a) line-up only for R8-R12 Manhattan Core; (b) percentage governs R6B. (b) recesses deeper than 10/15ft must sit in an uncaptured 12-10 \"outer court\"."
+    },
+    {
+      "section_id": "35-632",
+      "title": "Maximum height of buildings and setback regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-632",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-632",
+        "content_digest_sha256": "8105cc331eee4ed882e04466814928f6047618f5ba66a260f5c415a29630ad10"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-43",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
+          "captured": true
+        },
+        {
+          "section_id": "23-433",
+          "captured": true
+        },
+        {
+          "section_id": "23-434",
+          "captured": true
+        },
+        {
+          "section_id": "23-435",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay max-height/setback not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "(b) eligible-site increases are R6-R12 without suffix (exclude R6B); (c) towers R9-R12 (exclude R6B)."
+    },
+    {
+      "section_id": "23-34",
+      "title": "Rear Yard and Rear Yard Equivalent Requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-34",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-34",
+        "content_digest_sha256": "1cb54ef3763ed86697add52ce6c8fd9416c8b95418477d0dadbd7bf1bce9a977"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-341",
+          "captured": true
+        },
+        {
+          "section_id": "23-342",
+          "captured": true
+        },
+        {
+          "section_id": "23-343",
+          "captured": true
+        },
+        {
+          "section_id": "23-344",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: group header; no computed rule"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Rear-yard group header."
+    },
+    {
+      "section_id": "23-341",
+      "title": "Permitted obstructions in required rear yards or rear yard equivalents",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-341",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-341",
+        "content_digest_sha256": "2cd7b875428bc0e28f72b8aed83f35653cf51ccbdfe91cbee5274acfe0b5426d"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-311",
+          "captured": true
+        },
+        {
+          "section_id": "23-312",
+          "captured": true
+        },
+        {
+          "section_id": "23-41",
+          "captured": true
+        },
+        {
+          "section_id": "23-62",
+          "captured": true
+        },
+        {
+          "section_id": "25-85",
+          "captured": false,
+          "reason": "accessory-parking obstruction; NOT CAPTURED; out of scope; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: permitted-obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Permitted obstructions in rear yards. 25-85 (accessory-parking obstruction) is NOT CAPTURED / out of scope."
+    },
+    {
+      "section_id": "23-311",
+      "title": "Permitted obstructions in all yards, courts and open areas",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-311",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-311",
+        "content_digest_sha256": "effc083cce7405c15250314095c82dd40a944c155a662a8b36933f4d62b28f6a"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: permitted-obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Permitted obstructions in all yards/courts/open areas."
+    },
+    {
+      "section_id": "23-312",
+      "title": "Additional permitted obstructions generally permitted in all yards",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-312",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-312",
+        "content_digest_sha256": "c0475ada314e9b14e0753c30ee67f33534b899e99fbae19e02e9ccc55a4a1f3a"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-311",
+          "captured": true
+        },
+        {
+          "section_id": "23-62",
+          "captured": true
+        },
+        {
+          "section_id": "25-621",
+          "captured": false,
+          "reason": "accessory-parking obstruction; NOT CAPTURED; out of scope; not followed"
+        },
+        {
+          "section_id": "25-622",
+          "captured": false,
+          "reason": "accessory-parking obstruction; NOT CAPTURED; out of scope; not followed"
+        },
+        {
+          "section_id": "26-50",
+          "captured": false,
+          "reason": "other accessory obstruction; NOT CAPTURED; out of scope; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: permitted-obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "25-621/25-622/26-50 (parking/other accessory obstructions) NOT CAPTURED / out of scope."
+    },
+    {
+      "section_id": "23-41",
+      "title": "Permitted Obstructions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-41",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-41",
+        "content_digest_sha256": "edd7781a154c8e47dfd23d27649ba521ed7dabf96ea26c172477d93a29b8a45b"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-42",
+          "captured": true
+        },
+        {
+          "section_id": "23-43",
+          "captured": true
+        },
+        {
+          "section_id": "23-44",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: group header; no computed rule"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Permitted-obstructions group header, all Residence Districts."
+    },
+    {
+      "section_id": "23-411",
+      "title": "General permitted obstructions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-411",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-411",
+        "content_digest_sha256": "1c676cfea013722ae606bcf5ee150aed675f6e4a3903c78c2c427c2738e53e9b"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: permitted-obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "General permitted obstructions."
+    },
+    {
+      "section_id": "23-412",
+      "title": "Additional permitted obstructions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-412",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-412",
+        "content_digest_sha256": "879668ea1c3f2d4fa9a1c6976d5b807c59e7f37849b92afe29bc6205eb8183f7"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-411",
+          "captured": true
+        },
+        {
+          "section_id": "23-62",
+          "captured": true
+        },
+        {
+          "section_id": "26-50",
+          "captured": false,
+          "reason": "other accessory obstruction; NOT CAPTURED; out of scope; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: permitted-obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "26-50 NOT CAPTURED / out of scope."
+    },
+    {
+      "section_id": "23-413",
+      "title": "Permitted obstructions in certain districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-413",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-413",
+        "content_digest_sha256": "bd2431480480c84f29cdfa93ef0f38eecfb83f07c1187908b17c409af604978f"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-411",
+          "captured": true
+        },
+        {
+          "section_id": "23-421",
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-435",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: permitted-obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "23-421 is R1-R5 height context; 23-435 tower context (both out of scope for R6B)."
+    },
+    {
+      "section_id": "23-43",
+      "title": "Height and Setback Requirements in R6 Through R12 Districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-43",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-43",
+        "content_digest_sha256": "f5a7cf614d946db4c55bc40168c75f81607707bc087503b22c2343145db41061"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-431",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
+          "captured": true
+        },
+        {
+          "section_id": "23-433",
+          "captured": true
+        },
+        {
+          "section_id": "23-434",
+          "captured": true
+        },
+        {
+          "section_id": "23-435",
+          "captured": true
+        },
+        {
+          "section_id": "23-436",
+          "captured": true
+        },
+        {
+          "section_id": "23-44",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: group header; no computed rule"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "R6-R12 height & setback group header."
+    },
+    {
+      "section_id": "23-434",
+      "title": "Height and setback modifications for eligible sites",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-434",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-434",
+        "content_digest_sha256": "d880eea8c10cb2d2f69e131e7a6f25b5b2abefceba804dbc20f2ebfe4c8e50f9"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: eligible/affordable-site H&S modifications not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Height/setback modifications for eligible sites (R6-R12; in scope but no rule)."
+    },
+    {
+      "section_id": "23-435",
+      "title": "Tower regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-435",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-435",
+        "content_digest_sha256": "a1f5ee7090b0a770ad65e549034b2acd0723f3101b3d2f740a30ab9e20940170"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-432",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: towers are R9-R12 only (district line excludes R6B)"
+      ],
+      "coverage_status": "not_applicable",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: towers only in R9-R12; R6B excluded",
+      "notes": "Captured; retained for closure completeness."
+    },
+    {
+      "section_id": "23-436",
+      "title": "Additional height and setback provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-436",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-436",
+        "content_digest_sha256": "06259c32014c35341ee2b0dce3ec6476b4a7c91b2266b545f5556f3498d1312c"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-43",
+          "captured": true
+        },
+        {
+          "section_id": "23-431",
+          "captured": true
+        },
+        {
+          "section_id": "23-432",
+          "captured": true
+        },
+        {
+          "section_id": "23-433",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: additional H&S provisions not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Additional height & setback provisions, R6-R12."
+    },
+    {
+      "section_id": "23-44",
+      "title": "Special Provisions for Certain Areas",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-44",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-44",
+        "content_digest_sha256": "6c3a5adc66e3d1bdbb90477c993cf22c30fa845ad3c7adf27920b298a98cbb3f"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-441",
+          "captured": true,
+          "reason": "special tower sub-provision under 23-44; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "23-442",
+          "captured": true,
+          "reason": "special community-district sub-provision under 23-44; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "23-443",
+          "captured": true,
+          "reason": "special-geography sub-provision under 23-44; captured; out of scope for a non-special-area R6B lot; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: special-geography provisions not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: special geographic areas (title-only capture)",
+      "notes": "Captured as heading; body NOT captured. Applicability to a mapped special area is not affirmatively resolved, so coverage stays not_evaluated rather than not_applicable."
+    },
+    {
+      "section_id": "23-62",
+      "title": "Balconies",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-62",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-62",
+        "content_digest_sha256": "0498df1631eb92469ee37920818145957fa249686c956911cf721573f4fa4a9b"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-30",
+          "captured": false,
+          "reason": "yard group header; NOT CAPTURED; not followed"
+        },
+        {
+          "section_id": "23-63",
+          "captured": false,
+          "reason": "balcony cross-reference; NOT CAPTURED; out of scope; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: balcony obstruction leaf not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "23-30 yard header / 23-63 NOT CAPTURED / out of scope."
+    },
+    {
+      "section_id": "23-20",
+      "title": "FLOOR AREA REGULATIONS",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-20",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-20",
+        "content_digest_sha256": "0685a2e4e7002830a1c007dea23ac68c5c441f1a32eeb2e37b78000c5765d7cc"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-21",
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
+        },
+        {
+          "section_id": "23-22",
+          "captured": true
+        },
+        {
+          "section_id": "23-23",
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
+        },
+        {
+          "section_id": "23-24",
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: multi-use FAR cap not computed; needed by options 5,6,11"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Floor-area regulations header; 23-21 is R1-R5 FAR (out of scope)."
+    },
+    {
+      "section_id": "23-42",
+      "title": "Height and Setback Requirements in R1 Through R5 Districts - overview, routing, base-plane measurement",
+      "zr_url": "https://zr.planning.nyc.gov/article-ii/chapter-3/23-42",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-23-42",
+        "content_digest_sha256": "3fea4ca54cfee304698506e83f126949863b6a539b2e6de8731a58cfb494070d"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-421",
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-422",
+          "captured": true,
+          "reason": "referenced in the section text; not captured / not yet followed in this first pass"
+        },
+        {
+          "section_id": "23-423",
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-424",
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-425",
+          "captured": false,
+          "reason": "R1-R5 height; NOT CAPTURED; out of scope for R6B; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: R1-R5 height (district line excludes R6B)"
+      ],
+      "coverage_status": "not_applicable",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: R1-R5 height; R6B excluded",
+      "notes": "Captured; retained for closure completeness."
+    },
+    {
+      "section_id": "34-21",
+      "title": "General Provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-21",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-21",
+        "content_digest_sha256": "6da11080e5d4012f0f9e771595e3e9434a8cafc6fdd5aa02f517d33d929e09b8"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "34-11",
+          "captured": true
+        },
+        {
+          "section_id": "34-22",
+          "captured": true
+        },
+        {
+          "section_id": "34-23",
+          "captured": true
+        },
+        {
+          "section_id": "34-24",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay general provisions not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "C1-C6 general provisions."
+    },
+    {
+      "section_id": "34-22",
+      "title": "Modification of Floor Area Regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-22",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-22",
+        "content_digest_sha256": "8f4ad6f49de8ef67218e1b6b60bd929e2a42fc9c9504a9d0ffa3c6f367bfd248"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-20",
+          "captured": true
+        },
+        {
+          "section_id": "34-11",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay FAR modification not computed; needed by options 5,11"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Overlay FAR modification."
+    },
+    {
+      "section_id": "34-23",
+      "title": "Modification of Yard and Open Area Regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-23",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-23",
+        "content_digest_sha256": "4f6975364cc414188005c5270c41d9b3a420d36dde8339fb325cf1701646f97d"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "34-231",
+          "captured": true
+        },
+        {
+          "section_id": "34-232",
+          "captured": true
+        },
+        {
+          "section_id": "34-233",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: overlay yard/open-area modification header; no rule"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Overlay yard/open-area modification group."
+    },
+    {
+      "section_id": "34-231",
+      "title": "Modification of front yard requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-231",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-231",
+        "content_digest_sha256": "df20f8891b079072dd9ead1aa47df1188df132760344cccba361c9dbe57d5ed8"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: overlay front-yard modification not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "No front yard required for any residential building in the overlay."
+    },
+    {
+      "section_id": "34-233",
+      "title": "Change of use",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-233",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-233",
+        "content_digest_sha256": "0668220dd22e4dfe7af33972f7197839a1f662432f55a37322376d46e12a5815"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: use provision; marginal to bulk"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "Change of use."
+    },
+    {
+      "section_id": "34-111",
+      "title": "Residential bulk regulations in Cl or C2 Districts whose bulk is governed by surrounding Residence District",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-111",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-111",
+        "content_digest_sha256": "5a71b0d973f9e78d24fcd325418abc47cfc53cda4cca0de6320c0624aeaa1acf"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: overlay-to-underlying-residence bulk routing not computed; mentioned in r6b_height prose only"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "terminal",
+      "notes": "KEY for C2-2: the surrounding Residence District bulk (R6B here) governs; the R1-R5 sub-exceptions (a)/(b) do not reach R6B (unreviewed reading)."
+    },
+    {
+      "section_id": "34-112",
+      "title": "Residential bulk regulations in other C1 or C2 Districts or in C3, C4, C5 or C6 Districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-112",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-112",
+        "content_digest_sha256": "19e8c488831398c112a19306b72f6112454cf42ec184cc05f2f1235dc36c857f"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: district line is C1-6+/C2-6+/C3-C6, not C2-2"
+      ],
+      "coverage_status": "not_applicable",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: district line excludes C2-2 (a C4-6->R10 style equivalents table)",
+      "notes": "Captured; retained for closure completeness."
+    },
+    {
+      "section_id": "34-113",
+      "title": "Existing public amenities for which floor area bonuses have been received",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-113",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-34-113",
+        "content_digest_sha256": "17535e8a19f5b210bf9106af3f98aae794174ab5860c07a7f9ac17bfc4c114ad"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "37-727",
+          "captured": false,
+          "reason": "floor-area-bonus provision for previously-bonused lots; NOT CAPTURED; out of scope; not followed"
+        },
+        {
+          "section_id": "37-73",
+          "captured": false,
+          "reason": "floor-area-bonus provision for previously-bonused lots; NOT CAPTURED; out of scope; not followed"
+        },
+        {
+          "section_id": "74-761",
+          "captured": false,
+          "reason": "floor-area-bonus special permit for previously-bonused lots; NOT CAPTURED; out of scope; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: existing-floor-area-bonus provision; not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2007-10-17",
+      "scope_status": "conditional: applies only if this lot previously received a floor-area bonus (unresolved property fact)",
+      "notes": "Captured; 37-727/37-73/74-761 NOT CAPTURED / out of scope. Whether the benchmark lot ever received a floor-area bonus is an UNRESOLVED property fact, so coverage is not_evaluated, not not_applicable (matrix sec 2 rule 1 reserves not_applicable for affirmatively-resolved applicability) - G1 A1."
+    },
+    {
+      "section_id": "35-62",
+      "title": "Height and Setback Requirements in Commercial Districts With R1 Through R5 Equivalency",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-62",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-62",
+        "content_digest_sha256": "2d5b82e080118005897e7419b4bcd042cbccdc686d6dd0d646f7c813f6d63848"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-42",
+          "captured": true
+        },
+        {
+          "section_id": "23-423",
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "23-424",
+          "captured": true,
+          "reason": "R1-R5 height context; captured but out of scope for R6B; not followed"
+        },
+        {
+          "section_id": "35-22",
+          "captured": true,
+          "reason": "C-district R1-R5-equivalency height provision; captured but out of scope for R6B (uses 35-63); not followed"
+        },
+        {
+          "section_id": "35-64",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: R1-R5 equivalency (R6B uses 35-63)"
+      ],
+      "coverage_status": "not_applicable",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: R1-R5 equivalency; R6B uses 35-63",
+      "notes": "Captured; retained for closure completeness."
+    },
+    {
+      "section_id": "35-633",
+      "title": "Additional height and setback provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-633",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-633",
+        "content_digest_sha256": "4f5b0635ad96a2eaf403c5e6d824be211b1c61a545274579cb0ee891e40d0ad3"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-431",
+          "captured": true
+        },
+        {
+          "section_id": "23-436",
+          "captured": true
+        },
+        {
+          "section_id": "35-631",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: additional overlay H&S provisions not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed",
+      "notes": "Additional H&S provisions under the R6-R12-equivalency overlay."
+    },
+    {
+      "section_id": "35-64",
+      "title": "Special Provisions for Certain Areas",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-64",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-64",
+        "content_digest_sha256": "5baf8c24274f58277c3bca6522e234eb11f546e7a24ee0c19614a9e234fac328"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "35-641",
+          "captured": true,
+          "reason": "special tower sub-provision under 35-64; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "35-642",
+          "captured": true,
+          "reason": "special height/setback sub-provision under 35-64; captured; out of scope for a non-special-area R6B lot; not followed"
+        },
+        {
+          "section_id": "35-643",
+          "captured": true,
+          "reason": "special-geography sub-provision under 35-64; captured; out of scope for a non-special-area R6B lot; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: special-geography provisions not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: special geographic areas (title-only capture)",
+      "notes": "Captured as heading; body NOT captured. Applicability to a mapped special area not affirmatively resolved."
+    },
+    {
+      "section_id": "35-71",
+      "title": "Planting",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-71",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-71",
+        "content_digest_sha256": "e5086a5e86a8ea45e990fc3f3ad30d2ec324ae7b4512cfc2ed01bff82910ba1c"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-613",
+          "captured": false,
+          "reason": "planting-strip detail; NOT CAPTURED; out of scope; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: planting-strip detail not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "12/31/1969",
+      "scope_status": "followed",
+      "notes": "Planting-strip detail; 23-613 NOT CAPTURED / out of scope. Snapshot last_amended reads 12/31/1969 (epoch-0 artifact) - treat the amendment date as unresolved."
+    },
+    {
+      "section_id": "36-64",
+      "title": "Special Provisions for Zoning Lots Divided by District Boundaries",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-6/36-64",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-36-64",
+        "content_digest_sha256": "79fadf89852febb0486d74221c7ba8297edc734c8becce2a112ddadc1c47a8be"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: split-by-district-boundary provisions not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-06-06",
+      "scope_status": "out of scope: only if the zoning lot is split by a zoning-district boundary",
+      "notes": "Captured; relevant to option 8 only under the \"district-boundary split\" reading (see options-sections.md)."
+    },
+    {
+      "section_id": "35-53",
+      "title": "Modification of Rear Yard Requirements",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-53",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-53",
+        "content_digest_sha256": "755aa5113e8ea050c21e41355448ed20d88610eeaadaea256a92c23611629ceb"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "23-41",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: referenced by r6b_height prose (old mixed-building rear-yard numbering), not computed"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "out of scope: pre-Dec-2024 mixed-building rear-yard numbering",
+      "notes": "Captured. r6b_height prose references 35-53; the Dec-2024 renumbering moved the old mixed-building rear-yard provision. DOB BB 2009-030 (which construed old 35-53) is RESCINDED (see pitfalls.md)."
+    },
+    {
+      "section_id": "32-131",
+      "title": "Use Group III – general use allowances",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-131",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-32-131",
+        "content_digest_sha256": "568c257513253c16251d32f93097558ad857b026a68ddaf3b3b0e736dcebc35c"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "32-10",
+          "captured": false,
+          "reason": "Use Group use-allowances header; NOT CAPTURED; option-5/11 use-permission closure not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no use-permission rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 5/11 (C2-2 retail use permission)",
+      "notes": "Use Group III general use allowances."
+    },
+    {
+      "section_id": "32-161",
+      "title": "Use Group VI – general use allowances",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-161",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-32-161",
+        "content_digest_sha256": "f319ba9259c135f77200c8583455290b2b52c249f703d4d1ec2c425f7ed65675"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "32-10",
+          "captured": false,
+          "reason": "Use Group use-allowances header; NOT CAPTURED; option-5/11 use-permission closure not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no use-permission rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-06-06",
+      "scope_status": "followed: option 5/11 (C2-2 retail use permission)",
+      "notes": "Use Group VI general use allowances."
+    },
+    {
+      "section_id": "33-12",
+      "title": "Maximum Floor Area Ratio",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-12",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-33-12",
+        "content_digest_sha256": "8f41656cc85f9f570380fa73f833734681224dad3201468dbea0a7079caf1456"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "33-121",
+          "captured": true
+        },
+        {
+          "section_id": "33-13",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "33-14",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "33-15",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "33-16",
+          "captured": false,
+          "reason": "other commercial FAR provision; NOT CAPTURED; not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no commercial/overlay FAR rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 5/11 (overlay commercial FAR)",
+      "notes": "Maximum commercial FAR."
+    },
+    {
+      "section_id": "33-121",
+      "title": "In districts with bulk governed by Residence District bulk regulations",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-121",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-33-121",
+        "content_digest_sha256": "6c27de59da7cfa1250de2d6081b5da0b50eee4676ef9c28b7feba472be34ac00"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "12-10",
+          "captured": true,
+          "reason": "the Definitions chapter; specific defined terms are tracked in defined_terms, not as a numbered cross-reference"
+        },
+        {
+          "section_id": "24-111",
+          "captured": false
+        },
+        {
+          "section_id": "74-902",
+          "captured": false,
+          "reason": "Article VII special-permit (CPC) provision; NOT CAPTURED; project-specific, not followed"
+        },
+        {
+          "section_id": "74-903",
+          "captured": false,
+          "reason": "Article VII special-permit (CPC) provision; NOT CAPTURED; project-specific, not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no commercial/overlay FAR rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 5/11 (overlay commercial FAR keyed to underlying R6B)",
+      "notes": "District line lists C2-2; overlay commercial/CF FAR keyed to the underlying Residence District."
+    },
+    {
+      "section_id": "35-30",
+      "title": "APPLICABILITY OF FLOOR AREA AND OPEN SPACE REGULATIONS",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-30",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-30",
+        "content_digest_sha256": "b1102df91cae9eaeced5f6a7bae0519c9e8db24a2c2df64654cbaa086fce2def"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "35-31",
+          "captured": true
+        },
+        {
+          "section_id": "35-32",
+          "captured": true
+        },
+        {
+          "section_id": "35-33",
+          "captured": true
+        },
+        {
+          "section_id": "35-34",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-35",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-351",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-36",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-361",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        },
+        {
+          "section_id": "35-362",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no mixed-building floor-area rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2011-02-02",
+      "scope_status": "followed: option 5/6/11",
+      "notes": "Applicability of floor-area/open-space regs. Snapshot last_amended 2011-02-02."
+    },
+    {
+      "section_id": "35-31",
+      "title": "Maximum Floor Area Ratio",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-31",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-31",
+        "content_digest_sha256": "65e29c688be2f04b8963b87bc564afb16539c497b19b1219f58a0cf8edad80fe"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "35-30",
+          "captured": true
+        },
+        {
+          "section_id": "35-36",
+          "captured": false,
+          "reason": "further mixed-building floor-area provision; NOT CAPTURED; not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no mixed-building floor-area combination rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 5/6/11 (per-use cap + combined cap = greatest single-use FAR)",
+      "notes": "Mixed-building max FAR."
+    },
+    {
+      "section_id": "35-32",
+      "title": "Maximum Floor Area for Mixed Buildings on Qualifying Residential Sites",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-32",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-32",
+        "content_digest_sha256": "d1aad127c4ea150d3d6c388dbb40b5699c46912673f97c3a2b4723273e03c42a"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: no mixed-building floor-area rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 5/11",
+      "notes": "Max floor area for mixed buildings on qualifying residential sites."
+    },
+    {
+      "section_id": "35-33",
+      "title": "Maximum Floor Area and Special Provisions for Mixed Buildings or Zoning Lots With Multiple Buildings Containing Community Facility Use in Certain Districts",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-33",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-35-33",
+        "content_digest_sha256": "de947f0a4270dafcc9a34c4f8e8728b5365e88520e23946efce8fd45c86ef8e4"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: no mixed/community-facility floor-area rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 6/11",
+      "notes": "Max floor area for buildings with community-facility use in certain districts."
+    },
+    {
+      "section_id": "25-20",
+      "title": "REQUIRED ACCESSORY OFF-STREET PARKING SPACES FOR RESIDENCES",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-20",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-20",
+        "content_digest_sha256": "666f0d241ef5ac95e22a94f67626636305c2d92caff3bc48f0de250d588f8d07"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-21",
+          "captured": false,
+          "reason": "required-parking sub-provision header; NOT CAPTURED; option 10/11, not yet followed"
+        },
+        {
+          "section_id": "25-22",
+          "captured": true
+        },
+        {
+          "section_id": "25-23",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "Required accessory off-street parking for residences."
+    },
+    {
+      "section_id": "25-211",
+      "title": "General provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-211",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-211",
+        "content_digest_sha256": "59439d66be5065f6b1ecec8fa9b261a78b9a633732a23f1e1a8da2345ca253b7"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-212",
+          "captured": true
+        },
+        {
+          "section_id": "73-432",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, income-restricted housing); captured but project-specific (CPC/BSA); option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "75-31",
+          "captured": true,
+          "reason": "authorization to remove required parking; captured but project-specific (CPC); option-10 waiver context; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "General provisions."
+    },
+    {
+      "section_id": "25-212",
+      "title": "Existing parking requirements in the Inner Transit Zone",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-212",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-212",
+        "content_digest_sha256": "a4e88a1ebbda6a9ef6c696904da9d5a565d687475126ba401bc534c3c1e53057"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-20",
+          "captured": true
+        },
+        {
+          "section_id": "25-211",
+          "captured": true
+        },
+        {
+          "section_id": "25-63",
+          "captured": false,
+          "reason": "off-street parking/loading waiver provision; NOT CAPTURED; option 10/11, not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "Existing parking requirements in the Inner Transit Zone."
+    },
+    {
+      "section_id": "25-22",
+      "title": "Required Parking in the Outer Transit Zone",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-22",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-22",
+        "content_digest_sha256": "9f3cf0aaa88f9ffbe1054d4763bd9b7a1ac9f7cda7717e69a2776e311c8aaf95"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-221",
+          "captured": true
+        },
+        {
+          "section_id": "25-222",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "Required parking in the Outer Transit Zone."
+    },
+    {
+      "section_id": "25-221",
+      "title": "General provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-221",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-221",
+        "content_digest_sha256": "21327ea6aaadc6bc2d5da320a9f7d34351c4552e4636689303b4678be6499b97"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-22",
+          "captured": true
+        },
+        {
+          "section_id": "25-222",
+          "captured": true
+        },
+        {
+          "section_id": "73-432",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, income-restricted housing); captured but project-specific (CPC/BSA); option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "73-433",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, qualifying senior housing); captured but project-specific; option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "74-52",
+          "captured": true,
+          "reason": "special permit to remove required parking; captured but project-specific (CPC); option-10 waiver context; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "General provisions (Outer Transit Zone)."
+    },
+    {
+      "section_id": "25-222",
+      "title": "Requirements for developments or enlargements in the Outer Transit Zone",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-222",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-222",
+        "content_digest_sha256": "70b6c0c3fdbe8b0170aced554e64481dfac213acd626243e834dba578f286564"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-63",
+          "captured": false,
+          "reason": "off-street parking/loading waiver provision; NOT CAPTURED; option 10/11, not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "Requirements for developments/enlargements in the Outer Transit Zone."
+    },
+    {
+      "section_id": "25-23",
+      "title": "Required Parking Beyond the Greater Transit Zone",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-23",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-23",
+        "content_digest_sha256": "52179127f2acb1a9c5adf9e7ed0664a24d27d25763eb5c9572c93e08d272a04e"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-231",
+          "captured": true
+        },
+        {
+          "section_id": "25-232",
+          "captured": true
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "Required parking beyond the Greater Transit Zone."
+    },
+    {
+      "section_id": "25-231",
+      "title": "General provisions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-231",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-231",
+        "content_digest_sha256": "8dc7f3d9f4542188435199dfc128cee02bd5ff81b2b3b6133a8b0dc6dc322a6e"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-23",
+          "captured": true
+        },
+        {
+          "section_id": "25-232",
+          "captured": true
+        },
+        {
+          "section_id": "73-433",
+          "captured": true,
+          "reason": "special permit (reduce existing parking, qualifying senior housing); captured but project-specific; option-10 waiver context; not followed"
+        },
+        {
+          "section_id": "74-52",
+          "captured": true,
+          "reason": "special permit to remove required parking; captured but project-specific (CPC); option-10 waiver context; not followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "General provisions."
+    },
+    {
+      "section_id": "25-232",
+      "title": "Requirements for developments or enlargements beyond the Greater Transit Zone",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-5/25-232",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-25-232",
+        "content_digest_sha256": "e07f95d07ca351c6c406f77ea406e2156e652d598a8ed7948c3fd990042ff91d"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "25-63",
+          "captured": false,
+          "reason": "off-street parking/loading waiver provision; NOT CAPTURED; option 10/11, not yet followed"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no parking rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 10/11",
+      "notes": "Requirements for developments/enlargements beyond the Greater Transit Zone."
+    },
+    {
+      "section_id": "66-11",
+      "title": "Definitions",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-vi/chapter-6/66-11",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-66-11",
+        "content_digest_sha256": "711cd3e486aef487e3809e7cad05779ccc2d387af087ca640da7686b05e0f429"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "12-10",
+          "captured": true,
+          "reason": "the Definitions chapter; specific defined terms are tracked in defined_terms, not as a numbered cross-reference"
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no transit-zone rule file"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2025-08-14",
+      "scope_status": "followed: option 10/11 (transit-zone / select-mass-transit definitions)",
+      "notes": "Definitions. Snapshot last_amended 2025-08-14."
+    },
+    {
+      "section_id": "appendix-i",
+      "title": "APPENDIX I",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/appendix-i",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-appendix-i",
+        "content_digest_sha256": "6887b56d52508d839f60fda6d70be835962d443781b2e38bfd7e33ce108e76d1"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: transit-zone maps; a lot transit zone stays a recorded value (DB-194(b))"
+      ],
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-11-21",
+      "scope_status": "followed: option 10/11",
+      "notes": "Transit-zone maps (images). Snapshot last_amended 2024-11-21."
+    },
+    {
+      "section_id": "24-11",
+      "title": "Maximum Floor Area Ratio and Percentage of Lot Coverage (community facility)",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "cross_references_out": [
+        {
+          "section_id": "24-111",
+          "captured": false
+        }
+      ],
+      "handled_by": [
+        "NOT HANDLED: no community-facility FAR rule file"
+      ],
+      "coverage_status": "missing",
+      "last_amended": "2024-12-05",
+      "scope_status": "followed: option 6/7/11",
+      "notes": "Community-facility FAR. H6 opened the official page: R6B row FAR 2.00, corner coverage 80, interior/through 60; Last Amended 12/5/2024 (producer did not re-open). RECOMMEND capture."
+    },
+    {
+      "section_id": "24-111",
+      "title": "Maximum floor area ratio for certain community facility uses",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-111",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: no community-facility FAR rule file"
+      ],
+      "coverage_status": "missing",
+      "last_amended": null,
+      "scope_status": "followed: option 6/7/11",
+      "notes": "Max FAR for certain community-facility uses. Official page exists; not fetched. RECOMMEND capture."
+    },
+    {
+      "section_id": "23-154",
+      "title": "Universal Affordability Preference (primary page access-blocked; not captured)",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-154",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: UAP eligibility is a legal determination; FAR consequence flows through 23-22 2nd column"
+      ],
+      "coverage_status": "missing",
+      "last_amended": null,
+      "scope_status": "followed: option 2/11",
+      "notes": "Universal Affordability Preference. H6 got HTTP 403 on both portal hosts; relied on a web-search summary (effective 2024-12-05, medium/high-density outside MIH areas). RECOMMEND capture via the print/PDF node channel with a browser UA. Exact R6B wording not sure."
+    },
+    {
+      "section_id": "77-00",
+      "title": "Special Provisions for Zoning Lots Divided by District Boundaries (family; not captured)",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/article-vii/chapter-7/77-00",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: zoning-lots-divided-by-district-boundaries family not captured"
+      ],
+      "coverage_status": "missing",
+      "last_amended": null,
+      "scope_status": "conditional: option 8 only IF \"split lot\" means a lot divided by a district boundary",
+      "notes": "Article VII Ch 7 family (zoning lots divided by district boundaries). NOT fetched. The \"split lot\" meaning is an OPEN question (two buildings on one zoning lot vs a district-boundary split) - see options-sections.md. 36-64 (captured) is the C-district counterpart."
+    },
+    {
+      "section_id": "shared-housing-use-and-standards",
+      "title": "Shared-housing use/density/standards (section numbers unresolved)",
+      "zr_url": "https://zoningresolution.planning.nyc.gov/ (section number unresolved)",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "cross_references_out": [],
+      "handled_by": [
+        "NOT HANDLED: no shared-housing rule file or catalogue add-on"
+      ],
+      "coverage_status": "missing",
+      "last_amended": null,
+      "scope_status": "conditional: option 9/10/11",
+      "notes": "City-of-Yes shared-housing use/density/standards sections. No snapshot names them; exact ZR section numbers UNRESOLVED (not sure). 12-10 \"rooming unit\" (captured) + 23-52 extend DU regs to rooming units, but the dedicated shared-housing use/standards are not identified. RECOMMEND a research request to resolve the section numbers, then capture."
+    }
+  ],
+  "defined_terms": [
+    {
+      "term": "street wall",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-street-wall",
+        "content_digest_sha256": "0c6534be69d43c7fc941b164ff56281497638a50b23a43ccdd6f2ae48f3be70b"
+      },
+      "last_amended": "1961-12-15",
+      "used_by_sections": [
+        "23-431",
+        "35-631",
+        "23-432"
+      ]
+    },
+    {
+      "term": "wide street / narrow street",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10",
+        "content_digest_sha256": "23a9ccad31f1081fd15de94d796c22d540e7e8bcfe986e64c9ba302bf8fa4fde"
+      },
+      "last_amended": "2026-03-26",
+      "used_by_sections": [
+        "23-432",
+        "23-433",
+        "23-431",
+        "35-631",
+        "35-632"
+      ]
+    },
+    {
+      "term": "prevailing street wall frontage",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-prevailing-street-wall-frontage",
+        "content_digest_sha256": "1dbe67004a22ae8a31af1543d43a8310d82333ec1e254c4e0eb9d5d10d9c2354"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-431",
+        "35-631"
+      ]
+    },
+    {
+      "term": "aggregate width of street walls",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-aggregate-width-of-street-walls",
+        "content_digest_sha256": "8e762d877946555b57ee86470830be26f6843e02991de5cd718008025f42c3eb"
+      },
+      "last_amended": "2011-02-02",
+      "used_by_sections": [
+        "23-431",
+        "35-631"
+      ]
+    },
+    {
+      "term": "lot corner",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-lot-corner",
+        "content_digest_sha256": "86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58"
+      },
+      "last_amended": "1965-05-20",
+      "used_by_sections": [
+        "23-344",
+        "23-363"
+      ]
+    },
+    {
+      "term": "mixed building",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-mixed-building",
+        "content_digest_sha256": "6eb9a38952df680333bf54add4cd40a9428e338c1177e1dfe7ee35f35c9727e0"
+      },
+      "last_amended": "2011-02-02",
+      "used_by_sections": [
+        "35-01",
+        "35-31",
+        "35-631"
+      ]
+    },
+    {
+      "term": "floor area",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-floor-area",
+        "content_digest_sha256": "e14ecafcb5f27861fbfb73264f1d9000b14cac0a5679642dfa8e278d10c1d6f9"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-22",
+        "23-20",
+        "35-31"
+      ]
+    },
+    {
+      "term": "floor area ratio",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-floor-area-ratio",
+        "content_digest_sha256": "11e7a3dc9f57ba1718ec5edfebb7aeb0fa6e61698228f70a170c1649d354c8d4"
+      },
+      "last_amended": "2011-02-02",
+      "used_by_sections": [
+        "23-22",
+        "33-121",
+        "35-31"
+      ]
+    },
+    {
+      "term": "dwelling unit",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-dwelling-unit",
+        "content_digest_sha256": "2987569b30a2ee84dd18bdf52b92be13eb864eab07a0d13f0ec5afe56f94f1c1"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-52"
+      ]
+    },
+    {
+      "term": "multiple dwelling residence",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-multiple-dwelling-residence",
+        "content_digest_sha256": "4a3af3e31ec7863fc2749c3323903f8ede0f1b96d6cf04b046daed50668ca0a2"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-335",
+        "23-52"
+      ]
+    },
+    {
+      "term": "zoning lot",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-zoning-lot",
+        "content_digest_sha256": "0547550b1bcc8c5b8e5ff5fa3f429e139cd2a95bf4a7270a85fc4cd8cce9d53a"
+      },
+      "last_amended": "2011-02-02",
+      "used_by_sections": [
+        "23-344",
+        "36-64",
+        "77-00 (option 8)"
+      ]
+    },
+    {
+      "term": "lot coverage",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-lot-coverage",
+        "content_digest_sha256": "f5aabef6e32b83c013eb95142a44de3880b03781bd2ef88ddd15bd770d2df1cc"
+      },
+      "last_amended": "2016-03-22",
+      "used_by_sections": [
+        "23-362",
+        "23-363"
+      ]
+    },
+    {
+      "term": "residential equivalent",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-residential-equivalent",
+        "content_digest_sha256": "2332d3ea32b19349e1ed50e0300e1a7c709663d04494e3cbe991a6278401f75e"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "34-24",
+        "35-63"
+      ]
+    },
+    {
+      "term": "qualifying affordable housing",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-qualifying-affordable-housing",
+        "content_digest_sha256": "637b1b09ed49280c9ccfa3c2c32ddf27a10eedcbb96f57cb59e532dacb29d3ca"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-22",
+        "23-432"
+      ]
+    },
+    {
+      "term": "qualifying senior housing",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-qualifying-senior-housing",
+        "content_digest_sha256": "dba97ae9511f1f7624bb3c4f45a5b0d835c5dc5dae7e5ee062cb933e720a3947"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-22",
+        "23-432",
+        "23-52"
+      ]
+    },
+    {
+      "term": "qualifying residential site",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-qualifying-residential-site",
+        "content_digest_sha256": "310807a9d82fd3681b829430c548d66c6c40edb5c534db4dec5060db330a16a5"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-434",
+        "35-32"
+      ]
+    },
+    {
+      "term": "special density areas",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-special-density-areas",
+        "content_digest_sha256": "e8029ab3bcc628ef68098a954a357af86ae5e66040f8b53d9e142a35c7f401b6"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-52"
+      ]
+    },
+    {
+      "term": "large site",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-large-site",
+        "content_digest_sha256": "b066662c437f811714e053143092a14ff397bfc7a6fa31acbb37b0c38b575965"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "35-631"
+      ]
+    },
+    {
+      "term": "Transit Zone, Greater",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-transit-zone-greater",
+        "content_digest_sha256": "cff5de653d176344b1083f9ad330201ebcd67dcacd82eb655758bd4f133e19bb"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "25-22",
+        "25-23",
+        "66-11"
+      ]
+    },
+    {
+      "term": "Transit Zone, Outer",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-transit-zone-outer",
+        "content_digest_sha256": "692690b9e28d8f8109fb417494ee9264485cee084f54b7868daf98bda1110b6b"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "25-22"
+      ]
+    },
+    {
+      "term": "base plane",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-base-plane",
+        "content_digest_sha256": "f57cd9b62e591236908fe65163f7162605e03ca8604c5c4e6fe4e48a4f56eae2"
+      },
+      "last_amended": "2021-05-12",
+      "used_by_sections": [
+        "23-432"
+      ]
+    },
+    {
+      "term": "building",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-building",
+        "content_digest_sha256": "4eb81613913417c2737b593a7c9443ee45ba09f8905d095fc8ab700b86bcdacf"
+      },
+      "last_amended": "2011-02-02",
+      "used_by_sections": [
+        "23-432",
+        "23-431"
+      ]
+    },
+    {
+      "term": "story",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-story",
+        "content_digest_sha256": "def60901f65bc02fa1bfffe85e60a25222f42198b2db1cd85dbdd115c94cfe98"
+      },
+      "last_amended": "2011-02-02",
+      "used_by_sections": [
+        "23-432"
+      ]
+    },
+    {
+      "term": "curb level",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-curb-level",
+        "content_digest_sha256": "bd456f6c46c3bc77d50eeee5b0630f13e095657a8ff5f5936cced52dd402733e"
+      },
+      "last_amended": "1993-10-25",
+      "used_by_sections": [
+        "23-432"
+      ]
+    },
+    {
+      "term": "street line",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-street-line",
+        "content_digest_sha256": "20495a0325bef1576623272bd4c4628ce994edf9decd7da3214a7f3708b65a5f"
+      },
+      "last_amended": "1973-10-25",
+      "used_by_sections": [
+        "23-431",
+        "23-433"
+      ]
+    },
+    {
+      "term": "short dimension of a block",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-short-dimension-of-a-block",
+        "content_digest_sha256": "3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-344",
+        "23-363"
+      ]
+    },
+    {
+      "term": "rooming unit",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-rooming-unit",
+        "content_digest_sha256": "323c44cab3c59a3dd6232df3ad1a5719382df239f220104f98c15975d8d3fe6e"
+      },
+      "last_amended": "2024-12-05",
+      "used_by_sections": [
+        "23-52 (options 9/10)"
+      ]
+    },
+    {
+      "term": "residence or residential",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-residence-or-residential",
+        "content_digest_sha256": "fffb54b13ef4afde340b09d1f075474f2b096a5ed367fca78b3758d1fb7b593b"
+      },
+      "last_amended": "2016-03-22",
+      "used_by_sections": [
+        "23-335",
+        "34-232"
+      ]
+    },
+    {
+      "term": "Manhattan Core",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-manhattan-core",
+        "content_digest_sha256": "2c04132a96a435146c01f3c0a0578ea26520b10c2c5d1a894470ba8a47c59c56"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "35-631"
+      ]
+    },
+    {
+      "term": "yard / rear yard / rear yard equivalent",
+      "capture_status": {
+        "state": "captured",
+        "snapshot_id": "zr-12-10-yard-equivalent-rear",
+        "content_digest_sha256": "13950498ce5a59c313c2e844981cb8c0e63d86e49527cd5ee2c111a6d4eb181c"
+      },
+      "last_amended": "1961-12-15",
+      "used_by_sections": [
+        "23-342",
+        "23-343",
+        "23-344"
+      ]
+    },
+    {
+      "term": "Mandatory Inclusionary Housing areas",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "23-22"
+      ],
+      "notes": "FAR footnote - load-bearing for the qualifying-housing row"
+    },
+    {
+      "term": "UAP developments",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "23-22",
+        "23-154"
+      ],
+      "notes": "FAR footnote; options 2/11"
+    },
+    {
+      "term": "outer court",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "35-631"
+      ],
+      "notes": "street-wall recesses >10/15ft must sit in an outer court"
+    },
+    {
+      "term": "bulk",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "34-11",
+        "34-21",
+        "34-111",
+        "35-01"
+      ],
+      "notes": "defines which regulations transfer under the overlay"
+    },
+    {
+      "term": "Commercial District / commercial use / community facility use / residential use",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "34-11",
+        "34-232",
+        "35-01",
+        "23-52"
+      ],
+      "notes": "mixed vs residential-only pathway + DU-factor cases"
+    },
+    {
+      "term": "development / enlargement / conversion",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "23-52"
+      ],
+      "notes": "the no-DU-factor cases"
+    },
+    {
+      "term": "detached / semi-detached / attached / zero lot line building",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "23-335",
+        "23-342"
+      ],
+      "notes": "side-yard applicability + rear-yard depth turn on these"
+    },
+    {
+      "term": "required yard",
+      "capture_status": {
+        "state": "NOT CAPTURED"
+      },
+      "last_amended": null,
+      "used_by_sections": [
+        "23-342",
+        "23-343"
+      ],
+      "notes": "shallow-lot floor on the reduced yard"
+    }
+  ]
+}

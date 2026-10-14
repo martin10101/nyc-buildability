@@ -1,0 +1,287 @@
+{
+  "task_id": "M5-T175",
+  "title": "Report reads the results contract 1.5.0 rear-yard and constraint rows, input facts and constraint lines (page 1 and the What-constrains-the-design sheet), with a byte-identical fall-back to the 1.4.0 output; a hatched constraint overlay drawn only where established; NB-04 revision 3",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Make the report read the results contract 1.5.0 blocks, with an EXACT fall-back to the 1.4.0 output. (1) services/api/app/drawings/report/constraint_text.py reads rear_yard.checks and rear_yard.combined (state, way, text, conditions, zr_sections) and the permitted_envelope rows; when the document carries no 1.5.0 block it returns the current 1.4.0 output UNCHANGED, which for the rear yard is M5-T165's open-check wording (REAR_YARD_OPEN_CHECK, 23-344(b)/(c)(3) not yet checked). (2) page_site_context.py's 'What constrains the design?' (PDF page 3) rows read constraint_text.py: the hard-coded state dict at page_site_context.py:87 (:52 at plan base 2f546ec5) is removed; each row shows the row's own state/way/text; the 'see item N' span at page_site_context.py:81 becomes an <a href=\"#issue-<n>\"> link resolving to the page_assumptions id=\"issue-<n>\" anchors. (3) services/api/app/drawings/maps/close_frame_dimensions.py adds input_facts' other-basis lot dimensions (e.g. printed_tax_map frontage, administrative_record recorded area, gis outline area) BESIDE the map-outline dimensions, each labelled with its own basis, never averaged or merged. (4) a new services/api/app/drawings/maps/constraint_overlay.py draws geometry.constraint_lines (rear_yard_100ft_line, corner_area, street_wall_band, setback_line) on the compact site frame (shown both as the page-1 thumbnail and the page-type-2 close frame) ONLY when a line's state is 'established' (R017); lines are hatched and labelled with state and ZR section; the legend lists only what is drawn; not_established/not_known lines carry no geometry and draw nothing (R044); endpoints lie on the document's vertices within 0.01 ft. site_context_plan.py gains ONLY the thin hook that calls the overlay (near-zero SLOC; DB-250). NB-04 is revised to revision 3 to record close_frame_dimensions.py's new code identity; research_status stays 'conflicting_evidence' unchanged (G-13: only M5-T167 changes a research_status in W25). Output is byte-identical on every valid 1.4.0 fixture (S1).",
+  "business_reason": "D-094 R038/R061/R079/R037: the rear yard must be read from the engine's actual 1.5.0 result (fix the data path, not the wording), shown as the open check with its own conditions and ZR links, and drawn only where geometry and legal basis are established (R017); a legal fact is not marked unknown because a feature is unfinished (R061).",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/maps/constraint_overlay.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "services/api/tests/drawings/maps/test_constraint_overlay.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "project-control/reports/M5-T175-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T164",
+    "M5-T165",
+    "M5-T166"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/maps/constraint_overlay.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "services/api/tests/drawings/maps/test_constraint_overlay.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "project-control/reports/M5-T175-producer-report.md",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/kit/styles.py",
+    "services/api/tests/drawings/kit/test_style_table.py"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/zoning_lot_item.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/app/drawings/report/open_items.py",
+    "services/api/app/scenario/",
+    "packages/contracts/schemas/",
+    "services/api/app/_contract_schemas/",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_law_links.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "services/api/tests/api/test_report_read_context.py",
+    "services/api/tests/drawings/maps/test_site_context_plan.py",
+    "services/api/tests/drawings/maps/test_context_maps.py",
+    "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+    "services/api/tests/drawings/maps/test_snapshots.py",
+    "services/api/tests/drawings/maps/test_adapter.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "docs/reference-cases/",
+    "apps/web/",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "every valid 1.4.0 (and earlier) results fixture",
+      "when": "the report HTML and the map SVG are built",
+      "then": "both are byte-identical to the pre-task output (constraint_text.py falls back to the 1.4.0 text; the overlay draws nothing without constraint_lines; the #issue-<n> link affects only rows that carry a number, of which the fixtures have none)"
+    },
+    {
+      "id": "S2",
+      "given": "synthetic_rear_yard_constraints_contract_1_5_0.json (rear_yard.combined way=conditional)",
+      "when": "the report is built",
+      "then": "the page-1 uncertainty and the page-3 row show the combined row's own text, labelled Conditional, with its ZR section 23-344(b) linked; no number is printed. The appendix open item's text is built in readers.py (an NB-01 code path, W25's NB-01 owner is M5-T167): it moves to M5-T167 (scope correction of 2026-10-14)"
+    },
+    {
+      "id": "S3",
+      "given": "a 1.5.0 check or line in state not_known (23-344(c)(3) / corner_area in that fixture)",
+      "when": "the row and overlay are built",
+      "then": "the row shows no number, only its own reason/text; the not_known line carries and draws no geometry"
+    },
+    {
+      "id": "S4",
+      "given": "a constraint_line whose state is not_established or not_known",
+      "when": "the overlay is built",
+      "then": "it draws nothing for that line (geometry is drawn only for state=established, R017); the legend omits it"
+    },
+    {
+      "id": "S5",
+      "given": "the fixture's input_facts (printed_tax_map, administrative_record, gis) and the established rear_yard_100ft_line",
+      "when": "the close frame and overlay are built",
+      "then": "each dimension carries its own basis label beside the map-outline dimension, nothing is averaged or merged; the drawn part of an established line lies on the document's line (its own vertices, through the pure translation, within 0.01 ft) and inside or on the lot outline: a line that runs past the lot outline is drawn only within it (the clipped ends lie on the outline within 0.01 ft), and a line wholly outside the lot draws nothing (scope correction 2 of 2026-10-14)"
+    },
+    {
+      "id": "S6",
+      "given": "the hatched overlay labels",
+      "when": "the SVG is measured",
+      "then": "every label is at least 8.5 pt with no collisions; grey/illustrative copies are distinguishable by hatching"
+    },
+    {
+      "id": "S7",
+      "given": "a 1.5.0 document carrying permitted_envelope rows",
+      "when": "the constraints sheet is built",
+      "then": "the envelope rows render through the same reader, so M5-T170's later output needs no further report change"
+    },
+    {
+      "id": "S8",
+      "given": "the new tests",
+      "when": "they run",
+      "then": "they use M5-T164's committed 1.5.0 examples only; no new results fixture file is added; where an #issue-<n> link needs numbered open_items the test constructs the document in memory from those examples"
+    },
+    {
+      "id": "S9",
+      "given": "every internal href the report emits",
+      "when": "the HTML is read",
+      "then": "each #issue-<n> resolves to a page_assumptions id=\"issue-<n>\" anchor"
+    },
+    {
+      "id": "S10",
+      "given": "NB-04 after the edit",
+      "when": "python3 tools/research_record_check.py --check runs",
+      "then": "revision 3 records close_frame_dimensions.py's new code identity, research_status stays 'conflicting_evidence' unchanged, exit 0"
+    },
+    {
+      "id": "S11",
+      "given": "page_site_context.py and the maps files",
+      "when": "python tools/modularity_check.py --check runs",
+      "then": "it passes; site_context_plan.py stays at or below its recorded SLOC + material-growth limit (the overlay body lives in constraint_overlay.py; site_context_plan.py gains only the thin hook)"
+    },
+    {
+      "id": "S12",
+      "given": "a results document carrying geometry.constraint_lines and input_facts (built in memory from M5-T164's committed 1.5.0 examples and the benchmark's recorded map context)",
+      "when": "the whole report is built through the live path (build_report_html and the map embed)",
+      "then": "the page-1 frame and the close frame draw the established lines and the other-basis dimensions exactly as the unit tests of constraint_overlay.py and close_frame_dimensions.py expect; a document without them renders byte-identical (S1 still holds for every valid 1.4.0 fixture and the benchmark); nothing is drawn for a line that is not established"
+    },
+    {
+      "id": "S13",
+      "given": "a close frame that draws an established constraint line or area",
+      "when": "the legend is built",
+      "then": "the legend names each drawn constraint by its own kind (for example the rear-yard 100 ft line), never a reused kind that is not drawn; every legend row fits above the sources caption with nothing clipped or overlapping, as on a frame without the overlay"
+    },
+    {
+      "id": "S14",
+      "given": "the committed 1.5.0 rear-yard example, whose established rear-yard line runs from x 0 to x 182.5 while its lot outline ends near x 123",
+      "when": "the close frame is drawn",
+      "then": "the line is drawn only inside the lot outline and does not cross the street; the label and legend are unchanged"
+    },
+    {
+      "id": "S15",
+      "given": "an overlay that cannot be drawn (a label that cannot be placed at 8.5 pt, or a malformed established geometry)",
+      "when": "the report is built",
+      "then": "the site map is still drawn without the overlay, and a short visible note says a zoning line could not be drawn on this map and points to page 3; the whole map is never dropped because of the overlay"
+    },
+    {
+      "id": "S16",
+      "given": "a 1.5.0 combined rear-yard row whose text begins with its own title",
+      "when": "page 1 is built",
+      "then": "the uncertainty line does not repeat the title ('Rear yard Rear yard:'); a not_known 23-344(c)(3) check row on page 3 prints no number, only its own text (asserted directly)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "site_context_plan.py is 597 SLOC, 3 under the 600 WARN line (DB-250): even a thin hook can cross WARN/material-growth. Keep the hook minimal; the overlay drawing lives in constraint_overlay.py. modularity_check runs in the self-check.",
+    "The 1.4.0 fall-back must reproduce BOTH the short page-3 state column strings ('Not known', 'Not worked out yet', 'Not checked', 'by portion') AND the longer open-item effect texts exactly; conflating them would redden the forbidden benchmark tests (test_constraints_page.py, test_report_pages.py, test_location_sheet.py, test_report_read_context.py).",
+    "test_constraints_page.py caps the site-and-context section at <=199 visible words (test_s10, on the benchmark); the page-3 changes must not push the benchmark section over it, and that test may not be edited (M5-T166's).",
+    "The overlay's legend/labels on the 88 mm page-1 thumbnail must stay legible and must not alter the 'summary-figure' wrapper the benchmark pins; this is a visual-quality-reviewer check."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T02:53:13.796408+00:00",
+  "updated_at": "2026-10-14T18:59:18.874638+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R015",
+        "D-094-R017",
+        "D-094-R036",
+        "D-094-R037",
+        "D-094-R038",
+        "D-094-R044",
+        "D-094-R052",
+        "D-094-R053",
+        "D-094-R060",
+        "D-094-R061",
+        "D-094-R079"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T02:53:13.796686+00:00",
+  "path_notes": "Runs in W25 beside M5-T167 (no shared file; M5-T167 owns NB-01, NB-03, the rule file, README and RESEARCH_REQUESTS, and the benchmark set). Builders never start a server and never touch ports 3000/3001/8000; the report-print and width-capture e2e run in CI at the task head. constraint_text.py is NOT an NB-01 code path, so this task is not an NB-01 code-path editor (G-6 stays clean for M5-T167). Orchestrator decisions on the packet check's questions (2026-10-14): a line whose state is not_established or not_known draws nothing (the contract has no 'withheld' line state); the #issue-<n> link is tested on a document built in memory from the committed 1.5.0 examples (no new results fixture); the new overlay file renders document values only and is listed in no evidence record unless the G1 reviewer decides otherwise; no review-register entry (no rule or calculation changes).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings",
+    "python3 tools/research_record_check.py --check",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-14T02:53:16.998676+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed after M5-T165 and M5-T166 were accepted (it edits their files); the packet was checked against the code on 2026-10-14"
+    },
+    {
+      "at": "2026-10-14T03:39:50.898786+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "first round integrated as f66e8212 (cherry-pick of 826bf88a; 9 files inside the allowed paths; LF sha256 equal to the return for 8, the report has none): the 1.5.0 reader, page-3 rows, overlay and other-basis dimensions built and unit-tested; not yet wired into the live report"
+    },
+    {
+      "at": "2026-10-14T04:01:52.724270+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rework 1 (wiring into the live report; page 1's rear-yard uncertainty reads the 1.5.0 row): 1819 passed; 17 of 18 renders byte-identical (the 1.5.0 example changes as intended); the builder's commit integrated as c11b4e03 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T18:30:35.814698+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rework 2 (the visual review's three required corrections, the code review's advisories, S13-S16; reviewed by the same four at the builder commit 03c989ba: all PASS); the builder's commit integrated as 046c717d (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T18:38:29.940491+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T03:39:51+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction after the first build round (the builder's return, session 2026-10-14b): the overlay (maps/constraint_overlay.py) and the other-basis close-frame dimensions are built and unit-tested but not wired into the live report, because the wiring files were outside the packet; and the page-1 rear-yard uncertainty is composed in page_decision_summary.py, which the packet forbade while M5-T165 was in flight (M5-T165 is accepted since 02:52 UTC). Added to the allowed paths: maps/__init__.py, report/drawings_embed.py, report/page_location.py and report/page_decision_summary.py (no other task in flight lists them). S2 narrowed: the appendix open item's text is built in readers.py, an NB-01 code path whose W25 owner is M5-T167, so that part moves to M5-T167. S12 added: the live report path draws what the unit tests prove. No row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-14T17:37:05+00:00",
+      "actor": "orchestrator",
+      "change": "Second scope correction, after the four reviews pinned at 11c932b5d (session 2026-10-14c): G1 data contract PASS, G3 code PASS with two advisories, G4 QA PASS with two advisories, G3 visual PASS WITH THREE REQUIRED CORRECTIONS, all on the close frame when a constraint line is drawn (the benchmark draws none, so its pages are byte-identical): the legend grows a row and its last entry is clipped over the sources caption; the legend names the reused 'Setback line' kind for the drawn rear-yard line; the committed example's rear-yard line runs about 60 ft past its own lot outline and is drawn across the street. Decisions: the four constraint kinds get their own entries in the style table (kit/styles.py added to the allowed paths, with its test file, additive only: every existing output stays byte-identical), so the legend names what is drawn (S13); the legend fits (S13); an established line is drawn only inside the lot outline, wholly outside draws nothing (S5 reworded, S14); an overlay failure keeps the map without the overlay and a short note instead of dropping the whole map (the code review's advisories; S15); page 1 does not repeat the title, and a direct test for a not_known (c)(3) check row (the QA advisory; S16). The synthetic example's own inconsistencies (the line past its outline; input_facts unequal to its lot_area) are recorded for M5-T167 and the fixture's next edit (backlog). No row, gate, reviewer or dependency changes."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T18:59:18.874469+00:00"
+}

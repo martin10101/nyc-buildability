@@ -152,17 +152,28 @@ def embed_floor_stack(alternative: Mapping, *, env=None) -> Embedded:
 
 
 _MAP_UNAVAILABLE = "This map is not shown here."
+# When the 1.5.0 constraint overlay cannot be drawn (a label that cannot be placed
+# at 8.5 pt raises by design, or a malformed established geometry), the site map is
+# kept WITHOUT the overlay and carries this short note rather than dropping the whole
+# map (M5-T175 S15; code-review advisories 1 and 2). Any OTHER map failure keeps the
+# old behaviour (one short line).
+_OVERLAY_DROPPED_NOTE = "A zoning line could not be drawn on this map; page 3 lists it."
 
 
 def embed_map(
-    fn_name: str, map_context: Mapping, *, layers: tuple[str, ...], frame: str = "report", env=None
+    fn_name: str, map_context: Mapping, *, layers: tuple[str, ...], frame: str = "report", env=None,
+    constraint_lines=None, input_facts=None,
 ) -> Embedded:
     """A site-context, block or neighbourhood map, captioned in plain words with a
     short "Sources: ..." line (the layers it shows, each with its edit date once)
     and the drawing's own notes (:mod:`.map_caption`, rulings Y7/X6). ``frame`` is
     ``"report"`` (the full-size plan) or ``"summary"`` (the compact page-1 /
-    location-sheet thumbnail). An Unavailable, missing keyword or kit failure prints
-    one short line, never an error (S6)."""
+    location-sheet thumbnail). ``constraint_lines`` / ``input_facts`` (results
+    contract 1.5.0) are forwarded ONLY to the site-context map, which draws the
+    established overlay on its close frames (M5-T175); they are omitted from the call
+    otherwise, so the neighbourhood/block maps and every overlay-free render are
+    byte-identical (S1). An Unavailable, missing keyword or kit failure prints one
+    short line, never an error (S6)."""
     from app.drawings import maps
 
     from . import map_caption
@@ -170,16 +181,32 @@ def embed_map(
     fn = getattr(maps, fn_name, None)
     if fn is None or not _frame_supported(fn):
         return Embedded(short_line=_MAP_UNAVAILABLE)
+    overlay = {}
+    if constraint_lines is not None:
+        overlay["constraint_lines"] = constraint_lines
+    if input_facts is not None:
+        overlay["input_facts"] = input_facts
+    note: tuple[str, ...] = ()
     try:
-        result = fn(map_context, frame=frame, env=env)
+        result = fn(map_context, frame=frame, env=env, **overlay)
     except Exception:  # noqa: BLE001 - any kit failure means no map, never an error page
-        return Embedded(short_line=_MAP_UNAVAILABLE)
+        if not overlay:
+            return Embedded(short_line=_MAP_UNAVAILABLE)
+        # The failure may be the overlay's (a label that cannot be placed, or a
+        # malformed established geometry): keep the map by drawing it WITHOUT the
+        # overlay and carry one short note. If it fails without the overlay too, it is
+        # a genuine map failure - today's one short line (S15).
+        try:
+            result = fn(map_context, frame=frame, env=env)
+        except Exception:  # noqa: BLE001
+            return Embedded(short_line=_MAP_UNAVAILABLE)
+        note = (_OVERLAY_DROPPED_NOTE,)
     svg = getattr(result, "svg", None)
     if svg is None:
         reason = getattr(result, "reason", None)
         return Embedded(short_line=str(reason) if reason else _MAP_UNAVAILABLE)
     caption = map_caption.figure_caption(result, map_context, layers)
-    return Embedded(svg=size_svg_to_points(svg), caption=caption)
+    return Embedded(svg=size_svg_to_points(svg), caption=caption, notes=note)
 
 
 def allowance_bar_chart_svg(

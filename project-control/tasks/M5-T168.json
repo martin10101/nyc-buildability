@@ -1,0 +1,118 @@
+{
+  "task_id": "M5-T168",
+  "title": "Lint gap DB-240: ruff reads services/api/app/rules/coverage/render_coverage_matrix.py (the folder is skipped by ruff's git-ignore handling); its two findings fixed with no change in behaviour",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Make the api CI job's 'ruff check .' read services/api/app/rules/coverage/render_coverage_matrix.py. Today the root .gitignore ignores 'coverage/' (line 20) and re-includes '!services/api/app/rules/coverage/' (line 22); git honours the re-include but ruff skips the folder inside a git checkout. Change exactly ONE of .gitignore or services/api/pyproject.toml ([tool.ruff] table only), whichever the builder proves is the narrower fix, and fix the file's two findings (F841 unused 'column_order' at :70; E501 at :94) with no change in behaviour.",
+  "business_reason": "DB-240 (found by M5-T162's G3): a tracked production file escapes the lint gate, so CI green does not cover it (D-090 R639).",
+  "inputs": [
+    ".gitignore",
+    "services/api/pyproject.toml",
+    "services/api/app/rules/coverage/render_coverage_matrix.py",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "services/api/app/rules/coverage/render_coverage_matrix.py",
+    "project-control/reports/M5-T168-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    ".gitignore",
+    "services/api/pyproject.toml",
+    "services/api/app/rules/coverage/render_coverage_matrix.py",
+    "project-control/reports/M5-T168-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/rulesets/",
+    "services/api/tests/",
+    "apps/",
+    "packages/",
+    "docs/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the change",
+      "when": "cd services/api && python -m ruff check --show-files . runs",
+      "then": "the file is listed and ruff passes"
+    },
+    {
+      "id": "S2",
+      "given": "a git-archive copy of the task head (no .git)",
+      "when": "ruff check runs in services/api",
+      "then": "it passes"
+    },
+    {
+      "id": "S3",
+      "given": "the file's existing tests",
+      "when": "they run",
+      "then": "they are green, and the rendered coverage matrix output is byte-identical before and after"
+    },
+    {
+      "id": "S4",
+      "given": "a checkout with build artefacts present",
+      "when": "git status --ignored runs before and after",
+      "then": "the same files are ignored"
+    },
+    {
+      "id": "S5",
+      "given": "the diff",
+      "when": "it is read",
+      "then": "exactly one of .gitignore or services/api/pyproject.toml changed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Narrowing the ignore pattern could un-ignore tool output elsewhere; S4 guards it with artefacts present."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T19:45:12.076481+00:00",
+  "updated_at": "2026-10-11T21:21:09.506747+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-090",
+      "requirement_ids": [
+        "D-090-R639"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T19:45:12.076695+00:00",
+  "path_notes": "Filler task; runs when a builder slot is free.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check --show-files .",
+    "cd services/api && python -m pytest -q tests/rules"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T19:45:31.583848+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; builder dispatched when a builder slot is free"
+    },
+    {
+      "at": "2026-10-11T20:48:34.950599+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built; G3 and G4 PASS at 5a8228c1; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T21:21:09.506599+00:00"
+}

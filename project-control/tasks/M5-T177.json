@@ -1,0 +1,189 @@
+{
+  "task_id": "M5-T177",
+  "title": "Step P8: independent worked example of Building B's placement on lot 70 and its area allocation, written into the R6B reference cases as one case placement-building-b (two sealed readings; a value only where both agree on the same basis; placement on the printed-tax-map basis A1, the city-map outline a conflict check only; the area illustration on the one stated 60% share; the plate is zoning floor area per storey, no physical-plate conversion worked; NO rule file, engine, result, capture, register entry or human verdict)",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "A new R6B reference case placement-building-b built from the two step-P8 sealed readings (returns kept unchanged as provenance -17 and -18): the footprint, placement and area allocation of the three-storey Building B (20,150 sq ft zoning floor area, 10-ft floor-to-floor) on lot 70 of block 7334 under Z1 (lot 70 alone). A value or figure is recorded only where both readings give it on the same words and the same basis; every disagreement or unresolved basis stays NOT SETTLED with both readings named and the kind of gap stated. Placement is on the printed-tax-map basis (A1); the city-map (GIS) outline is used only as a conflict check (e.g. the south offset 33.34 tax map / 33.32 map outline, and the ~3.12 ft depth-basis conflict stay not known). The plate is recorded as zoning floor area per storey (20,150 / 3 = 6,716.67) with the footprint figure (about 100.76 x 66.66 = 6,716.66) reconciled within the readers' tolerance, every such figure labelled 'plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked'; the physical floor plate (gross-up, exclusions, wall thickness) is listed as not checked. The area allocation applies the one stated 60% apartment-area share to the proposed building's residential floor area (the same measure as the estimate): apartment area and other area per storey and in total, summing to the total. Every quantity names exactly one of the nine measurement bases; no figure mixes bases; no value anywhere comes from a program run. The case is wired into the reference-case support (CASE_IDS, REQUIRED_BASE_IDS, the checker, provenance digests) and the two consumer pins a new case moves are updated.",
+  "business_reason": "D-094 R043/R076/R082: the first complete scenario needs a footprint placed on the site, worked from source facts and law before the report/drawing and the engine consume it (M5-T172 later takes its expected values from this case, never from program output); R091/R092: the area illustration uses one stated share on a measure compatible with the estimate.",
+  "inputs": [
+    "docs/reference-cases/R6B/README.md",
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p7.py",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/placement-building-b.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-17.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-18.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+    "docs/reference-cases/R6B/README.md",
+    "project-control/reports/M5-T177-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T176"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/placement-building-b.md",
+    "docs/reference-cases/R6B/README.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-17.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-18.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+    "project-control/reports/M5-T177-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/",
+    "apps/",
+    "packages/",
+    "docs/research/",
+    "docs/zoning-rule-review/",
+    ".github/",
+    "tools/",
+    ".claude/",
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/reference-cases/R6B/cases/step-p4-worked.json",
+    "docs/reference-cases/R6B/cases/step-p3-worked.json",
+    "docs/reference-cases/R6B/cases/step-p1-worked.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/corner-reach.json",
+    "docs/reference-cases/R6B/cases/interior-lots.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "docs/reference-cases/R6B/cases/suffix.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the two step-P8 readings",
+      "when": "the provenance files are checked",
+      "then": "both are present unchanged below a short header, each says it was made from the sealed folder and ends with END-OF-REPORT, and their digests are pinned in r6b_reference_cases_step_p8; a changed reading is caught"
+    },
+    {
+      "id": "S2",
+      "given": "every row of placement-building-b.json",
+      "when": "the checker reads it",
+      "then": "each names both readings (-17 and -18) and quotes captured words found in the cited capture by its file name"
+    },
+    {
+      "id": "S3",
+      "given": "a point the two readings do not jointly settle (the south offset 33.34 tax map / 33.32 map outline, the ~3.12 ft depth-basis conflict, or any coverage bound the captured text does not fix)",
+      "when": "the row is written",
+      "then": "it stays NOT SETTLED with both readings named and the kind of gap stated; a value where they differ is refused"
+    },
+    {
+      "id": "S4",
+      "given": "the plate on the stated measure",
+      "when": "the row is built",
+      "then": "the plate is recorded as zoning floor area per storey (20,150 / 3 = 6,716.67) and the footprint figure (about 100.76 x 66.66 = 6,716.66) separately, each pinned to its exact recompute and reconciled within the readers' +/- 0.5 sq ft; each carries 'plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked'; the physical floor plate is listed as not checked; every quantity carries exactly one of the nine bases"
+    },
+    {
+      "id": "S5",
+      "given": "the area allocation at the one stated 60% apartment-area share",
+      "when": "it is built",
+      "then": "apartment area and other area are recorded per storey and in total on the proposed building's residential floor area (12,090 apartment / 8,060 other of 20,150; 4,030 / 2,686.67 per storey), apartment + other equals the total, and every arithmetic step recomputes exactly"
+    },
+    {
+      "id": "S6",
+      "given": "placement on the printed-tax-map basis (A1)",
+      "when": "the real-lot placement rows are written",
+      "then": "the city-map outline is used only as a conflict check; no row records a placement or coverage conclusion that omits its basis or the Z1 zoning-lot condition"
+    },
+    {
+      "id": "S7",
+      "given": "the reference-case suite and renderer",
+      "when": "they run",
+      "then": "placement-building-b is in CASE_IDS (lib and the pinned tuple at test_r6b_reference_cases.py), REQUIRED_BASE_IDS has its entry, README lists it, the rendered page is byte-identical, the step-p7 PRIOR_ROWS_DIGEST is updated, the other cases' rows stay byte-stable, program_result_errors is empty, and every support .py stays under 600 SLOC"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "rules-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The readings may differ on the placement basis or the offsets; then those rows stay NOT SETTLED and any later report/drawing shows not known.",
+    "20,150/3 = 6,716.67 but 100.76 x 66.66 = 6,716.66: the +/- 0.5 is the readers' agreement tolerance, not an engine tolerance - the reference-case engine compares each step exactly, so the plate and the footprint are separate rows/quantities each pinned to its own exact recompute; do not force one figure.",
+    "r6b_reference_cases_check.py is at 580 SLOC against the 600-SLOC focus cap; the step-P8 wiring must stay thin (all new guards live in r6b_reference_cases_step_p8.py).",
+    "The sealed folder lives on the private build server: the case records its inputs by name and digest, never third-party text in bulk."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T02:28:31.276385+00:00",
+  "updated_at": "2026-10-14T03:37:23.938001+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R043",
+        "D-094-R044",
+        "D-094-R076",
+        "D-094-R082",
+        "D-094-R091",
+        "D-094-R092"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T02:28:31.276570+00:00",
+  "path_notes": "Engine-free: the support code imports nothing from app. The producer receives the two readings as files and copies them unchanged into provenance -17/-18. Author the case with existing render constructs (facts, citations, arithmetic steps, quantities, not_known); do NOT reuse the step-p6 numbers_block differ-figure, whose 'reading 13 / reading 14' labels are hardcoded in render.py:238-240 and would mislabel step-P8. Keep render.py byte-identical unless a new construct is genuinely needed. Builders never start a server and never touch ports 3000/3001/8000. Does not touch the benchmark set (G-5) or NB-01 code paths (G-6); must be the sole reference-case task in flight while open.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "cd services/api && python tests/rules/reference_cases/r6b_reference_cases_render.py --check",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-14T02:28:34.544991+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the two sealed readings are saved and audited; the builder writes the case from them"
+    },
+    {
+      "at": "2026-10-14T03:02:43.244921+00:00",
+      "agent": "rules-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "the case placement-building-b written from the two sealed readings (11 rows); the builder's commit integrated as e3b0d8fa (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T03:14:50.767044+00:00",
+      "agent": "rules-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T03:37:23.937814+00:00"
+}

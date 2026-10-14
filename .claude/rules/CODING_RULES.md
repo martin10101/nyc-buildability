@@ -52,3 +52,7 @@
   `packages/contracts/fixtures/valid/<schema>/` fixture changes (snapshot per fixture; #387 F1).
 - DO run `python .github/scripts/validate_contracts.py` + `pytest .github/scripts/tests` before pushing a
   contract schema: it fails closed on any keyword outside KNOWN_KEYWORDS (M5-T128: `minProperties`).
+- DON'T write the text `result_way` anywhere under services/api/app outside the guard's permitted list, docstrings
+  included: test_result_ways.py scans file TEXT (a page-1 docstring reddened api + exact-production-install, wave 24).
+- DO put every test that pins a tuple or list the task extends (e.g. test_r6b_reference_cases.py pins CASE_IDS
+  literally) into the packet's allowed paths at the contract seam; a missed pin costs a scope correction (M5-T176).

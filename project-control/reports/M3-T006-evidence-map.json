@@ -1,0 +1,39 @@
+{
+ "task_id": "M3-T006",
+ "material_commits": [
+  "71a03977 (producer (cherry-pick of 737d9cd5): the zoning-law library, first pass: seven documents under docs/zoning-law-library/ built from four read-only research returns and the producer's own checks)",
+  "12663e29 (producer rework 1 (cherry-pick of b43d3c53) per G1 F1 and A1-A3: every cross-reference of the captured sections recorded; 34-113 not evaluated; BSA freshness date; BB 2014-025 rescission reason)"
+ ],
+ "claim_seam_head": "aac892fcde5dc035848af9bf99f7cea0bc8edec2",
+ "files_changed": [
+  "docs/zoning-law-library/README.md",
+  "docs/zoning-law-library/benchmark-r6b-sections.json",
+  "docs/zoning-law-library/coverage.md",
+  "docs/zoning-law-library/cross-reference-closure.md",
+  "docs/zoning-law-library/options-sections.md",
+  "docs/zoning-law-library/pitfalls.md",
+  "docs/zoning-law-library/research-log.md",
+  "project-control/reports/M3-T006-producer-report.md"
+ ],
+ "what_did_not_change": "No snapshot, evidence record, registry, coverage matrix, reference case, review register, service, web or contract file; NB-06 is not edited (its search S3 discrepancy is recorded in research-log.md for the NB-06 owner).",
+ "known_limits": [
+  "First pass bounded to the R6B + C2-2 benchmark frontier and the eleven options; options-frontier sections are catalogued but 58 of their onward references are recorded as not followed, each with a reason.",
+  "Five sections are not captured (24-11, 24-111, 23-154, 77-00, the shared-housing sections) and eight 12-10 terms; capture is recommended, not made here.",
+  "Pitfalls rest on official index pages: bulletin PDFs and the DCP Handbook could not be read (non-browser access blocked, recorded, not evaded); every BSA case and DOB determination is project-specific.",
+  "The library is an unreviewed draft discovery aid (ADR-007); nothing in it is a finding of the program."
+ ],
+ "checks_at_material_head": [
+  "producer: JSON loads; capture-claim script PASS (73 sections, 38 terms); dropped-reference audit 0 after rework 1; lane coverage PASS; diff limited to docs/zoning-law-library/* and the producer report",
+  "orchestrator: LF sha256 of every file equal to the producer's return at both cherry-picks; own capture-claim check 0 mismatches",
+  "G1 data-contract-verifier: FAIL r1 at 71a03977 (F1 dropped references) then PASS at 12663e29 (zero dropped references on its own re-extraction; A1-A3 resolved; S1 and S7 hold)",
+  "CI run 38175427439 at cb95092b (descendant of the reviewed head 12663e29; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R102": [
+   "The zoning-law library is started as its own documents-only task beside the report lane, sharing no file with it: docs/zoning-law-library/ holds the R6B section catalog (73 sections; every cross-reference of the captured sections recorded, 104 followed, 58 not followed with a reason), the handled / not-handled coverage (6 handled, 67 not handled), the sections the eleven options need, and a pitfall checklist from DOB Buildings Bulletins (current and rescinded), DOB determinations (project-specific), BSA resolutions and DCP guidance, with a research log."
+  ],
+  "D-094-R104": [
+   "Built with read-only research helpers beside the builders: four research helpers (cross-reference closure, DOB guidance, BSA and DCP guidance, sections per option) wrote nothing in the repository; at most 3 builders ran at once and every helper beyond 5 only read and researched (session notes 2026-10-11d)."
+  ]
+ }
+}

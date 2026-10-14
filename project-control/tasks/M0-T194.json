@@ -1,0 +1,127 @@
+{
+  "task_id": "M0-T194",
+  "title": "D-094 visual-proof baseline: the 'before' set of the report and the website frozen at the wave-24 contract head (product-identical to main b4704161), with metrics and a re-runnable procedure",
+  "task_type": "governance",
+  "milestone_id": "M0",
+  "objective": "Freeze the 'before' set for the D-094 redesign before any wave-24 product change is integrated: (1) the report PDF printed from the preview at main b4704161 (product-identical to the contract head), its nine pages rendered at 110 dpi in colour and in grey; (2) the website's Results view at 320, 390, 768, 1,024, 1,440 and 1,920 px (a viewport shot, a full-length shot and one shot per card) and the report preview; (3) the metrics: PDF words per page and in total (pdftotext, no -layout), pdfinfo -url link lines and their pages, internal issue/item link count, repeated sentences of 8+ words (distinct and printings), and the report HTML's visible words per section. The images stay outside git in the session folder; the manifest project-control/reports/D-094-visual-proof-before.md records the sha256 of every image and file, the metrics and the exact commands (scripts capture_before.mjs and metrics_before.py, kept beside the images), so the run can be repeated.",
+  "business_reason": "D-094 R083 requires before-and-after screenshots of every changed page and view; R072/R077 measure the text budget and repeats against the before set. Without a frozen, re-runnable before set no later page change can be proven.",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11c/print-main23/report.pdf",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11d/capture_before.mjs",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-11d/metrics_before.py"
+  ],
+  "outputs": [
+    "project-control/reports/D-094-visual-proof-before.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "project-control/reports/D-094-visual-proof-before.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    "docs/",
+    ".github/",
+    ".claude/",
+    "CLAUDE.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the report printed from the preview at main b4704161",
+      "when": "the pages are rendered",
+      "then": "all nine pages exist at 110 dpi in colour and in grey, each with its sha256 in the manifest"
+    },
+    {
+      "id": "S2",
+      "given": "the running preview at main",
+      "when": "the website is captured",
+      "then": "the Results view at 320, 390, 768, 1,024, 1,440 and 1,920 px (viewport, full length, each card) and the report preview exist, with sha256s"
+    },
+    {
+      "id": "S3",
+      "given": "the printed PDF and the report HTML",
+      "when": "the metrics script runs",
+      "then": "the manifest records words per page and total (expected 364/193/291/338/245/719/296/346/201 = 2,993), the pdfinfo -url line count and pages (25 lines, 24 links on page 8), the internal issue/item link count (0), repeats (distinct and printings) and the HTML visible words per section"
+    },
+    {
+      "id": "S4",
+      "given": "the same PDF and HTML",
+      "when": "the metrics script runs a second time",
+      "then": "the metrics are identical"
+    },
+    {
+      "id": "S5",
+      "given": "the owner's preview running before the capture",
+      "when": "the capture ends",
+      "then": "the preview is running at main again and its status is recorded"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3"
+  ],
+  "producer_agent": "orchestrator",
+  "reviewer_agents": [
+    "visual-quality-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The website captures need the running preview; builders never touch ports 3000/3001/8000, so the orchestrator captures.",
+    "The plan's repeat figure 7 counts printings; the script records distinct sentences (3) and printings (7) so H2 compares like with like."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T19:45:03.229747+00:00",
+  "updated_at": "2026-10-11T20:43:08.728440+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R056",
+        "D-094-R057",
+        "D-094-R069",
+        "D-094-R072",
+        "D-094-R077",
+        "D-094-R083"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T19:45:03.230015+00:00",
+  "path_notes": "Orchestrator-produced evidence task (M0-T189/M0-T191 precedent, task type governance per the round-3 critic P3). Images outside git (public repository; size).",
+  "documented_test_commands": [
+    "node /root/project/lanes-runtime/owner-docs/session-2026-10-11d/capture_before.mjs",
+    "python3 /root/project/lanes-runtime/owner-docs/session-2026-10-11d/metrics_before.py <report.pdf> <report.html>"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T19:45:30.388005+00:00",
+      "agent": "orchestrator",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the orchestrator captures the before set"
+    },
+    {
+      "at": "2026-10-11T19:57:38.048578+00:00",
+      "agent": "orchestrator",
+      "percent": 60,
+      "status": "claimed",
+      "message": "before set captured and pinned (manifest committed); G3 review next"
+    },
+    {
+      "at": "2026-10-11T20:12:53.556983+00:00",
+      "agent": "orchestrator",
+      "percent": 90,
+      "status": "claimed",
+      "message": "G3 PASS (+ delta attestation at 2098b043); review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-11T20:43:08.728169+00:00"
+}

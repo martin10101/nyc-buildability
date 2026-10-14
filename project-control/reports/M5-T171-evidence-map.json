@@ -1,0 +1,58 @@
+{
+ "task_id": "M5-T171",
+ "material_commits": [
+  "2f69ee16 (builder (cherry-pick of 71c65621): the additive block on the Results window (ApartmentFigures.tsx, lib/architect/apartment-figures.ts, three-answers.css, the hook in ThreeAnswersPanel.tsx), its unit tests, the six-width browser test extended for the block, the producer report)"
+ ],
+ "claim_seam_head": "654ea3fade56e075f7bb447eb2f87d0b88fb38a4",
+ "files_changed": [
+  "apps/web/e2e/results-layout.flag-on.spec.ts",
+  "apps/web/src/components/architect/answers/ApartmentFigures.tsx",
+  "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+  "apps/web/src/components/architect/answers/__tests__/apartment-figures.test.tsx",
+  "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+  "apps/web/src/components/architect/answers/three-answers.css",
+  "apps/web/src/lib/architect/apartment-figures.ts",
+  "project-control/reports/M5-T171-producer-report.md"
+ ],
+ "what_did_not_change": "The allowance card and its figure, three-answers.ts, the global styles, the tokens, every forbidden test (the journey test, the results-contract checks, results.flag-on.spec.ts) byte-identical to the claim head; no package added; no server code; nothing recalculated in the browser.",
+ "known_limits": [
+  "The block sits after the three answer cards, in report page 1's order; at every width it starts below the first screen (1,150 to 1,580 px down, the orchestrator's pictures), so an architect scrolls to reach it; on the desktop Results window the ceiling and the estimate stack in the narrow answer column. Raised by the walkthrough reviewer as advisory; recorded for the later website task (M5-T174), backlog DB-261.",
+  "The zoning-lot concern is the document's full condition sentence, not page 1's compact index-entry sentence (same facts; advisory); the estimate is not linked to its calculation as on page 1 (the Results window has no scenario sheet; advisory). Both in DB-261.",
+  "Every committed results document is a draft: with the review switch off the block shows only 'Not available — the rules for this answer are not reviewed yet', as the answer cards do; the figures show on the preview with the switch on. The PDF prints the figures under its standing label (a difference that existed before this task).",
+  "The ten-second test with a real person is not run (it needs a person)."
+ ],
+ "checks_at_material_head": [
+  "builder: npm ci 0 (lockfile only); lint 0; typecheck 0; vitest answers + lib/architect 591 passed; three mutation proofs fail as expected",
+  "orchestrator (G2) after integration at 2f69ee16: 8 files, all inside the 9 allowed paths; LF sha256 equal to the builder's return; lane coverage PASS; the owner's preview rebuilt from the branch at 97b2a492 and the block photographed at 320, 390, 768, 1024, 1440 and 1920 px (no horizontal overflow at any width; its text equal to report page 1's figures, chips, distinction line and lot-area line)",
+  "G3 walkthrough (human-journey-reviewer) PASS at 2f69ee16 (parity with page 1 re-derived from both code paths; every state covered by its own test; advisories: below the first screen, estimate not linked, full zoning-lot sentence, the 29 shown twice on the screen)",
+  "G3 visual-quality-reviewer PASS with one required correction at 2f69ee16 (no picture showed the block), then its delta PASS on the twelve pictures taken from the preview: no clipped text, overlap or horizontal overflow at the six widths; figures, chips, distinction line and lot-area line equal page 1's; advisories: below the first screen, the pair stacks in the narrow desktop column",
+  "G4 qa-engineer PASS at 2f69ee16 (S1-S8 reproduced in its own copy: lint 0, typecheck 0, 591 passed, whole web unit suite 2701 of 2704 with three time-outs in two files outside the task that pass alone; forbidden paths byte-identical; four own probes caught; CI web and web-e2e read green)",
+  "CI run 38507460363 at 79e2bfb9 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R035": [
+   "The website never promotes the conditional 29 to a confirmed entitlement: the block shows 'Legal ceiling 29' with the chip Conditional read from the value's own state (never settled), a withheld limit shows the document's reason and no figure, and the zoning-lot condition stays beside it."
+  ],
+  "D-094-R041": [
+   "Page 1's decision summary and the website's Results window now share one structure for this content: the same ceiling and estimate pair, the same distinction line read from the shared tokens, the same lot-area line and the zoning-lot concern, read from the same results document. The remaining sections' parity is M5-T174's."
+  ],
+  "D-094-R051": [
+   "Result first, qualification next: the block gives the two figures with their chips, then the distinction line, then the lot-area assumption and the zoning-lot concern; the website's existing details stay behind their disclosures."
+  ],
+  "D-094-R057": [
+   "Checked at representative desktop and mobile sizes: the extended browser test passes at 320, 390, 768, 1024, 1440 and 1920 px in CI, and the orchestrator's pictures at the same six widths were looked at by the visual reviewer; the figures, labels and caveats equal report page 1's (the zoning-lot sentence is the fuller form of the same facts)."
+  ],
+  "D-094-R071": [
+   "The 29 is never shown as a number of units that can be built: its chip is Conditional, the distinction line says neither figure is a demonstrated layout, and no forbidden word (buildable, achievable, can be built and the rest) appears in the block for any committed document (a test scans them all)."
+  ],
+  "D-094-R078": [
+   "The conditional ceiling (29) and the unvalidated estimate (17-22) are shown together on the website with the one-line distinction, as on report page 1 (M5-T165); neither is presented as a demonstrated layout."
+  ],
+  "D-094-R081": [
+   "The website's first page of results carries the same decision content as report page 1: the main answer with its assumption line, the ceiling beside the estimate with the distinction, the lot-area assumption and the zoning-lot uncertainty. Its position below the first screen is recorded for M5-T174 (DB-261)."
+  ],
+  "D-094-R083": [
+   "The changed website view was rendered from the branch and photographed at six widths (after-97b2a492/block-*.png on the build server) and looked at by the visual reviewer against the design contract; the before pictures are the frozen before set (M0-T194). The before-and-after set of the whole pass is M0-T195's."
+  ]
+ }
+}

@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 941,
  "producer": "orchestrator",
- "updated_at": "2026-10-11T09:31:14+00:00",
+ "updated_at": "2026-10-11T19:45:12+00:00",
  "requirements": [
   {
    "id": "D-090-R001",
@@ -21846,7 +21846,9 @@
    "applicability": {
     "task_ids": [
      "D-090-BOOTSTRAP",
-     "M5-T161"
+     "M5-T161",
+     "M0-T193",
+     "M5-T168"
     ],
     "task_types": [],
     "milestones": [],

@@ -1,0 +1,51 @@
+{
+ "task_id": "M5-T176",
+ "material_commits": [
+  "0b88d306 (producer (cherry-pick of 690eee1b): the step-P7 case short-block-rear-yard (35 rows) with its rendered page, provenance 15 and 16 (the two readings unchanged below a short header), README, the step-P7 support module and tests, the lib/check/render additions)",
+  "d6d2f3b8 ([ORCH-CORRECTED] under the scope correction 89c63124: test_r6b_reference_cases.py's pinned CASE_IDS tuple gains 'short-block-rear-yard' (one line))",
+  "ccb25c2a (producer rework 1 (cherry-pick of 826f7978) per G3 A1/A2: the R6B-suffix condition and the reading-1-only cross-street detail worded exactly as the readings give them; four rows' prose, the rendered page, README and the report)"
+ ],
+ "claim_seam_head": "8f713e6a6312a1cdcb6ae5eb941c2bd4e3a887db",
+ "files_changed": [
+  "docs/reference-cases/R6B/README.md",
+  "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-15.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-16.md",
+  "docs/reference-cases/R6B/short-block-rear-yard.md",
+  "project-control/reports/M5-T176-producer-report.md",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p7.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py"
+ ],
+ "what_did_not_change": "No rule file, engine, result, capture, evidence record (NB-03 and NB-04 read only), review register entry or human verdict; every existing case's rows and provenance 1-14 byte-identical (test_prior_cases_rows_are_byte_stable); existing pages re-render byte-identical.",
+ "known_limits": [
+  "Two AI readings that agree are not proof and not a professional review (ADR-007); every reading of law in the case is a draft.",
+  "The real lot's rear-yard rows stay NOT SETTLED: the measurement basis of 'the dimension between any two streets' (tax-map ~200 ft and lot-outline ~203 ft below 230; centreline ~260-261 ft above), whether lots 70 and 1 are one zoning lot, the neighbouring zoning lots' lot-line kinds where 23-344(c) bites, and the priority between (b) and (c) on the beyond-100-ft strip.",
+  "Reading 2 holds the (c)(3) branch subject to whether R6B falls within 'R6 through R12' (a district-suffix text neither reader had); the case records the branch rule with that condition named.",
+  "The not-settled guards list row ids by hand, as the step-P3 to P6 guards do; a new row added later must be added to the lists (G4 advisory)."
+ ],
+ "checks_at_material_head": [
+  "producer: ruff 0; reference cases 136 passed + 1 failure (the CASE_IDS pin outside its paths, routed to the orchestrator); step-P7 tests 19 passed; render check 0; modularity 0; lane paths 0; four mutation proofs fail as expected",
+  "orchestrator after integration (seam 7, d6d2f3b8): LF sha256 equal to the producer's files; ruff 0; tests/rules/reference_cases + lot reach + bridge overlay 137 passed; render check PASSED; modularity 0; lane coverage PASS; research record check PASS; validator exit 0",
+  "G4 qa-engineer PASS at d6d2f3b8 (S1-S8 reproduced; six own mutation probes flip; rule of agreement checked row by row against both readings: no value row rests on one reading, every NOT SETTLED row genuine)",
+  "G3 data-contract-verifier PASS at d6d2f3b8 (own reading of the captures first; block figures recomputed: tax-map 200.01, lot outline 203.129, centreline 260.02 ft; 103 quotes exact; rule of agreement holds; advisories A1/A2 fixed in rework 1), delta PASS at ccb25c2a; G4 qa-engineer delta PASS at ccb25c2a (only four rows' prose changed; 137 passed; render PASS)",
+  "CI run 38184422105 at ccb25c2a (the rework-1 head): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R036": [
+   "ZR 23-344(b) and (c)(3) are evaluated against the actual zoning-lot and boundary evidence by two independent readings from a sealed folder (the block-7334 lot outlines, DCM centrelines, PLUTO rows, printed tax-map labels), recorded as the reference case short-block-rear-yard: the real lot under Z1 (lot 70 alone) and Z2 (lots 70 and 1) on each measurement basis, with the bounding streets and widths, the reach, and the strip beyond 100 ft of 215 Place; the engine (M5-T167) takes its expected values from this case and the law."
+  ],
+  "D-094-R037": [
+   "No row records an unconditional 'no rear yard': the real-lot rear-yard rows are NOT SETTLED and name their conditions (zoning lot, measurement basis, the neighbour's lot-line kind) and quote ZR 23-344; the case names 23-344(b) and (c) beside the corner test and never treats the corner test as the only exception; a guard refuses an unconditional 'no rear yard' in a real-lot row (G4 probe)."
+  ],
+  "D-094-R044": [
+   "No geometry is invented: every figure in the case (block separations, frontages, reach) comes from the sealed facts as each reader measured it, with exactly one of the nine bases; where the two readings' figures differ (the centreline separation 260.02 vs 261.0 ft) both are kept and the row is NOT SETTLED."
+  ],
+  "D-094-R079": [
+   "The explicit applicability check of ZR 23-344(b) is worked independently before the engine changes: rows for what is measured, whether 'less than 230 feet' is strict, how 'within 100 feet' is measured, what can bound a block, the ten made-up boundary cases and the real lot; the exemption is not presented as established (the real lot's rows stay NOT SETTLED, the measurement basis being unresolved law)."
+  ]
+ }
+}

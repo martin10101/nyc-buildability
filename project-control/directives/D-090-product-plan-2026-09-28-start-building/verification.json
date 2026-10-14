@@ -7707,6 +7707,61 @@
     }
    ],
    "verified_at": "2026-10-11T10:33:52+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M0-T193",
+   "applicable_requirement_ids": [
+    "D-090-R639"
+   ],
+   "producer": "orchestrator",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738",
+   "reviewed_manifest_sha256": "d590469e58a343f0391a34d6bda4371d4e1cd7b7ddce62092b4e26d67f623a03",
+   "requirements": [
+    {
+     "id": "D-090-R639",
+     "state": "PASS",
+     "evidence": [
+      "Recorded in .claude/rules/PROGRAM_KNOWLEDGE.md (diff): new pointer \"Read CI green at the EXACT head before every gate, accept, merge and handoff (D-090 R639)\".",
+      "This task's own gates were recorded after CI read green at the submit head 4e92b20c: gh run 38171255530 headSha=4e92b20c conclusion=success.",
+      "The 72fe33cf push CI run (38171847167) is CANCELLED because a disjoint peer push (M5-T168) superseded it; that is the orchestrator's accept-time concern, not a material regression (files byte-stable 4e92b20c..72fe33cf).",
+      "Open: the orchestrator must re-read CI green at the exact accept/merge head before recording acceptance.",
+      "Verifier's carry-forward condition met at 209498e1: the task's allowed-path files are identical to those verified at 72fe33cf (content identity d590469e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3 PASS at that content identity (G2 orchestrator self-check; G3 product-design-director and code-reviewer). DCV report: project-control/reports/M0-T193-DCV.md."
+     ],
+     "reviewed_sha": "209498e1ef21590fa6a3641fc84f01b2a5a71738"
+    }
+   ],
+   "verified_at": "2026-10-11T20:43:09+00:00"
+  },
+  {
+   "directive_id": "D-090",
+   "task_id": "M5-T168",
+   "applicable_requirement_ids": [
+    "D-090-R639"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "cb95092b6a5d55ef98faa704950685deb43a3d7d",
+   "reviewed_manifest_sha256": "8b5dae76ed4bf149cbee3023988813a2b653f8be66dbfabd0650c0fb29d0b567",
+   "requirements": [
+    {
+     "id": "D-090-R639",
+     "state": "PASS",
+     "evidence": [
+      "Source is faithful: source-064-amendment.md owner message 125 says \"All required full-suite and security checks must pass in CI for the exact code being accepted or merged; later code changes must receive the relevant checks again\"; requirements.json quotes this exactly and adds the orchestrator's reading (CI on the exact head read before any gate/accept/merge).",
+      "This task's share is met at the gate head: G2/G3/G4 carry reviewed_sha 6dde134598a4 and CI there is green \u2014 run 38174034042 (CI, 21/21 jobs incl. \"api (ruff + pytest)\") updated 21:00:24Z, run 38174034044 (secret-scan) 20:53:16Z, run 38174034115 (context-budget) 20:52:51Z \u2014 all completed before the gates were recorded at 21:03:54-55Z, so CI was read first.",
+      "The reviews were performed at material head 5a8228c1 (CI run 38172084908 = 21/21 success), and the three allowed-path files are blob-identical at 5a8228c1, 6dde1345 and the frozen head, so the reviewed content identity carries to the gate head unchanged.",
+      "The task's content advances R639: I reproduced S1 at the frozen head (ruff 0.13.0, the CI-pinned version: `ruff check --show-files .` lists render_coverage_matrix.py, `ruff check .` = \"All checks passed!\" exit 0), and the mutation (respect-gitignore=true) prunes the file (count 0), so the DB-240 gap where a tracked production .py escaped the lint gate is closed and CI green now genuinely covers it; output is byte-identical (committed COVERAGE_MATRIX.md sha256 42120957dc6b\u2026 unchanged across base/material/frozen heads; F841 var confirmed unused, E501 fixed by adjacent-literal wrap).",
+      "What stays open: the orchestrator's acceptance and any merge of M5-T168 must still read CI green at that exact accept/merge head (R639's forward clause); the task is awaiting_gate and not on main, so that future read is the orchestrator's, not mine, to perform.",
+      "Verifier's carry-forward condition met at cb95092b: the task's allowed-path files are identical to those verified at 13221aba (content identity 8b5dae76), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (10 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T168-DCV.md."
+     ],
+     "reviewed_sha": "cb95092b6a5d55ef98faa704950685deb43a3d7d"
+    }
+   ],
+   "verified_at": "2026-10-11T21:21:08+00:00"
   }
  ]
 }

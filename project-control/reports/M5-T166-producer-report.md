@@ -1,0 +1,370 @@
+# M5-T166 producer report — one locator and a dimensioned constraints close frame
+
+Producer: geospatial-engineer. Worktree: `/root/project/nyc-buildability/.claude/worktrees/agent-a9abc376695a5d1e2`.
+Base: `d248293a0e8b77ea795cca73626443970e3a3506` (branch head of `task/wave24-report-v3`;
+moved on from the claim head `adc36fc7` with commits that touch none of this task's files).
+
+This task was continued from an earlier builder that was stopped at a session handoff. Its
+unfinished work (`M5-T166-builder-unfinished.patch`, base `adc36fc7`, 10 files) was applied
+cleanly at `d248293a`, reviewed against the packet and contract, and completed here. Its last
+note (NB-04 revision 2 not yet written, so the research-record check would fail once
+`close_frame_dimensions.py` was added to `code_paths`) was the main open item; it is resolved.
+
+## What changed and why
+
+- **Page 2 = the neighbourhood locator only** (`page_location.py`). The block close-up is still
+  built in `resolve()` (restorable) but no longer printed; `block_map.py` and its tests are
+  untouched (D-094 R014/R074).
+- **Page 3 = a large dimensioned constraints close frame** (`site_context_plan.py` `frame="close"`;
+  `context_scene.py` `compose_context` close mode + `CLOSE_PLAN`/furniture constants;
+  `close_frame_dimensions.py`, the new module that holds the dimension-line logic so
+  `site_context_plan.py` does not grow past its responsibility). The subject lot and its
+  edge-sharing neighbours (lots 1, 11, 61) dominate; every edge ≥ 6 ft carries a dimension line
+  anchored to the edge's own projected vertices; north arrow, scale bar, street names with mapped
+  widths, and a "No building placed" legend entry. No rear-yard or setback AREA is drawn (R008/
+  R017): `test_s4_no_yard_or_setback_area_is_drawn` proves no law geometry is emitted.
+- **Page-1 graphic**: kept as the compact summary-frame `site_context_plan` (the "compact" of the
+  two site-plan jobs; the "large" is the page-3 close frame). This is pinned by the unchanged,
+  passing `test_page1_carries_the_summary_frame_site_plan` and by `test_s12` (wrapper/caption
+  unchanged); changing the summary composition would alter page 1, which a parallel task owns.
+- **Heights**: the shown height values become a compact 3×2 standard / qualifying-housing table
+  (`page_site_context.py` `_heights_table`); they are removed from the constraint rows so no value
+  is listed twice. "Maximum lot coverage" stays once in the constraints table; no bare "Not shown".
+- **"No building placed"**: a close-frame legend entry on the site page; the full not-placed
+  sentence stays on the scenario sheet only (`test_report_read_context.py`, `test_s3`, `test_s8`).
+- **"Map geometry only…"** honesty line dropped from every map caption (`map_caption.py`) so it
+  prints once in the report (on the evidence page); `test_s6` asserts count == 1.
+- **e2e** (`report-print.flag-on.spec.ts`, location block only, per the packet): updated to expect
+  one locator figure/SVG on the location sheet (was two). Not run here; CI runs it.
+- **Two ruff E501 fixes** in `site_context_plan.py` (lines carried in from the patch, 101>100):
+  behaviour-identical (one extracted local, one wrapped call).
+
+No CSS change was needed: every SVG is sized from its viewBox
+(`test_close_frame_fits_the_a4_content_width`: width 512.0 ≤ 515.95 pt).
+
+## Dimensions drawn (close frame)
+
+The outline the close frame draws is the MapPLUTO (gis) lot-70 outline — the only basis the 1.4.0
+document carries. Values traced to NB-04 E4's saved primary source
+(`docs/research/owner-research/2026-10-10-215-16-northern-evidence/geometry-calculations.json`,
+lot-70 `edge_lengths_ft` and `adjacent_shared_lengths_ft`), not this brief's summary.
+
+| edge | length (ft, US survey) | label drawn | basis | identity |
+|---|---|---|---|---|
+| 0 | 99.97647 | `99.98 ft, map outline, not surveyed` | gis | boundary shared with lot 1 |
+| 1 | 103.87921 | `103.88 ft, map outline, not surveyed` | gis | north edge (already in NB-04 rev 1) |
+| 2 | 99.97605 | `99.98 ft, map outline, not surveyed` | gis | edge opposite the lot-1 boundary (not shared) |
+| 3 | 101.70896 | `101.71 ft, map outline, not surveyed` | gis | boundary shared with lot 11 |
+| 4 | 2.22445 | (undimensioned) | gis | sliver shared with lot 61; < 6 ft, left undimensioned |
+
+Endpoints lie on the edge's own projected vertices within 0.01 ft (S1). One basis only; nothing
+merged across bases; no tax-map value (100.76 / 100) is drawn (none is in the 1.4.0 document).
+Street names/widths (Northern Boulevard 100 ft, 215 Place 60 ft) are the map document's own
+`mapped_width_ft`; `label_problems` == [] confirms every drawn value traces to the document.
+
+## State table (one test per input state)
+
+| state | outcome | test |
+|---|---|---|
+| map document present | close frame + large site plan drawn; site section has an svg | `test_s4_close_frame_contents`, `test_s7_context_maps_svg_only_with_a_map_document` |
+| map document absent | no "Context maps" text, no svg in the site section | `test_s7_context_maps_svg_only_with_a_map_document` (without branch) |
+| one-outline check passes | surroundings shown (locator + close frame) | `test_s4_close_frame_contents`, `test_s1_location_sheet_opens_page_type_two` |
+| one-outline check fails / missing layer | Unavailable (drawing) / lot-only fallback (report), never blank | `test_s4_a_missing_layer_gives_unavailable`, `test_s1_tolerance…` |
+| edge too short to label (2.22 ft) | left undimensioned, never a bare number | `test_an_edge_too_short_to_label_is_left_undimensioned` |
+| label below 8.5 pt / cramped frame | `DimensionPlacementError` (fail, never shrink / drop) | `test_s2_a_sub_minimum_size_fails…`, `test_s2_a_cramped_frame_fails…` |
+| no building placed | legend on site page; sentence on scenario sheet only | `test_s8…`, `test_s3_not_placed_sentence_scenario_only_legend_on_site` |
+
+## Commands (direct exit codes)
+
+- `python -m ruff check .` (services/api, lanes venv ruff 0.13.0) → **exit 0** (clean; two E501 fixed).
+- `python -m pytest -q tests/drawings tests/cad tests/api/test_report_read_context.py` →
+  **exit 0**, **1739 passed, 6 skipped** (153–160 s).
+- `python3 tools/research_record_check.py --check` → **exit 0**; NB-04 `status=conflicting_evidence`
+  (unchanged), `code_current=True`, `review_state=stale` (revision 2 awaits the G1 review; reported,
+  not failed).
+- `python tools/modularity_check.py --check` → **exit 0** (site_context_plan.py 643 raw lines, SLOC
+  under the 600 warn threshold; new logic is in close_frame_dimensions.py, 130 lines).
+
+(The default `python` has no ruff/pytest installed; the project lanes venv
+`/root/project/lanes-runtime/venv` was used. The e2e browser tests were NOT run and no server was
+started — ports 3000/3001/8000 untouched; CI runs the e2e.)
+
+## Mutation proof (each reverted; suite re-run green afterwards)
+
+1. **Endpoint off its vertex by 0.1 ft** (`close_frame_dimensions.py`: `fr.px((a[0]+0.1, a[1]))`) →
+   `test_s1_dimension_endpoints_lie_on_their_edge_vertices` **FAILED**:
+   `AssertionError: edge 0 start off its vertex; assert 0.1125 <= 0.01`.
+2. **Basis words dropped** (`text = f"{format_feet(length)}"`) →
+   `test_s1_each_label_names_its_basis_in_plain_words` **FAILED**:
+   `AssertionError: assert 'map outline' in '99.98 ft'`.
+3. **Block close-up printed again** (re-added `_wide_figure("Block close-up", …)` in
+   `page_location.render`) → 3 FAILED:
+   `test_s5_at_most_three_map_figures_each_a_distinct_job` (assert 2 == 1 figures / block_map 0),
+   `test_s1_location_sheet_opens_page_type_two`, `test_location_page_is_the_locator_only`.
+
+All three mutations were reverted; no `MUTATION` marker remains; `close_frame_dimensions.py`
+re-hashes to the identity recorded in NB-04.
+
+## NB-04 revision 2 note
+
+Revision 1 → 2 (`last_changed` 2026-10-11). Added `close_frame_dimensions.py` to
+`implementation.code_paths` with its LF sha256
+`f036a957ae5a2f1f99164e8d0872dd2bcc8369b6b27337c7935cf81c4b2c6f4d` in `code_identity`
+(the two MapPLUTO connector paths and their hashes are unchanged and still match). Added three gis
+quantities for the drawn close-frame edges not previously recorded (99.97647, 99.97605, 101.70896
+ft), each traced to E4 and scoped "tax lot outline". `conclusion.research_status`,
+`meaning_and_applicability`, the conflicts and conditions are unchanged — no result is promoted and
+no verification status changes. README and RESEARCH_REQUESTS untouched. The revision-1 agent review
+stays recorded; the record now reads `review_state=stale`, honestly reflecting that revision 2
+awaits the G1 (data-contract-verifier) review.
+
+## Changed snapshots
+
+**None.** No `.svg` snapshot file was changed; the summary/wide/report/sheet frames use the
+drawing's default parameters, so their output is byte-identical (`test_snapshots.py` passed). The
+close frame is a new, un-snapshotted drawing.
+
+## What I could not check
+
+- **ruff could not be run under the default interpreter** (no module); I used the project lanes
+  venv's ruff 0.13.0. Same binary CI uses; still, CI must confirm on the exact head.
+- **e2e / browser (Playwright) and the running server** were not exercised (thin-client rule); the
+  e2e location-block edit is verified only by reading. CI is the authority.
+- **The gis street widths** (100 ft / 60 ft "mapped width") come from the map document's street
+  layer, assembled by an earlier task; I confirmed traceability via `label_problems`, not the DCM
+  source itself.
+- **The unresolved inputs stay unresolved**: the rear-yard (NB-03) and street-wall/setback/side-yard
+  (NB-06) analyses are `interpretation_awaiting_review` and NB-01 is `access_blocked`; the close
+  frame draws no yard, setback or zoning-lot geometry depending on them (R008/R017), so no
+  unresolved input is turned into a drawn figure.
+- Nothing here is a professional verification.
+
+## Rework 1 (G3/G4 F1: the page-1 graphic is the compact close frame)
+
+Base reset to `8f713e6a6312a1cdcb6ae5eb941c2bd4e3a887db` (my cherry-pick `09ac564e` + M5-T165
+integrated as `4617c720` + other wave-24 records). All three reviews (G3 code, G4 QA, G1 data)
+PASSed with the same REQUIRED F1; the orchestrator kept the objective and ordered this change.
+
+**What changed.** Page 1's site graphic is now the COMPACT CLOSE frame, not the old summary frame.
+A new frame `summary_close` in `site_context_plan.py` draws the same close COMPOSITION as the
+page-3 frame (`close_frame_view` — the subject and its edge-sharing neighbours dominate the tight
+view) but at the 88 mm page-1 column (`SUMMARY_PLAN` sizing, `mode="summary"` furniture).
+`page_location.py` now embeds `frame="summary_close"` for `summary_plan` (the swap is maps side
+only; `builder.py` and `page_decision_summary.py` wrap the SVG they are given, unchanged). The 88 mm
+column is too narrow for a legible basis label at >= 8.5 pt, so the compact frame draws NO dimension
+line and NO dimension label at all (the large page-3 close frame carries them) — never a bare
+number. Street widths and neighbour labels are dropped too, keeping the word budget.
+`close_frame_dimensions.py` is unchanged, so NB-04 revision 2's code identity is untouched (I did
+not edit NB-04; its review block is the orchestrator's to append).
+
+**Files changed:** `site_context_plan.py` (new `summary_close` branch + docstrings),
+`page_location.py` (embed `summary_close` + docstrings), `test_location_sheet.py`
+(`test_page1_carries_the_summary_frame_site_plan` → `test_page1_carries_the_compact_close_frame_site_plan`,
+pinning the compact close frame via `embed_map` identity and forbidding any dimension label; new
+`test_page1_compact_close_frame_states` for the three input states).
+
+**NOT edited (routed to the orchestrator):** `page_decision_summary.py` (an M5-T165 file) still
+carries the wording "the existing compact summary frame" (docstring) and a comment naming the
+"summary frame" for the page-1 graphic; these now misname the frame but are outside this task's
+allowed paths — the orchestrator should route the wording fix to the M5-T165 builder.
+
+**Page-1 word counts (visible_text, decision-summary section):**
+
+| measurement | before (summary frame) | after (compact close frame) | cap |
+|---|---|---|---|
+| standing test `build_report_html(benchmark())` (no map_context) | 190 | 190 | 200 (M5-T165) |
+| real report `build_report_html(benchmark(), map_context=…)` | 208 | 208 | — (not a standing test) |
+
+The standing CI cap is measured WITHOUT a map document, so the page-1 map graphic does not appear
+there (page 1 falls back to the kit site plan): the swap leaves it at 190, well under 200. With a
+map document the page-1 section is 208 both before and after — the compact close frame carries the
+SAME labels as the summary frame did (street names, `Lot 70`, north arrow, scale bar), so the swap
+is word-neutral; the 208 is the pre-existing results-text size (M5-T165's page 1), not caused by the
+graphic, and no standing test caps the with-maps page-1 section. I did not take page 1 over any cap.
+
+**State table (page-1 frame):**
+
+| state | outcome | test |
+|---|---|---|
+| map document present + one-outline check passes | page 1 = compact close frame (`summary_close`) | `test_page1_carries_the_compact_close_frame_site_plan`, `test_page1_compact_close_frame_states` (a) |
+| no map document | surroundings unavailable; `summary_plan is None`; page 1 falls back | `test_page1_compact_close_frame_states` (b) |
+| one-outline check fails (outline moved 0.5 ft) | surroundings dropped; `summary_plan is None` | `test_page1_compact_close_frame_states` (c) |
+| compact frame, dimensions | none drawn (no line, no label) — never a bare number | the two assertions in `test_page1_carries_…` |
+
+**Checks (direct exit codes; lanes venv):**
+- `ruff check .` (services/api) → exit 0.
+- `pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py` → exit 0, **1783 passed, 6 skipped** (includes M5-T165's now-filled page-1 tests).
+- `tools/research_record_check.py --check` → exit 0 (NB-04 conflicting_evidence unchanged, code_current=True, review_state=stale pending the orchestrator's rev-2 review entry).
+- `tools/modularity_check.py --check` → exit 0 (failures 0; site_context_plan.py still under the warn threshold).
+- e2e/browser not run; no server; ports 3000/3001/8000 untouched.
+
+**Mutation proof (each reverted; page-1 tests green afterwards):**
+1. Put the summary frame back on page 1 (`page_location.py` embed `"summary"`) → both page-1 pins
+   FAILED (`page1_svg == embed(summary_close)` false; it equals `embed(summary)`).
+2. Enable edges on the `summary_close` branch (`with_edges=True`) → the compact frame drew four
+   bare-number labels ("99.98 ft" … at 8.00 pt, no basis) and
+   `test_page1_carries_the_compact_close_frame_site_plan` FAILED on `'data-role="dimension"' not in
+   page1_svg`. (The literal "drop the basis words" mutation is N/A: the compact frame carries no
+   basis label by design; this mutation proves the stronger "never a bare number" invariant.)
+
+No snapshot `.svg` file changed in this rework.
+
+## Rework 2 (visual G3 finding 5: no dimension label crosses a drawn line on the close frame)
+
+Base reset to `7ab4bda5d1d997183d06988f7fae4b3bfd850e91` (rework 1 + the NB-04 G1 rev-2 entry +
+M5-T165's page 1). The visual-quality reviewer passed M5-T166 with one REQUIRED correction: a
+dimension label (the 215-Place edge) was crossed near its top by a neighbouring lot's boundary line.
+
+**Root cause.** `draw_edge_dimensions` placed each label by moving it straight OUT from its edge with
+no line avoidance, and `place()`'s street guard allows a perpendicular crossing. So a neighbour
+boundary could cut across a label.
+
+**Fix.** The close-frame dimension placement now avoids the DRAWN lot boundaries:
+- `site_context_plan.dimension_avoid_lines(context, fr, rect)` returns every neighbour lot outline
+  projected and clipped to the viewport EXACTLY as `draw_clipped_outline` draws it; `draw_block_scene`
+  passes it to `draw_edge_dimensions` (close path). The subject's own outline is excluded there (a
+  dimension legitimately sits against the edge it measures); the test still checks against it.
+- `draw_edge_dimensions` now searches a 2-D candidate grid — outward lanes × along-edge shifts —
+  ordered by least displacement, and rejects any candidate whose label box is touched by a line in
+  `avoid_lines` (`cross_max_len=0.0`, strict: no perpendicular crossing allowed either). It keeps the
+  full basis words ("…, map outline, not surveyed") and the >= 8.5 pt size, and raises
+  `DimensionPlacementError` (fails, never shrinks) if no clear spot exists. `DrawnDimension` now
+  carries the placed `label_box` so a caller/test can prove the label crosses no drawn line but its own.
+
+All four dimensions still draw (99.98 / 103.88 / 99.98 / 101.71 ft), each clear of every drawn lot
+boundary (neighbour and subject), verified geometrically and by my own print (below). The surprise:
+the specific collision did NOT reproduce at this head's benchmark geometry once the avoid set used the
+actual CLIPPED drawn outlines — my first attempts used UN-clipped rings (phantom cross-street lots)
+and wrongly reported infeasibility; the clipped set (24 polylines) leaves a clear spot for all four.
+
+**My own print** (`make_after_report.py` -> HTML; `print-report-pdf.mjs` -> PDF; `pdftoppm` 200/400/600 dpi;
+no server, ports untouched). Close frame on PDF page 4. The top "103.88 ft, map outline, not surveyed"
+sits above the subject, clear. Both vertical "99.98 ft, map outline, not surveyed" labels sit in the
+thin corridors beside the subject's left/right edges, each clear of Lot 1 / the 215-Place side — the
+215-Place label (finding 5) no longer crosses a boundary. The bottom "101.71 ft, map outline, not
+surveyed" sits below the subject, clear of the lot boundaries (it passes near a building footprint
+edge in inter-token whitespace; buildings are light fills, not boundary lines, and were not the
+finding). North arrow, scale bar, "No building placed" legend entry all present and legible.
+
+**Tests added** (`test_site_context_close_frame.py`):
+- `test_s2_no_dimension_label_crosses_a_drawn_line`: on the benchmark close frame, every dimension's
+  `label_box` is clear of every drawn lot boundary (neighbour + subject), checked with
+  `box_crosses_lines(max_len=0.0)`.
+- `test_s2_a_forced_collision_fails_closed`: a made-up frame with a boundary line laid across every
+  lane raises `DimensionPlacementError` (fail closed, never a silent crossing).
+
+**NB-04.** `implementation.code_identity` for `close_frame_dimensions.py` updated to the new LF sha256
+`e25fa02627f9ab4e849fcb55195adb16e5a85e225da6d4d12a958fe541e9e4b8`; `research_status`
+(conflicting_evidence) and the `review` block are UNCHANGED (the G1 reviewer re-stamps the review).
+The record check reads code_current=True, review_state=stale (expected pending the re-stamp), exit 0.
+
+**Checks (direct exit codes; lanes venv):**
+- `ruff check .` (services/api) -> exit 0.
+- `pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/scenario/three_answers/test_result_ways.py` -> exit 0, **1797 passed, 6 skipped**.
+- `research_record_check.py --check` -> exit 0. `modularity_check.py --check` -> exit 0 (failures 0).
+- e2e/browser not run; the PDF was printed via puppeteer (its own headless Chromium), ports 3000/3001/8000 untouched.
+
+**Mutation proof (reverted; close-frame tests green after):** forcing each label onto the edge line
+(single on-edge candidate) made `test_s2_no_dimension_label_crosses_a_drawn_line` FAIL — the strict
+guard refuses the on-line placement (`DimensionPlacementError`), so the test does not pass. Restored;
+`close_frame_dimensions.py` re-hashes to the identity recorded in NB-04.
+
+---
+
+## Rework 3 (2026-10-12) — the close-up reads cleanly (owner K1 / D-094 R115/R116)
+
+Built on top of `task/wave24-report-v3` head `d91c95cd` + the saved unfinished rework-3 patch (base
+`cd6d7fc3`, 7 files: pass-1/pass-2 reorder of the dimension draw so a label never strikes its own
+line; the constraints-section reorder; the two added tests). I read that patch critically and own the
+result; the clutter fixes the owner asked for (basis-once, white backgrounds, no neighbour addresses,
+lighter neighbours) were NOT in it and are this rework.
+
+**What changed (allowed paths only):**
+- `close_frame_dimensions.py` — **figure-only labels** (`"103.88 ft"`), never the basis words. New
+  constants `GIS_BASIS_NOTE` ("All dimensions: city map outline, not surveyed.") and `GIS_BASIS_TAG`
+  ("map outline"). New `edge_bases` arg: a drawing that MIXES bases tags each label (`"103.88 ft, <tag>"`);
+  one basis stays figure-only. Dimension labels are placed with a white background (`halo=True`).
+- `context_scene.py` — `place(halo=...)` draws a white rect behind the label (in the label's own
+  rotated frame) before the text; `draw_clipped_area(opacity=...)` wraps an area in a lighter group;
+  `compose_context(basis_note=...)` renders the single-basis note once, centred in the band directly
+  under the close-frame viewport, at 8.5 pt. Close-frame height KEPT at full size (see "Page count").
+- `site_context_plan.py` — `draw_block_scene(close_style=True)` for the page-3 and page-1 close frames:
+  white backgrounds on every scene label, neighbour buildings drawn lighter (`opacity 0.45`, legend
+  entry kept), neighbour **addresses dropped** (lot numbers stay). The page-3 frame passes the basis
+  note; the compact page-1 frame has no dimensions, so no note.
+- `page_site_context.py` — kept the patch's **reorder** (lot-area basis + both tables, then the frame
+  last) so no 4-row table is ever alone on a page.
+- `ARCHITECT_PRESENTATION_CONTRACT.md` — the two S17 sentences only (page-2 close-up sentence; the gis
+  wording line), dated 2026-10-12 / question K1. Nothing else changed.
+- `NB-04` — `implementation.code_identity[close_frame_dimensions.py]` = new LF sha256
+  `5dba6cf8e8307111b80fbd25bffe3c62964166572efd9a7e9347dbaeffb79dea`; `last_changed` 2026-10-12; the
+  four gis edge `scope` strings corrected to the figure-only rendering (value + basis unchanged;
+  D-093 accuracy). `research_status` and the whole `review` block UNCHANGED (reviewer re-stamps).
+
+**My own print** (`make_after_report.py` → HTML; `apps/web/scripts/print-report-pdf.mjs` → PDF via its
+own headless Chromium; `pdftoppm -r 300`; no server; ports 3000/3001/8000 untouched; the temporary
+`apps/web/node_modules` symlink into `/root/project/w-wave20` was removed with `rm` before commit).
+**10 pages.** Pages 1–4 at 300 dpi, read as a reader:
+- **Page 1 (decision summary).** The compact close frame shows "Lot 70" on a white background among
+  clearly **lighter** neighbour buildings; "NORTHERN BOULEVARD" and "215 PLACE" named on white
+  backgrounds; no neighbour addresses; caption "The lot among its neighbours (city map; not surveyed)."
+  The page-1 wrapper and 88 mm column are unchanged.
+- **Page 2 (Where is the lot?).** The neighbourhood locator only — street names, Subject-lot/Street
+  legend, north arrow, scale bar, sources caption. Clean.
+- **Page 3 (What constrains the design?).** Lot-area basis paragraph, the 3×2 Height-limits table, and
+  the 4-row Constraints table — all three together, no orphan. (Lower ~55 % of the page is blank; see
+  "Page count".)
+- **Page 4 (the large close frame).** Each edge carries a **figure-only** label — "103.88 ft" (top),
+  "99.98 ft" (both sides, vertical), "101.71 ft" (bottom) — on a white background, sitting BESIDE its
+  dimension line with a clear gap (the right-side "99.98 ft" is no longer struck through; "Lot 11" no
+  longer touches the bottom line). The basis note **"All dimensions: city map outline, not surveyed."**
+  appears once, centred directly under the frame. "Lot 70/1/11/61" are lot numbers only (no addresses),
+  each on a white background. Street names + mapped widths on white backgrounds. Neighbour buildings
+  are faint grey so the coral subject dominates. North arrow, scale bar, full legend incl. "No building
+  placed". No tax-map value, no rear-yard/setback area. The owner's "words everywhere, lines covered"
+  mess is gone.
+
+**Page count — the 9-page target was NOT reached; one part STOPPED (brief item 6).** The hard
+requirement (the 4-row table not alone on a page) is met by the reorder. Reaching 9 pages is not
+possible within this task's allowed paths: `.constraints-sheet` has `break-before: page` and the close
+frame is a `figure` with `break-inside: avoid`, so the frame cannot split; the lot-area basis + both
+tables already take ~128 mm of the 269 mm A4 content height, leaving ~141 mm, while the frame block is
+~160 mm. Shrinking the frame to fit (~340 pt) would push a dimension label below the ~416 pt placement
+floor — i.e. shrink a font / drop a dimension, which the brief forbids (I verified a 440 pt trim still
+rendered 10 pages, then reverted it). Fitting the section on one page needs the report row/page-break
+CSS in `services/api/app/drawings/report/layout.py` (an M5-T165 file, forbidden to this task): per brief
+item 6 I STOP that part and report it for the orchestrator/M5-T165 builder.
+
+**State table (rework-3 requirements):**
+
+| Requirement | State |
+|---|---|
+| S1 basis once under drawing, figure-only labels, mixed-bases code path + test | Built, tested |
+| S14 no line/fill touches any label (own lines incl.); white background; fail-not-shrink | Built, tested |
+| S15 no neighbour addresses (lot numbers stay); lighter neighbours; page-1 compact too | Built, tested |
+| Rework-3 patch (label off own line; "Lot 11" clear; reorder, no orphan) | Integrated, tested |
+| S17 contract — the two named sentences | Done |
+| 9-page target | NOT reached — needs forbidden report `layout.py` (STOPPED, item 6) |
+
+**Checks (direct exit codes; lanes venv; cd back after each):**
+- `cd services/api && python -m ruff check .` → **exit 0** ("All checks passed!").
+- `python -m pytest -q tests/drawings tests/cad tests/journey tests/api/test_report_read_api.py tests/api/test_report_read_context.py tests/scenario/three_answers/test_result_ways.py` → **exit 0, 1812 passed, 6 skipped**.
+- `python3 tools/research_record_check.py --check` → **exit 0** (NB-04 code_current=True, review_state=stale — expected pending the reviewer re-stamp).
+- `python3 tools/modularity_check.py --check` → **exit 0** (only unrelated warn signals).
+- e2e/browser not run; the PDF used puppeteer's own headless Chromium; ports untouched.
+
+**Mutation proofs (each applied, shown failing, then reverted; suite green after):**
+1. Dropped the own witness/dimension lines from the label avoid set (`base_avoid = avoid_lines`) →
+   `test_s2_no_line_crosses_any_label_own_dimension_line_included` FAILED: "a dimension/witness line
+   passes through dimension label '99.98 ft'".
+2. Put the basis back on every label (`"<fig>, <basis>"`) → `test_s1_each_label_shows_only_the_figure`
+   and `test_s1_basis_is_stated_once_in_a_note_under_the_drawing` both FAILED (basis words on the label).
+3. Drew neighbour addresses again (`with_address=True`) → `test_s15_no_neighbour_addresses_but_lot_numbers_stay`
+   FAILED: found '45-12 215 PLACE', '45-11 215 STREET'. After revert, `close_frame_dimensions.py`
+   re-hashes to `5dba6cf8…` (the NB-04 identity).
+
+**Surprised me / disclosed:** (a) the saved patch implemented only defects 1–2; all the clutter fixes
+the owner named were still owed. (b) The 9-page target is blocked by report CSS outside this task's
+scope, not by the drawing — this is a genuine STOP, not a skipped item. (c) I corrected four NB-04
+`scope` strings beyond `code_identity` so the record matches the K1 rendering (values/bases unchanged);
+if the reviewer prefers the edit limited strictly to `code_identity`, those four strings revert trivially.

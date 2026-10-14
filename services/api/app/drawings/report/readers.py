@@ -10,10 +10,12 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 
-from . import formatting, labels, unit_limit_text
+from . import constraint_text, formatting, labels, unit_limit_text, zoning_lot_item
+from .zoning_lot_item import zoning_lot_basis
 
 __all__ = [
     "answer_block",
+    "apartment_estimate_range",
     "apartment_estimate_text",
     "assumptions",
     "category_for_key",
@@ -260,26 +262,10 @@ def _coverage_block(results: Mapping) -> Mapping:
     return block if isinstance(block, Mapping) else {}
 
 
-# Short, structural effect text per open-item category (F8) and the order they
-# appear in, by effect on the main answers.
-# The phrase that appears ONLY in the ACRIS zoning-lot-index condition (backlog DB-232), matching
-# the scenario conditions module's ZONING_LOT_INDEX_MARKER, so the open item is built only when a
-# shown figure carries that condition (other_lots_named / not_read) - never for the generic
-# zoning-lot condition on the unit limit or any other condition. A test holds the two in step.
-_ZONING_LOT_CONDITION_MARKER = "register of recorded documents"
-
-_EFFECTS = {
-    "zoning_lot": "The floor area, the apartment limit and the building option are worked for this "
-                  "tax lot alone; recorded documents may name it with another lot.",
-    "lot_area": "The floor-area figures depend on it; the recorded area and the tax-map outline "
-                "disagree.",
-    "coverage": "The square-foot coverage figure is withheld.",
-    "rear_yard": "The rear yard is not known beyond the corner area.",
-    "placement": "Where the building sits on the lot is not worked out.",
-    "setback": "The setback above the base is not worked out.",
-    "street_wall": "The street wall is not checked.",
-    "parking": "Parking, loading and bicycle requirements are not checked.",
-}
+# The open-item order, by effect on the main answers. The short structural effect
+# text per category now lives in :mod:`.constraint_text` (the constraints) and
+# :mod:`.zoning_lot_item` (the zoning-lot condition); this module only wires them
+# into the numbered list (the G-6 report-side isolation, M5-T165).
 _ORDER = ["zoning_lot", "lot_area", "coverage", "rear_yard", "placement", "legal_unit_limit",
           "setback", "street_wall", "parking"]
 _CHECK_WORD = "A check not yet made against an independently worked example."
@@ -329,17 +315,18 @@ def open_items(results: Mapping) -> list[dict]:
         by_category[category] = {
             "category": category,
             "title": title,
-            "effect": _EFFECTS.get(category, ""),
+            "effect": constraint_text.effect_for(category),
             "reason": reason,
             "resolves": resolves,
             "status_label": label,
         }
 
-    zoning_lot = zoning_lot_basis(results)
-    if zoning_lot:
-        # (DB-232) the property-specific zoning-lot concern, ordered FIRST (owner D-094 R029/R030):
-        # the figures carry a condition that recorded documents may name this lot with another.
-        put("zoning_lot", "Zoning lot", zoning_lot[0], zoning_lot[1], labels.CONDITIONAL)
+    # (DB-232) the property-specific zoning-lot concern, ordered FIRST (owner D-094 R029/R030):
+    # the figures carry a condition that recorded documents may name this lot with another. The
+    # item is built by its own module (zoning_lot_item) so readers stays a general reader.
+    zoning_lot = zoning_lot_item.zoning_lot_open_item(results)
+    if zoning_lot is not None:
+        by_category["zoning_lot"] = zoning_lot
     basis = lot_area_basis(results)
     if basis:
         # The full lot-area condition sentence is stated once, on the Site and
@@ -374,15 +361,15 @@ def open_items(results: Mapping) -> list[dict]:
 
 
 def decision_open_items(results: Mapping) -> list[dict]:
-    """The three most important open items for the decision summary (F3): a
-    condition of the allowance (the recorded lot area), what limits the scheduled
-    building (site fit), then the apartment limit. Falls back to the first items
-    when a category is absent."""
+    """The three uncertainties for the decision summary, in the design-contract order
+    (D-094 R050, R037): the zoning lot, the lot-area basis, then the rear yard. Falls
+    back to the next open items when one of those categories is absent, so the page
+    always shows at most three."""
     items = open_items(results)
     by_cat = {item["category"]: item for item in items}
     picks: list[dict] = []
-    # (DB-232) the zoning-lot concern is preferred first when present (owner D-094 R029/R030).
-    for preferred in (["zoning_lot", "lot_area"], ["rear_yard", "placement"], ["legal_unit_limit"]):
+    # The page-1 uncertainty order (owner D-094): zoning lot, lot-area basis, rear yard.
+    for preferred in (["zoning_lot"], ["lot_area"], ["rear_yard"]):
         for category in preferred:
             if category in by_cat and by_cat[category] not in picks:
                 picks.append(by_cat[category])
@@ -427,38 +414,18 @@ def lot_area_basis(results: Mapping) -> str | None:
     return None
 
 
-def zoning_lot_basis(results: Mapping) -> tuple[str, str] | None:
-    """The ACRIS zoning-lot condition (backlog DB-232) carried on a shown figure, as (assumption,
-    settled_by), or None when no shown figure carries it. Detected by the marker phrase so it is
-    never confused with the generic zoning-lot condition on the unit limit or any other condition.
-    The figures carry it only in other_lots_named / not_read, so None means the figures are not
-    conditional on the recorded-document index (no open item)."""
-    def _match(conditions) -> tuple[str, str] | None:
-        for condition in conditions or []:
-            if not isinstance(condition, Mapping):
-                continue
-            assumption = condition.get("assumption")
-            if (
-                condition.get("kind") == "unchecked_condition"
-                and isinstance(assumption, str)
-                and _ZONING_LOT_CONDITION_MARKER in assumption
-            ):
-                return assumption, str(condition.get("settled_by") or "")
+def apartment_estimate_range(estimate: object) -> str | None:
+    """The preliminary apartment estimate's whole-number range as ``"low-high"``
+    (e.g. ``"17-22"``) for the page-1 estimate figure, read from the document; both
+    bounds come from the document and none is retyped. ``None`` when the range is
+    absent."""
+    if not isinstance(estimate, Mapping):
         return None
-
-    for name in ANSWER_NAMES:
-        for row in present_values(answer_block(results, name)):
-            hit = _match(row.get("conditions"))
-            if hit is not None:
-                return hit
-    for building in results.get("building_alternatives", []) or []:
-        if not isinstance(building, Mapping):
-            continue
-        way = building.get("way")
-        hit = _match(way.get("conditions") if isinstance(way, Mapping) else [])
-        if hit is not None:
-            return hit
-    return None
+    low = formatting.format_int_commas(estimate.get("whole_below_low"))
+    high = formatting.format_int_commas(estimate.get("whole_above_high"))
+    if low is None or high is None:
+        return None
+    return f"{low}-{high}"
 
 
 def apartment_estimate_text(estimate: object) -> str | None:

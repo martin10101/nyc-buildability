@@ -1,0 +1,53 @@
+{
+  "snapshot_id": "zr-12-10-street-wide",
+  "snapshot_schema": "zr_section_snapshot/v1",
+  "jurisdiction": "nyc",
+  "corpus": "zoning_resolution",
+  "section_number": "12-10",
+  "section_title": "Definitions - street, wide",
+  "article": "I",
+  "chapter": "2",
+  "source": {
+    "source_id": "nyc-dcp-zoning-resolution-portal",
+    "official_channel": "html",
+    "request_url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+    "retrieved_at": "2026-10-11T19:58:08Z",
+    "http_status": 200,
+    "response_bytes": 1287409,
+    "raw_html_sha256": "8eb066d190f0270a20008973576a19e65f579e46d68b51e5fb361a07515bb33c",
+    "portal_node_id": "18523",
+    "defined_term": "street, wide",
+    "defined_term_node_id": "21683",
+    "last_amended_machine_readable": "2026-03-26T12:00:00Z",
+    "last_amended_display": "3/26/2026",
+    "section_last_amended": "2026-03-26",
+    "section_last_amended_source_text": "Last Amended 3/26/2026 (ZR 12-10 term 'street, wide', /node/21683)",
+    "document_currency_banner": null,
+    "document_currency_banner_note": "The §12-10 page header (node 18523, data-section-number=\"12-10\", title \"DEFINITIONS\") shows Last Amended 3/26/2026, which is the date of the most-recently-amended term on the page (‘street, wide’); the operative provenance for THIS term is its own per-term Last Amended stamp (3/26/2026, /node/21683) recorded above. The whole §12-10 page fetched for this capture (2026-10-11, raw_html_sha256 8eb066d190f0270a20008973576a19e65f579e46d68b51e5fb361a07515bb33c, 1287409 bytes) is NOT byte-identical to the page pinned by the 2026-10-07 §12-10 term captures (3c7197026d616c459fd38b3cc76ccc607b7891f600e5a1ec00053ceb8574b5bc, 1316758 bytes); the page changed between those dates, but this term's per-term Last Amended stamp is unchanged, so the captured definition text is the same operative text.",
+    "capture_method": "M5-T163 in-task capture 2026-10-11 (direct HTTPS GET, curl -A Mozilla/5.0; whole-page HTML node 18523)",
+    "raw_html_verified": false,
+    "verification_required": "Captured source text only from the canonical §12-10 HTML (node 18523; sha256 pinned). The whole-page print/PDF completeness channel returned HTTP 504 so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel; this is the documented fallback (DB-167). The text has NOT been re-read by a second agent, so raw_html_verified stays false and extraction_status stays extracted_draft. Nothing here is a Verified zoning determination and nothing here is a rule, an interpretation of the text for any lot, or a derived number: it is the official source text of one ZR 12-10 defined term only. Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  },
+  "cross_check": {
+    "channel": "print_pdf",
+    "request_url": "https://zoningresolution.planning.nyc.gov/entityprint/pdf/node/18523",
+    "final_url": "https://zoningresolution.planning.nyc.gov/print/pdf/node/18523",
+    "retrieved_at": "2026-10-11T19:58:51Z",
+    "http_status": 504,
+    "content_type": "text/plain; charset=utf-8",
+    "response_bytes": 41,
+    "raw_pdf_sha256": null,
+    "method": "The §12-10 completeness channel is the whole-page print/PDF entityprint/pdf/node/18523, which returned HTTP 504 (Gateway Timeout) on 2026-10-11 at 2026-10-11T19:58:51Z - the documented DB-167 behaviour. Per that documented fallback the canonical-HTML channel (node 18523, sha256 and byte count pinned in source) was used; the term's definition text was extracted PROGRAMMATICALLY from that raw HTML (the defined-term article id=\"term-street, wide\", its definition__definition body) and self-checked for word-completeness against the raw HTML bytes (whitespace normalised; defined terms bold-italic <strong><em> written #term#). THIS term's definition contains NO ordered list (no <ol>), so there are NO list-position labels in this capture: any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture. The DB-167 F1 label-confirmation gap (whole-page PDF 504) therefore does not affect any text here.",
+    "result": "unavailable_documented_fallback"
+  },
+  "verbatim_excerpt": "A \"wide street\" is any #street# 75 feet or more in width. In C5-3, C6-4 or C6-6 Districts, when a #front lot line# of a #zoning lot# adjoins a portion of a #street# whose average width is 75 feet or more and whose minimum width is 65 feet, such portion of a #street# may be considered a #wide street#; or when a #front lot line# adjoins a portion of a #street# 70 feet or more in width, which is between two portions of a #street# 75 feet or more in width, and which portion is less than 700 feet in length, such portion may be considered a #wide street#, and in that case, for the purposes of the height and setback regulations and the measurement of any #publicly accessible open area# or #arcade#, the #street line# shall be considered to be a continuous line connecting the respective #street lines# of the nearest portions of the #street# which are 75 feet or more in width.\n\nIn Community District 7 in the Borough of Manhattan, the roadways of Broadway between West 94th and West 97th Streets and in Community District 3 in the Borough of Manhattan, the roadways of Allen Street between Rivington and Delancey Streets, which are separated by mapped #public park# shall each be considered a #wide street#.",
+  "verbatim_excerpt_composition": "Verbatim blocks joined by a blank line, in page order: each paragraph of the defined term's definition body. Defined terms (bold-italic in the HTML) are written #term#. Runs of whitespace and non-breaking spaces are written as one space and each block is trimmed; embedded figures are omitted; no word was changed. The definition has no ordered-list markup (no <ol>); any parenthesised (a)/(b)/(1) shown is LITERAL text of the official definition, not a position label added by the capture.",
+  "extraction_status": "extracted_draft",
+  "notes": [
+    "Captured as source text only (ZR 12-10 defined term 'street, wide') for the ZR 12-10 block-boundary and street-width definitions that NB-03 (rear yard, short dimension of a block) and NB-06 (street-wall/wide-narrow) name as needed (task M5-T163, D-094). The capture holds the official definition text and its provenance; it encodes no rule, no reading of the text for any lot, and no derived number.",
+    "Channel: canonical §12-10 HTML (node 18523; sha256 and byte count pinned). The whole-page print/PDF completeness channel returned HTTP 504 (the documented DB-167 fallback), so the Resolution's own list-marker glyphs could not be confirmed from the glyph-authoritative channel. This term's definition contains no ordered list, so no list-position label is used anywhere in it; any parenthesised (a)/(b)/(1) is literal source text.",
+    "The whole §12-10 page fetched here (2026-10-11) is not byte-identical to the 2026-10-07 §12-10 captures (page bytes 1316758 -> 1287409; raw_html_sha256 3c719702...b5bc -> 8eb066d1...b33c); this term's per-term Last Amended stamp (3/26/2026) is unchanged, so the operative definition text is the same.",
+    "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
+  ],
+  "content_digest_sha256": "ddc28f49a391f11bd5646152c1ecaed649172edf6dbe7c7224759f3d3b43f1b3"
+}

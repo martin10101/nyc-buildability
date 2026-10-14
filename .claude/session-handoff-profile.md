@@ -80,3 +80,30 @@ checkout of these files).
 - Expansion-planning hold (`.claude/rules/expansion-agent-dispatch-hold.md` §2) remains in force.
 - Dependency admissions follow `docs/DEPENDENCY_SECURITY_POLICY.md` (no new packages as a side
   effect of anything).
+
+## Living-files checklist (before HANDOFF READY; owner L1, D-094-R117)
+Confirm each line of `.claude/rules/living-files.md` for THIS session (one item below per map line) and write the result
+in the handoff's section 3 as a "Living files:" line (all updated, or the exact line not done and why). Never report
+HANDOFF READY with an unexplained gap.
+- Every owner question asked in chat is in `OWNER_QUESTIONS.md`; answered ones are marked with date and directive row.
+- The question-and-answer log has a section for every owner question of this session about building the app (not status
+  questions: D-094 R128-R130); the repository file and its private copy are equal (`cmp`).
+- Every substantive owner instruction of this session is captured; `tools/validate_directive_compliance.py --check` exit 0.
+- Research records touched this session: `tools/research_record_check.py --check` exit 0; any zoning-rule behaviour
+  change also in `docs/zoning-rule-review/` (principle 20); owner research asks in the RQ queue, committed and pushed
+  in the same step with a seam line and a PushNotification (D-050).
+- A dated backlog sweep line exists for every contract or merge seam of this session.
+- After a wave merge or a new contract: `project-control/master_plan.json` counts equal the ledger.
+- Lessons found this session are one-liners in PROGRAM_KNOWLEDGE / CODING_RULES / WORKING_KNOWLEDGE.
+- SESSION_NOTES has a STATE line per seam, dispatch and owner message, and a closing CHECKPOINT.
+- The handoff and the session brief are written; the handoff's section 3 carries this checklist's result as a
+  "Living files:" line.
+- Memory index (outside git, not in the map): new owner preferences or corrections of this session saved as memories.
+
+Handoff rules carried here from PROGRAM_KNOWLEDGE (unchanged wording):
+- Owner handoff = NOTHING keeps running (D-090-R941): save each helper's unfinished work into the session
+  folder (`git diff --binary`), stop it, record where it is; overrides the skill's let-helpers-finish line.
+- D-070 finished-seam handoffs: a PLANNED handoff requires the seam DONE FIRST (sweep, next
+  packet contracted+claimed+pushed, worktree, launcher pointed, fresh run-id) so the successor
+  only launches (no resume checks, D-094 R109-R113; same full handoff and prompt); crash/forced
+  turnover = the only fallback, and the only case for the reconcile checks.

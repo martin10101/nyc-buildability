@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-01",
  "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
- "revision": 3,
+ "revision": 4,
  "last_changed": "2026-10-11",
  "question": {
   "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
@@ -266,7 +266,8 @@
    "services/api/app/scenario/three_answers/result_way_bridge.py",
    "services/api/app/scenario/three_answers/result_ways.py",
    "services/api/app/scenario/three_answers/three_way_document.py",
-   "services/api/app/drawings/report/readers.py"
+   "services/api/app/drawings/report/readers.py",
+   "services/api/app/drawings/report/zoning_lot_item.py"
   ],
   "code_identity": {
    "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
@@ -278,7 +279,8 @@
    "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
    "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
-   "services/api/app/drawings/report/readers.py": "4a515b689bb7a8305b4119900e024ccd294732f148848fc81b2a3eb1dfd8bf07"
+   "services/api/app/drawings/report/readers.py": "91f607aaca9d99bab66be4b0112ff94d90a945622785df95416846f7bfb783a1",
+   "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52"
   },
   "worked_example": {
    "inputs": "Tax lots 1 and 70; three 2022 instruments indexed against both; DOB 421803891's text.",
@@ -301,7 +303,9 @@
   "dependency_assessment": [
    "Same assumption elsewhere: every lot-area-based output (floor-area allowance, coverage footprint, dwelling-unit limit, remaining capacity) takes the subject tax lot as the zoning lot. It is wrong only where a zoning lot spans several tax lots; no blanket change and no address-specific exception. Queued: DB-232 (a warning from the ACRIS index, labelled conditional).",
    "zoning_lot_history.py is reminder-only and never concludes a zoning lot; existing_floor_area/scope.py already sets aside zoning-lot-scoped DOB figures. Both stay consistent with this record.",
-   "Since M5-T158 (DB-232) the program reads the ACRIS index (Legals and Master metadata only) through a fail-closed connector behind a default-off flag (INTERNAL_ZONING_LOT_INDEX_ENABLED); with the flag off the output is unchanged. With a reading, the five-state classifier drives one property-specific zoning-lot condition on every lot-area figure; the benchmark shows it from the recorded replay. Reading the instruments themselves stays owed (access_blocked)."
+   "Since M5-T158 (DB-232) the program reads the ACRIS index (Legals and Master metadata only) through a fail-closed connector behind a default-off flag (INTERNAL_ZONING_LOT_INDEX_ENABLED); with the flag off the output is unchanged. With a reading, the five-state classifier drives one property-specific zoning-lot condition on every lot-area figure; the benchmark shows it from the recorded replay. Reading the instruments themselves stays owed (access_blocked).",
+   "Revision 4 (M5-T165, the G-6 report-side isolation): the report's zoning-lot condition logic moved out of drawings/report/readers.py into a new drawings/report/zoning_lot_item.py (the marker phrase 'register of recorded documents', zoning_lot_basis, zoning_lot_open_item and the page-1 index-entry sentence). readers.py keeps zoning_lot_basis only as a compatibility facade (it re-exports it) and wires the zoning-lot open item into the numbered open-items list. The marker is held in step with services/api/app/scenario/three_answers/result_way_conditions.py by a test. The code_identity here reflects M5-T162's readers.py change and this task's change, and adds zoning_lot_item.py.",
+   "Code-path proposal for the G1 reviewer to decide: readers.py should STAY in code_paths because it still carries NB-01-relevant report behavior (the facade re-export of zoning_lot_basis and the open-items wiring that surfaces the recorded-document condition). The detection and the page-1 sentence now live in zoning_lot_item.py, which is added to code_paths. The producer does not drop readers.py; the reviewer may."
   ]
  },
  "review": {
@@ -360,6 +364,32 @@
      "Live confirmation 2026-10-11: official Legals still indexes ZONE 2022020201551002 against lots 1 and 70 (all E) and returns the 7 lot-70 docs; Master metadata confirms document_amt='Principal debt or obligation' (omitted) and recorded_borough (unused), and good_through_date means 'index up to date through'. Disclosed DECL-only / former-lot-ZONE gaps are honest bounded negatives (ADVISORY-1)."
     ],
     "report": "project-control/reports/M5-T158-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-11",
+    "reviewed_revision": 4,
+    "reviewed_code_identity": {
+     "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
+     "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
+     "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
+     "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
+     "services/api/app/api/v1/study_inputs.py": "ebc38eeab6b1892d24040ef6e6d39d890bb5db9fb46cd373803a1c59ba5ef733",
+     "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
+     "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
+     "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
+     "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
+     "services/api/app/drawings/report/readers.py": "91f607aaca9d99bab66be4b0112ff94d90a945622785df95416846f7bfb783a1",
+     "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 delta at 2767f6a1: all 11 code_paths' LF sha256 recomputed and equal rev-4 code_identity (zoning_lot_item.py 88e1916a after the docstring-only ORCH correction 20801603; readers.py 91f607aa unchanged); research_status unchanged access_blocked.",
+     "Page-1 zoning-lot sentence, figures, bases, ceiling 29 Conditional and the rear-yard open check (23-344(b)/(c)(3), no conclusion) are unchanged from 4617c720 and remain faithful to NB-01/NB-03/NB-04 and the contract. The rework split only moved the non-key result text to the body token; every key figure is still read from the document's own value field, none recomputed.",
+     "G-6 decision unchanged: readers.py stays in code_paths (facade + open-items ordering realizing report.zoning_lot_warning); zoning_lot_item.py carries detection and the page-1 sentence.",
+     "S18 (narrowed by orchestrator scope correction 485b8ecb to this task's texts + the whole of page 1): met — the page-1 fallback caption now says 'city map outline (not surveyed)'; the remaining 'tax-map outline'/'Approximate tax map' texts live outside this task's paths or in the shared basis-rank display name and are owed by the GIS-wording sweep DB-245 (M5-T167)."
+    ],
+    "report": "project-control/reports/M5-T165-reviews.md"
    }
   ],
   "professional_review": null

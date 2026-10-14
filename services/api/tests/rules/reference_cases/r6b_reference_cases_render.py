@@ -205,6 +205,9 @@ def _render_row(row: dict) -> list[str]:
     lines.append("")
     lines.append(f"What this row does not establish: {row['does_not_establish']}")
     lines.append("")
+    quantities = row.get("quantities")
+    if quantities:
+        lines.extend(_render_quantities(quantities))
     block = row.get("numbers_block")
     if block:
         lines.extend(_render_numbers_block(block))
@@ -216,6 +219,16 @@ def _render_row(row: dict) -> list[str]:
             "settle; the current answer is in the named row(s))."
         )
         lines.append("")
+    return lines
+
+
+def _render_quantities(quantities: list[dict]) -> list[str]:
+    """Each measured quantity with the one measurement basis it carries (step P7).
+    A quantity is shown as written; no two bases are mixed in one figure."""
+    lines = ["Measured quantities, each on one basis:", ""]
+    for q in quantities:
+        lines.append(f"- {q['name']} = {q['value']} {q['unit']} (basis: {q['basis']}).")
+    lines.append("")
     return lines
 
 

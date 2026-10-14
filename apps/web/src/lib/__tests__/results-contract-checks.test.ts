@@ -152,3 +152,107 @@ describe("validateResultsDocument — shape of the blocks the panel reads [WIRIN
     expect(validateResultsDocument(body).ok).toBe(false);
   });
 });
+
+/**
+ * [WIRING] Contract 1.5.0 (task M5-T164): the additive illustrative placement and area allocation,
+ * and the cross-key way rules the schema cannot express (fitted only when placed; apartment + other
+ * = total within rounding), mirrored from services/api/app/contracts/results_way_rules.py. The
+ * value-state way rule of 1.3.0 keeps running on a 1.5.0 document, and an unknown version is still
+ * refused.
+ */
+const REAR_YARD_1_5_0 = "synthetic_rear_yard_constraints_contract_1_5_0";
+const PLACED_1_5_0 = "synthetic_placed_building_contract_1_5_0";
+
+/** One worked alternative, loosely typed for the deliberate 1.5.0 mutations below. */
+interface MutableAlt {
+  building: string;
+  placement?: { status: string; label: string; outline?: unknown };
+  area_allocation?: {
+    label: string;
+    share: number;
+    fitted: boolean;
+    apartment_area_sqft: number;
+    other_area_sqft: number;
+    total_sqft: number;
+  };
+}
+
+function altOf(doc: Results): MutableAlt {
+  return (doc as unknown as { building_alternatives: MutableAlt[] }).building_alternatives[0];
+}
+
+describe("validateResultsDocument — contract 1.5.0 placement and area allocation [WIRING]", () => {
+  it("accepts the rear-yard-constraints 1.5.0 fixture (withheld placement, unfitted allocation)", () => {
+    const doc = loadResultsFixture(REAR_YARD_1_5_0);
+    expect(doc.contract_version).toBe("1.5.0");
+    expect(validateResultsDocument(doc).ok).toBe(true);
+  });
+
+  it("accepts the placed-building 1.5.0 fixture (placed placement, fitted allocation)", () => {
+    const doc = loadResultsFixture(PLACED_1_5_0);
+    expect(doc.contract_version).toBe("1.5.0");
+    expect(validateResultsDocument(doc).ok).toBe(true);
+  });
+
+  it("S11: accepts 1.5.0 but still refuses an unknown contract version", () => {
+    const doc = loadResultsFixture(PLACED_1_5_0);
+    (doc as unknown as { contract_version: string }).contract_version = "9.9.9";
+    const result = validateResultsDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.startsWith("contract_version"))).toBe(true);
+  });
+
+  it("S12: refuses an area_allocation that is fitted while the placement is withheld", () => {
+    const doc = loadResultsFixture(PLACED_1_5_0);
+    const alt = altOf(doc);
+    if (!alt.placement || !alt.area_allocation) throw new Error("fixture changed");
+    alt.placement.status = "withheld";
+    delete alt.placement.outline; // a valid withheld placement; the allocation stays fitted
+    const result = validateResultsDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes("fitted"))).toBe(true);
+  });
+
+  it("S12: refuses an area_allocation whose apartment + other does not equal total", () => {
+    const doc = loadResultsFixture(PLACED_1_5_0);
+    const alt = altOf(doc);
+    if (!alt.area_allocation) throw new Error("fixture changed");
+    alt.area_allocation.total_sqft = alt.area_allocation.total_sqft + 1000;
+    const result = validateResultsDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes("apartment + other"))).toBe(true);
+  });
+
+  it("S4: refuses a placement label other than 'Illustrative'", () => {
+    const doc = loadResultsFixture(PLACED_1_5_0);
+    const alt = altOf(doc);
+    if (!alt.placement) throw new Error("fixture changed");
+    alt.placement.label = "Illustration";
+    const result = validateResultsDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes("placement.label"))).toBe(true);
+  });
+
+  it("S3: refuses a withheld placement that carries an outline", () => {
+    const doc = loadResultsFixture(REAR_YARD_1_5_0);
+    const alt = altOf(doc);
+    if (!alt.placement) throw new Error("fixture changed");
+    alt.placement.outline = [[[0, 0], [1, 0], [1, 1], [0, 0]]];
+    const result = validateResultsDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes("outline"))).toBe(true);
+  });
+
+  it("keeps the 1.3.0 value-state way rule running on a 1.5.0 document", () => {
+    const doc = loadResultsFixture(PLACED_1_5_0);
+    const allowance = doc.answers.floor_area_allowance;
+    if (allowance.status !== "available" || !allowance.value_states) {
+      throw new Error("fixture changed: allowance must carry value_states");
+    }
+    const shownKey = allowance.values[0].key;
+    delete (allowance.value_states as Record<string, unknown>)[shownKey];
+    const result = validateResultsDocument(doc);
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.problems.some(p => p.includes(shownKey))).toBe(true);
+  });
+});

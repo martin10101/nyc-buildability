@@ -1,0 +1,151 @@
+{
+  "task_id": "M5-T179",
+  "title": "Report page 7: the appendix scope note says context maps are in the report when the maps are printed (it lists them under 'Not yet in this report' today because the builder passes maps_present to page 1 only); a test for both cases; before/after picture of page 7",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Correct the appendix scope note of the report (page 7, page_assumptions.py `_material_exclusions`): when the report prints its context maps (the builder's `maps_present`, true when the surroundings' maps rendered), 'Context maps' is not listed under 'Not yet in this report'; when the maps are not printed it stays listed, exactly as today. The builder (services/api/app/drawings/report/builder.py) passes the same `maps_present` it already passes to page 1 into page_assumptions.render, which hands it to coverage.coverage_groups (coverage.py already supports it and is not edited). The docstring that says the page is built without the map context is corrected. Nothing else on any page changes.",
+  "business_reason": "D-094 R137 (the owner's forwarded review of 2026-10-14): 'Page 7 still incorrectly lists context maps as missing.' Confirmed in the print from the branch at 11c932b5d: page 7 prints 'Not yet in this report: ...; Context maps' while page 2 carries the locator map and the close-up page the dimensioned drawing.",
+  "inputs": [
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/tests/drawings/report/test_report_scope_note_maps.py",
+    "project-control/reports/M5-T179-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T165"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/tests/drawings/report/test_report_scope_note_maps.py",
+    "project-control/reports/M5-T179-producer-report.md",
+    "services/api/tests/drawings/report/test_report_pages.py"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/kit/",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "packages/contracts/",
+    "services/api/app/scenario/",
+    "docs/reference-cases/",
+    "docs/research/evidence-records/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the benchmark document with a map context whose maps render (as test_report_pages.py builds it with the recorded window pack)",
+      "when": "the report HTML is built",
+      "then": "the appendix scope note does not list 'Context maps' under 'Not yet in this report'; every other name it listed stays, in the same order and words"
+    },
+    {
+      "id": "S2",
+      "given": "every valid results fixture built WITHOUT a map context",
+      "when": "the report HTML is built",
+      "then": "it is byte-identical to the claim head's output (the scope note still lists 'Context maps' under 'Not yet in this report')"
+    },
+    {
+      "id": "S3",
+      "given": "the benchmark with its map context",
+      "when": "its report HTML at the claim head and after the change are compared",
+      "then": "the only difference is the removal of 'Context maps' (and its separator) from the scope note; no other byte changes"
+    },
+    {
+      "id": "S4",
+      "given": "the new test",
+      "when": "the builder's pass-through of maps_present to page_assumptions is reverted",
+      "then": "the S1 test fails (it asserts the displaced value), and passes again when restored"
+    },
+    {
+      "id": "S5",
+      "given": "the preview print from the branch after integration",
+      "when": "page 7 is compared with the print at 11c932b5d",
+      "then": "the 'Context maps' entry is gone from 'Not yet in this report' and nothing else on the page moved (before/after picture, R083)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Another test may pin the old scope-note text for a report built with maps: the builder runs the whole tests/drawings suite and reports any test outside the allowed paths that needs a change (a scope correction, never a silent edit).",
+    "M5-T175 (in flight) also proves byte-identity of the benchmark report with maps against its claim head: this task integrates AFTER M5-T175's rework 2 is integrated and its delta reviews returned, so neither proof is confused."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T17:50:20.686294+00:00",
+  "updated_at": "2026-10-14T18:59:20.595527+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R083",
+        "D-094-R137"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T17:50:20.686531+00:00",
+  "path_notes": "Contract base: task/wave24-report-v3 after D-094 source-019. Disjoint from M5-T175 (in flight: constraint_text.py, page_site_context.py, page_decision_summary.py, page_location.py, drawings_embed.py, maps/, kit/styles.py and their tests) and from M3-T008 (snapshots only); builder.py and page_assumptions.py are listed by no task in flight. Integration order: after M5-T175's rework 2 and its delta reviews. No research record changes (presentation only; D-093: no fact, reading, calculation or label changes). New test file in the existing folder tests/drawings/report/.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-14T17:50:24.232340+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the builder passes maps_present to the appendix scope note and adds the test"
+    },
+    {
+      "at": "2026-10-14T18:23:10.508778+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "built (maps_present passed to the appendix scope note; the q3 assertion corrected under the scope correction of 2026-10-14); the builder's commit integrated as d36341bc (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T18:38:47.286211+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T18:01:30+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction after the build round (the builder's return, session 2026-10-14c; the packet's risk 1): the whole drawings suite has one failure, test_report_pages.py::test_q3_coverage_and_maps_with_and_without_a_map_document, whose last line asserts 'Context maps' in the visible text of the report WITH maps; since the coverage inventory left page 1 (M5-T165) the only place that text appeared was the wrong page-7 scope note, so the assertion pinned the defect. test_report_pages.py is added to the allowed paths (no task in flight lists it) for that one assertion: the report with maps does NOT list 'Context maps' among the exclusions. No row, gate, reviewer or dependency changes."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T18:59:20.595343+00:00"
+}

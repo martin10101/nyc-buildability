@@ -1,0 +1,56 @@
+{
+ "task_id": "M3-T008",
+ "material_commits": [
+  "05e4ccb4 (researcher, round 1 (cherry-pick of febd80b4): ten captures (27-111, 27-131, 27-133, 27-14, 27-151, 27-16, 27-161, 27-162 and the 12-10 terms 'affordable independent residence for seniors' and 'long-term care facility') with byte-identical bundled copies; the producer report)",
+  "7a794e61 (researcher, rework 1 (cherry-pick of 381f7a7a): the G1 fixes: 27-16's top-level letters relabelled to the official print (F1), the senior term renamed to its singular official title (F2), Appendix F as a pointer capture with its landing page and official PDF asset sha256-pinned (F3), the 12-10 per-term dates re-read (F4); the producer report corrected)"
+ ],
+ "claim_seam_head": "2e830d00a2f9e1aa36b015c7f275425cb0178899",
+ "files_changed": [
+  "docs/research/zr-snapshots/v1/zr-12-10-affordable-independent-residence-for-seniors.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-12-10-affordable-independent-residences-for-seniors.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-12-10-long-term-care-facility.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-111.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-131.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-133.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-14.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-151.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-16.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-161.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-27-162.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json",
+  "project-control/reports/M3-T008-producer-report.md",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-affordable-independent-residence-for-seniors.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-affordable-independent-residences-for-seniors.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-long-term-care-facility.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-111.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-131.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-133.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-14.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-151.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-16.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-161.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-27-162.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-appendix-f.snapshot.json"
+ ],
+ "what_did_not_change": "No rule, scenario, drawing, test, script, library document, evidence record, reference case or review-register file; no existing snapshot other than this task's own; the sync script is unchanged (it wrote the bundled copies). ZR 23-154 still answers HTTP 403 and has no capture (recorded with its time, not worked around).",
+ "known_limits": [
+  "Every capture is an unreviewed draft (extraction_status extracted_draft, raw_html_verified false; ADR-007): documents only, no reading for any lot, no derived number, no eligibility determination.",
+  "Appendix F is a pointer: its maps and tables are not transcribed; they live in the sha256-pinned official PDF asset and the borough sub-pages.",
+  "The two 12-10 terms use the documented fallback (the whole-page print 504s, the per-term print 403s): HTML only, disclosed in each file; their ordered-list letters are markup positions (cite by words).",
+  "27-16's print/PDF pin is the round-1 render that was block-checked; the fresh render that confirmed the letters is recorded beside it (the site regenerates the PDF per request)."
+ ],
+ "checks_at_material_head": [
+  "producer (rework 1): sync_zr_snapshots.py --check exit 0 (200 files); tests/rules/test_zr_snapshot_bundle.py + tests/drawings/report/test_report_law_links.py 28 passed exit 0; research_record_check PASS; lane coverage PASS; own loader/digest/status check over every changed file",
+  "orchestrator (G2): the material commits touch only the packet's allowed paths (the plural senior-term path for the rename's deletion, the singular one added by the scope correction of 2026-10-14); LF sha256 of every file equal to the producer's return at each cherry-pick",
+  "G1 data-contract-verifier, round 1 at 05e4ccb4d: FAIL with one required fix (27-16 letters) and three advisories; G1 delta, a fresh data-contract-verifier at 7a794e610: PASS, all four resolved and re-derived from the official pages (print/PDF node 22711, Appendix F landing page and PDF asset byte-identical to the recorded sha256, 12-10 page node 18523); scope clean; both checks green",
+  "CI run 38610080172 at c2edfd8e (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R102": [
+   "The zoning-law library continues as its own documents-only line of work beside the report lane, sharing no file with it: this task captures, from the official portal, the eleven sections and terms the affordable- and senior-housing options need that the library marked not captured (backlog DB-253): Article II Chapter 7 sections 27-111, 27-131, 27-133, 27-14, 27-151, 27-16, 27-161, 27-162, Appendix F (a pointer: maps and tables not transcribed) and the 12-10 terms 'affordable independent residence for seniors' and 'long-term care facility', each in the zr_section_snapshot/v1 shape with a byte-identical bundled copy; 23-154 re-attempted and its HTTP 403 recorded."
+  ],
+  "D-094-R104": [
+   "Helpers within the limits fed the work: one researcher built (round 1 and rework 1, each in its own worktree), and read-only reviewers checked it (G1 round 1 and a fresh G1 delta); at no time more than three helpers built or more than the session's limit ran, and no two helpers shared a file (session notes of 2026-10-14b and 2026-10-14c)."
+  ]
+ }
+}

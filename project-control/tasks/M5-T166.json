@@ -1,0 +1,264 @@
+{
+  "task_id": "M5-T166",
+  "title": "One neighbourhood locator and a large dimensioned constraints close-up (dimension lines on the edges they measure, each naming its basis; street names with mapped widths; north arrow and scale), a compact heights table and the 'No building placed' legend entry",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Page 2 keeps the neighbourhood locator only (the block close-up is not printed; block_map.py and its tests stay, restorable). Page 3 becomes a large close frame: the subject lot and the lots sharing an edge with it (1, 11, 61) dominate; dimension lines anchored to the outline's edges on the only basis the 1.4.0 document has (the city map outline, gis), each labelled in plain words (e.g. '103.88 ft, map outline, not surveyed'); street names with mapped widths (Northern Boulevard 100 ft, 215 Place 60 ft), north arrow and scale bar. The page-1 graphic becomes the compact close frame (maps side only). The six height rows become a compact 3x2 standard / qualifying-housing table. The site page shows the 'No building placed' legend entry instead of the sentence. No tax-map value is drawn. The rows' 'Not known' data path (page_site_context.py:52) stays for a later task. No CSS change: every SVG is sized from its viewBox; any page-2/3 CSS need goes to the orchestrator, who relays it to the M5-T165 builder. NB-04 revision 2 adds close_frame_dimensions.py to its code_paths and every drawn edge value not yet recorded (at least 99.98 and 101.71 ft) as gis quantities; its research_status stays unchanged.",
+  "business_reason": "D-094 R014/R074: the maps repeat context while the property stays small; the constraints page needs a close-up drawing with dimensions attached to the boundaries.",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "project-control/reports/D-094-visual-proof-before.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "project-control/reports/M5-T166-producer-report.md"
+  ],
+  "dependencies": [
+    "M0-T193"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/maps/context_scene.py",
+    "services/api/app/drawings/maps/layout.py",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/map_caption.py",
+    "services/api/tests/drawings/maps/test_site_context_plan.py",
+    "services/api/tests/drawings/maps/test_context_maps.py",
+    "services/api/tests/drawings/maps/test_snapshots.py",
+    "services/api/tests/drawings/maps/snapshots/recorded_215_16_northern.location_map.svg",
+    "services/api/tests/drawings/maps/snapshots/recorded_215_16_northern.zoning_map.svg",
+    "services/api/tests/drawings/maps/snapshots/synthetic_buildings_unavailable.zoning_map.svg",
+    "services/api/tests/drawings/maps/snapshots/synthetic_corner_lot.location_map.svg",
+    "services/api/tests/drawings/maps/snapshots/synthetic_corner_lot.zoning_map.svg",
+    "services/api/tests/drawings/maps/snapshots/synthetic_midblock_split_lot.location_map.svg",
+    "services/api/tests/drawings/maps/snapshots/synthetic_midblock_split_lot.zoning_map.svg",
+    "services/api/tests/drawings/maps/snapshots/synthetic_zoning_unavailable.location_map.svg",
+    "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/api/test_report_read_context.py",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "project-control/reports/M5-T166-producer-report.md",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/zoning_lot_item.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_page_one.py",
+    "services/api/app/scenario/",
+    "packages/",
+    "apps/web/src/",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the close frame",
+      "when": "its dimensions are drawn",
+      "then": "every dimension endpoint lies on its edge's vertices within 0.01 ft; the drawing states its basis once in a note under it and each label shows only the figure (a label carries a short basis tag only when one drawing mixes bases; owner K1, D-094-R116); nothing is merged across bases; no tax-map value is drawn"
+    },
+    {
+      "id": "S2",
+      "given": "the close frame at print size",
+      "when": "labels are measured",
+      "then": "every label is at least 8.5 pt with no collisions; the build fails rather than shrink"
+    },
+    {
+      "id": "S3",
+      "given": "page 2",
+      "when": "it is built",
+      "then": "it is the locator only; the block_map tests stay green"
+    },
+    {
+      "id": "S4",
+      "given": "the close frame",
+      "when": "it is built",
+      "then": "its contents are as the objective states; the one-outline check and the lot-only fallback are unchanged (one line, never blank)"
+    },
+    {
+      "id": "S5",
+      "given": "the benchmark report",
+      "when": "its map figures are counted",
+      "then": "at most 3, each a distinct job"
+    },
+    {
+      "id": "S6",
+      "given": "the report",
+      "when": "it is built",
+      "then": "'Map geometry only...' appears once"
+    },
+    {
+      "id": "S7",
+      "given": "M5-T165's test_report_pages.py",
+      "when": "it runs",
+      "then": "the 3x2 table takes its labels from the document; 'Maximum lot coverage' appears once on the site page and there is no bare 'Not shown'; without a map document there is no 'Context maps' text in the site section, with one there is an svg"
+    },
+    {
+      "id": "S8",
+      "given": "the site page",
+      "when": "it is built",
+      "then": "the 'No building placed' legend entry shows; the not-placed sentence stays on the scenario sheet (test_report_read_context.py:68 still passes)"
+    },
+    {
+      "id": "S9",
+      "given": "the unchanged frames and snapshots",
+      "when": "the snapshot tests run",
+      "then": "every frame and snapshot not changed by this task is byte-identical (the changed ones listed in the report)"
+    },
+    {
+      "id": "S10",
+      "given": "the site-and-context section",
+      "when": "its HTML visible words are counted",
+      "then": "at most its baseline (199 on build_report_html(benchmark()))"
+    },
+    {
+      "id": "S11",
+      "given": "the maps package",
+      "when": "the modularity check runs",
+      "then": "it passes"
+    },
+    {
+      "id": "S12",
+      "given": "section ids, reader questions and the page-1 wrapper",
+      "when": "the report is built",
+      "then": "they are untouched; report/layout.py is unedited"
+    },
+    {
+      "id": "S13",
+      "given": "NB-04",
+      "when": "python3 tools/research_record_check.py --check runs",
+      "then": "revision 2 lists close_frame_dimensions.py in code_paths and every drawn edge value (at least 99.98 and 101.71 ft) as gis quantities; research_status unchanged; exit 0"
+    },
+    {
+      "id": "S14",
+      "given": "the close frame and the page-1 compact close frame",
+      "when": "a test walks every drawn label",
+      "then": "no drawn line, outline or fill crosses or touches any label's box, the label's own dimension and witness lines included; every label sits on a white background; a forced collision fails the build rather than shrinking text (D-094-R115)"
+    },
+    {
+      "id": "S15",
+      "given": "the close frame",
+      "when": "it is drawn for the benchmark",
+      "then": "the neighbours' street addresses are not drawn (their lot numbers stay); neighbouring buildings are drawn lighter than the subject lot and its edges; the subject lot and its dimensions dominate (D-094-R115, R116)"
+    },
+    {
+      "id": "S16",
+      "given": "the report printed in-process from the task's head",
+      "when": "the builder and then the visual reviewer look at pages 1-4 at print size",
+      "then": "no word touches a line or fill; the basis note appears once under the close frame; the constraints table is not alone on a page; the result is described page by page in the producer report (D-094-R115, R116)"
+    },
+    {
+      "id": "S17",
+      "given": "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+      "when": "it is read after the change",
+      "then": "the page-2 close-up sentence and the wording paragraph say the drawing states its basis once under it with figure-only labels (a short tag only when bases mix), dated 2026-10-12 and citing the owner's K1 answer; nothing else in the contract changes (D-094-R116)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "geospatial-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "Map drawings needed 3-4 rounds in wave 22; labels at print size are the usual failure.",
+    "A CSS need would collide with M5-T165's layout.py: relay it, never edit it."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T20:43:42.622669+00:00",
+  "updated_at": "2026-10-14T02:52:47.451086+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R014",
+        "D-094-R015",
+        "D-094-R016",
+        "D-094-R044",
+        "D-094-R052",
+        "D-094-R053",
+        "D-094-R074",
+        "D-094-R077",
+        "D-094-R115",
+        "D-094-R116"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T20:43:42.622945+00:00",
+  "path_notes": "Runs beside M5-T165 (no shared file). Builders never start a server; the report-print e2e runs in CI. Scope correction 2026-10-12 (owner D-094 R115/R116): the close-up's clutter fix and the K1 contract sentence are in this task; the builder edits only the two contract sentences named in S17.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings tests/cad tests/api/test_report_read_context.py",
+    "python3 tools/research_record_check.py --check",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-11T20:43:49.971979+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one builder dispatched"
+    },
+    {
+      "at": "2026-10-12T05:58:39.981074+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 40,
+      "status": "claimed",
+      "message": "rework 1 integrated and delta-reviewed; rework 2 integrated; scope corrected for the owner's K1 answer; rework 3 dispatched fresh from the saved patch"
+    },
+    {
+      "at": "2026-10-14T01:52:18.250726+00:00",
+      "agent": "geospatial-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "G1, G3, G4 and the visual review PASS at 68d417fe; review record and evidence map written; submit at the next CI-green head"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-12T05:58:38+00:00",
+      "actor": "orchestrator",
+      "change": "Owner correction and go-ahead of 2026-10-12 (D-094 source-010/011, rows R115/R116; question K1 answered yes): the close-up states its measurement basis once under the drawing with figure-only labels; no line or fill touches any label (own lines included) and every label has a white background; neighbours' street addresses off the close-up (lot numbers stay); lighter neighbouring buildings; a check by eye on the printed page. Added docs/design/ARCHITECT_PRESENTATION_CONTRACT.md (only the two sentences of S17 change: the orchestrator's own 2026-10-11 wording that every dimension label names its basis); S1 reworded accordingly (old S1 'then': 'every dimension endpoint lies on its edge's vertices within 0.01 ft; each label names its basis; nothing is merged across bases; no tax-map value is drawn'); S14-S17 added; rows R115 and R116 bound."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T02:52:47.450899+00:00"
+}

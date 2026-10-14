@@ -7,8 +7,8 @@ paths:
 ---
 # Drawings, CAD sheets and report presentation — loads only when editing those paths
 
-- Read `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` (sections 6 and 7) before changing a drawing, sheet or report.
-- The report follows the contract's page types (change of 2026-10-10): four architect questions in order, evidence last;
+- Read `docs/design/ARCHITECT_PRESENTATION_CONTRACT.md` (its change of 2026-10-11, D-094, and sections 6 and 7) before changing a drawing, sheet or report.
+- The report follows the contract's page types (change of 2026-10-10, rewritten 2026-10-11): four architect questions in order, evidence last;
   A4 only; no notes column; shared limitations once; 'Scheduled floor area: N sq ft; site fit unverified'; no developer words.
 - Draw only from the canonical results and geometry contracts: no stand-in shape, never a stretched outline.
 - Keep the current status meaning (screen: D-090 row R641; PDF: the six labels, rows R779 to R799). Presentation

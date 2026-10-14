@@ -1,0 +1,178 @@
+{
+  "task_id": "M5-T171",
+  "title": "Website page-1 parity: the Results headline shows the same answer as report page 1 (the legal ceiling beside the apartment estimate with the identical distinction line, the assumption line, the zoning-lot concern beside the headline)",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "The website Results headline shows the same answer as report page 1: one additive block holds 'Legal ceiling 29 (Conditional)' beside 'Estimate 17-22 (Provisional)' - the estimate's status chip reads the plain-word label 'Provisional' (labels.PROVISIONAL), never 'preliminary' - with the identical distinction line (a literal whose unit test compares it character-for-character with wording.ceiling_estimate_distinction read from docs/design/presentation-tokens.json: 'The ceiling is a conditional zoning limit; the estimate is an unvalidated apartment-yield range; neither is a demonstrated layout.'), the R055 assumption line composed exactly as report page 1 ('10,075 sq ft recorded lot area \u00d7 FAR 2.0, tax lot 70 alone'; the \u00d7 is U+00D7, 'alone' only while the zoning lot is unconfirmed), and the zoning-lot concern beside the headline. The block is ADDITIVE: the existing allowance card keeps its '29 units ... Conditional' value (three-answers.ts is read-only), so the legal unit limit still sits with the allowance (DB-214 N2) and now also appears beside the estimate for page-1 parity; the builder reconciles the DB-214 N2 wording in three-answers-panel.test.tsx in-scope without disturbing the allowance card. The screen statuses stay (question C2 is open); the task does not depend on C2's answer. Values come from the results document (results.answers.floor_area_allowance.value_states.legal_unit_limit_standard for the 29 and its conditional way; results.building_alternatives[0].capacity_estimate.whole_below_low / whole_above_high for 17-22); nothing is recalculated in TSX; an absent legal unit limit or capacity_estimate degrades to no figure, never an invented one. The new block uses its OWN testids (never answer-conditional-marker, answer-value or answer-headline-number).",
+  "business_reason": "D-094 R041/R057: one structure and the same figures, labels and caveats on the website and in the PDF.",
+  "inputs": [
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "docs/design/presentation-tokens.json",
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/readers.py"
+  ],
+  "outputs": [
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/ApartmentFigures.tsx",
+    "apps/web/src/lib/architect/apartment-figures.ts",
+    "project-control/reports/M5-T171-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T165"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx",
+    "apps/web/src/components/architect/answers/three-answers.css",
+    "apps/web/src/components/architect/answers/ApartmentFigures.tsx",
+    "apps/web/src/components/architect/answers/__tests__/apartment-figures.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/lib/architect/apartment-figures.ts",
+    "apps/web/e2e/results-layout.flag-on.spec.ts",
+    "project-control/reports/M5-T171-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "apps/web/src/lib/architect/three-answers.ts",
+    "apps/web/src/app/globals.css",
+    "docs/design/presentation-tokens.json",
+    "services/",
+    "packages/",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "apps/web/src/lib/results-contract-checks.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the distinction line on the screen",
+      "when": "the unit test runs",
+      "then": "the literal equals wording.ceiling_estimate_distinction character-for-character; the test reads docs/design/presentation-tokens.json directly"
+    },
+    {
+      "id": "S2",
+      "given": "the Results headline and the new figures block",
+      "when": "they are searched",
+      "then": "no forbidden word appears, including buildable, achievable, can be built"
+    },
+    {
+      "id": "S3",
+      "given": "the Results view at 320, 390, 768, 1,024, 1,440 and 1,920 px",
+      "when": "the edited e2e spec runs in CI and the orchestrator captures the widths",
+      "then": "no clipped text, horizontal page scroll, overlapping labels or obscured controls (UX-07); the builder runs neither"
+    },
+    {
+      "id": "S4",
+      "given": "the 29 and a withheld limit",
+      "when": "the headline renders",
+      "then": "the 29 is Conditional, never settled; a withheld limit shows its reason, never an invented value"
+    },
+    {
+      "id": "S5",
+      "given": "the builder's checks",
+      "when": "they run on the dev server without ports",
+      "then": "lint, typecheck and the touched unit tests pass; the e2e result is read from CI"
+    },
+    {
+      "id": "S6",
+      "given": "the figures",
+      "when": "they render",
+      "then": "the 29 and 17-22 come from the document; the R055 lot-area line is '10,075 sq ft recorded lot area \u00d7 FAR 2.0, tax lot 70 alone' (the \u00d7 is U+00D7), naming its basis (recorded lot area, administrative_record per G-10) in the contract's plain-word labels, byte-equal to report page 1"
+    },
+    {
+      "id": "S7",
+      "given": "every committed valid results fixture (including M5-T164's 1.5.0 synthetic_* documents) and the benchmark",
+      "when": "the panel renders the figures block",
+      "then": "it reads the 29 and the 17-22 from the document and degrades to no figure when the fixture carries no legal unit limit or no capacity_estimate; it never throws or invents a value; three-answers-panel.test.tsx stays green (DB-214 N2 reconciled in-scope: the allowance card keeps its 29)"
+    },
+    {
+      "id": "S8",
+      "given": "the new figures block's DOM",
+      "when": "the forbidden suites run in CI (journey-215-16-northern.test.tsx, results.flag-on.spec.ts, results-contract-checks*)",
+      "then": "they stay green UNEDITED; the block uses its own testids (never answer-conditional-marker, answer-value, answer-headline-number), so the whole-panel queryAllByTestId('answer-conditional-marker') length-0 assertion and the scoped e2e marker queries are unaffected"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "frontend-engineer",
+  "reviewer_agents": [
+    "human-journey-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "The screen statuses stay until question C2 is answered.",
+    "The existing web design keeps the 29 on the allowance card apart from the estimate (DB-214 N2); parity pairs ceiling+estimate in a new additive block. three-answers.ts and first-building-options.ts are read-only, so the allowance card is untouched; only three-answers-panel.test.tsx's DB-214 N2 wording is reconciled in-scope.",
+    "Reusing AnswerCard's answer-* testids in the new block would break three-answers-panel.test.tsx:321 and the forbidden e2e strict queries; the block uses distinct testids.",
+    "The wording group is Python-only in the token generator, so the web unit test reads docs/design/presentation-tokens.json via fs; confirm the repo-root path resolves from the apps/web vitest cwd."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-11T20:43:44.523757+00:00",
+  "updated_at": "2026-10-14T17:27:44.740835+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R035",
+        "D-094-R041",
+        "D-094-R051",
+        "D-094-R057",
+        "D-094-R071",
+        "D-094-R078",
+        "D-094-R081",
+        "D-094-R083"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-11T20:43:44.523950+00:00",
+  "path_notes": "Starts ONLY after M5-T165 is accepted (needs the frozen wording token and the exact page-1 strings); at the read root M5-T165 is active/in-rework, not accepted. Re-verify wording.ceiling_estimate_distinction and the R055 string against M5-T165's accepted head before dispatch. Runs after M5-T165 (answers/* and lib/architect/apartment-figures.ts versus the report side; no shared file). Builders never touch ports 3000/3001/8000; results-layout.flag-on.spec.ts runs in CI, not locally. The new block uses its own testids (not answer-*). The token-comparison test reads docs/design/presentation-tokens.json directly. G-7 fan-out: M5-T164's 1.5.0 fixtures are read by three-answers-panel.test.tsx and the results-fixtures consumers; the block must render for all of them.",
+  "documented_test_commands": [
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/components/architect/answers"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T02:28:28+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction before any claim or build (packet check by a read-only helper against the page 1 that M5-T165 built; session 2026-10-14): the estimate's chip reads 'Provisional' as on report page 1 (the packet said 'preliminary'); the lot-area line is quoted exactly as page 1 composes it (the multiplication sign U+00D7; 'alone' only while the zoning lot is unconfirmed); the block is additive and uses its own test ids (the allowance card keeps its 29; three-answers.ts stays read-only); four more files are forbidden as the work order lists them (the journey test and the results-contract checks, benchmark consumers of another task); S1, S4 and S6 reworded to say so; S7 added (every committed results document, incl. the 1.5.0 examples, renders; an absent figure shows no figure) and S8 added (the forbidden suites stay green unedited). No row, gate, reviewer, dependency or writable path changes."
+    }
+  ],
+  "progress_log": [
+    {
+      "at": "2026-10-14T02:53:12.341505+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed after M5-T165 was accepted; the builder mirrors the accepted page 1"
+    },
+    {
+      "at": "2026-10-14T03:24:10.034047+00:00",
+      "agent": "frontend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "the additive ceiling-and-estimate block beside the answers, mirroring report page 1; the builder's commit integrated as 2f69ee16 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-14T03:49:54.948018+00:00",
+      "agent": "frontend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T17:27:44.740645+00:00"
+}

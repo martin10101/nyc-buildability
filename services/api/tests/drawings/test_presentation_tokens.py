@@ -12,7 +12,7 @@ from pathlib import Path
 
 from app.drawings.kit import presentation_tokens
 
-GROUPS = ("color", "spacing", "control", "radius", "font", "type", "status")
+GROUPS = ("color", "spacing", "control", "radius", "font", "type", "status", "wording")
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _JSON_PATH = _REPO_ROOT / "docs" / "design" / "presentation-tokens.json"
 _FONT_STACK = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif"
@@ -60,6 +60,27 @@ def test_status_words_are_settled_conditional_not_known_no_verified() -> None:
     assert status["conditional"]["color_role"] == "secondary"
     assert status["not-known"]["marker"] is True
     assert "verified" not in status
+
+
+def test_wording_group_holds_the_three_contract_texts() -> None:
+    # S16 / G-15: the wording group holds the distinction line, the two zone labels and
+    # the area-illustration caption, each byte-equal to the design contract's quoted text
+    # (ARCHITECT_PRESENTATION_CONTRACT.md, "Change 2026-10-11", fixed wordings). The JSON
+    # and the generated module mirror each other (checked by test_module_mirrors_the_json_source).
+    wording = presentation_tokens.TOKENS["wording"]
+    assert wording["ceiling_estimate_distinction"] == (
+        "The ceiling is a conditional zoning limit; the estimate is an unvalidated "
+        "apartment-yield range; neither is a demonstrated layout."
+    )
+    assert wording["area_zone_apartment"] == "Apartment area"
+    assert wording["area_zone_other"] == (
+        "Other building area: core, circulation, walls and services"
+    )
+    # the caption carries an em dash, never a hyphen, and no closing full stop.
+    assert wording["area_illustration_caption"] == "Illustrative area allocation—not a floor plan"
+    # no double quote or backslash in any wording value (they would break the CSS string escaping).
+    for value in wording.values():
+        assert '"' not in value and "\\" not in value
 
 
 def test_module_lines_stay_within_100_chars() -> None:

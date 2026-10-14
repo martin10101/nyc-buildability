@@ -1,14 +1,15 @@
 {
  "project": "NYC Buildability",
- "version": 2,
+ "version": 3,
  "delivery_mode": "full_production",
- "current_milestone": "M4",
+ "current_milestone": "M5",
  "milestones": [
   {
    "id": "M0",
    "name": "Engineering control plane and cloud foundation",
    "status": "active",
-   "depends_on": []
+   "depends_on": [],
+   "summary": "Control plane, governance and tooling: 171/196 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Still open (ledger): M0-T007 blocked; M0-T008 blocked; M0-T021 awaiting_gate; M0-T026 backlog; M0-T032 backlog; M0-T034 awaiting_gate; M0-T037 backlog; M0-T080 in_progress; M0-T081 backlog; M0-T082 backlog; M0-T083 backlog; M0-T084 backlog; M0-T085 backlog; M0-T109 awaiting_gate; M0-T133 rework; M0-T135 backlog; M0-T137 backlog; M0-T145 awaiting_gate; M0-T153 claimed; M0-T154 backlog; M0-T155 claimed; M0-T162 claimed; M0-T163 claimed; M0-T164 claimed; M0-T175 in_progress. Most open items are dormant governance/supervisor work (D-023, D-024, D-033) and the two cloud-foundation tasks M0-T007/M0-T008 are blocked on B-001 (durable storage); the D-090 lane-bootstrap tasks M0-T162/M0-T164 of 2026-09-30 are claimed but dormant. The report programme's own governance tasks (contract change M0-T193, visual baseline M0-T194) are accepted; the final report-pass export M0-T195 is planned (report_programme below)."
   },
   {
    "id": "M1",
@@ -17,7 +18,7 @@
    "depends_on": [
     "M0"
    ],
-   "summary": "9/9 tasks accepted (M1-T001..T009). Official-source registry + connector framework delivered."
+   "summary": "Official-source registry and connector framework: 9/9 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Complete."
   },
   {
    "id": "M2",
@@ -26,16 +27,16 @@
    "depends_on": [
     "M1"
    ],
-   "summary": "13/16 tasks accepted (M2-T001..T013). M2-T014/T015/T016 survey-planning tasks remain HELD (owner survey-dispatch hold), not accepted."
+   "summary": "Citywide property intelligence: 21/22 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). The survey packets M2-T014/T015/T016 are accepted; open: M2-T019 backlog (survey-review HTTP routes and production store, blocked on B-001 durable storage)."
   },
   {
    "id": "M3",
    "name": "Versioned legal corpus",
-   "status": "planned",
+   "status": "active",
    "depends_on": [
     "M1"
    ],
-   "summary": "Versioned legal corpus. 0/5 accepted. Five-task chain contracted under D-002 (carried from PR #93, superseded): M3-T001 (source-authority hierarchy + coverage matrix + registry channels + legal-source-manifest + DOCUMENT_EVIDENCE_POLICY + construction-code-release-scope draft) is first-wave lane 1; M3-T002 immutable source capture + versioning; M3-T003 Document Evidence Verification Engine; M3-T004 cross-reference closure graph; M3-T005 DOB construction-code + amendment overlay. Dependency order T001->T002->T003->T004; T005 needs T001+T002+T003+B-001+B-011. M3-T002/T003/T005 acceptance blocked by B-001 (durable storage) while open; M3-T005 also by B-011 (construction-code scope). M4 rule work proceeded on needs_review rules per owner directive 2026-07-21; full M3 corpus still owed before publication/G6."
+   "summary": "Versioned legal corpus: 4/8 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Accepted: M3-T001 (source hierarchy, coverage matrix, manifest) and M3-T006 (zoning-law library, first pass, 2026-10-11: the R6B section catalogue with every cross-reference, 6 sections handled / 67 not, the eleven options' sections, pitfalls, research log). Open: M3-T002 backlog; M3-T003 backlog; M3-T004 backlog; M3-T005 backlog (immutable capture, document-evidence engine, cross-reference closure graph, construction-code overlay; capture/storage tasks wait on B-001). The library's capture list (5 sections, 8 terms) is DB-243. M3-T007 accepted (zoning-law library, second pass, contracted 2026-10-14: the law the remaining options 2-3, 5, 6-7, 8, 9, 10 and 11 need, read from the official text by read-only research helpers and written up by one builder; documents only; the captures it lists are DB-253). M3-T008 accepted (contracted 2026-10-14: captures of the law the affordable- and senior-housing options need - Article II Chapter 7, Appendix F and two 12-10 terms; the other capture sets of DB-253 follow one at a time)."
   },
   {
    "id": "M4",
@@ -44,16 +45,17 @@
    "depends_on": [
     "M3"
    ],
-   "summary": "0/6 tasks accepted. M4-T001..T006 all MERGED to main as DRAFT engineering (needs_review rules; T006 = R5 height/setback, PR #88); gates PASS recorded/on-file. NONE accepted, Published, or Verified. Whole chain blocked from acceptance by G6 qualified-human legal approval on M4-T001 (+ B-010 client benchmark). M4-T007 = exact Decimal/legal-units arithmetic foundation (D-002 first-wave lane 2; DF-2/B-014), deterministic engineering acceptable independent of G6. The PR #91 yard/coverage footprint proposal (which sketched M4-T007..T010) is SUPERSEDED and, being downstream of accepted M3-T004 + canonical zoning-lot model (Area C), will be re-proposed at fresh IDs after those land; it does not reserve M4-T007. D-045 CITYWIDE RULE-COVERAGE CAMPAIGN (owner directive 2026-09-13, integrated per D-045-R010): M4 now carries the full-coverage waves - A1 height/setback families R1-R4 + R6-R12 (D-045-R001), A2 geometry-dependent mechanics with their data inputs (R002) incl. the B2 street-width connector (R003), A3 contextual/Quality Housing + bonus programs (R004), C-district families (R005), M-district families (R006), and A4 special-purpose + waterfront as LATER waves (R007). Sequencing R008: one reviewed family at a time, bounded gated tasks citing D-045:<rid>, never a monolithic all-districts task; orchestrator wave order A1 -> A2+B2 -> A3 -> C -> M -> A4. Preservation R009 unchanged: DRAFT/needs_review until G6 qualified legal review (Section 20), no compliance declarations, section-G dependency policy for any new package, un-named gap-list rows stay owner-triage candidates. First campaign task: M4-T012 (A1 wave 1, R1+R2 series height/setback families, the numeric-limit families matching the R5 pilot discipline without the A2 geometry dependency)."
+   "summary": "Rule engineering and review: 32/38 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). The D-045 citywide rule-coverage campaign and the R6B benchmark rules run here (draft rules with law links; ADR-007: interpretations ship as labelled unreviewed drafts, professional review advisory). Open: M4-T001 awaiting_gate; M4-T002 awaiting_gate; M4-T003 awaiting_gate; M4-T004 awaiting_gate; M4-T005 awaiting_gate; M4-T006 awaiting_gate: the July rules-engine foundation chain merged as draft engineering and never accepted; their gate records predate ADR-007."
   },
   {
    "id": "M5",
    "name": "Scenario and optimization engine",
-   "status": "planned",
+   "status": "active",
    "depends_on": [
     "M2",
     "M4"
-   ]
+   ],
+   "summary": "Scenario engine, results and the feasibility report: 168/171 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). THE ACTIVE FRONTIER. Delivered: the three-answer results (allowance, envelope, building option), the first building option (Building B, R6B benchmark), the results contract to 1.5.0, the report generator in six page types (D-090 wave 21) and its redesign pass for the owner's reviewer (D-094, wave 24 in progress). Open: M5-T001 awaiting_gate; M5-T110 claimed; M5-T125 claimed (M5-T001 is the July scenario foundation, awaiting gate; M5-T110 and M5-T125 are claims of September with no recent progress). The report work toward the owner's sample-comparable PDF is listed in report_programme."
   },
   {
    "id": "M6",
@@ -61,7 +63,8 @@
    "status": "planned",
    "depends_on": [
     "M5"
-   ]
+   ],
+   "summary": "Operations, validation and production launch: 0/1 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Not started: open M6-T001 backlog. The production PDF export (server-made file and stored copies) waits for owner question B6; every production switch stays off until the owner's production approval (Tier D)."
   },
   {
    "id": "M7",
@@ -69,9 +72,243 @@
    "status": "planned",
    "depends_on": [
     "M6"
-   ]
+   ],
+   "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-09-13T05:45:00+00:00",
- "current_milestone_note": "Reconciled from 'M0'. M4 is the active engineering frontier (M4-T001..T005 merged draft, none accepted, held at G6). M0/M2 retain open/held tasks; M1 complete. This pointer marks active work, not acceptance of M3."
+ "updated_at": "2026-10-14T19:11:18+00:00",
+ "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
+ "report_programme": {
+  "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
+  "state_vocabulary": "done (accepted), in_progress (claimed: being built or in review), ready (contracted, not started), planned (named task, not yet contracted), not_planned (no task), owner_decision (waits on an owner answer or a decision not yet asked)",
+  "current_pass": {
+   "name": "D-094 report redesign pass (work order v3 = session-2026-10-11c/workorder-D094-v2.md + session-2026-10-11d/workorder-D094-v3-delta.md, private)",
+   "done": [
+    "M0-T194 visual before set | code: https://github.com/martin10101/nyc-buildability/commit/c5326454da09d5b4eabbd1a1cb5b1fcc5fc5ce61, https://github.com/martin10101/nyc-buildability/commit/2098b0431320faa20113b56180c0c0b19ec2931b | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38172918909 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/7481c2442c41f882a5021e1455275d2cc816f642) | supporting work, no visible change: the 'before' pictures every later before/after check compares with",
+    "M0-T193 design contract change of 2026-10-11 | code: https://github.com/martin10101/nyc-buildability/commit/ea689ea050ba518cd115f22b00c6b09d03926442, https://github.com/martin10101/nyc-buildability/commit/a369042432d237f7961e1c823fe4f0844421366b, https://github.com/martin10101/nyc-buildability/commit/1dac23f2e0c0f588b3bc4f7d41addbdbec717632 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38172918909 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/7481c2442c41f882a5021e1455275d2cc816f642) | supporting work, no visible change: the design rules the rebuilt pages follow",
+    "M5-T163 rear-yard record NB-03 rev 2 | code: https://github.com/martin10101/nyc-buildability/commit/b644f29224b9a671a8cf3cd871749fcd4e62588c, https://github.com/martin10101/nyc-buildability/commit/bebcaeef560394708e5e9ec7bb8e44e7d779d66a | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38174809078 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/87fc5b0fee37e116ad06aea02633ebb720c40f7e) | supporting work, no visible change yet: the rear-yard research record NB-03 that M5-T167 uses",
+    "M5-T164 results contract 1.5.0 | code: https://github.com/martin10101/nyc-buildability/commit/6dde134598a4dc99676b31555b8e639b819c44af | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38181562524 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/5c96f92ec06d6cc183e0c7f3f9673e914012e373) | supporting work, no visible change yet: the results format 1.5.0 the report and the engine tasks use",
+    "M5-T168 lint gap | code: https://github.com/martin10101/nyc-buildability/commit/5a8228c147bd0a3da415b5c01108951d4a88dccf | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38175427439 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/f50d55d3cb78cd3e29abd07097914f9c90701c0c) | supporting work, no visible change: a lint gap in the checks closed",
+    "M3-T006 zoning-law library | code: https://github.com/martin10101/nyc-buildability/commit/71a03977600374b7d9bb23fc0ab198ba19c560c9, https://github.com/martin10101/nyc-buildability/commit/12663e2990ff396e0186900149402b21da35608c | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38179232662 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/b13564ee88c18af8f2c3382f7e692de503c3f005) | supporting work, no change in the report: the zoning-law library documents (docs/zoning-law-library/)",
+    "M5-T176 short-block rear-yard reference case | code: https://github.com/martin10101/nyc-buildability/commit/0b88d3068eba7df67fde771cd076d670dca2ccb9, https://github.com/martin10101/nyc-buildability/commit/d6d2f3b80d8f6ead56c6d505befdc9f04ccf57f2, https://github.com/martin10101/nyc-buildability/commit/ccb25c2aa884594a913b5c67d4709c2021db964e | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38186240787 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/833f18bb389bc07169f4ace954da1e763964f820) | supporting work, no visible change yet: the independent worked rear-yard example that sets M5-T167's expected values",
+    "M5-T165 report page 1 rebuilt | code: https://github.com/martin10101/nyc-buildability/commit/4617c72067c1f6783debea92d02602238dfe8415, https://github.com/martin10101/nyc-buildability/commit/20801603fec300ccbc973a505db18941ad6d7eef, https://github.com/martin10101/nyc-buildability/commit/2767f6a1fdfb57c960aea9aa156f7dfedf95069b, https://github.com/martin10101/nyc-buildability/commit/c2413c5d6d1190cceb17fd0ecb386f8aa831a5f5, https://github.com/martin10101/nyc-buildability/commit/fd649b66fd37e42bc8af2f70758b3346950b43e1 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38502563875 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/d0932d074e9f4c143f5ad76dcfca36665822ea62) | visible: PDF page 1 rebuilt (the results in large type with their assumptions, one site graphic, at most three uncertainties, the conditional ceiling of 29 units beside the apartment estimate of 17 to 22)",
+    "M5-T166 one locator and a dimensioned close-up | code: https://github.com/martin10101/nyc-buildability/commit/09ac564e7869c03b4ba050c31b085740b6650269, https://github.com/martin10101/nyc-buildability/commit/ca74a6a66d8d3a613bde655e09f87c4f59680b66, https://github.com/martin10101/nyc-buildability/commit/aecc4261092453af9594887c815d2f0c46a7c9f1, https://github.com/martin10101/nyc-buildability/commit/98c2ad16027134d91e515f3bbe975c6ca0826e2d, https://github.com/martin10101/nyc-buildability/commit/cd6d7fc352ea978f390899d2cf2c2414d9bada5c, https://github.com/martin10101/nyc-buildability/commit/68d417feef132bbb8ce730f29bca765981b977d3, https://github.com/martin10101/nyc-buildability/commit/5e362d7fd5e983d77288a408c5e1f68ee1f2c0e4 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38502563875 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/d0932d074e9f4c143f5ad76dcfca36665822ea62) | visible: one neighbourhood locator map and one large close-up drawing with dimensions on the lot lines",
+    "M0-T196 living-files map and handoff checklist (owner question L1) | code: https://github.com/martin10101/nyc-buildability/commit/d0d4fe157a541cbdb64182c4f2cf46ffddedd45c, https://github.com/martin10101/nyc-buildability/commit/411b623c29fd7ad8c785cbf429f22bb85f62ad22, https://github.com/martin10101/nyc-buildability/commit/2426f9f6b18b9a4e31cf69e7eb12001ac9465c3b | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38355797837 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/b918be73c1166776ffeb90f3e5b5be55fdc5feb3) | supporting work, no visible change: the always-loaded map of the files Claude keeps up to date, and the handoff checklist",
+    "M3-T007 zoning-law library, second pass: the law the remaining options need (documents only; beside the report lane) | code: https://github.com/martin10101/nyc-buildability/commit/9730b3e6aa8e707b1ea2e9e01fed80e578e39bfb | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38503433897 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/21489be21421a7f6aa73497d876b16c50a6d2590) | supporting work, no change in the report: the law library's second pass (the law the other options need)",
+    "M5-T177 independent worked example of Building B's placement (step P8) | code: https://github.com/martin10101/nyc-buildability/commit/e3b0d8fa6a9548089218016f831c007d9315c412 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38506304838 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/4090eabe55266c2a7c8776905833e8fcea90f8bb) | supporting work, no visible change yet: the independent worked placement example that sets M5-T172's expected values",
+    "M5-T171 website page-1 parity | code: https://github.com/martin10101/nyc-buildability/commit/2f69ee162d4ab019084487fc396cd7d2a0e3c30b | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38605637322 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/559157045a2fd618cbeff20ab6bf48f745329f23) | visible: the website's Results window shows the legal ceiling beside the apartment estimate, as page 1 does",
+    "M5-T179 page 7: the appendix scope note says the context maps are in the report when they are printed (D-094 R137) | code: https://github.com/martin10101/nyc-buildability/commit/d36341bc94704cc377c8bdaf57840f11c21be440 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38618729703 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/4c1075d8d59329790aecd9e6959009d4a5eef7ac) | visible: page 7 no longer lists the context maps as missing when the report prints them",
+    "M3-T008 captures of the law the affordable- and senior-housing options need (documents and data only; beside the report lane; the other capture sets follow one at a time) | code: https://github.com/martin10101/nyc-buildability/commit/05e4ccb4ddbbc70346b8297b5e4020194b0cca6a, https://github.com/martin10101/nyc-buildability/commit/7a794e610eb2ef2d3fe01f39173f665c53b7122b | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38612986462 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/9310fa235f1f71d94e5113b5e190035cfe766467) | supporting work, no change in the report: eleven official law texts the affordable- and senior-housing options need, captured word for word (Appendix F as a pointer to its official maps)",
+    "M5-T175 the report reads the 1.5.0 constraint rows, input facts and lines | code: https://github.com/martin10101/nyc-buildability/commit/f66e82129c620174be04aa595cb7611b4a00214c, https://github.com/martin10101/nyc-buildability/commit/c11b4e03d721594100f8b06bbfc313aab2eb0ecf, https://github.com/martin10101/nyc-buildability/commit/046c717d4e209f072fae074ad25fe380c971a481 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38618729703 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/4c1075d8d59329790aecd9e6959009d4a5eef7ac) | visible when a zoning line is established: the close-up draws it inside the lot with its own legend entry, and the other measured lot sizes beside the map outline; the benchmark pages do not change yet (its results carry no such line until M5-T167)"
+   ],
+   "steps": [
+    {
+     "wave": 24,
+     "item": "wave PR and PDF #1 from main with before/after pictures (R083)",
+     "state": "planned"
+    },
+    {
+     "wave": 25,
+     "item": "rear yard on a short block (ZR 23-344(b), (c)(3)) in the engine; the GIS-wording sweep DB-245",
+     "ids": [
+      "M5-T167"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 26,
+     "item": "setback, street wall and side yard from NB-06",
+     "ids": [
+      "M5-T170"
+     ],
+     "state": "planned",
+     "waits_for": [
+      "M5-T167"
+     ]
+    },
+    {
+     "wave": 26,
+     "item": "option comparison first, one evidence appendix, run identity",
+     "ids": [
+      "M5-T169"
+     ],
+     "state": "planned",
+     "waits_for": [
+      "M5-T170"
+     ]
+    },
+    {
+     "wave": 27,
+     "item": "illustrative placement of Building B and its area allocation",
+     "ids": [
+      "M5-T172"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 27,
+     "item": "scenario sheet: dimensioned footprint, section, reconciled schedule, two-zone area illustration",
+     "ids": [
+      "M5-T173"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 28,
+     "item": "website parity for the remaining sections",
+     "ids": [
+      "M5-T174"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 28,
+     "item": "final export of the pass: PDF, before/after pictures, reader check",
+     "ids": [
+      "M0-T195"
+     ],
+     "state": "planned"
+    },
+    {
+     "wave": 28,
+     "item": "architect-entered facts feed the results (then the survey reader on real surveys, no id yet)",
+     "ids": [
+      "M5-T178"
+     ],
+     "state": "planned"
+    }
+   ]
+  },
+  "after_this_pass": [
+   {
+    "item": "options 2-11 worked (law each still lacks: side yards 23-335, community facility 24-11/24-111, the affordable-housing program 23-154, mixed buildings 35-30..35-33 and overlay 33-121, shops 32-131/32-161, parking 25-xx and the transit zone, shared housing; what 'split lot' means for option 8)",
+    "state": "not_planned",
+    "refs": [
+     "docs/zoning-law-library/options-sections.md",
+     "DB-243"
+    ]
+   },
+   {
+    "item": "the wide building (Building A)",
+    "state": "owner_decision",
+    "refs": [
+     "owner question A1"
+    ]
+   },
+   {
+    "item": "which buildings the results show when two can be worked",
+    "state": "owner_decision",
+    "refs": [
+     "owner question A2"
+    ]
+   },
+   {
+    "item": "one chapter per option (description, summary, section, floor schedule, gross and net area)",
+    "state": "not_planned"
+   },
+   {
+    "item": "apartment estimate assumptions editable on screen; apartment mix",
+    "state": "not_planned",
+    "refs": [
+     "DB-213"
+    ]
+   },
+   {
+    "item": "parking, loading and bicycle parking (applicability line per option before any option is shown as feasible; counts later)",
+    "state": "not_planned",
+    "refs": [
+     "DB-180"
+    ]
+   },
+   {
+    "item": "full zoning parameter table (courts, overlay uses, commercial floor area); flood zone, E-designation, FRESH",
+    "state": "not_planned"
+   },
+   {
+    "item": "site-facts page incl. the block description; contents page; limitations list",
+    "state": "not_planned"
+   },
+   {
+    "item": "city overview map and aerial photo; zoning map",
+    "state": "not_planned",
+    "refs": [
+     "DB-228",
+     "DB-229"
+    ]
+   },
+   {
+    "item": "street photos",
+    "state": "owner_decision",
+    "refs": [
+     "owner answer E1: the owner adds them later"
+    ]
+   },
+   {
+    "item": "tax abatement; comparable sales (selection method undecided)",
+    "state": "owner_decision"
+   },
+   {
+    "item": "financial inputs",
+    "state": "owner_decision",
+    "refs": [
+     "held by the owner"
+    ]
+   },
+   {
+    "item": "3D massing in the report",
+    "state": "owner_decision",
+    "refs": [
+     "not asked yet; D-087 released 3D massing in the program"
+    ]
+   },
+   {
+    "item": "print polish: drawing furniture below 8.5 pt; cosmetic notes",
+    "state": "not_planned",
+    "refs": [
+     "DB-246",
+     "DB-225"
+    ]
+   },
+   {
+    "item": "lots other than the test lot (a lot without geometry; the lot-area agreement tolerance)",
+    "state": "not_planned",
+    "refs": [
+     "DB-203",
+     "DB-173"
+    ]
+   },
+   {
+    "item": "production PDF export and stored reports",
+    "state": "owner_decision",
+    "refs": [
+     "owner question B6"
+    ]
+   }
+  ],
+  "owner_questions_that_shape_the_pdf": [
+   "D1 paper size (A4 meanwhile; Letter recommended, the sample's size)",
+   "C1 what Verified requires",
+   "C2 the six labels on the website",
+   "A1 footprint figure",
+   "A2 which buildings to show",
+   "F1 the zoning-lot documents",
+   "B6 PDF converter and storage",
+   "B5 an upper limit for a typed floor height (before the screen is used for real)",
+   "not asked yet: options 4-11 timing, tax abatement, comparable-sales method, the financial hold, 3D massing in the report, aerial photo and zoning map"
+  ],
+  "questionnaire": "/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md (private, build server)",
+  "next_milestone": {
+   "item": "a scenario placed on the actual site with reconciled calculations and its remaining constraints clearly named (D-094 R082, R143)",
+   "tasks_in_order": [
+    "M5-T175",
+    "M5-T167",
+    "M5-T170",
+    "M5-T169",
+    "M5-T172",
+    "M5-T173"
+   ],
+   "note": "M5-T169 stays on the path because the scenario sheet (M5-T173) reads its rounding helper; the order is the work order's serial lane (one engine task holds the benchmark set at a time)."
+  },
+  "progress_record_rule": "Each done entry names its code change (commit links), its test evidence (the CI run read green at the accept head) and its visible result, or says it is supporting work with no visible change yet (D-094 R142); links open on GitHub (R140)."
+ }
 }

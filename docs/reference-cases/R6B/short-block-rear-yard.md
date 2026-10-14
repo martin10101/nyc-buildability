@@ -1,0 +1,1183 @@
+# The two independent readings of ZR 23-344(b) (the short dimension of a block) and 23-344(c)(3), written into the R6B reference cases as one case: what 23-344(b) measures and whether its thresholds are strict, 23-344(c)/(c)(3), how 23-342/23-343/23-344 fit together, the ten made-up boundary cases M1 to M10, and the real lot (215-16 Northern Boulevard, lot 70 of block 7334) under Z1 (lot 70 alone) and Z2 (lots 70 and 1 together) on each measurement basis - a value only where both readings agree on the same basis
+
+GENERATED FILE - do not edit by hand. Produced by `services/api/tests/rules/reference_cases/r6b_reference_cases_render.py` from `cases/<case>.json`; edit the data file and re-render. See `README.md`.
+
+Work order table: D-094 R036, R037, R044, R079; work order D-094 v2/v3, task M5-T176; the rear-yard analysis of ZR 23-344 read independently before the rear-yard engine (M5-T167) is changed.
+
+The reading of ZR 23-344(b) (the short dimension of a block) and 23-344(c)(3), read independently in step P7 by two AI helpers working alone from a sealed folder (the 189 pinned law captures without their notes; the block-7334 lot outlines; the DCM centrelines; the PLUTO rows of lots 70 and 1; the printed tax-map labels; the zoning of lot 70; ten made-up boundary cases M1 to M10; and four answers settled by earlier readings), with no access to the program, the repository or the web. It records the reading of what 23-344(b) measures and whether 'less than 230 feet' is strict and how 'within 100 feet of such street line' is measured; of 23-344(c) and (c)(3); of how 23-342, 23-343 and 23-344(a)/(b)/(c) fit together; the ten made-up cases; and the real lot (215-16 Northern Boulevard, lot 70 of block 7334) under Z1 (lot 70 alone) and Z2 (lots 70 and 1 together) on each measurement basis, plus the bounding streets, their widths and the ALLEY. A value or a yes/no is recorded only where both readings give it on the same facts, the same quoted words and the same basis; otherwise the row is not known or not settled, naming both readings, the kind of its gap (a missing fact about the property, or unresolved law) and what would settle it. Where both readings give the same answer but one holds it subject to a text the readers did not have (reading 2's question whether R6B falls within 'R6 through R12'), the answer and the condition are both recorded, naming the reading that raised it. No value comes from a program run; no unconditional 'no rear yard' is recorded for the real lot; no human verdict is entered. Every quantity carries exactly one of the nine measurement bases and no two bases are mixed in one figure.
+
+## What this case is worth
+
+Read independently by two AI helpers, each working alone from the sealed step-P7 folder (reading 1 an official-source-researcher, reading 2 a data-contract-verifier); their agreement alone is not proof. It is a draft reading of the law by an AI helper, not professionally reviewed, and is not a statement that anything complies. A second AI read the same sealed folder and worked the same seven questions. Where the two readings differ, where one says not known, or where one holds an answer subject to a text the readers did not have, the row says so and names both readings; where the captured text does not settle a point the row says not known and names what would settle it. The real lot's rear-yard answers stay conditional on the measurement basis, the zoning lot and the neighbouring lots' records, which no reading had.
+
+- Prepared by: An AI helper (an official-source-researcher) that took no part in writing the program's rules, working only from a sealed folder - the 189 pinned law-text captures (without their notes), the block-7334 lot outlines, the DCM centrelines, the PLUTO rows of lots 70 and 1, the printed tax-map labels, the zoning of lot 70, ten made-up boundary cases M1 to M10, and four answers settled by earlier readings - with no access to the program (reading 1: provenance/return-independent-hand-calculation-15.md).
+- Checked by: A second, independent AI (a data-contract-verifier) read the same sealed folder and worked the same seven questions (reading 2: provenance/return-independent-hand-calculation-16.md). Agreement between two AI answers alone is not proof.
+
+## The facts this case uses
+
+| Fact | Value | Where it comes from |
+|---|---|---|
+| Zoning district | R6B | NYC PLUTO row for BBL 4073340070, field zonedist1 |
+| Commercial overlay | C2-2 | NYC PLUTO row for BBL 4073340070, field overlay1 |
+| Real lot | 215-16 Northern Boulevard, Queens (block 7334, lot 70; BBL 4073340070): a corner lot of Northern Boulevard and 215 Place, R6B with a C2-2 overlay | the readers' lot facts (lot_facts / zoning queries) and cases/real-lot.json |
+| Ten made-up boundary cases | M1 to M10, each a made-up block in plain R6B with every fact stated | the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property |
+| Four settled answers | four answers settled by earlier readings, given to the step-P7 readers as settled (copied word for word, not re-worked): used here for lot 70's lot lines and its reach | settled_by_earlier_readings.json; the step-p3-worked and corner-reach reference-case rows |
+
+## Rows
+
+### b-what-measured - ZR 23-344(b): what is measured for the short dimension of a block, and when the no-rear-yard rule along it applies
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+- ZR 12-10 (Definition: front lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-front`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-front.snapshot.json`.
+  - Content digest: `6bd9212cbb4ffb4671c692c92f6b265a1ab60e114778925048bc66b3a6cdbbbc`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #street line#."
+- ZR 12-10 (Definition: street line) - captured.
+  - Capture: snapshot `zr-12-10-street-line`, file `docs/research/zr-snapshots/v1/zr-12-10-street-line.snapshot.json`.
+  - Content digest: `20495a0325bef1576623272bd4c4628ce994edf9decd7da3214a7f3708b65a5f`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #lot line# separating a #street# from other land."
+
+Why the rule applies: ZR 23-344(b) applies the no-rear-yard rule to the street line of the 'short dimension of a block'; ZR 12-10 fixes what that dimension measures; a front lot line is a street line.
+
+Expected value: What is measured is the dimension between any two #streets# bounding the #block#, and the result (the short dimension of a block) is itself a #block# frontage (ZR 12-10). ZR 23-344(b) applies whenever a #front lot line# of the #zoning lot# coincides with the #street line# of that short-dimension frontage; then no #rear yard# is required within 100 feet of that #street line#. A #front lot line# is a #street line# (ZR 12-10). Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1a; return-independent-hand-calculation-16.md Q1a; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states what the text measures and when (b) bites; it does not fix the measurement basis (see b-measurement-basis) or the exact-100-ft edge (see b-exact-100-ft). A draft reading by AI helpers, not professionally reviewed; it says nothing complies.
+
+### b-measurement-basis - ZR 23-344(b)/ZR 12-10: between what, and along what line, the short-dimension distance is measured
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: ZR 12-10 says the dimension is 'between any two #streets#', and a #street# is a way (an area), not a line; it names no measurement line.
+
+Expected value: not known. Not known. Both readings read that the captured text says only 'the dimension between any two #streets# bounding the #block#' and does not state whether that distance is measured between street lines, between centrelines, or along lot lines, nor along which line it is taken. Each reading records the most defensible reading as street-line to street-line (a #block# is land bounded by #streets#, so its dimension runs between the bounding street lines), but each keeps the basis open because the text does not state it. KIND OF GAP: unresolved law - the captured text does not settle the measurement basis; what would settle it is an express measurement reference in the Zoning Resolution or City Planning guidance.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1a; return-independent-hand-calculation-16.md Q1a; both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records that the measurement basis is not settled by the captured text; it chooses no basis. A draft reading by AI helpers, not professionally reviewed.
+
+### b-less-than-230 - ZR 12-10: whether 'less than 230 feet' is strict (the short-dimension threshold)
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: ZR 12-10 fixes the threshold with the words 'measures less than 230 feet'.
+
+Expected value: Yes - strict. The words are 'measures less than 230 feet', so a dimension of exactly 230.00 feet does not qualify; only a dimension below 230 feet is a short dimension of a block. Both readings read this the same way and both confirm it with the made-up pair M2 (230.00, not short) and M3 (230.01, not short) against M1 (229.99, short).
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1a (229.99 yes, 230.00 no, 230.01 no); return-independent-hand-calculation-16.md Q1a (strict; M1 short, M2 and M3 not short); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It fixes the threshold's strictness; it does not fix how the dimension is measured (see b-measurement-basis). A draft reading by AI helpers, not professionally reviewed.
+
+### b-within-100-feet - ZR 23-344(b): how 'within 100 feet of such street line' is measured
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: corner lot (the corner portion)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "The portion of such #zoning lot# subject to the regulations for #corner lots# is that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#."
+
+Why the rule applies: ZR 23-344(b) waives the rear yard 'within 100 feet of such #street line#' but states no method; the corner-lot definition, by contrast, is explicit about a 100-foot parallel line.
+
+Expected value: not known. Not known. Both readings read that ZR 23-344(b) says only 'no #rear yard# shall be required within 100 feet of such #street line#' and does not state the method of measuring 'within 100 feet' (the natural, literal reading is a perpendicular distance from the street line, which both readings record as most defensible, but neither finds the method fixed in the text). Both note the contrast with the #corner lot# definition, which IS explicit ('lines parallel to and 100 feet from each intersecting #street line#'). KIND OF GAP: unresolved law - the captured text does not state the measurement method; what would settle it is an express method in the Zoning Resolution or City Planning guidance.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1b; return-independent-hand-calculation-16.md Q1b; both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records that the measurement method is not settled by the captured text. A draft reading by AI helpers, not professionally reviewed.
+
+### b-exact-100-ft - ZR 23-344(b): whether a point at exactly 100.00 feet is 'within 100 feet'
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: ZR 23-344(b) uses 'within 100 feet' without stating whether the 100-foot line itself is inside or outside the band.
+
+Expected value: not known. Not known. Both readings read that the captured text does not resolve whether a point lying at exactly 100.00 feet from the street line is 'within 100 feet' (inclusive) or outside it (exclusive). This decides the boundary cases M5 (a rear lot line at exactly 100.00 ft) and the real lot's near-100-ft edge. KIND OF GAP: unresolved law - the captured text does not settle the treatment of the exact-100-ft edge; what would settle it is an express inclusive/exclusive rule in the Zoning Resolution or City Planning guidance.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1b (M5); return-independent-hand-calculation-16.md Q1b (M5); both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records that the exact-100-ft edge is not settled by the captured text. A draft reading by AI helpers, not professionally reviewed.
+
+### b-block-boundary - ZR 12-10 'block': whether a public park, or a private way, can bound a block
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 12-10 (Definition: block) - captured.
+  - Capture: snapshot `zr-12-10-block`, file `docs/research/zr-snapshots/v1/zr-12-10-block.snapshot.json`.
+  - Content digest: `b5c004d936a9d9e773cf6700478d538e8cea487d4bee76e0cbbe91c12d39a47d`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a tract of land bounded by"
+- ZR 12-10 (Definition: block (public parks bound a block)) - captured.
+  - Capture: snapshot `zr-12-10-block`, file `docs/research/zr-snapshots/v1/zr-12-10-block.snapshot.json`.
+  - Content digest: `b5c004d936a9d9e773cf6700478d538e8cea487d4bee76e0cbbe91c12d39a47d`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "(b) #public parks#;"
+- ZR 12-10 (Definition: public park) - captured.
+  - Capture: snapshot `zr-12-10-public-park`, file `docs/research/zr-snapshots/v1/zr-12-10-public-park.snapshot.json`.
+  - Content digest: `18b41cc8972716aa6040aee944d61c6e76b38b71e37cc33ccf534986670368ce`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "any publicly owned park, playground, beach, parkway or roadway within the jurisdiction and control of the Commissioner of Parks and Recreation"
+- ZR 12-10 (Definition: street (private roads excluded)) - captured.
+  - Capture: snapshot `zr-12-10-street`, file `docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json`.
+  - Content digest: `7135283ce81d4d482a85086b466c709b53494d069ef4e4ede78f91b33685cce8`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "a #private road#, or a driveway that serves only to give vehicular access to an #accessory# parking or loading facility, or to allow vehicles to take on or discharge passengers at the entrance to a #building#, shall not be considered a #street#."
+- ZR 12-10 (Definition: street (a way on the City Map)) - captured.
+  - Capture: snapshot `zr-12-10-street`, file `docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json`.
+  - Content digest: `7135283ce81d4d482a85086b466c709b53494d069ef4e4ede78f91b33685cce8`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "a way established on the City Map"
+
+Why the rule applies: ZR 12-10 'block' lists the features that bound a block; a #public park# is listed; a private way is not, and the #street# definition expressly excludes a private road.
+
+Expected value: A public park CAN bound a block: ZR 12-10 'block' lists '#public parks#' among the features a block is bounded by, and ZR 12-10 defines a #public park# as a publicly owned park, playground, beach, parkway or roadway under the Commissioner of Parks and Recreation. A private way CANNOT bound a block as a private way: it is not among the listed features, and it bounds a block only if it independently qualifies as a #street# (for example, a way established on the City Map); the #street# definition says a #private road#, or a driveway serving only accessory parking or loading, 'shall not be considered a #street#'. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1c; return-independent-hand-calculation-16.md Q1c; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states which features bound a block; it makes no finding about any particular alley or way. A draft reading by AI helpers, not professionally reviewed.
+
+### c-which-lots - ZR 23-344(c): which lots or portions it speaks to
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(c) (Additional rear yard modifications (beyond 100 feet of a street line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "for #interior# or #through lot# portions of #corner lots#, and for #zoning lots# bounded by two or more #streets# that are neither #corner lots# nor #through lots#"
+- ZR 12-10 (Definition: corner lot (the corner portion)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "The portion of such #zoning lot# subject to the regulations for #corner lots# is that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#."
+- ZR 12-10 (Definition: interior lot) - captured.
+  - Capture: snapshot `zr-12-10-lot-interior`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-interior.snapshot.json`.
+  - Content digest: `6897ea4af3afc5915d829d9aa88ac189f6757b352c757f1739dcd28f3e30197a`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is any #zoning lot# neither a #corner lot# nor a #through lot#."
+- ZR 12-10 (Definition: through lot) - captured.
+  - Capture: snapshot `zr-12-10-lot-through`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-through.snapshot.json`.
+  - Content digest: `d71f24ad1ff0875e639ff40f99f76f61dce4df4f440c8fa3c792704262435a0d`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "adjoins two #street lines# opposite to each other and parallel or within 45 degrees of being parallel to each other"
+
+Why the rule applies: ZR 23-344(c) names the lot kinds it reaches; the corner-lot definition fixes the corner portion left over for interior/through treatment.
+
+Expected value: ZR 23-344(c) speaks to two situations: (i) the #interior# or #through lot# portions of #corner lots# (the part left over after the within-100-ft-of-each-street-line corner portion fixed by the #corner lot# definition), and (ii) #zoning lots# bounded by two or more #streets# that are neither #corner lots# nor #through lots#. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q2a; return-independent-hand-calculation-16.md Q2a; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states (c)'s scope; it is not a finding about any lot. A draft reading by AI helpers, not professionally reviewed.
+
+### c-becomes-rear-lot-line - ZR 23-344(c): what portion becomes a rear lot line
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(c) (Additional rear yard modifications (the deemed rear lot line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the portion of a #side lot line# beyond 100 feet of the #street line# that it intersects shall be considered a #rear lot line# and the following rules shall apply along such #rear lot line#"
+- ZR 12-10 (Definition: side lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-side`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-side.snapshot.json`.
+  - Content digest: `5ba11f6adfc47e15f68c20ca93e4dc5e053458725796eb74c8deb0ced8c67221`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is any #lot line# which is not a #front lot line# or a #rear lot line#."
+- ZR 12-10 (Definition: rear lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-rear`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-rear.snapshot.json`.
+  - Content digest: `d34da91dcfa8392e655806a06204621c80175de99a034d983b978cb73e45c86b`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is any #lot line# of a #zoning lot# except a #front lot line#, which is parallel or within 45 degrees of being parallel to, and does not intersect, any #street line# bounding such #zoning lot#."
+
+Why the rule applies: ZR 23-344(c) reclassifies only the far portion of a side lot line that intersects a street line.
+
+Expected value: Only the portion of a #side lot line# that lies beyond 100 feet of the #street line# it intersects is 'considered a #rear lot line#'; and only a side lot line that actually intersects a street line is reclassified. The near portion (within 100 ft) and any side lot line that does not intersect a street line are not reclassified. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q2a; return-independent-hand-calculation-16.md Q2a; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states what (c) reclassifies; it is not a finding about any lot. A draft reading by AI helpers, not professionally reviewed.
+
+### c-from-which-street-line - ZR 23-344(c): from which street line the 100 feet is measured
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(c) (Additional rear yard modifications (the deemed rear lot line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the portion of a #side lot line# beyond 100 feet of the #street line# that it intersects shall be considered a #rear lot line# and the following rules shall apply along such #rear lot line#"
+
+Why the rule applies: ZR 23-344(c) keys the 100-foot measure to 'the #street line# that it intersects'.
+
+Expected value: The 100 feet is measured from 'the #street line# that it [the side lot line] intersects' - the specific street line that particular side lot line meets, not any street line generally and not necessarily the frontage street. Each reclassification is keyed to its own intersecting street line. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q2a; return-independent-hand-calculation-16.md Q2a; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states from which street line the 100 ft runs; it is not a finding about any lot. A draft reading by AI helpers, not professionally reviewed.
+
+### c-1-vs-c-3 - ZR 23-344(c): what decides (c)(1) against (c)(3), and whether the adjoining lot's district matters
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(c)(1) (Additional rear yard modifications (c)(1)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In all districts, a #rear yard# shall be provided in accordance with Section 23-342 (Rear yard requirements), where such #rear lot line# coincides with a #rear lot line# of an adjoining #zoning lot#."
+- ZR 23-344(c)(2) (Additional rear yard modifications (c)(2)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R1 through R5 Districts, a #rear yard# with a minimum depth of five feet shall be provided where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+
+Why the rule applies: ZR 23-344(c)(1)-(3) branch on the kind of the adjoining zoning lot's coinciding lot line and on the subject lot's own district.
+
+Expected value: The branch turns on two things: the KIND of the adjoining #zoning lot#'s lot line that the deemed rear lot line coincides with, and the SUBJECT lot's own district. Where the deemed rear lot line coincides with a #rear lot line# of the adjoining #zoning lot#, (c)(1) requires a #rear yard# under ZR 23-342 (all districts). Where it coincides with a #side lot line# of the adjoining #zoning lot#, (c)(2) requires a five-foot rear yard in R1 through R5 Districts and (c)(3) requires no rear yard in R6 through R12 Districts. The ADJOINING lot's district is not mentioned and does not matter; only its lot-line kind, plus the subject lot's own district. CONDITION raised by reading 2: that R6B counts within 'R6 through R12' for (c)(3) is a point reading 2 holds because the captured 23-344 text does not separately enumerate the letter-suffix districts (R6A/R6B); reading 2 reads R6B as within 'R6 through R12' and flags it as a point a professional must confirm. Reading 1 reads R6B as within R6 through R12 without raising the suffix point. (ZR 11-25, which bears on whether R6B is within 'R6 through R12', was in the sealed folder and is not read by reading 1 or by reading 2.)
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q2b; return-independent-hand-calculation-16.md Q2b (reads R6B within 'R6 through R12' and flags it a point a professional must confirm, because the captured text does not enumerate the letter-suffix districts); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states the (c)(1)/(c)(3) branch and names reading 2's R6B-suffix condition; it decides nothing about any adjoining lot. A draft reading by AI helpers, not professionally reviewed.
+
+### fit-sections - How ZR 23-342, ZR 23-343 and ZR 23-344 fit together
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344 (Additional rear yard modifications (chapeau)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the #rear yard# requirements set forth in Section 23-342 (Rear yard requirements) and the #rear yard equivalent# requirements of Section 23-343 (Rear yard equivalent requirements) shall be modified as set forth in this Section."
+- ZR 23-342 (Rear yard requirements (interior lots)) - captured.
+  - Capture: snapshot `zr-23-342`, file `docs/research/zr-snapshots/v1/zr-23-342.snapshot.json`.
+  - Content digest: `1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342.
+  - Quoted: "except as otherwise provided pursuant to the provisions of Section 23-34, inclusive."
+- ZR 23-343 (Rear yard equivalent requirements (through lots)) - captured.
+  - Capture: snapshot `zr-23-343`, file `docs/research/zr-snapshots/v1/zr-23-343.snapshot.json`.
+  - Content digest: `b4440929d887fa5eba92db8ad881bdf84b04d3283b988026ab58ff6865221680`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-343.
+  - Quoted: "#rear yard equivalents# shall be provided on #through lots# in accordance with this Section, except as otherwise provided pursuant to the provisions of Section 23-34, inclusive."
+
+Why the rule applies: ZR 23-344's chapeau modifies the base rear-yard rule of 23-342 and the rear-yard-equivalent rule of 23-343, both of which carry the 23-34 carve-out.
+
+Expected value: ZR 23-342 sets the base #rear yard# rule for #interior lots#; ZR 23-343 sets the #rear yard equivalent# rule for #through lots#; each says it applies 'except as otherwise provided pursuant to the provisions of Section 23-34, inclusive'. ZR 23-344's chapeau provides that those 23-342/23-343 requirements 'shall be modified as set forth in this Section'. So ZR 23-344(a)-(d) are modifications of the 23-342/23-343 base requirements. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q3; return-independent-hand-calculation-16.md Q3; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states how the sections fit; it is not a finding about any lot. A draft reading by AI helpers, not professionally reviewed.
+
+### fit-multiple-apply - Whether more than one ZR 23-344 modification can apply to one lot
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(a) (Additional rear yard modifications (within 100 feet of corners)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "no #rear yard# shall be required within 100 feet of the point of intersection of two #street lines# intersecting at an angle of 135 degrees or less."
+- ZR 23-344(c) (Additional rear yard modifications (beyond 100 feet of a street line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "for #interior# or #through lot# portions of #corner lots#, and for #zoning lots# bounded by two or more #streets# that are neither #corner lots# nor #through lots#"
+
+Why the rule applies: The 23-344 modifications are keyed to different geometry and nothing makes them mutually exclusive.
+
+Expected value: Yes. The captured text lists the modifications together and keys them to different geometry; nothing in it makes them mutually exclusive. In particular ZR 23-344(a) (within 100 ft of a corner) and (c) (beyond 100 ft of a street line) address complementary portions of the same corner lot, so both can bear on one corner lot. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q3; return-independent-hand-calculation-16.md Q3; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states that more than one modification can apply; where two overlap on the same ground the text sets no priority (see fit-b-c-overlap). A draft reading by AI helpers, not professionally reviewed.
+
+### fit-b-on-corner-lot - Whether ZR 23-344(b) can apply to a corner lot
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: front lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-front`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-front.snapshot.json`.
+  - Content digest: `6bd9212cbb4ffb4671c692c92f6b265a1ab60e114778925048bc66b3a6cdbbbc`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #street line#."
+- ZR 12-10 (Definition: corner lot) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "a #zoning lot# bounded entirely by #streets#, or a #zoning lot# which adjoins the point of intersections of two or more #streets#"
+
+Why the rule applies: ZR 23-344(b) is not limited by lot type; a corner lot has front lot lines, each of which is a street line.
+
+Expected value: Yes. ZR 23-344(b) applies 'whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#' and is not limited to any lot type. A #corner lot# has #front lot lines# (each #front lot line# is a #street line#); if one of them coincides with the short-dimension street line, (b) applies. Nothing in (b) excludes corner lots. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q3; return-independent-hand-calculation-16.md Q3; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It states (b) can apply to a corner lot; it is not a finding about any lot. A draft reading by AI helpers, not professionally reviewed.
+
+### fit-b-c-overlap - Where ZR 23-344(b) and (c) overlap: which governs the overlap strip
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 23-344(c) (Additional rear yard modifications (the deemed rear lot line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the portion of a #side lot line# beyond 100 feet of the #street line# that it intersects shall be considered a #rear lot line# and the following rules shall apply along such #rear lot line#"
+
+Why the rule applies: A single area can be within 100 ft of one street line (so (b) exempts it) and beyond 100 ft of another (so (c) may reach it); the text states no priority.
+
+Expected value: not known. Not known. Both readings read that a single area can be within 100 feet of ONE street line (so ZR 23-344(b) requires no rear yard there) and at the same time beyond 100 feet of ANOTHER street line (so ZR 23-344(c) may deem a side lot line a rear lot line there). The captured text states no priority or ordering rule between (b) and (c) for such an overlap, so where they overlap the conflict is preserved: under (b) no rear yard is required, while (c) read alone might require one. KIND OF GAP: unresolved law - the captured text sets no priority between 23-344(b) and (c); what would settle it is an express ordering or override rule in the Zoning Resolution or City Planning guidance.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q3; return-independent-hand-calculation-16.md Q3; both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It preserves the (b)/(c) overlap conflict; it chooses no governing rule. A draft reading by AI helpers, not professionally reviewed.
+
+### M1 - Made-up case M1: a 229.99-ft block frontage - does ZR 23-344(b) apply?
+
+Facts used:
+
+- Made-up block M1 = X and Y parallel, 229.99 ft apart between their facing street lines; P and Q cross at right angles 600 ft apart; the P frontage runs X to Y; the lot is interior, front lot line on P, 50 ft along P, 100 ft deep, touching neither X nor Y (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: The P frontage runs between X and Y; their separation (229.99 ft, on the basis the made-up fact supplies) is less than 230 ft, so the P frontage is a short dimension of a block and the lot's front lot line is on that street line.
+
+Expected value: Yes - ZR 23-344(b) applies. The dimension between the two bounding cross-streets X and Y is 229.99 ft, which is less than 230 ft (strict), so the P frontage is a short dimension of a block; the lot's #front lot line# on P coincides with that #street line#. No #rear yard# is required within 100 feet of the P street line; the lot is 100 ft deep, so no rear yard is required anywhere on it under (b). ZR 23-344(c) does not speak to this lot (an interior lot fronting one street). Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M1); return-independent-hand-calculation-16.md Q4 (M1); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; the example checks a method. It does not fix the measurement basis the fact supplies. A draft reading by AI helpers, not professionally reviewed.
+
+### M2 - Made-up case M2: a 230.00-ft block frontage - does ZR 23-344(b) apply?
+
+Facts used:
+
+- Made-up block M2 = as M1 but X and Y are 230.00 ft apart (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+
+Why the rule applies: 230.00 ft is not 'less than 230 feet', so the P frontage is not a short dimension of a block.
+
+Expected value: No - ZR 23-344(b) does not apply. 230.00 ft is not less than 230 ft (strict), so the P frontage is not a short dimension of a block. Any rear-yard duty on the interior lot's rear lot line is governed by ZR 23-342, not asked here. ZR 23-344(c) does not speak to this single-street interior lot. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M2); return-independent-hand-calculation-16.md Q4 (M2); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; the example checks the strict threshold. A draft reading by AI helpers, not professionally reviewed.
+
+### M3 - Made-up case M3: a 230.01-ft block frontage - does ZR 23-344(b) apply?
+
+Facts used:
+
+- Made-up block M3 = as M1 but X and Y are 230.01 ft apart (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+
+Why the rule applies: 230.01 ft is greater than 230 ft, so the P frontage is not a short dimension of a block.
+
+Expected value: No - ZR 23-344(b) does not apply. 230.01 ft is greater than 230 ft, so the P frontage is not a short dimension of a block. With M1 and M2 this confirms the strict 'less than 230': 229.99 yes, 230.00 no, 230.01 no. ZR 23-344(c) does not speak to this single-street interior lot. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M3); return-independent-hand-calculation-16.md Q4 (M3); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; the example checks the strict threshold. A draft reading by AI helpers, not professionally reviewed.
+
+### M4 - Made-up case M4: 229.80 ft on the tax-map label vs 230.20 ft on a GIS outline - does ZR 23-344(b) apply?
+
+Facts used:
+
+- Made-up block M4 = as M1 but the X-Y distance is 229.80 ft from the printed tax-map labels and 230.20 ft on a city GIS outline; no survey (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: The short-dimension definition names no record or method to choose between a tax-map figure and a GIS figure, so the result flips with the source.
+
+Expected value: not known. Not known (conditional). Both readings read that the short-dimension definition says only the dimension 'measures less than 230 feet' and names no authoritative record or method (tax-map label vs GIS outline vs survey). On the tax-map figure 229.80 ft (< 230) ZR 23-344(b) would apply; on the GIS figure 230.20 ft (>= 230) it would not. The result flips with the source, which the text does not fix. KIND OF GAP: a missing fact about the property - an authoritative X-Y dimension (a survey) - and unresolved law (a rule in the captured text fixing the measurement source). ZR 23-344(c) does not speak to this single-street interior lot.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M4); return-independent-hand-calculation-16.md Q4 (M4); both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; it records that the measurement source is not fixed. A draft reading by AI helpers, not professionally reviewed.
+
+### M5 - Made-up case M5: a 100.00-ft-deep lot on a 200-ft short frontage - ZR 23-344(b) and the exactly-100-ft rear lot line
+
+Facts used:
+
+- Made-up block M5 = X and Y parallel 200 ft apart; P and Q 600 ft apart; the P frontage runs X to Y; the lot is interior, front on P, 50 ft along P, 100.00 ft deep (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: 200 ft < 230 ft, so the P frontage is a short dimension and (b) applies; the lot's rear lot line sits at exactly 100.00 ft from the P street line.
+
+Expected value: ZR 23-344(b) applies (200 ft < 230 ft). No #rear yard# is required within 100 feet of the P street line. The lot is exactly 100.00 ft deep, so its rear lot line sits at exactly 100.00 ft from the P street line; whether that line is 'within 100 feet' follows the exact-100-ft reading, which is not known (see b-exact-100-ft). So strictly inside 100 ft no rear yard is required; at exactly 100.00 ft the reach of the exemption is not known. ZR 23-344(c) does not speak to this single-street interior lot. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M5); return-independent-hand-calculation-16.md Q4 (M5); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; the exactly-100-ft edge is routed to b-exact-100-ft (not known). A draft reading by AI helpers, not professionally reviewed.
+
+### M6 - Made-up case M6: a 100.03-ft-deep lot on a 200-ft short frontage - the rear lot line beyond the band
+
+Facts used:
+
+- Made-up block M6 = as M5 but the lot is 100.03 ft deep (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 23-342 (Rear yard requirements (standard 20 ft)) - captured.
+  - Capture: snapshot `zr-23-342`, file `docs/research/zr-snapshots/v1/zr-23-342.snapshot.json`.
+  - Content digest: `1fece34420276aae6ca35f83b23929cea060b6cfee8871dbcea95edf44fb69c6`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-342.
+  - Quoted: "a #rear yard# with a depth of not less than 20 feet shall be provided at every #rear lot line# on any #zoning lot#"
+
+Why the rule applies: (b) applies (200 < 230) within 100 ft; the rear lot line at 100.03 ft lies beyond 100 ft of the P street line, so (b) does not reach it and the base rule of 23-342 governs there.
+
+Expected value: ZR 23-344(b) applies for the first 100 feet (200 ft < 230 ft): no #rear yard# within 100 feet of the P street line. But the lot's rear lot line is at 100.03 ft, which is BEYOND 100 feet of the P street line, so (b)'s 'within 100 feet' exemption does not reach it; a #rear yard# is required at that rear lot line under ZR 23-342. This is the M5-to-M6 contrast: at exactly 100.00 ft the edge is not known; at 100.03 ft the rear lot line is outside the band and the exemption does not cover it. ZR 23-344(c) does not speak to this single-street interior lot. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M6); return-independent-hand-calculation-16.md Q4 (M6); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; it shows the exemption stops at 100 ft. A draft reading by AI helpers, not professionally reviewed.
+
+### M7 - Made-up case M7: a corner lot on a short P frontage - ZR 23-344(b) and the (c) strip beyond 100 ft
+
+Facts used:
+
+- Made-up block M7 = block as M5 (X,Y 200 apart; P,Q 600 apart); the lot is a corner lot at the P-X intersection, 100 ft along P and 150 ft along X, street lines meeting at 90 degrees; its other two lot lines adjoin interior lots (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+- ZR 12-10 (Definition: side lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-side`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-side.snapshot.json`.
+  - Content digest: `5ba11f6adfc47e15f68c20ca93e4dc5e053458725796eb74c8deb0ced8c67221`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is any #lot line# which is not a #front lot line# or a #rear lot line#."
+- ZR 12-10 (Definition: rear lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-rear`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-rear.snapshot.json`.
+  - Content digest: `d34da91dcfa8392e655806a06204621c80175de99a034d983b978cb73e45c86b`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is any #lot line# of a #zoning lot# except a #front lot line#, which is parallel or within 45 degrees of being parallel to, and does not intersect, any #street line# bounding such #zoning lot#."
+- ZR 23-344(c) (Additional rear yard modifications (the deemed rear lot line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the portion of a #side lot line# beyond 100 feet of the #street line# that it intersects shall be considered a #rear lot line# and the following rules shall apply along such #rear lot line#"
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+- ZR 23-344(c)(1) (Additional rear yard modifications (c)(1)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In all districts, a #rear yard# shall be provided in accordance with Section 23-342 (Rear yard requirements), where such #rear lot line# coincides with a #rear lot line# of an adjoining #zoning lot#."
+
+Why the rule applies: The P frontage (X to Y = 200) is short and the lot's P front lot line is on it, so (b) applies; the corner lot's two non-street edges intersect a bounding street line, so they are side lot lines; beyond 100 ft of P the P-intersecting side lot line is deemed a rear lot line under (c).
+
+Expected value: ZR 23-344(b) applies via the short P frontage (X to Y = 200 ft < 230 ft): no #rear yard# within 100 feet of the P street line. Lot-line kinds: the P edge and the X edge are #front lot lines#; the two other edges each intersect a bounding #street line#, so each is a #side lot line# (2 front, 2 side, 0 rear). The lot reaches 150 ft from P, so the strip from 100 to 150 ft from P is beyond (b)'s band; there ZR 23-344(c) deems the P-intersecting side lot line a #rear lot line#. Whether a rear yard is then required on that strip is NOT KNOWN: under (c)(3) none if it coincides with a neighbour's #side lot line#, under (c)(1) a 23-342 rear yard if it coincides with a neighbour's #rear lot line#; the made-up case says the edge 'adjoins interior lots' but does not state the adjoining zoning lot's lot-line kind. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M7); return-independent-hand-calculation-16.md Q4 (M7); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; the (c)(1)-vs-(c)(3) result on the beyond-100-ft strip is not known because the made-up case does not state the adjoining lot's lot-line kind (a limit of the example). A draft reading by AI helpers, not professionally reviewed.
+
+### M8 - Made-up case M8: one zoning lot of two tax lots on a short P frontage - the internal line and the (c) strip
+
+Facts used:
+
+- Made-up block M8 = block as M5; one zoning lot of two tax lots - tax lot A a corner at P-X (100 ft along P, 100 ft along X) and tax lot B interior next to A along X (50 ft along X, 100 ft deep); recorded as one zoning lot (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: zoning lot (tax map)) - captured.
+  - Capture: snapshot `zr-12-10-zoning-lot`, file `docs/research/zr-snapshots/v1/zr-12-10-zoning-lot.snapshot.json`.
+  - Content digest: `0547550b1bcc8c5b8e5ff5fa3f429e139cd2a95bf4a7270a85fc4cd8cce9d53a`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "may or may not coincide with a lot as shown on the official tax map of the City of New York, or on any recorded subdivision plat or deed."
+- ZR 12-10 (Definition: side lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-side`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-side.snapshot.json`.
+  - Content digest: `5ba11f6adfc47e15f68c20ca93e4dc5e053458725796eb74c8deb0ced8c67221`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is any #lot line# which is not a #front lot line# or a #rear lot line#."
+- ZR 23-344(c) (Additional rear yard modifications (the deemed rear lot line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the portion of a #side lot line# beyond 100 feet of the #street line# that it intersects shall be considered a #rear lot line# and the following rules shall apply along such #rear lot line#"
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+
+Why the rule applies: Because A and B are one zoning lot, the A-B tax boundary is internal and is not a lot line; the whole is the same corner shape as M7, so (b) applies via P and (c) reaches the beyond-100-ft strip.
+
+Expected value: Because tax lots A and B are ONE #zoning lot#, the A-B tax boundary is internal and is not a #lot line# (ZR 12-10: a zoning lot may or may not coincide with a lot on the tax map); the combined lot is the same corner shape as M7 (2 front, 2 side, 0 rear). ZR 23-344(b) applies via the short P frontage (200 ft < 230 ft): no #rear yard# within 100 feet of the P street line. Beyond 100 ft of P the P-intersecting side lot line is deemed a #rear lot line# under (c); whether a rear yard is required there is NOT KNOWN, because the made-up case states nothing about the adjoining zoning lot's lot-line kind along the far edge. The teaching point M8 settles: the internal A-B line is not a lot line, so no rear yard arises from it. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M8); return-independent-hand-calculation-16.md Q4 (M8); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; the (c) result on the far strip is not known because the adjoining lot's lot-line kind is not stated. A draft reading by AI helpers, not professionally reviewed.
+
+### M9 - Made-up case M9: a block closed by a public park - ZR 23-344(b) on the P frontage
+
+Facts used:
+
+- Made-up block M9 = block bounded by streets X and Y (parallel, 220 ft apart), street P crossing them at one end, and a public park closing the block at the other end (about 600 ft from P); the lot is interior, front on P, 50 ft along P, 100 ft deep (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 12-10 (Definition: block (public parks bound a block)) - captured.
+  - Capture: snapshot `zr-12-10-block`, file `docs/research/zr-snapshots/v1/zr-12-10-block.snapshot.json`.
+  - Content digest: `b5c004d936a9d9e773cf6700478d538e8cea487d4bee76e0cbbe91c12d39a47d`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "(b) #public parks#;"
+- ZR 12-10 (Definition: public park) - captured.
+  - Capture: snapshot `zr-12-10-public-park`, file `docs/research/zr-snapshots/v1/zr-12-10-public-park.snapshot.json`.
+  - Content digest: `18b41cc8972716aa6040aee944d61c6e76b38b71e37cc33ccf534986670368ce`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "any publicly owned park, playground, beach, parkway or roadway within the jurisdiction and control of the Commissioner of Parks and Recreation"
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: The public park validly bounds the block (block def item (b)); the short-dimension test compares the dimension between two bounding streets (X and Y = 220 ft < 230), which the park at the far end does not disturb.
+
+Expected value: ZR 23-344(b) applies. The public park validly bounds the block (ZR 12-10 'block' lists #public parks#). The short-dimension test compares 'the dimension between any two #streets# bounding the #block#'; the streets bounding this block are X, Y and P, and the P frontage runs between X and Y, 220 ft apart (< 230), so the P frontage is a short dimension of a block. The park at the far end does not disturb this, because the qualifying dimension is between two STREETS (X and Y). The lot's front lot line on P coincides with that street line; the lot is 100 ft deep, so (subject to the exact-100-ft edge) no rear yard is required anywhere under (b). ZR 23-344(c) does not speak to this single-street interior lot. Both readings read this the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M9); return-independent-hand-calculation-16.md Q4 (M9); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; it shows a park can bound the block. A draft reading by AI helpers, not professionally reviewed.
+
+### M10 - Made-up case M10: non-parallel bounding streets - how is the dimension measured?
+
+Facts used:
+
+- Made-up block M10 = four-sided block; streets X and Y are NOT parallel (210 ft apart where they meet P, 250 ft apart where they meet Q); P and Q are 500 ft apart; the lot is interior, front on P, 50 ft along P, 100 ft deep (source: the readers' made-up boundary cases (made_up_boundary_lots.json); said to be made up, not a real property)
+
+Law relied on:
+
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: The short-dimension definition gives a single value 'the dimension between any two #streets#' but states no method when the two streets converge, so the X-Y dimension is not single-valued.
+
+Expected value: not known. Not known (conditional). Both readings read that the short-dimension definition gives 'the dimension between any two #streets#' but states no method for non-parallel bounding streets, so the X-Y dimension is not single-valued (210 ft at the P end, 250 ft at the Q end). Reading the dimension as the P-frontage span (210 ft) would make the P frontage short and ZR 23-344(b) apply; the Q-frontage span (250 ft) would not; the average (230 ft) is not less than 230. The text does not fix which measure controls for non-parallel streets. KIND OF GAP: unresolved law - the captured text supplies no rule for measuring 'the dimension between' non-parallel streets; what would settle it is an express method in the Zoning Resolution or City Planning guidance. ZR 23-344(c) does not speak to this single-street interior lot.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q4 (M10); return-independent-hand-calculation-16.md Q4 (M10); both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: A made-up lot describing no real property; it records that the method for non-parallel streets is not fixed. A draft reading by AI helpers, not professionally reviewed.
+
+### real-lot-bounding-streets - The real lot: the streets bounding block 7334 and their widths
+
+Facts used:
+
+- Bounding streets (block 7334) = Northern Boulevard (NE end, lots 1 and 70 front it), 215 Street (NW long side), 215 Place (SE long side); each centreline runs about 28-30 ft outside the matching lot-outline edges (source: the readers' DCM centrelines (streets_dcm_centerlines.json) and the block-7334 lot outlines (block_7334_lot_outlines_epsg2263.json))
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: block) - captured.
+  - Capture: snapshot `zr-12-10-block`, file `docs/research/zr-snapshots/v1/zr-12-10-block.snapshot.json`.
+  - Content digest: `b5c004d936a9d9e773cf6700478d538e8cea487d4bee76e0cbbe91c12d39a47d`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a tract of land bounded by"
+
+Why the rule applies: ZR 12-10 'block': a block is bounded by #streets#; the readers read the DCM centrelines and lot outlines to find the three bounding streets, and ZR 23-344(b) turns on the street line of the short-dimension frontage.
+
+Expected value: Block 7334 is bounded on three sides by mapped streets: Northern Boulevard (100 ft, the NE end, fronted by lots 1 and 70), 215 Street (60 ft, the NW long side) and 215 Place (60 ft, the SE long side); each centreline runs about 28-30 ft outside the matching lot-outline edges. The SW short end (opposite Northern Boulevard) is NOT resolved from the readers' facts; reading 1 adds (reading 1 only) that the nearest captured cross-streets 45 Road (50 ft) and 45 Drive (50 ft) run roughly east-west near the block and 46 Avenue (80 ft) lies about 126 ft beyond the farthest lots. A 2021 tax-map ALLEY label sits inside the block (both readings), so which single feature bounds the SW end is not known (see real-lot-alley). Both readings read the three bounding streets and widths the same way.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5a and return-independent-hand-calculation-16.md Q5a both give the three bounding streets and widths and the unresolved SW short end; the 45 Road / 45 Drive / 46 Avenue cross-street detail is from return-independent-hand-calculation-15.md Q5a only (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It names the three bounding streets and widths and records the SW-end feature as not known; it makes no compliance finding. A draft reading by AI helpers, not professionally reviewed.
+
+Measured quantities, each on one basis:
+
+- Northern Boulevard mapped width = 100 ft (basis: administrative_record).
+- 215 Place mapped width = 60 ft (basis: administrative_record).
+- 215 Street mapped width = 60 ft (basis: administrative_record).
+
+### real-lot-alley - The real lot: whether the ALLEY (or the SW-end feature) bounds the block
+
+Facts used:
+
+- ALLEY label = a 2021 tax-map ALLEY label runs across the southern part of the northern lots; whether it is a mapped street, a private way or something else is not stated on the labels read (source: the readers' printed tax-map labels (printed_tax_map_labels.json))
+
+Law relied on:
+
+- ZR 12-10 (Definition: block) - captured.
+  - Capture: snapshot `zr-12-10-block`, file `docs/research/zr-snapshots/v1/zr-12-10-block.snapshot.json`.
+  - Content digest: `b5c004d936a9d9e773cf6700478d538e8cea487d4bee76e0cbbe91c12d39a47d`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a tract of land bounded by"
+- ZR 12-10 (Definition: street (a way on the City Map)) - captured.
+  - Capture: snapshot `zr-12-10-street`, file `docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json`.
+  - Content digest: `7135283ce81d4d482a85086b466c709b53494d069ef4e4ede78f91b33685cce8`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "a way established on the City Map"
+- ZR 12-10 (Definition: street (private roads excluded)) - captured.
+  - Capture: snapshot `zr-12-10-street`, file `docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json`.
+  - Content digest: `7135283ce81d4d482a85086b466c709b53494d069ef4e4ede78f91b33685cce8`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "a #private road#, or a driveway that serves only to give vehicular access to an #accessory# parking or loading facility, or to allow vehicles to take on or discharge passengers at the entrance to a #building#, shall not be considered a #street#."
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: ZR 12-10 'block' lists the features that bound a block; an ALLEY bounds the block only if it is a #street# (or another listed feature), and the #street# definition excludes a private road.
+
+Expected value: not known. Not known. Both readings read that a block is bounded only by the features ZR 12-10 'block' lists (#streets#, #public parks#, railroad rights-of-way at or above grade, airport boundaries, pierhead/shore lines, or NYC corporate boundary lines). The ALLEY bounds the block only if it is a #street# (a way established on the City Map, or another qualifying public way) or another listed feature; a private way is excluded. The labels the readers had do not state the ALLEY's status, and the SW-end bounding feature is not identified. KIND OF GAP: a missing fact about the property - the ALLEY's status (a mapped street, a private way or other) and the SW-end feature, which would come from the City Map. It does not change the roughly 200-261 ft side-street separation that governs the Northern Boulevard frontage.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5a; return-independent-hand-calculation-16.md Q5a; both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records the ALLEY's status and the SW-end feature as not known; it makes no finding that the ALLEY bounds or does not bound the block. A draft reading by AI helpers, not professionally reviewed.
+
+### real-lot-short-dimension - The real lot: is the Northern Boulevard frontage a short dimension of a block?
+
+Facts used:
+
+- Side-street separation (215 Street to 215 Place) = about 200.01 ft summing the tax-map frontages (99.25 + 100.76), about 203.13 ft on the MapPLUTO outline, and about 260-261 ft between the two mapped centrelines (source: the readers' PLUTO rows and tax-map labels, the block-7334 lot outlines and the DCM centrelines)
+- Centreline figures differ between the readings = reading 1 measured 260.02 ft, reading 2 about 261.0 ft, between the 215 Street and 215 Place centrelines (source: return-independent-hand-calculation-15.md Q5a and return-independent-hand-calculation-16.md Q5a)
+
+Law relied on:
+
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: The short-dimension test compares the side-street separation with 230 ft; which basis governs the real lot's separation is the measurement-basis question the text does not fix (see b-measurement-basis), and the two readings differ on the centreline figure.
+
+Expected value: not known. Not known. On the street-line/tax-map basis (about 200.01 ft) and the GIS-outline basis (about 203.13 ft) the Northern Boulevard frontage IS a short dimension of a block (both < 230 ft); on the centreline basis (about 260-261 ft) it is NOT (>= 230 ft). Both readings agree on each basis's result and both record the most defensible reading as the street-line basis (a block is land bounded by its street lines), but the captured text does not fix which basis governs (see b-measurement-basis). The two readings also give different centreline figures - reading 1 measured 260.02 ft, reading 2 about 261.0 ft (a difference of about 1 ft) - both above 230 ft; no single centreline figure is recorded. Each measured quantity carries exactly one basis and no two bases are mixed in one figure. KIND OF GAP: unresolved law (the captured text does not fix the measurement basis) and a missing fact about the property (an authoritative side-street separation, which would come from a survey or a certified street-line record).
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5a/Q5b/Q5e; return-independent-hand-calculation-16.md Q5a/Q5b/Q5e; both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records the short-dimension determination as basis-dependent and not settled, and keeps both readers' differing centreline figures; it chooses no basis and no figure. A draft reading by AI helpers, not professionally reviewed; it says nothing complies.
+
+Measured quantities, each on one basis:
+
+- Northern Boulevard side-street separation (tax-map frontages 99.25 + 100.76) = 200.01 ft (basis: printed_tax_map).
+- Northern Boulevard side-street separation (MapPLUTO outline) = 203.13 ft (US survey) (basis: gis).
+- 215 Street to 215 Place centreline separation (reading 1) = 260.02 ft (basis: derived).
+- 215 Street to 215 Place centreline separation (reading 2) = 261.0 ft (basis: derived).
+
+### real-lot-front-lot-line - The real lot: lot 70's lot lines (settled) and its front lot line on Northern Boulevard
+
+Facts used:
+
+- Lot 70 lot lines = a corner lot with two #front lot lines# (the Northern Boulevard edge and the 215 Place edge), two #side lot lines#, and no #rear lot line# (settled; given to the readers as settled) (source: settled_by_earlier_readings.json (the settled sheet); the step-p3-worked#real-lot-lot-lines row)
+
+Law relied on:
+
+- ZR 12-10 (Definition: front lot line) - captured.
+  - Capture: snapshot `zr-12-10-lot-line-front`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-line-front.snapshot.json`.
+  - Content digest: `6bd9212cbb4ffb4671c692c92f6b265a1ab60e114778925048bc66b3a6cdbbbc`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #street line#."
+- ZR 12-10 (Definition: street line) - captured.
+  - Capture: snapshot `zr-12-10-street-line`, file `docs/research/zr-snapshots/v1/zr-12-10-street-line.snapshot.json`.
+  - Content digest: `20495a0325bef1576623272bd4c4628ce994edf9decd7da3214a7f3708b65a5f`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #lot line# separating a #street# from other land."
+- ZR 12-10 (Definition: rear yard) - captured.
+  - Capture: snapshot `zr-12-10-yard-rear`, file `docs/research/zr-snapshots/v1/zr-12-10-yard-rear.snapshot.json`.
+  - Content digest: `917264446f1ad123d8f2442836d5c885211efb36bdfff50b63099897ae26f330`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #yard# extending for the full length of a #rear lot line#."
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: On the settled lot-line reading, lot 70 is a corner lot whose Northern Boulevard front lot line is a street line; ZR 12-10 'front lot line' is a street line, and a rear yard exists only along a rear lot line.
+
+Expected value: Taken as settled (given to the readers as settled; from step-p3-worked#real-lot-lot-lines): lot 70 is a corner lot with two #front lot lines# - the Northern Boulevard edge and the 215 Place edge - two #side lot lines#, and NO #rear lot line#. So lot 70's Northern Boulevard #front lot line# coincides with the Northern Boulevard #street line#, which is what ZR 23-344(b) keys on. Because a #rear yard# exists only along a #rear lot line# (ZR 12-10) and the settled reading finds no rear lot line, no base rear yard arises from a rear lot line; any rear-yard question turns on ZR 23-344 and the measurement basis (see real-lot-z1-rear-yard). Both readings rest on the same settled lot-line reading.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5b [S] (settled lot-line reading, cited, not newly read); return-independent-hand-calculation-16.md Q5b [S] (settled lot-line reading, cited, not newly read); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It restates the settled lot-line reading and names the front lot line; it does not re-derive the lot lines and enters no rear-yard conclusion. A draft reading by AI helpers, not professionally reviewed.
+
+### real-lot-reach - The real lot: lot 70's reach from the street lines and the corner (settled, GIS outline)
+
+Facts used:
+
+- Lot 70 reach (settled, GIS outline) = the whole lot is within 100 ft of the Northern Boulevard street line (maximum reach about 99.97 ft); a strip about 3.93 ft wide lies beyond 100 ft of the 215 Place street line; about 2,560 sq ft lies beyond 100 ft of the corner point (settled; given to the readers as settled) (source: settled_by_earlier_readings.json (the settled sheet); the corner-reach#real-lot-reach row)
+- Reading 1 reproduced the reach from the outline = 99.975 ft from the Northern Boulevard edge, 103.932 ft from the 215 Place edge, 144.601 ft from the corner point (source: return-independent-hand-calculation-15.md Q5b (reach.py))
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: corner lot (the corner portion)) - captured.
+  - Capture: snapshot `zr-12-10-lot-corner`, file `docs/research/zr-snapshots/v1/zr-12-10-lot-corner.snapshot.json`.
+  - Content digest: `86b686b683e4ed37531319130ee49dc99a3cba3acbd41c27da2bccb2eb686a58`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "The portion of such #zoning lot# subject to the regulations for #corner lots# is that portion bounded by the intersecting #street line# and lines parallel to and 100 feet from each intersecting #street line#."
+
+Why the rule applies: The settled reach is on the GIS outline; it fixes how far the lot reaches from each street line and the corner, which ZR 23-344(a)/(b)/(c) measure from.
+
+Expected value: On the GIS-outline basis (settled; reading 1 reproduced it): lot 70's maximum reach is about 99.97 ft from the Northern Boulevard #street line#, about 103.93 ft from the 215 Place #street line#, and about 144.60 ft from the corner point. These are GIS-outline measurements, not a survey. Both readings rest on this settled reach. Whether the lot's far edge lies within or beyond 100 feet of the OPERATIVE street line is basis-dependent and not settled by the readers: the GIS reach (99.97 ft) is within 100 ft, while the printed tax-map depth label is 100 ft (exactly at the line); a survey or the approved yard diagram would settle which governs. No rear-yard conclusion is drawn here; see real-lot-z1-rear-yard and real-lot-z2-rear-yard.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5b [S] (settled reach, reproduced by reading 1); return-independent-hand-calculation-16.md Q5b [S] (settled reach, cited); both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It restates the settled GIS-outline reach and keeps the within/beyond-100-ft edge basis-dependent; it draws no rear-yard conclusion. A draft reading by AI helpers, not professionally reviewed.
+
+Measured quantities, each on one basis:
+
+- lot 70 maximum reach from the Northern Boulevard street line = 99.97 ft (US survey) (basis: gis).
+- lot 70 maximum reach from the 215 Place street line = 103.93 ft (US survey) (basis: gis).
+- lot 70 maximum reach from the corner point = 144.60 ft (US survey) (basis: gis).
+- lot 70 depth (tax-map label) = 100 ft (basis: printed_tax_map).
+
+### real-lot-z1-rear-yard - The real lot under Z1 (lot 70 alone): is a rear yard required?
+
+Facts used:
+
+- Zoning lot Z1 = lot 70 alone is the zoning lot (which is true, Z1 or Z2, is not known) (source: the readers' lot facts; no zoning-lot description in the folder)
+- District = R6B with a C2-2 overlay (source: zoning_nyzd_query_R6B.json and zoning_nyco_query_C2-2.json)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 23-344(a) (Additional rear yard modifications (within 100 feet of corners)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "no #rear yard# shall be required within 100 feet of the point of intersection of two #street lines# intersecting at an angle of 135 degrees or less."
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+- ZR 12-10 (Definition: rear yard) - captured.
+  - Capture: snapshot `zr-12-10-yard-rear`, file `docs/research/zr-snapshots/v1/zr-12-10-yard-rear.snapshot.json`.
+  - Content digest: `917264446f1ad123d8f2442836d5c885211efb36bdfff50b63099897ae26f330`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "is a #yard# extending for the full length of a #rear lot line#."
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: Under Z1, whether a rear yard is required turns on whether the Northern Boulevard frontage is a short dimension (basis-dependent, see real-lot-short-dimension), on the settled no-rear-lot-line reading, on the corner waiver (a), and on (c) for any beyond-100-ft strip.
+
+Expected value: not known. Not known. The readers' per-basis readings, which agree, are: on the street-line/tax-map basis the Northern Boulevard frontage is a short dimension of a block, so under ZR 23-344(b) no #rear yard# is required within 100 feet of the Northern Boulevard #street line# (on the GIS reach, the whole lot) - conditioned on that basis; on the centreline basis (b) does not apply, and then the result rests on ZR 23-344(a) (no rear yard within 100 ft of the roughly 90-degree corner), on the settled finding of no #rear lot line#, and on ZR 23-344(c) for the beyond-100-ft strip. The overall answer is not settled because (i) the governing measurement basis is unresolved (see real-lot-short-dimension and b-measurement-basis) and (ii) the (c) strip turns on an adjoining lot-line kind the readers did not have (see real-lot-beyond-100-sliver). KIND OF GAP: unresolved law (the measurement basis) and a missing fact about the property (the adjoining zoning lot's lot-line kind, from a survey, a deed or the neighbouring lots' records). No unconditional 'no rear yard' is entered: every reading above names its basis and its conditions and quotes ZR 23-344.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5b/Q5c/Q5d (Z1); return-independent-hand-calculation-16.md Q5b/Q5c/Q5d (Z1); both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records the Z1 rear-yard question as not settled, with the conditions and the kind of gap; it enters no unconditional 'no rear yard' and no compliance finding. A draft reading by AI helpers, not professionally reviewed.
+
+### real-lot-z2-rear-yard - The real lot under Z2 (lots 70 and 1 together): is a rear yard required?
+
+Facts used:
+
+- Zoning lot Z2 = lots 70 and 1 are one zoning lot (which is true, Z1 or Z2, is not known) (source: the readers' lot facts; no zoning-lot description in the folder)
+- Lot 1 = also fronts Northern Boulevard and reaches about 99.98 ft deep from it; under Z2 the lot 70/lot 1 shared edge is internal and is not a lot line (source: return-independent-hand-calculation-15.md Q5b and return-independent-hand-calculation-16.md Q5b)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 23-344(a) (Additional rear yard modifications (within 100 feet of corners)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "no #rear yard# shall be required within 100 feet of the point of intersection of two #street lines# intersecting at an angle of 135 degrees or less."
+- ZR 12-10 (Definition: zoning lot (two or more lots of record)) - captured.
+  - Capture: snapshot `zr-12-10-zoning-lot`, file `docs/research/zr-snapshots/v1/zr-12-10-zoning-lot.snapshot.json`.
+  - Content digest: `0547550b1bcc8c5b8e5ff5fa3f429e139cd2a95bf4a7270a85fc4cd8cce9d53a`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "a tract of land, either unsubdivided or consisting of two or more lots of record contiguous for a minimum of 10 linear feet"
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+- ZR 12-10 (Definition: short dimension of a block) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "shall be a #block# frontage where the dimension between any two #streets# bounding the #block# measures less than 230 feet"
+
+Why the rule applies: Under Z2 the combined lot likewise fronts the Northern Boulevard short-dimension street line, the shared edge is internal, and the same basis and neighbour questions remain; ZR 23-344(b) keys on the zoning lot's front lot line, so the zoning-lot condition carries.
+
+Expected value: not known. Not known. Both readings read that under Z2 the combined lot likewise fronts Northern Boulevard and is within about 100 ft of its street line, so on the street-line/tax-map basis ZR 23-344(b) would require no #rear yard# within 100 feet of the Northern Boulevard #street line# (the whole combined lot) - conditioned on that basis; on the centreline basis the result rests on ZR 23-344(a) and (c) as under Z1. The lot 70/lot 1 shared edge is internal under Z2 and is not a #lot line#. The overall answer is not settled for the same two reasons as Z1 AND because whether lots 70 and 1 are one #zoning lot# is itself not known (ZR 23-344(b) names the #zoning lot#'s front lot line). KIND OF GAP: unresolved law (the measurement basis) and missing facts about the property (whether 70 and 1 are one zoning lot; the adjoining lot-line kinds). No unconditional 'no rear yard' is entered: every reading names its zoning lot, its basis and its conditions and quotes ZR 23-344.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5b/Q5c/Q5d (Z2); return-independent-hand-calculation-16.md Q5b/Q5c/Q5d (Z2); both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records the Z2 rear-yard question as not settled, with the zoning-lot condition, the basis condition and the kind of gap; it enters no unconditional 'no rear yard'. A draft reading by AI helpers, not professionally reviewed.
+
+### real-lot-beyond-100-sliver - The real lot: the strip beyond 100 feet of the 215 Place street line (ZR 23-344(c))
+
+Facts used:
+
+- The beyond-100-ft strip = every point is within 100 ft of the Northern Boulevard street line (reach <= 99.97 ft), so no point is beyond 100 ft of that street line; a strip about 3.93 ft wide (about 390 sq ft) lies beyond 100 ft of the 215 Place street line (source: the settled reach (corner-reach#real-lot-reach); return-independent-hand-calculation-15.md Q5c and return-independent-hand-calculation-16.md Q5c)
+- Adjoining lots = geometrically the lots adjoining lot 70's back edge are tax lot 11 (fronting 215 Place) and tax lot 61 (fronting 215 Street); the adjoining zoning lot's lot-line kind is not in the folder (source: return-independent-hand-calculation-15.md Q5c and return-independent-hand-calculation-16.md Q5c)
+
+Law relied on:
+
+- ZR 23-344(c) (Additional rear yard modifications (the deemed rear lot line)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "the portion of a #side lot line# beyond 100 feet of the #street line# that it intersects shall be considered a #rear lot line# and the following rules shall apply along such #rear lot line#"
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+- ZR 23-344(c)(1) (Additional rear yard modifications (c)(1)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In all districts, a #rear yard# shall be provided in accordance with Section 23-342 (Rear yard requirements), where such #rear lot line# coincides with a #rear lot line# of an adjoining #zoning lot#."
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+
+Why the rule applies: Beyond 100 ft of the 215 Place street line the back side lot line is deemed a rear lot line under ZR 23-344(c); whether a rear yard is required there turns on the adjoining zoning lot's lot-line kind, which the readers did not have, and on the unresolved (b)/(c) overlap.
+
+Expected value: not known. Not known. Both readings read that beyond 100 feet of the 215 Place #street line# the back #side lot line# is deemed a #rear lot line# under ZR 23-344(c); then under (c)(3) no rear yard is required if it coincides with a neighbour's #side lot line#, and under (c)(1) a 23-342 rear yard is required if it coincides with a neighbour's #rear lot line#. The adjoining #zoning lot#'s lot-line kind cannot be fixed: the folder gives no zoning-lot description for any lot but 70, and a tax lot is not necessarily a zoning lot. The strip is also within 100 ft of the Northern Boulevard street line, so the unresolved (b)/(c) overlap (see fit-b-c-overlap) applies. KIND OF GAP: a missing fact about the property - the adjoining zoning lot's lot-line kind along that segment (from a survey, a deed or the neighbouring lots' records) - and unresolved law (the (b)/(c) overlap).
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q5c; return-independent-hand-calculation-16.md Q5c; both readings name this as not settled (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It records the beyond-100-ft strip as not known, with the missing fact and the unresolved overlap; it presents no variant as the answer and enters no unconditional 'no rear yard'. A draft reading by AI helpers, not professionally reviewed.
+
+### real-lot-missing-facts - The real lot: the facts neither reading had, each with the variant it would select
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 23-344(c)(3) (Additional rear yard modifications (c)(3)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "In R6 through R12 Districts, no #rear yard# shall be required where such #rear lot line# coincides with a #side lot line# of an adjoining #zoning lot#."
+
+Why the rule applies: The real-lot answers above turn on facts neither reading had; ZR 23-344(b)/(c)(3) identify which fact selects which outcome.
+
+Expected value: The real-lot answers turn on facts neither reading had; each is a missing fact about the property (KIND OF GAP), with where it would come from and what it selects: (1) the authoritative measurement basis for the side-street separation (about 200.01 ft tax-map, about 203.13 ft GIS, about 260-261 ft centreline) - from a survey or a certified street-line record - selects whether the Northern Boulevard frontage is a short dimension and so whether ZR 23-344(b) applies; (2) whether lots 70 and 1 are one #zoning lot# (Z1 vs Z2) - from a zoning-lot description, a deed or a Declaration - selects which zoning lot ZR 23-344(b) reads; (3) the zoning and the lot-line kind of every other lot on the block (only lot 70's R6B/C2-2 is given) - from the neighbouring lots' records - selects ZR 23-344(c)(1) against (c)(3) on the beyond-100-ft strip; (4) the ALLEY's status and the SW-end bounding feature - from the City Map - selects the far-end block boundary. A fifth gap is unresolved law rather than a property fact: whether exactly 100 ft counts as 'within 100 feet', and the method of measuring 'within 100 feet' and 'the dimension between any two streets'. Both readings name the same gaps.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q6; return-independent-hand-calculation-16.md Q6; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It catalogues the missing facts and what each selects; it chooses no value. A draft reading by AI helpers, not professionally reviewed.
+
+### both-readers-did-not-have - What both readers did not have (texts and facts), and the texts each reading named on its own
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: street line (street setback line)) - captured.
+  - Capture: snapshot `zr-12-10-street-line`, file `docs/research/zr-snapshots/v1/zr-12-10-street-line.snapshot.json`.
+  - Content digest: `20495a0325bef1576623272bd4c4628ce994edf9decd7da3214a7f3708b65a5f`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "A #street setback line# supersedes the #street line# in the application of #yard#, height and setback, and #court# regulations."
+
+Why the rule applies: Some answers wait on texts outside the readers' folder; the street-line definition points to a #street setback line#, and the readers name different outside-folder texts.
+
+Expected value: The readers did not have (an item is here only where BOTH readings name it): (1) an authoritative measurement basis - a survey - for the side-street separation; (2) a zoning-lot description, deed or Declaration deciding whether lots 70 and 1 are one zoning lot; (3) the zoning and lot-line kinds of the other lots on the block; (4) the status of the ALLEY and the SW-end bounding feature. Both readings also read that the captured text does not settle (i) how 'the dimension between any two streets' is measured, (ii) how 'within 100 feet' is measured and (iii) whether exactly 100 ft is inside. In addition, each reading names outside-folder texts of its own: reading 1 names a missing 'block frontage'/'frontage' definition; reading 2 names a missing general '#lot line#' definition, ZR 23-38 and ZR 23-72, and the full text of ZR 34-23, and reads R6B as within 'R6 through R12' (a point a professional must confirm, because the captured 23-344 text does not enumerate the letter-suffix districts). ZR 11-25, which bears on whether R6B is within 'R6 through R12', was in the folder and is not read by reading 1 or by reading 2. The ZR 12-10 '#street setback line#' definition was in the folder: reading 2 read it (a #street setback line# supersedes the #street line# for yards, but exists only in Staten Island or Queens Community District 10); reading 1 did not read it.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q6; return-independent-hand-calculation-16.md Q6; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It separates what both readers did not have from the texts each reading named alone, and from the one in-folder text one reading did not read; it chooses no value. A draft reading by AI helpers, not professionally reviewed.
+
+### m5-t167-scenario-map - Map of M5-T167's scenarios S1 to S12 to the rows that answer them
+
+Facts used:
+
+- none (this row rests on the law text alone)
+
+Law relied on:
+
+- ZR 23-344(b) (Additional rear yard modifications (along the short dimension of a block)) - captured.
+  - Capture: snapshot `zr-23-344`, file `docs/research/zr-snapshots/v1/zr-23-344.snapshot.json`.
+  - Content digest: `91f949153c7b682040151f1ad88c574dbe8e53f630cd720883a761e054068007`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344.
+  - Quoted: "whenever a #front lot line# of a #zoning lot# coincides with the #street line# of the #short dimension of a block#, no #rear yard# shall be required within 100 feet of such #street line#"
+- ZR 12-10 (Definition: short dimension of a block (the threshold)) - captured.
+  - Capture: snapshot `zr-12-10-short-dimension-of-a-block`, file `docs/research/zr-snapshots/v1/zr-12-10-short-dimension-of-a-block.snapshot.json`.
+  - Content digest: `3ec2dadd555aef1101fe37c14bb34f48bf4ffd73068fe3b0036cd1b6e2401648`.
+  - Official page: https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10.
+  - Quoted: "measures less than 230 feet"
+
+Why the rule applies: M5-T167 takes its expected values from this case and the law; each of its scenarios S1-S12 maps to a row here, or to a reading gap that leaves it open.
+
+Expected value: S1 (229.99 applies; 230.00 and 230.01 do not) -> b-less-than-230, M1, M2, M3. S2 (bases straddling 230 give not known) -> b-measurement-basis, M4, real-lot-short-dimension. S3 (the reach follows the reading of 'within 100 feet'; an uncovered strip is not known) -> b-within-100-feet, b-exact-100-ft, M5, M6, real-lot-beyond-100-sliver. S4 (99.97 / 100 / about 101.06 shown as a conflict; result Conditional) -> real-lot-reach and real-lot-z1-rear-yard (the step-P7 readings carry the 99.97 ft GIS reach and the 100 ft tax-map depth; the about-101.06 ft derived figure is from an earlier reading, not a step-P7 value, so the within/beyond-100-ft edge stays not settled). S5 (a lot fronting only the long side -> not applicable; an uncertain edge -> not known) -> c-which-lots, M7 and M8 (the long X frontage is not short) and the real lot's long direction (about 545 ft). S6 (a corner lot is measured from the short street only) -> fit-b-on-corner-lot, M7, M8, real-lot-short-dimension. S7 (two-lot zoning-lot cases carry the zoning-lot condition) -> M8, real-lot-z2-rear-yard. S8 (a block bounded by a park, railroad, paper street or the ALLEY -> not known) -> b-block-boundary, M9, real-lot-alley, real-lot-bounding-streets. S9 (an irregular block -> not known) -> M10, b-measurement-basis. S10 (R1-R12 via ZR 11-25; districts outside -> not applicable) -> c-1-vs-c-3 and the R6B-within-'R6 through R12' condition reading 2 raised (reading 2 reads R6B within 'R6 through R12', a point a professional must confirm, because the captured 23-344 text does not enumerate the letter-suffix districts; ZR 11-25, named by M5-T167 S10's own framing, was in the sealed folder and is not read by reading 1 or by reading 2). S11 (the union of (a) and (b) is named; any remainder names (c)(1) or (c)(3)) -> fit-multiple-apply, fit-b-c-overlap, c-1-vs-c-3. S12 (mixed-basis sums are refused) -> the quantity-basis rule (every quantity on one of the nine bases) and real-lot-short-dimension (no two bases mixed in one figure). Both readings' coverage supports this map.
+
+Where this stands in the independent reading: return-independent-hand-calculation-15.md Q1-Q7 (the readings answer the same questions M5-T167 scenarios test); return-independent-hand-calculation-16.md Q1-Q7; both readings reach this on the same basis (both readings: return-independent-hand-calculation-15.md and return-independent-hand-calculation-16.md).
+
+What this row does not establish: It maps M5-T167's scenarios to rows; the engine takes its expected values from those rows and the law, never from a program run. A draft reading by AI helpers, not professionally reviewed.
+
+## What this case does not establish
+
+- It records a value or a yes/no only where both readings agree on the same basis; where they differ, where one says not known, or where one holds an answer subject to a text the readers did not have, the row says so and names both readings.
+- No row records an unconditional 'no rear yard' for the real lot: every real-lot conclusion names its conditions (the zoning lot, the measurement basis, the street line or point it is measured from) and quotes ZR 23-344; the corner test of 23-344(a) is never worded as the only exception.
+- The measurement basis for the short dimension of a block, the method of measuring 'within 100 feet', the treatment of the exact-100-ft edge, and the method for a non-rectangular block are unresolved in the captured text; the authoritative side-street separation, the zoning lot (Z1 vs Z2) and the neighbouring lots' lot-line kinds are facts neither reading had.
+- Every quantity carries exactly one of the nine measurement bases and no two bases are mixed in one figure; the made-up cases' dimensions are stated facts of a made-up block, not measurements of any property.
+- It is not a professional or legal determination and does not say anything complies; no human verdict is entered anywhere; agreement between two AI readings is not proof.
+
+## Sources
+
+- The step-P7 reading 1: provenance/return-independent-hand-calculation-15.md
+- The step-P7 reading 2: provenance/return-independent-hand-calculation-16.md
+- The sealed folder given to each helper (sealed-p7-v2 on the private build server): the 189 pinned law-text captures (without the notes describing how the program encoded them), the block-7334 lot outlines, the DCM centrelines, the PLUTO rows of lots 70 and 1, the printed tax-map labels, the zoning of lot 70, ten made-up boundary cases M1 to M10, and four answers settled by earlier readings (copied word for word and given as settled), with no program access.
+- The law captures under docs/research/zr-snapshots/v1/, each pinned by its content digest.
+
+## Change log
+
+| Date | Change | By |
+|---|---|---|
+| 2026-10-11 | Case created (step P7, task M5-T176) from the two independent readings of the step-P7 sealed folder (provenance/return-independent-hand-calculation-15.md and -16.md): the reading of ZR 23-344(b) (the short dimension of a block) and 23-344(c)(3). A value is recorded only where both readings agree on the same basis; every disagreement, every not-known reading, and the basis the captured text does not fix stay not settled. No value comes from a program run; no unconditional 'no rear yard' is recorded for the real lot. | rules-engineer (M5-T176) |
+

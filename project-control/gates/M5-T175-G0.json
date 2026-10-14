@@ -1,0 +1,28 @@
+{
+  "task_id": "M5-T175",
+  "gate_id": "G0",
+  "reviewer": "orchestrator",
+  "role": "administrative",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T175-G0.md",
+  "reviewed_at": "2026-10-14T17:37:06.273638+00:00",
+  "content_manifest_sha256": "f4450251336abd4e977d9ca68075417f2d56e810d4330fc1457c5a79efd251bb",
+  "reviewed_sha": "63bb2720460ac3e5f07f94b3da39ed1898885068",
+  "history": [
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T175-G0.md",
+      "reviewed_at": "2026-10-14T02:53:15.731965+00:00"
+    },
+    {
+      "reviewer": "orchestrator",
+      "role": "administrative",
+      "result": "PASS",
+      "report_file": "project-control/reports/M5-T175-G0.md",
+      "reviewed_at": "2026-10-14T03:39:52.147403+00:00"
+    }
+  ],
+  "updated_at": "2026-10-14T17:37:06.660493+00:00"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-11T09:31:14+00:00",
+ "updated_at": "2026-10-14T17:50:21+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -89,10 +89,85 @@
   "D-094-R065",
   "D-094-R066",
   "D-094-R067",
-  "D-094-R068"
+  "D-094-R068",
+  "D-094-R069",
+  "D-094-R070",
+  "D-094-R071",
+  "D-094-R072",
+  "D-094-R073",
+  "D-094-R074",
+  "D-094-R075",
+  "D-094-R076",
+  "D-094-R077",
+  "D-094-R078",
+  "D-094-R079",
+  "D-094-R080",
+  "D-094-R081",
+  "D-094-R082",
+  "D-094-R083",
+  "D-094-R084",
+  "D-094-R085",
+  "D-094-R086",
+  "D-094-R087",
+  "D-094-R088",
+  "D-094-R089",
+  "D-094-R090",
+  "D-094-R091",
+  "D-094-R092",
+  "D-094-R093",
+  "D-094-R094",
+  "D-094-R095",
+  "D-094-R096",
+  "D-094-R097",
+  "D-094-R098",
+  "D-094-R099",
+  "D-094-R100",
+  "D-094-R101",
+  "D-094-R102",
+  "D-094-R103",
+  "D-094-R104",
+  "D-094-R105",
+  "D-094-R106",
+  "D-094-R107",
+  "D-094-R108",
+  "D-094-R109",
+  "D-094-R110",
+  "D-094-R111",
+  "D-094-R112",
+  "D-094-R113",
+  "D-094-R114",
+  "D-094-R115",
+  "D-094-R116",
+  "D-094-R117",
+  "D-094-R118",
+  "D-094-R119",
+  "D-094-R120",
+  "D-094-R121",
+  "D-094-R122",
+  "D-094-R123",
+  "D-094-R124",
+  "D-094-R125",
+  "D-094-R126",
+  "D-094-R127",
+  "D-094-R128",
+  "D-094-R129",
+  "D-094-R130",
+  "D-094-R131",
+  "D-094-R132",
+  "D-094-R133",
+  "D-094-R134",
+  "D-094-R135",
+  "D-094-R136",
+  "D-094-R137",
+  "D-094-R138",
+  "D-094-R139",
+  "D-094-R140",
+  "D-094-R141",
+  "D-094-R142",
+  "D-094-R143"
  ],
- "requirements_id_digest_sha256": "f74274df853fb37780d8e2f07a4fbd5d5d09264e112d5974829b6b0222b20c4f",
- "requirements_content_digest_sha256": "54edc0bdc7305c18137dbf9d66df17f72e5ce392307e6f211ab7868ce0b12d8f",
+ "requirements_id_digest_sha256": "01a4d8f14582fe62fa887072f5ab64cdd8dcedc874eec52c619d9dab683bf4bd",
+ "requirements_content_digest_sha256": "ac5261694f186ca7999d8d373ff9eebb2f4ef702e962e5f20ebc7892111a29d3",
  "sources": [
   {
    "file": "source-001.md",
@@ -100,9 +175,172 @@
    "sequence": 1,
    "recorded_at": "2026-10-11T04:50:28+00:00",
    "content_digest_sha256": "2713f603eec07f8d50123b24aab366de87c341ee0926650063441c3d8c09c7ad"
+  },
+  {
+   "file": "source-002-amendment.md",
+   "kind": "amendment",
+   "sequence": 2,
+   "recorded_at": "2026-10-11T15:52:06+00:00",
+   "content_digest_sha256": "bf42a09aa906179ae963e5fa380e896a4ba69988dc700be9fc81168a4151c020",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-003-amendment.md",
+   "kind": "amendment",
+   "sequence": 3,
+   "recorded_at": "2026-10-11T16:57:27+00:00",
+   "content_digest_sha256": "593b8a49f103b1136cc73c02ff79e35f5b3b992b381a1f50d87fd1a8912ae91f",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-004-amendment.md",
+   "kind": "amendment",
+   "sequence": 4,
+   "recorded_at": "2026-10-11T18:13:13+00:00",
+   "content_digest_sha256": "299968c21747ca6e6df49fac37e6b28529502311d9da1e7816771b85b2516249",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-005-amendment.md",
+   "kind": "amendment",
+   "sequence": 5,
+   "recorded_at": "2026-10-11T18:33:39+00:00",
+   "content_digest_sha256": "108513930c5ad6c1860d98092bd8d9548520454642c7270e511f4afd6f29637f",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-006-amendment.md",
+   "kind": "amendment",
+   "sequence": 6,
+   "recorded_at": "2026-10-11T18:33:39+00:00",
+   "content_digest_sha256": "a00f53304fb1b7f58680ee41a80ee8e4242ac156a722a32be169b56dd01362fa",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-007-amendment.md",
+   "kind": "amendment",
+   "sequence": 7,
+   "recorded_at": "2026-10-11T19:08:40+00:00",
+   "content_digest_sha256": "e2852b665abde4c5c18ddbd76a11d76a8fffa1eb44c242fed27a345e532a7707",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-008-amendment.md",
+   "kind": "amendment",
+   "sequence": 8,
+   "recorded_at": "2026-10-11T19:14:39+00:00",
+   "content_digest_sha256": "c6c7ff08bb024930676835716f012a9a0ee43c0cdfa1efcf09434120222ff868",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-009-amendment.md",
+   "kind": "amendment",
+   "sequence": 9,
+   "recorded_at": "2026-10-12T03:23:58+00:00",
+   "content_digest_sha256": "1362ab374b7bf8dca8823dfec1c210c01c17898e81dcd665760b9a1930026b61",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-010-amendment.md",
+   "kind": "amendment",
+   "sequence": 10,
+   "recorded_at": "2026-10-12T05:53:47+00:00",
+   "content_digest_sha256": "18e8be7f57bab274235ab2b0c3d772c2870838ff0c9dfb50dcbd83eacec0fda0",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-011-amendment.md",
+   "kind": "amendment",
+   "sequence": 11,
+   "recorded_at": "2026-10-12T05:57:39+00:00",
+   "content_digest_sha256": "94c3290e45147364ea6ce038c534e89fb066e0ffe7c118f65c48653528bc8d2a",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-012-amendment.md",
+   "kind": "amendment",
+   "sequence": 12,
+   "recorded_at": "2026-10-13T05:31:19+00:00",
+   "content_digest_sha256": "703f2930ecfb452c3afbcc279396bded92f6dce7dcc81a5fe9b21fd81587a427",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "recorded_at": "2026-10-14T01:24:51+00:00",
+   "content_digest_sha256": "2a0145b63d1c975cd949d21798032547cd6673737dd137795f8e569d7be8a1cd",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-014-amendment.md",
+   "kind": "amendment",
+   "sequence": 14,
+   "recorded_at": "2026-10-14T02:01:30+00:00",
+   "content_digest_sha256": "acfb63fe27083ffb9614111ccb0deffd896bc7a29c2be0e40fe6723bee7d2e7e",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-015-amendment.md",
+   "kind": "amendment",
+   "sequence": 15,
+   "recorded_at": "2026-10-14T02:26:03+00:00",
+   "content_digest_sha256": "0f5fef332ff4d402d36c25742bdb38d65518d0b06fa21939c94b6ea9b9490e10",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-016-amendment.md",
+   "kind": "amendment",
+   "sequence": 16,
+   "recorded_at": "2026-10-14T03:51:36+00:00",
+   "content_digest_sha256": "c450b77244736d02c4e62208d8020f625248b96689e77e910d3c04f44c4c7bd2",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-017-amendment.md",
+   "kind": "amendment",
+   "sequence": 17,
+   "recorded_at": "2026-10-14T04:11:51+00:00",
+   "content_digest_sha256": "ad510b3a6e8c49486d1857231a21448ae1b27e445258beb70525766dd2447ff1",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-018-amendment.md",
+   "kind": "amendment",
+   "sequence": 18,
+   "recorded_at": "2026-10-14T17:18:06+00:00",
+   "content_digest_sha256": "ebc8e291d643c48b47e83661c86f215589834654b62cf638dd552a22357e6f1d",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-019-amendment.md",
+   "kind": "amendment",
+   "sequence": 19,
+   "recorded_at": "2026-10-14T17:45:24+00:00",
+   "content_digest_sha256": "c51f0ca7b0d341e83d137f85c0280665ffabe7aaae2a0dee1311ff0b05b75529",
+   "amends": "source-001.md"
   }
  ],
- "amendments": [],
+ "amendments": [
+  "source-002-amendment.md",
+  "source-003-amendment.md",
+  "source-004-amendment.md",
+  "source-005-amendment.md",
+  "source-006-amendment.md",
+  "source-007-amendment.md",
+  "source-008-amendment.md",
+  "source-009-amendment.md",
+  "source-010-amendment.md",
+  "source-011-amendment.md",
+  "source-012-amendment.md",
+  "source-013-amendment.md",
+  "source-014-amendment.md",
+  "source-015-amendment.md",
+  "source-016-amendment.md",
+  "source-017-amendment.md",
+  "source-018-amendment.md",
+  "source-019-amendment.md"
+ ],
  "supersedes": [],
  "superseded_by": null,
  "affected_tasks": [
@@ -111,7 +349,22 @@
   "M5-T159",
   "M5-T160",
   "M5-T161",
-  "M5-T162"
+  "M5-T162",
+  "M0-T194",
+  "M0-T193",
+  "M5-T163",
+  "M5-T164",
+  "M3-T006",
+  "M5-T165",
+  "M5-T166",
+  "M5-T171",
+  "M5-T176",
+  "M0-T196",
+  "M3-T007",
+  "M5-T177",
+  "M5-T175",
+  "M3-T008",
+  "M5-T179"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -168,6 +421,216 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T162 (report wording follows the shown legal unit limit (after M5-T157)) to R057, R058 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T15:52:06+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-002 (the outside reviewer's audit of the report printed after wave 23) and requirements D-094-R069 to R086, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T16:57:27+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-003 (the owner's answer to question H1 and the instruction to stop giving time estimates) and requirements D-094-R087 to R099, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T18:13:13+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-004 (the owner's answers to I1, I2 and I3 and two questions about built-in sources) and requirements D-094-R100 to R104, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T18:33:39+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-005 (the owner's request for a question-and-answer log folder) and requirements D-094-R105 to R107, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T18:33:39+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-006 (the owner's instruction to add the log to GitHub) and requirements D-094-R108 to R108, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T19:08:40+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-007 (the owner's instruction on resuming after a handoff) and requirements D-094-R109 to R111, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T19:14:39+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-008 (the owner's correction of the quick-resume answer) and requirements D-094-R112 to R113, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-11T19:14:51+00:00",
+   "actor": "orchestrator",
+   "action": "requirements_reread",
+   "note": "Re-read D-094-R109 (reading and required_harness) and D-094-R110 (required_harness) to match the owner's correction source-008 (R112, R113): keep the same copy-in prompt and the full saved handoff; drop only the between-session checks. The owner's quoted words are unchanged; the requirements content digest is resynced in the same commit. Session 0dfe2ecc, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:03+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T194 (D-094 visual-proof baseline (the before set)) to R056, R057, R069, R072, R077, R083 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:06+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T193 (design contract revision for D-094 and the quick-resume routine) to R009, R010, R012, R014, R018, R019, R020, R021, R025, R026, R027, R028, R029, R041, R042, R047, R048, R049, R050, R051, R052, R053, R054, R065, R066, R071, R072, R074, R076, R077, R078, R081, R083, R087, R088, R089, R090, R091, R092, R093, R094, R095, R096, R097, R109, R110, R111, R112, R113 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:08+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T163 (NB-03 revision 2 and the 12-10 captures) to R036, R037, R061, R079 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:10+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T164 (results contract 1.5.0) to R017, R026, R044, R058, R079, R082, R091, R092, R094, R096 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T19:45:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T006 (zoning-law library, first pass (documents only)) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T20:43:41+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T165 (report page 1 rebuild and print type scale) to R011, R012, R013, R029, R030, R037, R047, R048, R050, R051, R054, R055, R060, R070, R071, R072, R073, R078, R079, R081, R085, R089, R090 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T20:43:43+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T166 (one locator and a dimensioned constraints close-up) to R014, R015, R016, R044, R052, R053, R074, R077 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T20:43:45+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T171 (website page-1 parity) to R035, R041, R051, R057, R071, R078, R081, R083 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-11T22:26:05+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T176 (step P7: short-block rear-yard reference case) to R036, R037, R044, R079 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-12T03:23:58+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-009 (the owner's request to bring the master plan up to date) and requirements D-094-R114 to R114, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-12T05:53:47+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-010 (the owner's correction of the close-up's clutter) and requirements D-094-R115 to R115, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-12T05:57:39+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-011 (the owner's go-ahead for the close-up fix (K1 yes)) and requirements D-094-R116 to R116, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-12T05:58:38+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Scope correction of task M5-T166 before any review: bound it also to R115, R116 via applicability.task_ids; requirements content digest resynced in the same commit; the task's provisional verification row extended (pending, verifier unset); no requirement text edited. Session 82bb675d, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-13T05:31:19+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-012 (the owner's yes to L1 (living-files map)) and requirements D-094-R117 to R117, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-13T05:36:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T196 (living-files map) to R117 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T01:24:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-013 (the owner's instruction to read the handoff and run ten helpers at once tonight) and requirements D-094-R118 to R120, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T01:27:08+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T007 (zoning-law library, second pass: the remaining options (documents only)) to R102, R104, R119 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T02:01:30+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-014 (the owner's request for a handoff at a clean seam) and requirements D-094-R121 to R123, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T02:26:03+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-015 (the owner's added line at the start of the session after handoff seq 167: run ten helpers) and requirements D-094-R124 to R124, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T02:28:31+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T177 (step P8: independent worked example of Building B's placement and area allocation) to R043, R044, R076, R082, R091, R092 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T02:53:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T175 (report reads the 1.5.0 constraint rows, input facts and constraint lines) to R015, R017, R036, R037, R038, R044, R052, R053, R060, R061, R079 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T02:53:41+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T008 (capture the affordable/senior-housing ZR sections (Article II Chapter 7 + Appendix F + two 12-10 terms); documents only) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T03:51:36+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-016 (the owner's request for a handoff at a clean seam after the three running helpers finish) and requirements D-094-R125 to R127, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T04:11:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-017 (the owner narrows the question-and-answer log to questions about building the app) and requirements D-094-R128 to R130, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T17:18:06+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-018 (the owner's resume after the handoff seq 168) and requirements D-094-R131 to R131, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T17:45:24+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-019 (the owner forwards an outside reviewer's assessment of the 2026-10-14 preview print and the handoff) and requirements D-094-R132 to R143, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T17:50:21+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T179 (page 7's scope note says context maps are in the report when the maps are printed) to R083, R137 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

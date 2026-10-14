@@ -320,6 +320,18 @@ describe("S4 — the Details focus behaviour and the 'Conditional' marker (UX-09
     render(<ThreeAnswersPanel results={loadResultsFixture(ALL_AVAILABLE)} showDraftValues />);
     expect(screen.queryAllByTestId("answer-conditional-marker")).toHaveLength(0);
   });
+
+  // M5-T171: the additive page-1 parity block must NOT reuse the sacred 'answer-conditional-marker'
+  // test id. The whole-panel assertion above (length 0 on a settled document) and the scoped e2e
+  // marker queries stay valid only while every conditional marker lives inside an AnswerCard, never
+  // in the parity block — so the block carries its own chip test id.
+  it("the page-1 parity block never carries answer-conditional-marker (whole-panel discipline)", () => {
+    render(<ThreeAnswersPanel results={loadResultsFixture(BENCHMARK)} showDraftValues />);
+    const parity = screen.getByTestId("apartment-figures");
+    for (const marker of screen.queryAllByTestId("answer-conditional-marker")) {
+      expect(parity.contains(marker)).toBe(false);
+    }
+  });
 });
 
 describe("S13 — the building-option answer is the scheduled area (ruling V11 (2))", () => {
@@ -426,6 +438,27 @@ describe("S5 — the legal unit limit sits with the allowance, apart from the es
     expect(shared.textContent ?? "").not.toContain(DENSITY_CONDITION);
     // the shared list still holds the two conditions shared across the other results, by name.
     expect(within(shared).getAllByTestId("shared-condition").length).toBeGreaterThanOrEqual(2);
+  });
+
+  // M5-T171: page-1 parity adds the legal ceiling beside the apartment estimate in a new additive
+  // block. DB-214 N2 is reconciled, not broken: the allowance card still carries the legal unit
+  // limit value ("29 units"), and the ceiling ALSO appears beside the estimate for page-1 parity —
+  // in the block's own figure form ("Legal ceiling 29", never "29 units"), with its own test ids.
+  it("DB-214 N2 reconciled: the allowance card keeps its 29; the parity block pairs ceiling and estimate", () => {
+    const doc = loadResultsFixture(BENCHMARK);
+    render(<ThreeAnswersPanel results={doc} showDraftValues />);
+    // the allowance card is undisturbed — it still shows the legal unit limit with the allowance.
+    expect(card("floor_area_allowance").textContent ?? "").toContain("29 units");
+    // the estimate range is not folded into the allowance card (kept apart — N2).
+    expect(card("floor_area_allowance").textContent ?? "").not.toContain("Estimate 17-22");
+    // the additive block shows the ceiling beside the estimate, using its own figure form and ids.
+    const parity = screen.getByTestId("apartment-figures");
+    expect(within(parity).getByTestId("apartment-figures-ceiling-value").textContent).toBe(
+      "Legal ceiling 29",
+    );
+    expect(within(parity).getByTestId("apartment-figures-estimate-value").textContent).toBe(
+      "Estimate 17-22",
+    );
   });
 });
 

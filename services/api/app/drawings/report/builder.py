@@ -89,7 +89,7 @@ def build_report_html(
                                  surroundings=surroundings, env=env),
         page_option_comparison.render(results, ident, env=env),
         page_scenario_sheet.render(results, ident, env=env),
-        page_assumptions.render(results, ident, env=env),
+        page_assumptions.render(results, ident, maps_present=maps_present, env=env),
         page_evidence.render(results, ident, map_context=map_context, env=env),
     ]
 

@@ -1,0 +1,670 @@
+# Back and forth: owner ↔ developer (AI), 2026-10-11
+
+A shortened but complete record of the conversation between the owner (not a developer; building the app with AI) and
+the developer AI on 11 October 2026: what the owner asked, what was answered, what was decided, what is done and what
+is still to do. Written so another AI or an architect can follow it without the chat.
+
+Status words used below: **DONE** (finished and checked), **RECORDED** (saved as an owner instruction the build must
+follow), **TO DO** (owed work), **OPEN** (waiting for the owner's decision), **ANSWERED** (a question answered, nothing
+to build).
+
+## Background in three lines
+
+- The app: a New York City zoning feasibility tool. You type an address; it gathers official city data, applies
+  zoning rules step by step, and produces results on a website and in a PDF report for architects.
+- The test property: 215-16 Northern Boulevard, Bayside, Queens (block 7334, lot 70; R6B with a C2-2 commercial
+  overlay; a corner lot). The owner chose it on 28 September by giving the competitor's report on the same lot.
+- The competitor: an 88-page "Zoning Analysis and Massing Study" of the same lot (dated 18 September 2026). It looks
+  finished (11 options worked, section drawings, 3D blocks, floor plans) but some figures have no stated conditions
+  and the owner's outside reviewer found errors in it.
+
+## 1. Morning: finishing the previous round of work
+
+- **What happened:** on resuming, the AI found that one automatic browser test had been failing on every upload since
+  05:48 UTC, and that four pieces of work had been approved while it was failing, without anyone reading the test
+  results. That broke the owner's rule that the full tests must pass before anything is approved.
+  - **DONE:** the test was out of date (the result was right); a small repair fixed it. Every later approval was made
+    only after the full test results were read green. The lesson is saved: read the test results before every
+    approval, merge and handoff.
+- **What happened:** a test print of the report showed a contradiction: page 1 and open item 6 said "No legal
+  apartment limit is shown" while page 8 showed the conditional 29-unit limit.
+  - **DONE:** the wording now follows the results ("shown as a conditional ceiling for standard residences; not known
+    for qualifying affordable or senior housing"), each with its own reason. "Conditional" is said only when the
+    limit's own recorded state is conditional.
+- **DONE:** the round was merged into the main version. It includes:
+  - the special density area read from the city's records (this Queens lot is outside both areas, so the standard
+    legal apartment limit shows as a conditional 29);
+  - the zoning-lot warning from the city's register of recorded documents (a 2022 zoning lot description names lot
+    70 together with lot 1, so every lot-area figure carries that condition; the documents themselves were not read);
+  - law links that open the exact section of the Zoning Resolution;
+  - a research record on the street wall, setback and side yard;
+  - the browser-test repair and the apartment-limit wording fix.
+- **TO DO:** one research record (the zoning-lot documents record) needs its links to the program refreshed after
+  the wording fix; no fact in it changed.
+
+## 2. The new PDF
+
+- **Owner:** waiting for the new PDF. **Developer:** sent it (9 pages, printed from the merged main version) with
+  website screenshots at desktop and phone size and a change list. Every page was inspected; every law link was
+  opened and lands on the right section.
+- **Owner:** "Give me the link." **Developer:** gave the pull request link, the research-records link and the local
+  preview link; the PDF itself was an attachment.
+- **Owner:** "Yes give me the PDF." **Developer:** re-sent it and made a private web page with all 9 pages and the
+  PDF.
+- **Still unresolved in that PDF (TO DO):** page 1's answer table has no row for the legal apartment limit; the
+  opening lot sentence is generic; rear yard beyond the corner, setback above the base and the street wall are not
+  worked out; "see item 4" references are plain text, not links.
+
+## 3. The outside reviewer's audit of that PDF (forwarded by the owner: "Do u get this?")
+
+- **Reviewer's points:** the facts improved, but the presentation did not.
+  - Improvements to keep: the zoning-lot flag (lots 70 and 1); the conditional 29 calculation; exact law links.
+  - The 29 does not prove 29 units can be built.
+  - Page 1: results compete with warnings, assumptions and a feature list; the architect has to assemble the answer.
+  - Pages 2-3: repeated maps; the property stays small; the constraints page needs a close-up with dimensions on the
+    boundaries.
+  - Page 4: five limitation paragraphs come before the comparison; most rows describe unfinished work.
+  - Page 5: three stacked rectangles show floors, but no footprint, placement, circulation or apartment arrangement.
+  - Pages 6-9: explanations repeat; much belongs in one organized evidence appendix.
+  - The "17-22 apartments" estimate is on page 1 but the "29-unit ceiling" is on page 8; they belong together, with
+    one line telling them apart; neither is a demonstrated layout.
+  - The rear-yard analysis omits the short-block exception, ZR 23-344(b); it needs an explicit applicability check
+    (the reviewer did not say the exemption applies).
+  - The report gained about 10% more text; the next version must not grow.
+  - Next pass: (1) rebuild page 1; (2) finish one meaningful option (dimensioned footprint on the site, a section, a
+    floor schedule that adds up, untested constraints named); (3) before-and-after screenshots of every changed page
+    and website view, checked against the design rules. Keep all eleven options in scope. The goal is an architect
+    understanding the property faster.
+- **Developer:** yes, understood. **RECORDED** as owner instructions (18 numbered requirements).
+- **Developer on the rear yard:** the research already exists (a conditional reading that no rear yard may be needed
+  under 23-344(b), awaiting independent review), but the program only applies the 100-foot corner rule, so the
+  report never shows the check. **TO DO:** build the check into the program and the report; never present the
+  exemption as settled.
+
+## 4. The competitor's PDF ("for reference")
+
+- **Developer:** it is the same file the owner sent on 4 October; the reviewer compared against all 88 pages.
+- **We borrow the form, not the numbers:**
+  - one headline figure with a one-sentence summary and a strip of the lot's key facts;
+  - one comparison table with all eleven options;
+  - a scenario sheet with the assumed conditions as small tags, a section with the zoning height lines next to a
+    summary table, a dimensioned footprint (ours on our real lot outline), and a floor-area schedule showing
+    deductions and adding up to the zoning floor area.
+- **We do not copy:** room-by-room apartment layouts (the owner ruled them out); figures without their conditions;
+  its mistakes (for example treating the rear-yard relief as the corner rule only).
+- **DONE:** the sample is stored in a stable private reference folder (never published; it is a third party's
+  document).
+
+## 5. Time estimates
+
+- **Owner:** "Can I expect a new PDF shortly?" **Developer:** gave a first guess, then corrected it once the plan
+  showed more work before the new page 1.
+- **Owner (later):** no more time estimates; it was a one-time question. **RECORDED:** updates name what comes next,
+  never when, unless the owner asks.
+- **Owner (later, asked directly):** how long until all 11 options are in the PDF? **Developer (one-time answer):**
+  very roughly two to four weeks of working sessions at about one session a day: the first fully worked option takes
+  the longest (it builds the shared machinery), then about half a session to one session per remaining option.
+
+## 6. "What if this conversation stops? Will the next session know everything?"
+
+- **Developer:** yes, through files, not memory:
+  - every owner instruction saved word for word and split into numbered requirements;
+  - every task, review and approval in the project's records;
+  - a step-by-step session log on the build server;
+  - a short handoff note plus a detailed next-session brief (what to build, how, what is missing, the sample PDF).
+- **DONE:** handoff note rewritten; full handoff done when the owner asked for it (all running helpers allowed to
+  finish first; nothing new started).
+- **TO DO:** add the lesson "always read the test results before approving" to the project's shared knowledge file,
+  so any model sees it (today it is in the handoff and the AI's own memory only).
+
+## 7. Two decisions asked of the owner
+
+- **Paper size: OPEN.** Recommendation: US Letter (New York architects print Letter; the competitor uses it).
+  Meanwhile A4. It matters for the page-1 rebuild.
+- **The worked option's floor plate: ANSWERED, RECORDED.** The owner said yes to a simple two-zone illustration, with
+  these rules:
+  - labels exactly "Apartment area" and "Other building area: core, circulation, walls and services" (never "core
+    and corridors", which would make a rough assumption look like a calculated layout);
+  - caption "Illustrative area allocation—not a floor plan";
+  - one stated percentage from the existing 60-75% assumption, shown beside it; drawing and calculation agree;
+  - the estimate and the drawing use compatible area measures; zoning floor area is never treated automatically as
+    the physical floor-plate area;
+  - no rooms, unit walls, apartment counts, or invented stair or elevator locations;
+  - zones inside the footprint only once the footprint is actually fitted to the site; until then a simple
+    proportional bar beside the building diagram;
+  - one short caption, the method in the appendix;
+  - the same on the website and in the PDF; the rendered result checked for readability before it is called done;
+  - recorded in the design rules and the questionnaire (questionnaire DONE; design rules TO DO in the first task).
+
+## 8. The owner's big question: where do we stand, and is it better than the competition?
+
+- **Where we stand:**
+  - The foundation is built and solid: official data with a receipt for every fact, rules applied step by step by
+    plain calculation (the AI never does the zoning math), honest labels on every answer, a website and a PDF.
+  - What is missing is most of what an architect looks at: worked building options with drawings.
+  - For the test property: very roughly a third of the way to the full report. For the whole city: much less (only
+    part of the residential rules; no commercial, manufacturing or special-district rules yet).
+- **How the app is built ("a kitchen"):**
+  - shopping (official city data, each fact with its source, date and exact value; missing facts stay "not known");
+  - recipe cards (each zoning rule with its exact law section);
+  - the cook (combines facts and rules into floor area, height, legal apartment limit, building options);
+  - the label maker (every answer: conditional, provisional, illustrative, pending verification or unresolved, with
+    what it depends on);
+  - plating (website and PDF).
+- **How numbers are checked:**
+  - thousands of automatic tests on every change;
+  - a test property worked by hand, separately from the program, and compared;
+  - exact saved copies of the real city data for that lot;
+  - a research record for every tricky question;
+  - independent AI reviewers who try to prove each change wrong.
+  - Gap: no licensed New York City professional has checked any rule yet.
+- **Are the rules the same for every district?**
+  - Partly: every district has the same kinds of rules (floor area, height, coverage, yards, apartments, parking)
+    with different numbers, mostly in tables.
+  - Each district family adds twists (contextual R6B, choices in plain R6, towers and wide/narrow streets in R7-R10,
+    commercial and special districts, and the 2024 City of Yes changes). The machinery is built once; the number of
+    rule cards grows and each needs checking.
+- **Can an expert mark the rules right or wrong? How many questions?**
+  - Yes: there is a review list with one plain-English entry per rule (law, district, the program's reading, a worked
+    example, a link, and a blank box for a New York architect or zoning examiner). Every box says "not reviewed".
+  - Today about 35-40 questions (23 rules, about 6 calculations, about 6 research readings).
+  - The whole city: a few hundred for all residential districts, several hundred more with commercial,
+    manufacturing and special districts. The expert can start with the districts that matter most.
+- **Versus the competitor:**
+  - Today they are more complete and visual (11 options, drawings, plans); we are more trustworthy (every number says
+    what it depends on, links to the law, nothing invented). We also caught things their report misses (the possible
+    shared zoning lot with lot 1; the short-block rear-yard rule).
+  - Final product: better, if we finish the worked options and drawings while keeping the honesty.
+- **Would an architect say "wow"?**
+  - Today: no; careful facts, but no building to look at, so they would still do their own study.
+  - After the new page 1, the dimensioned lot drawing and one worked option: "this saves me time".
+  - "Wow" when all 11 options are worked with drawings and every number traces to the law.
+- **Why does the owner's other AI sometimes find answers the developer misses?**
+  - Strict rules here (only official sources, exact quotes recorded, "not sure" when not sure).
+  - A fresh outside view (example: the failing test nobody read here).
+  - Some official sites are slow or block automated tools.
+  - Sometimes the developer is simply wrong.
+  - The other AI can also be confidently wrong, so its findings are strong leads that are then checked against the
+    law text (the owner's own rule).
+- **How is the law interpreted when experts can disagree?**
+  - Read the exact words and the definitions; look for exceptions and official guidance; write the reading as a draft
+    with reasons; an independent reviewer tries to break it.
+  - Where it truly could go two ways, the app shows the answer as conditional or says "not sure", never quietly picks
+    a side.
+  - The final word belongs to a licensed professional through the review list.
+
+## 9. Follow-up questions
+
+- **How often does "not known" happen?**
+  - For the test property about 1 in 3 answers is "not known" or "not worked out"; the rest show a number, every one
+    conditional (mainly on this tax lot being the whole zoning lot); none is settled; 10 of the 11 options are not
+    worked yet.
+  - Two kinds: the city's information does not settle it (lot size disagreement, unread recorded documents,
+    neighbours' exact lot lines; these need a survey, deed or documents), or the program has not learned the rule
+    yet (setback, street wall, parking, affordable apartment limit; these shrink as we build).
+- **Who gave us the test property?** The owner, on 28 September, with the competitor's report on the same lot. It is
+  also a tricky lot, which tests many rules.
+- **How do we know nothing was missed?**
+  - Not one hundred percent yet. Today: a master checklist of zoning topics per residential district, the report
+    saying out loud what it did not check, the review list's known-gaps section, outside reviews and hand-worked
+    examples.
+  - The remaining risk is a rule nobody has thought of yet. The proper protection is a complete law library that
+    follows every cross-reference (see I1 below), plus the professional review.
+- **When something new is added (for example affordable housing), does everything update from the ground up?**
+  - Every rule lives in one place and is shared by the website, the PDF, the drawings and every option.
+  - Tests act as tripwires: a changed rule makes every affected test fail until it is updated on purpose.
+  - Research records flag themselves as out of date when the program parts they depend on change.
+  - Law sections carry dates and fingerprints, so an amended section must be reviewed before use.
+- **Where does pitfall knowledge come from?** The Buildings Department's guidance notes; the city's formal
+  interpretations; appeal-board decisions; the planning department's guides; past permit filings on the same lot;
+  our own reviews. The plan: collect these into a "watch out for this" checklist per kind of rule.
+- **Is that guidance built into the program?**
+  - Buildings Department guidance and formal interpretations: no (researched and listed as planned sources only).
+  - Appeal-board decisions: no (not even listed yet).
+  - Both go into the law library work.
+- **Past permit filings for a real client's address:**
+  - A reader of a lot's past permit filings from the city's open data exists and works for any address. It is used
+    for the existing building's size and for filings that mention a zoning lot shared with other lots.
+  - It has been tested on saved data for the test lot but is not switched on for real visitors yet. Switching it on
+    is a live-site change for the owner to approve later.
+  - Limit: the city publishes the filings, not the examiners' written objections.
+- **When something stays "not known":**
+  - Does the website accept the architect's answers and recalculate? Partly. Today three entries change the results:
+    housing type, floor-to-floor height, and a statement about the special density area. The setup screen saves the
+    architect's lot size, dimensions, which lots belong together and the existing building size beside the city's
+    values, but these do not feed the calculation yet (see I3 below).
+  - Is a full report still produced? Yes, always. Answers that do not depend on the missing fact show normally;
+    answers that do are shown with their condition; only what truly cannot be worked out says "not known", with what
+    would settle it.
+  - Survey and drawing readers:
+    - The survey reader reads digital PDFs only (not scans). So far it pulls out the scale and the lot number;
+      distances, angles, area and boundary are designed but not finished. It has an accept / correct / reject step
+      per value, with a kept history. It is tested on made-up surveys only and not connected to the results.
+    - The drawing reader reads DXF files (AutoCAD can export them). It lists closed shapes for the architect to label
+      as building, property line or street, and to confirm the units. It has no web screen yet and is not connected.
+    - AutoCAD's native DWG format is not supported (left as the owner's licensing decision).
+    - An unconfirmed value is not used: the affected answers stay conditional or "not known" and the rest of the
+      report is produced. It is a warning, not a wall.
+    - The reader shows where on the document it found each value, so the architect can compare; corrections are
+      kept; if it cannot find a value it says so and the architect can type it in.
+- **Would 25 helpers speed up the 11 options?** Not much, and riskier: all options run through the same calculation
+  and report files, so parallel builders would collide, and every change still needs independent review and the full
+  tests, one at a time. Research can go wider because researchers only read (see I2 below).
+- **Financial estimates (AMI, affordable rents, 421-a, 485-x, the City of Yes bonus)?**
+  - Not built today; the Financials part of the app is a placeholder.
+  - Affordable rents are set by formula: area median income (AMI, published yearly) for the household size implied by
+    the apartment size, the program's income band (for example 60% of AMI), about 30% of that income per year divided
+    by 12, minus a utility allowance. With the unit mix and band assignment, affordable rents can be calculated
+    exactly from published tables.
+  - The hard part is which apartments get which band: programs require spreading affordable units across sizes and
+    floors and averaging income bands (the new affordable bonus requires an average of 60% AMI). That is a visible,
+    editable assumption at feasibility stage.
+  - Market rents have no official source: the owner's numbers or a labelled estimate.
+  - 421-a ended for new projects in 2022; 485-x (2024) replaces it, with tiers by size, affordable share, income
+    levels and wage rules. The City of Yes bonus adds floor area for affordable apartments.
+  - Each incentive would appear as a "with" and "without" pair per option (floor area, affordable apartments, yearly
+    rent, tax savings), all labelled estimates.
+  - The owner has already built an AMI and affordable-bonus calculator; its logic can be the starting point, checked
+    against the official tables, when this stage comes (after the building options).
+
+## 10. Questions I1, I2, I3 and the owner's answers (all RECORDED)
+
+- **I1. Start the zoning-law library now?** Owner: yes, in the next session. A second line of work beside the report:
+  every section connected to the rules this lot uses, every cross-reference followed, a list of what the app handles
+  and what it does not yet, and a pitfall checklist from official guidance (Buildings Department guidance and
+  interpretations, appeal-board decisions, planning guides). The handoff tells the next session to start it.
+- **I2. More helpers?** Owner: yes, and spin up agents. Up to 8 helpers at once when every helper beyond 5 only reads
+  and researches; still at most 3 building, never on the same files. The next session starts research helpers for the
+  library and for the remaining options' rules.
+- **I3. Architect-entered facts and the survey reader?** Owner: yes, recorded for the build. Right after the first
+  fully worked option, the architect's entered lot size, dimensions, lot grouping and existing building size feed the
+  results, each result labelled as resting on the architect's value so nobody mistakes it for a city record; then the
+  survey reader is finished and tested with real surveys.
+
+## 11. Rules now in force (owner decisions)
+
+- Updates: four short plain bullets; no time estimates unless asked.
+- Approvals and merges only after the full test results are read green on exactly the version approved.
+- Nothing is labelled Verified until the owner settles what Verified requires.
+- Every production switch stays off unless the owner approves it.
+- All eleven options stay in scope; no detailed apartment layouts or permit-ready plans.
+- The two-zone illustration rules of section 7.
+- Helpers: up to 8 when the extra ones only research; at most 3 building; never sharing files.
+- The owner's newer instruction to show fewer maps (one neighbourhood map plus one dimensioned close-up) replaces the
+  earlier location-sheet decision; the old map stays restorable.
+- The outside reviewer's forwarded audits count as owner instructions; the other AI's findings are leads to verify
+  against the law, not facts.
+
+## 12. What happens next, in order (TO DO)
+
+1. One independent check of the revised plan, then the design rules updated (page 1 layout, type sizes, fewer maps,
+   the two-zone illustration rules).
+2. The new page 1 and the dimensioned close-up of the lot, side by side; the first new PDF follows, with
+   before-and-after screenshots.
+3. In parallel: the zoning-law library with research helpers (I1, I2); the rear-yard short-block check (23-344(b)).
+4. The one fully worked option: footprint placed and dimensioned on the lot, a section with the height lines, a floor
+   schedule that adds up, the two-zone illustration, untested constraints listed.
+5. Architect-entered facts feed the results (I3); then the survey reader with real surveys.
+6. The website matching the PDF.
+7. The remaining 10 options, the comparison table and the evidence appendix.
+8. The other promised sections: nearby sales, block description, parking, photos, tax-abatement eligibility,
+   financial inputs.
+9. More districts beyond R6B, family by family.
+10. A licensed New York City professional goes through the review list.
+11. Small upkeep: the zoning-lot documents record refreshed after the wording fix; one rules file that the automatic
+    style check never reads fixed; the "read the test results before approving" lesson added to the shared knowledge file.
+
+## 13. Open questions for the owner
+
+- Paper size (recommend US Letter; meanwhile A4).
+- Whether the six status labels also replace the statuses on the website screen.
+- Older open items in the questionnaire: what must be true before anything is labelled Verified; how the lot-area
+  disagreement is shown; which building the results show when two can be worked; optional help saving three recorded
+  documents from the city register; and several housekeeping items.
+- Later: switching on the permit-filings reader for real visitors (a live-site change).
+
+## Where the records live (for an AI picking this up)
+
+- Owner instructions, word for word, with numbered requirements: the project's directive records (this conversation
+  is directive D-094, sources 001 to 004).
+- Work records (tasks, reviews, approvals): the project's control records in the repository.
+- Handoff note and next-session brief: the repository's session handoff file and the private session folder of
+  2026-10-11.
+- Questions to the owner and their answers: the private owner questionnaire.
+- Reference PDFs (competitor sample, our latest report): the private reference folder.
+
+## 14. Last question before the next session: "Any blind spots?"
+
+- **Developer's answer (ANSWERED; three new OPEN questions):**
+  - **Professional check early (OPEN, J1):** no licensed professional has checked any rule yet; a wrong early reading
+    would repeat in every option and district. Recommendation: a few paid hours of an expediter or zoning-savvy
+    architect on the review list (about 35-40 items) before the work spreads beyond R6B.
+  - **Addresses with known answers (OPEN, J2):** everything is tested on one lot. Recommendation: the owner sends 5-10
+    addresses from past projects (different lot shapes and districts) with what was approved; they become test cases.
+  - **Private backup (OPEN, J3):** the questionnaire, session logs, reference PDFs and working notes live only on the
+    build server. Recommendation: a private backup the owner controls (a private repository or cloud drive; the
+    owner creates it).
+  - **Real addresses end to end:** several live data connections are built but switched off (the zoning-lot document
+    index, the permit-filings reader); the real-address experience is not proven yet. Before showing clients: an
+    internal trial on real addresses, then the owner approves each live switch.
+  - **Law changes over time:** the city amends the zoning law; a routine re-check of the saved law sections is part
+    of the law library work.
+  - **Process weight:** every small fix goes through building, two reviews, a rule check and the full tests; good for
+    accuracy, slower; the owner's outside reviews keep the focus on what architects see.
+  - **Financial stage inputs:** beyond AMI rents and incentives, projections need construction and financing costs,
+    which have no official source; the owner will supply or approve those assumptions.
+  - **DWG:** many architects work in DWG; reading or writing DWG is still the owner's licensing decision.
+  - **Liability wording:** before selling to clients, a lawyer may want to review the disclaimer and terms (the app
+    already labels results as preliminary, unreviewed drafts with law links).
+
+## 15. "Why not reverse-engineer from the city's own data?"
+
+- **Owner:** take real buildings across districts, uses and odd lots (especially new ones filed after the 2024 City of
+  Yes changes), run the program on each lot, and compare with what the architect actually filed and built. Can we get
+  everything from the city's websites, including permit filings?
+- **Developer (ANSWERED; OPEN question J4):** yes, a strong and scalable test.
+  - How it would work, in four steps: (1) find buildings actually filed and built recently in the city's public
+    permit data; those filed after the 2024 City of Yes changes are the most valuable because they follow today's
+    rules; (2) pick a spread of about 20-30: different districts, residential and mixed with shops, corner,
+    mid-block and odd-shaped lots; (3) run the program on each lot and compare its floor area, height and apartment
+    limit with what the architect filed and built; (4) give every difference a written cause.
+  - What the filings give: address, lot number, kind of job (new building), filing date and status.
+  - The city publishes permit filings as open data (an older system and the newer DOB NOW, updated daily), plus
+    certificates of occupancy; the older filings carry the proposed zoning floor area (the app already reads it); the
+    newer filings dataset has about 95 columns, which must be confirmed one by one (floor area, height, stories,
+    units) before relying on them; recorded documents show air-rights deals and zoning-lot mergers; appeal-board
+    decisions show variances. The plans themselves are generally not available as bulk data, so the comparison is on
+    numbers, not drawings.
+  - A real building is evidence of what one architect did, not proof of the maximum: buildings often stop below the
+    maximum, use bonuses or special permits, merge lots, or were filed under the old rules. So the test is: the
+    program's legal maximum should never be below what was legally built (if it is, the program or our reading is
+    wrong), and every other difference gets a stated cause (for example: used the affordable-housing bonus; merged
+    with the lot next door; special permit; built below the maximum).
+  - The set becomes a growing check that is run again every time a rule changes.
+  - Recommendation: a research task with the reading-only helpers (about 20-30 recent new buildings); the owner's own
+    projects (J2) still add what public data cannot show (why choices were made, examiner objections).
+
+## 16. "Can the program get air-rights purchases, lot mergers and special permissions from the city?"
+
+- **Developer (ANSWERED; OPEN question J5):**
+  - **Air rights and lot mergers: partly built.** These are recorded in the city's register of property documents.
+    The app's register check reads the register's index (what kind of document, when, which lots it names); that is
+    how it found the 2022 zoning lot description naming lots 70 and 1. It flags the concern on every lot-area figure.
+    It does not read the documents themselves, so it cannot say how many square feet moved (the documents are mostly
+    scanned images). The check is switched off for real visitors until reviewed and approved by the owner.
+  - **Permit filings that mention a zoning lot:** built (the permit-filings reader notes filings that mention a
+    zoning lot shared with other lots); also off for real visitors.
+  - **Special permissions (appeal-board variances, planning-commission special permits): not built.** The city
+    publishes these decisions, some as searchable data and some as documents; which records hold what must be
+    confirmed before building the check.
+  - **Recommendation (J5):** (1) switch on the two existing checks after review and the owner's approval; (2) add the
+    variance and special-permit check; (3) later, read the recorded documents themselves.
+
+## 17. "How do we make the start of the next session quicker and cheaper? Nothing changes between sessions."
+
+- **Owner:** after a handoff nothing changes: the owner clears the session and pastes the handoff text, so the checks
+  and tests the new session runs first are a waste of time; the new session should jump in where the last one left off.
+- **Developer (first answer):** agreed; no checks after a planned handoff, only after a crash or forced stop; and also
+  a shorter pasted text and a handoff pointing only to the few lines the next step needs.
+- **Owner's correction:** keep the same pasted text and the full saved handoff, so the new session knows everything,
+  where everything is and how to proceed; only the checks go.
+- **Settled (recorded as D-094 rows R109 to R113):**
+  - The handoff file, the session brief and notes, and the pasted text stay as complete as before.
+  - After a planned handoff the new session skips the checks and starts the next step at once.
+  - The checks stay only after a crash or a forced stop, when the last session could not finish its handoff.
+  - The project's instruction file and the handoff routine still say "check first"; a small change brings them in
+    line (inside the design-rules task).
+
+## 18. "Do you think we're making incredible progress?" (asked about 20:20 UTC, mid-session)
+
+- **Developer (answered):** steady, careful progress, but not "incredible" yet. That day's work was mostly the
+  groundwork the visible changes depend on: the design rules for the report's next pass written, reviewed and
+  accepted; the "before" pictures and word counts of the report and website pinned; the rear-yard research record
+  updated; the zoning-law library's first pass written; the results format extended. The first change the owner
+  can see, the rebuilt page 1, was being built but was not finished. Every piece passes independent review and an
+  8-minute automated test run, and the build server runs only a few helpers at once, which keeps it reliable but
+  slower than it looks.
+- **At the handoff (owner, about 21:27 UTC: "dont start any new tesk finish up"):** nothing new was started; the
+  running helpers were stopped and their unfinished work saved for the next session (see the handoff).
+
+## 19. "So, what does the new library do?" (answered by about 23:37 UTC, 2026-10-11)
+
+- **Developer (answered):** the zoning-law library (accepted that evening) is a set of documents, not program code; it
+  changes no number in the report or on the website. It holds: every Zoning Resolution section the R6B benchmark's
+  rules rely on (73 so far) and every section those sections point to, each pointer marked followed or not followed
+  yet with the reason (162 pointers); which sections the program actually calculates (6) and which it does not yet
+  (67); the sections each of the eleven development options depends on; a pitfall checklist from Buildings
+  Department bulletins and determinations, Board of Standards and Appeals decisions and City Planning guidance; and a
+  research log (what was searched, what could not be reached, and what still needs capturing: 5 sections and 8
+  defined terms). It is labelled an unreviewed draft.
+- **Confirmed by it:** the height rule handles only the base-height table (23-432), not the street-wall (23-431) and
+  setback (23-433) sections; that gap is queued for the envelope-constraints task.
+
+## 20. "What is this for?" about a permission prompt, then "Ok send it again I will approve" (about 23:45 to 23:48 UTC)
+
+- **Developer (answered):** the page-1 builder had asked to delete `apps/web/node_modules` in its own private copy.
+  That was a shortcut (a link) to the web tools in the main wave folder, made only so the builder could print and
+  check its own page; deleting it removes the link, never the real tools, and keeps a stray file out of the commit.
+  Safe to allow.
+- **Done:** the orchestrator removed the link itself by its full path; the builder's copy was clean and the real tools
+  untouched.
+
+## 21. "At a clean seam do session handoff" (about 00:27 UTC, 2026-10-12)
+
+- **Where things stood:** accepted this session: the zoning-law library, the results format 1.5.0, and the short-block
+  rear-yard reference case (two independent readings of ZR 23-344(b) and (c)(3); every disagreement left not
+  settled). Page 1 rebuilt and on the wave branch: the whole decision summary fits page 1 (key figures large, each
+  on one line; status visible; the legal ceiling 29 beside the estimate 17-22 with the distinction line; three
+  uncertainties); its re-checks were finishing. The close-up map (page 3) was in its third fix (one label drawn on
+  its own dimension line; the constraints table alone on a page) when the session stopped.
+- **Not done yet:** the close-up's third fix, page 1's and the close-up's acceptance, the website's page-1 parity, the
+  wave's pull request, and the first PDF for the owner.
+- **At the handoff:** nothing kept running; unfinished work saved for the next session (see the handoff).
+
+## 22. "Where are the questions located?" and "a detailed non-technical report ... what still needs to be done" for the sample PDF (2026-10-12, after the handoff)
+
+- **Developer (answered):** the open questions are in the private questionnaire on the build server,
+  `/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md` (not in the public repository): D1 paper size, C1 what
+  Verified requires, C2 labels on the website, A1 footprint, A2 which buildings, F1 the zoning-lot documents, J1-J5,
+  B1-B6 (B6 = how the PDF file is made and stored).
+- **The report (shortened):** today's draft is 10 pages for one lot and one worked building; the sample is 88 pages and
+  eleven options. Done: the report's six page types; this session's accepted pieces (zoning-law library, results
+  format, short-block rear-yard reference case); page 1 rebuilt and reviewed. Left in the current redesign pass, in
+  order: finish the close-up map; accept page 1 and the close-up; website page 1; PDF #1 with before/after pictures;
+  the short-block rear yard in the engine and the "tax map" wording sweep (PDF #2); setback, street wall and side
+  yard; comparison first and one evidence appendix (PDF #3); Building B placed and fully worked (footprint, section,
+  schedule, two-zone picture); the website catching up; the final PDF of the pass; architect-entered facts. Not yet
+  planned for a sample-like report: options 2-11 worked; Building A (waits on A1); one chapter per option; editable
+  estimate and apartment mix; parking, loading and bicycle parking; the full zoning table, flood zone, E-designation,
+  FRESH; a site-facts page, contents page and limitations list; city overview map, aerial photo and zoning map; street
+  photos (owner adds later); tax abatement, comparable sales, financial inputs (held), 3D massing (undecided); print
+  polish; other lots. Ours is already stronger on: legal limits apart from estimates, labels and law links, the
+  zoning-lot flag, the visible lot-area conflict, a rear yard not overstated. Decisions only the owner can make: D1,
+  C1, A1, A2, F1, B6, and the not-yet-asked choices (options 4-11 timing, tax abatement, comparable-sales method, the
+  financial hold, 3D massing, aerial photo and zoning map). The developer noted the master plan file was out of date.
+
+## 23. "So,can u bring it up to date" (the master plan; 2026-10-12)
+
+- **Done:** recorded as D-094 row R114; the master plan (`project-control/master_plan.json`) now matches the ledger:
+  every milestone's status, task counts and open tasks; the current milestone moved to the scenario-engine-and-report
+  milestone; a new "report programme" section lists the remaining steps of this pass by wave, the work the full
+  sample-like report still needs (planned, not planned, or waiting on an owner decision) and the owner questions that
+  shape the PDF. An independent auditor checked every count and statement against the ledger: pass, with three small
+  wording notes, all applied. No task, hold or owner decision was changed by the update.
+
+## 24. "So from 1 to 100 how long till we have the sample pdf ready" (2026-10-12)
+
+- **Developer (answered, a first estimate):** about 25 to 30 out of 100. Mostly in place: the city data for a lot, this
+  district's zoning rules, the calculation engine, the report generator, and for the test lot one fully worked building
+  with its legal limits, estimate and drawings. Missing: most of the sample's bulk (eleven option chapters, about 72 of
+  its 88 pages, against one being finished here), the zoning law the other options need, and whole sections not
+  started (tax abatement, comparable sales, financials, site-facts page, contents, aerial and zoning maps). The current
+  redesign pass would bring it to about 35 to 40. Fastest next gains: options 2 and 3, parking and side yards, and the
+  owner's answers on A1, A2 and which sample sections stay. A calendar estimate from the observed pace was offered.
+
+## 25. "What about a partial pdf like the sample we made before but obviously with the new improvements can u make that?" (2026-10-12)
+
+- **Done:** the report was printed from the current work branch (10 pages, A4) with the street address, as the earlier
+  PDF was, and sent to the owner: `215-16-Northern-Boulevard-report-draft-2026-10-12.pdf` (private copy under the
+  session folder `owner/`). It shows the new page 1 (the whole decision summary on one page) and the new close-up.
+  Known open points shown in it: on the close-up one dimension label sits on its own line and one lot label touches a
+  line, and the constraints table sits alone on page 4 (both in the close-up's third fix); "tax-map outline" wording
+  on later pages (fixed in the rear-yard step). It is a draft of work in progress, not the finished PDF #1.
+
+## 26. "Why does this look like such a mess, words everywhere, lines covered" (2026-10-12, with a screenshot of the draft's close-up)
+
+- **Developer (answered):** the drawing tried to say too much: every measurement repeated "map outline, not surveyed"
+  (the developer's own design rule, not the reviewer's); labels were placed onto lines (one on its own dimension line,
+  "Lot 11" against a line, the bottom label across buildings), because the automatic check ignored a label's own line
+  and the building shapes; no white background behind words; neighbours' addresses and every neighbouring building
+  drawn. Recommended: state the source once under the drawing with figure-only labels; every label beside its line on
+  a white background; neighbours' addresses off (lot numbers stay); lighter neighbours; a check by eye on the printed
+  page. Asked as question K1 (basis once under the drawing). Recorded as D-094 row R115.
+
+## 27. "Ok fix it" (2026-10-12)
+
+- **Recorded:** D-094 row R116 (K1 answered yes). The design rule now states the basis once under the drawing.
+- **Done:** the close-up was rebuilt: one note "All dimensions: city map outline, not surveyed."; labels "103.88 ft",
+  "99.98 ft", "101.71 ft" on white backgrounds beside their lines; no line touches any word (a test checks every label
+  against every line, its own included); no neighbour addresses; lighter neighbours; the small constraints table no
+  longer alone on a page (now with the other tables on page 3; the drawing on page 4). The data, code, test and visual
+  reviewers all passed it. A second draft PDF was sent (`215-16-Northern-Boulevard-report-draft-2-2026-10-12.pdf`).
+- **Still minor (advisory):** the 215 Place name and its width label sit apart; "101.71 ft" and "Lot 11" are close;
+  legend and scale-bar text slightly under 8.5 pt; the report is 10 pages (the large drawing has its own page); the
+  "tax-map outline" wording on page 3 goes with the rear-yard step.
+
+## 28. How does Claude know, between sessions, which files to keep up to date? (2026-10-13)
+
+- **Owner (shortened):** each new session costs many tokens at the start; does Claude read a plain map of which file is
+  for what (the questionnaire, research, long-term observations), since information is not reliably added to those
+  files in later sessions?
+- **Developer (answered):** no single map existed. Every session loads about 12,000 tokens of instructions (CLAUDE.md,
+  four always-on rule files, the memory index) plus the handoff and brief its prompt names. The duties were scattered
+  one-liners: the questionnaire and research records were covered; the findings list by one line (two sweeps were
+  skipped in an earlier session); the question-and-answer log had no standing instruction (known only from the
+  handoff); the master plan said who may change it, not when (a month stale). Recommended (question L1): one short
+  living-files map loaded every session, replacing those one-liners so the session start does not grow, plus a
+  handoff checklist.
+
+## 29. "Yes" (2026-10-13)
+
+- **Recorded:** D-094 row R117; L1 answered.
+- **Done (governance task, reviewed):** `.claude/rules/living-files.md` lists each file to keep up to date, what goes in
+  it and the exact moment (questionnaire; this log and its private copy; owner instructions; research records, the
+  zoning-rule register and the owner research queue; the findings list; the master plan; lessons; session notes;
+  handoff and brief). The one-liners it replaces were removed (two handoff rules moved word for word into the handoff
+  instructions). Session start: the repository part grows by 105 bytes, the memory index shrinks by 107: 2 bytes
+  smaller overall (an independent reviewer required this to be stated exactly, with the caveat that nothing guards it).
+  Every handoff now confirms each file was updated and writes the result in the handoff. It applies to sessions
+  started after the change reaches the main version.
+
+## 30. /session-handoff (2026-10-13, about 08:10 UTC)
+
+- **Done:** handoff seq 166 written (the first with a "Living files:" line from the new checklist). Nothing was running.
+  Next session: records, submit, rule checks and acceptance for page 1 (M5-T165) and the close-up (M5-T166); then the
+  website page-1 parity task, the wave pull request and the first official PDF with before/after pictures.
+
+## 31. "read the session handoff, then ten helpers tonight" (2026-10-14, 01:18 UTC)
+
+- **Owner (shortened, spelling tidied):** read the session handoff; I need to use up my credits fast, so I want to launch
+  10 subagents to get a lot of work done tonight.
+- **Recorded:** D-094 rows R118 to R120 (read the handoff first; up to ten helpers at once tonight; tonight's usage is to
+  be spent on project work). Limits the message does not mention stand: at most three helpers building at once, no shared
+  files, heavy test runs and merges one at a time. Question M1 (may more than three build at once?) is in the
+  questionnaire; until answered, three.
+- **Done:** the handoff and the files it names were read. Ten read-only helpers were launched: seven read the Zoning
+  Resolution for the options that are not worked yet (affordable and senior housing; shops with residences; community
+  facility; split lot; shared housing; parking and the transit zone; combined programs) as a new documents-only task
+  (the zoning-law library, second pass), and three check the contract packets of the next three report tasks against
+  the code. The two finished report pages (page 1 and the close-up) are being prepared for acceptance.
+
+## 32. "This session is running outside, what does that mean? Does it mean you can't push to GitHub?" (2026-10-14)
+
+- **Developer (answered):** no, pushing to GitHub works. "Outside tmux" only means the session lives in the terminal
+  window it was started in: if that window closes or the connection drops, the session and its helpers stop; everything
+  already pushed stays. If the window stays open there is nothing to do. The owner also asked for answers to the point,
+  without long file reading first; recorded as a standing working note.
+
+## 33. "/session-handoff only at a clean seam, don't launch any more tasks, let the 4 finish, then write the handoff and give me the prompt" (2026-10-14, about 02:00 UTC)
+
+- **Recorded:** D-094 rows R121 to R123. Nothing was launched after the message.
+- **Done before the handoff:** page 1 (M5-T165) and the close-up (M5-T166) were submitted with their review records and
+  all four review gates recorded; their independent rule check and acceptance are the next session's first step. The
+  zoning-law library's second pass (M3-T007) was written from ten research returns and the settled reference cases and
+  integrated; it is not reviewed yet. Two independent readers worked the building-placement example from a sealed folder
+  and agree on its main figures; its task (M5-T177) is not contracted yet. The next three report tasks were checked
+  against the code (M5-T171, M5-T175, M5-T167) and their corrected packets saved.
+- **New questions for the owner (in the questionnaire, none stops the work):** M1 (may more than three helpers build at
+  once), N1 (what "split lot" means), N2 (shared housing under today's or the proposed law), N3 (options 9 and 10 may
+  give the same answer), N4 (what "all programs combined" combines).
+- **Handoff:** seq 167, with the prompt for the next session.
+
+## 34. "Run 10 subagents so we get more work done" (2026-10-14, 02:22 UTC, typed after the handoff's prompt)
+
+- **Recorded:** D-094 row R124: up to ten helpers at once in this session. Three building at once stays (question M1
+  is still open), no two helpers share a file, heavy runs go one at a time.
+- **Started at once:** the independent rule checks of page 1 (M5-T165) and the close-up (M5-T166), and two
+  independent reviewers who open the official law text behind the zoning-law library's second pass (M3-T007).
+- **Prepared in the same step:** the website page-1 task (M5-T171) got its wording correction; the building-placement
+  example (M5-T177) was contracted so its builder can start.
+- **New question for the owner (in the questionnaire, does not stop the work):** M2, whether ten at once should be
+  the standing limit or stay a per-session approval.
+
+## 35. "Btw can you simply explain what part of the work we are doing and how progress is going" (2026-10-14, about 02:52 UTC)
+
+- **Answered at once, in plain words:** we are in the report redesign pass: turning the PDF into a clear decision
+  document like the owner's sample, one page type at a time. Finished and checked that night: the rebuilt page 1
+  (M5-T165) and the close-up site drawing (M5-T166), both accepted after their independent rule checks; the law
+  library's second pass (M3-T007) passed its review and its rule check. Being built: the worked example of where the
+  building sits on the lot (M5-T177). Starting next: the website's first screen to match page 1 (M5-T171), the report
+  reading the newer results data (M5-T175), and saving the official law texts for the affordable-housing options
+  (M3-T008). Still ahead in the pass: the option comparison, the setback and street-wall rules, the building placed on
+  the lot with a section drawing, then the final PDF with before-and-after pictures.
+- **Progress as told:** of about seventeen pieces in this pass, seven were done before that night and three more
+  were finishing; no piece was blocked.
+- **Questions put to the owner earlier in the same session (in the questionnaire; none stops the work):** M2 (ten
+  helpers as the standing limit or per session), N5 (option 6 as one mixed building or two), P1 to P3 (the City's own
+  aerial photo; a zoning map drawn from the City's map data or the printed sheet; a city overview map with or without
+  neighbourhood areas).
+
+## 36. "I asked you a question earlier i still didn't get a response" (2026-10-14, about 03:26 UTC)
+
+- **What happened:** the answer to section 35 had been written in the middle of a long working reply, between steps, and
+  the owner did not see it. It was given again at once, updated, as its own short answer: what the pass is, what was
+  accepted that night (page 1, the close-up, the law library's second pass), what was almost done (the placement worked
+  example, in its last check), what was built and being reviewed (the website's first screen), what was being built
+  (the report reading the newer results data; the affordable-housing law texts), the next visible result (the wave
+  merged into the main version and the first new PDF printed from it with before-and-after pictures), and that ten of
+  about seventeen pieces of the pass were done, none blocked.
+- **Lesson kept:** an answer to the owner goes at the end of a reply or in a reply of its own, never between working
+  steps.
+
+## 37. "What about the pdf sample" (2026-10-14, about 03:49 UTC)
+
+- **Answered at once:** the latest print (10 pages, A4) was sent to the owner as a file: a preview printed that night from
+  the work branch, not yet the official print from the main version. It holds the rebuilt page 1 (the answer in large
+  type, the legal ceiling of 29 beside the 17-22 apartment estimate) and the dimensioned close-up of the lot. Not yet in
+  it: the report reading the newer results data, the option comparison page, and the building drawn on the lot with a
+  section. The official first PDF is printed from the main version, with before-and-after pictures, once the wave is
+  merged. Against the owner's 88-page sample the report is still far shorter (options 2 to 11 not worked; the overview
+  map, aerial photo and zoning map are questions P1 to P3).
+
+## 38. "/session-handoff at a clean seam finish the 3 running tesk first" (2026-10-14, 03:50 UTC)
+
+- **Recorded:** D-094 rows R125 to R127. Nothing was launched after the message; the three running helpers (the second
+  build round of the report's 1.5.0 reading, the review of the ten law captures, the rule check of the website's page 1)
+  finished and their results were recorded; then the handoff and its prompt.
+
+## 39. "Ok lets talk for a sec how much progress did we make now and how long till we can make same as the 88page" (2026-10-14, after the handoff of 04:05 UTC)
+
+- **Progress, as answered:** the redesign pass has about 17 pieces; 11 are accepted (4 of them that night) and the
+  website page 1 has passed every check and waits only for its acceptance. Against the 88-page sample the report is 10
+  pages and covers option 1 (standard housing) in depth; options 2 to 11 are listed but not worked; no maps, aerial,
+  photos, per-option chapters or financials yet. Roughly a third of the sample's substance (a rough reading, not a
+  measured figure).
+- **Time, asked for and given as a first guess from the observed pace (about 4 to 5 pieces accepted in a long session
+  like that night's):** the redesign pass in about 2 to 3 more such sessions; content comparable to the sample (options
+  2 to 11 with their law, rules, engine work and chapters, the maps, the site-facts page, parking) about 40 to 60 more
+  pieces, about 10 to 15 sessions, roughly 2 to 4 weeks of steady work. What moves it most: the owner's open answers
+  (N1-N5, P1-P3, Q1-Q3), how hard each option's law is, and whether financials, tax abatement and comparable sales
+  join the scope.

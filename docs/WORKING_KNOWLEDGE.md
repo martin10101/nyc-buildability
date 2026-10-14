@@ -760,3 +760,17 @@ working guidance was added to CLAUDE.md (D-090 R300). The seven notes below are 
   its OWN module + close the B4 input-bounds gap (see Tier 2). Lot side:
   `mappluto_geometry_arcgis.py` (2263, measurement) vs `mappluto_lot_outline.py` (4326, display
   only, NEVER measure).
+
+## Session 2026-10-11e/12/13 (82bb675d; seq 164-166)
+
+- An orchestrator-produced (governance) task cannot re-record G0 after its claim: `tools/project_control.py` refuses an
+  administrative gate recorded by the task's own producer (line ~1153). A scope correction of such a task is logged in
+  `scope_corrections` and a G0-report section only; acceptance still worked (M0-T196).
+- An owner message sent WITH a screenshot is stored in the transcript as a user line whose content is a list (image +
+  text); `session-2026-10-11b/capture_new_directive.py` reads only string content. The copy in
+  `session-2026-10-11e/capture_new_directive.py` also reads the text part of such a message.
+- Reports print without the owner's preview: `session-2026-10-11e/make_after_report.py <html> [<address>]` (TestClient
+  POST /report; pass the address as the preview does, else page 1 shows no street address) + `apps/web/scripts/
+  print-report-pdf.mjs`. Look at every printed page at 300 dpi before a page task's first review: a page-1 layout
+  defect passed three code/data/test reviews and was only caught on paper.
+- A label-collision test must include each label's OWN dimension and witness lines and every fill (M5-T166 rework 3).

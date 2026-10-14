@@ -1,0 +1,33 @@
+{
+ "task_id": "M5-T179",
+ "material_commits": [
+  "d36341bc (builder (cherry-pick of 0f5c23d8): builder.py passes the maps_present it already gives page 1 to the appendix scope note (page_assumptions.py; default False; docstring corrected); a new test file for S1-S3; the one assertion of test_report_pages.py that pinned the defect corrected (scope correction of 2026-10-14))"
+ ],
+ "claim_seam_head": "6cc452af0dbd8d05afdbf51eba354db90ea085b3",
+ "files_changed": [
+  "project-control/reports/M5-T179-producer-report.md",
+  "services/api/app/drawings/report/builder.py",
+  "services/api/app/drawings/report/page_assumptions.py",
+  "services/api/tests/drawings/report/test_report_pages.py",
+  "services/api/tests/drawings/report/test_report_scope_note_maps.py"
+ ],
+ "what_did_not_change": "coverage.py, every other page and every report built without a map context (all twelve valid results fixtures byte-identical to the claim head); for the benchmark with its map context the only byte change is the removal of '; Context maps' from the page-7 scope note. No fact, reading, calculation, label or evidence record changed.",
+ "known_limits": [
+  "The other names on page 7's 'Not yet in this report' line are unchanged and still owed (comparable sales, block description, parking and loading, photographs, tax abatement, financial inputs); the before/after picture of page 7 is the byte proof plus the orchestrator's next print from the branch."
+ ],
+ "checks_at_material_head": [
+  "producer: ruff 0; tests/drawings 1179 passed after the one-assertion correction; modularity and lane coverage PASS; S2 12 fixtures byte-identical; S3 one 14-byte removal; mutation proof",
+  "G3 code-reviewer at d36341bc: PASS, no required finding; S2 and S3 reproduced with its own script; the only caller of page_assumptions.render is the builder",
+  "G4 qa-engineer at d36341bc: PASS; tests/drawings 1179 passed; its own mutation fails S1 and the corrected q3 test; S2 and S3 reproduced",
+  "orchestrator (G2): the material commit touches only the packet's allowed paths (test_report_pages.py added by the scope correction of 2026-10-14); LF sha256 of all five files equal to the builder's return",
+  "CI run 38615796574 at 90f11548 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R083": [
+   "The changed page is shown before and after: for the benchmark with its recorded map context the report HTML differs from the claim head only by the removal of '; Context maps' from the page-7 scope note (S3, reproduced by the builder, the code reviewer and the QA reviewer with their own scripts); the orchestrator's print from the branch after integration shows page 7 before and after."
+  ],
+  "D-094-R137": [
+   "Page 7's appendix scope note no longer lists 'Context maps' under 'Not yet in this report' when the report prints its maps: the builder passes the same maps_present it gives page 1 (builder.py), page_assumptions.py hands it to coverage.coverage_groups; without maps the line is unchanged (S1, S2; test_report_scope_note_maps.py and the corrected q3 test in test_report_pages.py; mutation proofs by the builder and the QA reviewer)."
+  ]
+ }
+}

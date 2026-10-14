@@ -106,15 +106,20 @@ def render_zoning_map(
 
 
 def render_site_context_plan(
-    doc: Mapping, *, frame: str = "sheet", env: Mapping[str, str] | None = None
+    doc: Mapping, *, frame: str = "sheet", env: Mapping[str, str] | None = None,
+    constraint_lines=None, input_facts=None,
 ) -> Drawing | Unavailable:
     """The site plan among its surroundings (M5-T155, ruling Y3): the subject lot coloured with its
     edge lengths, the neighbouring tax lots and existing buildings in greys, and the streets as the
     pale space between the tax lots named along the street, rotated to the lot's frontage.
     ``frame='report'`` gives the wave-21 report frame (no notes column, at most 182 mm by 150 mm,
-    every label at least 7 pt, the caption returned to the caller). Unavailable if the tax lots, the
-    streets or the building footprints are not available."""
-    return draw_site_context_plan(_context(doc, env), frame=frame)
+    every label at least 7 pt, the caption returned to the caller). ``constraint_lines`` /
+    ``input_facts`` (results contract 1.5.0) are the report's overlay data, drawn only on the close
+    frames and only where established (M5-T175); both default to None, so every other caller is
+    byte-identical (S1). Unavailable if the tax lots, the streets or the building footprints are not
+    available."""
+    return draw_site_context_plan(_context(doc, env), frame=frame,
+                                  constraint_lines=constraint_lines, input_facts=input_facts)
 
 
 def render_block_map(

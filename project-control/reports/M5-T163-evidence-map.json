@@ -1,0 +1,46 @@
+{
+ "task_id": "M5-T163",
+ "material_commits": [
+  "b644f292 (researcher (cherry-pick of a5419463): NB-03 revision 2 (gaps a-h) and the four ZR 12-10 street definition captures with byte-identical bundled copies)",
+  "bebcaeef (orchestrator: the G1 reviewer's agent review entry appended unchanged [ORCH-CORRECTED: the reviewer cannot write])"
+ ],
+ "claim_seam_head": "aac892fcde5dc035848af9bf99f7cea0bc8edec2",
+ "files_changed": [
+  "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+  "docs/research/zr-snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-12-10-street-wide.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-12-10-street.snapshot.json",
+  "project-control/reports/M5-T163-producer-report.md",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-street-setback-line.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-street-wide.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-12-10-street.snapshot.json"
+ ],
+ "what_did_not_change": "No rule, engine, report, contract, fixture or web file; NB-03's research_status (interpretation_awaiting_review) and therefore the README status cell and the RESEARCH_REQUESTS.md index are unchanged; NB-06 is not edited.",
+ "known_limits": [
+  "Gaps (d) irregular blocks and (e) district-boundary yard rule stay open for M5-T176 (the independent reading); the depth conflict (100 / 99.97 / ~101.06) stays unresolved until a survey or the approved ZD1.",
+  "The block dimension is taken from the combined frontage of lots 1 and 70 (assumes a corner-to-corner span; a City Map measurement would settle it): routed to M5-T176 (G1 advisory 1).",
+  "NB-06 revision 2 search S3 ('street, wide/narrow not captured') is contradicted by zr-12-10.snapshot.json: routed to the NB-06 owner (M5-T170) and the backlog.",
+  "The captures stay extracted_draft (raw_html_verified false): the 12-10 print/PDF channel 504s and per-node print 403s (the documented fallback)."
+ ],
+ "checks_at_material_head": [
+  "researcher: research_record_check 0; sync_zr_snapshots --check 0 (189 files); test_zr_snapshot_bundle + test_report_law_links 28 passed; ruff 0",
+  "orchestrator at the integrated head 5a8228c1: record check 0 (NB-03 code_current True); sync 0; ruff 0; pytest tests/rules + test_report_law_links 1136 passed; modularity 0; after bebcaeef NB-03 review_state current",
+  "CI run 38172084908 at 5a8228c1 (the reviewed head): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R036": [
+   "NB-03 revision 2 evaluates the short-block pathway against the boundary evidence: the block's bounding features (12-10 'block'; a tax-map ALLEY is not a bounding feature unless a mapped street), the short dimension measured once for 23-344(b) and 23-363(c), and the depth conflict kept unresolved; the diagram and conclusion update together in M5-T167."
+  ],
+  "D-094-R037": [
+   "No unconditional zero rear yard is inferred from GIS: the depth stays a three-basis conflict, the conclusion stays interpretation_awaiting_review and conditional, and 23-344(a)'s corner test is recorded as one exception among (a), (b) and (c)(3)."
+  ],
+  "D-094-R061": [
+   "The legal source facts are captured, not marked unknown for an unfinished feature: ZR 12-10 'street', 'street setback line', 'street, wide' and 'street, narrow' are captured sha256-pinned with byte-identical bundled copies; only genuine site facts stay unknown."
+  ],
+  "D-094-R079": [
+   "The short-block frontage provision the reviewer said was omitted is researched beside the 100-ft point test: its inputs (front lot line on the short-dimension street line, the block dimension under 230 ft, the 100-ft reach) are recorded with their bases; the exemption is not presented as established."
+  ]
+ }
+}

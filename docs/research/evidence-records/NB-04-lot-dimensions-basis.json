@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-04",
  "title": "215-16 Northern Boulevard: which dimensions are printed, recorded or GIS, and what the 2017 survey settles",
- "revision": 1,
- "last_changed": "2026-10-11",
+ "revision": 3,
+ "last_changed": "2026-10-14",
  "question": {
   "text": "Which dimensions of lot 70 come from printed tax-map labels, administrative records and GIS, and what must the named 2017 survey settle?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -158,7 +158,28 @@
     "value": "103.87921",
     "units": "ft (US survey)",
     "basis": "gis",
-    "scope": "existing; tax lot outline"
+    "scope": "existing; tax lot outline; drawn on the close frame as '103.88 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
+   },
+   {
+    "name": "lot 70 outline edge shared with lot 1",
+    "value": "99.97647",
+    "units": "ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; tax lot outline; E4 adjacent_shared_lengths 70-1; drawn on the close frame as '99.98 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
+   },
+   {
+    "name": "lot 70 outline edge opposite the lot-1 boundary",
+    "value": "99.97605",
+    "units": "ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; tax lot outline; E4 lot-70 edge, not shared with a neighbour; drawn on the close frame as '99.98 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
+   },
+   {
+    "name": "lot 70 outline edge shared with lot 11",
+    "value": "101.70896",
+    "units": "ft (US survey)",
+    "basis": "gis",
+    "scope": "existing; tax lot outline; E4 adjacent_shared_lengths 70-11; drawn on the close frame as '101.71 ft' (the shared basis is stated once in a note under the drawing; owner K1, 2026-10-12)"
    },
    {
     "name": "Northern Boulevard frontage",
@@ -243,11 +264,13 @@
   ],
   "code_paths": [
    "services/api/app/connectors/mappluto_geometry_arcgis.py",
-   "services/api/app/connectors/mappluto_lot_outline.py"
+   "services/api/app/connectors/mappluto_lot_outline.py",
+   "services/api/app/drawings/maps/close_frame_dimensions.py"
   ],
   "code_identity": {
    "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
-   "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8"
+   "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8",
+   "services/api/app/drawings/maps/close_frame_dimensions.py": "8394b3e605728f14afc1544f8a6d5dec659a9fde0cd4e9c358822e83814529e8"
   },
   "worked_example": {
    "inputs": "Recorded area 10075 sq ft; GIS outline 10387.99 sq ft.",
@@ -279,6 +302,21 @@
      "G1 at 1b41c813: conflicting_evidence honest; conflicts real (10,075 against 10,387.99 sq ft; 100.76 against 103.88 ft; 2017-03-22 against 2017-04-07); recorded area for zoning, GIS for display, consistent with the code."
     ],
     "report": "project-control/reports/M0-T190-reviews.md"
+   },
+   {
+    "reviewer": "data-contract-verifier",
+    "date": "2026-10-12",
+    "reviewed_revision": 2,
+    "reviewed_code_identity": {
+     "services/api/app/connectors/mappluto_geometry_arcgis.py": "383d49c1b63771e843fa70457cda039398090ae803244d39575ae311b18fd9f4",
+     "services/api/app/connectors/mappluto_lot_outline.py": "df5ea5efeee71ce35910315fd07c595a3cd9d92f67367a78edcb489d64c1cad8",
+     "services/api/app/drawings/maps/close_frame_dimensions.py": "5dba6cf8e8307111b80fbd25bffe3c62964166572efd9a7e9347dbaeffb79dea"
+    },
+    "verdict": "agrees",
+    "findings": [
+     "G1 at 68d417fe (reworks 2-3): the close frame draws only the gis (city map outline) basis. Lot 70's four edges >= 6 ft recomputed from the MapPLUTO ring and drawn FIGURE-ONLY (99.98, 103.88, 99.98, 101.71 ft), each label traced to edge:/map_context/subject_lot/outline/0#{0..3}; the shared basis is stated once in a note under the drawing (\"All dimensions: city map outline, not surveyed.\") per owner K1 (2026-10-12); the 2.22 ft lot-61 sliver is undimensioned. The four scope strings were reworded to this rendering with values and bases unchanged; research_status stays conflicting_evidence. No tax-map value (100.76 / 100 ft) is drawn; nothing is merged across bases. close_frame_dimensions.py identity verified by `tr -d '\\r' | sha256sum`; the two connectors are byte-unchanged and were not edited by this task."
+    ],
+    "report": "project-control/reports/M5-T166-reviews.md"
    }
   ],
   "professional_review": null

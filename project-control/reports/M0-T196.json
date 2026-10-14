@@ -1,0 +1,14 @@
+{
+  "task_id": "M0-T196",
+  "producer_agent": "orchestrator",
+  "report_file": "project-control/reports/M0-T196-producer-report.md",
+  "submitted_at": "2026-10-13T06:04:51.775887+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M0-T196-evidence-map.json",
+  "content_manifest_sha256": "d3711e5da0aaa02b58cf833228f3cc71e2ca3aca76694a2fbc8c57f28c7694be",
+  "reviewed_sha": "0b5ff00ecb329ddb4c9e963ccce37953fccf2312",
+  "applicable_requirements": [
+    "D-094-R117"
+  ],
+  "updated_at": "2026-10-13T06:04:52.397582+00:00"
+}

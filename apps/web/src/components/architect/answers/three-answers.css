@@ -630,3 +630,70 @@
     padding: var(--pt-space-16);
   }
 }
+
+/* ---- Page-1 parity: the legal ceiling beside the apartment estimate (M5-T171; D-094 R041/R057) ----
+   The same additive block report page 1 carries after the answers summary. The two figures are side
+   by side and DISTINCT; each is told apart by its WORD (the status chip), never by colour: both chips
+   carry one neutral surface (the design rule / presentation contract). The pair wraps to one column on
+   a narrow screen, so no label is clipped and the page never scrolls sideways. No colour literal lives
+   here — every colour is a token. */
+.af-figures {
+  margin: var(--space-4) 0 0;
+  padding: var(--pt-space-16);
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-radius-panel);
+  background: var(--pt-color-surface);
+}
+
+.af-title {
+  margin: 0 0 var(--pt-space-8);
+  font-size: var(--pt-type-compact-size);
+  line-height: var(--pt-type-compact-line);
+  font-weight: 600;
+  color: var(--pt-color-supporting);
+}
+
+.af-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--pt-space-8) var(--pt-space-24);
+}
+
+.af-cell {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex: 1 1 14rem;
+  min-width: 0;
+}
+
+.af-figure {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.af-chip {
+  display: inline-block;
+  padding: 0 0.4em;
+  border: 1px solid var(--pt-color-divider);
+  border-radius: var(--pt-control-radius);
+  background: var(--pt-color-page);
+  color: var(--pt-color-supporting);
+  font-weight: 400;
+}
+
+.af-distinction {
+  margin: var(--pt-space-8) 0 0;
+}
+
+.af-lot-area,
+.af-zoning-lot {
+  margin: var(--pt-space-4) 0 0;
+  color: var(--pt-color-supporting);
+}
+
+.af-not-available {
+  margin: 0;
+  font-weight: 600;
+}
