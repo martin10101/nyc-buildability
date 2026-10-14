@@ -83,21 +83,21 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Another test may pin the old scope-note text for a report built with maps: the builder runs the whole tests/drawings suite and reports any test outside the allowed paths that needs a change (a scope correction, never a silent edit).",
     "M5-T175 (in flight) also proves byte-identity of the benchmark report with maps against its claim head: this task integrates AFTER M5-T175's rework 2 is integrated and its delta reviews returned, so neither proof is confused."
   ],
   "blockers": [],
   "created_at": "2026-10-14T17:50:20.686294+00:00",
-  "updated_at": "2026-10-14T17:50:21.167374+00:00",
+  "updated_at": "2026-10-14T17:50:24.232452+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -115,5 +115,14 @@
     "cd services/api && python -m pytest -q tests/drawings",
     "python3 tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-14T17:50:24.232340+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; the builder passes maps_present to the appendix scope note and adds the test"
+    }
+  ]
 }
