@@ -221,13 +221,14 @@ describe("S1 — the identity line comes first, and the two-column composition (
     // The lead band sits BEFORE the detail grid, and the grid's left sits before its right.
     expect(lead.compareDocumentPosition(left) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(left.compareDocumentPosition(right) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    // The lead leads with the results, in report page-1 order: identity, the one status strip, the
-    // floor-area allowance, then the legal ceiling beside the apartment estimate (apartment-figures).
+    // The lead leads with the results, in report page-1 order (M5-T181 round 2): the identity, then
+    // the floor-area allowance beside the legal ceiling and the apartment estimate (apartment-figures),
+    // and then the one status strip — the context follows the result, so the result leads the screen.
     const leadSequence = [
       within(lead).getByTestId("three-answers-identity"),
-      within(lead).getByTestId("three-answers-status-strip"),
       within(lead).getByTestId("answer-floor_area_allowance"),
       within(lead).getByTestId("apartment-figures"),
+      within(lead).getByTestId("three-answers-status-strip"),
     ];
     for (let index = 1; index < leadSequence.length; index += 1) {
       const relation = leadSequence[index - 1].compareDocumentPosition(leadSequence[index]);

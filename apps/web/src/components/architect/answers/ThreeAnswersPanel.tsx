@@ -58,9 +58,12 @@ const IDENTITY_KEYS = ["housing_program", "floor_to_floor_ft"] as const;
 /**
  * The architect-facing results slice (presentation contract step 3; M5-T149 part A, rulings V11/V12;
  * D-094 R151 / M5-T181). The RESULTS lead the first screen, as on report page 1: a full-width LEAD
- * band carries, in page-1 order, the identity, the one short context strip, the Floor-area allowance
- * and — directly below it — the legal ceiling beside the apartment estimate (the ApartmentFigures
- * block). Below the band sits the existing 44:56 detail grid: its left column keeps the permitted
+ * band carries, in page-1 order, the identity, then the Floor-area allowance BESIDE the legal ceiling
+ * and the apartment estimate (the ApartmentFigures block) — side by side where the window is wide
+ * enough, stacked when narrow — and then the one short context strip. Putting the allowance and the
+ * ceiling/estimate side by side, and the context strip after them (M5-T181 round 2), brings the legal
+ * ceiling and the estimate into the first screen beside the allowance, not below its full height.
+ * Below the band sits the existing 44:56 detail grid: its left column keeps the permitted
  * envelope, the building option, the building options/comparison and what needs resolving with the
  * shared conditions stated once (the answers refer to them by name); its right column keeps the
  * detailed scope and the assumed conditions, open by default (R119) — now beneath the results band
@@ -85,26 +88,34 @@ export function ThreeAnswersPanel({ results, showDraftValues = false, address }:
         ) : null}
       </h2>
       {/* The results lead the first screen (D-094 R151; presentation contract principle 1 and the
-          page-1 order): a full-width band holding the identity, the one status strip, the Floor-area
-          allowance and, directly below it, the legal ceiling beside the apartment estimate — ABOVE the
+          page-1 order): a full-width band holding the identity, then the Floor-area allowance beside
+          the legal ceiling and the apartment estimate, and then the one status strip — ABOVE the
           detail grid, so the architect sees the result before the assumed conditions. The band shares
           the Results window's size container with the grid below, so a narrow screen stacks it in the
           same reading order. */}
       <div className="ta-lead" data-testid="three-answers-lead">
         {results.scope ? <IdentityLine scope={results.scope} address={address} /> : null}
+        {/* The results themselves: the Floor-area allowance beside the legal ceiling and the apartment
+            estimate (page-1 parity, M5-T171). They sit SIDE BY SIDE where the Results window is wide
+            enough — the same size container as the grid below — and stack on a narrow screen, so the
+            ceiling and the estimate reach the first screen beside the allowance rather than below its
+            full height (D-094 R151 round 2). The allowance card and the apartment-figures JSX are
+            moved here unchanged; their props and test ids are untouched. */}
+        <div className="ta-lead-figures">
+          <AnswerCard
+            answerKey="floor_area_allowance"
+            view={answerView(results, "floor_area_allowance", showDraftValues)}
+            conditionNames={conditionNames}
+          >
+            {remaining ? <SupplementRow view={remaining} /> : null}
+          </AnswerCard>
+          <ApartmentFigures results={results} showDraftValues={showDraftValues} />
+        </div>
+        {/* The one status strip follows the results (plan §5a; D-094 R151 round 2): the preliminary /
+            approximate / lots-you-selected context comes AFTER the result, as on report page 1, so the
+            result leads the first screen and the context does not push it below the fold. Still one
+            strip, at most three items. */}
         <ResultsStatusStrip results={results} />
-        <AnswerCard
-          answerKey="floor_area_allowance"
-          view={answerView(results, "floor_area_allowance", showDraftValues)}
-          conditionNames={conditionNames}
-        >
-          {remaining ? <SupplementRow view={remaining} /> : null}
-        </AnswerCard>
-        {/* Page-1 parity (M5-T171): the legal ceiling beside the apartment estimate, the same
-            additive block report page 1 shows after the results summary — distinct from, and not a
-            change to, the allowance card above. M5-T181 moves this JSX into the lead band only; its
-            props and test ids are unchanged. */}
-        <ApartmentFigures results={results} showDraftValues={showDraftValues} />
       </div>
       <div className="ta-layout">
         <div className="ta-left" data-testid="three-answers-left">

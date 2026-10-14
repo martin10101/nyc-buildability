@@ -11,9 +11,17 @@ import profileFixture from "../../../packages/contracts/fixtures/valid/property_
  * It opens the Results tool (a WIDE window in DashboardEntry's wide list), presses "Show results", and
  * measures the first screen: the identity, the floor-area allowance's headline and the legal-ceiling /
  * apartment-estimate figures lead; the assumed-conditions list (three-answers-scope) sits BELOW the
- * results band. The packet scenarios here are S1 (results lead the first screen at the desktop
- * widths), S2 (results above the assumptions at 1440), S3 (the figures reach the first screen at the
- * phone widths), and S7 (no sideways scroll and no clipped text at every width).
+ * results band. Round 2 strengthens the measurement: each value's bounding box must lie WHOLLY inside
+ * the Results window's visible scroll area (the `.workspace-window__content` box), not merely intersect
+ * the browser viewport — toBeInViewport passes on a one-pixel sliver, which let the round-1 layout
+ * (ceiling top 824 px at 1440, below the ~795 px window fold) pass while the figure was not actually
+ * visible. At 1440/1920 the ceiling and the estimate carry 40 px of spare below them.
+ *
+ * Rate limit (round 2): the results route caps requests per window (results_read.py), shared across
+ * every spec. Each test here opens the results exactly ONCE and then RESIZES the viewport across the
+ * widths, re-measuring after each resize (the floating window re-fits on resize), so the whole file
+ * makes only TWO results requests — never one per width — and does not exhaust the limit for the specs
+ * that run after it.
  *
  * The existing results-layout.flag-on.spec.ts owns the 44:56 split (S1 there) and the S12 identity +
  * allowance first-screen case; its routeApi/openResults/clipped-text helpers are not exported, so this
@@ -36,7 +44,9 @@ async function routeApi(page: Page): Promise<void> {
   });
 }
 
-/** Open the workspace, open the Results tool, press "Show results", and return the window dialog. */
+/** Open the workspace, open the Results tool, press "Show results", and return the window dialog. This
+ * is the ONLY call that issues a results (POST) request; each test calls it once (round 2 rate-limit
+ * budget), then resizes the viewport to measure every width without a fresh request. */
 async function openResults(page: Page): Promise<Locator> {
   await routeApi(page);
   await page.goto(`/property/workspace?ruleeval=on&bbl=${BBL}`);
@@ -119,81 +129,149 @@ async function resultsPrecedeAssumptions(dialog: Locator): Promise<boolean> {
   });
 }
 
-// S1: at every desktop width the results lead the first screen.
-const S1_WIDTHS = [768, 1024, 1440, 1920];
-// S7: no sideways scroll and no clipped text at every width (UX-07).
-const S7_WIDTHS = [320, 390, 768, 1024, 1440, 1920];
+/**
+ * The visible bottom edge (px from the top of the browser window) of the Results window's scroll
+ * container `.workspace-window__content`: its border box is the clipped region, so a value whose box
+ * bottom is at or above this edge is WHOLLY visible in the first screen (the dialog's visible bottom,
+ * round 2). This is stronger than toBeInViewport, which only tests the browser viewport.
+ */
+async function scrollViewportBottom(dialog: Locator): Promise<number> {
+  const box = await dialog.locator(".workspace-window__content").boundingBox();
+  if (!box) throw new Error("the Results window scroll container has no bounding box");
+  return box.y + box.height;
+}
+
+/** The bottom edge (y + height) of an element's box, px from the top of the browser window. */
+async function boxBottom(locator: Locator): Promise<number> {
+  const box = await locator.boundingBox();
+  if (!box) throw new Error("the measured element has no bounding box");
+  return box.y + box.height;
+}
+
+/** The top edge (y) of an element's box, px from the top of the browser window. */
+async function boxTop(locator: Locator): Promise<number> {
+  const box = await locator.boundingBox();
+  if (!box) throw new Error("the measured element has no bounding box");
+  return box.y;
+}
+
+// Desktop widths (height 900, window fold ~795 px). The results lead the first screen at each; 40 px
+// of spare is required below the ceiling and the estimate at 1440/1920. Measured LARGEST -> SMALLEST
+// so the floating window only shrinks to fit each width (it tracks min(1100, viewport) and does not
+// re-grow once shrunk, so a descending sweep lands the right window size at every step).
+const DESKTOP: ReadonlyArray<{ width: number; spare: number }> = [
+  { width: 1920, spare: 40 },
+  { width: 1440, spare: 40 },
+  { width: 1024, spare: 0 },
+  { width: 768, spare: 0 },
+];
+
+// Phone widths (height 844, window fold ~836 px); the ceiling top must stay under 1.25x the height.
+const PHONE: readonly number[] = [390, 320];
 
 test.describe("M5-T181 results first screen — flag-on, the real results route", () => {
-  for (const width of S1_WIDTHS) {
-    test(`S1: at ${width} x 900 the identity, the allowance headline and the ceiling/estimate lead the first screen`, async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width, height: 900 });
-      const dialog = await openResults(page);
-      // The identity and the floor-area allowance's headline value are in the first screen.
-      await expect(dialog.getByTestId("three-answers-identity")).toBeInViewport();
-      await expect(
-        dialog.getByTestId("answer-floor_area_allowance").getByTestId("answer-headline-number").first(),
-      ).toBeInViewport();
-      // The legal ceiling and the apartment estimate (the page-1 parity block) are in the first screen.
-      await expect(dialog.getByTestId("apartment-figures-ceiling-value")).toBeInViewport();
-      await expect(dialog.getByTestId("apartment-figures-estimate-value")).toBeInViewport();
-      // No sideways page scroll, no clipped text in the dialog, and the two figure cells do not overlap.
-      expect(await pageHorizontalOverflow(page)).toBeLessThanOrEqual(1);
-      expect(await clippedTextInsideDialog(dialog)).toEqual([]);
-      expect(await parityCellsOverlap(dialog)).toBe(false);
-    });
-  }
-
-  test("S2: at 1440 x 900 the results sit above the assumed conditions, both in the DOM and vertically", async ({
+  test("S1/S2/S7: at 768–1920 the allowance headline, the legal ceiling and the apartment estimate lead the first screen (one results request, resized across the widths)", async ({
     page,
   }) => {
-    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.setViewportSize({ width: DESKTOP[0].width, height: 900 });
     const dialog = await openResults(page);
-    // In the DOM, the results band precedes the assumed-conditions list.
-    expect(await resultsPrecedeAssumptions(dialog)).toBe(true);
-    // Vertically, the apartment-figures block's bottom is at or above the scope block's top: the
-    // results lead and the assumptions follow, so the assumed-conditions list no longer occupies the
-    // first screen's right half from the top (R151).
-    const figures = await dialog.getByTestId("apartment-figures").boundingBox();
-    const scope = await dialog.getByTestId("three-answers-scope").boundingBox();
-    expect(figures).not.toBeNull();
-    expect(scope).not.toBeNull();
-    expect(figures!.y + figures!.height).toBeLessThanOrEqual(scope!.y + 0.5);
+    const identity = dialog.getByTestId("three-answers-identity");
+    const allowanceHeadline = dialog
+      .getByTestId("answer-floor_area_allowance")
+      .getByTestId("answer-headline-number")
+      .first();
+    const ceiling = dialog.getByTestId("apartment-figures-ceiling-value");
+    const estimate = dialog.getByTestId("apartment-figures-estimate-value");
+
+    for (const { width, spare } of DESKTOP) {
+      await page.setViewportSize({ width, height: 900 });
+      // Settle the re-layout at the new width: the identity and the ceiling must render in the browser
+      // viewport (web-first retry) before the exact dialog-relative measurements are read.
+      await expect(identity, `identity at ${width}`).toBeInViewport();
+      await expect(ceiling, `ceiling at ${width}`).toBeInViewport();
+
+      // The allowance headline, the legal ceiling AND the apartment estimate lie WHOLLY inside the
+      // Results window's visible scroll area (box bottom at or above the window's visible bottom), with
+      // `spare` px to spare at 1440/1920. This is the round-2 target: not a sliver in the browser
+      // viewport, but inside the dialog's visible bottom.
+      for (const [label, value] of [
+        ["allowance headline", allowanceHeadline],
+        ["legal ceiling", ceiling],
+        ["apartment estimate", estimate],
+      ] as const) {
+        await expect
+          .poll(
+            async () => (await boxBottom(value)) - (await scrollViewportBottom(dialog)),
+            { message: `${label} must be ${spare}px above the dialog's visible bottom at ${width}` },
+          )
+          .toBeLessThanOrEqual(-spare);
+      }
+
+      // No sideways page scroll, no clipped text in the dialog, and the two figure cells never overlap.
+      expect(await pageHorizontalOverflow(page), `overflow at ${width}`).toBeLessThanOrEqual(1);
+      expect(await clippedTextInsideDialog(dialog), `clipped at ${width}`).toEqual([]);
+      expect(await parityCellsOverlap(dialog), `overlap at ${width}`).toBe(false);
+
+      if (width >= 1440) {
+        // S2: the results band leads the assumed conditions — in the DOM and vertically — so the
+        // assumed-conditions list no longer occupies the first screen's right half from the top (R151).
+        expect(await resultsPrecedeAssumptions(dialog)).toBe(true);
+        const figures = await dialog.getByTestId("apartment-figures").boundingBox();
+        const scope = await dialog.getByTestId("three-answers-scope").boundingBox();
+        expect(figures).not.toBeNull();
+        expect(scope).not.toBeNull();
+        expect(figures!.y + figures!.height).toBeLessThanOrEqual(scope!.y + 0.5);
+        // The distinction line under the ceiling/estimate is in the first screen too at 1440/1920.
+        await expect
+          .poll(
+            async () =>
+              (await boxBottom(dialog.getByTestId("apartment-figures-distinction"))) -
+              (await scrollViewportBottom(dialog)),
+            { message: `the distinction line must be inside the dialog's visible bottom at ${width}` },
+          )
+          .toBeLessThanOrEqual(0);
+      }
+    }
   });
 
-  for (const width of [390, 320]) {
-    test(`S3: at ${width} x 844 the allowance headline and the ceiling figure reach the first screen`, async ({
-      page,
-    }) => {
-      const height = 844;
+  test("S3/S7: at 390 and 320 the allowance headline is in the first screen and the legal ceiling is one short scroll away (one results request, resized)", async ({
+    page,
+  }) => {
+    const height = 844;
+    await page.setViewportSize({ width: PHONE[0], height });
+    const dialog = await openResults(page);
+    const allowanceHeadline = dialog
+      .getByTestId("answer-floor_area_allowance")
+      .getByTestId("answer-headline-number")
+      .first();
+    const ceiling = dialog.getByTestId("apartment-figures-ceiling-value");
+
+    for (const width of PHONE) {
       await page.setViewportSize({ width, height });
-      const dialog = await openResults(page);
-      // The allowance headline value is in the first screen (keeps the S12 intent on a phone).
-      await expect(
-        dialog.getByTestId("answer-floor_area_allowance").getByTestId("answer-headline-number").first(),
-      ).toBeInViewport();
+      await expect(allowanceHeadline, `allowance headline at ${width}`).toBeInViewport();
+
+      // The allowance headline value is WHOLLY inside the Results window's visible area (keeps the S12
+      // intent on a phone, strengthened to the dialog's visible bottom rather than a viewport sliver).
+      await expect
+        .poll(
+          async () => (await boxBottom(allowanceHeadline)) - (await scrollViewportBottom(dialog)),
+          { message: `the allowance headline must be inside the dialog's visible bottom at ${width}` },
+        )
+        .toBeLessThanOrEqual(0);
+
       // The results still precede the assumed conditions in the DOM.
       expect(await resultsPrecedeAssumptions(dialog)).toBe(true);
-      // The legal-ceiling figure is at most one short scroll down (its top under 1.25x the viewport).
-      const ceiling = await dialog.getByTestId("apartment-figures-ceiling-value").boundingBox();
-      expect(ceiling).not.toBeNull();
-      expect(ceiling!.y).toBeLessThan(height * 1.25);
-      // No sideways scroll, and no clipped text — the long address wraps and no value ellipsizes.
-      expect(await pageHorizontalOverflow(page)).toBeLessThanOrEqual(1);
-      expect(await clippedTextInsideDialog(dialog)).toEqual([]);
-    });
-  }
 
-  for (const width of S7_WIDTHS) {
-    test(`S7: at ${width} px the page does not scroll sideways and no text is clipped in the dialog`, async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width, height: 900 });
-      const dialog = await openResults(page);
-      expect(await pageHorizontalOverflow(page)).toBeLessThanOrEqual(1);
-      expect(await clippedTextInsideDialog(dialog)).toEqual([]);
-    });
-  }
+      // The legal-ceiling figure is at most one short scroll down (its top under 1.25x the viewport).
+      await expect
+        .poll(async () => boxTop(ceiling), {
+          message: `the ceiling top must be under 1.25x the viewport height at ${width}`,
+        })
+        .toBeLessThan(height * 1.25);
+
+      // No sideways scroll, and no clipped text — the long address wraps and no value ellipsizes.
+      expect(await pageHorizontalOverflow(page), `overflow at ${width}`).toBeLessThanOrEqual(1);
+      expect(await clippedTextInsideDialog(dialog), `clipped at ${width}`).toEqual([]);
+    }
+  });
 });
