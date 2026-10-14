@@ -55,7 +55,7 @@
     "M2",
     "M4"
    ],
-   "summary": "Scenario engine, results and the feasibility report: 164/170 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). THE ACTIVE FRONTIER. Delivered: the three-answer results (allowance, envelope, building option), the first building option (Building B, R6B benchmark), the results contract to 1.5.0, the report generator in six page types (D-090 wave 21) and its redesign pass for the owner's reviewer (D-094, wave 24 in progress). Open: M5-T001 awaiting_gate; M5-T110 claimed; M5-T125 claimed; M5-T171 claimed; M5-T175 claimed; M5-T177 awaiting_gate (M5-T001 is the July scenario foundation, awaiting gate; M5-T110 and M5-T125 are claims of September with no recent progress). The report work toward the owner's sample-comparable PDF is listed in report_programme."
+   "summary": "Scenario engine, results and the feasibility report: 165/170 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). THE ACTIVE FRONTIER. Delivered: the three-answer results (allowance, envelope, building option), the first building option (Building B, R6B benchmark), the results contract to 1.5.0, the report generator in six page types (D-090 wave 21) and its redesign pass for the owner's reviewer (D-094, wave 24 in progress). Open: M5-T001 awaiting_gate; M5-T110 claimed; M5-T125 claimed; M5-T171 awaiting_gate; M5-T175 claimed (M5-T001 is the July scenario foundation, awaiting gate; M5-T110 and M5-T125 are claims of September with no recent progress). The report work toward the owner's sample-comparable PDF is listed in report_programme."
   },
   {
    "id": "M6",
@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-14T03:26:56+00:00",
+ "updated_at": "2026-10-14T04:02:02+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -93,7 +93,8 @@
     "M5-T176 short-block rear-yard reference case",
     "M5-T165 report page 1 rebuilt",
     "M5-T166 one locator and a dimensioned close-up",
-    "M3-T007 zoning-law library, second pass: the law the remaining options need (documents only; beside the report lane)"
+    "M3-T007 zoning-law library, second pass: the law the remaining options need (documents only; beside the report lane)",
+    "M5-T177 independent worked example of Building B's placement (step P8)"
    ],
    "steps": [
     {
@@ -138,15 +139,6 @@
       "M5-T171",
       "M5-T175"
      ]
-    },
-    {
-     "wave": 25,
-     "item": "independent worked example of Building B's placement (step P8)",
-     "ids": [
-      "M5-T177"
-     ],
-     "state": "in_progress",
-     "note": "contracted and claimed 2026-10-14; two sealed readings saved; the builder writes the case"
     },
     {
      "wave": 26,

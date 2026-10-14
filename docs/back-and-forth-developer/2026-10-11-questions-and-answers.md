@@ -638,3 +638,19 @@ to build).
   about seventeen pieces of the pass were done, none blocked.
 - **Lesson kept:** an answer to the owner goes at the end of a reply or in a reply of its own, never between working
   steps.
+
+## 37. "What about the pdf sample" (2026-10-14, about 03:49 UTC)
+
+- **Answered at once:** the latest print (10 pages, A4) was sent to the owner as a file: a preview printed that night from
+  the work branch, not yet the official print from the main version. It holds the rebuilt page 1 (the answer in large
+  type, the legal ceiling of 29 beside the 17-22 apartment estimate) and the dimensioned close-up of the lot. Not yet in
+  it: the report reading the newer results data, the option comparison page, and the building drawn on the lot with a
+  section. The official first PDF is printed from the main version, with before-and-after pictures, once the wave is
+  merged. Against the owner's 88-page sample the report is still far shorter (options 2 to 11 not worked; the overview
+  map, aerial photo and zoning map are questions P1 to P3).
+
+## 38. "/session-handoff at a clean seam finish the 3 running tesk first" (2026-10-14, 03:50 UTC)
+
+- **Recorded:** D-094 rows R125 to R127. Nothing was launched after the message; the three running helpers (the second
+  build round of the report's 1.5.0 reading, the review of the ten law captures, the rule check of the website's page 1)
+  finished and their results were recorded; then the handoff and its prompt.

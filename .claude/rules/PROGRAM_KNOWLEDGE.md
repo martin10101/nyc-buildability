@@ -100,6 +100,12 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   folder, never the library index's flags (2026-10-14).
 - The dependency-age check fails closed when PyPI resets a connection ('cannot fetch PyPI metadata ... Connection
   reset by peer'): read the failed step, see PyPI answer, rerun the failed job ONCE (run 38496479476).
+- A packet that adds a drawing module must also list the files that carry its data into the live report (maps
+  `__init__.py`, `drawings_embed.py`, `page_location.py`): M5-T175's first round stopped at the boundary (2026-10-14).
+- Website review pictures: the Results-window capture shows only the first screen; photograph a new block by its
+  test id at the six widths (`session-2026-10-14b/capture_block.mjs`) before the visual review (M5-T171 G3).
+- Builder briefs never dictate the co-author model line: say 'the lines your own instructions give' (a dictated
+  'Opus 5.5' trailer on an opus-4-8 helper's commit was flagged by a rule check, 2026-10-14).
 
 ## Key files / commands
 
