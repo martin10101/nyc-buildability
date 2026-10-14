@@ -111,7 +111,14 @@
     "apps/web/e2e/report-print.flag-on.spec.ts",
     "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
     "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
-    "project-control/reports/M5-T167-producer-report.md"
+    "project-control/reports/M5-T167-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/rules/test_zoning_rule_review_register.py",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+    "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md"
   ],
   "forbidden_paths": [
     "services/api/app/_contract_schemas/v1/results.schema.json",
@@ -132,7 +139,6 @@
     "services/api/app/drawings/report/layout.py",
     "services/api/app/drawings/report/builder.py",
     "services/api/tests/drawings/maps/test_constraint_overlay.py",
-    "services/api/tests/drawings/report/test_constraint_rows.py",
     "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
     "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
     "services/api/app/profile/measurement.py",
@@ -370,6 +376,11 @@
       "at": "2026-10-14T20:18:45+00:00",
       "actor": "orchestrator",
       "change": "Scope correction after the first build round (the builder's return of 2026-10-14c, which delivered the G-6 isolation and the block-frontage measure and asked to split the rest): the DB-245 wording sweep (the city map outline never called 'tax map'; scenario S22 and its wording-only files: profile/measurement.py, kit/scope.py, report/options.py, cad/results_dxf_notes.py, web three-answers.ts, tests/profile/test_measurement.py, three_way_scope_lines.py) moves to its own planned task M5-T180, contracted after this task is accepted, because both regenerate the one benchmark file and the rear-yard result should be reviewed on its own. M5-T167 keeps steps 1 to 7 and the regeneration (the rear-yard checks, the 1.5.0 emission, the appendix item, the fixed texts, the register and records, the benchmark and the two synthetic examples re-derived, the strip-test rework). The removed files are forbidden to this task. No row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-14T23:26:39+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 2 after build round 2 (session 2026-10-14d; the builder's return asked for it, an independent pre-integration check confirmed the five reds and their cause): regenerating the benchmark to 1.5.0 (R039) and the register's implementation_changed events reach files outside the packet. They join it: four api tests and one web test that pin the old benchmark or a register date (tests/scenario/three_answers/test_wiring_emits_nothing.py S12 version and street data; tests/rules/test_zoning_rule_review_register.py S13 sample history date; tests/drawings/report/test_constraint_rows.py, only its two benchmark cases, which pinned the 1.4.0 fallback - its synthetic cases, the 182.5 line included, stay unedited; tests/drawings/report/test_report_benchmark.py, the page-8 rear-yard case, which now reads the engine's conditional result (R136); apps/web/src/lib/__tests__/results-contract-checks.test.ts, the journey contract-version pin), and the two rendered register pages docs/zoning-rule-review/calculations/calc-first-building-option-complete.md and calc-preliminary-apartment-estimate.md (renderer output of the register change, already in the round-2 commit). test_constraint_rows.py leaves forbidden_paths. Each changed assertion must follow the reference case (docs/reference-cases/R6B/short-block-rear-yard.md and cases/), never the program's output alone; the benchmark rear yard stays not known / Conditional. No row, gate, reviewer or dependency changes."
     }
   ]
 }
