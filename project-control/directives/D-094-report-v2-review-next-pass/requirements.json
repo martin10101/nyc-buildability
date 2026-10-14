@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 131,
+ "requirement_count": 143,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T17:18:06+00:00",
+ "updated_at": "2026-10-14T17:45:24+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -4260,6 +4260,393 @@
    ],
    "required_harness": "The session notes of session-2026-10-14c record the handoff read and each step of section 4 taken in order; no helper count above the handoff's limits.",
    "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-14c/SESSION_NOTES.md` STATE lines and the ledger on task/wave24-report-v3.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R132",
+   "text": "'Yes, but this PDF shows modest progress since October 12.' 'I checked all 10 pages.': the reviewer read all ten pages of the preview print of 2026-10-14 (printed from the branch at 97b2a492) and judges that it shows modest visible progress since the draft of 2026-10-12.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R083"
+   ],
+   "required_harness": "The next print sent to the owner is compared page by page with the 97b2a492 print (before/after pictures, R083), and the owner update names what changed on the page.",
+   "required_evidence": "The before/after pictures of the next print and the update that sends it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R133",
+   "text": "'The constraints now sit together on page 3, the site drawing has its own page, and dimension labels are cleaner.' 'The previous page containing just four table rows is fixed. :codex-file-citation{path=\"sandbox:/workspace/scratch/6ebdb379b68e/upload/215-16-Northern-Boulevard-preview-2026-10-14.pdf\" purpose=\"source\"}': the improvements the reviewer saw (the constraints together on page 3, the site drawing on its own page, cleaner dimension labels, the former page of only four table rows gone) are kept in later prints.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The before/after comparison of the next print shows none of these regressed.",
+   "required_evidence": "The before/after pictures of the next print.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R134",
+   "text": "'The main feasibility output is essentially unchanged.' 'Eight pages have the same text apart from dates.': the feasibility answer itself, and the text of eight of the ten pages, read the same as the 2026-10-12 draft apart from dates; progress is judged by the visible output, not by the work behind it.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "external_fact",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "Owner updates say which pages and figures changed, and say plainly when completed work changes nothing visible yet.",
+   "required_evidence": "The owner updates after this message and the progress record (R142).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R135",
+   "text": "'There is still no building fitted to the site, no area-allocation illustration, and no additional worked scenario.': still owed: a building fitted to the site, the two-zone area-allocation illustration and an additional worked scenario (D-094 R076, R082, R087 to R098; the planned placement and scenario-sheet tasks); none is presented as done until it prints.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R076",
+    "D-094-R082"
+   ],
+   "required_harness": "The report prints a fitted footprint on the actual lot, the area illustration and the worked scenario, each with its accepted task, test evidence and before/after picture.",
+   "required_evidence": "The accepted placement and scenario-sheet tasks and the print that shows them.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R136",
+   "text": "'Page 8 still says the additional rear-yard rules have not been applied.': still owed: the short-block rear-yard rules ZR 23-344(b) and (c)(3) applied in the engine and their result shown in the report, including page 8's open item, which today prints the 1.4.0 'not yet checked' wording (task M5-T167, to which M5-T175 moved the appendix item).",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R036",
+    "D-094-R079"
+   ],
+   "required_harness": "After M5-T167 the printed page 8 item reads the engine's own rear-yard result and conditions, labelled as the result is (no unconditional 'no rear yard').",
+   "required_evidence": "M5-T167's acceptance and the print after it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R137",
+   "text": "'Page 7 still incorrectly lists context maps as missing.': correct page 7: its coverage line lists 'Context maps' under 'Not yet in this report' although the report prints the locator map and the close-up; when the maps are printed it says so, as page 1 does; a test proves both cases.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "A test builds the report with and without printed maps and asserts the page-7 coverage line for each; the print after the fix shows page 7 without 'Context maps' under 'Not yet'.",
+   "required_evidence": "The accepted fix task, its test and the before/after picture of page 7.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R138",
+   "text": "'These remain unfinished items.': the items of R135 to R137 stay listed as unfinished work owed (handoff and progress record) until each is done with evidence; none is dropped or reworded as done.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff's done/unfinished section and the progress record list them until their tasks are accepted.",
+   "required_evidence": "docs/SESSION_HANDOFF.md and project-control/master_plan.json after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R139",
+   "text": "'However, the handoff lists upcoming actions; it does not prove completion.': a handoff, plan or next-action list is never evidence that work is done; completion is an accepted task with its code change, its test evidence and its visible result.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "No owner update or handoff calls work done from a plan line; each 'done' cites the accepted task's commit and CI run.",
+   "required_evidence": "The owner updates and handoffs after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R140",
+   "text": "'I cannot verify the referenced tasks, commits, or test results because those server files and CI results were not supplied.': the reviewer had only the print and the handoff text: progress claims made to the owner carry links a reader without access to the build server can open (the public GitHub commits, pull requests and CI runs), never only private server paths.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "evidence",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The progress record and owner updates link each completed task's commit and CI run on GitHub.",
+   "required_evidence": "The progress record entries and the owner updates after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R141",
+   "text": "'I would keep him moving, with a concrete completion requirement: finish the pending work already identified, connect it to the report, and demonstrate the resulting improvement.': keep working without stopping, under a concrete completion requirement: finish the pending work already identified (the tasks in flight and next in the plan), connect each to the report, and demonstrate the resulting improvement (before/after pictures of the changed pages, R083).",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R083",
+    "D-094-R131"
+   ],
+   "required_harness": "Each task accepted after this message is connected to the report or website and its visible change is shown before/after, or it is recorded as supporting work with no visible change yet.",
+   "required_evidence": "The accepted tasks after this message, their pictures and the progress record.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R142",
+   "text": "'In the existing progress record, each completed task should identify its code change, test evidence, and visible result\u2014or explain that it is supporting work with no visible change yet.': in the existing progress record (the report programme of project-control/master_plan.json, summarized in the handoff's section 2), each completed task names its code change (the commit), its test evidence (the CI run and the tests) and its visible result (the page or screen it changed), or says it is supporting work with no visible change yet.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R114"
+   ],
+   "required_harness": "Every done entry of the report programme carries the three items or the supporting-work statement, from this message on, and the entries already there are brought to the same form.",
+   "required_evidence": "project-control/master_plan.json report_programme after this message.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R143",
+   "text": "'The next meaningful milestone is a scenario placed on the actual site with reconciled calculations and clearly identified remaining constraints.': the next meaningful milestone is a scenario placed on the actual site with reconciled calculations and its remaining constraints clearly named (D-094 R082); the planned tasks leading to it go first.",
+   "source_ref": "source-019-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R082"
+   ],
+   "required_harness": "The report programme names this milestone as the next one and lists the tasks that lead to it in order; owner updates measure progress against it.",
+   "required_evidence": "project-control/master_plan.json report_programme and the owner updates after this message.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
