@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-13T05:36:35+00:00",
+ "updated_at": "2026-10-14T01:24:51+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -138,10 +138,13 @@
   "D-094-R114",
   "D-094-R115",
   "D-094-R116",
-  "D-094-R117"
+  "D-094-R117",
+  "D-094-R118",
+  "D-094-R119",
+  "D-094-R120"
  ],
- "requirements_id_digest_sha256": "d95ad91ac1441e25d7cdac86eafdd88fe99a605b987e0a36f8a5c6fbb4f7041e",
- "requirements_content_digest_sha256": "15eb26bc4d53a350b43c6bed9cb304a3b9ad9cba0544d9daf695a5fe7b7a4e4c",
+ "requirements_id_digest_sha256": "c9eb6c1538fb59f357e25b1699b0def3fa658475c13bb604f2f57c5bda8406f1",
+ "requirements_content_digest_sha256": "d63843cd24c757603ceabaa8493aae67401666d732c82cfffd1ea23bdda44315",
  "sources": [
   {
    "file": "source-001.md",
@@ -237,6 +240,14 @@
    "recorded_at": "2026-10-13T05:31:19+00:00",
    "content_digest_sha256": "703f2930ecfb452c3afbcc279396bded92f6dce7dcc81a5fe9b21fd81587a427",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-013-amendment.md",
+   "kind": "amendment",
+   "sequence": 13,
+   "recorded_at": "2026-10-14T01:24:51+00:00",
+   "content_digest_sha256": "2a0145b63d1c975cd949d21798032547cd6673737dd137795f8e569d7be8a1cd",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -250,7 +261,8 @@
   "source-009-amendment.md",
   "source-010-amendment.md",
   "source-011-amendment.md",
-  "source-012-amendment.md"
+  "source-012-amendment.md",
+  "source-013-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -465,6 +477,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M0-T196 (living-files map) to R117 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T01:24:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-013 (the owner's instruction to read the handoff and run ten helpers at once tonight) and requirements D-094-R118 to R120, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

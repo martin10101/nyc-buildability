@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 117,
+ "requirement_count": 120,
  "producer": "orchestrator",
- "updated_at": "2026-10-13T05:36:35+00:00",
+ "updated_at": "2026-10-14T01:24:51+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3799,6 +3799,101 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured 2026-10-13; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R118",
+   "text": "'read sesen handoff md then i need to use up my creadtits fast so i want to lunch 10 subagents to get alot of work done tonigh': 'read sesen handoff md then': before anything else the session reads the session handoff (docs/SESSION_HANDOFF.md, seq 166) in full, with the files it names, and only then launches helpers.",
+   "source_ref": "source-013-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show the handoff and the files it names read before the first dispatch line.",
+   "required_evidence": "The session notes of 2026-10-14 (the read line, then the first dispatch line).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R119",
+   "text": "'read sesen handoff md then i need to use up my creadtits fast so i want to lunch 10 subagents to get alot of work done tonigh': 'i want to lunch 10 subagents to get alot of work done tonigh': the owner approves up to ten helpers running at once for tonight's session, to get as much project work done as the plan allows. Every other limit stands: at most three building at once, no shared files, heavy runs and merges one at a time, no model override, no timers, no unattended merges, the gates unchanged.",
+   "source_ref": "source-013-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R104"
+   ],
+   "required_harness": "The session notes' dispatch lines never show more than ten helpers running at once, never more than three of them building, and no two with a shared file; every piece of work they do is a tracked task or read-only preparation for one.",
+   "required_evidence": "The session notes of 2026-10-14 (dispatch and return lines) and the helper returns saved in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R120",
+   "text": "'read sesen handoff md then i need to use up my creadtits fast so i want to lunch 10 subagents to get alot of work done tonigh': 'i need to use up my creadtits fast': the owner wants tonight's Claude usage spent quickly on project work; usage cost is not a reason to run fewer helpers tonight. It approves no purchase, no paid service, no account or access change, and no lower standard of review.",
+   "source_ref": "source-013-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "Tonight's helpers are used up to the approved number wherever independent work exists; no purchase, paid service, account or access change appears in the session notes or the repository history of the night.",
+   "required_evidence": "The session notes of 2026-10-14 and the git history of the night.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
