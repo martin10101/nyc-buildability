@@ -218,3 +218,7 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   after the parents merge, empty base merge + the same reviewer's identity note (#438).
 - Merge step FAILS CLOSED on the LIVE rollup's `nonsuccess>0` (jq count, `exit 1` before `gh pr merge`): keying
   on a watcher's DONE merged #411 with a FAILURE check.
+- The review register (`services/api/app/rules/review_register/register.json`) pins the content hash of every code
+  module its entries cite: a refactor of such a module (e.g. three_way_document.py) turns tests/rules red until the
+  same change records an implementation_changed event; integrate an increment only after the full api pytest
+  (at least tests/rules) passed on it (M5-T167 increment A, run 38630997971).
