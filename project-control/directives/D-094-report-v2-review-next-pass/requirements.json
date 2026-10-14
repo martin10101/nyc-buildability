@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 120,
+ "requirement_count": 123,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T01:27:08+00:00",
+ "updated_at": "2026-10-14T02:01:30+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3893,6 +3893,99 @@
    "dependencies": [],
    "required_harness": "Tonight's helpers are used up to the approved number wherever independent work exists; no purchase, paid service, account or access change appears in the session notes or the repository history of the night.",
    "required_evidence": "The session notes of 2026-10-14 and the git history of the night.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R121",
+   "text": "'/session-handoff only at a clean seam dont lunch any more tesk let the 4 finish then write handoof and give me prompt': 'dont lunch any more tesk': from this message on the session launches no further helper and starts no further task.",
+   "source_ref": "source-014-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show no dispatch line and no contract after the owner's message; the helper ids running at the handoff equal those running at the message, or fewer.",
+   "required_evidence": "The session notes of 2026-10-14 (the owner-message line and every line after it).",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R122",
+   "text": "'/session-handoff only at a clean seam dont lunch any more tesk let the 4 finish then write handoof and give me prompt': 'only at a clean seam ... let the 4 finish': the work already running is allowed to finish; the handoff is made only when nothing is running and its results are saved and integrated.",
+   "source_ref": "source-014-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show each running helper's return saved and the builder's commit integrated and pushed before the closing checkpoint; the handoff says nothing is running.",
+   "required_evidence": "The session notes of 2026-10-14 (return lines, the integration line, the closing checkpoint) and the handoff's helper section.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R123",
+   "text": "'/session-handoff only at a clean seam dont lunch any more tesk let the 4 finish then write handoof and give me prompt': 'then write handoof and give me prompt': the session writes the handoff (docs/SESSION_HANDOFF.md and the session brief) and gives the owner the prompt to paste into the next session.",
+   "source_ref": "source-014-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "docs/SESSION_HANDOFF.md carries the new sequence number with the five things (where, done and unfinished, helpers and checks, the exact next action, holds and open decisions) and the copy-in prompt; the prompt is printed in the reply that reports the handoff.",
+   "required_evidence": "docs/SESSION_HANDOFF.md (main checkout), the session brief in the private session folder, and the reply itself.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
