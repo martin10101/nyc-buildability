@@ -94,6 +94,41 @@ async function clippedTextOutsideScrollRegions(dialog: Locator): Promise<string[
   });
 }
 
+/**
+ * M5-T171: text inside one element whose visible box is cut off by overflow:hidden/clip. Used to
+ * check the page-1 parity block specifically; an empty list is the pass.
+ */
+async function clippedTextInside(block: Locator): Promise<string[]> {
+  return block.evaluate((root) => {
+    const offenders: string[] = [];
+    for (const element of Array.from(root.querySelectorAll<HTMLElement>("*"))) {
+      const style = getComputedStyle(element);
+      if (style.overflowX !== "hidden" && style.overflowX !== "clip") continue;
+      if (element.scrollWidth <= element.clientWidth + 1) continue;
+      offenders.push((element.textContent ?? "").trim().slice(0, 40));
+    }
+    return offenders;
+  });
+}
+
+/**
+ * M5-T171: whether the legal-ceiling cell and the apartment-estimate cell overlap. Side by side on a
+ * wide window or stacked on a narrow one, their boxes must never intersect (UX-07: no overlapping
+ * labels). Returns false when either cell is absent (a document may carry no estimate).
+ */
+async function parityCellsOverlap(dialog: Locator): Promise<boolean> {
+  const block = dialog.getByTestId("apartment-figures");
+  const ceiling = await block.getByTestId("apartment-figures-ceiling").boundingBox();
+  const estimate = await block.getByTestId("apartment-figures-estimate").boundingBox();
+  if (!ceiling || !estimate) return false;
+  const apart =
+    ceiling.x + ceiling.width <= estimate.x + 0.5 ||
+    estimate.x + estimate.width <= ceiling.x + 0.5 ||
+    ceiling.y + ceiling.height <= estimate.y + 0.5 ||
+    estimate.y + estimate.height <= ceiling.y + 0.5;
+  return !apart;
+}
+
 const WIDTHS = [320, 390, 768, 1024, 1440, 1920];
 
 test.describe("M5-T149 results layout — flag-on, the real results route", () => {
@@ -105,6 +140,13 @@ test.describe("M5-T149 results layout — flag-on, the real results route", () =
       const dialog = await openResults(page);
       expect(await pageHorizontalOverflow(page)).toBeLessThanOrEqual(1);
       expect(await clippedTextOutsideScrollRegions(dialog)).toEqual([]);
+      // M5-T171: the page-1 parity block (the legal ceiling beside the apartment estimate) is present
+      // and, at every width, holds no clipped text and no overlapping cells, and adds no sideways
+      // page scroll (the whole-page check above already covers the block, which is inside the dialog).
+      const parity = dialog.getByTestId("apartment-figures");
+      await expect(parity).toBeVisible();
+      expect(await clippedTextInside(parity)).toEqual([]);
+      expect(await parityCellsOverlap(dialog)).toBe(false);
     });
   }
 

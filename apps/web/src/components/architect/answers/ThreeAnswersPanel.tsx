@@ -27,6 +27,7 @@ import {
   type BuildingOptionCardView,
   type ConditionNames,
 } from "./AnswerCard";
+import { ApartmentFigures } from "./ApartmentFigures";
 import { FirstBuildingOptions } from "./FirstBuildingOptions";
 import { ResultsStatusStrip } from "./ResultsStatusStrip";
 import { ScopeSummary } from "./ScopeSummary";
@@ -108,6 +109,11 @@ export function ThreeAnswersPanel({ results, showDraftValues = false, address }:
               </AnswerCard>
             )}
           </div>
+          {/* Page-1 parity (M5-T171): the legal ceiling beside the apartment estimate, the same
+              additive block report page 1 shows after the answers summary — distinct from, and not a
+              change to, the allowance card above. Placed after the answers (as on page 1) so the
+              property identity and the floor-area headline keep the first screen (e2e S12). */}
+          <ApartmentFigures results={results} showDraftValues={showDraftValues} />
           {firstOptions ? <FirstBuildingOptions view={firstOptions} /> : null}
           <SharedConditions results={results} />
         </div>
