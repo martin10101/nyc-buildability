@@ -127,13 +127,13 @@
     "G1",
     "G2"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "The ZR print/PDF big pages 504 and per-term print/PDF can 403 (DB-167): use the documented fallback (direct HTML GET, browser UA, sha256-pinned) and disclose it in cross_check/notes; never evade.",
     "23-154 returned HTTP 403 again on 2026-10-14 (confirmed this session): record the block, do not work around it.",
@@ -144,7 +144,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:18.322633+00:00",
-  "updated_at": "2026-10-14T02:53:18.751070+00:00",
+  "updated_at": "2026-10-14T02:53:44.300162+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -163,5 +163,14 @@
     "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-14T02:53:44.300068+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed; one capture task at a time, so the official site is never loaded by several runs"
+    }
+  ]
 }
