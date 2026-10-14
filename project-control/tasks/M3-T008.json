@@ -133,7 +133,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "The ZR print/PDF big pages 504 and per-term print/PDF can 403 (DB-167): use the documented fallback (direct HTML GET, browser UA, sha256-pinned) and disclose it in cross_check/notes; never evade.",
     "23-154 returned HTTP 403 again on 2026-10-14 (confirmed this session): record the block, do not work around it.",
@@ -144,7 +144,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:18.322633+00:00",
-  "updated_at": "2026-10-14T02:53:44.300162+00:00",
+  "updated_at": "2026-10-14T03:39:51.250987+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -171,6 +171,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed; one capture task at a time, so the official site is never loaded by several runs"
+    },
+    {
+      "at": "2026-10-14T03:39:51.250865+00:00",
+      "agent": "official-source-researcher",
+      "percent": 60,
+      "status": "claimed",
+      "message": "integrated as 05e4ccb4 (cherry-pick of febd80b4; 21 files inside the allowed paths; LF sha256 equal to the return for all 21): 10 captures; Appendix F not captured (multi-page on the site); 23-154 still HTTP 403; next: the G1 review"
     }
   ]
 }

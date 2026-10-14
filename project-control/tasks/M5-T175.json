@@ -160,7 +160,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "site_context_plan.py is 597 SLOC, 3 under the 600 WARN line (DB-250): even a thin hook can cross WARN/material-growth. Keep the hook minimal; the overlay drawing lives in constraint_overlay.py. modularity_check runs in the self-check.",
     "The 1.4.0 fall-back must reproduce BOTH the short page-3 state column strings ('Not known', 'Not worked out yet', 'Not checked', 'by portion') AND the longer open-item effect texts exactly; conflating them would redden the forbidden benchmark tests (test_constraints_page.py, test_report_pages.py, test_location_sheet.py, test_report_read_context.py).",
@@ -169,7 +169,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T02:53:13.796408+00:00",
-  "updated_at": "2026-10-14T02:53:16.998822+00:00",
+  "updated_at": "2026-10-14T03:39:50.898915+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -205,6 +205,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed after M5-T165 and M5-T166 were accepted (it edits their files); the packet was checked against the code on 2026-10-14"
+    },
+    {
+      "at": "2026-10-14T03:39:50.898786+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "first round integrated as f66e8212 (cherry-pick of 826bf88a; 9 files inside the allowed paths; LF sha256 equal to the return for 8, the report has none): the 1.5.0 reader, page-3 rows, overlay and other-basis dimensions built and unit-tested; not yet wired into the live report"
     }
   ]
 }
