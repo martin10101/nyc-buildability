@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T03:51:36+00:00",
+ "updated_at": "2026-10-14T04:11:51+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -148,10 +148,13 @@
   "D-094-R124",
   "D-094-R125",
   "D-094-R126",
-  "D-094-R127"
+  "D-094-R127",
+  "D-094-R128",
+  "D-094-R129",
+  "D-094-R130"
  ],
- "requirements_id_digest_sha256": "10a68feff3fabeb4f2e13980a1ce5352fce683b4bcb861cdc7df61b3db43c6df",
- "requirements_content_digest_sha256": "fb16a54ca4e34027d36bc0d50a49270d9837d1bc4b56dd996d83a06cab336693",
+ "requirements_id_digest_sha256": "41fd29582c045c1774994b72def5fe5a1065321898c7120e18625009a14a981c",
+ "requirements_content_digest_sha256": "cb39f1aa6eec87337e19c8dd5af23136bb53a5bc93e7966571cca5abb00e2095",
  "sources": [
   {
    "file": "source-001.md",
@@ -279,6 +282,14 @@
    "recorded_at": "2026-10-14T03:51:36+00:00",
    "content_digest_sha256": "c450b77244736d02c4e62208d8020f625248b96689e77e910d3c04f44c4c7bd2",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-017-amendment.md",
+   "kind": "amendment",
+   "sequence": 17,
+   "recorded_at": "2026-10-14T04:11:51+00:00",
+   "content_digest_sha256": "ad510b3a6e8c49486d1857231a21448ae1b27e445258beb70525766dd2447ff1",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -296,7 +307,8 @@
   "source-013-amendment.md",
   "source-014-amendment.md",
   "source-015-amendment.md",
-  "source-016-amendment.md"
+  "source-016-amendment.md",
+  "source-017-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -563,6 +575,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-016 (the owner's request for a handoff at a clean seam after the three running helpers finish) and requirements D-094-R125 to R127, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T04:11:51+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-017 (the owner narrows the question-and-answer log to questions about building the app) and requirements D-094-R128 to R130, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 127,
+ "requirement_count": 130,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T03:51:36+00:00",
+ "updated_at": "2026-10-14T04:11:51+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -4132,6 +4132,101 @@
    "dependencies": [],
    "required_harness": "docs/SESSION_HANDOFF.md carries the new sequence number with the five things and the copy-in prompt; the prompt is printed in the reply that reports the handoff.",
    "required_evidence": "docs/SESSION_HANDOFF.md (main checkout), the session brief in the private session folder, and the reply itself.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R128",
+   "text": "'The question and answer MD is designed for answers questions that are important for the building of the app, not general questions about where things stand in the moment.': the question-and-answer log (docs/back-and-forth-developer/ and its private copy) is for questions and answers that are important for building the app.",
+   "source_ref": "source-017-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [
+    "D-094-R105"
+   ],
+   "required_harness": "The living-files map's line for the log and the handoff checklist's line say so; sections added after this message answer questions about the build.",
+   "required_evidence": "`.claude/rules/living-files.md`, `.claude/session-handoff-profile.md`, and the log's sections after 2026-10-14 04:11 UTC.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R129",
+   "text": "'Question and answer is more like if I ask you, like, how do we get to this and this part, or you know what I mean, like structured answers and questions that actually is in regards to the actual build.': what belongs in it: questions like how to get to this or that part of the app, with structured answers about the actual build.",
+   "source_ref": "source-017-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "Each section added after this message is a question about how the app is built or reaches a part of it, with a structured answer.",
+   "required_evidence": "The log's sections after 2026-10-14 04:11 UTC.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured 2026-10-14; not yet implemented or verified.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R130",
+   "text": "'But general questions like, oh, where are you up to, what did you do right now, stuff like that, that does not need to be logged.': general questions about where the work stands at the moment (where are you up to, what did you do right now) are not logged; they are answered in chat only.",
+   "source_ref": "source-017-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-14"
+   },
+   "dependencies": [],
+   "required_harness": "No section added after this message records a status question; the session notes still record the owner message as a STATE line.",
+   "required_evidence": "The log's sections after 2026-10-14 04:11 UTC and the session notes.",
    "producer": "orchestrator",
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",

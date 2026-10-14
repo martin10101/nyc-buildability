@@ -3,8 +3,9 @@
 `O` = `/root/project/lanes-runtime/owner-docs`; handoff checklist: `.claude/session-handoff-profile.md`.
 
 - `O/OWNER_QUESTIONS.md`: questions+recommendation; ask in chat AND add here, same step; mark answers.
-- `docs/back-and-forth-developer/` + copy `O/back-and-forth-developer/`: each owner question or request and the
-  answer (D-094 R105-R108) after each answer; copies equal.
+- `docs/back-and-forth-developer/` + copy `O/back-and-forth-developer/`: owner questions about BUILDING the app (how
+  to reach a part, structured build answers) and the answer, after each answer; copies equal. NOT status questions
+  (where are you up to, what did you just do): chat only (D-094 R105-R108, R128-R130).
 - `project-control/directives/`: substantive owner instructions verbatim, BEFORE acting (/directive-compliance).
 - `docs/research/evidence-records/`: with any fact, reading, calculation, label change (D-093); rule changes also
   `docs/zoning-rule-review/` (principle 20). Owner research (Astra = discovery aid ONLY, D-050-R002): RQ queue in

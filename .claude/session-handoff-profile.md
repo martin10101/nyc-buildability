@@ -86,8 +86,8 @@ Confirm each line of `.claude/rules/living-files.md` for THIS session (one item 
 in the handoff's section 3 as a "Living files:" line (all updated, or the exact line not done and why). Never report
 HANDOFF READY with an unexplained gap.
 - Every owner question asked in chat is in `OWNER_QUESTIONS.md`; answered ones are marked with date and directive row.
-- The question-and-answer log has a section for every owner question or request of this session; the repository file and
-  its private copy are equal (`cmp`).
+- The question-and-answer log has a section for every owner question of this session about building the app (not status
+  questions: D-094 R128-R130); the repository file and its private copy are equal (`cmp`).
 - Every substantive owner instruction of this session is captured; `tools/validate_directive_compliance.py --check` exit 0.
 - Research records touched this session: `tools/research_record_check.py --check` exit 0; any zoning-rule behaviour
   change also in `docs/zoning-rule-review/` (principle 20); owner research asks in the RQ queue, committed and pushed
