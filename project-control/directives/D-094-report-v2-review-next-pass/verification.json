@@ -1631,60 +1631,104 @@
     "D-094-R083"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5",
+   "reviewed_manifest_sha256": "c9a195ff0070ebd2652fa14d7dfa4df6743eb971ec1efacff93c66e14329e0d1",
    "requirements": [
     {
      "id": "D-094-R035",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The block reads the 29 from results.answers.*.legal_unit_limit_standard and labels it via labelForWay (conditional->Conditional); S4 state A and the rendered block show \"Legal ceiling 29\" with the chip \"Conditional\", never settled.",
+      "apartment-figures.ts carries no \"Settled\"/\"Confirmed\" word; S4 state J proves a hypothetical settled ceiling would read \"Provisional\", so the conditional 29 is never promoted to a confirmed entitlement.",
+      "Reference cases overlay-reading.json and real-lot.json settle the 29 as conditional (20,150/680=29.63->29, resting on the unresolved lot area); the screen keeps the zoning-lot concern beside it and the line \"neither is a demonstrated layout\".",
+      "Open: correct handling of residential area/use/exemptions and the unit-limit calculation is engine work (M5-T167 etc.) and the special-density share is M5-T157/M5-T161; this website task only displays the document's conditional value.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R041",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The website module mirrors report page 1 (page_decision_summary.py): same ceiling cell, estimate cell labelled labels.PROVISIONAL, distinction from the shared token WORDING[\"ceiling_estimate_distinction\"], and the _floor_area_basis composition \u2014 one shared structure for this content.",
+      "The block is placed after the answers summary (answers -> ceiling/estimate -> uncertainties), the same section order as page 1; all figures are read from the same results document, nothing recalculated in TSX.",
+      "Open: parity for the remaining report sections (site/constraints, option comparison, scenario sheets, evidence) across website and PDF is M5-T174's share.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R051",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The block orders result first (Legal ceiling 29 / Estimate 17-22), material qualification next (the distinction line), then the lot-area basis line \u2014 matching page 1's _answer_cell order.",
+      "Every figure is read from the document; the website's further detail stays behind existing disclosures and other panel components.",
+      "Open: the estimate's link to its full calculation (#estimate-B on page 1) is not carried in the website block (the Results window has no scenario sheet) \u2014 advisory, deferred to M5-T174 (DB-261); R051's PDF side is already PASS under M5-T165.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R057",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "results-layout.flag-on.spec.ts asserts the block is visible, unclipped, non-overlapping and adds no sideways scroll at 320/390/768/1024/1440/1920; it passed in CI run 38507460363 (web-e2e success).",
+      "block-notes.txt and the rendered screenshots (block-in-window-1024.png) show the same figures (29, 17-22, 20,150, 10,075, FAR 2.0), labels (Conditional, Provisional), distinction line (byte-equal) and lot-area line (byte-equal, x = U+00D7) as report page-01.png.",
+      "The zoning-lot caveat appears in both (same facts) but in a fuller form on the website vs page 1's compact index-entry sentence; the estimate's source-reference link is on the PDF, not the website block.",
+      "Open: byte-level parity of the zoning-lot sentence and the estimate source-reference link, plus cross-section figure/label/source-reference parity, stay open for M5-T174 (DB-261) / M0-T195.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R071",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "S2 scans the block over every committed fixture for buildable/achievable/can be built/feasible/compliant/optimal/preferred/verified/achieved/recommended \u2014 none present (CI green); the chip is Conditional and the distinction line says neither figure is a demonstrated layout.",
+      "The qa-engineer mutation probe (Conditional->PROVISIONAL) made S4 state A fail, proving the Conditional label is load-bearing; the 29 is never shown as a number that can be built.",
+      "Open: nothing stays open for this task's website share; R071's PDF side is already PASS under M5-T165.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R078",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The block holds \"Legal ceiling 29\" beside \"Estimate 17-22\" with the one-line distinction beneath, confirmed by three-answers-panel.test.tsx (DB-214 N2 reconciliation) and the rendered block-in-window-1024.png \u2014 matching report page 1.",
+      "The literal CEILING_ESTIMATE_DISTINCTION is byte-equal to presentation-tokens.json wording.ceiling_estimate_distinction (S1 reads the token from disk) and ends \"neither is a demonstrated layout\", so neither figure is presented as a layout.",
+      "Open: nothing stays open for this task's website share; R078's PDF page-1 side is already PASS under M5-T165.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R081",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The website results carry the same decision content as page 1: the main answer with its assumption line, the ceiling beside the estimate with the distinction, the lot-area assumption and the zoning-lot uncertainty \u2014 the \"prominent results + their assumptions\" half of R081.",
+      "The block renders correctly at six widths (CI + screenshots) and reads every figure from the document.",
+      "Open: the block sits below the first screen at every width (block top 1151-1583 px; advisory, DB-261), and the \"one useful site graphic\" and the first-page layout rebuild for the website are M5-T174's share; R081's PDF page-1 rebuild is already PASS under M5-T165.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     },
     {
      "id": "D-094-R083",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The changed website view was rendered from the branch at 97b2a492 and photographed at six widths (after-97b2a492/block-*.png and block-in-window-*.png), which I viewed; the block renders with the figures, chips, distinction and lot-area line.",
+      "The visual-quality-reviewer's delta review looked at all twelve pictures against the design contract \"Change 2026-10-11\" and recorded PASS (the one required correction \u2014 capture the block \u2014 met); block-notes.txt records 0 px horizontal overflow at each width.",
+      "The web files are byte-identical across the material/submit/frozen heads, so the CI evidence applies to the pictured work; the before set is M0-T194's frozen baseline.",
+      "Open: the whole-pass before/after set across every changed page is M0-T195's share.",
+      "Verifier's carry-forward condition met at 11c932b5: the task's allowed-path files are identical to those verified at 00c8233a (content identity c9a195ff), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (19 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 human-journey-reviewer and visual-quality-reviewer (with a delta on the pictures); G4 qa-engineer). DCV report: project-control/reports/M5-T171-DCV.md."
+     ],
+     "reviewed_sha": "11c932b5d0984149868b61de8eb489e840bb53b5"
     }
-   ]
+   ],
+   "verified_at": "2026-10-14T17:27:43+00:00"
   },
   {
    "directive_id": "D-094",

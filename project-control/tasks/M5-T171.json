@@ -110,8 +110,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "The screen statuses stay until question C2 is answered.",
     "The existing web design keeps the 29 on the allowance card apart from the estimate (DB-214 N2); parity pairs ceiling+estimate in a new additive block. three-answers.ts and first-building-options.ts are read-only, so the allowance card is untouched; only three-answers-panel.test.tsx's DB-214 N2 wording is reconciled in-scope.",
@@ -120,7 +120,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:44.523757+00:00",
-  "updated_at": "2026-10-14T03:49:57.394665+00:00",
+  "updated_at": "2026-10-14T17:27:44.740835+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -172,5 +172,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-14T17:27:44.740645+00:00"
 }
