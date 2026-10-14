@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 143,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T19:36:21+00:00",
+ "updated_at": "2026-10-14T19:41:35+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -3324,7 +3324,8 @@
      "D-094-BOOTSTRAP",
      "M3-T006",
      "M3-T007",
-     "M3-T008"
+     "M3-T008",
+     "M3-T009"
     ],
     "task_types": [],
     "milestones": [],
@@ -3389,7 +3390,8 @@
      "D-094-BOOTSTRAP",
      "M3-T006",
      "M3-T007",
-     "M3-T008"
+     "M3-T008",
+     "M3-T009"
     ],
     "task_types": [],
     "milestones": [],

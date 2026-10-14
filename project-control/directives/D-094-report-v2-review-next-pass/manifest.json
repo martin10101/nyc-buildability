@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T19:36:21+00:00",
+ "updated_at": "2026-10-14T19:41:35+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -167,7 +167,7 @@
   "D-094-R143"
  ],
  "requirements_id_digest_sha256": "01a4d8f14582fe62fa887072f5ab64cdd8dcedc874eec52c619d9dab683bf4bd",
- "requirements_content_digest_sha256": "ad680de0346db491c8f2df30323605b63259c346808e996703369fda19009db3",
+ "requirements_content_digest_sha256": "cd3e7e8545422e7ae779740ae065050abd09f12465e2db8c3c1be680c9536bff",
  "sources": [
   {
    "file": "source-001.md",
@@ -365,7 +365,8 @@
   "M5-T175",
   "M3-T008",
   "M5-T179",
-  "M5-T167"
+  "M5-T167",
+  "M3-T009"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -638,6 +639,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T167 (rear yard on a short block (ZR 23-344(b)/(c)(3)) engine, 1.5.0 emission + benchmark and synthetic-fixture regen, and the DB-245 GIS-wording sweep) to R017, R026, R036, R037, R038, R039, R044, R061, R079, R136 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T19:41:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T009 (capture the community-facility ZR sections (Article II Chapter 4 + 22-13); documents only) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
   }
  ]
 }

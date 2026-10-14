@@ -1,0 +1,191 @@
+{
+  "task_id": "M3-T009",
+  "title": "Capture the Zoning Resolution sections the community-facility options need (Article II Chapter 4 and the Use Group III permission 22-13): documents only, source-text snapshots in the existing shape with byte-identical bundled copies. No rule, no reading of the text for any lot, no computed figure.",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "Capture, from the official NYC DCP Zoning Resolution portal, the community-facility sections the options library marks NOT CAPTURED (DB-253; docs/zoning-law-library/options/option-06-07-community-facility.md): Article II Chapter 4 24-04, 24-11, 24-111, 24-161, 24-162, 24-163, 24-33, 24-34, 24-35, 24-36, 24-391, 24-52, 24-522, 24-56 and Article II Chapter 2 22-13 (the parent section only; its child sections, if the site has them, are listed in the producer report for a later capture). Each capture is one JSON file in the existing zr_section_snapshot/v1 shape (templates: docs/research/zr-snapshots/v1/zr-23-344.snapshot.json and the eleven captures of M3-T008, e.g. zr-27-16.snapshot.json): HTML node request plus the print/PDF entityprint cross-check, sha256-pinned both channels (or the documented fallback, disclosed), the page's own Last Amended stamp, verbatim_excerpt with #term# markers and the list letters as the official PRINT shows them (the HTML markup can restart a list: M3-T008's G1 finding), content_digest_sha256 = sha256(verbatim_excerpt), extraction_status extracted_draft, raw_html_verified false, the ADR-007 not-professionally-reviewed label. Each lands in docs/research/zr-snapshots/v1/ AND as a byte-identical copy in services/api/app/_zr_snapshots/v1/ produced by services/api/scripts/sync_zr_snapshots.py. A listed section whose node does not exist under the current text is reported, never invented. Documents only: no rule file, no reading of the text for any lot, no derived or computed number, no eligibility determination.",
+  "business_reason": "The master plan lists options 2 to 11 as not planned because the law each still lacks is unread or not captured. The library's second pass (M3-T007; reviewed, G1 PASS) read these sections on the official site and left them not captured (backlog DB-243 and DB-253). A rule may cite a section only once it is captured with provenance (CLAUDE.md principles 2, 3 and 12). The affordable- and senior-housing subset was captured by M3-T008 (accepted); this task supplies the community-facility subset (options 6 and 7); the remaining subsets (split lot and courts; rooming units, shops and parking) follow as their own tasks, one at a time, so the official site is never loaded by several capture runs at once.",
+  "inputs": [
+    "docs/zoning-law-library/options-sections.md",
+    "docs/DISCOVERY_BACKLOG.md",
+    "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-transit-zone-outer.snapshot.json",
+    "services/api/app/rules/snapshots.py",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "docs/RESEARCH_AND_VERIFICATION.md",
+    "docs/SOURCE_AUTHORITY_POLICY.md",
+    "docs/SOURCE_ACCESS_REGISTRY.md",
+    "docs/zoning-law-library/options/option-06-07-community-facility.md",
+    "docs/research/zr-snapshots/v1/zr-27-16.snapshot.json"
+  ],
+  "outputs": [
+    "docs/research/zr-snapshots/v1/zr-22-13.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-04.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-11.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-111.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-161.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-162.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-163.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-33.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-34.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-35.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-36.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-391.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-52.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-522.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-56.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-13.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-04.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-11.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-111.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-161.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-162.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-163.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-33.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-34.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-35.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-36.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-391.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-52.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-522.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-56.snapshot.json",
+    "project-control/reports/M3-T009-producer-report.md"
+  ],
+  "dependencies": [
+    "M3-T006",
+    "M3-T007",
+    "M3-T008"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1/zr-22-13.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-04.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-11.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-111.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-161.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-162.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-163.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-33.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-34.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-35.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-36.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-391.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-52.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-522.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-56.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-13.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-04.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-11.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-111.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-161.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-162.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-163.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-33.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-34.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-35.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-36.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-391.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-52.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-522.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-24-56.snapshot.json",
+    "project-control/reports/M3-T009-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "services/api/tests/",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "apps/",
+    "packages/",
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/zoning-law-library/",
+    "docs/research/evidence-records/",
+    "docs/design/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "each captured section/term",
+      "when": "the snapshot checks run",
+      "then": "the file is in the zr_section_snapshot/v1 shape, content_digest_sha256 == sha256(verbatim_excerpt), it names its channel and is sha256-pinned on both channels (or records the documented 504/403 fallback), and SnapshotStore().load() loads it without error"
+    },
+    {
+      "id": "S2",
+      "given": "the new captures",
+      "when": "python services/api/scripts/sync_zr_snapshots.py --check runs and tests/rules/test_zr_snapshot_bundle.py runs",
+      "then": "--check exits 0 and every test passes: each bundled copy is byte-identical to its canonical source and membership matches"
+    },
+    {
+      "id": "S3",
+      "given": "the new captures",
+      "when": "tests/drawings/report/test_report_law_links.py runs unedited",
+      "then": "it stays green; each capture's request_url is the official article/chapter/section (or term) page, and no new section is cited by the benchmark fixture so no href changes"
+    },
+    {
+      "id": "S4",
+      "given": "a listed section whose node does not exist under the current text, or whose official title or number differs from the library's list",
+      "when": "it is looked up on the official site",
+      "then": "it is reported in the producer report with the URL, the time and what the site shows; no file is written for a missing node and no text or title is invented"
+    },
+    {
+      "id": "S5",
+      "given": "every captured file",
+      "when": "it is searched for status words",
+      "then": "extraction_status is extracted_draft, raw_html_verified is false, nothing is labelled Verified, no rule / reading for a lot / derived or computed number / eligibility determination appears; section id, title, official URL and Last Amended date are taken from the official page read for this pass, not from memory"
+    },
+    {
+      "id": "S6",
+      "given": "the task diff",
+      "when": "it is listed",
+      "then": "it touches only the allowed paths; no library doc, evidence record, rule, scenario, drawing or test file changes; each cited passage is the section's own verbatim source text"
+    },
+    {
+      "id": "S7",
+      "given": "a captured section with lettered or numbered lists",
+      "when": "its excerpt is compared with the official print/PDF",
+      "then": "the list letters and numbers are the print's (one continuous list where the print has one), every word verbatim; where the print is unavailable the markup positions are disclosed with \"cite by words\""
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "The ZR print/PDF big pages 504 and per-term print/PDF can 403 (DB-167): use the documented fallback (direct HTML GET, browser UA, sha256-pinned) and disclose it in cross_check/notes; never evade.",
+    "The 2024 City of Yes amendments renumbered sections: take every section number, title and Last Amended date from the official page read for this pass.",
+    "A capture changes no result, rule or label; a later rule task works its own independent example before any result changes (D-093).",
+    "A capture run loads the official site: one capture task runs at a time; the builder fetches only the pages it captures (two channels per section), with pauses, and stops on repeated refusals.",
+    "The HTML <ol> markup can restart a list's letters where the official print runs one list (M3-T008 G1 F1): take the letters from the print/PDF."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T19:41:35.105159+00:00",
+  "updated_at": "2026-10-14T19:41:35.540146+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R102",
+        "D-094-R104"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T19:41:35.105430+00:00",
+  "path_notes": "Lane A (engine snapshots): docs/research/zr-snapshots/** and services/api/app/_zr_snapshots/** are Lane A; the producer report is Lane C. Run on a task/ branch so the lane-branch path check is skipped (a lane-a/ branch would reject the Lane-C report). Disjoint snapshot filenames from any sibling capture task, so A/B/C may run in parallel in separate worktrees. sync_zr_snapshots.py is RUN, never edited.",
+  "documented_test_commands": [
+    "python services/api/scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
