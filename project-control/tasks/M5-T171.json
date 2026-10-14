@@ -3,7 +3,7 @@
   "title": "Website page-1 parity: the Results headline shows the same answer as report page 1 (the legal ceiling beside the apartment estimate with the identical distinction line, the assumption line, the zoning-lot concern beside the headline)",
   "task_type": "frontend",
   "milestone_id": "M5",
-  "objective": "The website Results headline shows the same answer as report page 1: one additive block holds 'Legal ceiling 29 (Conditional)' beside 'Estimate 17-22 (Provisional)' - the estimate's status chip reads the plain-word label 'Provisional' (labels.PROVISIONAL), never 'preliminary' - with the identical distinction line (a literal whose unit test compares it character-for-character with wording.ceiling_estimate_distinction read from docs/design/presentation-tokens.json: 'The ceiling is a conditional zoning limit; the estimate is an unvalidated apartment-yield range; neither is a demonstrated layout.'), the R055 assumption line composed exactly as report page 1 ('10,075 sq ft recorded lot area × FAR 2.0, tax lot 70 alone'; the × is U+00D7, 'alone' only while the zoning lot is unconfirmed), and the zoning-lot concern beside the headline. The block is ADDITIVE: the existing allowance card keeps its '29 units ... Conditional' value (three-answers.ts is read-only), so the legal unit limit still sits with the allowance (DB-214 N2) and now also appears beside the estimate for page-1 parity; the builder reconciles the DB-214 N2 wording in three-answers-panel.test.tsx in-scope without disturbing the allowance card. The screen statuses stay (question C2 is open); the task does not depend on C2's answer. Values come from the results document (results.answers.floor_area_allowance.value_states.legal_unit_limit_standard for the 29 and its conditional way; results.building_alternatives[0].capacity_estimate.whole_below_low / whole_above_high for 17-22); nothing is recalculated in TSX; an absent legal unit limit or capacity_estimate degrades to no figure, never an invented one. The new block uses its OWN testids (never answer-conditional-marker, answer-value or answer-headline-number).",
+  "objective": "The website Results headline shows the same answer as report page 1: one additive block holds 'Legal ceiling 29 (Conditional)' beside 'Estimate 17-22 (Provisional)' - the estimate's status chip reads the plain-word label 'Provisional' (labels.PROVISIONAL), never 'preliminary' - with the identical distinction line (a literal whose unit test compares it character-for-character with wording.ceiling_estimate_distinction read from docs/design/presentation-tokens.json: 'The ceiling is a conditional zoning limit; the estimate is an unvalidated apartment-yield range; neither is a demonstrated layout.'), the R055 assumption line composed exactly as report page 1 ('10,075 sq ft recorded lot area \u00d7 FAR 2.0, tax lot 70 alone'; the \u00d7 is U+00D7, 'alone' only while the zoning lot is unconfirmed), and the zoning-lot concern beside the headline. The block is ADDITIVE: the existing allowance card keeps its '29 units ... Conditional' value (three-answers.ts is read-only), so the legal unit limit still sits with the allowance (DB-214 N2) and now also appears beside the estimate for page-1 parity; the builder reconciles the DB-214 N2 wording in three-answers-panel.test.tsx in-scope without disturbing the allowance card. The screen statuses stay (question C2 is open); the task does not depend on C2's answer. Values come from the results document (results.answers.floor_area_allowance.value_states.legal_unit_limit_standard for the 29 and its conditional way; results.building_alternatives[0].capacity_estimate.whole_below_low / whole_above_high for 17-22); nothing is recalculated in TSX; an absent legal unit limit or capacity_estimate degrades to no figure, never an invented one. The new block uses its OWN testids (never answer-conditional-marker, answer-value or answer-headline-number).",
   "business_reason": "D-094 R041/R057: one structure and the same figures, labels and caveats on the website and in the PDF.",
   "inputs": [
     "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
@@ -82,7 +82,7 @@
       "id": "S6",
       "given": "the figures",
       "when": "they render",
-      "then": "the 29 and 17-22 come from the document; the R055 lot-area line is '10,075 sq ft recorded lot area × FAR 2.0, tax lot 70 alone' (the × is U+00D7), naming its basis (recorded lot area, administrative_record per G-10) in the contract's plain-word labels, byte-equal to report page 1"
+      "then": "the 29 and 17-22 come from the document; the R055 lot-area line is '10,075 sq ft recorded lot area \u00d7 FAR 2.0, tax lot 70 alone' (the \u00d7 is U+00D7), naming its basis (recorded lot area, administrative_record per G-10) in the contract's plain-word labels, byte-equal to report page 1"
     },
     {
       "id": "S7",
@@ -120,7 +120,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-11T20:43:44.523757+00:00",
-  "updated_at": "2026-10-11T20:43:48.089738+00:00",
+  "updated_at": "2026-10-14T02:28:29.860888+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
