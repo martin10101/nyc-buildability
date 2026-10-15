@@ -9,6 +9,8 @@ display string.
 
 from __future__ import annotations
 
+import math
+
 __all__ = [
     "format_feet",
     "format_int_commas",
@@ -21,11 +23,13 @@ __all__ = [
 
 def _as_float(value: object) -> float | None:
     """A float view of a numeric document value, or ``None`` when it is not a
-    plain number (so a missing value stays missing - never shown as 0)."""
+    plain number or is non-finite (inf/nan), so a missing or garbage value stays
+    missing - never shown as 0 and never crashing or printing "inf.0" (DB-278)."""
     if isinstance(value, bool) or value is None:
         return None
     if isinstance(value, (int, float)):
-        return float(value)
+        result = float(value)
+        return result if math.isfinite(result) else None
     return None
 
 

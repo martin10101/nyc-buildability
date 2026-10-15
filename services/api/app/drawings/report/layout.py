@@ -28,13 +28,21 @@ _NOTE_PT = TYPE["source-note"]["print_pt"]           # 8.5 pt (footer, captions,
 
 def _css_string(text: str) -> str:
     """Escape a value for use inside a CSS ``content: "..."`` string: backslash,
-    double quote and newlines."""
+    double quote and newlines, and neutralize ``<``/``>`` as CSS hex escapes so a
+    value containing ``</style>`` cannot terminate the ``<style>`` element the
+    ``@page`` margin boxes live in (DB-277). ``\\3C `` and ``\\3E `` render as
+    ``<`` and ``>`` in the content string, so any value without angle brackets
+    (every run-identity value: address, "Results revision N", "computed
+    YYYY-MM-DD") produces byte-identical CSS. The angle-bracket replaces come
+    AFTER the backslash doubling so their own backslash is not doubled."""
     return (
         str(text)
         .replace("\\", "\\\\")
         .replace('"', '\\"')
         .replace("\n", " ")
         .replace("\r", " ")
+        .replace("<", "\\3C ")
+        .replace(">", "\\3E ")
     )
 
 
@@ -182,6 +190,12 @@ a {{ color: {action}; }}
 .evidence-column {{ flex: 1 1 0; min-width: 0; }}
 .evidence-column h3 {{ margin-top: 0; }}
 .evidence-column ul {{ margin: 0; }}
+/* A long unbroken run-identity value - the 40-character deployed commit printed in
+   the run-identity column - breaks WITHIN its list item so it cannot overflow the
+   narrow flex column and make Chromium shrink the whole document to fit (8 pages
+   instead of 10; DB-277/S10). overflow-wrap:anywhere breaks only a token that would
+   otherwise overflow, so every value that already fits is laid out byte-identically. */
+.evidence-column li {{ overflow-wrap: anywhere; }}
 /* The open-items table is TALL (a note under most rows), so it breaks between rows
    with its header repeated, and the assumptions plus the start of the open items
    share a page (correction 3). An item's note never separates from the item (the

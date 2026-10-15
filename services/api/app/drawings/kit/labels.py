@@ -29,7 +29,17 @@ YARD_KIND_NAMES = {"front": "Front yard", "side": "Side yard", "rear": "Rear yar
 
 
 def format_number(value: float) -> str:
-    """At most two decimals, trailing zeros dropped, thousands separated."""
+    """At most two decimals, trailing zeros dropped, thousands separated.
+
+    Fails closed on a non-numeric or non-finite value (DB-278): a ``str``/``None``
+    no longer raises the cryptic "Unknown format code 'f'" and ``inf``/``nan`` no
+    longer render as literal "inf"/"nan" label text."""
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+    ):
+        raise ValueError(f"format_number needs a finite real, got {value!r}")
     text = f"{value:,.2f}".rstrip("0").rstrip(".")
     return "0" if text in ("-0", "") else text
 
