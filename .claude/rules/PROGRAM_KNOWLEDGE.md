@@ -113,6 +113,10 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
 - Heavy runs share `flock /root/project/lanes-runtime/heavy-run.lock`: NEVER start the preview or any daemon inside it (setsid
   children inherit the lock descriptor and hold it for good: 2026-10-15 every checker blocked ~1 h); use `flock -o` or run outside.
 
+- Agent-tool helper returns arrive as a SubagentHandback tool call in `subagents/agent-<id>.jsonl` of the session folder:
+  save them verbatim by script (session-2026-10-15b/save_agent.py), never retyped; a DCV return also needs its hand-back
+  time for the record (2026-10-15b).
+
 ## Key files / commands
 
 - Ledger: `python tools/project_control.py status|new-task|claim|progress|submit|gate|accept|
