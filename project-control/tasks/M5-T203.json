@@ -1,0 +1,111 @@
+{
+  "task_id": "M5-T203",
+  "title": "DB-273 (M5-T203): one street-window fetch when the live spatial provider is on: the geometry provider and the street-data provider share one fetch of the same street window (flag off by default; no live behaviour changes)",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Read first: services/api/app/api/v1/study_live_geometry.py (live_geometry_provider fetches the street window through fetch_streets) and services/api/app/api/v1/study_inputs.py (live_street_data_provider, ~line 577, fetches the same window again), and the route that calls both. Make the two share ONE fetch of the same street window per request (for example a per-request memo keyed by the canonical BBL and the window, or passing the first result through), behind LIVE_SPATIAL_PROVIDER_ENABLED exactly as today; the flag-off path and every injected test double are byte-identical. New test file: the window is fetched once with the flag on (counting fake fetch), the merged results equal the two-fetch results, a fetch failure surfaces exactly as before in both providers, and the flag-off path performs no fetch. If the fix needs a file outside the allowed paths, STOP and report the file and why.",
+  "business_reason": "DB-273: with the live spatial provider switched on, the same street window is fetched twice per request; the flag is off by default, so this is a latent cost and consistency risk fixed before any production switch.",
+  "inputs": [
+    "docs/DISCOVERY_BACKLOG.md",
+    "services/api/app/spatial/site_geometry/live_streets.py",
+    "services/api/tests/api/test_study_live_geometry.py",
+    "services/api/tests/api/test_study_inputs_live.py"
+  ],
+  "outputs": [
+    "services/api/app/api/v1/study_live_geometry.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/tests/api/test_study_street_window_single_fetch.py",
+    "project-control/reports/M5-T203-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T170"
+  ],
+  "allowed_paths": [
+    "services/api/app/api/v1/study_live_geometry.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/tests/api/test_study_street_window_single_fetch.py",
+    "project-control/reports/M5-T203-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/config.py",
+    "services/api/app/spatial/",
+    "services/api/app/connectors/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "packages/contracts/",
+    "apps/",
+    "docs/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "flag on, a counting fake street fetch",
+      "when": "one results request runs both providers",
+      "then": "the window is fetched once"
+    },
+    {
+      "id": "S2",
+      "given": "the same inputs",
+      "when": "compared with the two-fetch behaviour",
+      "then": "site geometry and street data equal"
+    },
+    {
+      "id": "S3",
+      "given": "the fetch raises or returns unavailable",
+      "when": "both providers run",
+      "then": "each surfaces the same typed result as before"
+    },
+    {
+      "id": "S4",
+      "given": "flag off",
+      "when": "a request runs",
+      "then": "no fetch; output byte-identical"
+    },
+    {
+      "id": "S5",
+      "given": "mutation: the shared fetch removed",
+      "when": "S1 runs",
+      "then": "fails (red and green in the report)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "study_inputs.py may be large: check modularity before growing it; prefer the smallest change",
+    "No live network in tests; injected fakes only"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:52:47.320405+00:00",
+  "updated_at": "2026-10-15T23:52:47.725677+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R287"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:52:47.320629+00:00",
+  "path_notes": "No in-flight task lists these files; integrate after the whole api suite passes on the increment.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/api/test_study_live_geometry.py tests/api/test_study_inputs_live.py tests/api/test_study_street_window_single_fetch.py tests/api/test_study_live_outline_provider.py",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave29"
+}

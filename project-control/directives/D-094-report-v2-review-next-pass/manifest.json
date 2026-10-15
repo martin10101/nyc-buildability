@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T23:52:42+00:00",
+ "updated_at": "2026-10-15T23:52:47+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -339,7 +339,7 @@
   "D-094-R315"
  ],
  "requirements_id_digest_sha256": "36f3b1e3902340b3f230249e0c47cc996d39a20424b4aab97a3147f1c1602ada",
- "requirements_content_digest_sha256": "919615046053c1351f73310930db507c8539fae0d71eb9d321704696ba1c9e47",
+ "requirements_content_digest_sha256": "05c77c8b7564ce7de1ab6a136a17cb988bb59eed9eef03b83dc7606a9ef517a6",
  "sources": [
   {
    "file": "source-001.md",
@@ -684,7 +684,8 @@
   "M5-T197",
   "M5-T198",
   "M0-T198",
-  "M5-T202"
+  "M5-T202",
+  "M5-T203"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1215,6 +1216,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T202 (fitted two-zone illustration on the website, not mounted) to R088, R091, R092, R093, R094, R095, R096, R247 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T23:52:47+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T203 (DB-273: one shared street-window fetch behind the live spatial flag) to R287 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
