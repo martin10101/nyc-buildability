@@ -225,8 +225,8 @@
     "directive-compliance-verifier",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK 1 (top, correction 1): the work order's '103.88 = city map outline (GIS)' example is FALSE at bb5c02b9 (103.88/lot_front_ft is approximate_tax_map; the gis basis is the 10,387.99 lot_outline_area). Do NOT assert it. Read value->basis pairs from the regenerated input_facts and assert the nine-bases labels + G-10. Preserve the work-order-vs-fixture conflict (D-093), do not reconcile silently.",
     "RISK 2 (serial, dispositive): readers.py is shared with M5-T170 AND both are in NB-01 code_paths; spec-M5-T170 RISK 6 says M5-T169 reads readers.py after M5-T170 lands; work order line 912 declares M5-T170 a dependency. No split is possible. Contract base = the wave-25/26 head AFTER M5-T170 is accepted and integrated.",
@@ -238,7 +238,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:18.105725+00:00",
-  "updated_at": "2026-10-15T12:22:57.537902+00:00",
+  "updated_at": "2026-10-15T13:10:16.068640+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -303,5 +303,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T13:10:16.068409+00:00"
 }
