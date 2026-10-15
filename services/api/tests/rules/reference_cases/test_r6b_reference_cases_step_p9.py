@@ -22,8 +22,12 @@ independent comparer (-25). These tests prove, one per input state:
   eligibility caveat; no forbidden present-tense "not captured" wording appears.
 * S6 - every quantity carries exactly one of the nine bases (equal to the
   authoritative set); the recorded 10,075 and the GIS 10,387.99 are never combined.
-* S7 - the arithmetic recomputes exactly (24,180; 4,030; 35; 20,150; 8,060; 6,045);
-  the 24-11 rows carry table_assertion null; a changed operand is caught.
+* S7 - the arithmetic recomputes exactly (24,180; 4,030; 35; 20,150); the 24-11 rows
+  carry table_assertion null; a changed operand is caught. The whole-lot
+  community-facility footprint is NOT a single figure: it stays not known (the lot
+  spans a corner portion and a strip beyond the 100-foot corner reach, so 0.80 and 0.60
+  are portion rates); a settled row giving 6,045, and a whole-lot footprint recorded
+  from a portion rate, are each refused.
 * S8 - no unconditional "no rear yard"; the corner waiver names its condition.
 * S9 - the case is wired in (CASE_IDS, REQUIRED_BASE_IDS, README, the page
   byte-identical, program_result_errors empty, other cases byte-stable, support .py
@@ -207,6 +211,62 @@ def test_a_step_p9_value_where_the_readings_differ_is_refused():
 
 
 # --------------------------------------------------------------------------
+# S4/S6 - the whole-lot community-facility footprint is not a portion-rate figure
+# --------------------------------------------------------------------------
+def test_the_footprint_row_stays_not_known_with_the_portion_areas_as_the_gap():
+    # Clean: the whole-lot community-facility footprint is not settled, and the row names
+    # the portion areas (within / beyond the 100-foot corner reach) as the missing fact.
+    assert step_p9.portion_footprint_errors(CID, CASES[CID]) == []
+    r = lib.load_row(CID, "opt67-cf-max-footprint")
+    assert r["kind"] == "not_known"
+    assert r["value"] is None
+    reason = r["reason"].lower()
+    assert "kind of gap" in reason
+    assert "missing fact about the property" in reason
+    assert "100-foot corner reach" in reason
+    # no settled quantity, and no 24-11-rate-times-whole-lot arithmetic, survives.
+    row = _row("opt67-cf-max-footprint")
+    assert row["quantities"] == []
+    assert row["arithmetic"] == []
+
+
+def test_a_settled_footprint_row_giving_6045_is_refused():
+    # A settled (value) row that records 6,045 sq ft (0.60 x the whole lot) as a footprint
+    # is refused: the interior/through rate on the whole lot is not a whole-lot maximum.
+    data = copy.deepcopy(CASES[CID])
+    row = next(r for r in data["rows"] if r["row_id"] == "opt67-cf-max-footprint")
+    row["expected"]["kind"] = "value"
+    row["expected"]["value"] = "6,045 sq ft on the interior or through portion"
+    row["expected"]["reason"] = ""
+    row["quantities"] = [{"name": "Interior/through-portion maximum footprint",
+                          "value": "6,045", "unit": "sq ft", "basis": "derived"}]
+    errs = step_p9.portion_footprint_errors(CID, data)
+    assert errs and any("6,045" in m and "opt67-cf-max-footprint" in m for m in errs), errs
+    # the must-stay-not-known guard also refuses flipping the row to a value.
+    assert any("opt67-cf-max-footprint" in m
+               for m in step_p9.must_stay_not_known_errors(CID, data)), errs
+
+
+def test_a_whole_lot_footprint_recorded_from_a_portion_rate_is_refused():
+    # An arithmetic step that multiplies the whole recorded lot area by a portion coverage
+    # rate (0.80 corner / 0.60 interior) and records the product as the footprint is refused.
+    data = copy.deepcopy(CASES[CID])
+    row = next(r for r in data["rows"] if r["row_id"] == "opt67-cf-max-footprint")
+    row["expected"]["kind"] = "value"
+    row["expected"]["value"] = "8,060 sq ft (a whole-lot maximum footprint)"
+    row["expected"]["reason"] = ""
+    row["arithmetic"] = [{
+        "label": "Whole-lot maximum footprint",
+        "operands": [{"name": "corner lot-coverage fraction", "value": "0.80"},
+                     {"name": "recorded lot area", "value": "10075"}],
+        "operation": "multiply", "rounding": "none", "result": "8060",
+    }]
+    errs = step_p9.portion_footprint_errors(CID, data)
+    assert errs and any("portion coverage rate" in m and "opt67-cf-max-footprint" in m
+                        for m in errs), errs
+
+
+# --------------------------------------------------------------------------
 # S5 - eligibility caveat and forbidden present-tense wording
 # --------------------------------------------------------------------------
 def test_eligibility_rows_carry_the_caveat():
@@ -296,7 +356,7 @@ def test_recorded_and_gis_areas_are_never_combined():
 # --------------------------------------------------------------------------
 def test_step_p9_arithmetic_recomputes():
     for rid in ("opt2-max-residential-fa", "opt2-uap-affordable-fa", "opt2-max-dwelling-units",
-                "opt6-cf-max-fa", "opt6-combined-max-fa", "opt67-cf-max-footprint",
+                "opt6-cf-max-fa", "opt6-combined-max-fa",
                 "opt2-vs-option-1", "opt3-vs-option-1"):
         assert lib.recompute_row_errors(CID, _row(rid)) == [], rid
     checks = [
@@ -304,8 +364,6 @@ def test_step_p9_arithmetic_recomputes():
         ("opt2-uap-affordable-fa", "Affordable floor area", "4030"),
         ("opt2-max-dwelling-units", "Maximum dwelling units", "35"),
         ("opt6-cf-max-fa", "Community-facility maximum floor area", "20150"),
-        ("opt67-cf-max-footprint", "Corner-portion maximum footprint", "8060"),
-        ("opt67-cf-max-footprint", "Interior-portion maximum footprint", "6045"),
     ]
     for rid, label, want in checks:
         assert _step_result(rid, label) == Decimal(want), (rid, label)

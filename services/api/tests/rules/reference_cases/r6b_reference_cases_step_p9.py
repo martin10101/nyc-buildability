@@ -115,11 +115,25 @@ MUST_STAY_NOT_KNOWN = {
         "opt2-mih-area-membership",
         "opt3-max-dwelling-units",
         "opt6-dwelling-units",
+        "opt67-cf-max-footprint",
         "opt67-which-uses-not-known",
         "opt67-street-wall",
         "real-lot-missing-facts",
     },
 }
+
+# The whole-lot community-facility footprint is not a single figure on this lot. The
+# lot spans a corner portion (within 100 feet of each street line) and a strip beyond
+# the 100-foot corner reach, so the 24-11 corner rate 0.80 and interior/through rate
+# 0.60 are each a PORTION rate, not a whole-lot rate; the portion areas are a missing
+# fact about the property (see the settled residential reading real-lot.json, which
+# records the 23-362 coverage by portion). So the opt67-cf-max-footprint row stays NOT
+# KNOWN, and a settled (value) footprint that records 6,045 or 8,060 sq ft as a
+# whole-lot maximum - or that multiplies the whole recorded lot area by a portion
+# coverage rate and records the product as a footprint - is refused (S4/S6).
+_FOOTPRINT_ROW_ID = "opt67-cf-max-footprint"
+_PORTION_FOOTPRINT_PRODUCTS = {"8060", "6045"}
+_PORTION_COVERAGE_RATES = {"0.80", "0.8", "0.60", "0.6"}
 
 # The qualifying-housing rows (opt2-*/opt3-*) and the community-facility use-permission
 # rows must carry a does_not_establish caveat that the case decides no eligibility (S5).
@@ -370,6 +384,46 @@ def rear_yard_errors(case_id: str, data: dict) -> list[str]:
 
 
 # --------------------------------------------------------------------------
+# S4/S6: the whole-lot community-facility footprint is not a portion-rate figure
+# --------------------------------------------------------------------------
+def portion_footprint_errors(case_id: str, data: dict) -> list[str]:
+    """The opt67-cf-max-footprint row stays NOT KNOWN: the whole-lot community-facility
+    footprint cannot be worked from one 24-11 rate on the whole recorded lot area,
+    because the lot spans a corner portion and a strip beyond the 100-foot corner reach
+    (the portion areas are a missing fact). A settled (value) footprint that records
+    6,045 or 8,060 sq ft as a whole-lot maximum, or an arithmetic step that multiplies
+    the whole recorded lot area by a portion coverage rate (0.80 corner / 0.60 interior)
+    and records the product as this row's footprint, is refused."""
+    if case_id != STEP_P9_CASE_ID:
+        return []
+    errs: list[str] = []
+    for row in data.get("rows", []):
+        if row.get("row_id") != _FOOTPRINT_ROW_ID:
+            continue
+        if row.get("expected", {}).get("kind") != "not_known":
+            errs.append(f"{case_id}/{_FOOTPRINT_ROW_ID}: the whole-lot community-facility "
+                        "footprint is not settled (the corner-portion area and the area beyond "
+                        "the 100-foot corner reach are a missing fact), so it must be 'not "
+                        f"known', not {row.get('expected', {}).get('kind')!r}")
+        for quant in row.get("quantities", []):
+            val = str(quant.get("value", "")).replace(",", "").strip()
+            if val in _PORTION_FOOTPRINT_PRODUCTS:
+                errs.append(f"{case_id}/{_FOOTPRINT_ROW_ID}: quantity {quant.get('name')!r} "
+                            f"records {quant.get('value')!r} sq ft as a settled footprint; it "
+                            "multiplies the whole recorded lot area by one portion's coverage "
+                            "rate, so it is not a whole-lot maximum footprint")
+        for stp in row.get("arithmetic", []):
+            vals = {str(op.get("value", "")).strip() for op in stp.get("operands", [])}
+            if _RECORDED_AREA in vals and (vals & _PORTION_COVERAGE_RATES):
+                errs.append(f"{case_id}/{_FOOTPRINT_ROW_ID}: an arithmetic step multiplies the "
+                            f"whole recorded lot area {_RECORDED_AREA} by a portion coverage rate "
+                            "(0.80 corner / 0.60 interior) and records it as a footprint; the "
+                            "whole-lot maximum footprint is not known (the portion areas are a "
+                            "missing fact about the property)")
+    return errs
+
+
+# --------------------------------------------------------------------------
 # one entry the checker calls (keeps check.py thin: Risk 1)
 # --------------------------------------------------------------------------
 def case_errors(case_id: str, data: dict) -> list[str]:
@@ -380,6 +434,7 @@ def case_errors(case_id: str, data: dict) -> list[str]:
     errs: list[str] = []
     errs += reading_pair_errors(case_id, data)
     errs += must_stay_not_known_errors(case_id, data)
+    errs += portion_footprint_errors(case_id, data)
     errs += quantity_basis_errors(case_id, data)
     errs += no_mixed_basis_errors(case_id, data)
     errs += eligibility_errors(case_id, data)

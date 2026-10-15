@@ -51,7 +51,11 @@ CID = "placement-building-b"
 # Moved by M5-T184: adding the step-P9 case benchmark-options-2-3-6-7 puts it into this
 # "other" set (CASE_IDS minus placement-building-b), so the blob grew by that case's rows
 # and the digest changed; no existing case's rows changed.
-OTHER_CASES_DIGEST = "106d76df3c1fac9b5ae56d9ed1d635c7953e5d0421ea58ec64021e9f7a7e35a6"
+# Moved again by M5-T184 round 2: the round-2 correction changed two rows of that same
+# benchmark case (opt67-cf-lot-coverage records only the agreed corner 80 percent; the
+# whole-lot opt67-cf-max-footprint becomes not known), so this "other" blob - which includes
+# the benchmark case - changed again; no existing case's rows changed.
+OTHER_CASES_DIGEST = "8af6b2d408d532bccb77b98adc46ed5ffcac9c1e70601d6280cc2300bfd7dc4d"
 
 
 def _row(rid):

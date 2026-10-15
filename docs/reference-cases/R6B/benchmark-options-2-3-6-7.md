@@ -686,7 +686,7 @@ Where this stands in the independent reading: return-independent-hand-calculatio
 
 What this row does not establish: It records that a community facility alone has no dwelling units; it decides no community-facility use permission. A draft reading by AI helpers, not professionally reviewed.
 
-### opt67-cf-lot-coverage - Options 6 and 7 - community-facility lot coverage (corner / interior)
+### opt67-cf-lot-coverage - Options 6 and 7 - community-facility lot coverage on the corner portion (the agreed figure); the interior/through rate is not settled on both readings
 
 Facts used:
 
@@ -700,20 +700,19 @@ Law relied on:
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11.
   - Quoted: "the maximum #floor area ratio# and maximum percent of #lot coverage# for a #community facility# #use# shall not exceed the #floor area ratio# and #lot coverage# set forth in the table in this Section."
 
-Why the rule applies: ZR 24-11's R6B contextual table row sets the maximum community-facility lot coverage at 80 percent on the corner portion and 60 percent on the interior/through portion (read from the capture's plural 'tables' structure).
+Why the rule applies: ZR 24-11's R6B contextual table row sets the community-facility corner-lot coverage at 80 percent (the capture's plural 'tables' row reads 2.00 / 80 / 60 for FAR / corner / interior-or-through). Both readings give the corner 80 percent on the same basis, so it is the agreed figure. The same table row's interior-or-through column reads 60 percent, but that interior/through rate is not settled on both readings' words (see does_not_establish).
 
-Expected value: 80 percent on the corner portion / 60 percent on the interior or through portion
+Expected value: 80 percent on the corner portion (the agreed figure); the interior/through rate is not settled on both readings' words
 
-Where this stands in the independent reading: return-independent-hand-calculation-23.md (both read 24-11 R6B contextual row: corner 80 percent, interior 60 percent; the numbers live in the capture's plural 'tables' structure, reviewer-eyeballed); return-independent-hand-calculation-24.md (both read 24-11 R6B contextual row: corner 80 percent, interior 60 percent; the numbers live in the capture's plural 'tables' structure, reviewer-eyeballed); both readings agree on the same value and the same basis, confirmed by the comparer return-independent-hand-calculation-25.md.
+Where this stands in the independent reading: return-independent-hand-calculation-23.md (reading A: 24-11 R6B contextual row, corner 80 percent and interior/through 60 percent); return-independent-hand-calculation-24.md (reading B: its worked table gives the corner 80 percent, and its conflicts note quotes the 24-11 R6B capture row '2.00 / 80 / 60' as the law, not an interior worked value); both readings give the corner 80 percent on the same basis, so it is the agreed figure; the comparer return-independent-hand-calculation-25.md confirms corner 80 / interior 60 against the 24-11 capture but is an adjudicator, not a value source. The interior/through rate is therefore not settled on both readings' words.
 
-What this row does not establish: It states the permitted community-facility lot-coverage maxima by portion; these are lower than the residential 100 / 80 of ZR 23-362. The 80 / 60 live in the 24-11 table row, reviewer-eyeballed. A draft reading by AI helpers, not professionally reviewed.
+What this row does not establish: It states the agreed community-facility corner-lot coverage maximum (80 percent), lower than the residential 100 percent of ZR 23-362. The interior/through-portion rate is NOT settled on both readings: reading A gives 60 percent; reading B gives only the corner portion in its worked table and quotes the 24-11 capture cell as the law; the comparer confirms the capture but is not a value source. The 24-11 R6B table cell reads 60 percent on the interior/through column, which may be quoted as the law; what would settle the rate is reading B applying it to this lot's beyond-100-foot portion as its own worked value. A draft reading by AI helpers, not professionally reviewed.
 
 Measured quantities, each on one basis:
 
 - Corner-portion community-facility lot coverage = 80 percent (basis: law).
-- Interior/through-portion community-facility lot coverage = 60 percent (basis: law).
 
-### opt67-cf-max-footprint - Options 6 and 7 - community-facility maximum footprint by portion
+### opt67-cf-max-footprint - Options 6 and 7 - the whole-lot community-facility maximum footprint (not settled)
 
 Facts used:
 
@@ -727,23 +726,13 @@ Law relied on:
   - Official page: https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11.
   - Quoted: "the maximum #floor area ratio# and maximum percent of #lot coverage# for a #community facility# #use# shall not exceed the #floor area ratio# and #lot coverage# set forth in the table in this Section."
 
-Why the rule applies: Applying the 24-11 community-facility lot-coverage maxima to the recorded lot area gives the maximum footprint per level: 0.80 x the lot area on the corner portion, 0.60 x the lot area on the interior portion.
+Why the rule applies: A single 24-11 lot-coverage rate applied to the whole recorded lot area does not give the whole-lot community-facility maximum footprint: the lot has a corner portion (within 100 feet of each street line) and a strip beyond the 100-foot corner reach, so the corner rate 0.80 and the interior/through rate 0.60 are each a portion rate, not a whole-lot rate. The settled residential reading records the 23-362 coverage on this lot by portion, the lot reaching about 103.9 feet from the 215 Place line, beyond the 100-foot corner reach.
 
-Working, step by step:
+Expected value: not known. Not known. Both readers worked a footprint by multiplying the WHOLE recorded lot area by one portion's coverage rate (0.80 x 10,075 = 8,060 sq ft at the corner rate, which both readers gave; 0.60 x 10,075 = 6,045 sq ft at the interior/through rate, which only reading A gave), but neither product is the whole-lot community-facility maximum footprint, because the lot spans a corner portion within 100 feet of each street line and a strip beyond the 100-foot corner reach (the settled residential reading real-lot.json records the 23-362 coverage on this lot by portion, the lot reaching about 103.9 feet from the 215 Place line). KIND OF GAP: a missing fact about the property - the area of the corner portion and the area of the portion beyond the 100-foot corner reach (a survey or a measured plan of the lot), which neither reading had; without them the whole-lot maximum footprint cannot be worked.
 
-- Corner-portion maximum footprint: 0.80 (corner lot-coverage fraction) x 10,075 (recorded lot area) = 8,060
-- Interior-portion maximum footprint: 0.60 (interior lot-coverage fraction) x 10,075 (recorded lot area) = 6,045
+Where this stands in the independent reading: return-independent-hand-calculation-23.md (reading A: 8,060 = 0.80 x 10,075 on the corner portion and 6,045 = 0.60 x 10,075 on the interior/through portion); return-independent-hand-calculation-24.md (reading B: 8,060 = 0.80 x 10,075, the corner portion only); both readers multiplied the WHOLE recorded lot area by one portion's rate, so neither is the whole-lot maximum footprint; the comparer return-independent-hand-calculation-25.md confirms the 24-11 rates against the capture but is not a value source. The whole-lot community-facility footprint is not settled (the portion areas are a missing fact about the property).
 
-Expected value: 8,060 sq ft on the corner portion (0.80 x 10,075) and 6,045 sq ft on the interior or through portion (0.60 x 10,075), per level
-
-Where this stands in the independent reading: return-independent-hand-calculation-23.md (8,060 = 0.80 x 10,075; 6,045 = 0.60 x 10,075; 24-11 lot-coverage maxima on the recorded lot area); return-independent-hand-calculation-24.md (8,060 = 0.80 x 10,075; 6,045 = 0.60 x 10,075; 24-11 lot-coverage maxima on the recorded lot area); both readings agree on the same value and the same basis, confirmed by the comparer return-independent-hand-calculation-25.md.
-
-What this row does not establish: It states the permitted maximum footprint per level by portion on the recorded lot area under Z1; it is not a built footprint. A draft reading by AI helpers, not professionally reviewed.
-
-Measured quantities, each on one basis:
-
-- Corner-portion maximum footprint = 8,060 sq ft (basis: derived).
-- Interior/through-portion maximum footprint = 6,045 sq ft (basis: derived).
+What this row does not establish: It records no whole-lot community-facility maximum footprint: neither 8,060 nor 6,045 sq ft is a whole-lot maximum, because each multiplies the whole recorded lot area by a single portion's coverage rate while the lot spans a corner portion and a strip beyond the 100-foot corner reach. A draft reading by AI helpers, not professionally reviewed.
 
 ### opt67-mixed-level-coverage - Option 6 - lot coverage on a level with both uses
 
@@ -1168,4 +1157,5 @@ What this row does not establish: It names the owed options and why they are out
 | Date | Change | By |
 |---|---|---|
 | 2026-10-15 | Case created (task M5-T184) from two independent readings per option (option 2: provenance -19 and -20; option 3: -21 and -22; options 6 and 7: -23 and -24) and an independent comparer (-25), each worked from a detached read-only checkout at bb5c02b9. A value or figure is recorded for options 2, 3, 6 and 7 only where both readings of that option agree on the same value and the same basis, confirmed by the comparer, and the cited section is captured in docs/research/zr-snapshots/v1; every disagreement, unresolved basis, eligibility and missing fact stays not known. Options 5, 8 and 9-10 are named as owed (they rest on sections not yet captured; capture task M3-T010). No value comes from a program run; no human verdict is entered. | rules-engineer (M5-T184) |
+| 2026-10-15 | Round-2 correction (task M5-T184) to the two community-facility lot-coverage rows, from an independent pre-integration check. opt67-cf-lot-coverage now records only the agreed corner 80 percent (both readings give it on the same basis); the interior/through 60 percent is recorded as not settled on both readings' words (reading A gives it; reading B gives only the corner portion in its worked table and quotes the 24-11 capture cell as the law; the comparer confirms the capture but is not a value source). opt67-cf-max-footprint becomes not known: both readers multiplied the whole recorded lot area by one portion's coverage rate (8,060 = 0.80 x 10,075; 6,045 = 0.60 x 10,075, reading A only), but neither is a whole-lot maximum, because the lot spans a corner portion and a strip beyond the 100-foot corner reach; the portion areas are a missing fact about the property. 6,045 removed from every settled place. | rules-engineer (M5-T184 round 2) |
 
