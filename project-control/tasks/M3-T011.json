@@ -212,7 +212,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "RISK 1: 22-131 carries two symbol tables (A and B) keyed by Residence District with a legend (0, *, S, P, E, G, B ...). Carry the tables cell-by-cell in the structured tables field with a placeholder token in the excerpt and quote the section's OWN legend verbatim (the M3-T010 F1 lesson). Do not read any cell as an R6B permission for any use -- that is a reading, out of scope.",
     "RISK 2: 33-303 carries two diagrams (33-303a, 33-303c) that are images. Record them as an image/pointer note the way Appendix F is captured (pointer only); never transcribe, redraw, or state a dimension from a figure.",
@@ -223,7 +223,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:13:04.430728+00:00",
-  "updated_at": "2026-10-15T10:13:09.124338+00:00",
+  "updated_at": "2026-10-15T11:31:03.563950+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -250,6 +250,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted; G0 PASS (plan return-plan-captures-owed.md; judge corrections applied)"
+    },
+    {
+      "at": "2026-10-15T11:31:03.563822+00:00",
+      "agent": "official-source-researcher",
+      "percent": 60,
+      "status": "claimed",
+      "message": "researcher round 1 (20 captures + library capture states); the builder's commit integrated as cebcf14c (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
