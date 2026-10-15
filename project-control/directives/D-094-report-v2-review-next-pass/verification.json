@@ -2779,36 +2779,61 @@
     "D-094-R102"
    ],
    "producer": "rules-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "46d2d0c1aca6c5b72b273a11c6d8fce6ac36b5a4",
+   "reviewed_manifest_sha256": "29177f9b4192ad1a31cb79745dd9679473e151554c37d10a4bffcfb57e2977b8",
    "requirements": [
     {
      "id": "D-094-R007",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source confirmed: source-001.md lines 49/71/212 carry verbatim \"Keep the full report scope; make its main answers much faster to understand\", \"Styling cannot produce the missing analysis\", \"missing building geometry and scenario results\"; the row text is a faithful decomposition.",
+      "This task's share (record the owed scenario analysis for 4 of 11 options) is delivered: cases/benchmark-options-2-3-6-7.json records option 2 (24,180 sq ft at 2.40 FAR, 4,030 affordable FA, 30/45/65 ft, 35 units), option 3 (24,180, 30/45/65, 680 factor removed) and options 6/7 (CF FAR 2.00 / 20,150, corner coverage 80 percent, 30/45/55 ft, yard and combination rules), each from two agreeing sealed readings plus the comparer.",
+      "I independently recomputed the arithmetic on the recorded 10,075 basis: 2.40x10075=24180, 0.40x10075=4030, 24180/680=35.56->35, 2.00x10075=20150, 0.80x10075=8060, 20150/680=29.6->29 \u2014 all exact; no step mixes the GIS 10,387.99 basis.",
+      "Stays open for later work: the page-1 rebuild, concise entry point and \"faster to understand\" layout, and the worked values of options 4, 5, 8, 9-10 and 11 (named as owed; 5/8/9-10 wait on capture task M3-T010) are not in this task.",
+      "Verifier's carry-forward condition met at 46d2d0c1: the task's allowed-path files are identical to those verified at be47c7dc (content identity 29177f9b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (9 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier (review and the delta check of the correction); G4 qa-engineer). DCV report: project-control/reports/M5-T184-DCV.md."
+     ],
+     "reviewed_sha": "46d2d0c1aca6c5b72b273a11c6d8fce6ac36b5a4"
     },
     {
      "id": "D-094-R075",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source confirmed: source-002-amendment.md carries verbatim \"Page 4 Five limitation paragraphs appear before the comparison.\" and \"Most rows describe unfinished calculations, so there is little meaningful comparison yet.\" (classification obligation); the row text faithfully captures it.",
+      "This task's share is the \"meaningful worked results\" the comparison needs: the four options' settled values are twice-read, same-basis, captured-section-cited and arithmetic-exact; I verified each VALUE row's source_reference names BOTH readings of its pair (opt2 -19/-20, opt3 -21/-22, opt6/7 -23/-24) and the shared rows name the comparer -25.",
+      "The genuinely unsettled points are kept not_known with the kind of gap (opt3 max dwelling units, opt6 dwelling units, opt67 street-wall citation split, opt67 interior/through coverage and whole-lot footprint, opt2 coverage/affordable-share/MIH membership, real-lot-missing-facts), so the comparison carries worked results rather than unfinished calculations.",
+      "Stays open for later work: the actual page-4 reorder (comparison before limitations) is task M5-T169, per the evidence map; this task supplies only the values it will read.",
+      "Verifier's carry-forward condition met at 46d2d0c1: the task's allowed-path files are identical to those verified at be47c7dc (content identity 29177f9b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (9 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier (review and the delta check of the correction); G4 qa-engineer). DCV report: project-control/reports/M5-T184-DCV.md."
+     ],
+     "reviewed_sha": "46d2d0c1aca6c5b72b273a11c6d8fce6ac36b5a4"
     },
     {
      "id": "D-094-R084",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source confirmed: source-002-amendment.md carries verbatim \"Keep all eleven scenarios in the intended scope.\" (classification prohibition); the row text is faithful.",
+      "The case records four options and does not narrow scope: the dedicated options-out-of-scope row reads \"Options 5 (shops with residences), 8 (a split lot with two buildings) and 9-10 (shared housing...) are owed and out of this task... Recording options 2, 3, 6 and 7 here does not narrow the eleven-option scope.\"",
+      "The owed options are also named in the summary, the README row and what_it_does_not_establish; no option or section is removed; options 5/8/9-10 are tied to capture task M3-T010.",
+      "Stays open for later work: the eleven-option report list itself lives on the report/comparison pages (other tasks); this task's only obligation \u2014 not to narrow scope \u2014 is met.",
+      "Verifier's carry-forward condition met at 46d2d0c1: the task's allowed-path files are identical to those verified at be47c7dc (content identity 29177f9b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (9 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier (review and the delta check of the correction); G4 qa-engineer). DCV report: project-control/reports/M5-T184-DCV.md."
+     ],
+     "reviewed_sha": "46d2d0c1aca6c5b72b273a11c6d8fce6ac36b5a4"
     },
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source confirmed: source-004-amendment.md carries verbatim \"Should we start the law library right away?\" and \"Did u tell the session handoff to work on that in next season ?\" (classification decision); the row text faithfully captures the answer to I1.",
+      "This task's share is to feed worked values and per-section capture state to the library option pages while editing no library page: all 43 citations are kind=captured across 26/24 distinct snapshots; I independently confirmed every distinct capture's content_digest_sha256 matches the cited digest and the quoted clause appears in the snapshot's excerpt/table/footnotes (0 mismatches, 0 quotes-not-found).",
+      "Uncaptured sections (23-154, 23-63, 74-902/74-903, 22-131..135) appear only in the prose of not-known / both-readers-did-not-have rows, never as a value basis or formal citation; forbidden_paths includes docs/zoning-law-library/ and the material commits touch no library page.",
+      "Stays open for later work: starting the zoning-law-library lane and the handoff that tells the next session are held by M3-T006..M3-T010 and the session handoff; the library option pages that will consume these values are later work. R102 is bound to M5-T184 only as an upstream source feed.",
+      "Verifier's carry-forward condition met at 46d2d0c1: the task's allowed-path files are identical to those verified at be47c7dc (content identity 29177f9b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (9 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 data-contract-verifier (review and the delta check of the correction); G4 qa-engineer). DCV report: project-control/reports/M5-T184-DCV.md."
+     ],
+     "reviewed_sha": "46d2d0c1aca6c5b72b273a11c6d8fce6ac36b5a4"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T08:53:46+00:00"
   }
  ]
 }
