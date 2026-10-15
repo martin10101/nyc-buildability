@@ -327,7 +327,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T19:36:20.882932+00:00",
-  "updated_at": "2026-10-15T00:38:53.601006+00:00",
+  "updated_at": "2026-10-15T02:18:55.838411+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -379,6 +379,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "rounds 2 and 3 integrated as 59a1b9bb (cherry-pick of d6bc41e7 = 8fa1714c) and 11cdb085 (cherry-pick of ad9079f4); the whole api pytest 9767 passed exit 0 re-run by an independent read-only check; next: the reviews"
+    },
+    {
+      "at": "2026-10-15T02:18:55.838315+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 4: street data carried on StudyInputs and threaded by the results route (the preview and the browser-test harness now emit the 1.5.0 rear-yard result); page 6's rear-yard line follows whether the engine applied the checks, so pages 6 and 8 agree on every document; the web journey pin to 1.5.0; pre-integration check READY (whole api 9776, whole web vitest 2704); the builder's commit integrated as d0611800 (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
