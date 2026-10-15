@@ -100,7 +100,7 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -108,8 +108,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (two footprints): page-6 zones sit in placement.outline (printed tax map, 100.76 x 66.66); page 4 draws floor_plates (city map, 103.88 x 64.66); the caption names the basis so they are never read as one surveyed plan.",
     "RISK 2 (page fit): kernel 468 x 290 pt and stack 360 x 358 pt cannot sit side by side within 515.9 pt; page 6 may take two printed pages (DB-270); W measures; no block alone on a blank page.",
@@ -117,7 +117,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:44.287519+00:00",
-  "updated_at": "2026-10-15T23:40:44.761419+00:00",
+  "updated_at": "2026-10-15T23:40:47.849070+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -165,5 +165,14 @@
     "python tools/modularity_check.py --check",
     "page-6 HTML for the benchmark (build_report_html with LANE_E) in scratch for the visual review"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:40:47.848975+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed at the wave-29 base; builder dispatched"
+    }
+  ]
 }
