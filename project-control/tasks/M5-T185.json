@@ -164,14 +164,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (thin wiring, mandatory): r6b_reference_cases_check.py is at 594 lines; the 600-line guard fails any .py >= 600. The step-P10 wiring must add only ~3 lines to check.py (1 import + 1 call to step_p10.case_errors in validate_case + 1 call to step_p10.reading_digest_errors in provenance_errors) -> ~597, under 600 but tight. ALL per-row/per-case guards live behind ONE step_p10.case_errors(case_id,data) and all reading-digest guards behind ONE entry; do NOT name it provenance_errors (check.py already has one) - use reading_digest_errors wrapped by step_p10. step_p10 itself < 600.",
     "RISK 2 (plural 'tables' key): 33-121 (commercial FAR), 23-12 (min lot area/width) and 23-371 carry their numbers under the plural 'tables' key; the checker's table_assertion reads singular 'table' (None) and would fail 'has no table'. Record 33-121 = 2.00, 23-12 = 2,375/25 & 1,700/18 (recorded only as 'not binding'), 23-371 = 40 ft as arithmetic operands / quote-only + a verbatim quote, table_assertion:null; a reviewer eyeballs the numbers against each snapshot's 'tables'. 23-22 and 23-432 carry singular 'table' -> table_assertion works. 35-31, 25-221, 23-51, 32-161, 34-231, 23-335, 54-311 are prose-only -> quote-only.",
@@ -185,7 +185,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:32.727219+00:00",
-  "updated_at": "2026-10-15T10:02:33.182343+00:00",
+  "updated_at": "2026-10-15T10:02:36.386989+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -207,5 +207,14 @@
     "python3 tools/modularity_check.py --check",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T10:02:36.386866+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted; G0 PASS (plan return-plan-case-5-8-9-10.md, judge ADOPT WITH CORRECTIONS applied)"
+    }
+  ]
 }
