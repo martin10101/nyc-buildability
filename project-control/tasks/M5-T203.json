@@ -75,22 +75,22 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "study_inputs.py may be large: check modularity before growing it; prefer the smallest change",
     "No live network in tests; injected fakes only"
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:52:47.320405+00:00",
-  "updated_at": "2026-10-15T23:52:47.725677+00:00",
+  "updated_at": "2026-10-15T23:52:50.794139+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -107,5 +107,14 @@
     "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/api/test_study_live_geometry.py tests/api/test_study_inputs_live.py tests/api/test_study_street_window_single_fetch.py tests/api/test_study_live_outline_provider.py",
     "python3 tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:52:50.794025+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed; builder dispatched"
+    }
+  ]
 }
