@@ -701,3 +701,5 @@ Sweep 2026-10-15 (M5-T169 and M5-T186 acceptance seam, session 2026-10-15b): DB-
 Sweep 2026-10-15 (wave-28 contract seam, session 2026-10-15b, main 86a450d4 after the wave-27 merge): DB-248 QUEUED(M5-T172, its way rule S10); DB-260 QUEUED(M5-T172, RISK B5: 35.31 ft); DB-279 WATCH (added: the two placement-module advisories wait for the next edit of those modules); DB-276 OPEN (its task M3-T013 is contracted next in this seam); DB-277 and DB-278 OPEN (M5-T189 next in this seam); DB-245 QUEUED(M5-T180), serialised after M5-T172 (both regenerate the benchmark); DB-241 and DB-242 QUEUED(M5-T170) are checked against the accepted M5-T170 at the next seam; other open and watch rows unchanged.
 
 Sweep 2026-10-15 (wave-28 contract seam, continued): DB-277 and DB-278 QUEUED(M5-T189).
+
+Sweep 2026-10-15 (wave-28 contract seam, continued): DB-276 QUEUED(M3-T013).

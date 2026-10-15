@@ -1129,6 +1129,40 @@
     }
    ],
    "verified_at": "2026-10-15T12:08:28+00:00"
+  },
+  {
+   "directive_id": "D-093",
+   "task_id": "M3-T013",
+   "applicable_requirement_ids": [
+    "D-093-R043",
+    "D-093-R051",
+    "D-093-R052"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-093-R043",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R051",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R052",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }
