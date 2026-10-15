@@ -60,7 +60,7 @@ from .placement_wiring import (
     PlacementInputs,
     _apply_area_allocation,
     _apply_placement,
-    _placement_applied,
+    _placement_drawn,
 )
 from .rear_yard_checks import RearYardAnalysis
 from .result_way_inputs import (
@@ -845,11 +845,15 @@ def emit_three_way_document(
     # by-portion areas when threaded (ruling W1/W13: AGREE shows the footprint and building A).
     # rear_yard_applied (round 4, R136) gates page 6's corner-lot rear-yard not-checked line so it
     # agrees with page 8: kept on a 1.4.0 document, dropped once ZR 23-344 is applied (1.5.0).
+    # placement_applied gates the page-5 'Where the plan sits on the lot' not-checked line (and the
+    # fit-note tail) on the actual placed-AND-drawn outcome - the four lot measures present AND the
+    # geometry supporting the corner footprint (_placement_drawn), the same predicate the plates
+    # draw on - never the four measures alone (S15): a single-frontage lot keeps the line.
     _apply_first_option(
         doc, ways, document, corner_areas=corner_areas, lot_area=lot_area,
         rear_yard_applied=rear_yard_analysis is not None,
         street_wall_applied=_street_wall_applied(envelope_analysis),
-        placement_applied=_placement_applied(placement_inputs),
+        placement_applied=_placement_drawn(doc.get("geometry"), placement_inputs),
     )
 
     # The additive contract-1.5.0 rear-yard emission (M5-T167 steps 3-4). Opt-in: only when the

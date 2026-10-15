@@ -17,7 +17,7 @@ import json
 import re
 from pathlib import Path
 
-from app.drawings.report import build_report_html, open_items, readers
+from app.drawings.report import build_report_html, open_items, page_evidence, readers
 
 _FIXTURES = (
     Path(__file__).resolve().parents[5]
@@ -184,6 +184,33 @@ def test_s8_area_illustration_bar_or_zones_follows_fitted() -> None:
         _load("synthetic_rear_yard_constraints_contract_1_5_0"))))
     assert "zones inside the placed building footprint" in fitted
     assert "proportional bar" in unfitted
+
+
+def _method_block(doc: dict) -> str:
+    text = visible_text(_appendix(build_report_html(doc)))
+    i = text.find("Area-illustration method")
+    return text[i:i + 320] if i != -1 else ""
+
+
+# S14: one case per area-illustration input state. The method never claims the illustration IS
+# shown unless it is actually drawn in the report (M5-T172 S14; the visual reviewer's F2).
+def test_s14_area_illustration_method_three_states(monkeypatch) -> None:
+    # (1) not placed: a document with no area_allocation block -> the method is absent.
+    no_block = visible_text(_appendix(build_report_html(
+        _load("synthetic_building_alternatives_contract_1_4_0"))))
+    assert "Area-illustration method" not in no_block
+    # (2) placed but the illustration is not drawn (this head): the method states HOW it will be
+    #     drawn and never claims it is shown.
+    monkeypatch.setattr(page_evidence, "_area_illustration_drawn", lambda _r: False)
+    not_drawn = _method_block(_load("synthetic_placed_building_contract_1_5_0"))
+    assert "not yet drawn in this report" in not_drawn
+    assert "when drawn it will be shown as zones inside the placed building footprint" in not_drawn
+    assert "; it is shown " not in not_drawn  # no present-tense drawing claim
+    # (3) placed AND drawn (simulated: M5-T173 part B draws it) -> present-tense "it is shown".
+    monkeypatch.setattr(page_evidence, "_area_illustration_drawn", lambda _r: True)
+    drawn = _method_block(_load("synthetic_placed_building_contract_1_5_0"))
+    assert "it is shown as zones inside the placed building footprint" in drawn
+    assert "not yet drawn in this report" not in drawn
 
 
 def test_s8_area_illustration_method_on_the_benchmark() -> None:

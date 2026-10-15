@@ -8,18 +8,18 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: area_allocation
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-15)
+- Revision: 3 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `5cc1f5217930825cbe765d4886c52dd568fb24f93881a9afa4a7fe83001ec7fc`
+- Combined code identity: `fa627706134760304fb213b64de36c98da3e9238f2924f2f2d605ba6469fa98b`
 - Modules:
   - `services/api/app/scenario/three_answers/area_allocation.py` (`c644ec2f243fb95c0e1ca7ced643546039dab21988104e4e63e8f62176c768a4`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c`)
-  - `services/api/app/scenario/three_answers/placement_wiring.py` (`8a600b04bd7cfa3ed0d00242b7a9434b3f86c299a848195d5e2cb86ead63c6c9`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751`)
+  - `services/api/app/scenario/three_answers/placement_wiring.py` (`ab9b2a52ec3e57054e72aafb7b5b149d27edf3571715def119c83e610903f76c`)
 
 ## Law
 

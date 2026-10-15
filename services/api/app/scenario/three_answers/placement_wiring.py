@@ -22,7 +22,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .area_allocation import build_area_allocation
-from .geometry import place_building_on_geometry
+from .geometry import footprint_drawable, place_building_on_geometry
 from .placement import build_placement
 
 __all__ = [
@@ -30,6 +30,7 @@ __all__ = [
     "_apply_area_allocation",
     "_apply_placement",
     "_placement_applied",
+    "_placement_drawn",
 ]
 
 
@@ -68,6 +69,30 @@ def _placement_applied(placement_inputs: PlacementInputs | None) -> bool:
             placement_inputs.gis_depth_ft,
         )
     )
+
+
+def _placement_drawn(geometry: dict | None, placement_inputs: PlacementInputs | None) -> bool:
+    """The ONE placed-AND-drawn predicate the page-5 'Where the plan sits on the lot'
+    not-checked line, the area-allocation ``fitted`` flag and the scenario sheet's not-placed
+    sentence all follow (M5-T172 S15) - never the presence of the four lot measures alone. True
+    only when the four measures are present (so :func:`build_placement` places the building) AND
+    the geometry supports the corner footprint (:func:`footprint_drawable`, the same corner test
+    :func:`place_building_on_geometry` applies, so geometry.floor_plates becomes available). A
+    single-frontage lot carries the four measures but has no corner, so the footprint cannot be
+    drawn: the building is worked out but not placed on the plan, the line stays and ``fitted`` is
+    False. Byte-identical on the benchmark corner lot (both this and the drawn outcome are True)."""
+    if not _placement_applied(placement_inputs) or not isinstance(geometry, dict):
+        return False
+    return footprint_drawable(geometry, placement_inputs.frontage_street_name)
+
+
+def _floor_plates_drawn(doc: dict) -> bool:
+    """True when the engine actually DREW the floor plates on this document (geometry.floor_plates
+    is available) - the placed-and-drawn fact read straight from the emitted document, the same one
+    the scenario sheet's not-placed sentence reads (readers.building_not_placed)."""
+    geometry = doc.get("geometry")
+    plates = geometry.get("floor_plates") if isinstance(geometry, dict) else None
+    return isinstance(plates, dict) and plates.get("status") == "available"
 
 
 def _apply_placement(
@@ -120,9 +145,13 @@ def _placed_floor_to_floor(alternative: dict) -> float | None:
 
 def _apply_area_allocation(doc: dict, *, contract_version: str) -> None:
     """Split every alternative's residential floor area at the one stated share (M5-T172): emitted
-    for every alternative with a floor area, placed or not; fitted is True only when that
-    alternative is placed (the Part-A module carries the arithmetic; the way-layer rule enforces
-    the same cross-key check)."""
+    for every alternative with a floor area, placed or not; fitted is True only when the building
+    is placed AND its footprint was actually drawn (S15), so a single-frontage lot whose plates
+    could not be drawn is emitted but NOT fitted. ``_floor_plates_drawn`` reads the actual outcome
+    from the document (the same fact the not-placed sentence reads), so the fitted flag, the page-5
+    line and the sentence all follow one predicate. The Part-A module carries the arithmetic; the
+    way-layer rule enforces the fitted-only-when-placed cross-key check."""
+    drawn = _floor_plates_drawn(doc)
     for alternative in doc.get("building_alternatives") or []:
         if not isinstance(alternative, dict):
             continue
@@ -130,7 +159,7 @@ def _apply_area_allocation(doc: dict, *, contract_version: str) -> None:
         status = placement.get("status") if isinstance(placement, dict) else None
         allocation = build_area_allocation(
             residential_floor_area_sqft=alternative.get("total_floor_area_sqft"),
-            placement_status=status,
+            placement_status=status if drawn else None,
         )
         if allocation is not None:
             alternative["area_allocation"] = allocation

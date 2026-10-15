@@ -3522,7 +3522,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/geometry.py",
-          "sha256": "d85e1aed33efc9a11ee5f64441d6e2bbfb2e551083c4120dd9b9c49a9e8c9988"
+          "sha256": "19e727ad976b7fc7c4c54faa8c10fa170505ccfd08fd8fa81b5d1c7df464e5bf"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3533,7 +3533,7 @@
           "sha256": "8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83"
         }
       ],
-      "code_identity_sha256": "ec68a62dc2f5671123535ef62d1c45da3c5f505bf7d91aede0e228e31c92df13",
+      "code_identity_sha256": "59c4f454566f21e6917c8dc4cece05968fc64ca9d45ef9a0924021ab7c66641f",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The by-portion lot coverage a corner lot takes: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. Reported through the emitter by how the recorded lot area and the tax-map outline area compare - available with its figures where they agree, withheld where they disagree (the benchmark lot), and withheld (the outline not available) where the lot's tax-map outline is missing.",
@@ -3595,7 +3595,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 11,
+      "revision": 12,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4075,14 +4075,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c"
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "84988fab671a64cca7a362eac73ff223f803344f1d1d0a47a1f361dc13fd8272",
+      "code_identity_sha256": "b4291ffe0f132b1d8626078e6bc1993acb8fe9d634bc0a88d8066fd96b1fd858",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -4148,7 +4148,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 15,
+      "revision": 16,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4275,7 +4275,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c"
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -4294,7 +4294,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "9eef66b41be720bc8a19aaed2d94be70813c553c0ebbeca0554222c1dba8444f",
+      "code_identity_sha256": "11d277ebd04a5dc66bb63022b5aa95fd18192a882c17c25347779dca295798d9",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -4397,7 +4397,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 16,
+      "revision": 17,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4665,18 +4665,18 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c"
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
         },
         {
           "path": "services/api/app/scenario/three_answers/placement_wiring.py",
-          "sha256": "8a600b04bd7cfa3ed0d00242b7a9434b3f86c299a848195d5e2cb86ead63c6c9"
+          "sha256": "ab9b2a52ec3e57054e72aafb7b5b149d27edf3571715def119c83e610903f76c"
         },
         {
           "path": "services/api/app/scenario/three_answers/geometry.py",
-          "sha256": "d85e1aed33efc9a11ee5f64441d6e2bbfb2e551083c4120dd9b9c49a9e8c9988"
+          "sha256": "19e727ad976b7fc7c4c54faa8c10fa170505ccfd08fd8fa81b5d1c7df464e5bf"
         }
       ],
-      "code_identity_sha256": "cc9626ac951b4c95ba914be5b459b39b3c98a9295fedba793dd0a91b0814bf8d",
+      "code_identity_sha256": "c20ebb39d9f54260bea68d32d7f9690091af4e31d395f2e117e3eed46282c9fe",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "An illustrative placement of the worked first building on the lot: a footprint as wide as the full street frontage and as deep as the plate (the zoning floor area per storey) needs, placed in the corner on the street lines. It is drawn on the printed-tax-map basis; the city-map (GIS) outline is used only as a conflict check, and the two bases are never mixed into one figure. The placement is reported on the first building alternative; where a measure needed to place it is missing it is held back (withheld, with no outline).",
@@ -4755,7 +4755,7 @@
         },
         "note": "Its code identity is the four modules that compute (placement.py), emit (three_way_document.py through the thin placement_wiring.py) and draw (geometry.py) the placement. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 2,
+      "revision": 3,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4863,14 +4863,14 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c"
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
         },
         {
           "path": "services/api/app/scenario/three_answers/placement_wiring.py",
-          "sha256": "8a600b04bd7cfa3ed0d00242b7a9434b3f86c299a848195d5e2cb86ead63c6c9"
+          "sha256": "ab9b2a52ec3e57054e72aafb7b5b149d27edf3571715def119c83e610903f76c"
         }
       ],
-      "code_identity_sha256": "5cc1f5217930825cbe765d4886c52dd568fb24f93881a9afa4a7fe83001ec7fc",
+      "code_identity_sha256": "fa627706134760304fb213b64de36c98da3e9238f2924f2f2d605ba6469fa98b",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "An illustrative split of a worked building's residential floor area into apartment area and other (core, circulation, walls, services) area at one stated share. The floor area is the legal maximum (ZR 23-22); the 0.60 apartment-area share is a preliminary assumption chosen by the owner (the low end of a 0.60-0.75 range), not law. It is reported for every building alternative that has a floor area, placed or not; its fitted flag follows whether the building is placed.",
@@ -4934,7 +4934,7 @@
         },
         "note": "Its code identity is area_allocation.py, the emitter (three_way_document.py) and the thin placement_wiring.py. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review."
       },
-      "revision": 2,
+      "revision": 3,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -5609,6 +5609,51 @@
       "event": "implementation_changed",
       "summary": "The placement and area-allocation wiring moved out of three_way_document.py into the new thin module placement_wiring.py (M5-T172 round 2 / S12); three_way_document.py's hash is resynced. The first-building-option assembly and its six-step figures are unchanged. Code identity resynced; no reading changed.",
       "by": "backend-engineer (M5-T172 round 2)"
+    },
+    {
+      "seq": 69,
+      "date": "2026-10-15",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 12,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): geometry.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 70,
+      "date": "2026-10-15",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 16,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 71,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 17,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 72,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-placement",
+      "revision": 3,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): geometry.py, placement_wiring.py, three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 73,
+      "date": "2026-10-15",
+      "entry_id": "calc-area-allocation",
+      "revision": 3,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): placement_wiring.py, three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
     }
   ],
   "coverage_gaps": [

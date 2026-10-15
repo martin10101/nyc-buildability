@@ -137,22 +137,40 @@ def _area_allocation(results: Mapping) -> Mapping | None:
     return None
 
 
+def _area_illustration_drawn(results: Mapping) -> bool:
+    """Whether the two-zone area illustration is actually DRAWN in this report (M5-T172
+    S14). It is not on this head: M5-T173 part B draws it on the scenario sheet. Until
+    then the method states HOW it will be drawn, never that the zones or the bar are
+    shown (no figure exists to point a reader at). The single named predicate M5-T173
+    part B switches on when it draws the illustration; never a guess."""
+    return False
+
+
 def _area_illustration_method(results: Mapping) -> object | None:
     """The area-illustration METHOD (R095/R092), once, when the document carries an
     ``area_allocation`` block: the stated share, the measure, the G-14 conversion
     statement, and the bar-or-zones rule. Absent when there is no block (the benchmark
-    until M5-T172), so the appendix is byte-identical then."""
+    until M5-T172), so the appendix is byte-identical then.
+
+    The method's facts (the share, the measure, the conversion statement) are honest on
+    their own, so the block is KEPT; only the drawing clause is made honest (S14): unless
+    the illustration is actually drawn (:func:`_area_illustration_drawn`) the method says
+    the illustration is not yet drawn and states, in one clause, HOW it will be drawn -
+    never the present-tense 'it is shown', which would send a reader hunting for a figure
+    that is not in the report."""
     block = _area_allocation(results)
     if block is None:
         return None
     share = block.get("share")
     measure = "residential floor area" if block.get("measure") == "residential_floor_area" \
         else str(block.get("measure") or "the building's floor area")
-    shown = ("shown as zones inside the placed building footprint" if block.get("fitted")
-             else "shown as a proportional bar beside the building diagram, not yet fitted")
+    how = ("as zones inside the placed building footprint" if block.get("fitted")
+           else "as a proportional bar beside the building diagram, not yet fitted")
+    drawing = (f"it is shown {how}" if _area_illustration_drawn(results)
+               else f"it is not yet drawn in this report; when drawn it will be shown {how}")
     sentence = (
         f"The area illustration applies one preliminary share ({share}) of the {measure} "
-        f"to split apartment area from other area; it is {shown}. "
+        f"to split apartment area from other area; {drawing}. "
         f"It is illustrative ({block.get('label') or labels.ILLUSTRATIVE}) and rests on no "
         f"reviewed rule of its own. "
         f"The plate measure is stated as: {_G14_CONVERSION}."

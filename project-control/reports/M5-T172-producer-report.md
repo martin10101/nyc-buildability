@@ -233,3 +233,104 @@ One bounded follow-up round. No round-1b result changed; the emitted document is
 | WHOLE api `pytest -q` (one run, under flock) | 0 | **10081 passed, 8 skipped, 0 failed** in 517.55s |
 
 The round-1b 3 failures are now green; the whole api suite is fully green (zero failures).
+
+## Round 3 (S14 + S15) — on top of the scope-correction-3 head `8585b6aa`
+
+One small, bounded correction round closing the two G3 visual findings (F1, F2) and the G3 code
+review's finding 1 (taken as required, S15). No value, reading or label changed; the benchmark
+corner-lot results JSON, the DXF and the kit SVG snapshots are byte-identical (regenerated, zero git
+diff). Only the report's page-5 status line and the appendix method change on the print.
+
+### What changed and why
+
+- **S14 (F1) — page 5 no longer claims a placement the site plan contradicts.** The page-5 chart
+  status (`drawings_embed.allowance_bar_chart_svg`, `services/api/app/drawings/report/drawings_embed.py`)
+  now has three honest states: `Not demonstrated` (nothing placed), `Worked out; not drawn` (placed
+  but the site plan does not draw the footprint — this head) and `Shown on the site plan` (only once
+  the footprint is actually drawn). The drawn condition is the single named predicate
+  `site_plan_draws_placed_footprint()` (returns `False`, documented: the page-4 maps context close
+  frame — `drawings.maps.site_context_plan` — still passes `not_placed_legend=True` and draws no
+  footprint; M5-T173 part B flips this one predicate, reading the scene's drawn state, never a guess).
+  Because the site plan does not draw the footprint on this head, the benchmark page-5 cell reads
+  `Worked out; not drawn`.
+- **S14 (F2) — the appendix method no longer asserts an absent drawing.** `_area_illustration_method`
+  (`services/api/app/drawings/report/page_evidence.py`) keeps the method block (its facts — the share,
+  the measure, the G-14 conversion statement — are honest on their own; CHOICE: keep, not omit, so the
+  method stays documented and the appendix stays short, one reworded clause), but the drawing clause is
+  made honest: unless `_area_illustration_drawn(results)` is true (returns `False`; M5-T173 part B draws
+  the two-zone illustration) it reads `it is not yet drawn in this report; when drawn it will be shown
+  as {zones inside the placed building footprint | a proportional bar …}` — never the present-tense
+  `it is shown`, which sent a reader hunting for a figure that is not in the report.
+- **S15 — one predicate decides 'placed'.** The page-5 `Where the plan sits on the lot` not-checked
+  line (and the fit-note tail), the area-allocation `fitted` flag and the scenario sheet's not-placed
+  sentence now all follow ONE placed-AND-drawn fact — never the four lot measures alone.
+  - `geometry.footprint_drawable(geometry, frontage_street_name)` (new, `geometry.py`) is the corner
+    test `place_building_on_geometry` applies (reuses `_frontage_lines`/`_footprint_outline`): true
+    only when the frontage street and an adjacent street share a corner.
+  - `placement_wiring._placement_drawn(geometry, placement_inputs)` (new) = the four measures present
+    AND `footprint_drawable` — it predicts exactly whether the plates will be drawn.
+  - `three_way_document.emit_three_way_document` now passes `placement_applied=_placement_drawn(...)`
+    to `_apply_first_option` (was `_placement_applied` = four measures alone); `_placement_applied` is
+    no longer imported there.
+  - `_apply_area_allocation` reads the actual drawn outcome from the document
+    (`_floor_plates_drawn`: `geometry.floor_plates.status == "available"`, the same fact
+    `readers.building_not_placed` reads) and passes `placement_status` as placed only when the plates
+    were drawn, so `fitted` is False on a placement whose footprint could not be drawn.
+  - Result (verified by emit probe and the S15 test): a single-frontage lot (four measures present, no
+    corner) keeps the line, has `fitted` False and keeps the not-placed sentence; the corner benchmark
+    is unchanged (line dropped, `fitted` True) — byte-identical.
+- **Register + evidence records resynced (code-identity only, no reading/value changed).** The five
+  calculation entries pinning an edited module were resynced to its new LF sha256 with an
+  `implementation_changed` event each (`calculations_history` seq 69–73): `calc-lot-coverage-by-portion`
+  (rev 11→12, geometry.py), `calc-preliminary-apartment-estimate` (15→16, three_way_document.py),
+  `calc-first-building-option-complete` (16→17, three_way_document.py), `calc-first-placement` (2→3,
+  three_way_document.py + placement_wiring.py + geometry.py), `calc-area-allocation` (2→3,
+  three_way_document.py + placement_wiring.py); Markdown re-rendered by `render_review_register.py
+  --write`. NB-01 (revision 10, unchanged) and NB-06 (revision 5, unchanged) carry three_way_document.py's
+  new hash `cb9695bf…` with a dependency-assessment line recording the S15 predicate change; no reading,
+  value or status changed, so the README status cell and RESEARCH_REQUESTS.md index are untouched
+  (G-13 fires only on a status change). The records' `review_state` stays `stale` for the independent G1
+  delta review (producer ≠ verifier). NB-05 pins only result_way_engine_bridge.py (not edited) and is
+  untouched.
+
+### Real print comparison (TestClient POST /report, benchmark_provider(with_zoning_lot=True, street_on=True) + recorded_pack_provider(window); no server, no ports)
+
+`node apps/web/scripts/print-report-pdf.mjs` → `/tmp/claude-0/M5-T172-r3/report.pdf`; 10 pages, same as
+before. Compared every page with `print-e79ddbc6/report.pdf` via `diff_pages.py`. The two MATERIAL
+content changes, exactly as the brief allows:
+- **page 5:** `Placed on site  Shown on the site plan` → `Placed on site  Worked out; not drawn` (F1).
+- **page 10 (appendix):** `… it is shown as zones inside the placed building footprint. …` → `… it is
+  not yet drawn in this report; when drawn it will be shown as zones inside the placed building
+  footprint. …` (F2).
+
+Every other per-page line in the diff is a print-HARNESS artifact (NOT a code change), identical on all
+10 pages and already documented in the round-1 report: the per-page header reads `Queens block 7334,
+lot 70` (TestClient identity) vs e79ddbc6's `215-16 NORTHERN BOULEVARD, Queens · block 7334, lot 70`
+(the orchestrator's preview print resolves the address), and page 9's run-identity block reads `Code
+commit: unknown` (no git commit env in the TestClient harness) vs e79ddbc6's pinned hash. No page lost
+or gained content; page count stays 10.
+
+### Checks (lanes venv, PYTHONDONTWRITEBYTECODE=1, pytest -p no:cacheprovider; heavy runs under `flock`)
+
+| check | exit | result |
+|---|---|---|
+| `cd services/api && python -m ruff check .` (lanes venv) | 0 | All checks passed |
+| `python tools/modularity_check.py --check` | 0 | failures 0; three_way_document.py in the warn band, NO justify warning (under 750 SLOC) |
+| register renderer `--check` | 0 | register check PASSED (no issues) |
+| `python3 tools/research_record_check.py --check` | 0 | PASS; NB-01/NB-05/NB-06 code_current True |
+| `python3 scripts/lanes/check_lane_paths.py --coverage` | 0 | LANE COVERAGE PASS: 10843 files |
+| journey fixture regen (`UPDATE_JOURNEY_FIXTURE=1`, 2 passed) | 0 | benchmark JSON + DXF + SVG snapshots byte-identical (zero git diff) |
+| touched test files (comparison/appendix/pages/geometry_streets/emit) | 0 | 141 passed |
+| WHOLE api `pytest -q` (one run, under flock) | 0 | **10103 passed, 8 skipped, 0 failed** in 512.09s |
+
+### Mutation proofs (then restored)
+
+1. **drawn predicate forced true (S14).** `site_plan_draws_placed_footprint()` → `return True`:
+   `test_s14_benchmark_placed_on_site_reads_worked_out_not_drawn` FAILED (page 5 said `Shown on the
+   site plan` again; `assert "Worked out; not drawn" in comparison` failed). Restored (drawings_embed.py
+   back to its edited state, LF sha256 `f3456225…`).
+2. **old measures-only predicate restored (S15).** emit line back to
+   `placement_applied=_placement_applied(placement_inputs)`:
+   `test_s15_one_predicate_decides_placed_corner_vs_single_frontage` FAILED
+   (`assert 'Where the plan sits on the lot' in [...]` — the line was dropped on the single-frontage
+   lot). Restored (three_way_document.py sha back to `cb9695bf…`, matching the register/records).

@@ -178,6 +178,23 @@ def place_building_on_geometry(
     ]
 
 
+def footprint_drawable(geometry: dict, frontage_street_name: str) -> bool:
+    """Whether a placed footprint CAN be drawn into this geometry (task M5-T172 S15): the
+    frontage street and an adjacent street share a corner, so :func:`place_building_on_geometry`
+    would set an AVAILABLE ``floor_plates`` layer. False for a single-frontage (non-corner) lot,
+    where the four lot measures may all be present but no corner exists - the building is worked
+    out but not placed on the plan. The result does not depend on the plate size (the footprint
+    depth scales to the frontage), so a nominal positive plate reuses the one ring builder and the
+    same corner test place_building_on_geometry applies; it is the actual-outcome predicate, never
+    a guess."""
+    if not isinstance(geometry, dict) or geometry.get("status") != "available":
+        return False
+    frontage_line, side_line = _frontage_lines(geometry, frontage_street_name)
+    if frontage_line is None:
+        return False
+    return _footprint_outline(frontage_line, side_line, plate_gross_sqft=1.0) is not None
+
+
 def _rectangle(width: float, depth: float) -> list[list[float]]:
     """A closed axis-aligned ring anchored at the origin (a lot corner), feet."""
     return [[0.0, 0.0], [width, 0.0], [width, depth], [0.0, depth], [0.0, 0.0]]

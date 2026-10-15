@@ -8,19 +8,19 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: placement
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 2 (last changed 2026-10-15)
+- Revision: 3 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-side-yard`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `cc9626ac951b4c95ba914be5b459b39b3c98a9295fedba793dd0a91b0814bf8d`
+- Combined code identity: `c20ebb39d9f54260bea68d32d7f9690091af4e31d395f2e117e3eed46282c9fe`
 - Modules:
   - `services/api/app/scenario/three_answers/placement.py` (`faf552ef10482709ee0fe40221c03ee1cd1d1e1b67f75f4c979d3894b93c8e65`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c`)
-  - `services/api/app/scenario/three_answers/placement_wiring.py` (`8a600b04bd7cfa3ed0d00242b7a9434b3f86c299a848195d5e2cb86ead63c6c9`)
-  - `services/api/app/scenario/three_answers/geometry.py` (`d85e1aed33efc9a11ee5f64441d6e2bbfb2e551083c4120dd9b9c49a9e8c9988`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751`)
+  - `services/api/app/scenario/three_answers/placement_wiring.py` (`ab9b2a52ec3e57054e72aafb7b5b149d27edf3571715def119c83e610903f76c`)
+  - `services/api/app/scenario/three_answers/geometry.py` (`19e727ad976b7fc7c4c54faa8c10fa170505ccfd08fd8fa81b5d1c7df464e5bf`)
 
 ## Law
 

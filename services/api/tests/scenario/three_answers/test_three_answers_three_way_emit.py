@@ -16,6 +16,7 @@ OUTSIDE the repository and recorded in the producer report.
 
 from __future__ import annotations
 
+import copy
 import http.client
 import json
 import math
@@ -29,7 +30,7 @@ from app.api.v1.study_read import get_rate_limiter
 from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
 from app.contracts.study_setup_bridge import study_from_study_setup
-from app.drawings.report import build_report_html, constraint_text
+from app.drawings.report import build_report_html, constraint_text, readers
 from app.profile.builder import build_property_profile
 from app.profile.zoning_lot_index import classify_zoning_lot_index, not_read
 from app.resilience.transport import TransportResponse
@@ -73,6 +74,7 @@ from app.scenario.three_answers.three_way_document import (
     STANDARD_UNIT_LIMIT_NOT_AVAILABLE_REASON,
     STANDARD_UNIT_LIMIT_NOT_AVAILABLE_RESOLVED_BY,
     UNIT_ESTIMATE_GIVEN_IN_ALTERNATIVES,
+    PlacementInputs,
     emit_three_way_document,
 )
 from app.scenario.three_answers.three_way_scope_lines import (
@@ -2220,3 +2222,69 @@ def test_v11_4_building_b_not_worked_reason_uses_plain_words_and_plain_numbers()
     assert "step-p6" not in b["reason"].lower()
     assert "step-p6" not in b["resolved_by"].lower()
     assert "the program's method for a first building" in b["resolved_by"]
+
+
+# =========================================================================== S15 one predicate
+_RESULTS_FIXTURES = (
+    Path(__file__).resolve().parents[5]
+    / "packages" / "contracts" / "fixtures" / "valid" / "results"
+)
+_PLACEMENT_INPUTS = PlacementInputs(
+    tax_frontage_ft=100.76, tax_depth_ft=100.0, gis_frontage_ft=103.88, gis_depth_ft=99.97,
+    frontage_street_name="Northern Boulevard",
+)
+_WHERE_THE_PLAN_SITS = "Where the plan sits on the lot"
+
+
+def _emit_with_streets(res, streets: list) -> dict:
+    """Re-emit the benchmark engine document and ways with a given set of drawn streets and the four
+    placement measures. The four measures are ALWAYS present; only the geometry (corner vs single
+    frontage) changes, so the only cause of a not-placed outcome is a missing corner to draw."""
+    engine_doc = copy.deepcopy(res.engine_result.document)
+    engine_doc["geometry"]["streets"] = copy.deepcopy(streets)
+    return emit_three_way_document(
+        engine_doc, res.gathered.ways, corner_areas=res.gathered.corner_areas,
+        lot_area=res.gathered.inputs.area, zoning_lot=res.gathered.inputs.zoning_lot,
+        placement_inputs=_PLACEMENT_INPUTS,
+    )
+
+
+def test_s15_one_predicate_decides_placed_corner_vs_single_frontage() -> None:
+    """S15: one predicate (placement placed AND the plates drawn) decides 'placed'. The page-5
+    'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the
+    scenario sheet's not-placed sentence all follow it - never the presence of the four lot measures
+    alone. Both cases carry the SAME four measures; only the geometry differs.
+
+    Corner lot (the benchmark's two streets): the footprint is drawn, so the line is dropped, fitted
+    is True and the not-placed sentence is gone. Single-frontage lot (one street, no corner): the
+    four measures are present but no footprint can be drawn, so the line is KEPT, fitted is False
+    and the not-placed sentence stays.
+
+    Mutation: restoring the old measures-only predicate (placement_applied=_placement_applied) drops
+    the line on the single-frontage lot and this test fails (it asserts the line is kept)."""
+    real_streets = json.loads(
+        (_RESULTS_FIXTURES / "recorded_215_16_northern_journey.json").read_text("utf-8")
+    )["geometry"]["streets"]
+    with pytest.MonkeyPatch.context() as mp:
+        res = _benchmark_adapter(mp)
+
+    # corner: placed AND drawn - all three consumers say placed.
+    corner = _emit_with_streets(res, real_streets)
+    corner_alt = corner["building_alternatives"][0]
+    assert corner["geometry"]["floor_plates"]["status"] == "available"
+    assert _WHERE_THE_PLAN_SITS not in corner_alt["not_checked"]
+    assert corner_alt["area_allocation"]["fitted"] is True
+    assert readers.building_not_placed(corner) is False
+
+    # single frontage: the four measures are present but no corner, so the footprint is not drawn.
+    single = _emit_with_streets(res, [real_streets[1]])
+    single_alt = single["building_alternatives"][0]
+    # the placement itself is still 'placed' on the printed-tax-map basis (the four measures), but
+    # the plates could not be drawn, so the building is NOT placed on the plan.
+    assert single_alt["placement"]["status"] == "placed"
+    assert single["geometry"]["floor_plates"]["status"] != "available"
+    assert _WHERE_THE_PLAN_SITS in single_alt["not_checked"]  # the not-placed line is kept
+    assert single_alt["area_allocation"]["fitted"] is False  # not fitted (footprint not drawn)
+    assert readers.building_not_placed(single) is True  # the not-placed sentence stays
+    # the fit-note tail agrees with the kept line (it still names where the building sits).
+    assert "where the building sits on the lot" in single_alt["fit_note"]

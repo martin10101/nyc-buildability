@@ -213,9 +213,11 @@ def test_f7_columns_chart_and_units() -> None:
     assert "20,150 sq ft" in text and "FAR 2.0" in text
     assert "24,180 sq ft" in text and "FAR 2.4" in text
     assert "None scheduled" in text
-    # the chart shows the placed-on-site status, never a bar; the benchmark building is now
-    # placed (M5-T172), so it reads "Shown on the site plan" (it read "Not demonstrated" before).
-    assert "Placed on site" in text and "Shown on the site plan" in text
+    # the chart shows the placed-on-site status, never a bar; the benchmark building is placed but
+    # the site plan does not yet draw the footprint (M5-T172 S14; M5-T173 part B draws it), so it
+    # reads "Worked out; not drawn", never "Shown on the site plan" or "Not demonstrated".
+    assert "Placed on site" in text and "Worked out; not drawn" in text
+    assert "Shown on the site plan" not in text
 
 
 # =========================================================================== S6

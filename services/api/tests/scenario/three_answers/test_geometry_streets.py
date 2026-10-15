@@ -106,3 +106,20 @@ def test_s7_no_outline_leaves_streets_absent_and_nothing_invented(monkeypatch) -
     geometry = _emit(monkeypatch, outline=False)["geometry"]
     assert geometry["status"] == "not_available"
     assert "streets" not in geometry
+
+
+# M5-T172 S15: footprint_drawable is the corner test place_building_on_geometry applies.
+def test_s15_footprint_drawable_needs_a_corner() -> None:
+    from app.scenario.three_answers.geometry import footprint_drawable
+
+    corner = {"status": "available", "streets": [
+        {"street": "Main", "frontage_line": [[0.0, 0.0], [100.0, 0.0]]},
+        {"street": "Side", "frontage_line": [[0.0, 0.0], [0.0, 80.0]]},  # shares the (0,0) corner
+    ]}
+    single = {"status": "available", "streets": [
+        {"street": "Main", "frontage_line": [[0.0, 0.0], [100.0, 0.0]]},
+    ]}
+    assert footprint_drawable(corner, "Main") is True  # two streets meet at a corner
+    assert footprint_drawable(single, "Main") is False  # one street, no corner to anchor the ring
+    assert footprint_drawable(corner, "Absent") is False  # the frontage street is not drawn
+    assert footprint_drawable({"status": "not_available"}, "Main") is False  # no geometry at all
