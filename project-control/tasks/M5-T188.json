@@ -35,7 +35,8 @@
     "services/api/tests/drawings/maps/test_constraint_overlay.py",
     "services/api/tests/drawings/maps/test_site_context_close_frame.py",
     "services/api/tests/drawings/report/test_page_one_title_boundary.py",
-    "project-control/reports/M5-T188-producer-report.md"
+    "project-control/reports/M5-T188-producer-report.md",
+    "services/api/app/drawings/maps/close_frame_dimensions.py"
   ],
   "forbidden_paths": [
     "services/api/app/scenario/",
@@ -44,7 +45,6 @@
     "services/api/app/drawings/report/builder.py",
     "services/api/app/drawings/report/drawings_embed.py",
     "services/api/app/drawings/report/page_location.py",
-    "services/api/app/drawings/maps/close_frame_dimensions.py",
     "services/api/app/drawings/maps/neighbourhood_map.py",
     "services/api/app/drawings/maps/block_map.py",
     "services/api/app/drawings/maps/__init__.py",
@@ -113,6 +113,12 @@
       "given": "a CONSTRUCTED established-line close frame (draw_site_context_plan frame='close' with an established rear_yard_100ft_line, or the synthetic fixture)",
       "when": "it is rendered to SVG and saved as the visual artifact",
       "then": "the before image (bb5c02b9) shows the line hidden under its label and the legend row clipped; the after image shows part of the line visible and the legend row fully within the frame; visual-quality-reviewer (G3) inspects these two SVGs"
+    },
+    {
+      "id": "S10",
+      "given": "a 1.5.0 results document whose input_facts carry the street widths (mapped_street_width:<street>, basis gis, from the DCP street center lines), as the benchmark does since M5-T170",
+      "when": "the close-up drawing (report page 4) is drawn",
+      "then": "the street widths are NOT drawn again in the other-basis lot-dimension band (each frontage already carries its '<n> ft mapped width' label); no street width is ever called 'map outline'; the lot's own other-basis figures are unchanged; a test pins it (one test per input state: street-width facts present / absent / a lot fact with gis basis still labelled), and the real print of the benchmark shows page 4 without the two duplicate chips (page-by-page diff against main 76745ade's print)"
     }
   ],
   "required_gates": [
@@ -178,6 +184,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted; G0 PASS (DB-263; pre-check: the page-1 test in a new file)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T10:12:11+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15b, before the builder starts): the owner's report printed from main 76745ade (PDF #3) shows on page 4 two chips '100 ft, map outline' and '60 ft, map outline' in the close-up's other-basis lot-dimension band. A read-only check (session-2026-10-15b/return-check-page4-width-label.md) traced them to close_frame_dimensions.draw_other_basis_dimensions drawing every input fact, which since M5-T170 includes the two mapped_street_width facts (basis gis); the same widths are already labelled '... ft mapped width' on each frontage (site_context_plan.py), so the chips duplicate them with the lot outline's basis word. This task already owns the close-frame polish (constraint_overlay.py, site_context_plan.py); close_frame_dimensions.py moves from forbidden to allowed and scenario S10 is added. Backlog row DB-275. This changes the benchmark's page 4 (the two chips go), which the original packet expected to stay byte-identical; S8's byte-identity now excludes page 4's two chips. No row, gate, reviewer or dependency changes; no production switch changes."
     }
   ]
 }
