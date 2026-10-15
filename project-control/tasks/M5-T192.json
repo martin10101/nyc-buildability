@@ -87,7 +87,7 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -95,15 +95,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1: the section is a renderer, never a law source: no code compares the building with a limit; the setback state on page 6 is part B3's pointer to the appendix item.",
     "RISK 2: the qualifying affordable/senior heights (65 ft) are not drawn for the standard Building B."
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:38.611579+00:00",
-  "updated_at": "2026-10-15T23:40:39.074532+00:00",
+  "updated_at": "2026-10-15T23:40:42.200082+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -125,5 +125,14 @@
     "python tools/modularity_check.py --check",
     "picture of the benchmark section in scratch for the visual review"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:40:42.199955+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed at the wave-29 base; builder dispatched"
+    }
+  ]
 }
