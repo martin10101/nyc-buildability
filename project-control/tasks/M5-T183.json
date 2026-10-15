@@ -139,7 +139,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "RISK 1 (parallel safety with M5-T170): the two synthetic 1.5.0 fixtures Part A renders from are in M5-T170's allowed_paths. Part A only READS them, so there is no write-write collision, but if M5-T170 changed their area_allocation/placement blocks or re-serialised them, Part A's snapshots would go stale. M5-T170's edits to these fixtures are ADDITIVE (envelope_rows/constraint_lines) and do not touch area_allocation/placement; G0 must confirm this. If M5-T170 cannot guarantee it, sequence Part A AFTER M5-T170 instead of beside it.",
     "RISK 2 (R091 contradiction): the design contract fixes the real report at 60% while the fixtures carry 0.65/0.70. The kernel is data-driven (round(share*100)); the 60% is enforced upstream. G0 records this responsibility split so a reviewer does not flag a token mismatch.",
@@ -149,7 +149,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:50:00.366986+00:00",
-  "updated_at": "2026-10-15T04:50:04.664674+00:00",
+  "updated_at": "2026-10-15T06:01:45.000059+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -186,6 +186,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed on task/wave26-envelope-constraints beside M5-T170 and M5-T182 (no shared file); the builder starts from the claim head"
+    },
+    {
+      "at": "2026-10-15T06:01:44.999922+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "area-illustration drawing kernel built (both states; 28 tests; four mutations); independent precheck READY (whole api 9804 passed under the lock); the builder's commit integrated as dec38ebf (LF sha256 equal to its return); next: the independent reviews"
     }
   ]
 }
