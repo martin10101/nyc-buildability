@@ -2612,6 +2612,7 @@
       },
       "code_links": [
         "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
+        "services/api/app/scenario/three_answers/rear_yard_checks.py",
         "services/api/app/rules/evaluator.py",
         "services/api/app/rules/registry.py"
       ],
@@ -2646,8 +2647,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 3,
-      "last_changed": "2026-10-14",
+      "revision": 4,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3324,6 +3325,15 @@
       "revision": 1,
       "event": "created",
       "summary": "Created the draft register entry for r6b-side-yard (M5-T170): the ZR envelope reading carried into the engine's envelope analysis (envelope_constraints.py) as a labelled draft, with its law captures and the R6B reference case; no human verdict is entered.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 31,
+      "date": "2026-10-15",
+      "entry_id": "r6b-rear-yard-corner-waiver",
+      "revision": 4,
+      "event": "implementation_changed",
+      "summary": "implementation_changed (M5-T170, backlog DB-265 item 2): the scenario engine module that reads ZR 23-344 paragraphs (b) and (c)(3), services/api/app/scenario/three_answers/rear_yard_checks.py, is added to the entry's code_links (its digest had been tracked only through evidence record NB-03). The module was edited in M5-T170 for three review-advisory text and dead-argument clean-ups - the (c)(3) and combined texts also name the ZR 23-344(c)(1) alternative, an unused operative-reach argument was dropped, and the (b) not_applicable text no longer appends the (b) waiver consequence - and its content is pinned in NB-03's code_identity at LF-sha256 24b7f2c8283baa460e6b58d4bccbf7df3b5f0da8ef2ebce56c6465c41d62182c. No rule-file change (the (a) draft DSL rule and its digest are unchanged), no interpretation, applicability, example or automated-test change, and no change to any reading of the law.",
       "by": "backend-engineer (M5-T170)"
     }
   ],

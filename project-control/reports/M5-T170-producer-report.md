@@ -365,3 +365,59 @@ residential benchmark. Pages 3/6/8 still agree.
 - NB-03 code-identity staleness for `rear_yard_checks.py` is carried (forbidden path).
 
 END-OF-REPORT
+
+---
+
+# Round 3 (backend-engineer) — NB-03 code identity + register code_link (DB-265 item 2)
+
+Reset to `9ac5ad4a8e537cf33fe6a2aaf2b8f10a5cc143d7` (head of `task/wave26-envelope-constraints`;
+round 2 integrated as `bec421b3`, then scope correction 2). One commit; no push. Requested status:
+**awaiting_gate**. Scratch under `/tmp/claude-0/M5-T170-r3/`. This round only revises records and the
+register for round 2's `rear_yard_checks.py` edit; no production code changed, no reading changed.
+
+## What changed, and why
+
+Round 2 edited `services/api/app/scenario/three_answers/rear_yard_checks.py` (DB-265 items 1, 4, 5),
+a code path of evidence record NB-03 and of the review register's `r6b-rear-yard-corner-waiver`
+reading. NB-03 was forbidden in round 2, so its code identity went stale (`code_current False`,
+reported-not-failed) and the register code_link stayed owed. Scope correction 2 moved NB-03 to
+allowed and added the register rule page. Round 3 closes both.
+
+1. **NB-03 -> revision 4** (`last_changed` 2026-10-15). `code_identity` for `rear_yard_checks.py`
+   refreshed `fd806941...` -> `24b7f2c8283baa460e6b58d4bccbf7df3b5f0da8ef2ebce56c6465c41d62182c`
+   (the new LF-sha256). The other code path `r6b_rear_yard_corner_waiver.rule.json` is unchanged
+   (`ee909d7e...`, re-verified), so its hash is untouched. A new `dependency_assessment` entry
+   (Revision 4) records the three round-2 clean-ups and states that no check state, measured value,
+   quantity, interpretation or conclusion changed (the combined rear-yard row stays not known /
+   Conditional; `research_status` stays `interpretation_awaiting_review`). Nothing Verified; no
+   reading changed. Mirrors how round 2 revised NB-01/NB-05/NB-06.
+
+2. **DB-265 item 2 — register.** The `r6b-rear-yard-corner-waiver` entry gains
+   `services/api/app/scenario/three_answers/rear_yard_checks.py` in `code_links` (the module that
+   reads ZR 23-344 (b)/(c)(3)). A rule entry carries no per-code_link hash field (`ENTRY_KEYS` is
+   fixed and the checker enforces it), so the module's content hash is pinned in NB-03's
+   `code_identity` and cited in the history event. Entry revision 3 -> 4, `last_changed` 2026-10-15,
+   one new `implementation_changed` history event (seq 31) per the GUIDE. No rule-file,
+   interpretation, applicability, example or automated-test change, so `automated_tests` stays
+   "Passed" bound to the unchanged rule-file digest. Pages re-rendered by
+   `render_review_register.py --write` (never hand-edited): REGISTER.md, HISTORY.md and
+   rules/r6b-rear-yard-corner-waiver.md moved; the evidence log did not change (no test run changed).
+
+## Files changed (6, all inside allowed_paths; nothing under `.claude/**`)
+`docs/research/evidence-records/NB-03-rear-yard-short-block.json`,
+`services/api/app/rules/review_register/register.json`, `docs/zoning-rule-review/REGISTER.md`,
+`docs/zoning-rule-review/HISTORY.md`, `docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md`,
+`project-control/reports/M5-T170-producer-report.md`.
+
+## Checks (lanes venv, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider; tests/rules under flock)
+- `research_record_check.py --check` — PASS, exit 0 (NB-03 `code_current=True`; `review_state=stale`,
+  reported not failed — the latest agent review is at revision 2).
+- `render_review_register.py --check` — register check PASSED (no issues), exit 0.
+- `ruff check .` (services/api) — All checks passed, exit 0.
+- `pytest -q -p no:cacheprovider tests/rules` — 1194 passed, exit 0 (the register pins module
+  hashes; it stays green).
+- `check_lane_paths.py --coverage` — LANE COVERAGE PASS, 10629 files, exit 0.
+
+No server/ports/Playwright; no production behaviour change.
+
+END-OF-REPORT
