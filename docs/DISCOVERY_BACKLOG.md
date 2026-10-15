@@ -656,3 +656,5 @@ Sweep 2026-10-15 (M5-T182 contract seam on task/wave26-envelope-constraints): no
 Sweep 2026-10-15 (M5-T183 contract seam on task/wave26-envelope-constraints): no row added or changed; DB-246 stays OPEN (the new drawing's own labels are at least 8.5 pt; the kit-wide furniture is not changed here); other open and watch rows as at the M5-T182 seam.
 
 Sweep 2026-10-15 (M3-T010 contract seam on task/wave26-envelope-constraints): DB-267 added QUEUED(M3-T010, M5-T184) (the law library's stale capture states and the 32-131 index mislabel); DB-243 and DB-253 stay OPEN (M3-T010 captures part of their lists; the community-facility use permission, 74-902/74-903, 23-63, 35-23, 35-24 and 23-154 remain owed); other open and watch rows as at the M5-T183 seam.
+
+Sweep 2026-10-15 (M5-T184 contract seam on task/wave26-envelope-constraints): no row added; DB-267 QUEUED(M3-T010, M5-T184); other open and watch rows as at the M3-T010 seam.

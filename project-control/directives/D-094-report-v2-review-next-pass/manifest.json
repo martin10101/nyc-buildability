@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T05:53:20+00:00",
+ "updated_at": "2026-10-15T05:53:28+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -183,7 +183,7 @@
   "D-094-R159"
  ],
  "requirements_id_digest_sha256": "39088ed4282a3af54f7e724a64f25232037784bb18f3411807aacf724bbf4172",
- "requirements_content_digest_sha256": "01f587044f0e03d49399bb341dfcb122a812b450cdf875a5b37762871b5bf8ba",
+ "requirements_content_digest_sha256": "c6ea97fcce7c7f5539277e68ecd2c7c486f3d517c6ee0dff7d6c8ee602230301",
  "sources": [
   {
    "file": "source-001.md",
@@ -423,7 +423,8 @@
   "M5-T170",
   "M5-T182",
   "M5-T183",
-  "M3-T010"
+  "M3-T010",
+  "M5-T184"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -756,6 +757,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M3-T010 (capture the 20 ZR sections the worked readings of options 5, 8 and 9-10 rest on, and correct the library's stale capture states: documents only) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T05:53:28+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T184 (the R6B reference case benchmark-options-2-3-6-7 (worked values of options 2, 3, 6, 7 for the benchmark lot; two agreeing sealed readings per option; captured-section citations only; options 5/8/9-10 named as owed); no rule file, engine, result, capture, register entry, law-library edit or human verdict) to R007, R075, R084, R102 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
