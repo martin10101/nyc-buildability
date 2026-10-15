@@ -1,0 +1,55 @@
+{
+ "task_id": "M5-T186",
+ "material_commits": [
+  "37403e84 (producer (cherry-pick of bf3020b9): the new R6B case benchmark-options-4-11 (45 rows), its page and README row, provenance 32-37 (two sealed readings and a comparer per option, unchanged below truthful headers), the step-P11 module and tests, the case-module dispatch extracted into r6b_reference_cases_cases.py with a compatibility facade (check.py 596 lines), the four moved cross-case pins, the producer report)"
+ ],
+ "claim_seam_head": "fcd953e1575cb1cfddc4a1fe9a6eec7fd5c1f378",
+ "files_changed": [
+  "docs/reference-cases/R6B/README.md",
+  "docs/reference-cases/R6B/benchmark-options-4-11.md",
+  "docs/reference-cases/R6B/cases/benchmark-options-4-11.json",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-32.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-33.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-34.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-35.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-36.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-37.md",
+  "project-control/reports/M5-T186-producer-report.md",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_cases.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p11.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p10.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p11.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p9.py"
+ ],
+ "what_did_not_change": "No rule file, engine, result, capture, register entry, law-library page, evidence record or report page changed; the other 14 reference cases are byte-identical; render.py is unchanged; neither owner question N1 nor N2 is decided.",
+ "known_limits": [
+  "Not yet visible in the report: the comparison page names options 4 and 11 as not evaluated until an engine task works them.",
+  "Fourteen rows stay not known (among them option 4's conversion label, the minimum unit size outside the Zoning Resolution, option 11's final street-wall line, whether affordable and senior housing combine, shared housing, the split-lot meaning, the overlay's extent and the UAP text); every figure rests on lot 70 alone being the zoning lot (NB-01) and the recorded lot area (NB-04).",
+  "Option 11's 20,150/29 and 24,180/35 cross-cite the prior cases and open no new floor-area pool. Agreement of two AI readings is not proof; nothing is Verified."
+ ],
+ "checks_at_material_head": [
+  "producer: ruff 0; tests/rules/reference_cases 249 passed; render --check 0; modularity 0 failures (check.py 596); lanes PASS; whole api 10064 passed, 8 skipped; six mutations red",
+  "G3 data-contract-verifier at 37403e84: PASS (23 citations captured and digest-matched; arithmetic recomputed; provenance faithful; one cosmetic advisory)",
+  "G4 qa-engineer at 37403e84: PASS (249 passed; six mutation probes red; every scenario pinned; the split behaviour-identical)",
+  "CI run 38735954825 at 4f3a294e (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R007": [
+   "The last two owed options are recorded as source-backed worked values (docs/reference-cases/R6B/cases/benchmark-options-4-11.json): option 4 allows the same 29 dwelling units as option 1 (the 680 factor caps the count, not the unit size); option 11 caps total floor area at the greatest single-use ratio (2.00 -> 20,150 sq ft, 2.40 -> 24,180 with qualifying housing; shops and a community facility add no floor area) with 29 / 35 units and heights 30/45/55 or 30/45/65. With it, all eleven options are traceable across the reference cases; no option or section is removed."
+  ],
+  "D-094-R075": [
+   "These are worked results the comparison page needs, each recorded only where two sealed readings agree on value and basis, the comparer confirms, and the section is captured (test_step_p11_rows_name_their_readings_and_comparer); showing them on page 5 is an engine task's."
+  ],
+  "D-094-R084": [
+   "All eleven options stay in scope and are now traceable: options 1 (settled cases), 2/3/6/7 (M5-T184), 5/8/9-10 (M5-T185), 4/11 (this case); the owner's questions N1 and N2 stay open where option 11 touches them."
+  ],
+  "D-094-R102": [
+   "The worked values and each cited section's capture state feed the law library's option-4 and option-11 pages; the case cites only captured sections and edits no library page."
+  ]
+ }
+}
