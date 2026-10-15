@@ -120,8 +120,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK A1 (the split's safety hinge): the modules MUST be import-isolated from three_way_document.py/geometry.py/first_option_results.py/envelope_constraints.py (mirror rear_yard_checks.py, which imports only block_frontage), so M5-T170's concurrent geometry.py edits cannot touch them and __init__.py stays unedited. A G3 check confirms the import set.",
     "RISK A2 (interface churn): the module signatures are designed before M5-T172b wires them; if Part B needs a different shape it must re-open these now-accepted files (a scope correction). Keep the signatures minimal and driven by the contract $defs. This risk is the main argument for building M5-T172 as one task instead.",
@@ -130,7 +130,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:49:51.192108+00:00",
-  "updated_at": "2026-10-15T06:07:47.199091+00:00",
+  "updated_at": "2026-10-15T06:32:58.997683+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -164,6 +164,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "placement and area-allocation computation modules built (27+27 tests; three mutations); independent precheck green on every item except the whole-api run its lock blocked; the orchestrator's whole-api run at 9b902d20 then passed (9830 passed, 8 skipped; wholeapi-M5-T182-9b902d20.log); the builder's commit integrated as db590413 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T06:32:55.451545+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }
