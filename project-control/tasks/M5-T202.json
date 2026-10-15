@@ -95,22 +95,22 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "visual-quality-reviewer",
     "qa-engineer",
     "code-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "May be built beside M5-T173B (disjoint files) but takes its measure words before submit",
     "Web worktree needs npm ci once (heavy: run under the lock)"
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:52:41.655388+00:00",
-  "updated_at": "2026-10-15T23:52:42.065957+00:00",
+  "updated_at": "2026-10-15T23:52:45.146929+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -136,5 +136,14 @@
     "cd services/api && python -m ruff check . && python -m pytest -q tests/drawings/kit/test_web_parity_area_zones.py",
     "No server, no e2e, no width capture; never ports 3000/3001/8000"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:52:45.146782+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed; builder dispatched (unmounted)"
+    }
+  ]
 }
