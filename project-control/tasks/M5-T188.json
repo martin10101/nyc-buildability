@@ -137,7 +137,7 @@
     "security-reviewer"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "RISK 1 (benchmark has NO established line): the recorded benchmark carries constraint_lines in state not_known even after M5-T167 (accepted) and M5-T170 keeps street_wall_band/setback_line not_established, so the A1/A2 improvement cannot be demonstrated on the benchmark's own page 3. The real print (S8) proves byte-identity (no regression); the beside-line/legend-fit proof (S1/S3/S9) MUST use a constructed established-line case or the synthetic_rear_yard fixture. Do not claim a benchmark before/after.",
     "RISK 2 (latent plain-frame clip, out of scope): the non-overlay close frame is ALREADY clamped at 470 (furn_bottom+8 > 470 verified), so a latent clip may exist there. DB-263 must NOT widen the plain frame; overlay_present=False preserves 470 exactly. S4 is the red/green guard.",
@@ -150,7 +150,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:47.531321+00:00",
-  "updated_at": "2026-10-15T10:12:12.329544+00:00",
+  "updated_at": "2026-10-15T11:05:19.737115+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -184,6 +184,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "contracted; G0 PASS (DB-263; pre-check: the page-1 test in a new file)"
+    },
+    {
+      "at": "2026-10-15T11:05:19.736991+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 1 (DB-263 polish + S10 duplicate street-width chips); the builder's commit integrated as 3c95cae9 (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
