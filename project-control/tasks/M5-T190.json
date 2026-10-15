@@ -1,0 +1,110 @@
+{
+  "task_id": "M5-T190",
+  "title": "The report's document fingerprint is stable for the same document (backlog DB-282): run_identity.document_fingerprint also leaves out the two per-run ids the live results route mints (option_id, study_id), beside results_id and computed_at, so re-running the same request reproduces the fingerprint while any real value change still moves it",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "In services/api/app/drawings/report/run_identity.py extend _FINGERPRINT_EXCLUDE from (results_id, computed_at) to (results_id, computed_at, option_id, study_id) and correct the two prose places that list the excluded fields (the module docstring and the comment above the tuple). A read-only check (session-2026-10-15b/return-check-fingerprint.md) built the benchmark results document twice through the live route and diffed every leaf: exactly four top-level fields differ between runs (computed_at, results_id, option_id, study_id; the last two are uuid4 values minted per run in results_read.py), and no zoning value differs. The fixture tests never saw it because the recorded fixture carries fixed placeholder ids. Tests in services/api/tests/drawings/report/test_report_run_identity.py: one per input state (only the four run fields differ: same fingerprint; a real value differs: different fingerprint; a document without option_id or study_id: unchanged behaviour), a live two-run test through the TestClient results route with the benchmark providers (same fingerprint twice), and a mutation (the two-field tuple turns the new tests red). No other file changes; no value, label or text on any page changes except that the fingerprint is now reproducible.",
+  "business_reason": "The owner's provenance rows ask the report to identify what generated it (R028) and to prove its results and diagrams come from one document (R058). The builder of M5-T189 and the orchestrator's prints saw the fingerprint change on every print of the same property (ffab545ea162, efb2e8145ae6, 7a1bd4c24f11), so the fingerprint proved nothing across prints.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-check-fingerprint.md",
+    "services/api/app/drawings/report/run_identity.py",
+    "services/api/tests/drawings/report/test_report_run_identity.py",
+    "services/api/app/api/v1/results_read.py",
+    "project-control/tasks/M5-T169.json",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/run_identity.py",
+    "services/api/tests/drawings/report/test_report_run_identity.py",
+    "project-control/reports/M5-T190-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T169"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/run_identity.py",
+    "services/api/tests/drawings/report/test_report_run_identity.py",
+    "project-control/reports/M5-T190-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/api/",
+    "services/api/app/scenario/",
+    "packages/contracts/",
+    "docs/research/evidence-records/",
+    "docs/zoning-rule-review/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "two results documents that differ only in results_id, computed_at, option_id and study_id",
+      "when": "document_fingerprint is computed for each",
+      "then": "the two fingerprints are equal"
+    },
+    {
+      "id": "S2",
+      "given": "two results documents that differ in one real value (an answer value, a floor area, a status)",
+      "when": "document_fingerprint is computed",
+      "then": "the fingerprints differ (the existing sensitivity test stays green)"
+    },
+    {
+      "id": "S3",
+      "given": "a document without option_id or study_id (older documents, synthetic fixtures)",
+      "when": "document_fingerprint is computed",
+      "then": "it behaves exactly as before for that document"
+    },
+    {
+      "id": "S4",
+      "given": "the live results route through the TestClient with benchmark_provider(with_zoning_lot=True, street_on=True), run twice",
+      "when": "the fingerprint of each returned document is computed",
+      "then": "the two are equal; mutation: with the old two-field tuple they differ and S1 and S4 fail"
+    },
+    {
+      "id": "S5",
+      "given": "the module docstring and the comment above _FINGERPRINT_EXCLUDE",
+      "when": "read",
+      "then": "they list the four excluded run fields and say why (per-run metadata, not values)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1: a deny-list fits contract 1.5.0 as emitted; a future contract that adds another per-run id or timestamp would bring the drift back. S4's live two-run test catches that the day it happens.",
+    "RISK 2: page_evidence.py's _run_identity docstring may name the excluded fields; it is outside this task (wording only) and stays as is unless it is wrong: if it lists only two fields, report it for the next task that edits that file."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T14:32:58.010964+00:00",
+  "updated_at": "2026-10-15T14:32:58.447082+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R028",
+        "D-094-R058"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T14:32:58.011410+00:00",
+  "path_notes": "Small, independent hardening found in wave 28 (backlog DB-282). Neither file is pinned by an evidence record or the zoning-rule review register (checked by the read-only check). No test pins a literal fingerprint value. Runs beside M5-T172 (no shared file) and after M5-T189 (no shared file).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q -p no:cacheprovider tests/drawings/report/test_report_run_identity.py",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q -p no:cacheprovider tests/drawings/report",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
