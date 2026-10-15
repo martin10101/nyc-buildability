@@ -106,6 +106,8 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   test id at the six widths (`session-2026-10-14b/capture_block.mjs`) before the visual review (M5-T171 G3). A
   before/after of a change below the fold scrolls both builds to one shared anchor and prints digests; equal digests
   are labelled 'unchanged' (the owner's reviewer caught a duplicate picture, D-094 R150, 2026-10-14).
+- A result can pass every test and still miss the owner's report: print it from the REAL preview (print_w23.sh) before
+  the reviews; M5-T167 reached only the test fixture until round 4 threaded street data through the live route.
 - Builder briefs never dictate the co-author model line: say 'the lines your own instructions give' (a dictated
   'Opus 5.5' trailer on an opus-4-8 helper's commit was flagged by a rule check, 2026-10-14).
 
