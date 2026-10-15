@@ -3649,18 +3649,26 @@
     "D-094-R054"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "0d2175f5d82db8fe3000e8993e1194aeee29d09a",
+   "reviewed_manifest_sha256": "646694339b2c576df997df64ef3794e370a9fd18e8507fac069b3e8aeecf9155",
    "requirements": [
     {
      "id": "D-094-R054",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor is faithful: source-001.md line 151 is the owner's verbatim brief bullet \"Keep missing data and incomplete software honest without filling the report with repeated \u201cnot yet\u201d prose.\"; source-001.md line 259 maps that exact quote to R054 (obligation); requirements.json R054 quotes it verbatim \u2014 not weakened, combined or invented.",
+      "This task's share = keep missing data / incomplete software honest without new \"not yet\" prose; I ran the real code: formatting.format_int_commas(inf)=None, format_ratio(inf)=None, format_sqft/feet(inf)=None, whole_percent_shares([inf,1.0])=None \u2014 a non-finite figure shows as MISSING, never 0, never 'inf.0', never a crash.",
+      "kit.labels.format_number raises ValueError on inf/nan/'abc'/None/bool (I ran it) and is byte-identical on finite reals (20150.0->'20,150'); this also hardens close_frame._fact_figure with NO edit to the NB-04-pinned module (close_frame_dimensions.py blob e2f1adfe identical main vs frozen head).",
+      "No new prose was added and every valid page is unchanged: per-page pdftotext of main's commit-unknown print (10pp) vs the fixed head's print (10pp) is identical on pages 1-9; page 10 differs only in the run identity (document fingerprint efb2e8145ae6->5dfbaac4c427 plus the now-wrapped Code-commit line).",
+      "Stays open for later work: R054 is a report-wide, multi-task obligation (bound to D-094-BOOTSTRAP, M0-T193, M5-T165, M5-T169, M5-T189) and its row status stays \"pending\"; the broader honest-missing-data presentation across report content and the \"not yet\"-prose discipline are held by the other bound tasks, and the pre-existing document-fingerprint run-to-run non-determinism is owned by M5-T190 (DB-282), not this task.",
+      "Verifier's carry-forward condition met at 0d2175f5: the task's allowed-path files are identical to those verified at d0992406 (content identity 64669433), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T189-DCV.md."
+     ],
+     "reviewed_sha": "0d2175f5d82db8fe3000e8993e1194aeee29d09a"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T15:03:20+00:00"
   },
   {
    "directive_id": "D-094",

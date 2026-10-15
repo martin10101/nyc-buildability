@@ -124,8 +124,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK 1 (dispositive): close_frame_dimensions.py is NB-04-pinned (code_identity) and owned by spec-M5-T172. Item 3 MUST be done in kit/labels.format_number only; editing close_frame_dimensions.py would fire the NB-04 contingency and collide with M5-T172. If a typed DimensionPlacementError at the close-frame seam is later wanted, that is a separate task sequenced out of parallel with M5-T172 (owns NB-04).",
     "RISK 2 (byte-identity): the proof relies on T172/T169-owned snapshot tests (test_report_benchmark.py, the DXF/SVG snapshots) staying green; they are FORBIDDEN here and must not be edited. Run them read-only; any red means a valid output moved and is a real defect, not a snapshot refresh.",
@@ -133,7 +133,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:44:05.148519+00:00",
-  "updated_at": "2026-10-15T14:41:57.984855+00:00",
+  "updated_at": "2026-10-15T15:03:21.431183+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -174,5 +174,7 @@
       "actor": "orchestrator",
       "change": "Scope correction 1 (session 2026-10-15b, while the builder works): the orchestrator gave the private preview its checkout commit (GIT_COMMIT_SHA, the variable the run identity reads, as production sets RENDER_GIT_COMMIT) and reprinted main 86a450d4: the same report HTML except the run identity's 'Code commit:' line printed on 8 pages instead of 10, every page at a smaller scale. Reprinting both HTML files with the same printer reproduced it (8 vs 10 pages): the unbroken 40-character commit in the appendix's run-identity column (page_evidence._run_identity, class evidence-column) overflows and Chromium shrinks the whole document to fit. The print stylesheet is layout.py, already in this task's allowed paths; scenario S10 is added. Backlog row DB-280. No path, row, gate, reviewer or dependency changes; the benchmark's printed text stays identical with the commit unknown."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T15:03:21.430987+00:00"
 }
