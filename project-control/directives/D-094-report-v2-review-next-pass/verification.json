@@ -2296,24 +2296,37 @@
     "D-094-R104"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512",
+   "reviewed_manifest_sha256": "3b8091205ea8be636a073cfba7c186ad18b2b980b6ac714bf8d5ec299bce19eb",
    "requirements": [
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text (source-004-amendment.md#owner-message-verbatim) is the owner's decision to start the zoning-law library as a documents-only second line of work beside the report; this task's share is the fifteen community-facility captures (DB-253).",
+      "I reproduced all 15 snapshots at the frozen head: snapshot_schema \"zr_section_snapshot/v1\", content_digest_sha256 == sha256(verbatim_excerpt) for all 15, extraction_status \"extracted_draft\", raw_html_verified false, no affirmative \"Verified\" token (grep excluding negations/ADR-007 line = none).",
+      "Both channels are pinned (raw_html_sha256 and raw_pdf_sha256 each 64 hex), http 200/200, host zoningresolution.planning.nyc.gov, Last Amended 12/5/2024 on all 15; each canonical file is byte-identical to its bundled copy; the diff touches no rule/scenario/drawing/test/library/report-lane file (shares no file with the report lane).",
+      "STAYS OPEN: the broader R102 facets (complete handled/not list, pitfall list, other option subsets \u2014 split-lot/courts, rooming/shops/parking) and 22-13's child sections 22-131..135 are owed to later capture tasks per the evidence map and producer report; this is a multi-task decision and only the community-facility slice closes here.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 3b809120), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T009-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Row text is the owner's authorization of up to 8 helpers at once (at most 3 building, research-only beyond 5, never sharing files); required evidence is session notes and dispatch records.",
+      "The dispatch record (session-2026-10-14c/SESSION_NOTES.md lines 40-43) shows M3-T009 was built by one research agent (official-source-researcher ae33a551) in its own worktree, at peak 2 building helpers (M3-T009 + M5-T167) and then 1 building + 1 read-only G1 reviewer \u2014 within the <=3 building / <=8 helper limits.",
+      "I confirmed file-disjointness from git: the intersection of M5-T167's builder commit d0611800 files and M3-T009's ccf8e24b files is empty, so no two concurrent helpers shared a file.",
+      "STAYS OPEN: R104 is a standing authorization for the next session's research agents generally; nothing of this task's compliance slice stays open.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 3b809120), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T009-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T02:43:19+00:00"
   },
   {
    "directive_id": "D-094",
@@ -2328,54 +2341,96 @@
     "D-094-R151"
    ],
    "producer": "frontend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512",
+   "reviewed_manifest_sha256": "2c659509ac3a73bf535c2f681638301c551c39da34c86295140340362499b46f",
    "requirements": [
     {
      "id": "D-094-R051",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-001.md:148 (\"Put the result first, the material qualification next, and the derivation in linked detail...\"); row text byte-identical at main 30762409 and the frozen head.",
+      "ThreeAnswersPanel.tsx leads with a full-width .ta-lead band: identity, then the floor-area allowance beside the legal-ceiling/estimate block (chips, distinction line, lot-area basis, zoning-lot concern); the derivation and the assumed conditions follow in the detail grid below.",
+      "positions.txt (f78d302f, code-identical to the frozen head) confirms the results band leads and the assumed conditions drop below the fold at 1440/1920 (356 -> 977).",
+      "STAYS OPEN: the \"PDF contains or precisely references the same essential evidence\" half of R051 is the report/PDF tasks' share, not this website task's.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R057",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-001.md:174 (\"Check the website at representative desktop and mobile sizes...\").",
+      "The new spec results-first-screen.flag-on.spec.ts measures six widths (1920/1440/1024/768 + 390/320); CI run 38670334315 web-e2e passed both its tests (lines :173 and :237), and six-width before/after pictures exist.",
+      "The figures/labels shown are the unchanged ApartmentFigures block (forbidden file byte-identical claim-head to material), so no label or caveat drifted.",
+      "STAYS OPEN: the full website<->PDF figure/label/source-reference parity cross-check is not re-derived by this placement task; it belongs to the parity tasks (M5-T171/M5-T174).",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R071",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-002-amendment.md:23 (\"This does not establish that 29 units can actually be built.\").",
+      "Placement-only: ApartmentFigures.tsx, apartment-figures.ts, three-answers.ts and presentation-tokens.json are byte-identical between claim head 658e51fb and material 965de3d5 (git diff = 0), so the \"29 Conditional\" label and the distinction line are unchanged.",
+      "Grep of the two changed source files finds no \"buildable\", \"achievable\" or \"can be built\"; the unchanged ApartmentFigures comment states \"the 29 is never shown as settled\".",
+      "STAYS OPEN: nothing stays open \u2014 the prohibition is not regressed.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R073",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-002-amendment.md:32 (\"Page 1 Results compete with warnings, assumptions, and a software feature inventory.\" / \"The architect still has to assemble the answer.\").",
+      "On the website the results no longer compete with assumptions: before (main 30762409) the assumed-conditions list sat at top 356 (top of the first screen) at 1440/1920; after (f78d302f) it moved to 977 (below the 795 fold) while the ceiling rose from 1382 to 539 (into the first screen).",
+      "The cited authority, contract principle 1 (ARCHITECT_PRESENTATION_CONTRACT.md:32 \"Architect-facing results come first; the material qualification next...\"), is honoured.",
+      "STAYS OPEN: the report page-1 share of R073 is other tasks' (M5-T165); this task's website share is met.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R081",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-002-amendment.md:47 (\"Rebuild the first page: prominent results, their assumptions beside them, one useful site graphic, and the few uncertainties that materially change the answer.\").",
+      "The website first screen now leads with the prominent floor-area allowance beside the ceiling/estimate with assumptions demoted below (positions.txt), matching the \"prominent results, their assumptions beside them\" clause.",
+      "STAYS OPEN: only the allowance leads among the three answers; the height/scheduled-building answers, the \"one useful site graphic\" (a report feature, not in the Results window) and a summarised \"few uncertainties\" remain for the later website parity task M5-T174 (recorded DB-264).",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R083",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-002-amendment.md:49 (\"Require visual proof: before-and-after screenshots of every changed PDF page and corresponding website view, checked against the existing design requirements.\").",
+      "six-before-30762409/ and six-after-f78d302f/ each hold six PNGs plus positions.txt; I confirmed the before/after images differ at every width (distinct sha256), directly answering the owner's identical-image concern from source-021.",
+      "The visual-quality-reviewer and human-journey-reviewer both checked the before/after at six widths against the presentation contract and returned PASS (M5-T181-reviews.md).",
+      "STAYS OPEN: nothing stays open for this task's changed website view.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     },
     {
      "id": "D-094-R151",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source quote verified verbatim in source-021-amendment.md:26/39 (\"The visible screen still gives substantial space to assumptions while results sit farther down.\"); the row is bound to only D-094-BOOTSTRAP and M5-T181.",
+      "At 768/1024/1440/1920 the allowance, legal ceiling (29, Conditional) and estimate (17-22, Provisional) with the distinction line lie wholly inside the Results window (measured f78d302f: ceiling 531-550, estimate 565-584, visible to 795; assumptions start at 977+); CI run 38670334315 passed the new spec's desktop S1/S2 test (:173).",
+      "On phones (390/320) the allowance leads the first screen and the ceiling is one short scroll below (tops 848/963, under 1.25x844); the new spec asserts this at CI line :237.",
+      "STAYS OPEN: the ceiling/estimate reaching the first screen on phones needs a results-scoped window height, carried to M5-T174 / DB-264; the directive is honestly not called complete by this task alone.",
+      "Verifier's carry-forward condition met at 175ec83f: the task's allowed-path files are identical to those verified at 18b9eac5 (content identity 2c659509), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (2 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check (with the real-preview measurement); G3 visual-quality-reviewer (record) with the human-journey-reviewer walkthrough; G4 qa-engineer). DCV report: project-control/reports/M5-T181-DCV.md."
+     ],
+     "reviewed_sha": "175ec83f25684fda84c0cee8f9c5caac21b81512"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T02:43:21+00:00"
   }
  ]
 }
