@@ -180,3 +180,88 @@ share, an inconsistent split or a fitted-without-outline yields `Unavailable`, n
 - One adjustment during review: the first canvas (340 pt wide) clipped the long conversion statement;
   I widened it to 468 pt (≤ 182 mm A4 drawing width) so every label reads on one line, regenerated
   the two snapshots, and re-looked at both PNGs.
+
+---
+
+## Round 2 — G5 F1/F2/F3 hardening (builder, round 2)
+
+Round 2 closes the three REQUIRED corrections the G5 security review raised, as one cluster, in the
+kernel and its test only (both in the packet's `allowed_paths`). The kernel's own contract is to fail
+CLOSED: a document it cannot draw truthfully yields `Unavailable`, never a malformed drawing (a
+literal `nan` in a path) and never an unhandled exception. All three findings concern hostile
+`placement.outline` coordinates. The two valid synthetic fixtures still draw and both snapshots are
+byte-identical (unchanged by this round — proven below).
+
+### The three findings and what changed (all in `_placed_ring`)
+
+- **F1 — non-finite / over-large outline coordinate drew a `nan` token.** `_placed_ring` now checks
+  every outline coordinate with a new `_plausible_coord(value)` helper: a coordinate must be a finite
+  number (`_finite_number`: `int`/`float`, not `bool`, `math.isfinite`) whose magnitude is
+  `≤ _COORD_MAX` (new constant, `1.0e9`). This rejects `NaN`, `±inf`, a non-number, and a magnitude
+  such as `1e308` whose shoelace/scaling products overflow to `inf`/`nan`. `_COORD_MAX = 1e9` keeps a
+  plausible absolute projected coordinate (EPSG:2263 NY state-plane, about `1.1e6` ft for NYC) well
+  inside the bound — verified a `(980000, 190000)`-based 82×82 ring still draws — while refusing an
+  over-large magnitude. A malformed vertex shape (not a ≥2-length sequence) is refused the same way.
+- **F2 — a zero-area outline raised `ZeroDivisionError`.** `_placed_ring` now refuses a ring whose
+  `_poly_area(pts) ≤ 0.0` (a collinear ring, or a zero-width vertical spike) → `Unavailable`, so the
+  `fraction = _poly_area(apartment_poly) / total` division is never reached with `total == 0`. I also
+  proved (reproductions in `/tmp/claude-0/M5-T183-r2/`) that the G5's *empty-clip* `ValueError` from
+  the svg helpers (`head, *rest = points` on an empty list) is reachable ONLY through the non-finite /
+  overflow path: for any finite, plausible-magnitude, positive-area ring and a share in 0.60–0.75 the
+  vertical half-plane clip always keeps both extreme vertices, so neither side is ever empty (I
+  probed simple, thin-spike and self-intersecting shapes — all kept ≥3 points per side). F1 therefore
+  removes the only route to that `ValueError`; F1 + the zero-area guard together give the
+  "no `ZeroDivisionError`, no `ValueError` from the svg helpers" guarantee without dead code.
+- **F3 — no vertex-count cap (enormous SVG / CPU).** `_placed_ring` now refuses a ring whose raw
+  vertex count exceeds `_MAX_OUTLINE_VERTICES` (new constant, `1000`) BEFORE building points or
+  running the O(n) bisection → `Unavailable`. A plausible footprint carries a handful of vertices.
+
+All three refusals return a plain-words reason (no field/record names) via a small
+`_outline_unavailable(reason)` helper with `reason_kind = "outline_invalid"`. `draw_area_allocation`
+now returns the `Unavailable` from `_placed_ring` directly (structural "not placed" stays `None` →
+the existing `not_placed` reason). The dead `_ring_points` helper was folded into `_placed_ring`.
+The valid drawing path is untouched, so the two snapshots do not change.
+
+### Round-2 input-state table (input, state, outcome, test that pins it)
+
+| input | state | outcome | test |
+|---|---|---|---|
+| outline coord | `NaN` / `inf` / `-inf` | Unavailable (outline_invalid), no `nan` in reason | `test_f1_nonfinite_or_overlarge_outline_coord_is_unavailable[nan/inf/-inf]` |
+| outline coord | `1e308` (overflow magnitude) | Unavailable (outline_invalid) | `test_f1_…[1e+308]` |
+| outline ring | zero-area collinear (flat) | Unavailable (outline_invalid), no `ZeroDivisionError` | `test_f2_zero_area_collinear_ring_is_unavailable_no_zerodivision` |
+| outline ring | zero-width vertical spike (clips to nothing) | Unavailable (outline_invalid) | `test_f2_zero_width_spike_clips_to_nothing_is_unavailable` |
+| outline ring | `_MAX_OUTLINE_VERTICES + 1` (1001) vertices | Unavailable (outline_invalid); 1000 still draws | `test_f3_outline_above_the_vertex_cap_is_unavailable` |
+| outline refusals | F1 / F2 reasons | plain words, none of `area_allocation/fitted/sqft/placement/outline/\|/\|_` | `test_f1_f2_outline_reasons_are_plain_words_no_internal_names` |
+| valid fitted fixture | placed 82×82 ring | Drawing, no `nan` token; snapshot byte-identical | `test_valid_fitted_outline_still_draws_without_a_nan_token`, `test_matches_approved_snapshot` |
+
+### Checks (direct exit codes; lanes venv, `PYTHONDONTWRITEBYTECODE=1`, pytest `-p no:cacheprovider`)
+
+1. `cd services/api && python -m ruff check app/drawings/kit/area_allocation.py tests/drawings/kit/test_area_allocation_drawing.py` → **All checks passed!  exit 0**.
+2. `cd services/api && python -m ruff check .` (api CI job's first step) → **All checks passed!  exit 0**.
+3. `cd services/api && python -m pytest -q tests/drawings/kit/test_area_allocation_drawing.py` → **37 passed in 0.50s  exit 0** (28 round-1 + 9 round-2).
+4. `flock …/heavy-run.lock python -m pytest -q tests/drawings/kit` (whole kit folder, >1 file) → **474 passed in 24.20s  exit 0**.
+5. `python tools/modularity_check.py --check` → **exit 0** (`failures 0; warnings 33`; no new/area_allocation warning — the kernel is 527 SLOC, under the 600 warn line).
+6. `python scripts/lanes/check_lane_paths.py --coverage` → **LANE COVERAGE PASS: 10556 file(s), each owned by exactly one lane.  exit 0**.
+7. Did NOT run the full api suite (the independent check runs it once); never started a server or touched ports 3000/3001/8000; ran no Playwright.
+
+### Mutation proofs (one per guard; applied, shown failing, reverted; `grep -c MUTANT` = 0 after)
+
+| guard | mutation | failing test | result |
+|---|---|---|---|
+| F1 | `if not (_plausible_coord(vertex[0]) and _plausible_coord(vertex[1])):` → `if False:` | `test_f1_nonfinite_or_overlarge_outline_coord_is_unavailable` | **4 failed** (drew a `nan`-token SVG / `viewBox … nan`) exit 1 |
+| F2 | `if _poly_area(pts) <= 0.0:` → `if False:` | `test_f2_zero_area_collinear_ring_…`, `…zero_width_spike_…` | **2 failed** (`ZeroDivisionError` at `_draw_zones` `fraction = _poly_area(apartment_poly) / total`) exit 1 |
+| F3 | `if len(ring) > _MAX_OUTLINE_VERTICES:` → `if False:` | `test_f3_outline_above_the_vertex_cap_is_unavailable` | **1 failed** (the 1001-vertex ring drew) exit 1 |
+
+After each mutation the source was restored from a byte-identical backup (restored sha256 ==
+pre-mutation sha256); `grep -c MUTANT` = 0; the file test re-ran 37/37 and ruff passed.
+
+### D-093 / limitations
+
+This round adds fail-closed INPUT validation only; it changes no feasibility fact, rule
+applicability, calculation input, result or certainty label, so it revises no evidence record. I read
+`docs/research/evidence-records/NB-04-lot-dimensions-basis.json` (read only): it records the owner's
+rule that an outline's area is a drawing measure, never a zoning figure — consistent with this kernel,
+which uses the outline only to draw proportions. Limitation: the empty-clip `ValueError` branch is now
+unreachable from any finite input (closed by F1), so the "spike that clips to nothing" state is
+exercised as a zero-area (zero-width) spike through the F2 guard; I proved the unreachability by
+reproduction rather than leaving a dead guard.

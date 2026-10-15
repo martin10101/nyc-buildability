@@ -13,6 +13,7 @@ determinism.
 from __future__ import annotations
 
 import json
+import math
 import os
 import re
 import xml.etree.ElementTree as ET
@@ -20,7 +21,7 @@ from pathlib import Path
 
 import pytest
 
-from app.drawings.kit.area_allocation import draw_area_allocation
+from app.drawings.kit.area_allocation import _MAX_OUTLINE_VERTICES, draw_area_allocation
 from app.drawings.kit.model import Drawing, Unavailable
 from app.drawings.kit.presentation_tokens import WORDING
 
@@ -362,3 +363,71 @@ def test_matches_approved_snapshot(stem: str) -> None:
         snapshot.write_bytes(drawing.svg.encode("utf-8"))
     assert snapshot.exists(), f"no approved snapshot {snapshot.name}"
     assert drawing.svg.encode("utf-8") == snapshot.read_bytes().replace(b"\r\n", b"\n")
+
+
+# -- round 2: a hostile placement.outline fails closed (G5 F1/F2/F3) ----------
+# The kernel's contract is to fail CLOSED: a footprint it cannot draw truthfully
+# yields Unavailable, never a malformed drawing (a literal 'nan' in a path) and
+# never an unhandled ZeroDivisionError or ValueError from the svg helpers. One
+# test per input state; the two valid fixtures keep drawing byte-identically
+# (test_matches_approved_snapshot, unchanged).
+
+
+def _fitted_outline(outline) -> object:
+    """draw_area_allocation for a fitted block with the given placement.outline."""
+    return draw_area_allocation(allocation(0.70, fitted=True), placement=placement(outline=outline))
+
+
+@pytest.mark.parametrize(
+    "bad_coord", [float("nan"), float("inf"), float("-inf"), 1e308]
+)
+def test_f1_nonfinite_or_overlarge_outline_coord_is_unavailable(bad_coord: float) -> None:
+    outline = [[[0.0, 0.0], [82.0, 0.0], [82.0, bad_coord], [0.0, 82.0], [0.0, 0.0]]]
+    result = _fitted_outline(outline)
+    assert isinstance(result, Unavailable)
+    assert result.reason_kind == "outline_invalid"
+    assert "nan" not in (result.reason or "").lower()
+
+
+def test_f2_zero_area_collinear_ring_is_unavailable_no_zerodivision() -> None:
+    # a flat (collinear) ring: finite small points, zero area -> would divide by zero
+    result = _fitted_outline([[[0.0, 0.0], [40.0, 0.0], [80.0, 0.0], [0.0, 0.0]]])
+    assert isinstance(result, Unavailable)
+    assert result.reason_kind == "outline_invalid"
+
+
+def test_f2_zero_width_spike_clips_to_nothing_is_unavailable() -> None:
+    # a vertical spike with no width: there is no area to split into two zones
+    result = _fitted_outline([[[10.0, 0.0], [10.0, 40.0], [10.0, 80.0], [10.0, 0.0]]])
+    assert isinstance(result, Unavailable)
+    assert result.reason_kind == "outline_invalid"
+
+
+def test_f3_outline_above_the_vertex_cap_is_unavailable() -> None:
+    n = _MAX_OUTLINE_VERTICES
+    circle = [[50.0 + 40.0 * math.cos(2 * math.pi * i / n),
+               50.0 + 40.0 * math.sin(2 * math.pi * i / n)] for i in range(n)]
+    over_cap = [circle + [circle[0]]]  # cap + 1 raw vertices (1001)
+    result = _fitted_outline(over_cap)
+    assert isinstance(result, Unavailable)
+    assert result.reason_kind == "outline_invalid"
+    at_cap = [circle[:n - 1] + [circle[0]]]  # exactly cap raw vertices (1000) still draws
+    assert isinstance(_fitted_outline(at_cap), Drawing)
+
+
+def test_f1_f2_outline_reasons_are_plain_words_no_internal_names() -> None:
+    forbidden = ("area_allocation", "fitted", "sqft", "placement", "outline", "/", "_")
+    for outline in (
+        [[[0.0, 0.0], [82.0, 0.0], [82.0, float("nan")], [0.0, 82.0]]],
+        [[[0.0, 0.0], [40.0, 0.0], [80.0, 0.0], [0.0, 0.0]]],
+    ):
+        result = _fitted_outline(outline)
+        assert isinstance(result, Unavailable)
+        assert not any(token in result.reason for token in forbidden)
+
+
+def test_valid_fitted_outline_still_draws_without_a_nan_token() -> None:
+    alloc, place = blocks(PLACED)
+    drawing = draw_area_allocation(alloc, placement=place)
+    assert isinstance(drawing, Drawing)
+    assert "nan" not in drawing.svg.lower()

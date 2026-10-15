@@ -66,6 +66,18 @@ _AREA_TOL = 0.01 + 1e-9
 # split.
 _SHARE_TOL = 0.005 + 1e-9
 
+# A placed footprint the kernel can draw truthfully carries a handful of vertices
+# and finite coordinates of a plausible magnitude. A ring larger than this cap
+# (F3), a coordinate that is not a finite number (F1: NaN / +/-inf), or a
+# coordinate whose magnitude would overflow the shoelace and scaling arithmetic to
+# inf/nan (F1) is NOT a drawable footprint and fails CLOSED to Unavailable - never
+# a malformed drawing or an exception. The coordinates are in feet; even an
+# absolute projected coordinate (EPSG:2263 NY state-plane, about 1.1e6 ft for New
+# York City) sits far below the magnitude bound, while a value at or above it
+# overflows the shoelace products.
+_MAX_OUTLINE_VERTICES = 1000
+_COORD_MAX = 1.0e9
+
 # Readability floor (R098, DB-246): the drawing-label PREFERRED print size (9.5 pt);
 # never TYPOGRAPHY.label_pt (8.0) nor the 7.5 scale-bar size. Every label is at
 # least 8.5 pt at the printed size.
@@ -105,6 +117,13 @@ def _finite_number(value: object) -> bool:
         and not isinstance(value, bool)
         and math.isfinite(float(value))
     )
+
+
+def _plausible_coord(value: object) -> bool:
+    """True when ``value`` is a finite number whose magnitude cannot overflow the
+    geometry arithmetic (F1: rejects NaN, +/-inf, a non-number, and an over-large
+    magnitude such as 1e308)."""
+    return _finite_number(value) and abs(float(value)) <= _COORD_MAX
 
 
 def _hatch_pattern(pattern_id: str, angle_deg: float) -> str:
@@ -198,13 +217,6 @@ def _zone(points: Sequence[Point], *, pattern: str, role: str) -> list[str]:
 
 
 # -- geometry (polygon split by a single vertical division at the share ratio) --
-
-
-def _ring_points(ring: Sequence) -> list[Point]:
-    pts = [(float(p[0]), float(p[1])) for p in ring]
-    if len(pts) > 1 and pts[0] == pts[-1]:
-        pts = pts[:-1]
-    return pts
 
 
 def _poly_area(pts: Sequence[Point]) -> float:
@@ -360,8 +372,22 @@ def _validate(allocation: object) -> Unavailable | tuple[float, bool]:
     return share, fitted
 
 
-def _placed_ring(placement: object) -> list[Point] | None:
-    """The placed footprint's exterior ring, or ``None`` when no outline is placed."""
+def _outline_unavailable(reason: str) -> Unavailable:
+    """A placed footprint the kernel cannot draw truthfully (F1/F2/F3). The reason
+    is plain words only - no field or record names."""
+    return Unavailable("area_allocation", reason, "outline_invalid", "/placement/outline")
+
+
+def _placed_ring(placement: object) -> list[Point] | Unavailable | None:
+    """The placed footprint's exterior ring; ``None`` when no outline is placed;
+    ``Unavailable`` when an outline IS placed but cannot be drawn truthfully.
+
+    Fails CLOSED on a footprint with too many points (F3), a point that is not a
+    finite number of plausible magnitude (F1: NaN, +/-inf, a non-number or an
+    over-large magnitude that would overflow to inf/nan), or no area to divide
+    (F2: a zero-area collinear or zero-width ring) - never a malformed drawing and
+    never an unhandled ``ZeroDivisionError``/``ValueError`` downstream.
+    """
     if not isinstance(placement, Mapping) or placement.get("status") != "placed":
         return None
     outline = placement.get("outline")
@@ -370,8 +396,22 @@ def _placed_ring(placement: object) -> list[Point] | None:
     ring = outline[0]
     if not isinstance(ring, Sequence) or isinstance(ring, (str, bytes)):
         return None
-    pts = _ring_points(ring)
-    return pts if len(pts) >= 3 else None
+    if len(ring) > _MAX_OUTLINE_VERTICES:  # F3: a footprint carries a handful of vertices
+        return _outline_unavailable("The footprint has too many points to draw.")
+    pts: list[Point] = []
+    for vertex in ring:  # F1: every coordinate a finite number of plausible magnitude
+        if not isinstance(vertex, Sequence) or isinstance(vertex, (str, bytes)) or len(vertex) < 2:
+            return _outline_unavailable("The footprint shape is not given as points.")
+        if not (_plausible_coord(vertex[0]) and _plausible_coord(vertex[1])):
+            return _outline_unavailable("The footprint shape has a point that is out of range.")
+        pts.append((float(vertex[0]), float(vertex[1])))
+    if len(pts) > 1 and pts[0] == pts[-1]:
+        pts = pts[:-1]
+    if len(pts) < 3:
+        return None
+    if _poly_area(pts) <= 0.0:  # F2: a zero-area footprint cannot be split into two zones
+        return _outline_unavailable("The footprint has no area to show as two zones.")
+    return pts
 
 
 # -- the two drawn states --
@@ -476,6 +516,8 @@ def draw_area_allocation(
     if not fitted:
         return _draw_bar(share, caption=caption)
     ring = _placed_ring(placement)
+    if isinstance(ring, Unavailable):
+        return ring
     if ring is None:
         return Unavailable(
             "area_allocation",
