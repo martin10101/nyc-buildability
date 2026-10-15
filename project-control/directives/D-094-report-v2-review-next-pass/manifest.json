@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T22:35:27+00:00",
+ "updated_at": "2026-10-15T03:37:07+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -175,10 +175,12 @@
   "D-094-R151",
   "D-094-R152",
   "D-094-R153",
-  "D-094-R154"
+  "D-094-R154",
+  "D-094-R155",
+  "D-094-R156"
  ],
- "requirements_id_digest_sha256": "4e8782b08b21a0aa0f4ea7a9d4537ba54cc1db1dfc437ec12a3626f5669dfb8b",
- "requirements_content_digest_sha256": "86a96a7575a950f6c41a22100b7f15d13a0173a39ca45c8e40c4834cba05662d",
+ "requirements_id_digest_sha256": "ef85103ff3e7718d7c0a183841e5f535ee0bc273940dd1fe02a5d944802a3d9a",
+ "requirements_content_digest_sha256": "37267fc401375ea8bf17e9c419b67ce6196f65b4e9acff72f7debec88da51f2a",
  "sources": [
   {
    "file": "source-001.md",
@@ -346,6 +348,14 @@
    "recorded_at": "2026-10-14T22:02:36+00:00",
    "content_digest_sha256": "eaf4e54e3be53d24d246aa92b663b834de11186aeb7b3712e9c2341a574cb7f5",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-022-amendment.md",
+   "kind": "amendment",
+   "sequence": 22,
+   "recorded_at": "2026-10-15T03:37:07+00:00",
+   "content_digest_sha256": "274828583d0fc9b124fcd430fd07ac84ff11f5889ac330b24ed087f7bb4a4f54",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -368,7 +378,8 @@
   "source-018-amendment.md",
   "source-019-amendment.md",
   "source-020-amendment.md",
-  "source-021-amendment.md"
+  "source-021-amendment.md",
+  "source-022-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -693,6 +704,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T181 (the Results window's first screen leads with the results; the assumed conditions below them (web only)) to R051, R057, R071, R073, R081, R083, R151 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T03:37:07+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-022 (the owner's session handoff after the two running helpers finish) and requirements D-094-R155 to R156, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

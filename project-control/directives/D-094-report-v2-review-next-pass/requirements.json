@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 154,
+ "requirement_count": 156,
  "producer": "orchestrator",
- "updated_at": "2026-10-14T22:35:27+00:00",
+ "updated_at": "2026-10-15T03:37:07+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -5024,6 +5024,68 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the start of session 2026-10-14d before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R155",
+   "text": "'/session-handoff after the 2 running tesk do session handoff': once the two helpers running when the message was typed have finished, the session starts no further task and launches no helper; nothing keeps running (D-090 R941); the wave-25 merge seam stops before the pull request is opened.",
+   "source_ref": "source-022-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show no dispatch after this message and the two helpers' returns saved in the session folder.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-14d/SESSION_NOTES.md` and `return-prbody-w25-draft.md`, `return-prbody-w25-check.md` in that folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff before writing it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R156",
+   "text": "'/session-handoff after the 2 running tesk do session handoff': the session writes the handoff (docs/SESSION_HANDOFF.md and the session brief) and gives the owner the copy-in prompt for the next session.",
+   "source_ref": "source-022-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff file and the brief exist with the exact next action; the prompt is printed in the reply.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md` (main checkout) and `NEXT-SESSION-BRIEF.md` in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff before writing it; no work done on it yet.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
