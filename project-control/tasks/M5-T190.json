@@ -73,21 +73,21 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1: a deny-list fits contract 1.5.0 as emitted; a future contract that adds another per-run id or timestamp would bring the drift back. S4's live two-run test catches that the day it happens.",
     "RISK 2: page_evidence.py's _run_identity docstring may name the excluded fields; it is outside this task (wording only) and stays as is unless it is wrong: if it lists only two fields, report it for the next task that edits that file."
   ],
   "blockers": [],
   "created_at": "2026-10-15T14:32:58.010964+00:00",
-  "updated_at": "2026-10-15T14:32:58.447082+00:00",
+  "updated_at": "2026-10-15T14:33:01.944586+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -106,5 +106,14 @@
     "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q -p no:cacheprovider tests/drawings/report",
     "python3 tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T14:33:01.944384+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "M5-T190 claimed: the report's document fingerprint stable for the same document (builder dispatched next)"
+    }
+  ]
 }
