@@ -179,14 +179,14 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (600-line split REQUIRED - the brief's explicit question): r6b_reference_cases_check.py is 594 lines at read HEAD 48d6587b; the 5/8/9-10 case's step-P10 wiring adds ~3 lines (1 import + step_p10.case_errors in validate_case + step_p10.reading_digest_errors in provenance_errors) -> ~597. That leaves only 3 lines of headroom (the guard FAILS any .py >= 600). Plain step-P11 thin wiring is again ~3 lines (1 import + 1 case_errors + 1 reading_digest_errors) -> 600 -> FAILS. So a split/refactor IS needed for THIS task. Minimal behavior-identical fix inside check.py: introduce one registry `CASE_MODULES = (step_p9, step_p10, step_p11)` near the step imports and replace the hard-coded per-module calls with two loops (`for _m in CASE_MODULES: errs += _m.case_errors(case_id, data)` in validate_case; `for _m in CASE_MODULES: errs += _m.reading_digest_errors()` in provenance_errors). Net: +1 import +1 tuple, loops replace the existing hard lines -> check.py ~599, < 600 but TIGHT (1 line). Because options 4/11 complete the option set, no further case is expected, so 599 is an acceptable terminal state - BUT the producer MUST confirm the real count with `python tools/modularity_check.py --check`; if it lands >= 600, extract the case-module dispatch + reading-digest aggregation into the new module r6b_reference_cases_cases.py (already in allowed_paths as a contingency; preserve public imports per CLAUDE.md principle 16) so check.py gets durable headroom, NEVER weaken the 600 guard. step_p11 itself must be < 600.",
     "RISK 2 (plural 'tables' key): 33-121 (commercial FAR 2.00) and 24-11 (CF FAR 2.00) carry their numbers under the plural 'tables' key; the checker's table_assertion reads singular 'table' (None) and would fail 'has no table'. Record 33-121 = 2.00 and 24-11 = 2.00 as arithmetic operands / quote-only + a verbatim quote, table_assertion:null; a reviewer eyeballs the numbers against each snapshot's 'tables'. 23-22 (residential 2.00/2.40) and 23-432 (heights) carry singular 'table' -> table_assertion works. 35-31, 23-20, 23-52, 35-01, 35-63, 35-631, 35-632, 35-32, 35-33, 32-161, 23-433, 23-51, 54-311, 22-12/22-121 are prose-only -> quote-only.",
@@ -201,7 +201,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T11:21:27.660054+00:00",
-  "updated_at": "2026-10-15T11:21:28.141430+00:00",
+  "updated_at": "2026-10-15T11:21:31.652428+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -223,5 +223,14 @@
     "python3 tools/modularity_check.py --check",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T11:21:31.652291+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted; G0 PASS (plan return-plan-case-4-11.md, judge ADOPT)"
+    }
+  ]
 }
