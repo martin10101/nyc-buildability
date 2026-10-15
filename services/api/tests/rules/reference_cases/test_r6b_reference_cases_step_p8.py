@@ -48,7 +48,10 @@ CID = "placement-building-b"
 # The other cases' rows, pinned at the claim head: this task adds a case and must not
 # touch any existing one. The digest proves byte-stability of all cases except the new
 # one, without git.
-OTHER_CASES_DIGEST = "9a77545ad3ff53d0049a6c0679935b974ee7f1b70a06ac79b19af0bc999e6f9c"
+# Moved by M5-T184: adding the step-P9 case benchmark-options-2-3-6-7 puts it into this
+# "other" set (CASE_IDS minus placement-building-b), so the blob grew by that case's rows
+# and the digest changed; no existing case's rows changed.
+OTHER_CASES_DIGEST = "106d76df3c1fac9b5ae56d9ed1d635c7953e5d0421ea58ec64021e9f7a7e35a6"
 
 
 def _row(rid):
