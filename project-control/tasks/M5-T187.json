@@ -124,8 +124,8 @@
     "directive-compliance-verifier",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "R096 sequencing: mounting the website bar before the PDF illustration (M5-T173) would create a website/PDF mismatch - this task deliberately does not mount; Part B mounts in lockstep with M5-T173.",
     "G-5 benchmark freeze: the lead-refinement (DB-264/DB-261) must NOT run here because it edits the frozen three-answers-panel.test.tsx; it is Part B.",
@@ -135,7 +135,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:40.368053+00:00",
-  "updated_at": "2026-10-15T10:54:07.243916+00:00",
+  "updated_at": "2026-10-15T11:20:55.141890+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -864,5 +864,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T11:20:55.141686+00:00"
 }
