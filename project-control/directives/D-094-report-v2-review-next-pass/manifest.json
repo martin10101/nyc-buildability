@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T17:08:38+00:00",
+ "updated_at": "2026-10-15T18:48:32+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -194,10 +194,11 @@
   "D-094-R170",
   "D-094-R171",
   "D-094-R172",
-  "D-094-R173"
+  "D-094-R173",
+  "D-094-R174"
  ],
- "requirements_id_digest_sha256": "4b7db4ca6f933c0b2bf2057a110a928e2d30246f37190735a9639f62a313d17f",
- "requirements_content_digest_sha256": "8eacb8d01467ade8f2fe7067ba8dd82713705e541517ba0f372e0c5d0367d292",
+ "requirements_id_digest_sha256": "6c8d6e11320a6ca7c5c32acc63587c1da4af92d88a42a58a2d7ea950f0373311",
+ "requirements_content_digest_sha256": "42a8e9d544f278d8789279caddfcd9e77d20b64fd1c782e6a7f09143bef92284",
  "sources": [
   {
    "file": "source-001.md",
@@ -405,6 +406,14 @@
    "recorded_at": "2026-10-15T17:08:38+00:00",
    "content_digest_sha256": "94439547ecde62fa6ae88b99cded601e6e000ea41511a74471fe03318f10db83",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-027-amendment.md",
+   "kind": "amendment",
+   "sequence": 27,
+   "recorded_at": "2026-10-15T18:48:32+00:00",
+   "content_digest_sha256": "3610cdd35e6feba473699191e7a7d86c06006151c01234716ff6850d775ad2e6",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -432,7 +441,8 @@
   "source-023-amendment.md",
   "source-024-amendment.md",
   "source-025-amendment.md",
-  "source-026-amendment.md"
+  "source-026-amendment.md",
+  "source-027-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -899,6 +909,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-026 (the owner's session handoff once the current tasks finish, with at least fifteen helpers for the next session) and requirements D-094-R167 to R173, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T18:48:32+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-027 (the owner's reminder to finish only the current tasks and start no more helpers before the handoff) and requirements D-094-R174 to R174, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

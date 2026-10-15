@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 173,
+ "requirement_count": 174,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T17:08:38+00:00",
+ "updated_at": "2026-10-15T18:48:32+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -5720,6 +5720,37 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R174",
+   "text": "'What happened with my handoff prompt and the instructions to just finish the current tesk not to spin up more': from this message on the session dispatches no helper; it finishes the task in flight (M3-T013's rule-check record and acceptance) with its own seams only, then writes the handoff and prints the copy-in prompt; the instruction for the next session (at least fifteen helpers, R169) is unchanged.",
+   "source_ref": "source-027-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show no dispatch after this message, M3-T013 accepted, and the handoff printed.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-15b/SESSION_NOTES.md`; `docs/SESSION_HANDOFF.md`.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff of session 2026-10-15b; the rule check it waited for returned PASS before capture.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
