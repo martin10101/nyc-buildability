@@ -2542,24 +2542,37 @@
     "D-094-R092"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "331eba7494a54c10c7b185f5f7ab0f14f43aa573",
+   "reviewed_manifest_sha256": "e758853deba78ac2657ea4b5c2ca0cc0909fe04424444e4e0f677085d53dc247",
    "requirements": [
     {
      "id": "D-094-R044",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The footprint outline in placement.py is built by compute_placement_geometry from derived figures only: plan_depth = plate_full/frontage (round half up), and every ring vertex is an arithmetic expression of the 0-ft lot-line touches and the computed frontage/depth \u2014 no coordinate is typed in.",
+      "The outline area is re-measured from the vertices by the shoelace formula and must reconcile to the plate within 0.5 sq ft or build_placement raises; I reproduced 6716.66 vs plate 6716.67 (0.01 apart), matching placement-building-b.json row footprint-tax-map.",
+      "The withheld branch (placed=False, or any fact None read by `is None`, or a 0 frontage that fails closed) carries no outline key; the schema withheld oneOf (additionalProperties:false) rejects one; test_s3 and the 4-way missing-fact test pass (54 focused tests green).",
+      "Stays open: R044 also governs the actual drawing (M5-T173) and the wired report's \"every drawn shape traces to result geometry\"; this task is not wired, so that live drawing-vs-result check remains for M5-T172/M5-T173.",
+      "Verifier's carry-forward condition met at 331eba74: the task's allowed-path files are identical to those verified at 32a11ed4 (content identity e758853d), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T182-DCV.md."
+     ],
+     "reviewed_sha": "331eba7494a54c10c7b185f5f7ab0f14f43aa573"
     },
     {
      "id": "D-094-R092",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Both modules carry measure const \"residential_floor_area\" (byte-equal to schema $defs.area_measure), the same measure the preliminary apartment estimate uses; area_allocation applies the one stated 0.60 share to the residential floor area 20,150 (apartment 12,090.00 + other 8,060.00 = total 20,150.00), matching row area-allocation.",
+      "Every output carries the conversion_statement const \"plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked\" (byte-equal to $defs.plate_conversion_statement); test_s7 pins all three consts against the bundled schema and I reproduced it.",
+      "The plate (zoning floor area per storey, 6716.67) and the physical floor plate are kept distinct \u2014 \"the physical floor plate (gross-up, exclusions, wall thickness)\" is in not_checked and the plate is never returned or labelled as the physical plate (test_s8 reproduced).",
+      "Stays open: R092's required evidence names the register entry and its wired worked example, and its harness is a wired test that fails if ZFA is used as plate area without a stated conversion; this task delivers the compatible-measure modules+tests but the register entry and the wiring belong to M5-T172 (R092 also depends on R088, the two-zone authorization, outside this task).",
+      "Verifier's carry-forward condition met at 331eba74: the task's allowed-path files are identical to those verified at 32a11ed4 (content identity e758853d), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T182-DCV.md."
+     ],
+     "reviewed_sha": "331eba7494a54c10c7b185f5f7ab0f14f43aa573"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T06:55:11+00:00"
   },
   {
    "directive_id": "D-094",
