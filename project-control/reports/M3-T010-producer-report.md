@@ -76,7 +76,7 @@ Each file records the official title read now.
   commercial overlay). Captured. "Transit Zone, Inner" exists as the operative inverted-title term
   (/node/22739, LA 12/5/2024; "Inner Transit Zone" is a "see" cross-reference). Captured.
 - **Adjacent child/parent nodes found but NOT in this batch** (for a later capture, never silently
-  omitted): 22-12 → children 22-131…22-135 (NOT captured). 33-26 → children 33-261 "Beyond one hundred
+  omitted): 22-13 (Use Group III, not in this batch) → children 22-131…22-135 (NOT captured) [ORCH-CORRECTED per G1 A1: they are children of 22-13, not 22-12; 22-12's children 22-121 and 22-122 are captured here]. 33-26 → children 33-261 "Beyond one hundred
   feet of a street line", 33-262 "Minimum rear yards for C7 Districts" (NOT captured). 33-301, 32-421,
   23-372, 23-12, 23-351/352/353, 23-371, 54-311, 25-241, 22-121, 22-122, 32-121, 23-51 are leaf
   sections (no children). 23-35's children (23-351/352/353) are all captured here.
