@@ -1,0 +1,159 @@
+{
+  "task_id": "M5-T191",
+  "title": "M5-T173 part B1 (M5-T191) - page-4 footprint renderers: the engine's floor-1 plate drawn and dimensioned as an illustrative footprint on the site close frame (maps) and the kit report-frame fallback; opt-in, every other frame byte-identical",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Renderer level only (part W threads the data). (1) NEW maps/placed_footprint.py: translate the results-local floor-1 plate ring onto the map lot by constraint_overlay.overlay_offset (import only); validate it (finite, magnitude at most 1e9, 3 to 1000 vertices, non-zero area, every vertex inside or on the subject outline within 0.05 ft); draw it in the new kind 'illustrative_footprint' (legend 'Illustrative building footprint'); two dimensions, the back edge (width) and one depth edge, with their dimension lines on the lot-interior side so they never meet the lot-edge dimensions, each label the edge's own length, at least 8.5 pt, reusing close_frame_dimensions helpers by import. Invalid input or an unplaceable label draws NOTHING of the footprint (no exception, never shrunk or partial). (2) maps/site_context_plan.py, frame 'close' only (at most +15 SLOC; the file is 611 SLOC): accept placed_footprint and call (1); not_placed_legend stays True only when placed_footprint is None. (3) maps/__init__.py render_site_context_plan(..., placed_footprint=None) forwards it. (4) kit/styles.py: one new ShapeStyle 'illustrative_footprint'. (5) kit/site_plan.py frame 'report' only: the floor-1 plate in kind 'illustrative_footprint' (not the 'Residential' use kind) with the same two dimensions. No clearance and no tax-map figure is drawn anywhere: a clearance is neither a document number nor an edge length (C-4) and measured on the drawing it reads 35.32 ft against the document's 35.31 ft; part W prints the document's statement.",
+  "business_reason": "Audit 2026-10-15c section 3: page 4 says 'No building placed' although the engine places Building B (DB-284; DB-227 building part). At e026a391 the kit fallback page 4 already draws the plate as 'Residential' while page 5 says 'Worked out; not drawn'.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/fixtures/benchmark_215_16_northern_window",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/maps/placed_footprint.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/kit/styles.py",
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/tests/drawings/maps/test_placed_footprint.py",
+    "services/api/tests/drawings/kit/test_site_plan_footprint.py",
+    "project-control/reports/M5-T191-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172",
+    "M5-T175",
+    "M5-T188"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/maps/placed_footprint.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/kit/styles.py",
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/tests/drawings/maps/test_placed_footprint.py",
+    "services/api/tests/drawings/kit/test_site_plan_footprint.py",
+    "services/api/tests/drawings/kit/test_report_frame.py",
+    "services/api/tests/drawings/kit/test_report_frame_rework1.py",
+    "services/api/tests/drawings/kit/test_report_frame_rework3.py",
+    "services/api/tests/drawings/kit/test_style_table.py",
+    "project-control/reports/M5-T191-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/maps/constraint_overlay.py",
+    "services/api/app/drawings/maps/context_scene.py",
+    "services/api/app/drawings/kit/adapter.py",
+    "services/api/app/drawings/kit/section.py",
+    "services/api/app/drawings/kit/__init__.py",
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/app/drawings/report/",
+    "services/api/app/scenario/",
+    "services/api/app/cad/",
+    "packages/contracts/",
+    "services/api/tests/drawings/kit/snapshots/",
+    "services/api/tests/drawings/maps/snapshots/",
+    "services/api/tests/cad/",
+    "services/api/tests/drawings/report/",
+    "docs/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "placed_footprint None; kit frames 'sheet' and 'summary'",
+      "when": "every maps frame and those kit frames render",
+      "then": "byte-identical to the base: maps, kit and DXF snapshots and test_site_context_close_frame.py unchanged ('No building placed' row kept)"
+    },
+    {
+      "id": "S2",
+      "given": "the window map document and the benchmark floor_plates floor-1 outline",
+      "when": "render_site_context_plan(frame='close', placed_footprint=...)",
+      "then": "footprint inside the subject lot, each vertex = document vertex + overlay_offset within 0.01 ft; legend 'Illustrative building footprint', no 'No building placed'; labels 103.88 ft (back edge) and 64.66 ft (depth edge), expected from placement-building-b.json row gis-conflict-check, never a program run; maps_support.numbers_not_in_input passes; the note 'All dimensions: city map outline, not surveyed.' printed once; no 33.34, 35.31, 35.32, 100.76 or 66.66 in the SVG"
+    },
+    {
+      "id": "S3",
+      "given": "the benchmark, LANE_E on",
+      "when": "kit render_site_plan(frame='report')",
+      "then": "plate in 'illustrative_footprint' with the same two labels; no 'Residential' legend; exactly one caption (test_k4); within 182 x 150 mm; no label overlap; numbers_not_in_input passes"
+    },
+    {
+      "id": "S4",
+      "given": "one degenerate footprint per state: non-finite, magnitude over 1e9, a point not a pair, over 1000 vertices, under 3 points, zero area, a vertex 0.06 ft outside the lot",
+      "when": "the close frame and the kit report frame render",
+      "then": "no footprint, no exception, kinds_drawn lacks 'illustrative_footprint'; on the close frame no 'No building placed' row either (the engine placed it); one test per state"
+    },
+    {
+      "id": "S5",
+      "given": "a footprint label that cannot fit at 8.5 pt (forced in the test)",
+      "when": "it renders",
+      "then": "the whole footprint withheld, never shrunk or partial"
+    },
+    {
+      "id": "S6",
+      "given": "placed_footprint passed to frames summary, summary_close, wide, report or sheet",
+      "when": "they render",
+      "then": "byte-identical to the same frame without it (pages 1 and 2 unchanged)"
+    },
+    {
+      "id": "S7",
+      "given": "the change set",
+      "when": "ruff and modularity_check run",
+      "then": "pass; site_context_plan.py at most +15 SLOC; placed_footprint.py under 300 SLOC"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (bases): floor_plates is the plate fitted on the city-map (GIS) outline, 103.88 x 64.66 (scenario geometry.py:51-118); placement.outline is the printed-tax-map rectangle 100.76 x 66.66 in its own frame. Drawing placement.outline on the GIS map would mix bases: forbidden.",
+    "RISK 2: the literal kind 'illustrative_footprint' is the contract with part B4's manifest; do not rename.",
+    "RISK 3 (residual): the kit fallback keeps its held caption 'Lot outline: Approximate - tax map' (schema const, DB-269)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:40:19.457228+00:00",
+  "updated_at": "2026-10-15T23:40:19.928873+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R017",
+        "D-094-R043",
+        "D-094-R044",
+        "D-094-R053",
+        "D-094-R082",
+        "D-094-R197",
+        "D-094-R225",
+        "D-094-R226",
+        "D-094-R235"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:40:19.457568+00:00",
+  "path_notes": "Parallel part (with B2, B3, B4); W integrates after all four. This part alone owns the kit report-frame tests; B2 keeps the floor-stack default byte-identical so test_report_frame_rework3.py:109 cannot move. D-093: read placement-building-b.json (rows footprint-tax-map, gis-conflict-check) and NB-04; no record written here. Heavy runs under flock /root/project/lanes-runtime/heavy-run.lock.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/maps tests/drawings/kit tests/cad",
+    "python tools/modularity_check.py --check",
+    "pictures of the close frame and the kit report frame for the benchmark, in scratch, for the visual review"
+  ],
+  "worktree": "/root/project/w-wave29"
+}

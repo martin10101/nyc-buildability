@@ -731,3 +731,5 @@ Sweep 2026-10-15 (handoff seam of session 2026-10-15b, after the acceptance of M
 Sweep 2026-10-15 (M3-T015 contract, session 2026-10-15c): DB-285 to DB-291 added from the batch-1 checks of the owner's audit (source-028); DB-243 and DB-253 stay OPEN (M3-T015 captures part of what they name; the rest stays owed); other rows unchanged.
 
 Sweep 2026-10-15 (M0-T197 contract, session 2026-10-15c): DB-285 is reported by the new export check (its fix stays OPEN for the report layout); other rows unchanged.
+
+Sweep 2026-10-15 (wave-29 part contracts, session 2026-10-15c): DB-227, DB-283, DB-284 and DB-288 stay QUEUED(M5-T173) (its parts M5-T191 to M5-T194 and the wiring part); other rows unchanged.
