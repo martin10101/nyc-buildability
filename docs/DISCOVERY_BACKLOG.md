@@ -672,3 +672,5 @@ Sweep 2026-10-15 (wave-26 closing seam, session 2026-10-15b): DB-271 added OPEN 
 Sweep 2026-10-15 (M5-T170 acceptance seam, session 2026-10-15b): DB-265, DB-266 and DB-267 RESOLVED; DB-273 added WATCH (DB-265 item 3); DB-274 added QUEUED(M5-T169); DB-270 stays QUEUED(M5-T169); DB-271 and DB-272 stay OPEN; DB-263 stays OPEN (its task is planned for the next wave); other open and watch rows unchanged.
 
 Sweep 2026-10-15 (wave-27 contract seam, session 2026-10-15b): DB-263 QUEUED(M5-T188); DB-270 QUEUED(M5-T169); DB-274 QUEUED(M5-T169 for NB-01, the records task for NB-05); DB-271 OPEN (the records task for NB-07 is planned next in this wave); DB-272 OPEN (the next capture task); DB-273 WATCH; other open and watch rows unchanged.
+
+Sweep 2026-10-15 (M5-T185 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): no row added; open and watch rows as at the wave-27 contract seam.
