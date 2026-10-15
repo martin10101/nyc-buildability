@@ -1,0 +1,97 @@
+{
+  "task_id": "M5-T198",
+  "title": "E0 part 4 (M5-T198) (record, new file): NB-09 qualifying-housing pathway for 215-16 Northern Boulevard - the facts each option 2/3 figure rests on (24,180 sq ft / 2.40; 30/45/65 ft; 35 units; 4,030 sq ft), the senior count not known, each unknown with its missing item and next step. No program output. E0-S indexes it and stamps code identity.",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "docs/research/evidence-records/NB-09-qualifying-housing-pathway.json (id vs the NB-08 reserved by draft-spec-E1) in the NB-07 shape. Reuse, never re-research: benchmark-options-2-3-6-7 opt2-* and opt3-* rows; real-lot L2, L4, L7, L8; overlay-reading base-and-building-height; NB-01, NB-04, NB-05, NB-07. Per figure name facts F1-F8 (this return, section A2) with capture quotes and digests; keep retrieved evidence, interpretation, software testing and professional review apart. Unknowns: eligibility (HPD permit notice or regulatory agreement; State Department of Health licensure or AIRS agreement); senior unit cap (readings differ); OPEN, not decided: whether a UAP development with less than the full affordable floor area may use 65 ft. code_paths and code_identity empty here.",
+  "business_reason": "D-093: the conditions E0 adds cite one canonical record.",
+  "inputs": [
+    "docs/research/evidence-records/NB-07-mih-inclusionary-status.json",
+    "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "docs/research/zr-snapshots/v1/"
+  ],
+  "outputs": [
+    "docs/research/evidence-records/NB-09-qualifying-housing-pathway.json",
+    "project-control/reports/M5-T198-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "docs/research/evidence-records/NB-09-qualifying-housing-pathway.json",
+    "project-control/reports/M5-T198-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/reference-cases/",
+    "docs/research/zr-snapshots/",
+    "services/",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the record alone in a scratch folder",
+      "when": "research_record_check --check --records-dir on it",
+      "then": "PASS"
+    },
+    {
+      "id": "S2",
+      "given": "each figure",
+      "when": "read",
+      "then": "its facts with source and quote; senior count not_known; 35 named as the affordable 680-factor count only"
+    },
+    {
+      "id": "S3",
+      "given": "each unknown",
+      "when": "read",
+      "then": "recorded search, exact missing item, next step"
+    },
+    {
+      "id": "S4",
+      "given": "a sealed re-derivation by the G3 reviewer",
+      "when": "compared",
+      "then": "same list; differences recorded, never merged away"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Do not seed the record (a placeholder fails research_record_check in CI); seed only the report."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:41:13.230646+00:00",
+  "updated_at": "2026-10-15T23:41:13.703014+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R258",
+        "D-094-R262"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:41:13.230991+00:00",
+  "path_notes": "New file only; README, RESEARCH_REQUESTS and code identity belong to E0-S.",
+  "documented_test_commands": [
+    "python3 tools/research_record_check.py --check --records-dir SCRATCH_DIR_WITH_ONLY_NB-09"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
