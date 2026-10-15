@@ -89,13 +89,13 @@
     "G1",
     "G2"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "R1: this is a documents-only correction that restates the already-captured folder state and verbatim text; any statement that would change a computed reading or result is OUT OF SCOPE and must be named for a research task, not edited here.",
     "R2 (data contract): the library's capture-claim check currently FAILS at the pinned head (24-11/24-111 marked NOT CAPTURED while zr-24-11/zr-24-111 exist); the G1 data-contract-verifier must re-run it green on the frozen head as the acceptance evidence.",
@@ -104,7 +104,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T16:00:36.580054+00:00",
-  "updated_at": "2026-10-15T16:00:37.054898+00:00",
+  "updated_at": "2026-10-15T16:00:40.249479+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -122,5 +122,14 @@
     "the library capture-claim check (verify_captures.py / the producer command in docs/zoning-law-library/research-log.md) PASSES at the frozen head",
     "grep -rnEi 'NOT CAPTURED|not captured|transit-zone definition|C-district counterpart' docs/zoning-law-library/  # no stale 24-11/24-111/36-64/66-11 hit remains"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T16:00:40.249334+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "M3-T014 claimed: the law library's remaining capture-state and label corrections (builder dispatched next)"
+    }
+  ]
 }
