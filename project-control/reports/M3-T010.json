@@ -1,0 +1,15 @@
+{
+  "task_id": "M3-T010",
+  "producer_agent": "official-source-researcher",
+  "report_file": "project-control/reports/M3-T010-producer-report.md",
+  "submitted_at": "2026-10-15T08:22:45.189676+00:00",
+  "requested_status": "awaiting_gate",
+  "evidence_map": "project-control/reports/M3-T010-evidence-map.json",
+  "content_manifest_sha256": "36bd5bf7daf4f8abe7b95d558ce5d2f794ab86e36b5f12d6af4b258b2edebb79",
+  "reviewed_sha": "3170556fea13b2176818bbd1878363d92572e563",
+  "applicable_requirements": [
+    "D-094-R102",
+    "D-094-R104"
+  ],
+  "updated_at": "2026-10-15T08:22:46.365032+00:00"
+}

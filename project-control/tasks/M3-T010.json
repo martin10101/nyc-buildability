@@ -208,8 +208,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK 1: Options 8 and 10 carry open owner questions (N1, N2/DB-255). Capture is meaning-neutral; the producer report states that no meaning is chosen and capture alone unblocks nothing downstream.",
     "RISK 2: 12/5/2024 City of Yes renumbering - Article VII Chapter 7 and the 23-35x court group may have moved, merged or been retitled. Take every number, title and Last Amended date from the page read this pass; report, never invent, a missing or renumbered node (S4). The library's parenthetical titles are a summary, not a confirmed per-node title.",
@@ -220,7 +220,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T05:53:20.164625+00:00",
-  "updated_at": "2026-10-15T07:08:27.251249+00:00",
+  "updated_at": "2026-10-15T08:22:48.483043+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -254,6 +254,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "twenty official law texts captured word for word with byte-identical bundled copies, and the law library's capture states corrected; independent precheck READY (whole api suite under the lock); the builder's commit integrated as fd48fbc0 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T08:22:44.844296+00:00",
+      "agent": "official-source-researcher",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }
