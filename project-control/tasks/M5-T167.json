@@ -324,7 +324,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T19:36:20.882932+00:00",
-  "updated_at": "2026-10-14T23:26:41.651505+00:00",
+  "updated_at": "2026-10-15T00:17:17.511967+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -369,6 +369,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "round 1 (increment A: the G-6 zoning-lot isolation behind facades and the block-frontage measure; the rest follows in round 2); the builder's commit integrated as 474c8ee3 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T00:17:17.511849+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rounds 2 and 3 integrated as 59a1b9bb (cherry-pick of d6bc41e7 = 8fa1714c) and 11cdb085 (cherry-pick of ad9079f4); the whole api pytest 9767 passed exit 0 re-run by an independent read-only check; next: the reviews"
     }
   ],
   "scope_corrections": [
