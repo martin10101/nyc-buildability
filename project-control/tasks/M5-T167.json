@@ -314,8 +314,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "DB-245 rank-label scope growth: a CONSISTENT rename of the measurement-rank display label requires profile/measurement.py:65 and kit/scope.py:88 (missed by DB-245's enumeration and the refresh) because the kit comment keeps the card, the drawing caption and the evidence page in step; leaving them out leaves 'approximate tax map' on the site-plan caption/scope line against 'city map outline' on the evidence page. The exact rename set, the rank-label wording, and whether to touch profile/kit are pinned at G0.",
     "test_result_ways_facts_area_overlay.py:142 asserts the engine's 'tax-map outline' rendered wording and was absent from the refresh scope; renaming result_way_conditions.py reddens it. It is now in allowed_paths; sweep all consumers of the renamed strings.",
@@ -327,7 +327,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T19:36:20.882932+00:00",
-  "updated_at": "2026-10-15T02:58:40.968921+00:00",
+  "updated_at": "2026-10-15T03:18:34.394065+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -416,5 +416,7 @@
       "actor": "orchestrator",
       "change": "Scope note 4 (2026-10-15, after the four reviews G1, G3, G4 and G5, all PASS with no required correction): two readings recorded so the packet matches what was built and reviewed. (1) S19: the emitted input_facts are only the values the rear-yard calculation uses (S24: recorded_lot_area 10,075 sq ft, administrative_record; lot_outline_area 10,387.99 sq ft, gis), each with its source and date and within the nine-basis vocabulary; the street widths of Northern Boulevard, 215 Street and 215 Place are not inputs of ZR 23-344 and are not emitted as input facts (no mapped street width is adopted as settled, DB-260); S19's width clause states the basis such a fact would carry, not an obligation to emit it (the G4 reviewer's reading, PASS*). (2) The objective's 'net-shrink result_ways.py' wording: the moved zoning-lot cluster lived in result_way_bridge.py (525 -> 444 lines) and three_way_document.py (904 -> 864); result_ways.py is unchanged (it does not grow; S20 holds; modularity_check passes). The six review advisories are backlog DB-265, queued for M5-T170 (same engine area and register). No path, gate, reviewer, row or scenario changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T03:18:34.393896+00:00"
 }
