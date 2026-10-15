@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-15T17:00:18+00:00",
+ "updated_at": "2026-10-15T18:57:54+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -118,7 +118,9 @@
     "M5-T186 reference case: the agreed worked values of options 4 and 11 for the benchmark lot (documents only) | code: https://github.com/martin10101/nyc-buildability/commit/37403e84b090531ef221267da3bdb59f9e127a92 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38739399616 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/606fc40c4d8b67b0000263e1285a62ff8b72ccb9) | supporting work, no visible change yet: the agreed worked values of options 4 and 11 recorded as a reference case, so all eleven options now have reference values or named gaps",
     "M5-T189 report safety fixes: the page header escaped, non-finite figures shown as missing, the full code version wraps (DB-277, DB-278, DB-280) | code: https://github.com/martin10101/nyc-buildability/commit/23aeeff5d2af48e584661d79e19aa265387eb203 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38755463071 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/21c2d3c13bca2808de51741a76a0a82ca30893de) | visible on the printed report only when the full code version is set: the report keeps its 10 pages instead of shrinking to 8; otherwise supporting work (the page header cannot break the page style; a non-finite figure shows as missing)",
     "M5-T190 the report's document fingerprint stable for the same document (DB-282) | code: https://github.com/martin10101/nyc-buildability/commit/26d1d4bfc5e3920dca2ccd3380da9944e6c9a0cb | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38759469773 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/92cbf9360b2dfb4fff2c0ade1f16e8c2de249446) | visible on the appendix's last page: the document fingerprint is now the same on every print of the same results",
-    "M3-T014 the zoning-law library's remaining capture-state and label corrections (documents only; DB-252, DB-272) | code: https://github.com/martin10101/nyc-buildability/commit/63ab5d19d073f9bd8b84db5115150b0d21a737a4 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38772303427 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8c0d2d9e88ff7d296fc4844dd7f0fbb5a1bac984) | supporting work, no change in the report: the zoning-law library's capture states and two section labels corrected (docs/zoning-law-library/)"
+    "M3-T014 the zoning-law library's remaining capture-state and label corrections (documents only; DB-252, DB-272) | code: https://github.com/martin10101/nyc-buildability/commit/63ab5d19d073f9bd8b84db5115150b0d21a737a4 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38772303427 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8c0d2d9e88ff7d296fc4844dd7f0fbb5a1bac984) | supporting work, no change in the report: the zoning-law library's capture states and two section labels corrected (docs/zoning-law-library/)",
+    "M5-T172 the first building option placed on the lot, its area split and three floor plates in the results (part B; four rounds) | code: https://github.com/martin10101/nyc-buildability/commit/11b2bb59e76e4d66ffa208f01e52a89cc479d367, https://github.com/martin10101/nyc-buildability/commit/e79ddbc6c369a8a30c5d292245371a1e10eca4c5, https://github.com/martin10101/nyc-buildability/commit/5994e2201116b1c044e5b801022eed99946607a3 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38782795320 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/b15398a007fcfd74a9dec3ca27f6a9cbba222bab) | visible on report pages 3, 5, 6 and the appendix: the first building option is placed on the lot (page 5 'Worked out; not drawn'), three floor plates drawn on page 6, the not-placed sentence gone; the placed footprint and the two-zone illustration are drawn next (M5-T173 part B)",
+    "M3-T013 the captured law tables' fingerprints, checked on load (DB-276) | code: https://github.com/martin10101/nyc-buildability/commit/c106173557013163f8cfbd41d6c9fce980129e80, https://github.com/martin10101/nyc-buildability/commit/7785d0dedaa538a2241dbd700813a77388d367ab | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38788713959 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8041c101e71f6a2e8d4bfb92c7842126016223d0) | supporting work, no change in the report: every captured law table carries its own fingerprint, checked when it is loaded"
    ],
    "steps": [
     {
@@ -131,24 +133,6 @@
      "waits_for": [
       "M5-T167"
      ]
-    },
-    {
-     "wave": 28,
-     "item": "illustrative placement of Building B and its area allocation",
-     "ids": [
-      "M5-T172"
-     ],
-     "state": "in_progress",
-     "note": "part B contracted and claimed 2026-10-15 (wave 28, after the wave-27 merge): the engine places the first building option on the lot and writes the placement and the area split into the results; the massing plates draw; the scenario-sheet drawing and the website follow in M5-T173 part B and M5-T174"
-    },
-    {
-     "wave": 28,
-     "item": "law-capture table integrity (DB-276): every captured law table carries its own fingerprint, checked when it is loaded",
-     "ids": [
-      "M3-T013"
-     ],
-     "state": "in_progress",
-     "note": "contracted and claimed 2026-10-15 beside M5-T172 part B (the 37 table-bearing captures and their bundled copies, the loader; no shared file); no value changes"
     },
     {
      "wave": 27,
