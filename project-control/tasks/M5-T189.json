@@ -95,13 +95,19 @@
       "id": "S8",
       "given": "the full api suite at the accept head",
       "when": "CI runs",
-      "then": "test_report_benchmark.py (report HTML snapshot), the DXF and site_plan.svg snapshots, tests/drawings/kit and tests/drawings/maps all stay GREEN with no snapshot file edited \u2014 the byte-identity proof that no valid output moved"
+      "then": "test_report_benchmark.py (report HTML snapshot), the DXF and site_plan.svg snapshots, tests/drawings/kit and tests/drawings/maps all stay GREEN with no snapshot file edited — the byte-identity proof that no valid output moved"
     },
     {
       "id": "S9",
       "given": "the modularity census",
       "when": "modularity_check --check runs",
       "then": "it passes; the three guards add only a handful of lines and cross no threshold"
+    },
+    {
+      "id": "S10",
+      "given": "a report whose run identity carries a full 40-character code commit (the route's identity commit, or GIT_COMMIT_SHA / RENDER_GIT_COMMIT set in the process, as production sets it)",
+      "when": "the report is printed (TestClient POST /report with the benchmark providers and the commit set, then apps/web/scripts/print-report-pdf.mjs)",
+      "then": "the long commit wraps inside its appendix column (a print-stylesheet rule in layout.py lets an evidence-column list item break anywhere); the benchmark prints on the same 10 pages, at the same scale, as with the commit unknown (page-by-page text identical except the commit line); a test pins the rule; mutation: without the rule the same print shrinks to 8 pages"
     }
   ],
   "required_gates": [
@@ -153,6 +159,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "M5-T189 claimed: report safety fixes for the page header and non-finite figures (builder dispatched next)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T13:53:39+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15b, while the builder works): the orchestrator gave the private preview its checkout commit (GIT_COMMIT_SHA, the variable the run identity reads, as production sets RENDER_GIT_COMMIT) and reprinted main 86a450d4: the same report HTML except the run identity's 'Code commit:' line printed on 8 pages instead of 10, every page at a smaller scale. Reprinting both HTML files with the same printer reproduced it (8 vs 10 pages): the unbroken 40-character commit in the appendix's run-identity column (page_evidence._run_identity, class evidence-column) overflows and Chromium shrinks the whole document to fit. The print stylesheet is layout.py, already in this task's allowed paths; scenario S10 is added. Backlog row DB-280. No path, row, gate, reviewer or dependency changes; the benchmark's printed text stays identical with the commit unknown."
     }
   ]
 }
