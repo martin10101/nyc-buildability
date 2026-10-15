@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-01",
  "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
- "revision": 7,
+ "revision": 8,
  "last_changed": "2026-10-15",
  "question": {
   "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
@@ -276,12 +276,12 @@
    "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
    "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
    "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
-   "services/api/app/api/v1/study_inputs.py": "48eaf75f9ded81b4322126df61d03783206218f87f47e2a2799c3f3cce793030",
+   "services/api/app/api/v1/study_inputs.py": "8f70a61cab9cb455677b460dbe53bbf43556f3e1b4a8b96e8a2cc7c5b4d72fa0",
    "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
    "services/api/app/scenario/three_answers/result_way_bridge.py": "4e4d209e41b4278a908afa422b7abd63055b203d8393695f7527649b3d76ddea",
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
    "services/api/app/scenario/three_answers/three_way_document.py": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c",
-   "services/api/app/drawings/report/readers.py": "8f9aefc6e42ac2d85e56ead3e75d784599b45ec0cfc8c9137cbdcaf4069dc4f1",
+   "services/api/app/drawings/report/readers.py": "4aed375d1b400f8ecfe64216a26aca578f74ed32ef25a7cda5fec8086a1659a2",
    "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52",
    "services/api/app/scenario/three_answers/three_way_zoning_lot.py": "c92745d59682fa24d3f6651a925b0bcd0f6b45da0f7610ce35fce747391a55ef",
    "services/api/app/scenario/three_answers/result_way_zoning_lot.py": "5ad4efdfd34a18b184e0967f8fd9ef76c7c73729fb8a6cd6af01483a94bfa790"

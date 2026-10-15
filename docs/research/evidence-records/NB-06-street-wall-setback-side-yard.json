@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-06",
  "title": "215-16 Northern Boulevard: street-wall location, the 23-433 setback trigger at or below the base height, and R6B side yards (ZR 23-431, 35-631; 23-432/23-433, 35-632; 23-335, 34-232)",
- "revision": 3,
+ "revision": 4,
  "last_changed": "2026-10-15",
  "question": {
   "text": "For a building on lot 70 (R6B with a C2-2 overlay, corner of Northern Boulevard and 215 Place): (Q1) where must the street wall sit along each frontage, and does the C2-2 overlay change the rule for a residential-only building and for a mixed building? (Q2) does ZR 23-433 require any setback for a building at or below the maximum base height (the benchmark three-storey 30 ft option), and on what condition? (Q3) is a side yard required, optional or prohibited in R6B, and under which section?",
@@ -448,8 +448,8 @@
    "services/api/app/scenario/three_answers/three_way_document.py"
   ],
   "code_identity": {
-   "services/api/app/scenario/three_answers/envelope_constraints.py": "fb32d6cd86963255e31e3b55f86b5b853087a9ef2ec8d10f71784f87ddf414ae",
-   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "fe6e7bc1ecd42d45368dd657000e97a60b193dc94985cc86acda3e00d7c99438",
+   "services/api/app/scenario/three_answers/envelope_constraints.py": "2f7d6146926ad102e64e63a05a2d4db70eb4b2eedd604531e1b67404b1aded91",
+   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "267ac3906a0f3031a63ef38a5a12227f166c5339a8547665797d7582c90316df",
    "services/api/app/scenario/three_answers/three_way_document.py": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
   },
   "worked_example": {

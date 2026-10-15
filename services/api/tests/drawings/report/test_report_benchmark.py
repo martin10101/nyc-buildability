@@ -209,6 +209,18 @@ def test_m5t170_page_8_shows_the_applied_envelope_readings() -> None:
         assert "The street wall" not in (building.get("not_checked") or [])
 
 
+def test_m5t170_page_8_side_yard_effect_follows_the_row_state() -> None:
+    # G4 advisory 3: the page-8 side-yard effect follows the row state (like the setback branch),
+    # so a detached building without the overlay (state=applies, two 5-ft yards) cannot contradict
+    # page 3. The shipped benchmark side yard is not_applicable, so its print is unchanged.
+    applies = readers._envelope_open_effect("side_yard", {"state": "applies"})
+    not_applicable = readers._envelope_open_effect("side_yard", {"state": "not_applicable"})
+    assert "two side yards" in applies.lower()
+    assert "23-335(a)" in applies
+    assert "no side yard is required" in not_applicable.lower()
+    assert applies != not_applicable  # the effect is NOT state-invariant
+
+
 # =========================================================================== S17
 def test_s17_long_apartment_estimate_sentence_prints_once() -> None:
     doc = benchmark()

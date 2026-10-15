@@ -304,6 +304,7 @@ def _setback_check(
     triggered = _setback_triggered(street_wall_height_ft, max_base_height_ft)
     base = max_base_height_ft
     if triggered is True:
+        conditions.append(_setback_depth_minimum_condition())
         text = "A conditional reading: a setback above the base applies."
         return _applies_row("setback", values, conditions, text, zr)
     if triggered is False:
@@ -316,6 +317,18 @@ def _setback_check(
     conditions.append(_above_base_condition(base))
     text = "A conditional reading of the setback above the base."
     return _applies_row("setback", values, conditions, text, zr)
+
+
+def _setback_depth_minimum_condition() -> dict:
+    return {
+        "kind": "unchecked_condition",
+        "assumption": (
+            "The 10-foot and 15-foot depths are the least the setback must be; ZR 23-433(a) to "
+            "(d) may reduce or waive them (for example where part of the wall is far enough from "
+            "the street line)"
+        ),
+        "settled_by": "The building design checked against ZR 23-433(a) to (d)",
+    }
 
 
 def _above_base_condition(max_base_height_ft: float | None) -> dict:
@@ -349,7 +362,17 @@ def _side_yard_check(
         values = [{"name": "Each of two side yards", "value": _DETACHED_SIDE_YARD_FT, "unit": "ft"}]
         return _applies_row("side_yard", values, conditions, text, zr)
     if building_type in _RESIDENCE_MULTI:
-        where = "ZR 34-232" if overlay_present else "ZR 23-335(b)"
+        if building_type == BUILDING_MIXED:
+            # A mixed building reaches "no side yard required" through the Chapter 5 bulk
+            # (ZR 35-01 -> 23-335(b)); ZR 34-232 by its words governs a residential building
+            # only, so it is not the citation for a mixed building (and ZR 35-24 is not captured,
+            # so it is not cited).
+            where = "ZR 23-335(b)"
+            zr = ["ZR 23-335", "ZR 35-01"]
+        elif overlay_present:
+            where = "ZR 34-232"
+        else:
+            where = "ZR 23-335(b)"
         text = f"A draft reading: no side yard is required under {where}."
         return _not_applicable_row("side_yard", [], [open_note], text, zr)
     # The building type was not stated.

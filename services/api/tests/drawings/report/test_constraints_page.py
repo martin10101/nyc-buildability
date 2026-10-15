@@ -149,8 +149,10 @@ def test_s10_site_section_words_within_the_baseline() -> None:
     # M5-T170: page 3 now shows the three NB-06 envelope readings (setback, street wall, side
     # yard) as short conditional readings, replacing the 1.4.0 "Not worked out yet" / "Not checked"
     # fall-backs and adding the side-yard row (D-094 R037/R043). The G0 baseline was 199; the three
-    # applied readings add ~16 words. New baseline (each reading kept to one short sentence).
-    assert len(visible_text(site).split()) <= 216
+    # applied readings add ~16 words. M5-T170 round 2 (G4 advisory 4): the side-yard row now carries
+    # the same "(see item N)" cross-reference the setback and street-wall rows have, adding 4 words
+    # (216 -> 220); each reading is still one short sentence.
+    assert len(visible_text(site).split()) <= 220
 
 
 # =========================================================================== S12

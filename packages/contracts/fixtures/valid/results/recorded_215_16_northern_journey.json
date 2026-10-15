@@ -999,7 +999,7 @@
           "ZR 12-10"
         ],
         "state": "not_known",
-        "text": "A labelled draft reading: in R6 through R12 districts, beyond 100 feet of a street line, whether a rear yard is required under ZR 23-344(c)(3) turns on whether the deemed rear lot line coincides with a side lot line of an adjoining zoning lot. The neighbouring zoning lots' lot-line kinds are not recorded for this lot, so this is not known. No number is shown. Not a determination by the Department of Buildings."
+        "text": "A labelled draft reading: in R6 through R12 districts, beyond 100 feet of a street line, whether a rear yard is required turns on the kind of the adjoining zoning lot's lot line that the deemed rear lot line meets: meeting a side lot line calls for none under ZR 23-344(c)(3), while meeting a rear lot line requires one under ZR 23-344(c)(1). The neighbouring zoning lots' lot-line kinds are not recorded for this lot, so this is not known. No number is shown. Not a determination by the Department of Buildings."
       }
     ],
     "combined": {
@@ -1013,7 +1013,7 @@
         },
         {
           "kind": "unchecked_condition",
-          "assumption": "If the neighbours' side lot lines are confirmed for ZR 23-344(c)(3) beyond 100 feet of a street line",
+          "assumption": "If the adjoining zoning lots' lot-line kinds are confirmed beyond 100 feet of a street line - a neighbour's side lot line calls for none (ZR 23-344(c)(3)), a neighbour's rear lot line requires one (ZR 23-344(c)(1))",
           "settled_by": "Reading the adjoining zoning lots' recorded lot-line kinds"
         },
         {
@@ -1051,7 +1051,7 @@
       "value": 60.0,
       "unit": "ft",
       "basis": "gis",
-      "source_title": "NYC Department of City Planning MapPLUTO, version 26v2",
+      "source_title": "DCP Digital City Map street center lines",
       "source_date": "2026-09-30"
     },
     {
@@ -1059,7 +1059,7 @@
       "value": 100.0,
       "unit": "ft",
       "basis": "gis",
-      "source_title": "NYC Department of City Planning MapPLUTO, version 26v2",
+      "source_title": "DCP Digital City Map street center lines",
       "source_date": "2026-09-30"
     }
   ],

@@ -504,11 +504,22 @@ def pluto_study_inputs_provider(
             if zoning_lot_index_provider is not None
             else None
         )
-        street_data = (
-            street_data_provider(canonical_bbl, correlation_id)
-            if street_data_provider is not None
-            else None
-        )
+        try:
+            street_data = (
+                street_data_provider(canonical_bbl, correlation_id)
+                if street_data_provider is not None
+                else None
+            )
+        except StudyInputsUnavailableError:
+            raise  # a provider that already speaks the fail-safe 503 passes through unchanged
+        except Exception as exc:  # an UNEXPECTED street-window failure -> the route's fail-safe 503
+            # Typed connector errors already fail closed to None inside the provider; anything
+            # else must not surface as a 500 - the study is withheld and is safe to retry.
+            raise StudyInputsUnavailableError(
+                "the street-window source could not be read; the study setup is withheld and is "
+                "safe to retry.",
+                reason="street_data_unavailable",
+            ) from exc
         return assemble_study_inputs(
             result,
             selected=selected,

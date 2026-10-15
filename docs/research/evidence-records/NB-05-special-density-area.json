@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-05",
  "title": "215-16 Northern Boulevard: special density area resolved; the dwelling-unit limit stays conditional",
- "revision": 5,
+ "revision": 6,
  "last_changed": "2026-10-15",
  "question": {
   "text": "Is lot 70 in a special density area (ZR 23-52(a)(1)), and which inputs to the dwelling-unit limit stay conditional?",
@@ -167,7 +167,7 @@
    "services/api/app/scenario/three_answers/result_way_facts.py": "8e440578e5c38ed11488f64bf1d172716301b264e814926887feee9c3bff560c",
    "services/api/app/scenario/three_answers/result_way_bridge.py": "4e4d209e41b4278a908afa422b7abd63055b203d8393695f7527649b3d76ddea",
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
-   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "fe6e7bc1ecd42d45368dd657000e97a60b193dc94985cc86acda3e00d7c99438",
+   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "267ac3906a0f3031a63ef38a5a12227f166c5339a8547665797d7582c90316df",
    "services/api/app/scenario/three_answers/three_way_scope_lines.py": "8cece25b78227d8c63840826173220d8b06c2d805cc1a2b59ea0f5fd19abd0ee"
   },
   "worked_example": {

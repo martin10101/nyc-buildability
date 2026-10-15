@@ -439,6 +439,10 @@ def _envelope_open_effect(kind: str, row: Mapping) -> str:
         return "A setback above the base applies for this building (ZR 23-433)."
     if kind == "street_wall":
         return "The street wall sits close to the street line; the exact position is conditional."
+    # side yard: the effect follows the row state, like the setback branch, so page 8 never
+    # contradicts page 3 (a detached building without the overlay needs two 5-ft yards).
+    if row.get("state") == "applies":
+        return "Two side yards, each at least 5 feet wide, are required (ZR 23-335(a))."
     return "No side yard is required (ZR 23-335; ZR 34-232 under a commercial overlay)."
 
 

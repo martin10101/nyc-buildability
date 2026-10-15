@@ -222,12 +222,15 @@ def _check_b(block_frontage: BlockFrontageMeasure | None, *, basis_fixed_by_law:
             "name": "Distance between the two streets bounding the block",
             "value": round(separation, 2), "unit": "ft", "basis": basis,
         }]
+    # The (b) waiver consequence ("within 100 feet of that street line no rear yard would be
+    # required") only follows where (b) APPLIES; a not_applicable reading does not carry it.
+    consequence = (
+        "; within 100 feet of that street line no rear yard would be required under ZR 23-344(b)"
+        if state == "applies" else ""
+    )
     return {
         **base, "state": state, "inputs": inputs,
-        "text": (
-            f"A labelled draft reading: {reason}; within 100 feet of that street line no rear "
-            f"yard would be required under ZR 23-344(b). {_DOB}"
-        ),
+        "text": f"A labelled draft reading: {reason}{consequence}. {_DOB}",
     }
 
 
@@ -264,10 +267,11 @@ def _check_c3(district: str | None) -> dict:
         **base, "state": "not_known",
         "text": (
             "A labelled draft reading: in R6 through R12 districts, beyond 100 feet of a street "
-            "line, whether a rear yard is required under ZR 23-344(c)(3) turns on whether the "
-            "deemed rear lot line coincides with a side lot line of an adjoining zoning lot. The "
-            "neighbouring zoning lots' lot-line kinds are not recorded for this lot, so this is "
-            f"not known. No number is shown. {_DOB}"
+            "line, whether a rear yard is required turns on the kind of the adjoining zoning "
+            "lot's lot line that the deemed rear lot line meets: meeting a side lot line calls "
+            "for none under ZR 23-344(c)(3), while meeting a rear lot line requires one under ZR "
+            "23-344(c)(1). The neighbouring zoning lots' lot-line kinds are not recorded for this "
+            f"lot, so this is not known. No number is shown. {_DOB}"
         ),
     }
 
@@ -294,8 +298,9 @@ def _combined() -> dict:
             {
                 "kind": "unchecked_condition",
                 "assumption": (
-                    "If the neighbours' side lot lines are confirmed for ZR 23-344(c)(3) beyond "
-                    "100 feet of a street line"
+                    "If the adjoining zoning lots' lot-line kinds are confirmed beyond 100 feet "
+                    "of a street line - a neighbour's side lot line calls for none (ZR "
+                    "23-344(c)(3)), a neighbour's rear lot line requires one (ZR 23-344(c)(1))"
                 ),
                 "settled_by": (
                     "Reading the adjoining zoning lots' recorded lot-line kinds"
@@ -326,11 +331,12 @@ def _input_fact(key: str, value: float, unit: str, basis: str, title: str, date:
     }
 
 
-def _rear_yard_constraint_lines(operative_reach_ft: float | None) -> list[dict]:
-    """The rear-yard constraint lines. For a real lot the 100-ft line is not established within the
-    lot (the whole lot is within 100 ft of the operative street line, so the line lies beyond it),
-    and the corner area is not drawn - both not_known, carrying no geometry (S24: an emitted line
-    lies within the lot)."""
+def _rear_yard_constraint_lines() -> list[dict]:
+    """The rear-yard constraint lines. On every real-lot path the 100-ft line is not established
+    within the lot (the whole lot is within 100 ft of the operative street line, so the line lies
+    beyond it) and the corner area is not drawn - both not_known, carrying no geometry (S24: an
+    emitted line lies within the lot). The operative reach does not change this, so it is not an
+    argument here (it would otherwise be an input the function never reads)."""
     return [
         {"kind": "rear_yard_100ft_line", "state": "not_known", "basis": "derived",
          "zr_sections": [_ZR_23_344]},
@@ -343,7 +349,6 @@ def build_rear_yard_analysis(
     *,
     corner_reach_ft: float | None,
     corner_angle_deg: float | None,
-    operative_street_reach_ft: float | None,
     district: str | None,
     block_frontage: BlockFrontageMeasure | None,
     recorded_area_sqft: float | None,
@@ -371,7 +376,7 @@ def build_rear_yard_analysis(
     if not (source_title and source_date):
         return RearYardAnalysis(
             rear_yard=rear_yard,
-            constraint_lines=_rear_yard_constraint_lines(operative_street_reach_ft),
+            constraint_lines=_rear_yard_constraint_lines(),
         )
     if recorded_area_sqft is not None:
         input_facts.append(_input_fact(
@@ -386,5 +391,5 @@ def build_rear_yard_analysis(
     return RearYardAnalysis(
         rear_yard=rear_yard,
         input_facts=input_facts,
-        constraint_lines=_rear_yard_constraint_lines(operative_street_reach_ft),
+        constraint_lines=_rear_yard_constraint_lines(),
     )

@@ -174,6 +174,21 @@ def _mappluto_source(profile: Mapping[str, Any] | None) -> tuple[str, str]:
     return title, str(retrieved)[:10]
 
 
+def _street_width_source(street_data: StreetData) -> tuple[str, str]:
+    """The source title and date for the mapped street-width input facts, read from the DCM Street
+    Center Line window the widths were measured from - the SAME provenance :func:`_street_segments`
+    stamps on each ``SegmentSource`` (``street_data.source`` and the window's retrieval). The
+    widths are not a MapPLUTO field (MapPLUTO carries no street width), so the MapPLUTO lot-fact
+    provenance is never borrowed for them. Returns ``('<title>', '')`` when no retrieval date is
+    present; the width facts are then emitted without a borrowed source (none at all)."""
+    prov = dict(street_data.provenance)
+    retrieved = prov.get("retrieved_at")
+    if isinstance(retrieved, list) and retrieved:
+        retrieved = retrieved[0]
+    date = str(retrieved)[:10] if isinstance(retrieved, str) and retrieved else ""
+    return street_data.source, date
+
+
 def _lot_point(outline: PreparedOutline | None) -> tuple[float, float] | None:
     if outline is None:
         return None
@@ -210,10 +225,6 @@ def _rear_yard_analysis_for(
     corner = reach.corner if reach is not None else None
     corner_reach = corner.reach.value if corner is not None and corner.reach.known else None
     corner_angle = corner.angle.value if corner is not None and corner.angle.known else None
-    street_reaches = (
-        [line.reach.value for line in reach.street_lines if line.reach.known]
-        if reach is not None else []
-    )
     block_frontage = measure_block_frontage(
         _frontage_key(geometry) or "", street_data, lot_point=_lot_point(outline),
     )
@@ -222,7 +233,6 @@ def _rear_yard_analysis_for(
     return build_rear_yard_analysis(
         corner_reach_ft=corner_reach,
         corner_angle_deg=corner_angle,
-        operative_street_reach_ft=min(street_reaches) if street_reaches else None,
         district=gathered.inputs.district,
         block_frontage=block_frontage,
         recorded_area_sqft=area.recorded_sq_ft if area is not None else None,
@@ -349,7 +359,9 @@ def _envelope_analysis_for(
     reused D-052 classifier."""
     if street_data is None:
         return None
-    title, date = _mappluto_source(profile)
+    # The widths come from the DCM Street Center Line window, so its provenance travels with them
+    # (G1 F1) - never the MapPLUTO lot facts, which carry no street-width field.
+    title, date = _street_width_source(street_data)
     return build_envelope_analysis(
         overlay_present=_overlay_present(gathered),
         building_type=_building_type(gathered.inputs.housing_kind),

@@ -155,6 +155,26 @@ def test_setback_not_applicable_carries_the_depths_and_the_above_base_condition(
     assert any("above the 45 ft maximum base height" in c["assumption"] for c in row["conditions"])
 
 
+def test_triggered_setback_notes_the_depths_are_minimums_subject_to_23_433():
+    # G1 F3: a triggered setback row says the 10/15 ft depths are the least the setback must be and
+    # that ZR 23-433(a) to (d) may reduce or waive them (plain user words). The benchmark triggers
+    # no setback, so this condition does not appear on the shipped print.
+    row = _row(_build(street_wall_height_ft=50.0), "setback")
+    assert row["state"] == "applies"
+    blob = " ".join(c["assumption"] for c in row["conditions"]).lower()
+    assert "23-433(a) to (d)" in blob
+    assert "least" in blob or "minimum" in blob
+
+
+def test_not_triggered_setback_carries_no_minimums_condition():
+    # The minimums-are-subject-to-23-433 note belongs only to a TRIGGERED row; the benchmark
+    # (30 ft, not triggered) does not carry it.
+    row = _row(_build(street_wall_height_ft=30.0), "setback")
+    assert row["state"] == "not_applicable"
+    blob = " ".join(c["assumption"] for c in row["conditions"]).lower()
+    assert "23-433(a) to (d)" not in blob
+
+
 def test_setback_height_not_stated_is_conditional_never_not_known():
     # RULE 1 / R061: the law is known (a setback above the maximum base height); whether the
     # building reaches above it is a named condition, never not_known.
@@ -211,6 +231,27 @@ def test_side_yard_multi_family_none_required():
 def test_side_yard_mixed_none_required():
     row = _row(_build(building_type=BUILDING_MIXED), "side_yard")
     assert row["state"] == "not_applicable"
+
+
+def test_side_yard_mixed_leads_with_23_335b_not_34_232():
+    # G1 F2: a mixed building reaches "no side yard required" through the Chapter 5 bulk (ZR 35-01
+    # -> 23-335(b)); 34-232 by its words governs a residential building only, and 35-24 is not
+    # captured. The citation (not only the state) is asserted. The shipped benchmark is
+    # residential-only, so the printed report is unaffected.
+    row = _row(_build(building_type=BUILDING_MIXED, overlay_present=True), "side_yard")
+    assert row["state"] == "not_applicable"
+    assert "23-335(b)" in row["text"]
+    assert "ZR 23-335" in row["zr_sections"]
+    assert "ZR 35-01" in row["zr_sections"]
+    assert "ZR 34-232" not in row["zr_sections"]  # 34-232 reaches a residential building only
+    assert "ZR 35-24" not in row["zr_sections"]   # 35-24 is not captured, never cited
+
+
+def test_side_yard_residential_in_overlay_keeps_34_232():
+    # A residential (not mixed) building in the overlay keeps the 34-232 citation.
+    row = _row(_build(building_type=BUILDING_RESIDENTIAL_ONLY, overlay_present=True), "side_yard")
+    assert row["state"] == "not_applicable"
+    assert "ZR 34-232" in row["zr_sections"]
 
 
 def test_side_yard_detached_in_overlay_none_required():

@@ -80,8 +80,10 @@ _ENVELOPE_TITLES = {
     "side_yard": "Side yard",
 }
 # The envelope-row kind -> the open-item category whose numbered record the row
-# links to (`#issue-<n>`); a kind with no open-item category carries no link.
-_ENVELOPE_CATEGORY = {"setback": "setback", "street_wall": "street_wall"}
+# links to (`#issue-<n>`); a kind with no open-item category carries no link. Side yard
+# links to its own numbered open item too, so page 3 cross-references it like the setback
+# and street-wall rows (page 8 numbers side_yard as an open item).
+_ENVELOPE_CATEGORY = {"setback": "setback", "street_wall": "street_wall", "side_yard": "side_yard"}
 
 
 def _issue_link(category: str | None, item_number: dict) -> raw:
