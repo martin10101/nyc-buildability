@@ -116,7 +116,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "frontend-engineer",
   "reviewer_agents": [
     "human-journey-reviewer",
     "visual-quality-reviewer",
@@ -124,8 +124,8 @@
     "directive-compliance-verifier",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "R096 sequencing: mounting the website bar before the PDF illustration (M5-T173) would create a website/PDF mismatch - this task deliberately does not mount; Part B mounts in lockstep with M5-T173.",
     "G-5 benchmark freeze: the lead-refinement (DB-264/DB-261) must NOT run here because it edits the frozen three-answers-panel.test.tsx; it is Part B.",
@@ -135,7 +135,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:40.368053+00:00",
-  "updated_at": "2026-10-15T10:02:40.827724+00:00",
+  "updated_at": "2026-10-15T10:02:43.586314+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -841,5 +841,14 @@
     "cd apps/web && npx vitest run src/components/architect/answers/__tests__/area-allocation.test.tsx src/lib/architect/__tests__/area-allocation.test.ts src/lib/architect/__tests__/source-links-parity.test.ts",
     "BUILDER DOES NOT start a server or run e2e (G-1); the real-preview readability check and before/after are the orchestrator's (deferred to Part B mount)."
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T10:02:43.586225+00:00",
+      "agent": "frontend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted; G0 PASS (M5-T174 part A; pre-check READY)"
+    }
+  ]
 }
