@@ -1,0 +1,96 @@
+{
+  "task_id": "M5-T204",
+  "title": "E1 part (M5-T204, record, new file): NB-08 community-facility floor area for 215-16 Northern Boulevard: R6B community-facility FAR 2.00 (ZR 24-11), ZR 24-111 adds nothing for a suffixed district, no floor-area gain over option 1 for options 6-7; commit held until the E1 serial part",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "docs/research/evidence-records/NB-08-community-facility-floor-area-use.json in the NB-07 shape. Reuse, never re-research: benchmark-options-2-3-6-7.json rows opt6-cf-far, opt67-no-fa-gain, opt67-35-33-not-applicable; the captures zr-24-11, zr-24-111, zr-33-121, zr-11-25, zr-24-161 (if captured; list the folder). Record: question (does ZR 24-111 change the R6B community-facility FAR for the benchmark lot?), retrieved text with quotes and digests, the interpretation marked as such (24-111(b) reaches only R6-R9 WITHOUT a letter suffix, so its 2.43 row never applies to R6B; 24-111(c) sends suffixed R6-R12 to 24-11 = 2.00; through the C2-2 overlay 33-121(d)/(e) route the 24-111 use class back to 24-111(c), Column A commercial is also 2.00), the combined ceiling (greatest single use, 24-161/35-31 as captured), what stays unknown (the 74-903 special permit; the specific community-facility use class; the zoning lot per NB-01) each with a next step. Keep retrieved evidence, interpretation, software testing and professional review apart. code_paths and code_identity empty here. Planning input: session-2026-10-15c/return-H13-open-readings.md part (a).",
+  "business_reason": "D-093: the options 6-7 results (E1) cite one canonical record; the audit asks that 'no additional floor area' be explained accurately (R263).",
+  "inputs": [
+    "docs/research/evidence-records/NB-07-mih-inclusionary-status.json",
+    "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json",
+    "docs/research/zr-snapshots/v1/",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/return-H13-open-readings.md"
+  ],
+  "outputs": [
+    "docs/research/evidence-records/NB-08-community-facility-floor-area-use.json",
+    "project-control/reports/M5-T204-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "docs/research/evidence-records/NB-08-community-facility-floor-area-use.json",
+    "project-control/reports/M5-T204-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/reference-cases/",
+    "docs/research/zr-snapshots/",
+    "services/",
+    "apps/",
+    "packages/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the record alone in a scratch folder",
+      "when": "research_record_check --check --records-dir on it",
+      "then": "PASS"
+    },
+    {
+      "id": "S2",
+      "given": "each figure",
+      "when": "read",
+      "then": "its facts with source and quote; senior count not_known; 35 named as the affordable 680-factor count only"
+    },
+    {
+      "id": "S3",
+      "given": "each unknown",
+      "when": "read",
+      "then": "recorded search, exact missing item, next step"
+    },
+    {
+      "id": "S4",
+      "given": "a sealed re-derivation by the G3 reviewer",
+      "when": "compared",
+      "then": "same list; differences recorded, never merged away"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Do not seed the record (a placeholder fails research_record_check in CI); seed only the report."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:52:52.875592+00:00",
+  "updated_at": "2026-10-15T23:52:53.354934+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R258",
+        "D-094-R263"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:52:52.875892+00:00",
+  "path_notes": "New file only; README.md, RESEARCH_REQUESTS.md and code identity belong to the serial part of its options increment; the commit is HELD until then.",
+  "documented_test_commands": [
+    "python3 tools/research_record_check.py --check --records-dir SCRATCH_DIR_WITH_ONLY_THIS_RECORD"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
