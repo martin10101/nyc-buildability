@@ -168,3 +168,45 @@ read by the register-calculation tests, so these reds reproduce identically at t
   principle 20 not triggered) — EXCEPT for the forced NB-06 re-pin above, which is a mechanical saved_copy hash
   update with no reading change, left for the orchestrator.
 - Did not start any server or touch ports 3000/3001/8000.
+
+## Round 2 (builder, backend-engineer) — the NB-06 E10 re-pin (G4 F1 / G1 check 6)
+
+Worktree: `/root/project/nyc-buildability/.claude/worktrees/agent-ad04ce314c137419d`. Base reset to
+`c106173557013163f8cfbd41d6c9fce980129e80` (head of task/wave28-placement-wiring with M5-T172 accepted plus the
+orchestrator's cherry-pick of round-1 commit 06651e8d); clean status before edits.
+
+Round 1 left research_record_check red on exactly one cause: NB-06 evidence E10 pinned zr-23-432.snapshot.json by
+its whole-file LF sha256, and signing that snapshot moved its bytes. M5-T172 (which owned NB-06) is now accepted,
+so scope correction 1 added NB-06 and the records README to the allowed paths and scenario S10. This round applies
+only that re-pin — a records-only change; no code, snapshot, loader, doc or test touched.
+
+NB-06 (`docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json`) → revision 6:
+- `revision` 5 → 6; `last_changed` stays `2026-10-15` (same day).
+- E10 (`evidence[9]`) `saved_copy` sha256 re-pinned:
+  OLD `37c1414c2f1fb93404dca4178d70304c6f39eeecf0f39aa215bd2754cd16887a`
+  → NEW `ae06010e91a8fae0017f7a33a671c8ce5750c8ddb4f25a647a92ca79c1280898`
+  (the LF sha256 of the signed zr-23-432.snapshot.json at this head: `tr -d '\r' < f | sha256sum`; matches the
+  value G1 and G4 independently found).
+- Appended one `implementation.dependency_assessment` entry: the saved copy gained only the additive
+  `table_digest_sha256` field; `verbatim_excerpt` and its `content_digest_sha256` are byte-identical, so the R6B
+  30/45/55 ft base-height readings, the setback-above-base reading and the side-yard reading are unchanged. A
+  saved-copy hash re-pin only.
+- Unchanged: `code_identity`, every `reading`/`interpretation`/`condition`, the `conclusion.research_status`
+  (`interpretation_awaiting_review`), and `promotion.requested_label` (null — nothing labelled Verified).
+
+README index cell: `docs/research/evidence-records/README.md` was NOT changed. Its index columns are
+Record | Question | Research status (copied from `conclusion.research_status`, which did not change); the format
+carries no revision number, so per the packet it needs no edit.
+
+Checks (direct exit codes; lanes venv; multi-file pytest under `flock /root/project/lanes-runtime/heavy-run.lock`;
+see the RETURN hand-back for the full run log and counts):
+- `python3 tools/research_record_check.py --check` → exit 0 (PASS; NB-06 now current; NB-04 code_current=False is
+  pre-existing, reported-not-failed, unrelated to this change).
+- `cd services/api && python -m ruff check .` → exit 0.
+- `flock … python -m pytest -q -p no:cacheprovider tests/rules` (cwd services/api).
+- `python3 services/api/scripts/sync_zr_snapshots.py --check` → 255 files byte-identical.
+- `python3 scripts/lanes/check_lane_paths.py --coverage`.
+- whole api suite once.
+
+Scope: this round edits only NB-06 and this report. No snapshot, loader, doc or test from round 1 was retouched;
+the 37 signed captures and their bundled copies remain as cherry-picked into the base.
