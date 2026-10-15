@@ -111,15 +111,15 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer",
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (dispositive): close_frame_dimensions.py is NB-04-pinned (code_identity) and owned by spec-M5-T172. Item 3 MUST be done in kit/labels.format_number only; editing close_frame_dimensions.py would fire the NB-04 contingency and collide with M5-T172. If a typed DimensionPlacementError at the close-frame seam is later wanted, that is a separate task sequenced out of parallel with M5-T172 (owns NB-04).",
     "RISK 2 (byte-identity): the proof relies on T172/T169-owned snapshot tests (test_report_benchmark.py, the DXF/SVG snapshots) staying green; they are FORBIDDEN here and must not be edited. Run them read-only; any red means a valid output moved and is a real defect, not a snapshot refresh.",
@@ -127,7 +127,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:44:05.148519+00:00",
-  "updated_at": "2026-10-15T13:44:05.622046+00:00",
+  "updated_at": "2026-10-15T13:44:08.832021+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -145,5 +145,14 @@
     "cd services/api && python -m pytest -q tests/drawings/report/test_report_benchmark.py tests/drawings/kit tests/drawings/maps tests/cad",
     "python3 tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T13:44:08.831903+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "M5-T189 claimed: report safety fixes for the page header and non-finite figures (builder dispatched next)"
+    }
+  ]
 }
