@@ -299,8 +299,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK 1 (top, neither candidate plan caught it): readers.py builds page-8 appendix open items with 'setback' and 'street_wall' categories. When the engine applies the checks they will DROP from page 8 (the Withheld way and the not-checked line both clear) while page 3 shows the applied reading - unless readers.py gains _apply_street_wall_open_item / _apply_setback_open_item mirroring M5-T167's _apply_rear_yard_open_item. The work order forbids readers.py; this packet OVERRIDES that forbid (readers.py in allowed_paths) for page-3/6/8 parity (R136 class). If G0 instead decides the items may simply drop, readers.py stays forbidden but the real-print check (S10) must prove page 8 does not contradict page 3 and the conditions still appear. Resolve at G0 before the build; do not discover it at the gate as M5-T167 did.",
     "RISK 2: result_ways.py _setback_way is a second setback emitter; it must agree byte-for-meaning with envelope_rows[setback] (lesson iii). Plan B omitted result_ways.py - do not drop it from scope.",
@@ -315,7 +315,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:48:14.731487+00:00",
-  "updated_at": "2026-10-15T09:28:15.747900+00:00",
+  "updated_at": "2026-10-15T09:46:33.770120+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -390,5 +390,7 @@
       "actor": "orchestrator",
       "change": "Scope correction 2 (session 2026-10-15b, after the round-2 builder return 5b30c0e8, integrated as bec421b3): round 2 closed DB-265 items 1, 4 and 5 in services/api/app/scenario/three_answers/rear_yard_checks.py (inside the packet), which is a code path of evidence record NB-03; NB-03 was forbidden here, so its code identity is now stale (research_record_check reports code_current False, not a failure). The project's rule is that the task that edits a record's code path revises the record (D-093; as M5-T170 did for NB-01, NB-05 and NB-06). DB-265 item 2 (the review register's r6b-rear-yard-corner-waiver entry gains rear_yard_checks.py in its code_links) re-renders that entry's rule page and evidence file, outside the packet; the builder carried it with that reason. This correction moves NB-03 from forbidden to allowed and adds the entry's rule page and evidence file, so a bounded round 3 revises NB-03's code identity and closes item 2. DB-265 item 3 (a double fetch in study_live_geometry.py, flag off by default) stays carried. No row, gate, reviewer or dependency changes; no production switch changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T09:46:33.769985+00:00"
 }

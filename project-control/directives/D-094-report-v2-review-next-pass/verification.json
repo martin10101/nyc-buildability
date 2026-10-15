@@ -2503,36 +2503,61 @@
     "D-094-R082"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "367520c9d958ae671db6dfdf7d13ab14a892710c",
+   "reviewed_manifest_sha256": "6a1f3a3e9ca2d15548bffc4631d4756eac366e714af05ad4794f8d3d0d4ef930",
    "requirements": [
     {
      "id": "D-094-R017",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor source-001.md (\"Show applicable yard/setback areas only when their geometry and basis are established.\") is honored: envelope_constraints.py `_constraint_lines` emits street_wall_band/setback_line as state not_established with NO \"geometry\" key, and marks street_wall_band \"established\" only when an operative-street-line geometry is supplied.",
+      "Benchmark fixture recorded_215_16_northern_journey.json carries street_wall_band and setback_line both state \"not_established\", basis \"derived\", zr_sections set, and no geometry key \u2014 no area drawn without an established basis.",
+      "I reproduced the two pinning tests green at the frozen head: test_constraint_lines_not_established_without_an_operative_street_line and test_street_wall_band_established_when_a_geometry_is_supplied (full test_envelope_constraints.py = 40 passed).",
+      "Nothing of the prohibition stays open; drawing the band once an operative street line is recorded is future capability but the prohibition is fully kept now.",
+      "Verifier's carry-forward condition met at 367520c9: the task's allowed-path files are identical to those verified at b7f37c56 (content identity 6a1f3a3e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier (round 1 and the delta check of rounds 2-3); G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer (round 1 and the delta check of round 2); G5 security-reviewer). DCV report: project-control/reports/M5-T170-DCV.md."
+     ],
+     "reviewed_sha": "367520c9d958ae671db6dfdf7d13ab14a892710c"
     },
     {
      "id": "D-094-R043",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor source-001.md item 5 asks for one meaningful spatial example (footprint placed, relevant constraints, section/massing, reconciled schedule) with an explicit incomplete state until those exist; this task delivers the \"relevant constraints\" share.",
+      "Street wall, setback-above-base and side yard are now engine-checked with states/conditions and shown on page 3 (with \"see item\" links), page 6 and page 8; the real print print-9ac5ad4a shows pages 3/6/8 agree (only page-3 side-yard \"(see item 9)\" changed vs round 1).",
+      "The scenario keeps an explicit incomplete state: page 6 \"What was not checked / Pending verification\" lists \"Where the plan sits on the lot\", \"Parking, loading and bicycle\", and \"Floor schedule\" \u2014 nothing is falsely claimed complete.",
+      "STAYS OPEN: the dimensioned footprint placed on the site, the section/massing, and the reconciled floor schedule are NOT delivered here; they are owed to M5-T172 part B and M5-T173 part B (per the evidence map).",
+      "Verifier's carry-forward condition met at 367520c9: the task's allowed-path files are identical to those verified at b7f37c56 (content identity 6a1f3a3e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier (round 1 and the delta check of rounds 2-3); G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer (round 1 and the delta check of round 2); G5 security-reviewer). DCV report: project-control/reports/M5-T170-DCV.md."
+     ],
+     "reviewed_sha": "367520c9d958ae671db6dfdf7d13ab14a892710c"
     },
     {
      "id": "D-094-R061",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor source-001.md (\"legal source facts are not marked unknown solely because a software feature is unfinished; genuinely unresolved site facts stay unresolved\") is honored: envelope_constraints.py has only \"applies\"/\"not_applicable\" row builders and no \"not_known\" path for the three checks; the law is captured in three DRAFT rule files and NB-06, not left unknown.",
+      "Genuinely unresolved site facts stay NAMED conditions or withheld distances, never defaulted to narrow (D-051): unknown/unresolved width shows no distance, overlay-not-read and building-type-not-stated are named conditions.",
+      "I reproduced green: test_no_envelope_row_is_ever_not_known, test_setback_trigger_table_strict_above_the_maximum_base_height (strict >45.00: 30/44.99/45.00 not triggered, 45.01/50 triggered), and test_street_wall_no_overlay_unknown_width_shows_no_distance_never_narrow; research_record_check.py --check exited 0 (6 records, code_current=True, none claims Verified).",
+      "Nothing of the harness stays open for this task's three envelope checks.",
+      "Verifier's carry-forward condition met at 367520c9: the task's allowed-path files are identical to those verified at b7f37c56 (content identity 6a1f3a3e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier (round 1 and the delta check of rounds 2-3); G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer (round 1 and the delta check of round 2); G5 security-reviewer). DCV report: project-control/reports/M5-T170-DCV.md."
+     ],
+     "reviewed_sha": "367520c9d958ae671db6dfdf7d13ab14a892710c"
     },
     {
      "id": "D-094-R082",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source anchor source-002-amendment.md item 2 (\"Finish one meaningful scenario: a dimensioned footprint on the site, a section, and a reconciled floor schedule. Clearly identify every constraint still untested.\"); this task delivers the \"clearly identify every constraint still untested\" share plus the three now-checked constraints.",
+      "Real print print-9ac5ad4a: page 6's \"What was not checked\" no longer lists the street wall (now checked, Conditional) and keeps plan placement, parking and floor schedule; page 8 open items 7/8/9 show the applied conditional setback/street-wall/side-yard readings and page 3 agrees.",
+      "The DB-266 silent-drop bug (page 3 dropping setback/street-wall rows while page 8 kept them) is fixed and tested: I reproduced test_constraint_rows.py green (S18 fallback), so no constraint is silently omitted.",
+      "STAYS OPEN: the dimensioned footprint, the section, and the reconciled floor schedule are NOT delivered here; they are owed to M5-T172 part B and M5-T173 part B.",
+      "Verifier's carry-forward condition met at 367520c9: the task's allowed-path files are identical to those verified at b7f37c56 (content identity 6a1f3a3e), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4, G5 PASS at that content identity (G1 data-contract-verifier (round 1 and the delta check of rounds 2-3); G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer (round 1 and the delta check of round 2); G5 security-reviewer). DCV report: project-control/reports/M5-T170-DCV.md."
+     ],
+     "reviewed_sha": "367520c9d958ae671db6dfdf7d13ab14a892710c"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T09:46:31+00:00"
   },
   {
    "directive_id": "D-094",
