@@ -188,6 +188,27 @@ def test_s13_moved_effect_texts_keep_their_1_4_0_output_except_the_rear_yard() -
     assert constraint_text.effect_for("made_up_category") == ""
 
 
+# =========================================================================== M5-T170 S10
+def test_m5t170_page_8_shows_the_applied_envelope_readings() -> None:
+    # On the regenerated 1.5.0 benchmark the page-8 appendix shows the engine's applied envelope
+    # readings for the setback, street wall and side yard - NOT "not checked" / "not worked out" -
+    # so page 8 agrees with the page-3 constraints table and page 6 (which drops "The street
+    # wall"). This pins readers._apply_envelope_open_items (M5-T170).
+    items = {it["category"]: it for it in readers.open_items(benchmark())}
+    for category in ("setback", "street_wall", "side_yard"):
+        assert category in items, f"page 8 must list the {category} reading"
+        effect = items[category]["effect"].lower()
+        assert "not checked" not in effect, category
+        assert "not worked out" not in effect, category
+        assert "not yet" not in effect, category
+    assert "setback above the base" in items["setback"]["effect"].lower()
+    assert "street wall" in items["street_wall"]["effect"].lower()
+    assert "side yard" in items["side_yard"]["effect"].lower()
+    # the "The street wall" not-checked line is gone from the worked building (page 6 / 8 agree).
+    for building in readers.worked_buildings(benchmark()):
+        assert "The street wall" not in (building.get("not_checked") or [])
+
+
 # =========================================================================== S17
 def test_s17_long_apartment_estimate_sentence_prints_once() -> None:
     doc = benchmark()

@@ -1,0 +1,157 @@
+{
+  "rule_id": "r6b-side-yard",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_side_yard",
+  "title": "R6B district - no side yard is required for a residence other than a single- or two-family detached one (ZR 23-335(b)); a commercial overlay removes the requirement for any residential building (ZR 34-232)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "lane_flag": "A",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the side-yard rule for R6B. ZR 23-335(b): for all residences other than single- or two-family detached ones, no side yard is required (any open area along a side lot line must be at least five feet wide). Under a commercial overlay ZR 34-232 removes the side-yard requirement for any residential building. A single- or two-family detached residence requires two 5-foot side yards under ZR 23-335(a) without the overlay. The building-type table and the open-area minimum are read as a labelled draft in envelope_constraints.py; this rule records the 'no side yard required' result for the all-other-buildings case.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-335",
+      "section": "23-335(b)",
+      "quote": "In the districts indicated, for zoning lots containing all other types of residences, no side yards shall be required. However, if any open area extending along a side lot line is provided at any level, it shall have a minimum width of five feet, measured perpendicular to the side lot line.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "31b67b9d47eca82cb93e1b06db908b20f1ad7f159c2b4306d78248e5fb02fcf2"
+    },
+    {
+      "snapshot_id": "zr-34-232",
+      "section": "34-232",
+      "quote": "In the districts indicated, no side yard shall be required for any residential building. However, if any open area extending along a side lot line is provided at any level, it shall have a minimum width of five feet, measured perpendicular to the side lot line.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "9cf83f8d9c3fa6f594fa3be1e1d65651713c1809254fd08e60e527daa09c61b2"
+    },
+    {
+      "snapshot_id": "zr-11-25",
+      "section": "11-25",
+      "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "zoning_district",
+      "type": "string",
+      "required": true,
+      "description": "Residence district governing the lot (scope enforced by applicability in_set R6B)."
+    },
+    {
+      "name": "overlay_present",
+      "type": "boolean",
+      "required": true,
+      "description": "True iff a commercial overlay is mapped on the lot (profile zoning.commercial_overlays[] non-empty)."
+    },
+    {
+      "name": "special_district_present",
+      "type": "boolean",
+      "required": false,
+      "description": "True iff a special purpose district is mapped; when true the result escalates to professional review."
+    },
+    {
+      "name": "single_or_two_family_detached",
+      "type": "boolean",
+      "required": true,
+      "description": "True iff the building is a single- or two-family detached residence (ZR 23-335(a) then requires two 5-foot side yards without the overlay). A design fact supplied by the caller; not supplied -> no side-yard result."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "side_yard_required",
+      "type": "integer",
+      "unit": null,
+      "description": "0 = no side yard is required for an all-other-buildings residence (ZR 23-335(b); ZR 34-232 under a commercial overlay). The detached case and the 5-foot open-area minimum are read in envelope_constraints.py."
+    }
+  ],
+  "parameters": [
+    {
+      "name": "side_yard_required_all_other_buildings",
+      "value": 0,
+      "citation_ref": "zr-23-335",
+      "note": "ZR 23-335(b): no side yard required for all residences other than single- or two-family detached ones."
+    }
+  ],
+  "applicability": {
+    "all": [
+      {
+        "op": "in_set",
+        "input": "zoning_district",
+        "values": [
+          "R6B"
+        ]
+      },
+      {
+        "op": "equals",
+        "input": "single_or_two_family_detached",
+        "value": false
+      }
+    ]
+  },
+  "computation": {
+    "steps": [
+      {
+        "id": "required",
+        "op": "identity",
+        "args": [
+          {
+            "param": "side_yard_required_all_other_buildings"
+          }
+        ],
+        "note": "ZR 23-335(b): no side yard is required."
+      }
+    ],
+    "outputs": {
+      "side_yard_required": {
+        "step": "required"
+      }
+    }
+  },
+  "exceptions": [
+    {
+      "id": "detached_needs_two_five_foot_yards",
+      "description": "A single- or two-family detached residence requires two side yards, each at least five feet wide (ZR 23-335(a)), unless a commercial overlay removes it (ZR 34-232); read in envelope_constraints.py.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-23-335"
+    },
+    {
+      "id": "open_area_five_foot_minimum",
+      "description": "Any open area provided along a side lot line must be at least five feet wide (ZR 23-335(b) / 34-232).",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-34-232"
+    },
+    {
+      "id": "suffix_inheritance_zr_11_25",
+      "description": "ZR 23 and 35 list R6 through R12 and do not name R6B; the rule reaches R6B through ZR 11-25 (suffix inheritance), flagged for the reviewer.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-11-25"
+    },
+    {
+      "id": "special_district_modification",
+      "description": "A special purpose district is mapped on this lot and may modify residence-district bulk; its provisions are not captured here, so the result is not emitted as final. Professional review required.",
+      "condition": {
+        "op": "equals",
+        "input": "special_district_present",
+        "value": true
+      },
+      "effect": "professional_review_required",
+      "citation_ref": null
+    }
+  ],
+  "limitations": [
+    "Draft extraction pending independent review and G6 qualified-human legal approval; not a Verified determination.",
+    "The detached-residence case (two 5-foot side yards under ZR 23-335(a)) and the 5-foot open-area minimum are read in envelope_constraints.py, not this rule.",
+    "This rule never measures geometry; the site facts are supplied by the caller."
+  ]
+}

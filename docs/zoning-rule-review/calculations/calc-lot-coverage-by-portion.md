@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: lot_coverage
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 9 (last changed 2026-10-11)
+- Revision: 10 (last changed 2026-10-15)
 - Combines rule entries: `r6b-lot-coverage`
 
 ## Code identity
@@ -80,7 +80,7 @@ Planned, not built:
 
 ## Automated test result
 
-- Status: Passed
+- Status: Not run
 - Code identity tested: `51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713`
 - Commit tested: `10e5c55d1a02f6f18a5c6a2bdc16f01b05751312`
 - Date tested: 2026-10-11
@@ -88,7 +88,7 @@ Planned, not built:
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-lot-coverage-by-portion.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

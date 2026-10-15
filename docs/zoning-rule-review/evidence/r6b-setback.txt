@@ -1,0 +1,38 @@
+EVIDENCE - r6b-setback (ZR 23-433 / 23-432 / 35-632(a)) - a labelled unreviewed DRAFT (ADR-007)
+
+LAW (captured, pinned by content digest):
+- ZR 23-432 (zr-23-432): R6B row - minimum base height 30 ft, maximum base height 45 ft
+  (standard residences), maximum building height 55 ft; "For portions of a building street wall
+  that exceed the maximum base height, a setback shall be provided ... in accordance with Section
+  23-433."
+- ZR 23-433 (zr-23-433): "a setback with a depth of at least 10 feet shall be provided from any
+  street wall fronting on a wide street, and a setback with a depth of at least 15 feet shall be
+  provided from any street wall fronting on a narrow street. Such minimum setbacks may be modified
+  as follows: ... (c) ... optional for any building wall that either is located beyond 50 feet of
+  a street line, or oriented so that lines drawn perpendicular to it ... would intersect a street
+  line at an angle of 65 degrees or less."
+- ZR 35-632(a) (zr-35-632): under a commercial overlay the heights come from the ZR 23-432 table
+  and the setback above the maximum base height follows ZR 23-433.
+- ZR 11-25 (zr-11-25): R6B inherits ZR 23 and 35 through the suffix provision.
+
+READING (reference-case overlay-reading.json row setback-above-base; two independent AI readings
+agree on the same basis):
+- A setback is required ONLY for the part of a building street wall that exceeds the maximum base
+  height (45 ft for R6B standard residences). The benchmark three-storey 30 ft option equals the
+  minimum base height and is well below 45 ft, so no setback is triggered.
+- Where a setback is triggered, the depth is at least 10 ft from a wide-street wall (Northern
+  Boulevard, 100 ft) and at least 15 ft from a narrow-street wall (215 Place, 60 ft). The overlay
+  does not change the depths.
+- The per-frontage wide/narrow class comes from the accepted D-052 classifier (narrow below 75 ft,
+  wide at or above 75 ft); a frontage whose width is unresolved or unknown withholds its depth
+  (never narrow by default, D-051).
+
+WHAT IS NOT ESTABLISHED:
+- ZR 23-433(a) to (d) may reduce or adjust the depths (a one-foot-for-one-foot reduction with a
+  seven-foot floor; optional beyond 50 ft of a street line or at a 65-degree orientation).
+- The setback geometry on the lot is not drawn (the setback line is not_established); the depth
+  runs from the operative street line, which a mapped width does not fix.
+
+This is the program's own draft reading of the law. It has not been reviewed by a qualified
+architect or zoning examiner and is not legal advice. Not a determination by the Department of
+Buildings.

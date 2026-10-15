@@ -1,0 +1,34 @@
+EVIDENCE - r6b-street-wall (ZR 35-631(b) / 23-431) - a labelled unreviewed DRAFT (ADR-007)
+
+LAW (captured, pinned by content digest):
+- ZR 35-63 (zr-35-63): "In Commercial Districts mapped within, or with a residential equivalent
+  of R6 through R12 Districts, the street wall location of a building shall be as set forth in
+  Section 35-631 ..."
+- ZR 35-631(b) (zr-35-631): "For all buildings that are not subject to the provisions of
+  paragraph (a) ... At least 70 percent of the aggregate width of street walls shall be located
+  within eight feet of the street line and shall extend to at least the minimum base height
+  specified in Sections 23-432, or the height of the building, whichever is less."
+- ZR 23-431 (zr-23-431): paragraph (a) line-up rule for R6B/R7B/R8B; paragraph (b) along wide
+  streets within eight feet, along narrow streets within ten feet.
+- ZR 11-25 (zr-11-25): regulations applicable to a district designation apply to the suffixed
+  designation unless separate provisions are listed; R6B inherits ZR 23 and 35 through it.
+
+READING (two independent AI readings of the sealed step-P2 captures, reference-case
+overlay-reading.json row street-wall-location; both agree on the same basis):
+- The C2-2 overlay changes the street-wall rule from the R6B line-up (ZR 23-431(a)) to the
+  percentage rule of ZR 35-631(b), reached through ZR 35-63 (for a mixed building via ZR 35-01;
+  for an all-residential building via ZR 34-11 and 34-24(b)(1)): at least 70 percent of the
+  aggregate street-wall width within eight feet of each street line.
+- Paragraph (a) of ZR 35-631 is limited to R8-R12 districts in the Manhattan Core, so it does
+  not apply to this R6B Queens lot; paragraph (b) governs.
+- Without the overlay, ZR 23-431(b) sets eight feet on a wide-street frontage and ten feet on a
+  narrow one (the D-051 asymmetry; narrow is not the safe side).
+
+WHAT IS NOT ESTABLISHED:
+- The exact street-wall position within paragraph (b) is conditional on whether the block has a
+  prevailing street-wall frontage (ZR 12-10 / ZR 35-631 closing clause, ZR 23-431(a) line-up) and
+  on the operative street line, which a mapped street width does not fix.
+
+This is the program's own draft reading of the law. It has not been reviewed by a qualified
+architect or zoning examiner and is not legal advice. Not a determination by the Department of
+Buildings.

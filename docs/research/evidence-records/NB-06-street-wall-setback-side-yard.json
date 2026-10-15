@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-06",
  "title": "215-16 Northern Boulevard: street-wall location, the 23-433 setback trigger at or below the base height, and R6B side yards (ZR 23-431, 35-631; 23-432/23-433, 35-632; 23-335, 34-232)",
- "revision": 2,
- "last_changed": "2026-10-11",
+ "revision": 3,
+ "last_changed": "2026-10-15",
  "question": {
   "text": "For a building on lot 70 (R6B with a C2-2 overlay, corner of Northern Boulevard and 215 Place): (Q1) where must the street wall sit along each frontage, and does the C2-2 overlay change the rule for a residential-only building and for a mixed building? (Q2) does ZR 23-433 require any setback for a building at or below the maximum base height (the benchmark three-storey 30 ft option), and on what condition? (Q3) is a side yard required, optional or prohibited in R6B, and under which section?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070; R6B with a C2-2 overlay; corner of Northern Boulevard and 215 Place)",
@@ -235,6 +235,34 @@
    "excerpt": "A \"prevailing street wall frontage\" shall refer to #block# frontages where, within 150 feet of the #street wall# of a subject #building#, at least half of the #aggregate width of street walls# on the same side of the #block# are within two feet of the average distance of such #street walls# from the #street line#. The total #aggregate width of street walls# shall not be less than 100 feet. ... To determine whether the #street wall# on the subject property is eligible to utilize certain #street wall# location modifications applicable to #prevailing street wall frontage#, the percentage of #street wall# segments that are within the 150-foot selection and within two feet of such average distance, shall be greater than 50 percent.",
    "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-prevailing-street-wall-frontage.snapshot.json",
    "sha256": "0bef4080835cc1535bc0c01fb6919056335fcb0d43bcd5816f88d458e108469f"
+  },
+  {
+   "id": "E17",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street, wide",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street-wide)",
+   "page": null,
+   "document_date": "last amended 2026-03-26",
+   "retrieved": "2026-10-11",
+   "excerpt": "A \"wide street\" is any #street# 75 feet or more in width. In C5-3, C6-4 or C6-6 Districts, when a #front lot line# of a #zoning lot# adjoins a portion of a #street# whose average width is 75 feet or more and whose minimum width is 65 feet, such portion of a #street# may be considered a wide street.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street-wide.snapshot.json",
+   "sha256": "f14bfee5eaade6f26fb41fa42923f42f16a6313ce31d8bad71a860438063ef24"
+  },
+  {
+   "id": "E18",
+   "kind": "law_text",
+   "authority": "NYC Department of City Planning (Zoning Resolution portal)",
+   "title": "ZR 12-10 definition: street, narrow",
+   "url": "https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10",
+   "reference": "ZR 12-10 (zr-12-10-street-narrow)",
+   "page": null,
+   "document_date": "last amended 1961-12-15",
+   "retrieved": "2026-10-11",
+   "excerpt": "A \"narrow street\" is any #street# less than 75 feet wide.",
+   "saved_copy": "docs/research/zr-snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+   "sha256": "881180c7b08169d30f6ae40724d9d8c079acc9de18067b6e1b7a9d019e600e16"
   }
  ],
  "meaning_and_applicability": {
@@ -251,7 +279,7 @@
    "ZR 35-63 (E8), 35-631 (a)/(b) (E9), 35-632 (a) (E12)",
    "DCM Street Center Line mapped widths: Northern Boulevard 100 ft; 215 Place 60 ft (E15)",
    "Repository policy D-052 (owner-approved street-width classification, project-control/directives/D-052-street-width-draft-classification/): below 75 feet is narrow; exactly 75 feet or above is wide; classify only when every permitted value is on the same side of the threshold",
-   "NOT captured in the repository snapshot set: ZR 12-10 'street, narrow' / 'street, wide' definitions (the verbatim current text; repository notes record a 2026-03-26 amendment to 'street, wide'). Live fetch of the 12-10 page on 2026-10-11 truncated before the street definitions (see searches S3)."
+   "ZR 12-10 'street, wide' (E17, last amended 2026-03-26) and 'street, narrow' (E18, last amended 1961-12-15): 'A wide street is any street 75 feet or more in width'; 'A narrow street is any street less than 75 feet wide' - the verbatim current text, now in the snapshot set, confirming the owner-approved D-052 threshold (narrow below 75 feet, wide at or above 75 feet)."
   ],
   "exceptions_considered": [
    "35-631(a) line-up applies only to Commercial Districts with an R8 through R12 equivalent in the Manhattan Core; this site is R6B in Queens, so (a) does not apply and (b) governs.",
@@ -261,7 +289,8 @@
    "35-632(b) eligible-site height increases apply to R6 through R12 WITHOUT a letter suffix; R6B has a letter suffix, so (b) does not apply. 35-632(c) towers apply to R9 through R12; not R6B.",
    "23-335(a) (two 5 ft side yards) applies only to single- or two-family detached residences; a multi-family or mixed building falls under 23-335(b) (no side yard required). In the overlay 34-232 removes the side-yard requirement for ANY residential building.",
    "The wide/narrow classification's alternate-width provisions noted in the repository (12-10 'street, wide' amended 2026-03-26 for C5-3/C6-4/C6-6) do not apply to an R6B/C2-2 site.",
-   "FAR, lot coverage, the rear yard (NB-03), lot dimensions (NB-04), special-density or MIH overlays, parking, use, and obstructions are separate questions and are not resolved here."
+   "FAR, lot coverage, the rear yard (NB-03), lot dimensions (NB-04), special-density or MIH overlays, parking, use, and obstructions are separate questions and are not resolved here.",
+   "ZR 23-433(a) to (d) may reduce or adjust the setback depths where a setback is triggered above the maximum base height: a one-foot-for-one-foot reduction with a seven-foot floor, and the setback is optional for a building wall beyond 50 feet of a street line or oriented so a perpendicular meets a street line at 65 degrees or less (23-433(c)). These modify only a setback that is triggered; the benchmark 30-foot option triggers none."
   ],
   "reading": "A labelled DRAFT reading, not a DOB determination. Q1 (street wall). ZR 23-431(a) is the residence-district rule for R6B: a line-up with eligible existing adjacent buildings. However, in the C2-2 overlay the Article III modifications apply. For a MIXED building (residential plus the C2-2 commercial use, 12-10 E3) ZR 35-01 applies the Chapter 5 bulk directly; for a RESIDENTIAL-ONLY building 34-11 applies Article II Chapter 3 bulk 'except as modified by ... 34-24', and 34-24(b)(1) 'shall' apply the Section 35-63 (inclusive) modifications for an R6-R12 equivalency, which 35-01's closing cross-reference sentence contemplates. Either pathway reaches 35-63, under which (E8) the street-wall location of a building 'shall be as set forth in Section 35-631'. R6B is not an R8-R12 Manhattan Core district, so 35-631(a) does not apply and 35-631(b) governs: at least 70 percent of the aggregate width of the street wall on EACH frontage must sit within 8 feet of that street line and extend to at least the minimum base height (30 ft for R6B) or the building height, whichever is less; up to 30 percent may recess beyond 8 feet, with recesses deeper than 10 ft on the wide frontage (Northern Boulevard) or 15 ft on the narrow frontage (215 Place) placed in an outer court. This supports repository backlog item DB-099, whose premise 'no Article III snapshot' is now outdated. The precise street-wall position within (b) stays conditional on whether the block has a prevailing street-wall frontage further from the street line (then the 23-431(a) line-up may be applied), and the 8-ft measure runs from the operative street line, which a mapped width does not fix. Q2 (setback). Both the residence-district chain (23-432 -> 23-433, E10/E11) and the overlay chain (35-632(a) -> 23-433, E12/E11) require a setback only for the portion of a building street wall that EXCEEDS the maximum base height (45 ft for R6B standard residences), provided between the minimum and maximum base heights. The benchmark three-storey 30 ft option equals the minimum base height and is well below the 45 ft maximum base height, so no setback is triggered. The street-width class (D-052: Northern Boulevard 100 ft = wide, 215 Place 60 ft = narrow) decides only the DEPTH of a setback that would apply above 45 ft (10 ft from a wide-street wall, 15 ft from a narrow-street wall); it is not triggered at or below the maximum base height. Q3 (side yards). Under 23-335 a side yard is NOT required for this building (23-335(b): all residences other than single/two-family detached), and the overlay 34-232 removes the requirement for any residential building; a side yard is permitted (optional), and any open area along a side lot line must be at least 5 feet wide. Only a single- or two-family detached residence would need two 5-ft side yards under 23-335(a), and even that is removed by 34-232 in the overlay. A side yard is not prohibited.",
   "applies": "conditional"
@@ -349,13 +378,12 @@
   "conditions": [
    "Whether the 35-631(b) percentage rule governs the exact street-wall position, or its closing clause instead permits the 23-431(a) line-up, depends on whether either frontage of the block has a #prevailing street wall frontage# located further from the street line than 8 ft. 'Prevailing street wall frontage' is the ZR 12-10 defined term (E16): within 150 ft of the subject building's street wall, at least half of the aggregate width of street walls on the same side of the block are within two feet of their average distance from the street line (aggregate not less than 100 ft; the street wall is eligible when more than 50 percent of the segments are within two feet of that average). This is an unresearched adjacency fact. (The separate 15 ft / 25 ft / over-35-ft test is the 23-431(a) eligible-adjacent-building test, not the definition of a prevailing street wall frontage; 35-631(a) itself does not apply to this R6B Queens site.)",
    "The 8-ft street-wall measure and any setback depth run from the operative street line; a DCM mapped width does not fix the street-line position (handoff: widths alone do not fix street-line positions). The street line comes from a survey or the approved plan.",
-   "The wide/narrow classification (Northern Boulevard 100 ft = wide; 215 Place 60 ft = narrow) rests on the DCM mapped widths plus the owner-approved D-052 policy; the verbatim ZR 12-10 'street, narrow'/'street, wide' definition is not captured in the repository snapshots (S3).",
+   "The wide/narrow classification (Northern Boulevard 100 ft = wide; 215 Place 60 ft = narrow) rests on the DCM mapped widths and the owner-approved D-052 policy. The verbatim ZR 12-10 'street, wide' and 'street, narrow' definitions are now captured (E17, E18) and confirm that threshold (narrow below 75 feet, wide at or above 75 feet); the mapped width is still not a survey and does not fix the operative street-line position.",
    "Whether the building is residential-only or mixed changes the applicability pathway (34-11/34-24(b)(1)/35-63 versus 35-01); both reach 35-631(b) here.",
    "The setback depth (10 ft wide / 15 ft narrow) is relevant only for a portion of a building street wall above the 45 ft maximum base height; the benchmark 30 ft option does not reach it."
   ],
   "settled_by": [
    "an independent G1 review of the 34-11 -> 34-24(b)(1) -> 35-63 -> 35-631(b) cross-reference chain and the residential-only vs mixed-building reading",
-   "capture of ZR 12-10 'street, narrow' and 'street, wide' (current text; repository notes a 2026-03-26 amendment to 'street, wide') via the print/PDF channel, added to the snapshot set",
    "an adjacency survey of existing street walls on each frontage (to choose 35-631(a) vs (b))",
    "the approved plan or a certified survey for the operative street-line positions"
   ]
@@ -387,13 +415,13 @@
   {
    "source": "ZR portal 12-10 definitions page (live) and a domain-scoped web search",
    "query": "ZR 12-10 'street, narrow' and 'street, wide' verbatim definitions",
-   "result": "not_found",
-   "missing_item": "the verbatim current text of ZR 12-10 'street, narrow' and 'street, wide' (the live 12-10 page on 2026-10-11 truncated before the street definitions; the web search returned only a paraphrase: narrow <75 ft, wide >=75 ft, consistent with D-052)",
+   "result": "found",
+   "missing_item": "",
    "affected_outputs": [
     "street_wall.location",
     "setback_lines"
    ],
-   "next_step": "capture ZR 12-10 'street, narrow'/'street, wide' via the print/PDF channel with a browser UA, sha-pin it, and add it to the snapshot set; classification meanwhile rests on the DCM widths plus the owner-approved D-052 policy"
+   "next_step": "captured ZR 12-10 'street, wide' (zr-12-10-street-wide, amended 2026-03-26) and 'street, narrow' (zr-12-10-street-narrow) in the snapshot set; both confirm the D-052 75-foot threshold"
   },
   {
    "source": "Not researched here (deferred to a later placement step)",
@@ -414,8 +442,16 @@
    "setback_lines",
    "side_yard.required"
   ],
-  "code_paths": [],
-  "code_identity": {},
+  "code_paths": [
+   "services/api/app/scenario/three_answers/envelope_constraints.py",
+   "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+   "services/api/app/scenario/three_answers/three_way_document.py"
+  ],
+  "code_identity": {
+   "services/api/app/scenario/three_answers/envelope_constraints.py": "fb32d6cd86963255e31e3b55f86b5b853087a9ef2ec8d10f71784f87ddf414ae",
+   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "fe6e7bc1ecd42d45368dd657000e97a60b193dc94985cc86acda3e00d7c99438",
+   "services/api/app/scenario/three_answers/three_way_document.py": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
+  },
   "worked_example": {
    "inputs": "R6B with a C2-2 overlay, corner lot at Northern Boulevard (mapped width 100 ft = wide) and 215 Place (mapped width 60 ft = narrow); benchmark three-storey 30 ft building.",
    "expected": "Street wall per 35-631(b): at least 70% of the aggregate street-wall width on each frontage within 8 ft of that street line, extending to at least the 30 ft minimum base height or the building height whichever is less, with up to 30% recessed (recesses deeper than 10 ft on Northern Boulevard or 15 ft on 215 Place in an outer court). No setback: 30 ft is at or below the 45 ft R6B maximum base height, so 23-433/35-632(a) is not triggered. No side yard required (23-335(b); 34-232), one optional with a 5-ft minimum if provided. The exact street-wall position stays conditional on the block's prevailing street-wall frontage and the operative street-line position.",
@@ -432,7 +468,8 @@
   "dependency_assessment": [
    "Backlog DB-099: its premise 'no Article III snapshot' is now outdated - 34-11, 34-24, 34-232, 35-01, 35-63, 35-631, 35-632 are captured and support the reading that the C2-2 overlay applies 35-631(b) to both residential-only and mixed buildings. The DISCOVERY_BACKLOG.md update is the orchestrator's (outside this task's allowed paths).",
    "Shares street lines and the wide/narrow classification with NB-03 (rear yard) and NB-04 (lot dimensions): the street-line-position condition must stay consistent across NB-03/NB-04/NB-06; the same DCM widths feed the wide/narrow class.",
-   "A future street-wall or placement rule must encode the overlay pathway and the 35-631(a)-vs-(b) prevailing-frontage test as labelled drafts, with a deterministic wide/narrow classification per frontage, never an address-specific exception."
+   "A future street-wall or placement rule must encode the overlay pathway and the 35-631(a)-vs-(b) prevailing-frontage test as labelled drafts, with a deterministic wide/narrow classification per frontage, never an address-specific exception.",
+   "M5-T170 carries this record into the scenario engine and the report: envelope_constraints.py holds the street-wall, setback and side-yard checks as labelled draft readings; result_way_engine_bridge.py derives the per-frontage wide/narrow class through the accepted D-052 classifier and threads the analysis into the route emit; three_way_document.py attaches the 1.5.0 envelope_rows, constraint_lines (both bands not_established on the benchmark) and input_facts. The reading stays an unreviewed draft (interpretation_awaiting_review); the independent G1 confirmation of the 34-11 -> 34-24(b)(1) -> 35-63 -> 35-631(b) chain and the now-captured 12-10 definitions is the reviewer's."
   ]
  },
  "review": {
@@ -457,10 +494,10 @@
   "professional_review": null
  },
  "freshness": {
-  "checked_on": "2026-10-11",
+  "checked_on": "2026-10-15",
   "method": "snapshot",
   "snapshot_date": "2026-10-07",
-  "limitation": "Law text from the repository ZR snapshot set captured 2026-09-30 (23-432) to 2026-10-07 (35-6xx, 34-xx, 23-335, the 12-10 definitions); 23-431 and 23-433 captured 2026-10-04; all last amended 2024-12-05 except the 12-10 definitions (street wall 1961-12-15, corner lot 1965-05-20, mixed building 2011-02-02). Street widths read from the owner-research pack retrieved 2026-10-10 (not re-fetched today). ZR 12-10 'street, narrow'/'street, wide' is not in the snapshot set and the live 12-10 fetch on 2026-10-11 truncated before the street definitions (search S3); the wide/narrow classification rests on the DCM widths plus the owner-approved D-052 policy. A labelled unreviewed draft (ADR-007); not professionally verified."
+  "limitation": "Law text from the repository ZR snapshot set captured 2026-09-30 (23-432) to 2026-10-11 (the 12-10 'street, wide'/'street, narrow' definitions, retrieved via the HTML channel with the print/PDF completeness channel returning HTTP 504, the documented DB-167 fallback); 23-431 and 23-433 captured 2026-10-04; 35-6xx, 34-xx, 23-335 and the other 12-10 definitions 2026-10-07. Street widths read from the owner-research pack retrieved 2026-10-10. The wide/narrow classification rests on the DCM mapped widths and the owner-approved D-052 policy, now corroborated by the captured 12-10 'street, wide'/'street, narrow' definitions. A labelled unreviewed draft (ADR-007); not professionally verified."
  },
  "promotion": {
   "requested_label": null
