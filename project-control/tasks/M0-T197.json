@@ -101,13 +101,13 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "qa-engineer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Real fixtures live outside git: the test reads them from REPORT_CHECK_FIXTURES and FAILS (never skips) when one is missing or its sha256 differs; the orchestrator keeps them in N12/check-fixtures/.",
     "CI does not run tools tests unless ci.yml names them; G4 evidence is the qa-engineer\u2019s own run at the frozen head (CI wiring is a later choice, not this task).",
@@ -115,7 +115,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:31:46.909592+00:00",
-  "updated_at": "2026-10-15T23:31:47.376575+00:00",
+  "updated_at": "2026-10-15T23:32:02.632715+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -138,5 +138,14 @@
     "python tools/modularity_check.py --check",
     "flock /root/project/lanes-runtime/heavy-run.lock <fixture prints of 8fbf701b and e026a391>"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:32:02.632595+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed at the wave-29 base; builder dispatched"
+    }
+  ]
 }
