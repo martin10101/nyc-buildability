@@ -1,0 +1,142 @@
+{
+  "task_id": "M5-T194",
+  "title": "M5-T173 part B4 (M5-T194) - drawn-content manifest (H4 design): a DrawnManifest built only from the rendered Embedded drawings; the page-5 chart and appendix method take an explicit drawn state instead of the two hard-coded False predicates; legacy path kept when no state is passed",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "(1) NEW report/manifest.py: frozen DrawnManifest (booleans and one state word: site_plan_drawn, site_plan_draws_footprint, section_drawn, area_illustration_state in {'zones', 'bar', None}) and build_manifest(*, site_plan, area_illustrations, sections) over drawings_embed.Embedded values only: site_plan_draws_footprint = site_plan.is_drawing and 'illustrative_footprint' in site_plan.kinds_drawn; 'zones' when an embedded SVG carries data-role 'area_zone_apartment' and 'area_zone_other', 'bar' for 'area_bar_apartment' and 'area_bar_other', else None. No results field, no arithmetic. (2) report/drawings_embed.py: Embedded gains kinds_drawn: tuple = () filled by _from_result from Drawing.kinds_drawn (HTML unchanged); allowance_bar_chart_svg(..., placed_on_site=False, footprint_drawn=None): None keeps the zero-argument site_plan_draws_placed_footprint() path, True/False select the states; embed_map(..., placed_footprint=None) forwards the keyword only when given; if the overlay or the footprint fails, it re-renders without both and adds one note naming what was not drawn (the zoning-line note kept for that case). (3) report/page_option_comparison.py render(..., footprint_drawn=None) passes it to the chart. (4) report/page_evidence.py render(..., illustration_state=None) and _area_illustration_method(results, illustration_state=None): None keeps the legacy _area_illustration_drawn(results); 'zones' gives 'it is shown as zones inside the placed building footprint on the scenario sheet'; 'bar' gives 'it is shown as a proportional bar on the scenario sheet'; an explicit not-drawn state gives today's 'not yet drawn' clause. Deleting the legacy constants is part W's.",
+  "business_reason": "Audit 2026-10-15c section 3: a data field is not proof a drawing was rendered. H4 R1-R3: drawings_embed.py:212-221 and page_evidence.py:140-146 return a hard-coded False; page_option_comparison.py:32-35 reads a data field.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15c/return-H4-claims-manifest.md",
+    "services/api/app/drawings/kit/model.py",
+    "services/api/app/drawings/kit/area_allocation.py"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/manifest.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/tests/drawings/report/test_report_drawn_manifest.py",
+    "project-control/reports/M5-T194-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172",
+    "M5-T169"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/manifest.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/tests/drawings/report/test_report_drawn_manifest.py",
+    "project-control/reports/M5-T194-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/kit/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/page_scenario_sheet.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/scenario/",
+    "packages/contracts/",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_comparison.py",
+    "services/api/tests/drawings/report/test_report_appendix.py",
+    "docs/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "no new keyword passed anywhere",
+      "when": "the report test folder runs",
+      "then": "every existing test passes unedited, including test_report_comparison.py:107-134 and test_report_appendix.py:204-213; report HTML byte-identical"
+    },
+    {
+      "id": "S2",
+      "given": "stub Embedded values (H4 T1-T3): footprint kind drawn; drawn without the kind; not drawn",
+      "when": "build_manifest feeds the chart",
+      "then": "'Shown on the site plan' / 'Worked out; not drawn' / 'Worked out; not drawn' for a placed document and 'Not demonstrated' when not placed; mutation: removing the kind flips the claim"
+    },
+    {
+      "id": "S3",
+      "given": "stub illustrations: zones SVG, bar SVG, a short line, no block (H4 T4)",
+      "when": "the appendix method renders",
+      "then": "zones, bar, not-yet-drawn, no method section; never 'shown' without a drawn SVG"
+    },
+    {
+      "id": "S4",
+      "given": "a non-finite share (H4 T5)",
+      "when": "the kernel refuses and the stub is a short line",
+      "then": "state None; no 'inf'/'nan' printed; no drawn claim"
+    },
+    {
+      "id": "S5",
+      "given": "a zero allowance (H4 T6)",
+      "when": "allowance_bar_chart_svg runs",
+      "then": "today's behaviour pinned (None: an unknown is never a zero bar, R020); recorded as a question, not changed"
+    },
+    {
+      "id": "S6",
+      "given": "embed_map with placed_footprint and a renderer that raises",
+      "when": "it embeds",
+      "then": "map kept without overlay and footprint plus one note naming what was not drawn; placed_footprint None gives today's call exactly"
+    },
+    {
+      "id": "S7",
+      "given": "the change set",
+      "when": "ruff and modularity_check run",
+      "then": "pass; manifest.py under 150 SLOC; drawings_embed.py and page_evidence.py each grow at most 40 SLOC"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1: 'illustrative_footprint' and the kernel data-role names are the only cross-part contracts; part W's integration test asserts the kind equals the kit style.",
+    "RISK 2 (lane collision): while open, this part holds drawings_embed.py, page_option_comparison.py and page_evidence.py; no other lane (H9 presentation parts, E0) may edit them."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:40:49.759848+00:00",
+  "updated_at": "2026-10-15T23:40:50.207110+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R050",
+        "D-094-R095",
+        "D-094-R098",
+        "D-094-R198",
+        "D-094-R200",
+        "D-094-R203",
+        "D-094-R204",
+        "D-094-R205",
+        "D-094-R277",
+        "D-094-R278"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:40:49.760145+00:00",
+  "path_notes": "Parallel part (with B1, B2, B3); imports nothing from them. H4 T7 (bases) and T8 (long metadata) need the integrated report: part W. coverage.py (H4 R9) is not printed in the PDF and stays out (advisory).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/report",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
