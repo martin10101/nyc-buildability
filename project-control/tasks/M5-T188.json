@@ -150,7 +150,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:47.531321+00:00",
-  "updated_at": "2026-10-15T11:05:19.737115+00:00",
+  "updated_at": "2026-10-15T11:45:32.039073+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -191,6 +191,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "builder round 1 (DB-263 polish + S10 duplicate street-width chips); the builder's commit integrated as 3c95cae9 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T11:45:32.038980+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 2 (G3 F1: the native-height predicate follows a drawn constraint); the builder's commit integrated as 8302fc2e (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
