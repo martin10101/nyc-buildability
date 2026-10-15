@@ -283,7 +283,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -291,8 +291,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (top, neither candidate plan caught it): readers.py builds page-8 appendix open items with 'setback' and 'street_wall' categories. When the engine applies the checks they will DROP from page 8 (the Withheld way and the not-checked line both clear) while page 3 shows the applied reading - unless readers.py gains _apply_street_wall_open_item / _apply_setback_open_item mirroring M5-T167's _apply_rear_yard_open_item. The work order forbids readers.py; this packet OVERRIDES that forbid (readers.py in allowed_paths) for page-3/6/8 parity (R136 class). If G0 instead decides the items may simply drop, readers.py stays forbidden but the real-print check (S10) must prove page 8 does not contradict page 3 and the conditions still appear. Resolve at G0 before the build; do not discover it at the gate as M5-T167 did.",
     "RISK 2: result_ways.py _setback_way is a second setback emitter; it must agree byte-for-meaning with envelope_rows[setback] (lesson iii). Plan B omitted result_ways.py - do not drop it from scope.",
@@ -307,7 +307,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:48:14.731487+00:00",
-  "updated_at": "2026-10-15T04:48:15.117730+00:00",
+  "updated_at": "2026-10-15T04:48:18.747819+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -333,5 +333,14 @@
     "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/architect src/lib/__tests__/results-contract-checks.test.ts src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
     "cd apps/web && npx vitest run (the whole web unit suite once)"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T04:48:18.747680+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints at main 2bcdb05a plus the contract; the builder starts from the claim head; packet pre-checked (return-precheck-T170.md + skeptic)"
+    }
+  ]
 }
