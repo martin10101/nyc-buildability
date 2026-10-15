@@ -204,8 +204,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK B1 (count): the sweep/brief say 36; the true table-bearing count at 0463ec78 is 37 (zr-22-131, a 'tables' payload, was omitted). The builder MUST derive the set by glob over 'table'/'tables' and let S1 pin the set; a hard-coded 36 silently leaves zr-22-131 unsigned.",
     "RISK B2 (no digest moves): the new field is a sibling to verbatim_excerpt; content_digest_sha256 is computed over the excerpt only and must stay byte-identical on every file, so the ~40 rule/reference-case/register pins do not move. A test asserts content_digest_sha256 is unchanged for zr-23-22/zr-23-432.",
@@ -215,7 +215,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:44:12.773544+00:00",
-  "updated_at": "2026-10-15T18:14:08.153181+00:00",
+  "updated_at": "2026-10-15T18:36:54.928904+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -244,6 +244,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "M3-T013 claimed: each captured law table carries its own fingerprint, checked on load (builder dispatched next)"
+    },
+    {
+      "at": "2026-10-15T18:36:45.543251+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [
