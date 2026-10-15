@@ -1,0 +1,119 @@
+{
+  "task_id": "M5-T195",
+  "title": "E0 part 1 (M5-T195) (rule): r6b-dwelling-units - replace the qualifying-affordable professional_review_required exception with a conditional_alternative naming the pathway; dividend for qualifying affordable = the ZR 23-22 qualifying allowance (settled: real-lot L7, opt2-max-dwelling-units, 24,180 / 680 = 35.56 -> 35); qualifying senior stays not_applicable (ZR 23-52(a)(2)); rule tests. Commit HELD; integrated only with E0-S.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Replace exception qualifying_affordable_dividend_to_verify (rule line 77) with qualifying_affordable_pathway: condition housing_program equals qualifying_affordable_housing, effect conditional_alternative, description: the dividend is the ZR 23-22 qualifying allowance supplied by the caller; the count holds only if the building is qualifying affordable housing (ZR 12-10 (a)/(b)/(c)) and, on the UAP route, only if the affordable floor area provided lets the ratio reach the qualifying column (ZR 27-111); eligibility is an agency determination the rule never makes. Add the zr-27-111 and zr-12-10-qualifying-affordable-housing citations (quotes and digests from the captures). Keep applicability (senior excluded), special-district and special-density behaviour, formula, parameters. Fix stale prose (line 17: sent to professional review; read by no consumer yet) and the housing_program and dividend input descriptions. Version bump decided at G0. Flip test_qualifying_affordable_is_computed_but_sent_to_review; new test file reads expected values from benchmark-options-2-3-6-7.json and real-lot.json, never from a program run.",
+  "business_reason": "The one place the division lives; its qualifying branch is blocked only by a reviewer question the reference cases have settled.",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/research/zr-snapshots/v1/zr-23-52.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-27-111.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-qualifying-affordable-housing.snapshot.json"
+  ],
+  "outputs": [
+    "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json",
+    "services/api/tests/rules/test_r6b_coverage_yard_units.py",
+    "services/api/tests/rules/test_r6b_qualifying_dwelling_units.py",
+    "project-control/reports/M5-T195-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "services/api/app/rules/rulesets/r6b_dwelling_units.rule.json",
+    "services/api/tests/rules/test_r6b_coverage_yard_units.py",
+    "services/api/tests/rules/test_r6b_qualifying_dwelling_units.py",
+    "project-control/reports/M5-T195-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/review_register/",
+    "docs/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "packages/contracts/",
+    "apps/web/",
+    "services/api/tests/rules/test_r6b_a02b_golden.py",
+    "services/api/tests/rules/test_r6b_other_districts_unchanged.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "qualifying_affordable_housing, dividend 24,180 (real-lot L2), no special density area, no special district",
+      "when": "evaluated",
+      "then": "conditional; max_dwelling_units equals opt2-max-dwelling-units and real-lot L7 (35); qualifying_affordable_pathway applied"
+    },
+    {
+      "id": "S2",
+      "given": "qualifying_senior_housing with 24,180 and with 20,150",
+      "when": "evaluated",
+      "then": "not_applicable, no outputs; the test asserts opt3-max-dwelling-units and real-lot L8 are not_known"
+    },
+    {
+      "id": "S3",
+      "given": "standard_residence, 20,150",
+      "when": "evaluated",
+      "then": "29 (real-lot L6), coverage and applied exceptions as before"
+    },
+    {
+      "id": "S4",
+      "given": "special district true or not supplied; special density area true",
+      "when": "evaluated",
+      "then": "professional_review_required; not_applicable - as before, for every program"
+    },
+    {
+      "id": "S5",
+      "given": "mutation: old professional_review_required effect restored",
+      "when": "S1 runs",
+      "then": "fails; red and green in the producer report"
+    },
+    {
+      "id": "S6",
+      "given": "the golden and other-district guards, unedited",
+      "when": "run",
+      "then": "pass; a needed edit is a stop-and-report"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Red until E0-S: test_zoning_rule_review_register.py (rule_file_sha256) and NB-05 code identity. Commit HELD.",
+    "Never integrate while M5-T173B or M5-T180 is in flight: inputs.py line 218 passes the study program, so qualifying-affordable studies would change engine output."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:40:55.389036+00:00",
+  "updated_at": "2026-10-15T23:40:55.841868+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R075",
+        "D-094-R259",
+        "D-094-R261"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:40:55.389299+00:00",
+  "path_notes": "No in-flight or planned task lists these files. Build now; hold the commit.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py tests/rules/test_r6b_qualifying_dwelling_units.py tests/rules/test_r6b_a02b_golden.py tests/rules/test_r6b_other_districts_unchanged.py"
+  ],
+  "worktree": "/root/project/w-wave29"
+}

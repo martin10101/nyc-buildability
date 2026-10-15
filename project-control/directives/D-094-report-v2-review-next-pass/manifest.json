@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T23:40:50+00:00",
+ "updated_at": "2026-10-15T23:40:55+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -330,7 +330,7 @@
   "D-094-R306"
  ],
  "requirements_id_digest_sha256": "f912cf76c47f7903bef5c9cca3e20e0a4df86f75992ad35f7cd71f6851f079ca",
- "requirements_content_digest_sha256": "97d723f114d6f5a114820d4d9c394adb9c9630c01214685e859f28283ac594a6",
+ "requirements_content_digest_sha256": "5f1c0e90688581810e18c8d1291710b38df9d6313deeaed09d51785fa74702f0",
  "sources": [
   {
    "file": "source-001.md",
@@ -633,7 +633,8 @@
   "M5-T191",
   "M5-T192",
   "M5-T193",
-  "M5-T194"
+  "M5-T194",
+  "M5-T195"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1104,6 +1105,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T194 (drawn-content manifest; chart and appendix claims read an explicit drawn state; legacy path kept) to R050, R095, R098, R198, R200, R203, R204, R205, R277, R278 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T23:40:55+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T195 (E0 part 1: qualifying-affordable unit branch conditional with its pathway named; senior not applicable) to R075, R259, R261 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
