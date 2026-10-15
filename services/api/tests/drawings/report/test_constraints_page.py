@@ -158,8 +158,9 @@ def test_s10_site_section_words_within_the_baseline() -> None:
 # =========================================================================== S12
 def test_s12_six_sections_and_page_one_wrapper_untouched() -> None:
     html = _report_with_maps()
+    # M5-T169: pages 5 and 6 merged into one evidence appendix (five sections).
     for sid in ("decision-summary", "site-and-context", "option-comparison",
-                "scenario-B", "assumptions-open-items", "calculations-evidence"):
+                "scenario-B", "appendix"):
         assert f'id="{sid}"' in html
     decision = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
     # the page-1 wrapper (class summary-figure, its short caption) is unchanged.

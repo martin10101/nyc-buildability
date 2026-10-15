@@ -48,8 +48,9 @@ def _capture_request_url(snapshot_id: str) -> str:
 
 
 def _evidence_html(results: dict) -> str:
+    # M5-T169: the calculations/evidence content now lives in the one merged appendix.
     html = build_report_html(results)
-    return html[html.index('id="calculations-evidence"'):]
+    return html[html.index('id="appendix"'):]
 
 
 def _law_hrefs(evidence: str) -> list[str]:

@@ -36,17 +36,17 @@ const A4_WIDTH_PT = 595.28;
 const A4_HEIGHT_PT = 841.89;
 const PT_TOLERANCE = 4;
 
-// The six page types, matched by their OWN label line (the report's `type-name` line), anchored and
+// The five page types, matched by their OWN label line (the report's `type-name` line), anchored and
 // multiline so a loose word elsewhere never matches first (rework 4: the decision summary's coverage
 // block names "H. Option comparisons", which the old loose /option comparison/i matched on page 1).
-// The label text is read from the report HTML's `type-name` lines (print-int4/report.html).
+// M5-T169: page types 5 and 6 print under one merged heading, "Appendix" (D-094 R077), so the list
+// is five. The label text is read from the report HTML's `type-name` lines.
 const PAGE_TYPE_TITLES: RegExp[] = [
   /^decision summary$/im,
   /^site and context$/im,
   /^option comparison$/im,
   /^scenario sheet\b/im,
-  /^assumptions and open items$/im,
-  /^calculations and evidence$/im,
+  /^appendix$/im,
 ];
 
 // The words the owner forbids for a result, anywhere in the report (ruling X5 / X11).

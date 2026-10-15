@@ -1,10 +1,13 @@
-"""Page type 3 - Option comparison (page-types.md row 3; rework F7).
+"""Page type 3 - Option comparison (page-types.md row 3; rework F7; M5-T169 R075).
 
-The page title is the reader's question. All eleven options in the owner-approved
-order, on one basis: option, floor-area allowance, scheduled building, label and
-a numbered shared limitation. The shared limitations are stated once above the
-table. One compact bar chart shows the allowance against each worked building's
-scheduled area, on one scale.
+The page title is the reader's question. The comparison comes FIRST (R075): the
+eleven-option table, then one compact bar chart. Options 1-3 carry figures; options
+4-11 read "Not evaluated in this report" (R059/R084) - never an infeasibility or an
+achieved-on-site finding. The "Limitation N." paragraphs are gone from this page;
+the material limitations live as issue records in the evidence appendix (R025). The
+chart distinguishes the floor-area allowance, each worked building's scheduled area,
+and whether a building is placed on site ("Not demonstrated", no bar) on one scale
+(R018/R020) - never two equal bars, never a zero-height bar for an unknown.
 """
 
 from __future__ import annotations
@@ -20,15 +23,6 @@ __all__ = ["render"]
 QUESTION = "How do the options compare?"
 
 
-def _shared_limitations(results: Mapping) -> object:
-    rows = options.shared_limitations(results)
-    items = [
-        el("p", raw(f"<strong>Limitation {row['number']}.</strong> "), row["sentence"])
-        for row in rows
-    ]
-    return el("div", el("h3", "Shared limitations"), *items, class_="shared-limitations")
-
-
 def _chart(results: Mapping, worked: list[dict]) -> object:
     allowance = readers.named_value(
         readers.answer_block(results, "floor_area_allowance"), "max_residential_floor_area"
@@ -36,14 +30,17 @@ def _chart(results: Mapping, worked: list[dict]) -> object:
     svg = None
     if allowance is not None:
         svg = drawings_embed.allowance_bar_chart_svg(
-            formatting.format_int_commas(allowance.get("value")), allowance.get("value"), worked
+            formatting.format_int_commas(allowance.get("value")), allowance.get("value"), worked,
+            placed_on_site=not readers.building_not_placed(results),
         )
     if svg is None:
         return short_line("No scheduled building is available to chart yet.")
     return el(
         "figure",
         raw(svg),
-        el("figcaption", "Floor-area allowance against each worked building's scheduled area."),
+        el("figcaption",
+           "Floor-area allowance, each worked building's scheduled area, and whether a "
+           "building is placed on site."),
     )
 
 
@@ -64,7 +61,6 @@ def _option_rows(results: Mapping) -> list[list[object]]:
             raw(f'<span class="nowrap">{escape(row["scheduled"])}</span>')
             if row["scheduled"] == "None scheduled" else row["scheduled"],
             label_chip(row["status_label"]),
-            raw(f'<span class="nowrap">{row["limitation"]}</span>'),
         ]
         for row in options.option_rows(results)
     ]
@@ -88,7 +84,7 @@ def _buildings(results: Mapping) -> object:
         items.append(
             el("li",
                raw(f"<strong>{escape(name)} – not worked:</strong> the square-foot footprint "
-                   "is withheld (see Limitation 1) "),
+                   "is withheld (see the evidence appendix) "),
                label_chip(building["status_label"]))
         )
     if not items:
@@ -101,13 +97,12 @@ def render(results: Mapping, ident: Mapping, *, env=None) -> str:
     children = [
         el("p", "Option comparison", class_="type-name"),
         el("h2", QUESTION),
-        _shared_limitations(results),
-        _chart(results, worked),
         table(
-            ["Option", "Floor-area allowance", "Scheduled building", "Status", "Limitation"],
+            ["Option", "Floor-area allowance", "Scheduled building", "Status"],
             _option_rows(results),
             caption="The eleven development options, in the owner-approved order",
         ),
+        _chart(results, worked),
         _buildings(results),
     ]
     return str(el("section", *children, class_="report-page", id="option-comparison"))

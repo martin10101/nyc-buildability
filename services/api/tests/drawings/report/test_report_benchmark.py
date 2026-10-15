@@ -35,9 +35,11 @@ TOTAL_WORD_CAP = 2448
 REPEAT_DISTINCT_CAP = 3   # before set: 3 sentences of 8+ words printed 2+ times
 REPEAT_PRINTING_CAP = 7   # before set: 7 printings of those sentences
 
+# M5-T169: page types 5 and 6 are one merged evidence appendix (id="appendix"), so the
+# section-id list drops from six to five.
 _SECTION_IDS = (
     "decision-summary", "site-and-context", "option-comparison",
-    "scenario-B", "assumptions-open-items", "calculations-evidence",
+    "scenario-B", "appendix",
 )
 
 
@@ -117,9 +119,7 @@ def test_benchmark_rear_yard_reads_as_the_applied_conditional_result() -> None:
     # real-lot-z1/z2): labelled Conditional, naming ZR 23-344(b) and (c)(3) with the section
     # linked, the conditions named, never an unconditional "no rear yard".
     html = build_report_html(benchmark())
-    appendix = html[
-        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
-    ]
+    appendix = html[html.index('id="appendix"'):]
     # the rear-yard open item is numbered by the reader; locate its row (not program wording).
     number = {it["category"]: it["number"] for it in readers.open_items(benchmark())}["rear_yard"]
     row = appendix[appendix.index(f'id="issue-{number}"'):]
@@ -131,8 +131,9 @@ def test_benchmark_rear_yard_reads_as_the_applied_conditional_result() -> None:
     assert "is not yet checked" not in row_text
     # names the short-block rule (b) and the adjoining-side-line rule (c)(3).
     assert "23-344(b)" in row_text and "23-344(c)(3)" in row_text
-    # labelled Conditional (the engine's combined way), not the 1.4.0 open-check label.
-    assert 'class="label-chip">Conditional</span>' in row
+    # the engine's combined conditional way is Conditional on page 3 (five-field appendix
+    # records carry no status column); the record names the conditions that settle it.
+    assert readers.open_items(benchmark())[number - 1]["status_label"] == "Conditional"
     # the conditions that settle it are named (the adjoining lots' lot lines).
     assert "lot lines" in row_text
     # never an unconditional "no rear yard".
@@ -159,9 +160,7 @@ def test_round4_benchmark_page_6_drops_the_rear_yard_pre_check_line() -> None:
     for alt in doc.get("building_alternatives", []):
         assert "The rear yard beyond the corner" not in alt["not_checked"]
     # page 8 is NOT the "not yet checked" open check (it reads the applied conditional result).
-    appendix = html[
-        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
-    ]
+    appendix = html[html.index('id="appendix"'):]
     assert constraint_text.REAR_YARD_OPEN_CHECK not in visible_text(appendix)
 
 

@@ -67,8 +67,9 @@ def test_s1_location_sheet_opens_page_type_two() -> None:
     site = _site_section(html)
     # 'Where is the lot?' opens page type 2, then 'What constrains the design?'.
     assert site.index("Where is the lot?") < site.index("What constrains the design?")
-    # The location sheet lives INSIDE page type 2 - the page-type list stays at six.
-    assert html.count('class="report-page"') == 6
+    # The location sheet lives INSIDE page type 2 - the page-type list is five
+    # (pages 5 and 6 merged into one evidence appendix, M5-T169).
+    assert html.count('class="report-page"') == 5
     # M5-T166 (D-094 R014/R074): page 2 is the neighbourhood locator only; the
     # dimensioned close frame is on the 'What constrains the design?' sheet.
     location = site[site.index("Where is the lot?"):site.index("What constrains the design?")]
@@ -205,9 +206,9 @@ def test_s1_captions_are_plain_no_dataset_id_no_doubled_date() -> None:
             assert cap.count(date) <= 1, f"date {date} doubled in a caption"
 
 
-def test_s1_six_page_types_unchanged() -> None:
+def test_s1_five_page_types_unchanged() -> None:
     for sid in ("decision-summary", "site-and-context", "option-comparison",
-                "scenario-B", "assumptions-open-items", "calculations-evidence"):
+                "scenario-B", "appendix"):
         assert f'id="{sid}"' in _report_with_maps()
 
 

@@ -75,22 +75,23 @@ def visible_text(markup: str) -> str:
     return _html.unescape(markup)
 
 
+# M5-T169: page types 5 and 6 are merged into ONE evidence appendix (D-094 R077), so
+# the section-id list, the reader-question list and the page count drop from six to five.
 REASONS_IN_ORDER = (
     "What can I potentially build?",
     "What constrains the design?",
     "How do the options compare?",
     "What is this option?",
-    "What remains unresolved, and what would resolve it?",
-    "How was this derived?",
+    "What remains unresolved, and how was this derived?",
 )
 SECTION_IDS_IN_ORDER = (
     "decision-summary", "site-and-context", "option-comparison",
-    "scenario-", "assumptions-open-items", "calculations-evidence",
+    "scenario-", "appendix",
 )
 
 
 # =========================================================================== S1
-def test_s1_six_page_types_in_order() -> None:
+def test_s1_five_page_types_in_order() -> None:
     html = build_report_html(benchmark())
     positions = [html.index(f'id="{sid}') for sid in SECTION_IDS_IN_ORDER]
     assert positions == sorted(positions)
@@ -104,11 +105,11 @@ def test_s1_six_page_types_in_order() -> None:
 def test_s1_two_worked_buildings_two_sheets() -> None:
     html = build_report_html(two_buildings_document())
     assert html.count('id="scenario-A"') == 1 and html.count('id="scenario-B"') == 1
-    assert html.count('class="report-page"') == 7
+    assert html.count('class="report-page"') == 6
 
 
-def test_s1_benchmark_has_six_pages() -> None:
-    assert build_report_html(benchmark()).count('class="report-page"') == 6
+def test_s1_benchmark_has_five_pages() -> None:
+    assert build_report_html(benchmark()).count('class="report-page"') == 5
 
 
 # =========================================================================== S2 / F1
@@ -172,25 +173,39 @@ def test_s4_no_developer_information_partial() -> None:
 
 
 # =========================================================================== S5 / F7
-def test_s5_eleven_options_shared_limitations_once() -> None:
+def test_s5_eleven_options_table_first_no_limitation_paragraphs() -> None:
+    # M5-T169 (R075/R059/R084): the comparison comes first - the eleven-option table
+    # precedes the chart, and no "<p><strong>Limitation N.</strong>" paragraph remains
+    # on the page; options 1-3 carry figures and options 4-11 read "Not evaluated in
+    # this report" in the owner-approved order and names.
     doc = benchmark()
     rows = options.option_rows(doc)
     assert [r["ordinal"] for r in rows] == list(range(1, 12))
     assert [r["name"] for r in rows] == [name for _ordinal, name in options.ELEVEN_OPTIONS]
     assert len({r["status_label"] for r in rows}) > 1
     assert len({r["allowance_area"] for r in rows}) > 1
-    text = visible_text(build_report_html(doc))
-    for limitation in options.shared_limitations(doc):
-        assert text.count(limitation["sentence"]) == 1, limitation["sentence"]
+    html = build_report_html(doc)
+    comparison = html[html.index('id="option-comparison"'):html.index('id="scenario-B"')]
+    # the table precedes the chart (the comparison, not the limitation text, comes first).
+    assert comparison.index("<table") < comparison.index('class="bar-chart"')
+    # no "Limitation N." paragraph remains anywhere in the section.
+    assert "<p><strong>Limitation" not in comparison
+    text = visible_text(html)
     assert "Building A – not worked" in text  # en dash (A6)
+    # options 1-3 carry figures; options 4-11 read "Not evaluated in this report".
+    assert text.count("Not evaluated in this report") == 8
 
 
 def test_f7_columns_chart_and_units() -> None:
     doc = benchmark()
     html = build_report_html(doc, env=_LANE_E)
     text = visible_text(html)
-    for header in ("Floor-area allowance", "Scheduled building", "Limitation"):
+    # the "Limitation" column is gone (R075); the table keeps these four columns.
+    for header in ("Floor-area allowance", "Scheduled building", "Status"):
         assert header in text
+    comparison = html[html.index('id="option-comparison"'):html.index('id="scenario-B"')]
+    header_row = comparison[comparison.index("<thead"):comparison.index("</thead>")]
+    assert "Limitation" not in visible_text(header_row)
     assert "No scheduled building is available to chart yet." not in text
     assert 'class="bar-chart"' in html
     assert "sq ft sq ft" not in text and "FAR FAR" not in text
@@ -198,11 +213,8 @@ def test_f7_columns_chart_and_units() -> None:
     assert "20,150 sq ft" in text and "FAR 2.0" in text
     assert "24,180 sq ft" in text and "FAR 2.4" in text
     assert "None scheduled" in text
-    # A6: the Limitation column cells carry the number only (no "Limitation 2" in a cell).
-    comparison = html[html.index('id="option-comparison"'):html.index('id="scenario-B"')]
-    assert "Limitation 2" not in visible_text(
-        comparison[comparison.index("<tbody"):comparison.index("</table>")]
-    )
+    # the chart distinguishes the placed-on-site status as "Not demonstrated" (no bar).
+    assert "Placed on site" in text and "Not demonstrated" in text
 
 
 # =========================================================================== S6
@@ -329,8 +341,12 @@ def test_s9_every_number_comes_from_the_document() -> None:
         allowed |= _rounded(i)
     # Checked on the report's OWN text (drawings off): the kit's site plan prints
     # computed edge dimensions whose provenance is the kit's own labels, not the
-    # report's. The report itself types no figure (ruling X7).
-    text = visible_text(build_report_html(doc))
+    # report's. The report itself types no figure (ruling X7). The run-identity block
+    # (M5-T169) carries a document FINGERPRINT and the code COMMIT - identity hashes,
+    # not document figures - so it is excluded before the figure scan.
+    html = build_report_html(doc)
+    html = re.sub(r'<h3>Run identity</h3>.*?(?=<h3>Status-label key</h3>)', " ", html, flags=re.S)
+    text = visible_text(html)
     for token in re.findall(r"\d[\d,]*(?:\.\d+)?", text):
         value = float(token.replace(",", ""))
         assert any(round(value, k) in allowed for k in (0, 1, 2, 3, 4, 6)), (
@@ -342,7 +358,7 @@ def test_s9_every_number_comes_from_the_document() -> None:
 def test_s10_partial_data_every_page() -> None:
     html = build_report_html(partial_document())
     for sid in ("decision-summary", "site-and-context", "option-comparison",
-                "scenario-none", "assumptions-open-items", "calculations-evidence"):
+                "scenario-none", "appendix"):
         assert f'id="{sid}"' in html
     text = visible_text(html)
     assert "The lot outline is not available for this property." in text
@@ -364,19 +380,24 @@ def test_s11_escaping() -> None:
 
 
 # =========================================================================== F8 / A3
-def test_f8_open_items_short_effect_and_full_reason() -> None:
+def test_f8_open_items_five_field_records() -> None:
+    # M5-T169 (R025): the appendix open items are five-field issue records -
+    # issue, consequence, next action, responsible role, evidence reference.
     html = build_report_html(benchmark())
     text = visible_text(html)
-    assert "Effect on the answer" in text
-    # After M5-T157 the standard-residence limit is shown (a Conditional ceiling); the effect
-    # follows the document instead of the old fixed "No legal apartment limit is shown." sentence.
+    for header in ("Issue", "Consequence", "Next action", "Responsible role",
+                   "Evidence reference"):
+        assert header in text
+    # The legal-apartment-limit consequence (after M5-T157) follows the document.
     assert (
         "The legal apartment limit is shown as a conditional ceiling for standard residences; "
         "it is not known for qualifying affordable housing or qualifying senior housing."
     ) in text
     assert "No legal apartment limit is shown." not in text
-    # The rear-yard benchmark wording (the open check, M5-T165) is asserted in
-    # test_report_benchmark.py, which now owns the moved benchmark-text assertions.
+    # site documents are kept apart from program work (R025).
+    assert "Owner or surveyor" in text
+    assert "This program" in text
+    # material document reasons are preserved beneath the row (not deleted, R025).
     assert "class=\"reason-row\"" in html
 
 
@@ -394,17 +415,26 @@ def test_db232_zoning_lot_open_item_is_first() -> None:
     assert decision[0]["title"] == "Zoning lot"
 
 
-def test_a3_not_checked_items_have_no_redundant_detail() -> None:
-    # Only items whose full reason differs from the title/effect get a reason row.
+def test_a3_material_reason_preserved_and_honest_sentence_once() -> None:
+    # M5-T169 (R025/R054/R077): a material document reason is preserved beneath the
+    # issue row ONLY for the unique material reasons (coverage by-portion law; the
+    # per-program legal-limit gaps). The zoning-lot, lot-area and rear-yard reasons
+    # already appear on page 1 / page 3 / the shared assumptions, so repeating them is
+    # the repetition R077 removes. The honest "A check not yet made ..." next action
+    # prints at most once though more than one not-checked item exists.
+    from app.drawings.report import open_items
     doc = benchmark()
-    expected = sum(
-        1 for item in readers.open_items(doc)
-        if item.get("reason") and item["reason"] not in (item["effect"], item["title"])
-    )
+    expected = sum(1 for r in open_items.appendix_issue_records(doc) if r.get("detail"))
     html = build_report_html(doc)
+    text = visible_text(html)
     assert html.count('class="reason-row"') == expected
-    # the not-checked items (street wall, placement, parking) contribute no reason row.
-    assert expected < len(readers.open_items(doc))
+    assert 0 < expected < len(readers.open_items(doc))  # some details, not every item
+    # the unique material reasons are preserved; the repeated zoning-lot one is not.
+    assert "the law allows up to 100 percent coverage" in text  # coverage by-portion kept
+    assert text.count("A check not yet made against an independently worked example.") <= 1
+    not_checked = [i for i in readers.open_items(doc)
+                   if i["category"] in ("placement", "parking")]
+    assert len(not_checked) >= 2  # more than one not-checked item, so the dedupe is exercised
 
 
 # ==================================================================== F10 / R012 / UX-12
@@ -432,12 +462,20 @@ def test_f10_r012_coverage_inventory_leaves_the_report() -> None:
 
 # =========================================================================== F11
 def test_f11_evidence_inputs_label_key_and_nowrap() -> None:
+    # M5-T169 (R026/R077): the "Inputs and their sources" table lists the MEASURED
+    # 1.5.0 input_facts with their real source titles and dates; the categorical reads
+    # (zoning district, lot type, frontage) are stated once in the Shared assumptions
+    # above (not repeated as input rows).
     html = build_report_html(benchmark())
     text = visible_text(html)
     assert "Inputs and their sources" in text
-    assert "Recorded lot area" in text and "Zoning district" in text
-    assert "Lot frontage" in text  # A7: the document's label, not "Front lot line"
-    assert "Lot within 100 ft of the street-line intersection" in text  # A7
+    assert "Recorded lot area" in text and "Lot outline area (city map)" in text
+    assert "Mapped street width - 215 Place" in text
+    # real source identifiers and dates, never just "City records" (R026).
+    assert "NYC Department of City Planning MapPLUTO, version 26v2 (as of 2026-09-30)" in text
+    assert "DCP Digital City Map street center lines (as of 2026-09-30)" in text
+    # the categorical reads are stated once, in the shared assumptions.
+    assert "Zoning district" in text
     # envelope law sections present (not only 23-22); the number never breaks (A7).
     assert "23-432" in text
     assert '<span class="nowrap">23-432</span>' in html
@@ -494,7 +532,7 @@ def test_short_table_by_height_is_no_split_and_a_tall_one_is_not() -> None:
 def test_status_label_key_is_a_no_split_table() -> None:
     # the status-label key (a short table) moves whole, never a lone fragment.
     html = build_report_html(benchmark())
-    evidence = html[html.index('id="calculations-evidence"'):]
+    evidence = html[html.index('id="appendix"'):]
     key_table = evidence[evidence.index("<table", evidence.index("Status-label key")):]
     assert key_table.startswith('<table class="key-table no-split"')
 
@@ -602,10 +640,9 @@ def test_vc2_no_long_document_sentence_printed_twice() -> None:
         assert text.count(sentence.lower()) <= 1, (
             f"document sentence printed twice: {sentence[:70]!r}"
         )
-    # the two sentences the review flagged each appear once; the lot-area item points away.
+    # the two sentences the review flagged each appear once.
     assert text.count("by portion the law allows up to 100 percent coverage") == 1
     assert text.count("if the recorded lot area of 10,075 sq ft is confirmed") == 1
-    assert "see site and context for the lot-area basis." in text
     # The long apartment-estimate sentence now prints ONCE: on the scenario sheet (page 4),
     # its full calculation. Page 1 shows the range "Estimate 17-22" and links here, so the
     # duplicate on page 1 is gone (D-094 R013, R2-F14; M5-T165).

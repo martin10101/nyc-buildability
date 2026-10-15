@@ -39,6 +39,7 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, Response
 
 from app.drawings.report import build_report_html
+from app.drawings.report.run_identity import deployed_commit
 
 from .report_context import MapContextProvider, get_report_map_context_provider
 from .results_read import get_results_study_inputs_provider, post_results
@@ -102,7 +103,14 @@ async def post_report(
     try:
         document = json.loads(bytes(results_response.body))
         map_context = _map_context_for(provide_map_context, bbl, correlation_id or "")
-        html = build_report_html(document, map_context=map_context, identity={"address": address})
+        # The route carries the deployed code commit into the report's run identity
+        # (M5-T169, R028/R038); read from the environment the same way build-info does,
+        # "unknown" when unset. The report layer owns the reader, so no API router
+        # module is imported into drawings/report.
+        html = build_report_html(
+            document, map_context=map_context,
+            identity={"address": address, "commit": deployed_commit()},
+        )
     except Exception:
         logger.error("report_v1 render_failed correlation_id=%s", correlation_id)
         # Reuse the results route's typed internal-error refusal shape.

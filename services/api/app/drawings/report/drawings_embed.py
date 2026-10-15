@@ -213,13 +213,19 @@ def allowance_bar_chart_svg(
     allowance_display: str | None,
     allowance_value: float | None,
     buildings: list[dict],
+    *,
+    placed_on_site: bool = False,
 ) -> str | None:
-    """A compact horizontal bar chart: the floor-area allowance against each
-    worked building's scheduled area, on one scale. Returns ``None`` when there is
-    nothing to draw. Every printed number is a document figure passed in."""
-    bars = [b for b in buildings if isinstance(b.get("scheduled_value"), (int, float))]
-    if not bars or not isinstance(allowance_value, (int, float)) or allowance_value <= 0:
+    """A compact horizontal bar chart distinguishing THREE things on ONE zero-based
+    scale (R018/R020): the floor-area allowance, each worked building's scheduled
+    area, and whether a building is placed on site. The placed-on-site row is a status,
+    never a bar: "Not demonstrated" when nothing is placed (not a zero-height bar) and
+    "Shown on the site plan" when one is - so the chart never prints two equal bars.
+    Returns ``None`` when there is no allowance to chart. Every printed number is a
+    document figure passed in."""
+    if not isinstance(allowance_value, (int, float)) or allowance_value <= 0:
         return None
+    bars = [b for b in buildings if isinstance(b.get("scheduled_value"), (int, float))]
     scale = max([allowance_value, *[b["scheduled_value"] for b in bars]])
     if scale <= 0:
         return None
@@ -237,14 +243,30 @@ def allowance_bar_chart_svg(
         name = f"Building {b.get('building')}" if b.get("building") else "Worked building"
         label = b.get("scheduled_display")
         text = f"{label} sq ft" if label else ""
-        rows.append(_bar(y, track, name, text, b["scheduled_value"], scale))
+        rows.append(_bar(y, track, f"{name} scheduled", text, b["scheduled_value"], scale))
         y += 22
+    # placed-on-site: a status, never a bar (an unknown is never a zero-height bar, R020).
+    placed_text = "Shown on the site plan" if placed_on_site else "Not demonstrated"
+    rows.append(_status_row(y, "Placed on site", placed_text))
+    y += 22
     height = y + 4
     body = "".join(rows)
     # viewBox units are points; stamped width/height in pt print it at true size (D1).
     return (
         f'<svg class="bar-chart" viewBox="0 0 {width_total} {height}" '
         f'role="img" width="{width_total}pt" height="{height}pt">{body}</svg>'
+    )
+
+
+def _status_row(y: int, name: str, status_text: str) -> str:
+    """A label and a status word with NO rectangle (the placed-on-site distinction):
+    the status is never drawn as a bar, so an unknown cannot read as a zero-length
+    bar (R020). font-size in viewBox units (points): at least 7 (D2)."""
+    name_s = _xml_escape(name)
+    status_s = _xml_escape(status_text)
+    return (
+        f'<text x="0" y="{y + 9}" font-size="8">{name_s}</text>'
+        f'<text x="155" y="{y + 9}" font-size="8" font-style="italic">{status_s}</text>'
     )
 
 

@@ -220,7 +220,7 @@ def test_s5_guard_no_denial_while_a_limit_is_shown() -> None:
         html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
     )
     open_items_page = _visible_text(
-        html[html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')]
+        html[html.index('id="appendix"'):]
     )
     for slice_text in (decision, open_items_page):
         assert _EFFECT_NONE not in slice_text
