@@ -19,11 +19,11 @@ Capture state read from a listing of `docs/research/zr-snapshots/v1/`; handled s
 |---|---|---|---|---|---|
 | 32-161 | Use Group VI — general use allowances (retail/service = the shops use) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-161 | 6/6/2024 | zr-32-161.snapshot.json | NOT HANDLED |
 | 32-131 | Use Group III — general use allowances (**community facilities, not shops**) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-131 | 12/5/2024 | zr-32-131.snapshot.json | NOT HANDLED |
-| 32-421 | Limitation on floors occupied by commercial uses | https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-421 | 6/6/2024 | NOT CAPTURED | NOT HANDLED |
+| 32-421 | Limitation on floors occupied by commercial uses | https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-421 | 6/6/2024 | zr-32-421.snapshot.json (M3-T010) | NOT HANDLED |
 | 33-12 | Maximum Floor Area Ratio (commercial, parent) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-12 | 12/5/2024 | zr-33-12.snapshot.json | NOT HANDLED |
 | 33-121 | In districts with bulk governed by Residence District bulk regulations | https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-121 | 12/5/2024 | zr-33-121.snapshot.json | NOT HANDLED |
-| 33-26 | Minimum Required Rear Yards (commercial) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-26 | 6/6/2024 | NOT CAPTURED | NOT HANDLED |
-| 33-301 | Within one hundred feet of corners (commercial rear-yard waiver) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-301 | 12/15/1961 | NOT CAPTURED | NOT HANDLED |
+| 33-26 | Minimum Required Rear Yards (commercial) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-26 | 6/6/2024 | zr-33-26.snapshot.json (M3-T010) | NOT HANDLED |
+| 33-301 | Within one hundred feet of corners (commercial rear-yard waiver) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-3/33-301 | 12/15/1961 | zr-33-301.snapshot.json (M3-T010) | NOT HANDLED |
 | 35-01 | Applicability of This Chapter (Ch. 5 mixed-building bulk) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-01 | 12/5/2024 | zr-35-01.snapshot.json | NOT HANDLED |
 | 35-30 | Applicability of Floor Area and Open Space Regulations (heading) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-30 | 2/2/2011 | zr-35-30.snapshot.json (heading only) | NOT HANDLED |
 | 35-31 | Maximum Floor Area Ratio (mixed building) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-31 | 12/5/2024 | zr-35-31.snapshot.json | NOT HANDLED |
@@ -147,8 +147,8 @@ building**; a tax lot is not a zoning lot (NB-01 unresolved).
    whether qualifying housing applies — a computation left to the engine, not decided here.
 4. **Whether 35-632 changes the R6B envelope numbers for a mixed building** — the modification is
    captured but not handled (NB-06). Next step: a rules task reads 35-632's numeric effect.
-5. **Capture owed:** 32-421, 33-26, 33-27, 33-28, 33-30, 33-301 are NOT CAPTURED (read live by
-   HX1/HB). Next step: capture these before a rule cites them.
+5. **Capture state (was "capture owed"):** 32-421, 33-26, 33-301 CAPTURED (M3-T010); 33-27, 33-28,
+   33-30 CAPTURED (M3-T011). (Capture-state only; no reading added here.)
 6. **Actual mapped overlay line at the lot is NOT KNOWN** (76-131 default 150 ft recorded; the
    zoning-map sheet / ZoLa / NYCO GIS not read). Next step: read the DCP Zoning Map sheet (or ZoLa,
    or query the NYCO geometry) and check for a dimensioned line vs the 150-ft default. Also 76-00 /

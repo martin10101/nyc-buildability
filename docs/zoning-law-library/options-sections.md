@@ -73,7 +73,7 @@ residential floor area in one mixed building.
   (R1-R5 only, checked). Still open: the actual mapped overlay line at the lot (76-131 default
   150 ft; not read — nothing assumed about coverage); whether C2-2 is a "select commercial
   overlay" (32-421); the single mixed-building rear-yard rule; 32-421/33-26/33-301 CAPTURED (M3-T010),
-  33-27/33-28/33-30 NOT CAPTURED.
+  33-27/33-28/33-30 CAPTURED (M3-T011).
 
 ### 6 — Residences with a community facility
 Confirm the community-facility use is permitted, add community-facility FAR, and combine with residential
@@ -143,7 +143,7 @@ and its density.
   conversion to dwelling units. Use permission: 22-12/22-121 (UG II in R6, via 11-25 for the
   suffix) and 32-121 (residences in C1/C2); 22-122 bars rooming units only in single-/two-family
   districts (not R6B); residential bulk follows the residence district via 34-11 (captured). 22-12 /
-  22-121 / 22-122 / 23-51 / 32-121 / 54-311 CAPTURED (M3-T010); 22-131…22-135 NOT CAPTURED. Still open: the modern
+  22-121 / 22-122 / 23-51 / 32-121 / 54-311 CAPTURED (M3-T010); 22-131…22-135 CAPTURED (M3-T011). Still open: the modern
   shared-housing-suite framework is pending 2027 legislation; occupancy is set outside the ZR
   (MDL/HMC/Building Code); the r6b_dwelling_units rule does not yet encode the 23-51 exclusion.
 
