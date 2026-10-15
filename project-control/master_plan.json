@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-15T05:53:28+00:00",
+ "updated_at": "2026-10-15T06:55:18+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -103,7 +103,8 @@
     "wave 24 merged to main and PDF #1 printed from main with before/after pictures (R083) | code: https://github.com/martin10101/nyc-buildability/pull/489 (merge https://github.com/martin10101/nyc-buildability/commit/30762409f40457fdc4902642618670e060f4b261) | tests: all 47 checks on the final head ba0d05d6 success (pull-request CI run https://github.com/martin10101/nyc-buildability/actions/runs/38621589866, 21 jobs) and an independent pre-merge audit MERGE-READY | visible: the report from main (10 pages: page 1 rebuilt, the locator, the constraints, the new dimensioned close-up, page 7 corrected) and a before/after of the changed pages, sent to the owner on 2026-10-14",
     "M3-T009 captures of the law the community-facility options need (documents only; beside the report lane) | code: https://github.com/martin10101/nyc-buildability/commit/ccf8e24be7870e1e0c02ef97eaa15d2485a2ba85 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38671986931 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8eb12777402a25d7f83112534a566d92f2d4bcf2) | supporting work, no change in the report: fifteen official law texts the community-facility options need (Article II Chapter 4 and 22-13), captured word for word",
     "M5-T181 website first screen: the results lead the Results window, the assumed conditions below them (the owner's forwarded review, D-094 R151) | code: https://github.com/martin10101/nyc-buildability/commit/3edf9ae0ca7ec68fc94d78a8a9eb46f1b34395a1, https://github.com/martin10101/nyc-buildability/commit/965de3d517f8aede673ae1be928e7de9b47f67ca | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38671986931 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8eb12777402a25d7f83112534a566d92f2d4bcf2) | visible: the website's Results window now opens with the results - the floor-area allowance beside the legal ceiling and the apartment estimate inside the first screen at 768 to 1,920 px wide, the assumed conditions below them (on phones the ceiling is one short scroll away)",
-    "M5-T167 rear yard on a short block (ZR 23-344(b), (c)(3)) in the engine, shown in the report | code: https://github.com/martin10101/nyc-buildability/commit/474c8ee3be8f2c9f64038bb01bf32cbb9ebe4eba, https://github.com/martin10101/nyc-buildability/commit/59a1b9bb7325f8ba79769266e04b64350c293196, https://github.com/martin10101/nyc-buildability/commit/11cdb085407b7466edb9c984e0c97f1fed9f6e19, https://github.com/martin10101/nyc-buildability/commit/d06118007112fde65d9981207a06abbc29dc8b67 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38675004974 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/0b65ca9c9136d05eb1d8b61403729a71e9738ccb) | visible: page 8's rear-yard item now prints the engine's own conditional reading of the short-block rule ZR 23-344(b) and the adjoining-side-line rule ZR 23-344(c)(3) (the rear yard is not settled on this lot; a survey or deed showing the lot lines would settle it) instead of 'not yet checked', and page 6 agrees; the website's Results window carries the same result"
+    "M5-T167 rear yard on a short block (ZR 23-344(b), (c)(3)) in the engine, shown in the report | code: https://github.com/martin10101/nyc-buildability/commit/474c8ee3be8f2c9f64038bb01bf32cbb9ebe4eba, https://github.com/martin10101/nyc-buildability/commit/59a1b9bb7325f8ba79769266e04b64350c293196, https://github.com/martin10101/nyc-buildability/commit/11cdb085407b7466edb9c984e0c97f1fed9f6e19, https://github.com/martin10101/nyc-buildability/commit/d06118007112fde65d9981207a06abbc29dc8b67 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38675004974 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/0b65ca9c9136d05eb1d8b61403729a71e9738ccb) | visible: page 8's rear-yard item now prints the engine's own conditional reading of the short-block rule ZR 23-344(b) and the adjoining-side-line rule ZR 23-344(c)(3) (the rear yard is not settled on this lot; a survey or deed showing the lot lines would settle it) instead of 'not yet checked', and page 6 agrees; the website's Results window carries the same result",
+    "M5-T182 placement of Building B and its area allocation: the computation modules (first part of M5-T172) | code: https://github.com/martin10101/nyc-buildability/commit/db590413f3435dcf95c93aa4b9a50d4d6d5e53f9 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38694446444 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/e7c1868f8f44c1bc70b2e7031c210e680f3c5a2e) | supporting work, no visible change yet: the placement of Building B on lot 70 and its two-zone area split computed and tested against the independent worked example (M5-T172 wires them into the report)"
    ],
    "steps": [
     {
@@ -128,15 +129,6 @@
       "M5-T167"
      ],
      "note": "contracted and claimed 2026-10-15 on task/wave26-envelope-constraints (main 2bcdb05a after the wave-25 merge); also restores page 3's setback and street-wall rows (DB-266)"
-    },
-    {
-     "wave": 26,
-     "item": "placement of Building B and its area allocation: the pure computation modules (first part of M5-T172; built beside M5-T170, no shared file; wired later by M5-T172)",
-     "ids": [
-      "M5-T182"
-     ],
-     "state": "in_progress",
-     "note": "contracted and claimed 2026-10-15 on task/wave26-envelope-constraints; supporting work, no visible change until M5-T172 wires it"
     },
     {
      "wave": 26,
@@ -343,10 +335,12 @@
     "M5-T167",
     "M5-T170",
     "M5-T169",
+    "M5-T182",
     "M5-T172",
+    "M5-T183",
     "M5-T173"
    ],
-   "note": "M5-T169 stays on the path because the scenario sheet (M5-T173) reads its rounding helper; the order is the work order's serial lane (one engine task holds the benchmark set at a time)."
+   "note": "M5-T169 stays on the path because the scenario sheet (M5-T173) reads its rounding helper; the order is the work order's serial lane (one engine task holds the benchmark set at a time); M5-T182 and M5-T183 are the first, unwired parts of M5-T172 and M5-T173, built beside M5-T170 on files no other task touches (2026-10-15)."
   },
   "progress_record_rule": "Each done entry names its code change (commit links), its test evidence (the CI run read green at the accept head) and its visible result, or says it is supporting work with no visible change yet (D-094 R142); links open on GitHub (R140)."
  }
