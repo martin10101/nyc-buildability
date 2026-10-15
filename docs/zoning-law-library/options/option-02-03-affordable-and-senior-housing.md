@@ -22,19 +22,19 @@ Capture state is read from a listing of `docs/research/zr-snapshots/v1/`; handle
 |---|---|---|---|---|---|
 | 12-10 | Definitions — "qualifying affordable housing" | https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10 | 12/5/2024 | zr-12-10-qualifying-affordable-housing.snapshot.json | NOT HANDLED (eligibility, not computed) |
 | 12-10 | Definitions — "qualifying senior housing" | https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10 | 12/5/2024 | zr-12-10-qualifying-senior-housing.snapshot.json | NOT HANDLED |
-| 12-10 | Definitions — "affordable independent residences for seniors" | https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10 | 12/5/2024 (per HA) | NOT CAPTURED | NOT HANDLED |
-| 12-10 | Definitions — "long-term care facility" | https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10 | 12/5/2024 (per HA) | NOT CAPTURED | NOT HANDLED |
+| 12-10 | Definitions — "affordable independent residence for seniors" | https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10 | 12/5/2024 | zr-12-10-affordable-independent-residence-for-seniors.snapshot.json | NOT HANDLED |
+| 12-10 | Definitions — "long-term care facility" | https://zoningresolution.planning.nyc.gov/article-i/chapter-2/12-10 | 12/5/2024 | zr-12-10-long-term-care-facility.snapshot.json | NOT HANDLED |
 | 23-22 | Floor Area Regulations for R6 Through R12 Districts | https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22 | 12/5/2024 | zr-23-22.snapshot.json | r6_r12_residential_far.rule.json (1st col 2.00) + r6b_qualifying_housing_far.rule.json (2nd col 2.40) |
 | 23-432 | Height and setback requirements | https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432 | 12/5/2024 | zr-23-432.snapshot.json | r6b_height.rule.json |
 | 23-433 | Setbacks (above the maximum base height) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-433 | 12/5/2024 | zr-23-433.snapshot.json | NOT HANDLED |
 | 23-52 | Maximum Number of Dwelling Units | https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-52 | 12/5/2024 | zr-23-52.snapshot.json | r6b_dwelling_units.rule.json |
 | 11-25 | Suffix inheritance (reaches R6B from R6) | https://zoningresolution.planning.nyc.gov/article-i/chapter-1/11-25 | per rule | zr-11-25.snapshot.json | cited by r6b_dwelling_units.rule.json |
 | 23-154 | (title not readable) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-154 | UNKNOWN — access blocked (HTTP 403) | NOT CAPTURED | NOT HANDLED |
-| 27-111 | General definitions (UAP / MIH / regulatory agreement) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-111 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 27-131 | Mandatory Inclusionary Housing (shares / income bands) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-131 | 12/5/2024 (per HA) | NOT CAPTURED | NOT HANDLED |
-| 27-133 | Mandatory Inclusionary Housing areas | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-133 | not read | NOT CAPTURED | NOT HANDLED |
-| 27-14 | Methods of Providing Affordable Housing | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-14 | 12/5/2024 (per HA) | NOT CAPTURED | NOT HANDLED |
-| 27-151 | Additional requirements for MIH and UAP developments | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-151 | 12/5/2024 (per HA) | NOT CAPTURED | NOT HANDLED |
+| 27-111 | General definitions (UAP / MIH / regulatory agreement) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-111 | 12/5/2024 | zr-27-111.snapshot.json | NOT HANDLED |
+| 27-131 | Mandatory Inclusionary Housing (shares / income bands) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-131 | 12/5/2024 | zr-27-131.snapshot.json | NOT HANDLED |
+| 27-133 | Mandatory Inclusionary Housing areas | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-133 | 12/5/2024 | zr-27-133.snapshot.json | NOT HANDLED |
+| 27-14 | Methods of Providing Affordable Housing | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-14 | 12/5/2024 | zr-27-14.snapshot.json | NOT HANDLED |
+| 27-151 | Additional requirements for MIH and UAP developments | https://zoningresolution.planning.nyc.gov/article-ii/chapter-7/27-151 | 12/5/2024 | zr-27-151.snapshot.json | NOT HANDLED |
 
 **Correction carried from the first pass (checked by the producer).** `options-sections.md` §2
 and the master list treat **23-154** as "the UAP section". That is not how the current text
@@ -43,8 +43,8 @@ defines "UAP development", "MIH development" and "affordable housing regulatory 
 references 23-154 only for the UAP **Offsite Option** floor-area rate, while a UAP development on
 its own (generating) site "utilizes the floor area regulations of Section 23-22 … or the height
 and setback regulations of Section 23-432 … applicable to qualifying affordable housing." So the
-substantive affordable/senior rules now live in **Article II, Chapter 7** (not captured, not
-handled), and 23-154 is not load-bearing for the benchmark lot. 23-154 itself stayed HTTP 403 on
+substantive affordable/senior rules now live in **Article II, Chapter 7** (now captured by
+M3-T008, not handled), and 23-154 is not load-bearing for the benchmark lot. 23-154 itself stayed HTTP 403 on
 both WebFetch and the documented browser-UA GET fallback (see `research-log.md`); its text is not
 read. The first-pass file `../options-sections.md` is editable by this pass and its §2 note is
 updated; the non-editable `benchmark-r6b-sections.json` is addressed under "Findings outside my
@@ -75,9 +75,9 @@ branch). Eligibility for either programme is not decided here.
 
 **Definitions relied on (12-10).** "qualifying affordable housing" (captured) = MIH developments
 in MIH areas; UAP developments; or buildings under an affordable housing regulatory agreement —
-its sub-terms are defined in §27-111 (not captured). "qualifying senior housing" (captured) =
-"affordable independent residences for seniors" or "long-term care facility" — both sub-terms are
-§12-10 general definitions (not captured). Also: "floor area", "floor area ratio", "zoning lot",
+its sub-terms are defined in §27-111 (captured). "qualifying senior housing" (captured) =
+"affordable independent residence for seniors" or "long-term care facility" — both sub-terms are
+§12-10 general definitions (captured). Also: "floor area", "floor area ratio", "zoning lot",
 "dwelling unit".
 
 **Exceptions / carve-outs.** UAP is by definition **outside** a Mandatory Inclusionary Housing
@@ -99,7 +99,7 @@ NB-05), so the 23-52(a)(1) no-factor branch does not apply here.
 2.40. Heights in feet from the base plane / curb level. Dwelling units = maximum residential
 floor area on the zoning lot / 680 (affordable); no factor (senior). Affordable floor area for a
 UAP site is measured from DOB-approved plans "by methods specified in the [HPD] guidelines"
-(§27-14, per HA; not captured).
+(§27-14, captured).
 
 **Zoning-lot scope.** FAR and the dwelling-unit limit are per **zoning lot**; heights are per
 building; "qualifying affordable housing / senior housing", "UAP development" and "MIH
@@ -141,9 +141,9 @@ determinations the program does not make.
    23-52 calculation. The handled rule flags this for review. Next step: a reviewer/legal reading,
    not a lookup; keep unresolved.
 3. **The Article II Chapter 7 chapter (27-111, 27-131, 27-133, 27-14, 27-151) and Appendix F** are
-   NOT CAPTURED and NOT HANDLED. Next step: capture §27-111 (definitions), §27-131 (MIH shares /
-   income), §27-133 + Appendix F (MIH-area membership) before a rule states option 2's share or
-   gate.
+   now CAPTURED (M3-T008; `zr-27-111/131/133/14/151`, `zr-appendix-f`) but NOT HANDLED. Next step: a
+   rule may now cite §27-131 (MIH shares / income) and §27-133 + Appendix F (MIH-area membership)
+   before stating option 2's share or gate.
 4. **Exact UAP income-index band** — not co-located with "UAP development"; set in §27-14 /
    §27-161 / §27-162 plus HPD guidelines. Next step: read those pages in full.
 5. **Whether §35-632 changes the R6B envelope numbers for a mixed building under the overlay** —

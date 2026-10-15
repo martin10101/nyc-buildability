@@ -14,28 +14,28 @@ producer's own checks (two official pages: 24-11 and 24-162) and the settled R6B
 ## Sections
 
 Capture state read from a listing of `docs/research/zr-snapshots/v1/`; handled from
-`services/api/app/rules/rulesets/`. No `zr-24-*` snapshot exists, so every Article II Chapter 4
-section is NOT CAPTURED.
+`services/api/app/rules/rulesets/`. Every Article II Chapter 4 section listed below is now CAPTURED (M3-T009; verified against a
+listing of `docs/research/zr-snapshots/v1/`).
 
 | id | title | official URL | last amended (page) | capture | handled |
 |---|---|---|---|---|---|
-| 22-13 / 22-131…22-135 | Use Group III — community facilities (use permission) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-2/22-13 | not individually read | NOT CAPTURED | NOT HANDLED |
+| 22-13 / 22-131…22-135 | Use Group III — community facilities (use permission) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-2/22-13 | 12/5/2024 (22-13) | zr-22-13.snapshot.json (parent); 22-131…22-135 NOT CAPTURED | NOT HANDLED |
 | 32-131 | Use Group III — general use allowances (CF use in the C2-2 overlay) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-131 | 12/5/2024 | zr-32-131.snapshot.json | NOT HANDLED |
-| 24-11 | Maximum Floor Area Ratio and Percentage of Lot Coverage (CF) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-111 | Maximum floor area ratio for certain community facility uses | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-111 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-161 | Maximum FAR for zoning lots containing CF and residential uses | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-161 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-162 | Maximum FARs and special FA limitations … in certain districts | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-162 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-163 | Lot coverage for CF + residential zoning lots | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-163 | not read | NOT CAPTURED | NOT HANDLED |
-| 24-04 | Applicability of Article II, Chapter 3 Regulations (CF height/setback routing) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-04 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-52 | Maximum Height of Walls and Required Setbacks (routing) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-52 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-522 | Front setbacks where front yards are not required | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-522 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-56 | Special Height and Setback Provisions for Certain Areas | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-56 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
+| 24-11 | Maximum Floor Area Ratio and Percentage of Lot Coverage (CF) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11 | 12/5/2024 | zr-24-11.snapshot.json | NOT HANDLED |
+| 24-111 | Maximum floor area ratio for certain community facility uses | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-111 | 12/5/2024 | zr-24-111.snapshot.json | NOT HANDLED |
+| 24-161 | Maximum FAR for zoning lots containing CF and residential uses | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-161 | 12/5/2024 | zr-24-161.snapshot.json | NOT HANDLED |
+| 24-162 | Maximum FARs and special FA limitations … in certain districts | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-162 | 12/5/2024 | zr-24-162.snapshot.json | NOT HANDLED |
+| 24-163 | Lot coverage for CF + residential zoning lots | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-163 | 12/5/2024 | zr-24-163.snapshot.json | NOT HANDLED |
+| 24-04 | Applicability of Article II, Chapter 3 Regulations (CF height/setback routing) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-04 | 12/5/2024 | zr-24-04.snapshot.json | NOT HANDLED |
+| 24-52 | Maximum Height of Walls and Required Setbacks (routing) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-52 | 12/5/2024 | zr-24-52.snapshot.json | NOT HANDLED |
+| 24-522 | Front setbacks where front yards are not required | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-522 | 12/5/2024 | zr-24-522.snapshot.json | NOT HANDLED |
+| 24-56 | Special Height and Setback Provisions for Certain Areas | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-56 | 12/5/2024 | zr-24-56.snapshot.json | NOT HANDLED |
 | 23-43 (/431/432/433) | Height and Setback Requirements in R6-R12 Districts | https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-43 | 12/5/2024 | zr-23-43 / zr-23-431 / zr-23-432 / zr-23-433 | r6b_height.rule.json (residences); NOT HANDLED as a CF rule |
-| 24-33 | Permitted Obstructions in Required Yards | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-33 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-34 | Minimum Required Front Yards (none in R6B) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-34 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-35 | Minimum Required Side Yards (none; ≥8 ft if provided) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-35 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-36 | Minimum Required Rear Yards (30 ft) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-36 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
-| 24-391 | Within one hundred feet of corners (CF rear-yard waiver) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-391 | 12/5/2024 | NOT CAPTURED | NOT HANDLED |
+| 24-33 | Permitted Obstructions in Required Yards | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-33 | 12/5/2024 | zr-24-33.snapshot.json | NOT HANDLED |
+| 24-34 | Minimum Required Front Yards (none in R6B) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-34 | 12/5/2024 | zr-24-34.snapshot.json | NOT HANDLED |
+| 24-35 | Minimum Required Side Yards (none; ≥8 ft if provided) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-35 | 12/5/2024 | zr-24-35.snapshot.json | NOT HANDLED |
+| 24-36 | Minimum Required Rear Yards (30 ft) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-36 | 12/5/2024 | zr-24-36.snapshot.json | NOT HANDLED |
+| 24-391 | Within one hundred feet of corners (CF rear-yard waiver) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-391 | 12/5/2024 | zr-24-391.snapshot.json | NOT HANDLED |
 | 35-01 | Applicability of This Chapter (mixed building) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-01 | 12/5/2024 | zr-35-01.snapshot.json | NOT HANDLED |
 | 35-31 | Maximum Floor Area Ratio (mixed building) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-31 | 12/5/2024 | zr-35-31.snapshot.json | NOT HANDLED |
 | 35-33 | Max FA … CF use in certain districts (**excludes R6B**) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-33 | 12/5/2024 | zr-35-33.snapshot.json | NOT HANDLED |
@@ -58,7 +58,7 @@ The catalogue add-on `community_facility_floor_area` has `rule_ids=()` → NOT H
 
 ## Reading (unreviewed draft)
 
-**CF use permission.** Community-facility uses are Use Group III (22-13…22-135; not captured).
+**CF use permission.** Community-facility uses are Use Group III (22-13 captured; 22-131…22-135 not captured).
 In the C2-2 overlay, CF use permission is 32-131 (Use Group III, captured). Which specific Group
 III uses are as-of-right vs size-limited (22-132) vs special-permit (22-134) in R6B was not read
 item by item — **not sure** (next step: read 22-131…22-134).
@@ -87,13 +87,13 @@ same 23-431 / 23-432 (R6B min base 30, max base 45, max building 55) / 23-433 ch
 `r6b_height` handles for residences; 24-522's generic table carries no R6B row and is superseded;
 24-56 is special geographies only (not R6B). 24-04's own exception: the 23-431(b) street-wall
 rules "need not apply to houses of worship listed under Use Group III(B)." These 24-xx sections
-are NOT CAPTURED (next step: capture them).
+are now CAPTURED (M3-T009); not yet handled by a rule.
 
 **CF yards.** Front: 24-34 — none required for CF in R6B. Side: 24-35 — none required; any side
 open area ≥8 ft (vs 5 ft for a residence, 23-335/34-232). Rear: 24-36 — 30 ft at every rear lot
 line (subject to 24-37/38/39). Corner waiver: 24-391 — no rear yard within 100 ft of two street
 lines meeting at ≤135°; it sits inside Chapter 4, so it reaches CF (the benchmark is a corner).
-24-33 permits listed obstructions. All NOT CAPTURED.
+24-33 permits listed obstructions. All now CAPTURED (M3-T009).
 
 **Overlay / special-district effects (C2-2 on R6B).** 33-121 lists C2-2; the R5D/R6B row Column
 B (CF only) = **2.00** and Column C (both) = 2.00, so the overlay does **not** raise the CF FAR
@@ -126,7 +126,7 @@ building combining residential and a community-facility use, the total held to t
 single-use FAR rather than summed. Sample scenario 6 "community facility" (pp.52-57): a pure
 institutional building with no dwelling units, the CF FAR driving the envelope. The sample cites
 no CF-FAR or combination section. Its premise (a CF-equivalent FAR and a highest-single-use cap)
-matches the law as read; the CF FAR source (24-11, not captured) and use permission stay inputs.
+matches the law as read; the CF FAR source (24-11, captured) and use permission stay inputs.
 
 ## What is not sure (each with its next step)
 
@@ -135,8 +135,8 @@ matches the law as read; the CF FAR source (24-11, not captured) and use permiss
    District). Both reach the same greatest-single-use ceiling and 35-33 is excluded, so the number
    is the same, but the citation differs. Next step: read 34-11 / 35-00 / 35-01 / 24-17
    applicability precedence for a residential+CF building in a C1/C2 overlay. Keep unresolved.
-2. **24-11, 24-111, 24-161, 24-163 and the Chapter-4 height/yard sections are NOT CAPTURED.** Next
-   step: capture the Article II Chapter 4 sections options 6/7 rely on before a rule cites them.
+2. **24-11, 24-111, 24-161, 24-163 and the Chapter-4 height/yard sections are now CAPTURED (M3-T009).** Next
+   step: a rule may now cite them (24-161 directly supplies the R6B combination ceiling, 2.00); not yet handled.
 3. **Use-permission precision** — which Use Group III uses are as-of-right vs 22-132/22-133/22-134
    in R6B. Next step: read 22-131…22-134.
 4. **24-163 lot coverage for a combined CF + residential lot** — read from the index only. Next
