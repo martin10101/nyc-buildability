@@ -3292,24 +3292,37 @@
     "D-094-R104"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484",
+   "reviewed_manifest_sha256": "c01899ec52b83aa327125fc86fe5602e92e2784cfde725935afe3ee950e08f93",
    "requirements": [
     {
      "id": "D-094-R102",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The decision is \"start the zoning-law library as a second line of work beside the report (every section reachable from the benchmark rules, cross-references followed, a handled/not-handled list, a pitfall list), handoff tells the next session\"; this task's share is capturing the next 20 owed sections (options 5/6/7) with provenance plus correcting the library's capture states, and it is met.",
+      "I reproduced all 20 snapshots at the frozen head: schema zr_section_snapshot/v1; content_digest_sha256 == sha256(verbatim_excerpt) for all 20; both channels sha256-pinned (source.raw_html_sha256 + cross_check.raw_pdf_sha256); every request_url is an official zoningresolution.planning.nyc.gov article/chapter/section page; node ids (22415-22419, 19198/19199, 17505, 17658/17659/17662/17664/17665, 17740/17741/17749/17751/17752, 18264/22817) and Last Amended dates present and matching; the ADR-007 not-professionally-reviewed label on every file.",
+      "Documents-only posture reproduced: extraction_status extracted_draft and source.raw_html_verified false on all 20; 22-131's own legend quoted verbatim with no glyph-meaning restatement; the four library edits are capture-state only (verified diffs: options-sections \u00a75/\u00a79 marks, option-05 stale 32-421/33-26/33-301 + item 5, option-06-07 22-131..135 cell + labelled 24-37/38/39 bookkeeping, index 23-63/74-902/74-903 flipped), matching the judge's three corrections; index JSON valid (json.load OK); readings and \"not sure\" preserved; sync_zr_snapshots.py --check EXIT 0 (255 byte-identical) and SnapshotStore().load() resolves 255 ids with all 20 present, no duplicate, get('zr-22-131')\u2192SectionSnapshot 22-131.",
+      "Stays open for later work: R102's broader share (the handoff/next-session tells, the official-guidance pitfall list, the full handled/not-handled catalogue, and the deferred sections 23-154 403 / 25-31..25-37 parking / 77-xx / 23-38 / 23-72 / the 12-10 \"residential building\" term) is listed in the producer report but delivered by other bound tasks (D-094-BOOTSTRAP, M3-T006..M3-T010, M5-T184/185/186); within the files this task edited, the option-05 line-62 stale 32-421 mark and the index 24-111/32-10 residuals are disclosed and left for a later capture-state pass.",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 9a0b55ef (content identity c01899ec), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (16 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T011-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "The authorization allows up to 8 helpers at once when extras are read-only research, at most 3 building, never sharing files; this task's share is that M3-T011 ran inside those limits, and it did.",
+      "Dispatch records (session-2026-10-15b/SESSION_NOTES.md) show M3-T011 dispatched to one documents-only producer (official-source-researcher, B5) at 10:46 UTC with building count 3 (M5-T169, M5-T188, M3-T011) = at most 3 building; its read-only helpers (owed-captures planner return-plan-captures-owed.md, judge return-judge-M3-T011.md, G1 data-contract-verifier, me) only read/research.",
+      "File non-collision reproduced: the 45 allowed-path files are byte-stable from capture cebcf14c to the frozen head 9a0b55ef (no concurrent commit touched them), and the judge confirmed the four library files are in no in-flight task's allowed_paths.",
+      "Stays open / not fully checkable: the session-wide instantaneous helper count (SESSION_NOTES records \"12 at once\" at 08:12 UTC) exceeds R104's literal 8, but that ceiling is governed by later owner amendments R158/R162 (cap raised to 12 for 2026-10-15, per PROGRAM_KNOWLEDGE/MEMORY) and is session-level orchestration, not M3-T011's deliverable; I cannot reconstruct instantaneous agent counts beyond the recorded notes.",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 9a0b55ef (content identity c01899ec), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (16 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T011-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T12:08:30+00:00"
   },
   {
    "directive_id": "D-094",
@@ -3319,24 +3332,37 @@
     "D-094-R104"
    ],
    "producer": "official-source-researcher",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484",
+   "reviewed_manifest_sha256": "8b8f676b6a8366e154f5a7553b7fa26c0c04ee31229b3495c44cd7655ce91b92",
    "requirements": [
     {
      "id": "D-094-R003",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source re-derived: D-094 source-001.md line 19 / table line 208 carry the owner's verbatim \"Research and verification (D-093) applies; put its dispatch clause in every brief.\" and \"Do not repeat completed work.\"; the row reproduces both.",
+      "Completed work was reused, not repeated: the producer report states \"I did not re-run the live DCP nycmih/nyih/MapPLUTO/ZAP fetches; I relied on the two sealed independent returns\" and copied the validated draft byte-identical, re-verifying each field \u2014 demonstrable reuse of the two prior determinations.",
+      "The D-093 workflow was applied: the record keeps unresolved inputs unresolved (3 conditions, recorded searches), distinguishes evidence from the draft interpretation, and labels nothing Verified; my own verifier brief carries the D-093 dispatch clause.",
+      "Stays open: nothing material for this task; the session-wide \"dispatch clause in every brief\" obligation continues across other briefs (dispatch-prompt texts are not committed \u2014 see section 6).",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 4269c757 (content identity 8b8f676b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (96 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T012-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
     },
     {
      "id": "D-094-R104",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source re-derived: D-094 source-004-amendment.md carries the owner's verbatim \"That's question I2 in your file\" / \"So please add that on this it should spone up agents\" and its reading (up to 8 helpers when extras only research; at most 3 building; never sharing files); the row reproduces it.",
+      "This task's share is met: it ran one documents-only producer (official-source-researcher) whose five files are in no other in-flight packet; the collision with M5-T170 (which held RESEARCH_REQUESTS.md and the README) was resolved by a hard dependency, and I confirmed M5-T170 status=accepted at the frozen head, so no overlapping parallel write occurred.",
+      "The G0 report records \"No file is shared with a task in flight\"; the diff touches only the five allowed paths, consistent with the never-sharing-files rule.",
+      "Stays open: the session-wide concurrency caps (<=3 builders, <=8 helpers at once) and \"next session spins up research agents\" are ongoing session obligations verified here only for this task's single producer (session-notes matter \u2014 see section 6).",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 4269c757 (content identity 8b8f676b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (96 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T012-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T12:08:28+00:00"
   },
   {
    "directive_id": "D-094",
