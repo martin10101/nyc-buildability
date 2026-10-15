@@ -1,0 +1,104 @@
+{
+  "task_id": "M5-T197",
+  "title": "E0 part 3 (M5-T197) (report, new files): qualifying_options.py - read-only extras for option rows 2 and 3 (option 2: the unit figure with its own state, the affordable floor area, the pathway as a short reference; option 3: the senior entry own not-known reason, never a number) and tests. Commit HELD; wired by E0-S.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "option_extras(results, ordinal) for 2 and 3 via readers primitives (answer_block, present_values, withheld_values, named_value), computing nothing; each option reads only its own key: option 2 from legal_unit_limit_qualifying_affordable and uap_affordable_floor_area and the AFFORDABLE condition text on that value; option 3 from the legal_unit_limit_qualifying_senior withheld reason and the condition on max_residential_floor_area_qualifying_affordable_or_senior. Presentation contract lines 110, 222, 338: the qualifying condition sits beside the result.",
+  "business_reason": "Keeps options.py and page_option_comparison.py (shared with M5-T180, E1, E2) to wiring.",
+  "inputs": [
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/drawings/report/unit_limit_text.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/qualifying_options.py",
+    "services/api/tests/drawings/report/test_qualifying_options.py",
+    "project-control/reports/M5-T197-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/qualifying_options.py",
+    "services/api/tests/drawings/report/test_qualifying_options.py",
+    "project-control/reports/M5-T197-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/",
+    "services/api/app/rules/",
+    "packages/contracts/",
+    "docs/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "affordable limit shown conditional",
+      "when": "option_extras(2)",
+      "then": "document display, Conditional label, affordable floor area display, condition text unchanged"
+    },
+    {
+      "id": "S2",
+      "given": "affordable limit withheld",
+      "when": "option_extras(2)",
+      "then": "no figure; the withheld reason"
+    },
+    {
+      "id": "S3",
+      "given": "senior withheld, affordable shown as 35",
+      "when": "option_extras(3)",
+      "then": "no option 2 number; senior reason shown; mutation reading the affordable key for option 3 fails"
+    },
+    {
+      "id": "S4",
+      "given": "absent or malformed blocks",
+      "when": "either",
+      "then": "None-safe; nothing invented"
+    },
+    {
+      "id": "S5",
+      "given": "returned strings",
+      "when": "scanned",
+      "then": "no internal names (options._DEV); none of complies, buildable, optimal, feasible"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Key names from P2; fix at G0."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:41:07.475239+00:00",
+  "updated_at": "2026-10-15T23:41:07.922776+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R059",
+        "D-094-R075",
+        "D-094-R261"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:41:07.475431+00:00",
+  "path_notes": "New files only; edit no existing file. Build now; hold.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings/report/test_qualifying_options.py"
+  ],
+  "worktree": "/root/project/w-wave29"
+}

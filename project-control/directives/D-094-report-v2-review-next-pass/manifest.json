@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T23:41:02+00:00",
+ "updated_at": "2026-10-15T23:41:08+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -330,7 +330,7 @@
   "D-094-R306"
  ],
  "requirements_id_digest_sha256": "f912cf76c47f7903bef5c9cca3e20e0a4df86f75992ad35f7cd71f6851f079ca",
- "requirements_content_digest_sha256": "433923c71554bcce7fee9944e3551866c0f29f4ab5dfb5d668b94ac9cc8b59a5",
+ "requirements_content_digest_sha256": "4d538cc1588b89afb295f79b097f61918f2f7633785b780530a8ca6747d1f3b7",
  "sources": [
   {
    "file": "source-001.md",
@@ -635,7 +635,8 @@
   "M5-T193",
   "M5-T194",
   "M5-T195",
-  "M5-T196"
+  "M5-T196",
+  "M5-T197"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1118,6 +1119,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T196 (E0 part 2: qualifying figures and pathway texts as new pure modules) to R075, R261, R262 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T23:41:08+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T197 (E0 part 3: report extras for options 2 and 3 read from the document) to R059, R075, R261 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
