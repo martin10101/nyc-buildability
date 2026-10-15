@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T08:05:20+00:00",
+ "updated_at": "2026-10-15T10:02:18+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -190,7 +190,7 @@
   "D-094-R166"
  ],
  "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
- "requirements_content_digest_sha256": "ee63ca8f516de341209eee44eabb7d99c4143fc3d86ab65050b9206a5d39f7b7",
+ "requirements_content_digest_sha256": "32285d02e25b5612aaf4bcdf27215285a04c8aac33c36cbd09eb00523832e99c",
  "sources": [
   {
    "file": "source-001.md",
@@ -449,7 +449,8 @@
   "M5-T182",
   "M5-T183",
   "M3-T010",
-  "M5-T184"
+  "M5-T184",
+  "M5-T169"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -800,6 +801,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-025 (the owner's resume of handoff seq 171 with twelve helpers at once) and requirements D-094-R164 to R166, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T10:02:18+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T169 (option comparison reordered (table first, limitation paragraphs removed, chart distinguishing allowance/scheduled/site-fit), page types 5-6 merged into one evidence appendix with five-field issue records, worked arithmetic with input_facts bases, register linkage, run identity and the area-illustration method) to R018, R019, R020, R023, R025, R026, R027, R028, R032, R038, R049, R054, R058, R059, R060, R061, R072, R075, R077, R084, R092, R095 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
