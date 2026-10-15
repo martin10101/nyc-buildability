@@ -68,3 +68,9 @@
   names: M5-T167's page-6/8 fix silently emptied two page-3 rows (DB-266), caught only in the next PDF.
 - DO put every evidence record whose code_paths a packet edits into its allowed paths at the contract seam (forbidding NB-03
   while M5-T170 edited rear_yard_checks.py left the record stale and cost scope correction 2 and a round 3, 2026-10-15).
+- DON'T seed placeholder pages under docs/zoning-rule-review/calculations or evidence at a contract seam: the register check refuses a
+  page with no entry and reddens api + production-install (M5-T172 seam, run 38746608790); list them in allow_new instead.
+- DO list every evidence record that pins a changed FILE by its whole-file sha256 (saved_copy pins, e.g. NB-06 E10 -> zr-23-432) when a
+  packet edits captures or other pinned files; research_record_check fails closed on it (M3-T013, 2026-10-15).
+- DON'T append a note to a packet field with += without checking its type: a list += a string adds one item per character
+  (M5-T187 path_notes, DB-281); append one element or join strings.
