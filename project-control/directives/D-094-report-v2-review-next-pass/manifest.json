@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T03:37:07+00:00",
+ "updated_at": "2026-10-15T04:20:24+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -177,10 +177,13 @@
   "D-094-R153",
   "D-094-R154",
   "D-094-R155",
-  "D-094-R156"
+  "D-094-R156",
+  "D-094-R157",
+  "D-094-R158",
+  "D-094-R159"
  ],
- "requirements_id_digest_sha256": "ef85103ff3e7718d7c0a183841e5f535ee0bc273940dd1fe02a5d944802a3d9a",
- "requirements_content_digest_sha256": "37267fc401375ea8bf17e9c419b67ce6196f65b4e9acff72f7debec88da51f2a",
+ "requirements_id_digest_sha256": "39088ed4282a3af54f7e724a64f25232037784bb18f3411807aacf724bbf4172",
+ "requirements_content_digest_sha256": "7c4c6f1ddf464dd5fc5d787b0e79642e773762bd88486922be6dc5ef703a58e4",
  "sources": [
   {
    "file": "source-001.md",
@@ -356,6 +359,14 @@
    "recorded_at": "2026-10-15T03:37:07+00:00",
    "content_digest_sha256": "274828583d0fc9b124fcd430fd07ac84ff11f5889ac330b24ed087f7bb4a4f54",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-023-amendment.md",
+   "kind": "amendment",
+   "sequence": 23,
+   "recorded_at": "2026-10-15T04:20:24+00:00",
+   "content_digest_sha256": "8f6921d8b71cfba39c8f976f53c8851b62ce7b8182850db1ed0530278cb30eed",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -379,7 +390,8 @@
   "source-019-amendment.md",
   "source-020-amendment.md",
   "source-021-amendment.md",
-  "source-022-amendment.md"
+  "source-022-amendment.md",
+  "source-023-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -710,6 +722,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-022 (the owner's session handoff after the two running helpers finish) and requirements D-094-R155 to R156, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T04:20:24+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-023 (the owner's resume with twelve helpers, each a different part of the job) and requirements D-094-R157 to R159, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
