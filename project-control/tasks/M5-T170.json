@@ -140,7 +140,13 @@
     "services/api/tests/scenario/three_answers/test_three_answers_heights.py",
     "services/api/tests/scenario/three_answers/test_three_answers_c6_c11.py",
     "services/api/tests/scenario/three_answers/test_three_answers_addons.py",
-    "services/api/tests/scenario/three_answers/test_three_answers_notes_emit.py"
+    "services/api/tests/scenario/three_answers/test_three_answers_notes_emit.py",
+    "services/api/tests/rules/test_r6b_a02b_golden.py",
+    "services/api/tests/rules/test_r6b_other_districts_unchanged.py",
+    "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+    "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+    "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+    "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md"
   ],
   "forbidden_paths": [
     "packages/contracts/schemas/",
@@ -341,6 +347,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed on task/wave26-envelope-constraints at main 2bcdb05a plus the contract; the builder starts from the claim head; packet pre-checked (return-precheck-T170.md + skeptic)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T07:18:12+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15a, after the builder's return e85ace52 and the independent read-only precheck return-M5-T170-precheck.json, which found exactly these six files outside the packet and nothing in forbidden paths): the three new lane-A rule files (r6b_street_wall, r6b_setback, r6b_side_yard; objective S11) move two tests that pin the exact R6B rule set (tests/rules/test_r6b_a02b_golden.py and test_r6b_other_districts_unchanged.py: the three new ids added) and the register's calculation pages, because every calculation entry binds the shared register-calculation test file whose rule-count assertion moves from 23 to 26 (calc-floor-area-allowance, calc-lot-coverage-by-portion, calc-building-option-floor-stack, calc-legal-dwelling-unit-limit re-rendered; their content changes only in the rendered review state lines). The packet pre-check enumerated the benchmark fan-out but not this rule-file fan-out. The builder committed them and reported needs_split instead of stopping; the orchestrator accepts the content, adds the six files here, and records the lesson (a new rule file moves the rule-set pins and the calc pages: list them at the contract seam). No row, gate, reviewer or dependency changes; no production switch changes."
     }
   ]
 }
