@@ -649,3 +649,5 @@ Sweep 2026-10-15 (M5-T181 review seam): DB-264 added (the M5-T181 review advisor
 Sweep 2026-10-15 (M5-T167 review seam): DB-265 added (the M5-T167 review advisories, QUEUED(M5-T170)); DB-263 stays OPEN; DB-264 stays QUEUED(M5-T174); no other open or watch row changed.
 
 Sweep 2026-10-15 (wave-25 merge seam, PR 490 merged as main 2bcdb05a, and the M5-T170 contract seam on task/wave26-envelope-constraints): DB-266 added QUEUED(M5-T170) (page 3 drops the setback and street-wall rows on a 1.5.0 document, found in the print of main 2bcdb05a); DB-265 stays QUEUED(M5-T170); DB-264 stays QUEUED(M5-T174); DB-263 stays OPEN (a polish task is planned beside M5-T170); DB-245 stays QUEUED(M5-T180); DB-248 stays WATCH (M5-T172); no other open or watch row changed.
+
+Sweep 2026-10-15 (M5-T182 contract seam on task/wave26-envelope-constraints): no row added or changed; DB-248 stays WATCH (M5-T182 computes the split from the share; the way rule stays with M5-T172); DB-266 QUEUED(M5-T170); other open and watch rows as at the M5-T170 seam.

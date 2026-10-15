@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T04:48:15+00:00",
+ "updated_at": "2026-10-15T04:49:51+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -183,7 +183,7 @@
   "D-094-R159"
  ],
  "requirements_id_digest_sha256": "39088ed4282a3af54f7e724a64f25232037784bb18f3411807aacf724bbf4172",
- "requirements_content_digest_sha256": "bc1db702fe2ae29fec99943cacfd92487fc8aa789e1f77ccae42021dbe440fd1",
+ "requirements_content_digest_sha256": "eb4fc27d31af63c6d933c9d4a9533c5350c1a789b21131a39971deb7938cb4a2",
  "sources": [
   {
    "file": "source-001.md",
@@ -420,7 +420,8 @@
   "M5-T167",
   "M3-T009",
   "M5-T181",
-  "M5-T170"
+  "M5-T170",
+  "M5-T182"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -735,6 +736,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T170 (envelope constraints from NB-06 in the engine: street wall, setback above the base, side yard; the benchmark regenerated) to R017, R043, R061, R082 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T04:49:51+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T182 (the illustrative placement and area-allocation computation modules (placement.py, area_allocation.py) with unit tests; no wiring, no document change) to R044, R092 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
