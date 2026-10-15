@@ -313,7 +313,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:48:14.731487+00:00",
-  "updated_at": "2026-10-15T07:18:24.297432+00:00",
+  "updated_at": "2026-10-15T09:01:17.861587+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -354,6 +354,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "envelope constraints built (street wall, setback above the base, side yard; pages 3, 6 and 8 agree on 1.4.0, the 1.5.0 document without envelope rows and the regenerated benchmark; DB-266 fixed); independent precheck: whole api 9814 passed, whole web 2704 passed on a rerun (one pre-existing timeout flake in engine.test.ts under load), scope corrected (six rule-file fan-out files); the builder's commit integrated as 281e23b7 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T09:01:17.861423+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 2 (G1 F1 width provenance, S17 = DB-265, F2, F3, G4 advisories 3 and 4); the builder's commit integrated as bec421b3 (LF sha256 equal to its return); next: the independent reviews"
     }
   ],
   "scope_corrections": [
