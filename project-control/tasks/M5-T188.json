@@ -136,8 +136,8 @@
     "directive-compliance-verifier",
     "security-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK 1 (benchmark has NO established line): the recorded benchmark carries constraint_lines in state not_known even after M5-T167 (accepted) and M5-T170 keeps street_wall_band/setback_line not_established, so the A1/A2 improvement cannot be demonstrated on the benchmark's own page 3. The real print (S8) proves byte-identity (no regression); the beside-line/legend-fit proof (S1/S3/S9) MUST use a constructed established-line case or the synthetic_rear_yard fixture. Do not claim a benchmark before/after.",
     "RISK 2 (latent plain-frame clip, out of scope): the non-overlay close frame is ALREADY clamped at 470 (furn_bottom+8 > 470 verified), so a latent clip may exist there. DB-263 must NOT widen the plain frame; overlay_present=False preserves 470 exactly. S4 is the red/green guard.",
@@ -150,7 +150,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:47.531321+00:00",
-  "updated_at": "2026-10-15T11:54:47.538401+00:00",
+  "updated_at": "2026-10-15T12:36:31.982467+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -213,5 +213,7 @@
       "actor": "orchestrator",
       "change": "Scope correction 1 (session 2026-10-15b, before the builder starts): the owner's report printed from main 76745ade (PDF #3) shows on page 4 two chips '100 ft, map outline' and '60 ft, map outline' in the close-up's other-basis lot-dimension band. A read-only check (session-2026-10-15b/return-check-page4-width-label.md) traced them to close_frame_dimensions.draw_other_basis_dimensions drawing every input fact, which since M5-T170 includes the two mapped_street_width facts (basis gis); the same widths are already labelled '... ft mapped width' on each frontage (site_context_plan.py), so the chips duplicate them with the lot outline's basis word. This task already owns the close-frame polish (constraint_overlay.py, site_context_plan.py); close_frame_dimensions.py moves from forbidden to allowed and scenario S10 is added. Backlog row DB-275. This changes the benchmark's page 4 (the two chips go), which the original packet expected to stay byte-identical; S8's byte-identity now excludes page 4's two chips. No row, gate, reviewer or dependency changes; no production switch changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T12:36:31.982253+00:00"
 }

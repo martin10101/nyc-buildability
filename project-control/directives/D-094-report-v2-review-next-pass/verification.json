@@ -3247,42 +3247,73 @@
     "D-094-R116"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "e76071c35a5963e20543d7058e60b43079f63075",
+   "reviewed_manifest_sha256": "28357fe06c0ab35eab6e7d69a2a457095268e62594b123708b826f5e1c31ba04",
    "requirements": [
     {
      "id": "D-094-R015",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source source-001.md line 220 is quoted verbatim in requirements.json (dedicated constraints diagram, subject+neighbours dominant, dimensions anchored to edges); no row text was altered by this task.",
+      "This task's share is the close-up legibility polish: constraint_overlay.py (blob d40363ba) makes the established LINE label's first candidate a perpendicular unit-normal offset off the line, proven by test_s1 (anchor lies OUTSIDE the placed box; a drawn polyline vertex stays outside every box).",
+      "The frame grows only when a constraint is ACTUALLY drawn: site_context_plan.py passes overlay_present=overlay_was_drawn(sheet); test_s3 (established line \u2192 height>470, legend row fits) and test_s4 / test_s4_a (no overlay and benchmark-shape not-established list both stay 470) are the red/green guards.",
+      "Stays open: the full obligation (the diagram's overall subject/neighbour dominance and all edge-anchored dimensions on the live benchmark) is the shared share of M5-T166 and M5-T175; and the A1 effect is only demonstrable on a constructed established-line case because the benchmark establishes no line (per the evidence map's own known_limits).",
+      "Verifier's carry-forward condition met at e76071c3: the task's allowed-path files are identical to those verified at 75ae32ce (content identity 28357fe0), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer (round 1 and the delta check of round 2); G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T188-DCV.md."
+     ],
+     "reviewed_sha": "e76071c35a5963e20543d7058e60b43079f63075"
     },
     {
      "id": "D-094-R017",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source source-001.md line 222 is quoted verbatim (yard/setback areas drawn only when geometry and basis are established); classification prohibition; text unchanged by this task.",
+      "This task's share strengthens the prohibition at the frame level: the round-1 bug grew the frame for ANY carried constraint_lines block (the benchmark's four not_established/not_known items); the F1 fix ties frame growth to a drawn established constraint via overlay_was_drawn.",
+      "Reproduced from the diff and tests: a not_established/not_known item hits `continue` (no draw, no kind registered), so test_s4_a asserts the benchmark-shape list keeps height 470 with no CONSTRAINT_STYLE_KINDS on the sheet; test_overlay_was_drawn pins empty\u2192False, not-established\u2192False, established\u2192True.",
+      "Consistent with the settled reading short-block-rear-yard.json (no unconditional 'no rear yard'; conditions named). Stays open: the engine-wide established-gating for every other constraint kind is the share of M5-T164/T167/T170/T175; nothing of this task's own share stays open.",
+      "Verifier's carry-forward condition met at e76071c3: the task's allowed-path files are identical to those verified at 75ae32ce (content identity 28357fe0), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer (round 1 and the delta check of round 2); G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T188-DCV.md."
+     ],
+     "reviewed_sha": "e76071c35a5963e20543d7058e60b43079f63075"
     },
     {
      "id": "D-094-R037",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source source-001.md line 242 is quoted verbatim (no unconditional zero rear yard inferred from GIS; the corner-radius test is not the only exception); prohibition; text unchanged.",
+      "This task's share is confined to page-1 wording: page_decision_summary.py (blob a4a27fce) strips the leading row title only at a word boundary (char after the title is ':' , whitespace, or end), reproduced in the diff.",
+      "test_s6 (five states) proves 'Rear yard Rear yard \u2026' still collapses to the conditional 'Rear yard is conditional under ZR 23-344 \u2026' reading while a bare-prefix ('Rear yardage\u2026') is NOT mis-stripped; the change is behaviour-identical on the benchmark and introduces no unconditional zero rear yard.",
+      "Consistent with the settled short-block-rear-yard.json (\"the corner test of 23-344(a) is never worded as the only exception\"). Stays open: the substantive rear-yard pathways (ZR 23-344(b) short-block / (c)(3) adjoining side line, diagram+conclusion together) are the share of M5-T163/T165/T176/T167, not this task.",
+      "Verifier's carry-forward condition met at e76071c3: the task's allowed-path files are identical to those verified at 75ae32ce (content identity 28357fe0), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer (round 1 and the delta check of round 2); G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T188-DCV.md."
+     ],
+     "reviewed_sha": "e76071c35a5963e20543d7058e60b43079f63075"
     },
     {
      "id": "D-094-R053",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source source-001.md line 258 is quoted verbatim (real source-based geometry, useful line weights, anchored dimensions, readable street/lot labels, north arrow, scale; illustrative geometry marked distinctly); obligation; text unchanged.",
+      "This task's share is label readability: close_frame_dimensions.py (blob e2f1adfe) excludes keys starting \"mapped_street_width:\" from the other-basis LOT band, so each street width reads once as \"<n> ft mapped width\" on its frontage and is not duplicated as a \"map outline\" chip.",
+      "test_s10 (three states) pins it: street-width facts present \u2192 only the lot fact drawn, no \"100 ft, map outline\"/\"60 ft, map outline\"; absent \u2192 lot band unchanged; a lot's OWN gis fact still reads \"map outline\". The G4 real-print page diff (reproduced independently) shows page 4's only change is the two duplicate chips removed, frontage \"100/60 ft mapped width\" kept, lot \"10,387.99 sq ft, map outline\" kept.",
+      "The widths 100 ft (Northern Blvd) / 60 ft (215 Place) and the lot areas 10,075 / ~10,388 sq ft match the settled overlay-reading.json and short-block-rear-yard.json facts. Stays open: the full obligation (line weights, north arrow, scale, all labels, illustrative-geometry marking across all drawings) is primarily the share of M0-T193/M5-T166/M5-T175.",
+      "Verifier's carry-forward condition met at e76071c3: the task's allowed-path files are identical to those verified at 75ae32ce (content identity 28357fe0), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer (round 1 and the delta check of round 2); G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T188-DCV.md."
+     ],
+     "reviewed_sha": "e76071c35a5963e20543d7058e60b43079f63075"
     },
     {
      "id": "D-094-R116",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source source-011-amendment.md quotes the owner verbatim (\"Ok fix it\", 9 chars, digest recorded) as a decision answering K1; the requirements.json reading (basis once under the drawing, every label beside its line on a white background, addresses off, lighter neighbours, checked by eye) is unchanged by this task; it depends on D-094-R115.",
+      "This task's share is the \"every label beside, never on, its line, with a white background\" piece for the constraint overlay line: the A1 perpendicular first candidate keeps halo=True (white box), proven beside-the-line by test_s1.",
+      "The other K1 elements (one basis note under the drawing, neighbour addresses off, lighter neighbours) are M5-T166's share; the evidence map states the existing beside-line/basis tests stay green, which is outside this task's edited files.",
+      "Stays open: the owner-facing by-eye check at print size and the beside-line demonstration for an actual constraint line are deferred because the benchmark establishes no line (RISK 1); and the remainder of K1 rides on M5-T166.",
+      "Verifier's carry-forward condition met at e76071c3: the task's allowed-path files are identical to those verified at 75ae32ce (content identity 28357fe0), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (39 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer (round 1 and the delta check of round 2); G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T188-DCV.md."
+     ],
+     "reviewed_sha": "e76071c35a5963e20543d7058e60b43079f63075"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T12:36:31+00:00"
   },
   {
    "directive_id": "D-094",
