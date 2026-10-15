@@ -79,15 +79,15 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 20,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK 1: a deny-list fits contract 1.5.0 as emitted; a future contract that adds another per-run id or timestamp would bring the drift back. S4's live two-run test catches that the day it happens.",
     "RISK 2: page_evidence.py's _run_identity docstring may name the excluded fields; it is outside this task (wording only) and stays as is unless it is wrong: if it lists only two fields, report it for the next task that edits that file."
   ],
   "blockers": [],
   "created_at": "2026-10-15T14:32:58.010964+00:00",
-  "updated_at": "2026-10-15T14:33:01.944586+00:00",
+  "updated_at": "2026-10-15T15:12:26.315961+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -114,6 +114,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "M5-T190 claimed: the report's document fingerprint stable for the same document (builder dispatched next)"
+    },
+    {
+      "at": "2026-10-15T15:12:23.997453+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ]
 }
