@@ -187,5 +187,6 @@
     "Nothing in this record is a Verified zoning determination. Verified requires an M4 published rule with G6 qualified-human legal approval.",
     "DIGEST CORRECTION 2026-09-11 (MVP_AGENDA C3): as captured, content_digest_sha256 was '116b1ae510d19c59a77f3174dec2ae1319d7ff7def60ba90e0612fd1dca61416', computed over the whole canonical-JSON record (compact separators, sorted keys, digest field excluded) - verified by recomputation. That deviates from the zr_section_snapshot/v1 contract this file declares, under which the loader (services/api/app/rules/snapshots.py) and all five earlier snapshots define the field as sha256(verbatim_excerpt), so SnapshotStore failed closed on this file. Corrected to the v1 convention with NO change to verbatim_excerpt, table, footnotes or source; excerpt fidelity is anchored by raw_html_sha256 (the archived response authenticates byte-for-byte) and the owner-PDF cross-check above. The stronger whole-record convention remains a candidate for an explicit zr_section_snapshot/v2 (C3 option b)."
   ],
+  "table_digest_sha256": "518c1f2bf6154ebc15c9f4812f9a31f6d55713db7f88afc2ae47608def9d7f97",
   "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
 }

@@ -119,5 +119,6 @@
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory).",
     "Correction of 2026-10-08 (task M4-T036, correcting commit by a second builder): source.retrieved_at and cross_check.retrieved_at were first recorded as 2026-10-08T15:30:00Z, a constant in the capture script that was later than the real fetches and than the commit that added this file. They now record the time each saved response was written during the fetch (the page: 2026-10-08T04:14:29Z; the print file: 2026-10-08T04:22:24Z), read from the modification times of the saved files of that fetch; the saved page's bytes equal the pinned raw_html_sha256 and response_bytes. No word of the text, no table cell, no pin and no digest was changed."
   ],
+  "table_digest_sha256": "48cc98b39e48ed622e8861f91582785353a791469ca033b1776a8344fe055eae",
   "content_digest_sha256": "77f6d40c55be03c3f467a754712a4da2a99c96e2b88832db67f99d9560dfc606"
 }

@@ -91,5 +91,6 @@
     "The section's table(s) are carried in the structured table field (caption, columns, a header-structure note and the rows, every cell verbatim with #term# markers) and replaced in the excerpt by a placeholder; every cell was confirmed against the print/PDF.",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "f791c1909feca3cb7d4807eab93f2bcdb5e5cae0768d76dfd0c0bfd8127d8e3e",
   "content_digest_sha256": "c1ba39e96f622b6390957539364b90f1fdff64f35e01d83a2a47185f71ab8cd9"
 }

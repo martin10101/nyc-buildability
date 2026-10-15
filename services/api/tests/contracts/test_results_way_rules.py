@@ -417,3 +417,61 @@ def test_pure_rule_flags_a_way_entry_for_no_shown_value() -> None:
 def test_pure_rule_returns_empty_for_a_non_mapping_or_missing_answers() -> None:
     assert results_way_violations("not a document") == []
     assert results_way_violations({"contract_version": CONTRACT_VERSION_1_3_0}) == []
+
+
+# ---------------------------------------------------------------------------
+# DB-248 (S10): the area allocation's apartment figure IS the stated share of the
+# total - a split that does not match its own share beyond the display rounding is
+# refused by the new way rule (allocation_share_mismatch). One test per input state
+# (equal, within rounding, beyond rounding, no allocation) and a mutation proof.
+# ---------------------------------------------------------------------------
+def _alloc_doc(apartment: float, other: float, total: float, *, share: float = 0.60,
+               placed: bool = True, with_allocation: bool = True) -> dict:
+    """A minimal 1.5.0 document whose one building alternative carries an area_allocation
+    (apartment/other/total/share) and, when ``placed``, a placed placement. Only the fields the
+    cross-key rule reads are present; the schema is not run (this exercises the pure rule)."""
+    alt: dict = {"building": "B"}
+    if placed:
+        alt["placement"] = {"status": "placed"}
+    if with_allocation:
+        alt["area_allocation"] = {
+            "share": share, "apartment_area_sqft": apartment,
+            "other_area_sqft": other, "total_sqft": total, "fitted": placed,
+        }
+    # an empty answers mapping is needed: results_way_violations short-circuits to [] without it,
+    # before the area-allocation cross-key rules run (it is present on every real document).
+    return {"contract_version": "1.5.0", "answers": {}, "building_alternatives": [alt]}
+
+
+def test_db248_share_equal_passes() -> None:
+    # apartment is exactly the share of the total (12,090 = 0.60 x 20,150).
+    doc = _alloc_doc(12090.00, 8060.00, 20150.00)
+    assert "allocation_share_mismatch" not in {b.rule for b in results_way_violations(doc)}
+
+
+def test_db248_share_within_rounding_passes() -> None:
+    # a total that rounds the share split by less than the display rounding: 0.60 x 3333.33 =
+    # 1999.998 -> apartment 2000.00 (0.002 away), within the 0.01 tolerance.
+    doc = _alloc_doc(2000.00, 1333.33, 3333.33)
+    assert "allocation_share_mismatch" not in {b.rule for b in results_way_violations(doc)}
+
+
+def test_db248_share_beyond_rounding_is_flagged() -> None:
+    # apartment is 0.65 of the total, not the stated 0.60 share: flagged (apartment+other still
+    # equals total, so ONLY the share rule fires, proving it is the rule that catches this).
+    doc = _alloc_doc(13097.50, 7052.50, 20150.00, share=0.60)
+    breaches = {(b.answer, b.key, b.rule) for b in results_way_violations(doc)}
+    assert ("building_alternatives", "B", "allocation_share_mismatch") in breaches
+    assert "allocation_total_mismatch" not in {r for _, _, r in breaches}
+
+
+def test_db248_no_allocation_no_violation() -> None:
+    doc = _alloc_doc(0, 0, 0, with_allocation=False)
+    assert results_way_violations(doc) == []
+
+
+def test_db248_rule_is_version_gated_below_1_5_0() -> None:
+    # The whole area-allocation rule family does nothing below the way-layer versions.
+    doc = _alloc_doc(13097.50, 7052.50, 20150.00)
+    doc["contract_version"] = "1.2.0"
+    assert results_way_violations(doc) == []

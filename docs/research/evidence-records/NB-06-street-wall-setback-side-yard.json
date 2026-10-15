@@ -2,7 +2,7 @@
  "schema": "research_record/v1",
  "record_id": "NB-06",
  "title": "215-16 Northern Boulevard: street-wall location, the 23-433 setback trigger at or below the base height, and R6B side yards (ZR 23-431, 35-631; 23-432/23-433, 35-632; 23-335, 34-232)",
- "revision": 4,
+ "revision": 6,
  "last_changed": "2026-10-15",
  "question": {
   "text": "For a building on lot 70 (R6B with a C2-2 overlay, corner of Northern Boulevard and 215 Place): (Q1) where must the street wall sit along each frontage, and does the C2-2 overlay change the rule for a residential-only building and for a mixed building? (Q2) does ZR 23-433 require any setback for a building at or below the maximum base height (the benchmark three-storey 30 ft option), and on what condition? (Q3) is a side yard required, optional or prohibited in R6B, and under which section?",
@@ -150,7 +150,7 @@
    "retrieved": "2026-09-30",
    "excerpt": "For portions of a #building# #street wall# that exceed the maximum base height, a setback shall be provided at a height not lower than the minimum base height or higher than the maximum base height in accordance with Section 23-433. [Structured table row read for R6B: minimum base height 30 ft; standard #residences# maximum base height 45 ft; standard #residences# maximum height of #buildings or other structures# 55 ft; qualifying affordable/senior housing maximum base height 45 ft, maximum height 65 ft.]",
    "saved_copy": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
-   "sha256": "37c1414c2f1fb93404dca4178d70304c6f39eeecf0f39aa215bd2754cd16887a"
+   "sha256": "ae06010e91a8fae0017f7a33a671c8ce5750c8ddb4f25a647a92ca79c1280898"
   },
   {
    "id": "E11",
@@ -449,8 +449,8 @@
   ],
   "code_identity": {
    "services/api/app/scenario/three_answers/envelope_constraints.py": "2f7d6146926ad102e64e63a05a2d4db70eb4b2eedd604531e1b67404b1aded91",
-   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "267ac3906a0f3031a63ef38a5a12227f166c5339a8547665797d7582c90316df",
-   "services/api/app/scenario/three_answers/three_way_document.py": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
+   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "be72b9ceb8b6fa5c167e54824695c519d6d4ebc315f8bf733ce68726dbf6d725",
+   "services/api/app/scenario/three_answers/three_way_document.py": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
   },
   "worked_example": {
    "inputs": "R6B with a C2-2 overlay, corner lot at Northern Boulevard (mapped width 100 ft = wide) and 215 Place (mapped width 60 ft = narrow); benchmark three-storey 30 ft building.",
@@ -469,7 +469,11 @@
    "Backlog DB-099: its premise 'no Article III snapshot' is now outdated - 34-11, 34-24, 34-232, 35-01, 35-63, 35-631, 35-632 are captured and support the reading that the C2-2 overlay applies 35-631(b) to both residential-only and mixed buildings. The DISCOVERY_BACKLOG.md update is the orchestrator's (outside this task's allowed paths).",
    "Shares street lines and the wide/narrow classification with NB-03 (rear yard) and NB-04 (lot dimensions): the street-line-position condition must stay consistent across NB-03/NB-04/NB-06; the same DCM widths feed the wide/narrow class.",
    "A future street-wall or placement rule must encode the overlay pathway and the 35-631(a)-vs-(b) prevailing-frontage test as labelled drafts, with a deterministic wide/narrow classification per frontage, never an address-specific exception.",
-   "M5-T170 carries this record into the scenario engine and the report: envelope_constraints.py holds the street-wall, setback and side-yard checks as labelled draft readings; result_way_engine_bridge.py derives the per-frontage wide/narrow class through the accepted D-052 classifier and threads the analysis into the route emit; three_way_document.py attaches the 1.5.0 envelope_rows, constraint_lines (both bands not_established on the benchmark) and input_facts. The reading stays an unreviewed draft (interpretation_awaiting_review); the independent G1 confirmation of the 34-11 -> 34-24(b)(1) -> 35-63 -> 35-631(b) chain and the now-captured 12-10 definitions is the reviewer's."
+   "M5-T170 carries this record into the scenario engine and the report: envelope_constraints.py holds the street-wall, setback and side-yard checks as labelled draft readings; result_way_engine_bridge.py derives the per-frontage wide/narrow class through the accepted D-052 classifier and threads the analysis into the route emit; three_way_document.py attaches the 1.5.0 envelope_rows, constraint_lines (both bands not_established on the benchmark) and input_facts. The reading stays an unreviewed draft (interpretation_awaiting_review); the independent G1 confirmation of the 34-11 -> 34-24(b)(1) -> 35-63 -> 35-631(b) chain and the now-captured 12-10 definitions is the reviewer's.",
+   "M5-T172 edits three_way_document.py (it now emits the placement and the area allocation) and result_way_engine_bridge.py (it now assembles the placement's four lot measures); both code identities are refreshed here, superseding the revision 4 identities. The street-wall, setback-above-base and side-yard readings are unchanged - the placement's checks name the same ZR 23-335 side-yard five-foot minimum this record reads, and the setback-above-base reading is untouched. A code-identity resync only; no reading, value or status changed.",
+   "M5-T172 round 2 (S12): the illustrative placement and area-allocation wiring (PlacementInputs, _apply_placement, _apply_area_allocation) moved out of three_way_document.py into the new thin module placement_wiring.py so three_way_document.py stays at or under the 750-SLOC justification line; three_way_document.py's code identity is resynced here within the same revision 5. The street-wall, setback-above-base and side-yard readings are untouched (the placement's ZR 23-335 side-yard five-foot minimum is unchanged). A code-identity resync only; no reading, value or status changed.",
+   "M5-T172 round 3 (S14/S15): three_way_document.py changed so the page-5 not-checked line, the area-allocation fitted flag and the not-placed sentence follow one placed-AND-drawn predicate (_placement_drawn), not the four lot measures alone; its code identity is resynced here within the same revision 5. No reading, value or status changed.",
+   "M3-T013 (DB-276, tamper-evidence; revision 6): the saved copy zr-23-432.snapshot.json cited by evidence E10 gained one additive field, table_digest_sha256 (a fingerprint over the canonical JSON of the structured base-height table payload, verified on load by snapshots.py). That field moved the file's whole-file LF sha256 from 37c1414c2f1fb93404dca4178d70304c6f39eeecf0f39aa215bd2754cd16887a to ae06010e91a8fae0017f7a33a671c8ce5750c8ddb4f25a647a92ca79c1280898, so E10's saved_copy sha256 is re-pinned to the signed file. No captured text, value or reading changed: verbatim_excerpt and its content_digest_sha256 are byte-identical, so the R6B 30/45/55 ft base-height readings (E10), the setback-above-base reading and the side-yard reading are untouched. A saved-copy hash re-pin only; the code_identity, the interpretation and the conditions are unchanged; nothing is labelled Verified (promotion.requested_label stays null)."
   ]
  },
  "review": {

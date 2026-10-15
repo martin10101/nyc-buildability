@@ -1,0 +1,19 @@
+calc-area-allocation - automated-test evidence (M5-T172)
+
+This calculation entry was added in M5-T172 (the illustrative area allocation: the residential
+floor area split into apartment area and other area at one stated share). Its code identity is:
+  - services/api/app/scenario/three_answers/area_allocation.py (the share split)
+  - services/api/app/scenario/three_answers/three_way_document.py (emits the allocation on every
+    alternative)
+
+The entry's deterministic register tests live in
+services/api/tests/rules/test_zoning_rule_review_register_calculations.py and run in CI on every
+change. The recorded result reads "Not run" because the code identity changed in this same task and
+no recorded run is yet bound to it and to the test-file digest; CI runs the full suite at the
+accepted head. A passing result is a code check, not a human or professional review of the law.
+
+The worked example is the settled reference case docs/reference-cases/R6B/cases/placement-building-b.json
+(step P8, row area-allocation), read independently by two sealed-folder AI agents; its expected
+figures (apartment 12,090.00, other 8,060.00, total 20,150.00) are never taken from a program run.
+Both readings agree, so the entry records agrees = true. The 0.60 apartment-area share is a
+preliminary assumption chosen by the owner, not a legal requirement.

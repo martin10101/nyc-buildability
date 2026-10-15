@@ -5,8 +5,10 @@ Why it exists: the appendix must let a reader tell what produced a report and pr
 that every figure and diagram on the page came from ONE result revision of ONE
 document (R038/R058). The fingerprint is a short hash OVER THE DOCUMENT'S VALUES: it
 is stable for the same document (so re-running without a change reproduces it) and
-changes when any value changes, but it excludes ``results_id`` and ``computed_at``
-(the run timestamp and id, which differ between otherwise-identical runs).
+changes when any value changes, but it excludes the four per-run metadata fields the
+live results route mints fresh on every run -- ``results_id``, ``computed_at``,
+``option_id`` and ``study_id`` -- which differ between otherwise-identical runs and
+carry no value of their own.
 
 The deployed commit is read from the SAME environment variables the build-info route
 reads, with the same fail-safe rule ("unknown" unless a hex git id is set). It is read
@@ -41,10 +43,12 @@ COMMIT_ENV_VARS: tuple[str, ...] = ("RENDER_GIT_COMMIT", "GIT_COMMIT_SHA")
 # A git object id: SHA-1 (40) or SHA-256 (64) hex, or an abbreviation of at least 7.
 _COMMIT_PATTERN = re.compile(r"[0-9a-f]{7,64}")
 
-# Top-level fields excluded from the fingerprint: the run id and the run timestamp.
-# Two runs of the SAME document differ only in these, so the fingerprint is stable
-# across them and changes with any other value (S7/R038).
-_FINGERPRINT_EXCLUDE = ("results_id", "computed_at")
+# Top-level fields excluded from the fingerprint: the four per-run metadata ids and
+# timestamp the live results route mints fresh each run (results_read.py) -- the run
+# id and timestamp, plus the option id and study id. They are per-run metadata, not
+# values; two runs of the SAME document differ only in these, so the fingerprint is
+# stable across them and still changes with any other value (S7/R038/R058).
+_FINGERPRINT_EXCLUDE = ("results_id", "computed_at", "option_id", "study_id")
 
 
 def deployed_commit(env: Mapping[str, str] | None = None) -> str:
@@ -59,9 +63,10 @@ def deployed_commit(env: Mapping[str, str] | None = None) -> str:
 
 
 def document_fingerprint(results: Mapping, *, length: int = 12) -> str:
-    """A short, stable sha256 fingerprint of the document's VALUES, excluding
-    ``results_id`` and ``computed_at``. Stable for the same document; changes when any
-    other value changes (S7). ``length`` is how many leading hex characters to show."""
+    """A short, stable sha256 fingerprint of the document's VALUES, excluding the four
+    per-run metadata fields (``results_id``, ``computed_at``, ``option_id``,
+    ``study_id``). Stable for the same document; changes when any other value changes
+    (S7). ``length`` is how many leading hex characters to show."""
     payload = {k: v for k, v in results.items() if k not in _FINGERPRINT_EXCLUDE} \
         if isinstance(results, Mapping) else {}
     canonical = json.dumps(payload, sort_keys=True, ensure_ascii=False,

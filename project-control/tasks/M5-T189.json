@@ -1,0 +1,180 @@
+{
+  "task_id": "M5-T189",
+  "title": "Report/figure rendering hardening (DB-277/DB-278): layout._css_string also neutralizes angle brackets so a run-identity value containing </style> cannot break out of the @page <style> block; formatting._as_float returns None for inf/nan so format_int_commas/format_ratio/format_sqft/format_feet/whole_percent_shares degrade a non-finite document value to 'missing' instead of crashing or printing 'inf.0'; kit/labels.format_number fails closed on a non-numeric or non-finite value (which also fixes close_frame_dimensions._fact_figure via format_number, WITHOUT editing the NB-04-pinned close_frame module). Byte-identical on every valid document.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Three smallest-safe guards, each byte-identical on valid documents and each proven by one test per input state plus a mutation revert. (1) services/api/app/drawings/report/layout.py::_css_string (lines 29-38): in addition to the existing backslash/double-quote/newline escapes, neutralize '<' and '>' as CSS hex escapes ('<'->'\\3C ', '>'->'\\3E ') so a header/footer value containing '</style>' cannot terminate the <style> element the @page margin boxes live in; '\\3C ' renders as '<' in the content string, so any value WITHOUT angle brackets (every run-identity value: address, 'Results revision N', 'computed YYYY-MM-DD') produces byte-identical CSS. (2) services/api/app/drawings/report/formatting.py::_as_float (lines 22-30): add 'import math' and 'return None' when the float is not math.isfinite; this single change makes format_int_commas (no OverflowError/ValueError), format_ratio (no 'inf.0'/'nan.0'), format_sqft, format_feet and whole_percent_shares (no int(inf) crash) all treat inf/nan as a missing value, never 0. (3) services/api/app/drawings/kit/labels.py::format_number (lines 31-33): guard 'if isinstance(value,bool) or not isinstance(value,(int,float)) or not math.isfinite(value): raise ValueError(...)' (math already imported) so a non-numeric value no longer raises the cryptic \"Unknown format code 'f'\" and a non-finite value no longer renders literal 'inf sq ft'; this fix also covers close_frame_dimensions._fact_figure (which formats via format_number) with no edit to the NB-04-pinned maps module. No engine, schema, fixture, snapshot, maps or close-frame change.",
+  "business_reason": "return-T169-G5 (F1: </style> breakout in layout._css_string now also carrying run-identity values; F2: inf/nan crash/garbage in figure formatting) and return-T188-G5 (advisory: format_number/_fact_figure accept non-numeric/non-finite). All three are latent fail-open/crash sinks that the gates flagged as ADVISORY on the feature tasks; this task closes them under the project's fail-closed discipline without moving any benchmark output.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-T169-G5.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-T188-G5.md",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/formatting.py",
+    "services/api/app/drawings/kit/labels.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/formatting.py",
+    "services/api/app/drawings/kit/labels.py",
+    "services/api/tests/drawings/report/test_report_css_escaping.py",
+    "services/api/tests/drawings/report/test_report_formatting_hardening.py",
+    "services/api/tests/drawings/kit/test_labels_format_number.py",
+    "project-control/reports/M5-T189-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T169",
+    "M5-T188"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/formatting.py",
+    "services/api/app/drawings/kit/labels.py",
+    "services/api/tests/drawings/report/test_report_css_escaping.py",
+    "services/api/tests/drawings/report/test_report_formatting_hardening.py",
+    "services/api/tests/drawings/kit/test_labels_format_number.py",
+    "project-control/reports/M5-T189-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/readers.py",
+    "packages/contracts/",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/cad/snapshots/",
+    "services/api/tests/drawings/kit/snapshots/",
+    "services/api/app/scenario/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "report_css called with a header/footer value containing '</style><script>alert(1)</script>'",
+      "when": "the stylesheet is built",
+      "then": "the output contains NO '</style>' substring and shows the CSS hex escape '\\3C '; mutation: removing the '<' replace in _css_string makes raw '</style>' reappear"
+    },
+    {
+      "id": "S2",
+      "given": "a normal header 'Results revision 3' and footer value with no angle brackets",
+      "when": "report_css is built",
+      "then": "the stylesheet string is byte-identical to the pre-change output (the two new replaces are a no-op)"
+    },
+    {
+      "id": "S3",
+      "given": "a finite document value (int and fractional float)",
+      "when": "format_int_commas/format_ratio/format_sqft/format_feet format it",
+      "then": "output is byte-identical to today (e.g. 20150.0->'20,150'; 6716.666->'6,716.67'; 2.0->'2.0')"
+    },
+    {
+      "id": "S4",
+      "given": "a non-finite document value float('inf') and float('nan')",
+      "when": "the formatting functions run",
+      "then": "each returns None (value shown as missing); mutation: removing the math.isfinite guard makes format_int_commas(inf) raise OverflowError and format_ratio(inf)=='inf.0'"
+    },
+    {
+      "id": "S5",
+      "given": "whole_percent_shares([float('inf'),1.0])",
+      "when": "it runs",
+      "then": "it returns None; mutation: without the guard it raises on int(nan)"
+    },
+    {
+      "id": "S6",
+      "given": "kit format_number with a finite real (incl. -0.0 and a thousands value)",
+      "when": "it formats",
+      "then": "output is byte-identical ('-0'/''->'0'); every existing kit/maps/cad caller is unaffected"
+    },
+    {
+      "id": "S7",
+      "given": "kit format_number with float('inf'), float('nan'), 'abc', None",
+      "when": "it is called",
+      "then": "each raises ValueError (fails closed); mutation: without the guard inf renders 'inf' and 'abc' raises the cryptic format-code error; close_frame._fact_figure inherits the fix with no edit to close_frame_dimensions.py"
+    },
+    {
+      "id": "S8",
+      "given": "the full api suite at the accept head",
+      "when": "CI runs",
+      "then": "test_report_benchmark.py (report HTML snapshot), the DXF and site_plan.svg snapshots, tests/drawings/kit and tests/drawings/maps all stay GREEN with no snapshot file edited \u2014 the byte-identity proof that no valid output moved"
+    },
+    {
+      "id": "S9",
+      "given": "the modularity census",
+      "when": "modularity_check --check runs",
+      "then": "it passes; the three guards add only a handful of lines and cross no threshold"
+    },
+    {
+      "id": "S10",
+      "given": "a report whose run identity carries a full 40-character code commit (the route's identity commit, or GIT_COMMIT_SHA / RENDER_GIT_COMMIT set in the process, as production sets it)",
+      "when": "the report is printed (TestClient POST /report with the benchmark providers and the commit set, then apps/web/scripts/print-report-pdf.mjs)",
+      "then": "the long commit wraps inside its appendix column (a print-stylesheet rule in layout.py lets an evidence-column list item break anywhere); the benchmark prints on the same 10 pages, at the same scale, as with the commit unknown (page-by-page text identical except the commit line); a test pins the rule; mutation: without the rule the same print shrinks to 8 pages"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "RISK 1 (dispositive): close_frame_dimensions.py is NB-04-pinned (code_identity) and owned by spec-M5-T172. Item 3 MUST be done in kit/labels.format_number only; editing close_frame_dimensions.py would fire the NB-04 contingency and collide with M5-T172. If a typed DimensionPlacementError at the close-frame seam is later wanted, that is a separate task sequenced out of parallel with M5-T172 (owns NB-04).",
+    "RISK 2 (byte-identity): the proof relies on T172/T169-owned snapshot tests (test_report_benchmark.py, the DXF/SVG snapshots) staying green; they are FORBIDDEN here and must not be edited. Run them read-only; any red means a valid output moved and is a real defect, not a snapshot refresh.",
+    "RISK 3 (scope): out-of-regime hardening only; no feature behaviour, no new figure, no engine/schema/fixture change. kit format_number raising ValueError is the fail-closed choice; it is not DimensionPlacementError (that would require the forbidden close_frame edit)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T13:44:05.148519+00:00",
+  "updated_at": "2026-10-15T15:03:21.431183+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R054"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T13:44:05.148866+00:00",
+  "path_notes": "All three production files are non-NB-pinned (checked at 0463ec78). In-regime through D-094-R054 (the ledger needs a directive row on every new task); the CSS escaping is security hardening reviewed at G5. New test files avoid every file in spec-M5-T172.allowed_paths and spec-B. Seed the three new test files with a trivial passing test is unnecessary for python (empty py test files are allowed) but each will carry real tests at build. Replace the placeholder task id M5-T189 with the ledger-assigned id and update the producer-report path + seed + g0 accordingly.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings/report/test_report_css_escaping.py tests/drawings/report/test_report_formatting_hardening.py tests/drawings/kit/test_labels_format_number.py",
+    "cd services/api && python -m pytest -q tests/drawings/report/test_report_benchmark.py tests/drawings/kit tests/drawings/maps tests/cad",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T13:44:08.831903+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "M5-T189 claimed: report safety fixes for the page header and non-finite figures (builder dispatched next)"
+    },
+    {
+      "at": "2026-10-15T14:41:55.135095+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T13:53:39+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15b, while the builder works): the orchestrator gave the private preview its checkout commit (GIT_COMMIT_SHA, the variable the run identity reads, as production sets RENDER_GIT_COMMIT) and reprinted main 86a450d4: the same report HTML except the run identity's 'Code commit:' line printed on 8 pages instead of 10, every page at a smaller scale. Reprinting both HTML files with the same printer reproduced it (8 vs 10 pages): the unbroken 40-character commit in the appendix's run-identity column (page_evidence._run_identity, class evidence-column) overflows and Chromium shrinks the whole document to fit. The print stylesheet is layout.py, already in this task's allowed paths; scenario S10 is added. Backlog row DB-280. No path, row, gate, reviewer or dependency changes; the benchmark's printed text stays identical with the commit unknown."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T15:03:21.430987+00:00"
+}

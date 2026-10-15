@@ -213,8 +213,11 @@ def test_f7_columns_chart_and_units() -> None:
     assert "20,150 sq ft" in text and "FAR 2.0" in text
     assert "24,180 sq ft" in text and "FAR 2.4" in text
     assert "None scheduled" in text
-    # the chart distinguishes the placed-on-site status as "Not demonstrated" (no bar).
-    assert "Placed on site" in text and "Not demonstrated" in text
+    # the chart shows the placed-on-site status, never a bar; the benchmark building is placed but
+    # the site plan does not yet draw the footprint (M5-T172 S14; M5-T173 part B draws it), so it
+    # reads "Worked out; not drawn", never "Shown on the site plan" or "Not demonstrated".
+    assert "Placed on site" in text and "Worked out; not drawn" in text
+    assert "Shown on the site plan" not in text
 
 
 # =========================================================================== S6
@@ -432,9 +435,22 @@ def test_a3_material_reason_preserved_and_honest_sentence_once() -> None:
     # the unique material reasons are preserved; the repeated zoning-lot one is not.
     assert "the law allows up to 100 percent coverage" in text  # coverage by-portion kept
     assert text.count("A check not yet made against an independently worked example.") <= 1
-    not_checked = [i for i in readers.open_items(doc)
+    # Placement now resolves "Where the plan sits on the lot" on the benchmark (M5-T172), so parking
+    # is the one not-checked item carrying the honest sentence above. The dedupe (R054) is still
+    # exercised on an UNPLACED building, which keeps the placement not-checked line: two items then
+    # carry the sentence and only the first prints it (the second points back).
+    import copy
+    unplaced = copy.deepcopy(doc)
+    unplaced["building_alternatives"][0]["not_checked"] = [
+        "Where the plan sits on the lot", "Parking, loading and bicycle requirements",
+    ]
+    not_checked = [i for i in readers.open_items(unplaced)
                    if i["category"] in ("placement", "parking")]
     assert len(not_checked) >= 2  # more than one not-checked item, so the dedupe is exercised
+    unplaced_text = visible_text(build_report_html(unplaced))
+    assert unplaced_text.count(
+        "A check not yet made against an independently worked example."
+    ) == 1
 
 
 # ==================================================================== F10 / R012 / UX-12

@@ -117,6 +117,16 @@ Pointers only — the ledger/registry stays authoritative; no secrets (public re
   save them verbatim by script (session-2026-10-15b/save_agent.py), never retyped; a DCV return also needs its hand-back
   time for the record (2026-10-15b).
 
+- Print the owner's report with the code commit set, as production sets RENDER_GIT_COMMIT (preview_acris.sh passes GIT_COMMIT_SHA since
+  2026-10-15): the full 40-character commit shrank the whole print from 10 pages to 8, unseen while every print read 'unknown' (DB-280).
+- A packet's claim that a value 'emits purely through' one module needs the module's live callers checked first: M5-T172's builder
+  stopped on round 1 because only the engine bridge held the four lot measures (scope correction 1, 2026-10-15).
+
+- A builder commit that moves a file an IN-FLIGHT task's evidence record pins (NB-06 E10 -> zr-23-432) waits off the
+  branch: accept the record's owner first, then integrate it with a second records-only round (M3-T013, 2026-10-15).
+- Never put a single quote inside a `bash -c '...'` seam string: it ends the string and runs half the chain (the
+  2026-10-15b handoff backlog step); put such steps in a script file.
+
 ## Key files / commands
 
 - Ledger: `python tools/project_control.py status|new-task|claim|progress|submit|gate|accept|

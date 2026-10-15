@@ -93,19 +93,45 @@ def test_s2_chart_neither_draws_nothing() -> None:
     assert drawings_embed.allowance_bar_chart_svg("0", 0.0, [], placed_on_site=False) is None
 
 
-def test_s2_chart_placed_on_site_shows_a_status_not_a_bar() -> None:
-    not_placed = drawings_embed.allowance_bar_chart_svg(
-        "20,150", 20150.0, [{"building": "B", "scheduled_value": 20150.0,
-                             "scheduled_display": "20,150"}], placed_on_site=False)
-    placed = drawings_embed.allowance_bar_chart_svg(
-        "20,150", 20150.0, [{"building": "B", "scheduled_value": 20150.0,
-                             "scheduled_display": "20,150"}], placed_on_site=True)
-    assert "Not demonstrated" in not_placed and "Shown on the site plan" in placed
-    # the two states differ, so the chart is NOT placement-invariant.
-    assert not_placed != placed
+def _chart(**over):
+    args = dict(allowance_display="20,150", allowance_value=20150.0,
+                buildings=[{"building": "B", "scheduled_value": 20150.0,
+                            "scheduled_display": "20,150"}])
+    args.update(over)
+    return drawings_embed.allowance_bar_chart_svg(
+        args["allowance_display"], args["allowance_value"], args["buildings"],
+        placed_on_site=args.get("placed_on_site", False))
+
+
+# S14: one case per placed-on-site input state. The status is a word, never a bar, and it never
+# says "Shown on the site plan" unless the site plan actually draws the footprint (M5-T172 S14).
+def test_s14_placed_on_site_three_states(monkeypatch) -> None:
+    # (1) not placed -> "Not demonstrated"
+    not_placed = _chart(placed_on_site=False)
+    # (2) placed but the site plan does not draw the footprint -> "Worked out; not drawn"
+    monkeypatch.setattr(drawings_embed, "site_plan_draws_placed_footprint", lambda: False)
+    worked_not_drawn = _chart(placed_on_site=True)
+    # (3) placed AND drawn (simulated: M5-T173 part B switches the predicate on) -> "Shown ..."
+    monkeypatch.setattr(drawings_embed, "site_plan_draws_placed_footprint", lambda: True)
+    placed_drawn = _chart(placed_on_site=True)
+    assert "Not demonstrated" in not_placed and "Worked out; not drawn" not in not_placed
+    assert "Worked out; not drawn" in worked_not_drawn and "Shown on the site plan" \
+        not in worked_not_drawn
+    assert "Shown on the site plan" in placed_drawn and "Worked out; not drawn" not in placed_drawn
+    # the three states differ, so the chart is NOT placement-invariant.
+    assert len({not_placed, worked_not_drawn, placed_drawn}) == 3
     # the placed-on-site row carries no rectangle (it is a status, never a bar).
-    not_placed_tail = not_placed[not_placed.index("Placed on site"):]
-    assert "<rect" not in not_placed_tail
+    assert "<rect" not in worked_not_drawn[worked_not_drawn.index("Placed on site"):]
+
+
+def test_s14_benchmark_placed_on_site_reads_worked_out_not_drawn() -> None:
+    # On this head the site plan (page 4) does not draw the placed footprint, so the page-5 status
+    # reads "Worked out; not drawn", never "Shown on the site plan" (the visual reviewer's F1).
+    # Mutation: forcing site_plan_draws_placed_footprint() true makes the benchmark say "Shown on
+    # the site plan" again and this test fails.
+    comparison = _comparison(build_report_html(benchmark()))
+    assert "Worked out; not drawn" in comparison
+    assert "Shown on the site plan" not in comparison
 
 
 # ------------------------------------------------------------------- S12 scope intact

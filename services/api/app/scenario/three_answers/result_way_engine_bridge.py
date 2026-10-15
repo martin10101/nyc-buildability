@@ -70,6 +70,7 @@ from .three_way_document import (
     FLOOR_TO_FLOOR_KEY,
     HOUSING_PROGRAM_KEY,
     USER_CHOICE_KEYS,
+    PlacementInputs,
     emit_three_way_document,
 )
 
@@ -385,6 +386,100 @@ def _overlay_present(gathered: GatheredResult) -> bool | None:
     return None
 
 
+def _placement_frontage(geometry: SiteGeometry | None):
+    """The street the building sits along for the illustrative placement: the LONGEST confirmed
+    frontage (the reference lot's Northern Boulevard, the wide street; NB-06). None when no frontage
+    is confirmed. Deterministic and source-based - it names no street geometry did not confirm."""
+    if geometry is None:
+        return None
+    confirmed = [f for f in geometry.frontages if f.length.value is not None]
+    if not confirmed:
+        return None
+    return max(confirmed, key=lambda f: f.length.value or 0.0)
+
+
+def _frontage_edge_length_ft(
+    outline: PreparedOutline | None, frontage,
+) -> float | None:
+    """The city-map (GIS) frontage length: the sum of the prepared outline's edges the confirmed
+    frontage runs along (the measured parcel geometry, basis gis). None when no outline was prepared
+    or an edge index is out of range (nothing is invented, rule L1)."""
+    if outline is None or frontage is None:
+        return None
+    edges = outline.edges
+    total = 0.0
+    for index in frontage.edge_indices:
+        if not 0 <= index < len(edges):
+            return None
+        total += edges[index].length_ft
+    return total if total > 0 else None
+
+
+def _street_reach_ft(gathered: GatheredResult, street_name: str) -> float | None:
+    """The city-map (GIS) depth back from the frontage: the farthest perpendicular reach of the lot
+    from that street line (the spatial lot-reach measure, carried on
+    gathered.inputs.reach.street_lines). None when the reach was not measured - never a default."""
+    reach = gathered.inputs.reach
+    if reach is None:
+        return None
+    for line in reach.street_lines:
+        if line.street_name == street_name:
+            return line.reach.value
+    return None
+
+
+def _lot_tax_dimensions(
+    profile: Mapping[str, Any] | None,
+) -> tuple[float | None, float | None]:
+    """The printed-tax-map frontage and depth, read from the recorded PLUTO lot facts
+    (lotfront / lotdepth, basis printed_tax_map). NEVER the emitted scope's lot_front_ft, which
+    carries the GIS frontage under an approximate_tax_map code (DB-260). None for a fact unread."""
+    if not isinstance(profile, Mapping):
+        return None, None
+    lot_facts = profile.get("lot_facts")
+    if not isinstance(lot_facts, Mapping):
+        return None, None
+
+    def _value(key: str) -> float | None:
+        entry = lot_facts.get(key)
+        value = entry.get("value") if isinstance(entry, Mapping) else None
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return float(value)
+        return None
+
+    return _value("lotfront"), _value("lotdepth")
+
+
+def _placement_inputs_for(
+    gathered: GatheredResult,
+    *,
+    street_data: StreetData | None,
+    outline: PreparedOutline | None,
+    geometry: SiteGeometry | None,
+    profile: Mapping[str, Any] | None,
+) -> PlacementInputs | None:
+    """The four lot measures an illustrative placement rests on, each on its own basis (M5-T172).
+    OPT-IN on a DCM street window being supplied (the same gate as the rear-yard and envelope
+    emissions): the journey/benchmark path threads it, the live route only behind the geometry flag,
+    so every other caller is byte-identical. The printed-tax-map pair comes from the recorded PLUTO
+    lot facts, the GIS frontage from the prepared outline's frontage edge, and the GIS depth from
+    the lot-reach measure - never one basis's figure relabelled as another. None when no frontage
+    is confirmed; a missing single measure is carried as None and holds its basis back in module."""
+    if street_data is None:
+        return None
+    frontage = _placement_frontage(geometry)
+    if frontage is None:
+        return None
+    tax_frontage, tax_depth = _lot_tax_dimensions(profile)
+    return PlacementInputs(
+        tax_frontage_ft=tax_frontage,
+        tax_depth_ft=tax_depth,
+        gis_frontage_ft=_frontage_edge_length_ft(outline, frontage),
+        gis_depth_ft=_street_reach_ft(gathered, frontage.street_name),
+        frontage_street_name=frontage.street_name,
+    )
+
+
 def run_engine_and_result_ways(
     inputs: ThreeAnswerInputs,
     *,
@@ -534,6 +629,10 @@ def run_engine_and_result_ways_from_evidence(
         gathered, engine_result.document, street_data=street_data,
         geometry=site_geometry, profile=property_profile,
     )
+    placement_inputs = _placement_inputs_for(
+        gathered, street_data=street_data, outline=prepared_outline,
+        geometry=site_geometry, profile=property_profile,
+    )
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         condition_sources=conditions, user_choices=user_choices,
@@ -542,5 +641,6 @@ def run_engine_and_result_ways_from_evidence(
         zoning_lot=gathered.inputs.zoning_lot,
         rear_yard_analysis=rear_yard_analysis,
         envelope_analysis=envelope_analysis,
+        placement_inputs=placement_inputs,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

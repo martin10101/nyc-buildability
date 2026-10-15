@@ -1,0 +1,20 @@
+calc-first-placement - automated-test evidence (M5-T172)
+
+This calculation entry was added in M5-T172 (the illustrative placement of the first building on
+the lot). Its code identity is the three scenario-engine modules that compute, emit and draw the
+placement:
+  - services/api/app/scenario/three_answers/placement.py (the footprint, outline and offsets)
+  - services/api/app/scenario/three_answers/three_way_document.py (emits the placement on the
+    first alternative)
+  - services/api/app/scenario/three_answers/geometry.py (draws the floor plates within the lot)
+
+The entry's deterministic register tests live in
+services/api/tests/rules/test_zoning_rule_review_register_calculations.py and run in CI on every
+change. The recorded result reads "Not run" because the code identity changed in this same task and
+no recorded run is yet bound to it and to the test-file digest; CI runs the full suite at the
+accepted head. A passing result is a code check, not a human or professional review of the law.
+
+The worked example is the settled reference case docs/reference-cases/R6B/cases/placement-building-b.json
+(step P8), read independently by two sealed-folder AI agents; its expected figures are never taken
+from a program run. The two readings agree on the printed-tax-map figures and leave the city-map
+(GIS) conflict not known, so the entry records agrees = null.

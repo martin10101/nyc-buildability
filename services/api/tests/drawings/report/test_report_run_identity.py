@@ -1,10 +1,11 @@
-"""M5-T169 S7: the report's run identity (D-094 R028/R038/R058).
+"""M5-T169 S7 / M5-T190: the report's run identity (D-094 R028/R038/R058).
 
 The appendix carries a document FINGERPRINT (stable for the same document, changing
-when any value changes, and excluding the run id and timestamp), the deployed CODE
-COMMIT (read from the environment, "unknown" when unset, or carried by the route) and
-the result revision. One test per input state; every expected value is read from the
-document or the module, never retyped from a program run.
+when any value changes, and excluding the four per-run metadata fields the live route
+mints fresh each run -- the run id, the run timestamp, the option id and the study id),
+the deployed CODE COMMIT (read from the environment, "unknown" when unset, or carried
+by the route) and the result revision. One test per input state; every expected value
+is read from the document or the module, never retyped from a program run.
 """
 
 from __future__ import annotations
@@ -14,7 +15,16 @@ import json
 import re
 from pathlib import Path
 
+from fastapi.testclient import TestClient
+
+from app.config import INTERNAL_RESULTS_ENABLED_ENV_VAR
 from app.drawings.report import build_report_html, run_identity
+from tests.api.test_results_read_api import (
+    NORTHERN_BBL,
+    _no_network,
+    app_with,
+    benchmark_provider,
+)
 
 _FIXTURES = (
     Path(__file__).resolve().parents[5]
@@ -53,6 +63,62 @@ def test_s7_fingerprint_changes_when_any_value_changes() -> None:
 def test_s7_fingerprint_is_hex_and_short() -> None:
     fp = run_identity.document_fingerprint(benchmark())
     assert re.fullmatch(r"[0-9a-f]{12}", fp)
+
+
+# ------------------------------------- M5-T190 (DB-282): the two per-run ids are excluded too
+def test_t190_s1_fingerprint_stable_across_all_four_run_fields() -> None:
+    """S1: two documents that differ only in the four per-run metadata fields
+    (results_id, computed_at, option_id, study_id) share a fingerprint. The live route
+    mints option_id and study_id as fresh uuids each run (results_read.py), so this is
+    the drift the module must exclude; the older test only tweaked results_id/computed_at
+    and did not catch it."""
+    doc = benchmark()
+    other = {
+        **doc,
+        "results_id": "a-different-run-id",
+        "computed_at": "2027-01-01T00:00:00Z",
+        "option_id": "a-different-option-id",
+        "study_id": "a-different-study-id",
+    }
+    assert run_identity.document_fingerprint(doc) == run_identity.document_fingerprint(other)
+
+
+def test_t190_s3_document_without_option_or_study_id_behaves_as_before() -> None:
+    """S3: an older document or synthetic fixture that never carried option_id or
+    study_id fingerprints exactly as the full document. The two ids are excluded run
+    metadata, so their absence changes nothing: dropping them leaves the fingerprint
+    unmoved."""
+    doc = benchmark()
+    assert "option_id" in doc and "study_id" in doc  # the benchmark carries both
+    older = {k: v for k, v in doc.items() if k not in ("option_id", "study_id")}
+    assert run_identity.document_fingerprint(older) == run_identity.document_fingerprint(doc)
+
+
+def test_t190_s4_live_route_two_runs_share_a_fingerprint(monkeypatch) -> None:
+    """S4: the live results route, run twice through the TestClient with the benchmark
+    providers, mints fresh per-run ids each run yet produces the SAME fingerprint. This
+    catches the real drift the recorded fixture (with fixed placeholder ids) never saw.
+    Mutation: with the old two-field exclude tuple the two fingerprints differ and this
+    test (and S1) go red."""
+    _no_network(monkeypatch)
+    monkeypatch.setenv(INTERNAL_RESULTS_ENABLED_ENV_VAR, "1")
+    monkeypatch.setenv("LANE_A_ENABLED", "1")
+    provider = benchmark_provider(with_zoning_lot=True, street_on=True)
+    body = {"housing_program": "standard_residence"}
+
+    def one() -> dict:
+        resp = TestClient(app_with(provider)).post(
+            f"/api/v1/properties/{NORTHERN_BBL}/results", json=body)
+        assert resp.status_code == 200
+        return resp.json()
+
+    d1, d2 = one(), one()
+    # the route really mints fresh per-run ids each run, so the test is not vacuous.
+    assert d1["option_id"] != d2["option_id"]
+    assert d1["study_id"] != d2["study_id"]
+    assert d1["results_id"] != d2["results_id"]
+    # yet no real value differs, so the fingerprint is reproducible across the two runs.
+    assert run_identity.document_fingerprint(d1) == run_identity.document_fingerprint(d2)
 
 
 # ---------------------------------------------------------------- deployed commit states

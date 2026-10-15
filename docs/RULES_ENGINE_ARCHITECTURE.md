@@ -121,6 +121,35 @@ M3 corpus ingestion should adopt it (per-section records, `Last Amended`, conten
 document-currency banners) rather than fight it. Bulk/full-corpus ingestion remains an M3 task; this
 slice captures only the specific sections its rules implement.
 
+### 5.1 Structured table payloads + `table_digest_sha256` (DB-276)
+
+Many sections carry a structured table (FAR, height/setback, and use tables) that does not fit a
+flat verbatim excerpt. The table is stored in a **sibling payload field** and the `verbatim_excerpt`
+holds a `[table - see structured table field]` placeholder, so `content_digest_sha256` — which signs
+only the excerpt — does **not** cover the table numbers. Three mutually exclusive payload shapes exist
+(there is no separate snapshot JSON-schema file; the shape is documented here):
+
+- **`table.rows`** — a `table` object with `caption`/`columns`/`header_structure`/`rows` (each row a
+  cell map). The common FAR and height/setback shape (e.g. `zr-23-22`, `zr-23-432`).
+- **`tables`** — a *list* of such table objects, for a section whose capture holds more than one table
+  (e.g. `zr-22-131`, the use-group tables).
+- **`table.row_groups`** — a `table` object whose rows are nested under `row_groups` (e.g. `zr-24-522`,
+  front-setback/sky-plane). Tolerated on read; reference-case `table_assertion` normalisation of this
+  shape is deferred (no assertion targets it today).
+
+To bring the table under tamper-evidence **additively** — without re-opening the pinned
+`verbatim_excerpt`/`content_digest_sha256` or moving any citing rule/reference/register digest — each
+table-bearing snapshot also carries a **`table_digest_sha256`**: the SHA-256 of the *canonical JSON of
+the parsed payload*,
+`sha256(json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))`.
+The digest is computed over the **parsed** object (the `table` object or the `tables` list), so
+re-indenting or re-ordering keys in the file never breaks it — only a change to a table value does.
+`load_snapshot_file` verifies it after the excerpt digest and **fails closed** (`SnapshotError`) on a
+digest mismatch, a payload present without the digest, a digest present without a payload, and a
+snapshot carrying both `table` and `tables`. Snapshots with no table payload are unaffected. The field
+is additive metadata; it changes no property fact, rule applicability, calculation, result, or
+certainty label.
+
 ## 6. Rule lifecycle + the G6 boundary
 
 `discovered → extracted_draft → needs_review → (G6 human approval) → published`. The canonical

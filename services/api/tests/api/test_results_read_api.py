@@ -386,9 +386,16 @@ def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     committed_b = committed["building_alternatives"][0]
     assert "The rear yard beyond the corner" in no_street_b["not_checked"]
     assert "The rear yard beyond the corner" not in committed_b["not_checked"]
-    assert {k: v for k, v in no_street_b.items() if k != "not_checked"} == {
-        k: v for k, v in committed_b.items() if k != "not_checked"
+    # The no-street route threads no placement either (M5-T172: placement is gated on the DCM
+    # window), so its building B carries no placement or area allocation, keeps the "Where the plan
+    # sits on the lot" not-checked line and the fit note's placement clause. The committed 1.5.0
+    # document is placed, so it drops those lines, carries placement and area_allocation and
+    # reworded the fit note. Apart from those placement-driven fields the worked building is equal.
+    _placement_driven = {"not_checked", "fit_note", "placement", "area_allocation"}
+    assert {k: v for k, v in no_street_b.items() if k not in _placement_driven} == {
+        k: v for k, v in committed_b.items() if k not in _placement_driven
     }
+    assert "placement" not in no_street_b and "area_allocation" not in no_street_b
     # With the recorded DCM window threaded (street_on=True, the journey-path inputs), the route
     # reproduces the committed 1.5.0 document - the engine applies ZR 23-344 and emits the SAME
     # rear_yard block and input_facts. DB-232: thread the recorded zoning-lot index too.

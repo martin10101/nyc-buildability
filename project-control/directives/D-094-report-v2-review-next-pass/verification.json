@@ -3593,6 +3593,181 @@
     }
    ],
    "verified_at": "2026-10-15T13:10:16+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T172",
+   "applicable_requirement_ids": [
+    "D-094-R044",
+    "D-094-R058",
+    "D-094-R082",
+    "D-094-R091",
+    "D-094-R092"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "76f596646532f165efb1337e8be691c667de4051",
+   "reviewed_manifest_sha256": "3b6f224bc5f9542526b508a161b2cfe2437fc94801ed3908eb1b78189e1aba2e",
+   "requirements": [
+    {
+     "id": "D-094-R044",
+     "state": "PASS",
+     "evidence": [
+      "Source matches: source-001.md lines 137/249 \"Do not invent geometry to fill a layout.\"; the requirements.json row text is the owner's words, unweakened.",
+      "No geometry is invented: result_way_engine_bridge.py assembles the four lot measures each from its own source (_lot_tax_dimensions reads PLUTO lotfront/lotdepth as printed_tax_map and explicitly NOT scope lot_front_ft per DB-260; _frontage_edge_length_ft from the prepared outline; _street_reach_ft from the lot-reach), and every helper returns None when its source is unread \u2014 never a default (I read lines 401-480).",
+      "The drawn plates are real computed polygons: I reshoelaced the benchmark geometry.floor_plates (3 entries, GIS vertices) = 6716.569 sq ft each, reconciling to the plate gross_sf 6716.6667 within 0.098 sq ft (< 0.5 tol); place_building_on_geometry returns None (keeps honest not_available) when no corner footprint can be formed.",
+      "Nothing stays open for this task's share; the drawn footprint on the site plan (M5-T173 part B) must itself honour R044 when it is drawn.",
+      "Verifier's carry-forward condition met at 76f59664: the task's allowed-path files are identical to those verified at 5a826f59 (content identity 3b6f224b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its round-3 delta); G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (and their round-3 deltas); G4 qa-engineer (and its round-3 delta)). DCV report: project-control/reports/M5-T172-DCV.md."
+     ],
+     "reviewed_sha": "76f596646532f165efb1337e8be691c667de4051"
+    },
+    {
+     "id": "D-094-R058",
+     "state": "PASS",
+     "evidence": [
+      "Source matches: source-001.md line 175 \"...same result revision and scenario. Distinguish allowance, scheduled area, demonstrated site fit, preliminary apartment estimate, and legal unit limit.\" \u2014 row text verbatim.",
+      "One document: the placement, area_allocation and floor_plates all come from the one regenerated benchmark recorded_215_16_northern_journey.json (contract_version 1.5.0), which the live route reproduces (test_results_read_api street_on asserts doc == committed); the frozen benchmark blob is byte-identical to the round-3 head.",
+      "Categories stay distinct in the real print (print-5994e220/report.html): \"Floor-area allowance ... 20,150 sq ft\" vs \"Building B scheduled 20,150 sq ft\" vs \"Placed on site: Worked out; not drawn\" vs \"site fit unverified\" vs \"legal dwelling-unit limit ... conditional ceiling\" vs the preliminary apartment estimate \u2014 allowance, scheduled area, demonstrated site fit, estimate and legal unit limit are each separately labelled.",
+      "Nothing material stays open for this task; later pages that add diagrams (M5-T173) must preserve the same-revision/same-scenario discipline.",
+      "Verifier's carry-forward condition met at 76f59664: the task's allowed-path files are identical to those verified at 5a826f59 (content identity 3b6f224b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its round-3 delta); G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (and their round-3 deltas); G4 qa-engineer (and its round-3 delta)). DCV report: project-control/reports/M5-T172-DCV.md."
+     ],
+     "reviewed_sha": "76f596646532f165efb1337e8be691c667de4051"
+    },
+    {
+     "id": "D-094-R082",
+     "state": "PASS",
+     "evidence": [
+      "Source matches: source-002-amendment.md line 48 \"Finish one meaningful scenario: a dimensioned footprint on the site, a section, and a reconciled floor schedule. Clearly identify every constraint still untested.\" \u2014 row text verbatim.",
+      "The first building option is now placed on the lot (placement.status \"placed\", basis printed_tax_map, outline 100.76 x 66.66) with its reconciled floor schedule: floor_schedule is 3 storeys at 6716.6667 summing to 20,150 and 3 floor plates at the same plate \u2014 C-4 holds (3 x 6716.6667 = 20,150); the QA mutation dropping a floor-by-floor row raised plates_rows_mismatch, proving the reconciliation is pinned.",
+      "Untested constraints are named: placement.not_checked lists the physical floor plate, walls/rooms/core/stairs/elevators, parking/loading/bicycle, whole-lot coverage, street wall/setback, and the survey/zoning-lot; the alt fit_note states it checks coverage only.",
+      "OPEN for later work: the DIMENSIONED footprint drawn on the site plan and the section drawing are M5-T173 part B (the evidence map and packet path_notes assign them there; page-4 site plan still legends \"No building placed\"); this task delivers the scenario's computed placement + reconciled schedule + untested-constraint naming only.",
+      "Verifier's carry-forward condition met at 76f59664: the task's allowed-path files are identical to those verified at 5a826f59 (content identity 3b6f224b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its round-3 delta); G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (and their round-3 deltas); G4 qa-engineer (and its round-3 delta)). DCV report: project-control/reports/M5-T172-DCV.md."
+     ],
+     "reviewed_sha": "76f596646532f165efb1337e8be691c667de4051"
+    },
+    {
+     "id": "D-094-R091",
+     "state": "PASS",
+     "evidence": [
+      "Source matches: source-003-amendment.md line 26 \"Use one explicitly stated percentage from the existing 60\u201375% assumption. Keep the drawing and calculations consistent, and show the assumed percentage beside it.\" \u2014 row text verbatim.",
+      "One stated percentage: benchmark area_allocation.share = 0.6 (apartment 12,090.0, other 8,060.0, total 20,150.0); calc-area-allocation.md states \"the 0.60 apartment-area share is a preliminary assumption chosen by the owner (the low end of a 0.60-0.75 range), not law\" \u2014 one explicit percentage from the existing 60-75% assumption.",
+      "Drawing and calculation agree by construction: apartment = share x total (12090 = 20150 x 0.60 exactly, 12090/20150 = 0.6), and results_way_rules.py enforces allocation_share_mismatch (apartment must equal round2(total x share) within rounding, DB-248); the QA/G3 beyond-rounding mutation proved only this rule fires.",
+      "OPEN for later work: the DRAWN two-zone illustration (where the drawing's proportions are visibly shown and the percentage sits beside the figure) is M5-T173 part B; the appendix method here is honestly future-tensed (\"not yet drawn in this report; when drawn it will be shown as zones...\").",
+      "Verifier's carry-forward condition met at 76f59664: the task's allowed-path files are identical to those verified at 5a826f59 (content identity 3b6f224b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its round-3 delta); G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (and their round-3 deltas); G4 qa-engineer (and its round-3 delta)). DCV report: project-control/reports/M5-T172-DCV.md."
+     ],
+     "reviewed_sha": "76f596646532f165efb1337e8be691c667de4051"
+    },
+    {
+     "id": "D-094-R092",
+     "state": "PASS",
+     "evidence": [
+      "Source matches: source-003-amendment.md line 27 \"Check that the estimate and drawing use compatible area measurements. Do not automatically treat zoning floor area as the physical floorplate area.\" \u2014 row text verbatim.",
+      "Compatible measures: both placement.measure and area_allocation.measure are \"residential_floor_area\"; each carries conversion_statement \"plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked\"; the printed appendix repeats \"The plate measure is stated as: plate = zoning floor area per storey; no gross-up...\".",
+      "Zoning floor area is NOT presented as the physical plate: placement.not_checked explicitly lists \"the physical floor plate (gross-up, exclusions, wall thickness)\"; calc-area-allocation.md states the residential floor area is the zoning floor area and \"no physical floor plate ... is worked.\"",
+      "Nothing material stays open for this task; a future drawn plate (M5-T173) must keep the measures compatible and labelled.",
+      "Verifier's carry-forward condition met at 76f59664: the task's allowed-path files are identical to those verified at 5a826f59 (content identity 3b6f224b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (1 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its round-3 delta); G2 orchestrator self-check; G3 code-reviewer and visual-quality-reviewer (and their round-3 deltas); G4 qa-engineer (and its round-3 delta)). DCV report: project-control/reports/M5-T172-DCV.md."
+     ],
+     "reviewed_sha": "76f596646532f165efb1337e8be691c667de4051"
+    }
+   ],
+   "verified_at": "2026-10-15T18:13:46+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T189",
+   "applicable_requirement_ids": [
+    "D-094-R054"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "0d2175f5d82db8fe3000e8993e1194aeee29d09a",
+   "reviewed_manifest_sha256": "646694339b2c576df997df64ef3794e370a9fd18e8507fac069b3e8aeecf9155",
+   "requirements": [
+    {
+     "id": "D-094-R054",
+     "state": "PASS",
+     "evidence": [
+      "Source anchor is faithful: source-001.md line 151 is the owner's verbatim brief bullet \"Keep missing data and incomplete software honest without filling the report with repeated \u201cnot yet\u201d prose.\"; source-001.md line 259 maps that exact quote to R054 (obligation); requirements.json R054 quotes it verbatim \u2014 not weakened, combined or invented.",
+      "This task's share = keep missing data / incomplete software honest without new \"not yet\" prose; I ran the real code: formatting.format_int_commas(inf)=None, format_ratio(inf)=None, format_sqft/feet(inf)=None, whole_percent_shares([inf,1.0])=None \u2014 a non-finite figure shows as MISSING, never 0, never 'inf.0', never a crash.",
+      "kit.labels.format_number raises ValueError on inf/nan/'abc'/None/bool (I ran it) and is byte-identical on finite reals (20150.0->'20,150'); this also hardens close_frame._fact_figure with NO edit to the NB-04-pinned module (close_frame_dimensions.py blob e2f1adfe identical main vs frozen head).",
+      "No new prose was added and every valid page is unchanged: per-page pdftotext of main's commit-unknown print (10pp) vs the fixed head's print (10pp) is identical on pages 1-9; page 10 differs only in the run identity (document fingerprint efb2e8145ae6->5dfbaac4c427 plus the now-wrapped Code-commit line).",
+      "Stays open for later work: R054 is a report-wide, multi-task obligation (bound to D-094-BOOTSTRAP, M0-T193, M5-T165, M5-T169, M5-T189) and its row status stays \"pending\"; the broader honest-missing-data presentation across report content and the \"not yet\"-prose discipline are held by the other bound tasks, and the pre-existing document-fingerprint run-to-run non-determinism is owned by M5-T190 (DB-282), not this task.",
+      "Verifier's carry-forward condition met at 0d2175f5: the task's allowed-path files are identical to those verified at d0992406 (content identity 64669433), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4, G5 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer; G5 security-reviewer). DCV report: project-control/reports/M5-T189-DCV.md."
+     ],
+     "reviewed_sha": "0d2175f5d82db8fe3000e8993e1194aeee29d09a"
+    }
+   ],
+   "verified_at": "2026-10-15T15:03:20+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M5-T190",
+   "applicable_requirement_ids": [
+    "D-094-R028",
+    "D-094-R058"
+   ],
+   "producer": "backend-engineer",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "206fc8c55921db3141786800f2de78490112fb95",
+   "reviewed_manifest_sha256": "714f63c786073166e77a4c70ce52b54491a1fa27575c935cca6c50645afd5a0a",
+   "requirements": [
+    {
+     "id": "D-094-R028",
+     "state": "PASS",
+     "evidence": [
+      "Source matches verbatim: source-001.md line 103, Provenance row 9, \"Provide enough run/source/revision information to identify what actually generated this report\"; the requirement text is unchanged by this task (text sha256 7cb1fb76 identical at contract parent and frozen head).",
+      "This task's share is the run-identity fingerprint that identifies what generated the report: run_identity._FINGERPRINT_EXCLUDE now also excludes option_id and study_id, so re-running the same request reproduces the fingerprint; I reproduced in-process on the recorded fixture (doc vs a copy differing only in the four run fields -> equal a43b9aa2c61a), and the in-process mutation to the old two-field tuple made them differ (c813b01a2619 vs 1d183b40626f).",
+      "The appendix placement, \"clearly named appendix\" and \"no repeated headings\" clauses of R028 are NOT this task's share and are untouched (no page text/label changes); they are held by M5-T169 (accepted), which built the appendix and run-identity column.",
+      "Stays open for later work: the appendix-structure / no-repeated-heading portion of R028 is M5-T169's share, not this task's; nothing of this task's fingerprint share stays open.",
+      "Verifier's carry-forward condition met at 206fc8c5: the task's allowed-path files are identical to those verified at b9412f35 (content identity 714f63c7), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T190-DCV.md."
+     ],
+     "reviewed_sha": "206fc8c55921db3141786800f2de78490112fb95"
+    },
+    {
+     "id": "D-094-R058",
+     "state": "PASS",
+     "evidence": [
+      "Source matches verbatim: source-001.md line 175, \"Verify that each result and diagram comes from the same result revision and scenario. Distinguish allowance, scheduled area, demonstrated site fit, preliminary apartment estimate, and legal unit limit\"; text unchanged by this task (text sha256 7b2360ec identical at parent and frozen head).",
+      "This task's share is the harness tying every rendered figure to one document: I ran tests/drawings/report/test_report_run_identity.py under the lanes venv (11 passed, exit 0), including S4's live two-run TestClient test which is non-vacuous (option_id/study_id/results_id differ per run yet the two fingerprints are equal); a real value change (floor_area_allowance 20150->20151) moves the fingerprint (a43b9aa2c61a -> 231d8ce95ee2), so sensitivity is preserved.",
+      "The four excluded fields are genuinely per-run metadata, not values: results_read.py mints option_id (line 343), study_id (351), results_id (388) as uuid4().hex and computed_at (344) via _now_iso(); the read-only return-check and both reviewers found exactly four top-level differing leaves between runs and no nested per-run leak, consistent with S3 (dropping option_id/study_id leaves the hash unchanged, reproduced True).",
+      "Stays open for later work: the \"distinguish allowance / scheduled area / demonstrated site fit / preliminary apartment estimate / legal unit limit\" clause is a page-content concern unchanged by this metadata-only task and is held by M5-T162, M5-T164, M5-T169, M5-T172; this task's harness share leaves nothing open.",
+      "Verifier's carry-forward condition met at 206fc8c5: the task's allowed-path files are identical to those verified at b9412f35 (content identity 714f63c7), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T190-DCV.md."
+     ],
+     "reviewed_sha": "206fc8c55921db3141786800f2de78490112fb95"
+    }
+   ],
+   "verified_at": "2026-10-15T15:30:57+00:00"
+  },
+  {
+   "directive_id": "D-094",
+   "task_id": "M3-T014",
+   "applicable_requirement_ids": [
+    "D-094-R102"
+   ],
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "8585b6aab2391cf87adfc86837d0ebf958750e45",
+   "reviewed_manifest_sha256": "d718b17889aa047305f08c88b46942ccb421f712843e7ca3430273ce80bc6982",
+   "requirements": [
+    {
+     "id": "D-094-R102",
+     "state": "PASS",
+     "evidence": [
+      "Owner verbatim (source-004-amendment.md): \"Should we start the law library right away?\" / \"Did u tell the session handoff to work on that in next season ?\" \u2014 a decision to run the zoning-law library as a second line of work beside the report; keeping the library's capture-state and labels true to the snapshot folder and the captured text is exactly that line's maintenance, so R102 is the correct and sole bind.",
+      "Capture state verified against primary source: benchmark-r6b-sections.json marks 24-11 captured (snapshot_id zr-24-11, content_digest 7ac0234975425e65cd327b114e25c4ed9bb8356d4fc79b6237ef7cb3c2227254) and 24-111 captured (snapshot_id zr-24-111, digest 77951e89b5edbbc83a9046cf88595a6355c3cc2059ef6ae6ca127ab557c4e8bb), each digest byte-equal to the content_digest_sha256 field of its snapshot file; both coverage_status not_evaluated; counts read captured 70 / not_captured 3 and the only not-captured sections are 23-154, 77-00 and shared-housing-use-and-standards.",
+      "Labels verified against the captured verbatim: zr-36-64 (Art III Ch 6, C1-C8) body is loading-only (\"...off-street loading berths, the provisions set forth in Article VII, Chapter 7, shall apply\"), and coverage.md + the benchmark 77-00 note now call 36-64 \"only a loading-berth pointer into Article VII, Chapter 7 ... not a general C-district counterpart\" (77-00 stays NOT CAPTURED); zr-66-11 is \"66-11 Definitions\" (Art VI Ch 6) defining \"mass transit station\" terms, and coverage.md line 53 now reads \"Article VI Chapter 6 'Definitions' ... not the transit zones; the transit-zone definitions themselves are the 12-10 defined terms ... plus Appendix I\".",
+      "Documents-only confirmed: the material commit 63ab5d19 touches only the six allowed files; no snapshot, reference-case, evidence-record or code path is touched; no added line in the five library files carries complies/buildable/optimal/feasible/Verified; no residual stale \"24-11/24-111 NOT CAPTURED\", \"transit-zone definitions\" or uncorrected \"C-district counterpart\" claim remains (the remaining grep hits are genuinely-uncaptured sections or the corrective sentences themselves).",
+      "Stays open: R102 as a whole is a continuing library lane and remains pending overall (served incrementally by later library tasks); this task fully satisfies its share (capture-state + the 36-64/66-11 labels), while the open reading questions (24-111's FAR effect vs 24-11 at 2.00, the split-lot meaning, overlay-edge-as-district-boundary, the 35-31 carve-out) and the genuinely uncaptured 23-154 / 77-00 / shared-housing sections are preserved and named for future research, not resolved here.",
+      "Verifier's carry-forward condition met at 8585b6aa: the task's allowed-path files are identical to those verified at 2727a27a (content identity d718b178), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (5 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T014-DCV.md."
+     ],
+     "reviewed_sha": "8585b6aab2391cf87adfc86837d0ebf958750e45"
+    }
+   ],
+   "verified_at": "2026-10-15T17:00:13+00:00"
   }
  ]
 }

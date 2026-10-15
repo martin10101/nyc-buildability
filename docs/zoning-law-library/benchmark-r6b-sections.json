@@ -15,16 +15,16 @@
   "coverage_status_vocabulary": "docs/LEGAL_CORPUS_COVERAGE_MATRIX.md section 2. Producer mapping: partial = captured AND a rule file formally cites/computes it (unreviewed draft, full closure incomplete); not_evaluated = captured, in scope, no rule yet; not_applicable = captured but the district line / R1-R5 / tower / other-equivalency / special-geography body affirmatively excludes an R6B / C2-2 lot (title-only captures stay not_evaluated because applicability to a mapped special area is not resolved); missing = required for an option but NOT CAPTURED.",
   "counts": {
     "sections_total": 73,
-    "captured": 68,
-    "not_captured": 5,
+    "captured": 70,
+    "not_captured": 3,
     "handled": 6,
     "not_handled": 67,
     "defined_terms_total": 38,
     "defined_terms_captured": 30,
     "defined_terms_not_captured": 8,
-    "cross_references_recorded": 162,
-    "cross_references_followed": 104,
-    "cross_references_not_followed": 58
+    "cross_references_recorded": 168,
+    "cross_references_followed": 105,
+    "cross_references_not_followed": 63
   },
   "sections": [
     {
@@ -1542,7 +1542,7 @@
         },
         {
           "section_id": "24-111",
-          "captured": false
+          "captured": true
         },
         {
           "section_id": "74-902",
@@ -2013,37 +2013,71 @@
       "title": "Maximum Floor Area Ratio and Percentage of Lot Coverage (community facility)",
       "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11",
       "capture_status": {
-        "state": "NOT CAPTURED"
+        "state": "captured",
+        "snapshot_id": "zr-24-11",
+        "content_digest_sha256": "7ac0234975425e65cd327b114e25c4ed9bb8356d4fc79b6237ef7cb3c2227254"
       },
       "cross_references_out": [
         {
           "section_id": "24-111",
-          "captured": false
+          "captured": true
         }
       ],
       "handled_by": [
         "NOT HANDLED: no community-facility FAR rule file"
       ],
-      "coverage_status": "missing",
+      "coverage_status": "not_evaluated",
       "last_amended": "2024-12-05",
       "scope_status": "followed: option 6/7/11",
-      "notes": "Community-facility FAR. H6 opened the official page: R6B row FAR 2.00, corner coverage 80, interior/through 60; Last Amended 12/5/2024 (producer did not re-open). RECOMMEND capture."
+      "notes": "Community-facility FAR. Captured M3-T009 (zr-24-11.snapshot.json). The captured table has an R6B row FAR 2.00, corner coverage 80, interior/through 60; Last Amended 12/5/2024. No rule file computes it yet (not_evaluated)."
     },
     {
       "section_id": "24-111",
       "title": "Maximum floor area ratio for certain community facility uses",
       "zr_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-111",
       "capture_status": {
-        "state": "NOT CAPTURED"
+        "state": "captured",
+        "snapshot_id": "zr-24-111",
+        "content_digest_sha256": "77951e89b5edbbc83a9046cf88595a6355c3cc2059ef6ae6ca127ab557c4e8bb"
       },
-      "cross_references_out": [],
+      "cross_references_out": [
+        {
+          "section_id": "24-11",
+          "captured": true
+        },
+        {
+          "section_id": "73-11",
+          "captured": false,
+          "reason": "permit-required use (Agriculture and Open Uses) named in the captured text; NOT CAPTURED; not followed"
+        },
+        {
+          "section_id": "73-13",
+          "captured": false,
+          "reason": "permit-required use (Community Facilities) named in the captured text; NOT CAPTURED; not followed"
+        },
+        {
+          "section_id": "73-18",
+          "captured": false,
+          "reason": "permit-required use (Recreation, Entertainment and Assembly Spaces) named in the captured text; NOT CAPTURED; not followed"
+        },
+        {
+          "section_id": "74-902",
+          "captured": true,
+          "reason": "Article VII special-permit (bulk-modification) provision; CAPTURED (M3-T011; zr-74-902.snapshot.json); project-specific, not followed"
+        },
+        {
+          "section_id": "74-903",
+          "captured": true,
+          "reason": "Article VII special-permit (CPC) provision; CAPTURED (M3-T011; zr-74-903.snapshot.json); project-specific, not followed"
+        }
+      ],
       "handled_by": [
         "NOT HANDLED: no community-facility FAR rule file"
       ],
-      "coverage_status": "missing",
-      "last_amended": null,
+      "coverage_status": "not_evaluated",
+      "last_amended": "2024-12-05",
       "scope_status": "followed: option 6/7/11",
-      "notes": "Max FAR for certain community-facility uses. Official page exists; not fetched. RECOMMEND capture."
+      "notes": "Max FAR for certain community-facility uses. Captured M3-T009 (zr-24-111.snapshot.json). The captured text carries an R1 R2 district header and references the permit-required uses 73-11/73-13/73-18, the bulk-modification special permits 74-902/74-903, and the general CF FAR 24-11. Its effect on the R6B community-facility FAR (vs 24-11 at 2.00) is an OPEN reading question (see options-sections.md); no rule file computes it (not_evaluated)."
     },
     {
       "section_id": "23-154",
@@ -2075,7 +2109,7 @@
       "coverage_status": "missing",
       "last_amended": null,
       "scope_status": "conditional: option 8 only IF \"split lot\" means a lot divided by a district boundary",
-      "notes": "Article VII Ch 7 family (zoning lots divided by district boundaries). NOT fetched. The \"split lot\" meaning is an OPEN question (two buildings on one zoning lot vs a district-boundary split) - see options-sections.md. 36-64 (captured) is the C-district counterpart."
+      "notes": "Article VII Ch 7 family (zoning lots divided by district boundaries). NOT fetched. The \"split lot\" meaning is an OPEN question (two buildings on one zoning lot vs a district-boundary split) - see options-sections.md. 36-64 (captured) is only a loading-berth pointer into Article VII, Chapter 7 (accessory off-street loading berths), not a general C-district counterpart."
     },
     {
       "section_id": "shared-housing-use-and-standards",

@@ -3522,7 +3522,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/geometry.py",
-          "sha256": "9f43f9f30019194f8d83d473b7fed328fdaad316bf70877cd68c668964a60d13"
+          "sha256": "19e727ad976b7fc7c4c54faa8c10fa170505ccfd08fd8fa81b5d1c7df464e5bf"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3533,7 +3533,7 @@
           "sha256": "8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83"
         }
       ],
-      "code_identity_sha256": "51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713",
+      "code_identity_sha256": "59c4f454566f21e6917c8dc4cece05968fc64ca9d45ef9a0924021ab7c66641f",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The by-portion lot coverage a corner lot takes: the corner-lot portion at 100% (ZR 23-362) plus the remaining interior-lot strip at 80%. Reported through the emitter by how the recorded lot area and the tax-map outline area compare - available with its figures where they agree, withheld where they disagree (the benchmark lot), and withheld (the outline not available) where the lot's tax-map outline is missing.",
@@ -3595,7 +3595,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 10,
+      "revision": 12,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4075,14 +4075,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "f3a9eeae39fe114560a6655985e2230c3ffefd84238a7fd67d4f2e9e26b7e60a",
+      "code_identity_sha256": "b4291ffe0f132b1d8626078e6bc1993acb8fe9d634bc0a88d8066fd96b1fd858",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -4148,7 +4148,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 13,
+      "revision": 16,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4275,7 +4275,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -4294,7 +4294,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "61b79b2dcc2446fcdc38ba374b4fd74644d9d1dd151f9dd8355068d28a37c1a4",
+      "code_identity_sha256": "11d277ebd04a5dc66bb63022b5aa95fd18192a882c17c25347779dca295798d9",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -4397,7 +4397,7 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 14,
+      "revision": 17,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4617,6 +4617,383 @@
             "would_settle": "A survey, a deed, or a record of the neighbouring lots and buildings."
           }
         ]
+      }
+    },
+    {
+      "entry_id": "calc-first-placement",
+      "entry_kind": "calculation",
+      "title": "Illustrative placement of the first building: footprint on the lot and its offsets on two bases (benchmark lot)",
+      "family": "placement",
+      "law": [
+        {
+          "section": "23-322",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-322",
+          "snapshot_id": "zr-23-322",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-322.snapshot.json",
+          "last_amended": "",
+          "captured_on": "2026-10-07",
+          "content_digest_sha256": "2a5af75847b73f8238936cbc9818eef0b76102e588be741254604d0a2d8c2c3e"
+        },
+        {
+          "section": "23-335",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-335",
+          "snapshot_id": "zr-23-335",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-335.snapshot.json",
+          "last_amended": "",
+          "captured_on": "2026-10-07",
+          "content_digest_sha256": "31b67b9d47eca82cb93e1b06db908b20f1ad7f159c2b4306d78248e5fb02fcf2"
+        },
+        {
+          "section": "23-362",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-362",
+          "snapshot_id": "zr-23-362",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-362.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T07:29:06Z",
+          "content_digest_sha256": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6-r12-residential-far",
+        "r6b-lot-coverage",
+        "r6b-side-yard"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/placement.py",
+          "sha256": "faf552ef10482709ee0fe40221c03ee1cd1d1e1b67f75f4c979d3894b93c8e65"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/three_way_document.py",
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/placement_wiring.py",
+          "sha256": "ab9b2a52ec3e57054e72aafb7b5b149d27edf3571715def119c83e610903f76c"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/geometry.py",
+          "sha256": "19e727ad976b7fc7c4c54faa8c10fa170505ccfd08fd8fa81b5d1c7df464e5bf"
+        }
+      ],
+      "code_identity_sha256": "c20ebb39d9f54260bea68d32d7f9690091af4e31d395f2e117e3eed46282c9fe",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "An illustrative placement of the worked first building on the lot: a footprint as wide as the full street frontage and as deep as the plate (the zoning floor area per storey) needs, placed in the corner on the street lines. It is drawn on the printed-tax-map basis; the city-map (GIS) outline is used only as a conflict check, and the two bases are never mixed into one figure. The placement is reported on the first building alternative; where a measure needed to place it is missing it is held back (withheld, with no outline).",
+      "exceptions": [
+        "The placement is an illustration, not a design, a dwelling layout or a finding that the building complies, is buildable or is feasible.",
+        "The printed tax map and the city-map outline disagree (the frontage differs by about 3.12 feet); the conflict is reported and neither basis is chosen - a survey or deed would settle it.",
+        "The plate is zoning floor area per storey; the physical floor plate (gross-up, exclusions, wall thickness) is not checked; the rear yard and the zoning lot stay not known."
+      ],
+      "interpretation": "The footprint is a rectangle as wide as the full Northern Boulevard frontage and as deep as the plate needs: the plan depth is the plate (20,150 / 3 = 6,716.67) divided by the frontage, so on the printed-tax-map basis the depth is 6,716.67 / 100.76 = 66.66 ft and the footprint is 100.76 x 66.66 = 6,716.66 sq ft (reconciled with the plate within half a square foot). On that basis the footprint clears the lot line opposite the frontage by 100 - 66.66 = 33.34 ft and stands on the street lines (ZR 23-322 requires no front yard), leaving a back strip wider than the five feet any open area along a side lot line must keep (ZR 23-335(b)); the footprint is about 66.66 percent of the tax rectangle and the maximum residential lot coverage is read by portion (ZR 23-362: 100 percent corner / 80 percent interior). The city-map outline gives a 103.88 ft frontage, a 64.66 ft plan depth and a 35.31 ft back clearance - carried beside the tax-map figures as a conflict, never mixed. The footprint and offsets are computed in placement.py; three_way_document.py, through the thin placement_wiring.py, emits the placement on the first alternative and geometry.py draws the floor plates within the measured lot outline.",
+      "units": "feet and square feet",
+      "measurement_basis": "The placement is on the printed-tax-map basis (PLUTO lotfront/lotdepth); the city-map (GIS) frontage and depth (EPSG:2263 US survey feet, measured from the prepared outline and the lot-reach measure) are a conflict check only. See the measurement-basis record; the two bases are never mixed in one figure.",
+      "behaviour": {
+        "tested": [
+          "The document places the first building alternative: building_alternatives[0].placement is a placed placement with the footprint outline, the printed-tax-map basis, the checks and the conditions; geometry.floor_plates draws three plates within the lot outline (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The dimensioned footprint, section and offsets are drawn on the scenario sheet by a later task; this entry records the placement data the sheet reads."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "Plan depth and footprint from the plate and the frontage (the footprint outline)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "The footprint stands on the street lines - no front yard required (ZR 23-322)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "In the districts indicated, no #front yard# requirements shall apply.",
+          "capture_snapshot_id": "zr-23-322",
+          "capture_digest": "2a5af75847b73f8238936cbc9818eef0b76102e588be741254604d0a2d8c2c3e"
+        },
+        {
+          "figure": "A side open area must be at least five feet wide (ZR 23-335)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "for #zoning lots# containing all other types of #residences#, no #side yards# shall be required.",
+          "capture_snapshot_id": "zr-23-335",
+          "capture_digest": "31b67b9d47eca82cb93e1b06db908b20f1ad7f159c2b4306d78248e5fb02fcf2"
+        },
+        {
+          "figure": "Maximum residential lot coverage by portion (ZR 23-362)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #lot coverage# for #interior lots# or #through lots# shall be 80 percent and the maximum #residential# #lot coverage# for #corner lots# shall be 100 percent.",
+          "capture_snapshot_id": "zr-23-362",
+          "capture_digest": "f8370a389af6ffde27b0991b456868be6d9312a67df07e8c5864ea193b40acd9"
+        },
+        {
+          "figure": "The city-map (GIS) outline is a conflict check only, never mixed with the printed-tax-map figure",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "docs/research/evidence-records/NB-04-lot-dimensions-basis.json (the four-measure basis)",
+        "docs/reference-cases/R6B/cases/placement-building-b.json (the worked placement, step P8)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Not run",
+        "tested_commit": "",
+        "tested_on": "",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "",
+        "evidence": "docs/zoning-rule-review/evidence/calc-first-placement.txt",
+        "tested_code_identity_sha256": "",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": ""
+        },
+        "note": "Its code identity is the four modules that compute (placement.py), emit (three_way_document.py through the thin placement_wiring.py) and draw (geometry.py) the placement. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review of the law."
+      },
+      "revision": 3,
+      "last_changed": "2026-10-15",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The whole-lot coverage stays not known as a single figure (the recorded, tax-map and city-map areas conflict); the placement records the bases side by side and chooses neither.",
+        "The rear yard, the zoning lot and the physical floor plate stay not checked; the dimensioned sheet is drawn by a later task."
+      ],
+      "coverage_gap": "The placement is reported on the first building alternative on the printed-tax-map basis with the city-map outline a conflict check; the whole-lot coverage, the rear yard, the zoning lot and the physical floor plate stay not known or not checked.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "zoning_floor_area_sqft = 20150 (the worked building's floor area)",
+        "storeys = 3",
+        "printed-tax-map frontage 100.76 ft and depth 100 ft (PLUTO lotfront/lotdepth)",
+        "city-map (GIS) frontage 103.88 ft and depth 99.97 ft (conflict check only)"
+      ],
+      "formula": "plan depth = plate / frontage; footprint = plan depth x frontage; back clearance = depth - plan depth; the GIS figures are computed the same way as a conflict check",
+      "rounding": "round half up to two decimals; the footprint reconciles with the plate within half a square foot (no single figure is forced)",
+      "example": {
+        "description": "The illustrative placement of the three-storey Building B on the benchmark lot (215-16 Northern Boulevard): the footprint on the printed-tax-map basis reconciled with the plate, its offsets, and the city-map outline carried beside it as a conflict.",
+        "inputs": {
+          "zoning_floor_area_sqft": 20150,
+          "storeys": 3,
+          "tax_frontage_ft": 100.76,
+          "tax_depth_ft": 100,
+          "gis_frontage_ft": 103.88,
+          "gis_depth_ft": 99.97
+        },
+        "expected": {
+          "values": {},
+          "basis_kind": "reference_case",
+          "basis": "placement-building-b.json: the plate is 6,716.67 (plate); the footprint on the printed-tax-map basis is 100.76 x 66.66 = 6,716.66, 0.01 under the plate (footprint-tax-map); the placement clears the back lot line by 33.34 ft and stands on the street lines (placement-tax-map); the city-map outline gives 103.88 ft frontage, 64.66 ft plan depth and 35.31 ft back clearance (+1.97), a conflict the readers leave unresolved (gis-conflict-check, not known as a single figure); the maximum lot coverage is read by portion, 100 percent corner / 80 percent interior (lot-coverage-max). Both step-P8 readings agree on the tax-map figures; the GIS conflict stays not known.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/placement-building-b.json",
+              "row_id": "plate"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/placement-building-b.json",
+              "row_id": "footprint-tax-map"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/placement-building-b.json",
+              "row_id": "placement-tax-map"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/placement-building-b.json",
+              "row_id": "gis-conflict-check"
+            },
+            {
+              "case_file": "docs/reference-cases/R6B/cases/placement-building-b.json",
+              "row_id": "lot-coverage-max"
+            }
+          ],
+          "prepared_by": "worked independently by two sealed-folder AI agents (step P8); not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "plan_depth_ft": 66.66,
+            "footprint_sqft": 6716.66,
+            "tax_back_clearance_ft": 33.34,
+            "gis_back_clearance_ft": 35.31,
+            "frontage_conflict_ft": 3.12
+          },
+          "state": "available_conditional",
+          "engine_values": {},
+          "engine_note": "The program places the footprint on the printed-tax-map basis and carries the city-map figures beside it as a conflict, exactly as the two readings do; the two bases are never mixed and neither is chosen, so the placement stays conditional."
+        },
+        "agrees": null
+      }
+    },
+    {
+      "entry_id": "calc-area-allocation",
+      "entry_kind": "calculation",
+      "title": "Illustrative area allocation: residential floor area split into apartment and other area at one stated share (benchmark lot)",
+      "family": "area_allocation",
+      "law": [
+        {
+          "section": "23-22",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-22",
+          "snapshot_id": "zr-23-22",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-22.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-11T00:00:00Z",
+          "content_digest_sha256": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        }
+      ],
+      "combines_rule_ids": [
+        "r6-r12-residential-far"
+      ],
+      "code_modules": [
+        {
+          "path": "services/api/app/scenario/three_answers/area_allocation.py",
+          "sha256": "c644ec2f243fb95c0e1ca7ced643546039dab21988104e4e63e8f62176c768a4"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/three_way_document.py",
+          "sha256": "cb9695bf9e83f6d4fc75f0fbaabdcfba4ab59f29281730cd73c7fe05788db751"
+        },
+        {
+          "path": "services/api/app/scenario/three_answers/placement_wiring.py",
+          "sha256": "ab9b2a52ec3e57054e72aafb7b5b149d27edf3571715def119c83e610903f76c"
+        }
+      ],
+      "code_identity_sha256": "fa627706134760304fb213b64de36c98da3e9238f2924f2f2d605ba6469fa98b",
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "An illustrative split of a worked building's residential floor area into apartment area and other (core, circulation, walls, services) area at one stated share. The floor area is the legal maximum (ZR 23-22); the 0.60 apartment-area share is a preliminary assumption chosen by the owner (the low end of a 0.60-0.75 range), not law. It is reported for every building alternative that has a floor area, placed or not; its fitted flag follows whether the building is placed.",
+      "exceptions": [
+        "The share is a preliminary assumption, editable; apartment area plus other area equals the total, and the per-storey figures sum to the plate.",
+        "Nothing here is a count of apartments, a room, a core, a wall or a stair position, and nothing is called complies, buildable, optimal or feasible.",
+        "The allocation's other-area total happens to share a numeral with the coverage lower bound (8,060); they are different quantities on different bases and are never summed or equated."
+      ],
+      "interpretation": "apartment area = residential floor area x share; other area = total - apartment. For Building B (20,150 sq ft) at the one stated 0.60 share (a preliminary assumption): apartment 20,150 x 0.60 = 12,090.00 sq ft (4,030.00 per storey), other 20,150 - 12,090 = 8,060.00 sq ft (2,686.67 per storey), total 20,150.00; apartment plus other equals the total and the per-storey figures sum to the plate 6,716.67. The split is built in area_allocation.py and emitted on every alternative through three_way_document.py (the thin wiring in placement_wiring.py); its fitted flag is true only when that building's placement is placed (the way-layer rule in results_way_rules.py enforces the same thing).",
+      "units": "square feet",
+      "measurement_basis": "The residential floor area is the zoning floor area (the estimate's own measure); no physical floor plate (gross-up, exclusions or wall thickness) is worked. See the measurement-basis record.",
+      "behaviour": {
+        "tested": [
+          "The document splits every alternative's residential floor area at the one stated share: building_alternatives[0].area_allocation carries apartment 12,090.00, other 8,060.00, total 20,150.00, fitted true, with the fixed conversion statement (test: test_document_actuals_match_the_recorded_fixture)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The share is shown with the value used but not yet changeable on the screen."
+        ]
+      },
+      "legal_vs_design": [
+        {
+          "figure": "Residential floor area, the total split (the legal maximum, ZR 23-22)",
+          "kind": "LEGAL_REQUIREMENT",
+          "quoted_text": "the maximum #residential# #floor area ratio# shall be as set forth in the following table",
+          "capture_snapshot_id": "zr-23-22",
+          "capture_digest": "943b65f9005df8bd4d868e9656998d2c831faabc0df19d280fb1f9b98df1a38e"
+        },
+        {
+          "figure": "Apartment-area share 0.60 (a preliminary assumption chosen by the owner)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        },
+        {
+          "figure": "The split is the apartment/other area, not a count of apartments, rooms or walls (a design illustration)",
+          "kind": "DESIGN_ASSUMPTION",
+          "quoted_text": "",
+          "capture_snapshot_id": "",
+          "capture_digest": ""
+        }
+      ],
+      "linked_records": [
+        "docs/measurement-basis/MEASUREMENT_BASIS.md (the measurement basis; linked, not copied)",
+        "docs/reference-cases/R6B/cases/placement-building-b.json (the worked allocation, step P8)"
+      ],
+      "test_links": [
+        "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
+      ],
+      "automated_tests": {
+        "status": "Not run",
+        "tested_commit": "",
+        "tested_on": "",
+        "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
+        "counts": "",
+        "evidence": "docs/zoning-rule-review/evidence/calc-area-allocation.txt",
+        "tested_code_identity_sha256": "",
+        "tested_test_file_sha256s": {
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": ""
+        },
+        "note": "Its code identity is area_allocation.py, the emitter (three_way_document.py) and the thin placement_wiring.py. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review."
+      },
+      "revision": 3,
+      "last_changed": "2026-10-15",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_code_identity_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The share is shown with the value used but not yet changeable on the screen.",
+        "The allocation is an illustration at one stated assumption; it establishes no dwelling-unit count, no net or rentable area, no physical floor plate and no layout."
+      ],
+      "coverage_gap": "The area allocation is reported for every alternative with a floor area at the one stated 0.60 share (a preliminary assumption); its fitted flag follows the placement; the share is shown but not yet changeable on the screen.",
+      "draft_note": "This is the program's own draft reading, worked by an AI agent. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice (ADR-007).",
+      "inputs": [
+        "residential_floor_area_sqft = 20150 (the worked building's floor area)",
+        "apartment-area share = 0.60 (a preliminary assumption; the low end of 0.60-0.75)"
+      ],
+      "formula": "apartment area = residential floor area x 0.60 (a preliminary assumption); other area = total - apartment",
+      "rounding": "round half up to two decimals; apartment + other = total within the display rounding",
+      "example": {
+        "description": "The illustrative area allocation of the three-storey Building B on the benchmark lot at the one stated 0.60 apartment-area share.",
+        "inputs": {
+          "residential_floor_area_sqft": 20150,
+          "share": 0.6
+        },
+        "expected": {
+          "values": {
+            "apartment_area_sqft": "12090.00",
+            "other_area_sqft": "8060.00",
+            "total_sqft": "20150.00"
+          },
+          "basis_kind": "reference_case",
+          "basis": "placement-building-b.json#area-allocation: at the one stated 0.60 apartment-area share, apartment 12,090.00 sq ft (4,030.00 per storey) and other 8,060.00 sq ft (2,686.67 per storey); apartment plus other equals the total 20,150.00 and the per-storey figures sum to the plate 6,716.67. Both step-P8 readings agree. The 0.60 share is a preliminary assumption chosen by the owner.",
+          "cited_rows": [
+            {
+              "case_file": "docs/reference-cases/R6B/cases/placement-building-b.json",
+              "row_id": "area-allocation"
+            }
+          ],
+          "prepared_by": "worked independently by two sealed-folder AI agents (step P8); not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "apartment_area_sqft": 12090.0,
+            "other_area_sqft": 8060.0,
+            "total_sqft": 20150.0
+          },
+          "state": "available",
+          "engine_values": {},
+          "engine_note": ""
+        },
+        "agrees": true
       }
     }
   ],
@@ -5151,6 +5528,132 @@
       "event": "implementation_changed",
       "summary": "The register-calculations test file bound to this entry changed (M5-T170 updated the rule-entry count to 26 after adding the three draft envelope rule entries); the recorded run is no longer current for the stored identity, so automated tests read 'Not run' until re-run. The calculation's code and arithmetic are unchanged.",
       "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 60,
+      "date": "2026-10-15",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 11,
+      "event": "implementation_changed",
+      "summary": "geometry.py now draws the illustrative floor plates once a building is placed (M5-T172); the by-portion lot-coverage reading is unchanged - the module's lot-coverage path and its numbers are identical. Code identity resynced; no reading changed.",
+      "by": "backend-engineer (M5-T172)"
+    },
+    {
+      "seq": 61,
+      "date": "2026-10-15",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 14,
+      "event": "implementation_changed",
+      "summary": "three_way_document.py now also emits the placement and the area allocation and populates the floor-by-floor table when a building is placed (M5-T172); the preliminary-estimate path and its figures are unchanged. Code identity resynced; no reading changed.",
+      "by": "backend-engineer (M5-T172)"
+    },
+    {
+      "seq": 62,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 15,
+      "event": "implementation_changed",
+      "summary": "three_way_document.py now also emits the placement and the area allocation when a building is placed (M5-T172); the first-building-option assembly and its six-step figures are unchanged. Code identity resynced; no reading changed.",
+      "by": "backend-engineer (M5-T172)"
+    },
+    {
+      "seq": 63,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-placement",
+      "revision": 1,
+      "event": "created",
+      "summary": "Calculation entry created (M5-T172): the illustrative placement of the first building, with step P8 (placement-building-b.json) as the worked example; the expected side is the reference case, never a program run; no human verdict is entered.",
+      "by": "backend-engineer (M5-T172)"
+    },
+    {
+      "seq": 64,
+      "date": "2026-10-15",
+      "entry_id": "calc-area-allocation",
+      "revision": 1,
+      "event": "created",
+      "summary": "Calculation entry created (M5-T172): the illustrative area allocation of the first building, with step P8 (placement-building-b.json) as the worked example; the expected side is the reference case, never a program run; no human verdict is entered.",
+      "by": "backend-engineer (M5-T172)"
+    },
+    {
+      "seq": 65,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-placement",
+      "revision": 2,
+      "event": "implementation_changed",
+      "summary": "The placement wiring (PlacementInputs, _apply_placement, _apply_area_allocation) moved out of three_way_document.py into the new thin module placement_wiring.py (M5-T172 round 2 / S12), so three_way_document.py stays under the 750-SLOC justification line; the emitted document is byte-identical. placement_wiring.py is added to the code identity and three_way_document.py's hash is resynced. No reading, value or arithmetic changed.",
+      "by": "backend-engineer (M5-T172 round 2)"
+    },
+    {
+      "seq": 66,
+      "date": "2026-10-15",
+      "entry_id": "calc-area-allocation",
+      "revision": 2,
+      "event": "implementation_changed",
+      "summary": "The area-allocation wiring (_apply_area_allocation) moved out of three_way_document.py into the new thin module placement_wiring.py (M5-T172 round 2 / S12); the emitted document is byte-identical. placement_wiring.py is added to the code identity and three_way_document.py's hash is resynced. No reading, value or arithmetic changed.",
+      "by": "backend-engineer (M5-T172 round 2)"
+    },
+    {
+      "seq": 67,
+      "date": "2026-10-15",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 15,
+      "event": "implementation_changed",
+      "summary": "The placement and area-allocation wiring moved out of three_way_document.py into the new thin module placement_wiring.py (M5-T172 round 2 / S12); three_way_document.py's hash is resynced. The preliminary-estimate path and its figures are unchanged. Code identity resynced; no reading changed.",
+      "by": "backend-engineer (M5-T172 round 2)"
+    },
+    {
+      "seq": 68,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 16,
+      "event": "implementation_changed",
+      "summary": "The placement and area-allocation wiring moved out of three_way_document.py into the new thin module placement_wiring.py (M5-T172 round 2 / S12); three_way_document.py's hash is resynced. The first-building-option assembly and its six-step figures are unchanged. Code identity resynced; no reading changed.",
+      "by": "backend-engineer (M5-T172 round 2)"
+    },
+    {
+      "seq": 69,
+      "date": "2026-10-15",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 12,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): geometry.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 70,
+      "date": "2026-10-15",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 16,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 71,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 17,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 72,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-placement",
+      "revision": 3,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): geometry.py, placement_wiring.py, three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
+    },
+    {
+      "seq": 73,
+      "date": "2026-10-15",
+      "entry_id": "calc-area-allocation",
+      "revision": 3,
+      "event": "implementation_changed",
+      "summary": "M5-T172 round 3 (S14/S15): placement_wiring.py, three_way_document.py changed so one predicate (the placement placed AND the plates drawn) decides the page-5 'Where the plan sits on the lot' not-checked line, the area-allocation fitted flag and the scenario sheet's not-placed sentence - never the four lot measures alone (a single-frontage lot is worked out but not placed). The pinned hashes are resynced. No reading, value or arithmetic changed; the benchmark corner-lot output is byte-identical.",
+      "by": "backend-engineer (M5-T172 round 3)"
     }
   ],
   "coverage_gaps": [

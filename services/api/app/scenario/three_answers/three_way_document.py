@@ -56,6 +56,12 @@ from .first_option_results import (
     max_lot_coverage_value_state,
     portions_measurable,
 )
+from .placement_wiring import (
+    PlacementInputs,
+    _apply_area_allocation,
+    _apply_placement,
+    _placement_drawn,
+)
 from .rear_yard_checks import RearYardAnalysis
 from .result_way_inputs import (
     COVERAGE_KEY,
@@ -111,8 +117,10 @@ __all__ = [
     "USER_CHOICE_KEYS",
     "USER_ENTERED_FLOOR_TO_FLOOR_STATEMENT",
     "USER_SELECTED_HOUSING_PROGRAM_STATEMENT",
+    "PlacementInputs",
     "emit_three_way_document",
 ]
+
 
 CONTRACT_VERSION_THREE_WAY = "1.3.0"
 # The additive version the document declares once it carries a first-building-option block
@@ -525,6 +533,7 @@ def _apply_first_option(
     lot_area: LotAreaFigures | None = None,
     rear_yard_applied: bool = False,
     street_wall_applied: bool = False,
+    placement_applied: bool = False,
 ) -> None:
     """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks WHENEVER the
     floor-area allowance is shown (the engine ran and the recorded lot area is known).
@@ -608,6 +617,7 @@ def _apply_first_option(
         way_conditions=tuple(c.to_dict() for c in conditions),
         rear_yard_applied=rear_yard_applied,
         street_wall_applied=street_wall_applied,
+        placement_applied=placement_applied,
     ))
 
     # coverage_by_portion is emitted whenever the area agreement is determinate: a caller-threaded
@@ -734,6 +744,7 @@ def emit_three_way_document(
     zoning_lot: ZoningLotCitation | None = None,
     rear_yard_analysis: RearYardAnalysis | None = None,
     envelope_analysis: EnvelopeAnalysis | None = None,
+    placement_inputs: PlacementInputs | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
@@ -767,7 +778,13 @@ def emit_three_way_document(
     ``lot_outline_available`` (M5-T150, S2/R896), when the caller threads it: False withholds the
     WHOLE geometry block (no measured tax-map outline, so no site plan is drawn and the geometry
     says why) - never a rectangle sized to the recorded lot area; True / None leave the measured
-    lot outline the engine drew. The engine, disclosure builder and schema stay read-only."""
+    lot outline the engine drew. The engine, disclosure builder and schema stay read-only.
+
+    ``placement_inputs`` (M5-T172), when threaded, places the first alternative: build_placement
+    makes building_alternatives[0].placement, build_area_allocation splits every alternative's
+    floor area at the one stated share, geometry.floor_plates becomes the drawn footprint (so the
+    not-placed sentence clears and the kit draws plates, readers.py unedited), and 1.5.0 declared.
+    When None (the live route and every direct-transform test) the document is byte-identical."""
     doc = copy.deepcopy(document)
     doc["contract_version"] = CONTRACT_VERSION_THREE_WAY
 
@@ -828,10 +845,15 @@ def emit_three_way_document(
     # by-portion areas when threaded (ruling W1/W13: AGREE shows the footprint and building A).
     # rear_yard_applied (round 4, R136) gates page 6's corner-lot rear-yard not-checked line so it
     # agrees with page 8: kept on a 1.4.0 document, dropped once ZR 23-344 is applied (1.5.0).
+    # placement_applied gates the page-5 'Where the plan sits on the lot' not-checked line (and the
+    # fit-note tail) on the actual placed-AND-drawn outcome - the four lot measures present AND the
+    # geometry supporting the corner footprint (_placement_drawn), the same predicate the plates
+    # draw on - never the four measures alone (S15): a single-frontage lot keeps the line.
     _apply_first_option(
         doc, ways, document, corner_areas=corner_areas, lot_area=lot_area,
         rear_yard_applied=rear_yard_analysis is not None,
         street_wall_applied=_street_wall_applied(envelope_analysis),
+        placement_applied=_placement_drawn(doc.get("geometry"), placement_inputs),
     )
 
     # The additive contract-1.5.0 rear-yard emission (M5-T167 steps 3-4). Opt-in: only when the
@@ -840,6 +862,13 @@ def emit_three_way_document(
     # The additive contract-1.5.0 envelope emission (M5-T170): the street-wall, setback and
     # side-yard rows, the envelope constraint lines and the street-width input_facts. Opt-in.
     _apply_envelope(doc, envelope_analysis)
+    # The additive contract-1.5.0 placement and area allocation (M5-T172): the first alternative's
+    # footprint on the lot, the drawn floor plates, and every alternative's area split. The thin
+    # wiring lives in placement_wiring.py (round 2 / S12); the emitted document is byte-identical.
+    # Opt-in.
+    if placement_inputs is not None:
+        _apply_placement(doc, placement_inputs, contract_version=CONTRACT_VERSION_REAR_YARD)
+        _apply_area_allocation(doc, contract_version=CONTRACT_VERSION_REAR_YARD)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)

@@ -249,17 +249,28 @@ def test_s2_tolerance_is_one_hundredth_of_a_foot() -> None:
 
 # =========================================================================== S3
 def test_s3_not_placed_sentence_scenario_only_legend_on_site() -> None:
-    doc = benchmark()
-    assert readers.building_not_placed(doc) is True  # the document gives no floor plate
     line = readers.NOT_PLACED_LINE
     # the fixed sentence, not spliced from the document's reason text (fix 4).
     assert line == ("No building is placed on this plan yet: the program does not yet "
                     "work out where a building sits on the lot.")
+    # M5-T172: the benchmark now places building B (its floor plates are drawn), so the
+    # not-placed sentence is GONE from the scenario sheet. The site close-frame context map
+    # still carries the 'No building placed' legend (that map draws no building massing).
+    placed = benchmark()
+    assert readers.building_not_placed(placed) is False
+    placed_html = build_report_html(placed, map_context=map_context(), env=_LANE_E)
+    assert line not in visible_text(placed_html[placed_html.index('id="scenario-B"'):])
+    assert "No building placed" in visible_text(_site_section(placed_html))
+    # A not-placed document (floor plates withheld) still shows the sentence on the scenario
+    # sheet ONLY; the site page shows the 'No building placed' legend entry instead (M5-T166
+    # S8). Kept as explicit not-placed coverage now the benchmark is placed (M5-T172 S13).
+    doc = copy.deepcopy(placed)
+    doc["geometry"]["floor_plates"] = {
+        "status": "not_available", "reason": "x", "reason_kind": "rule_not_implemented"}
+    assert readers.building_not_placed(doc) is True  # the document gives no floor plate
     html = build_report_html(doc, map_context=map_context(), env=_LANE_E)
     site = _site_section(html)
     scenario = html[html.index('id="scenario-B"'):]
-    # M5-T166 S8: the not-placed sentence stays on the scenario sheet ONLY; the site
-    # page shows the 'No building placed' legend entry on the close frame instead.
     assert line not in visible_text(site)
     assert line in visible_text(scenario)
     assert "No building placed" in visible_text(site)

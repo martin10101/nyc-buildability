@@ -169,7 +169,10 @@ class FirstOptionInputs:
     conditions the floor-area answer already carries. ``rear_yard_applied`` is True when the engine
     applied ZR 23-344 to this document (it carries a 1.5.0 rear_yard block); False (the default)
     when it did not (a 1.4.0 document). It gates the corner-lot rear-yard not-checked line so page 6
-    and page 8 agree on every document (M5-T167 round 4, R136)."""
+    and page 8 agree on every document (M5-T167 round 4, R136). ``placement_applied`` is True when
+    the engine placed the building on the lot (a 1.5.0 document carrying the placement); it drops
+    the 'Where the plan sits on the lot' not-checked line so the scenario agrees with the placed
+    footprint (M5-T172)."""
 
     allowance_sqft: float | None
     recorded_lot_area_sqft: float | None
@@ -183,6 +186,7 @@ class FirstOptionInputs:
     way_conditions: tuple[dict, ...] = ()
     rear_yard_applied: bool = False
     street_wall_applied: bool = False
+    placement_applied: bool = False
 
 
 @dataclass(frozen=True)
@@ -510,11 +514,20 @@ def _fit_note(inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str | 
     if fit is None or inp.recorded_lot_area_sqft is None:
         return None
     bound, plan = fit
+    # The trailing clause names where the building sits on the lot as not worked ONLY until a
+    # placement is worked (M5-T172): once the engine placed the building (placement_applied) the
+    # footprint sits on the lot, so the clause drops and the fit note agrees with the placed
+    # footprint; the plan is still checked against coverage only (the bound is a lower bound).
+    tail = (
+        "the other items listed as not checked are not worked."
+        if inp.placement_applied
+        else "where the building sits on the lot and the other items listed as not checked "
+        "are not worked."
+    )
     return (
         f"The plan of {_sqft(plan)} fits the lot coverage even at the lowest applicable ratio: "
         f"80 percent of the recorded lot area ({_sqft(inp.recorded_lot_area_sqft)}) is "
-        f"{_sqft(bound)}, at least the plan. This checks the plan against coverage only; where "
-        "the building sits on the lot and the other items listed as not checked are not worked."
+        f"{_sqft(bound)}, at least the plan. This checks the plan against coverage only; {tail}"
     )
 
 
@@ -527,7 +540,11 @@ def _not_checked(inp: FirstOptionInputs) -> list[str]:
     rows: list[str] = []
     if not inp.rear_yard_applied and inp.lot_type == "corner":
         rows.append(_NOT_CHECKED_REAR_YARD)
-    rows.append(_NOT_CHECKED_BASE[0])  # "Where the plan sits on the lot"
+    # "Where the plan sits on the lot" is kept only until a placement is worked (M5-T172): when the
+    # engine placed the building (a 1.5.0 document carrying building_alternatives[].placement) the
+    # footprint sits on the lot, so the line is dropped and page 5 agrees with the placed footprint.
+    if not inp.placement_applied:
+        rows.append(_NOT_CHECKED_BASE[0])  # "Where the plan sits on the lot"
     if not inp.street_wall_applied:
         rows.append(_NOT_CHECKED_STREET_WALL)
     rows.append(_NOT_CHECKED_BASE[1])  # "Parking, loading and bicycle requirements"

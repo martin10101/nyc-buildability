@@ -209,6 +209,18 @@ def embed_map(
     return Embedded(svg=size_svg_to_points(svg), caption=caption, notes=note)
 
 
+def site_plan_draws_placed_footprint() -> bool:
+    """Whether the report's site plan actually RENDERS the placed building footprint
+    (M5-T172 S14). The site plan (page 4, the maps context close frame drawn by
+    ``drawings.maps.site_context_plan``) does NOT draw it on this head: it still carries
+    the 'No building placed' legend and draws no footprint polygon - drawing it is
+    M5-T173 part B. So the placed-on-site status reads 'Worked out; not drawn', never
+    'Shown on the site plan', until the footprint is actually drawn. This is the single
+    named predicate M5-T173 part B switches on (it reads the scene's drawn state, never a
+    guess); the chart's text follows it so page 5 never claims a drawing page 4 lacks."""
+    return False
+
+
 def allowance_bar_chart_svg(
     allowance_display: str | None,
     allowance_value: float | None,
@@ -219,10 +231,13 @@ def allowance_bar_chart_svg(
     """A compact horizontal bar chart distinguishing THREE things on ONE zero-based
     scale (R018/R020): the floor-area allowance, each worked building's scheduled
     area, and whether a building is placed on site. The placed-on-site row is a status,
-    never a bar: "Not demonstrated" when nothing is placed (not a zero-height bar) and
-    "Shown on the site plan" when one is - so the chart never prints two equal bars.
-    Returns ``None`` when there is no allowance to chart. Every printed number is a
-    document figure passed in."""
+    never a bar, with three honest states: "Not demonstrated" when nothing is placed
+    (not a zero-height bar); "Worked out; not drawn" when the engine placed the building
+    but the site plan does not yet draw the footprint (M5-T173 part B); and "Shown on the
+    site plan" only once :func:`site_plan_draws_placed_footprint` is true (the drawing is
+    actually in the report) - so page 5 never claims a placement the site plan contradicts
+    and the chart never prints two equal bars. Returns ``None`` when there is no allowance
+    to chart. Every printed number is a document figure passed in."""
     if not isinstance(allowance_value, (int, float)) or allowance_value <= 0:
         return None
     bars = [b for b in buildings if isinstance(b.get("scheduled_value"), (int, float))]
@@ -246,7 +261,15 @@ def allowance_bar_chart_svg(
         rows.append(_bar(y, track, f"{name} scheduled", text, b["scheduled_value"], scale))
         y += 22
     # placed-on-site: a status, never a bar (an unknown is never a zero-height bar, R020).
-    placed_text = "Shown on the site plan" if placed_on_site else "Not demonstrated"
+    # Three honest states (S14): not placed -> "Not demonstrated"; placed but the site plan
+    # does not yet draw the footprint -> "Worked out; not drawn"; placed AND drawn -> "Shown
+    # on the site plan" (only when site_plan_draws_placed_footprint() is true).
+    if not placed_on_site:
+        placed_text = "Not demonstrated"
+    elif site_plan_draws_placed_footprint():
+        placed_text = "Shown on the site plan"
+    else:
+        placed_text = "Worked out; not drawn"
     rows.append(_status_row(y, "Placed on site", placed_text))
     y += 22
     height = y + 4

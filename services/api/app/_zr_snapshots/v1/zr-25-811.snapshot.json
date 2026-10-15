@@ -202,5 +202,6 @@
     "This is the section the reviewer named (source-055). The site shows 25-811 'Enclosed bicycle parking spaces'; its requirement table lists the required amount per #use#. No reading is drawn here.",
     "Nothing in this record is a Verified zoning determination (ADR-007: a rule citing it ships under the standing not-professionally-reviewed label with a direct source link; professional review is advisory)."
   ],
+  "table_digest_sha256": "5c639053099b242c7706e0e73155b63ef28d6f3efbaee8eea600ae8c3ca39c51",
   "content_digest_sha256": "fe55907253151346aacc3f0bef4e0f37b65204c0ad206c0d3edb4970c0ad473b"
 }

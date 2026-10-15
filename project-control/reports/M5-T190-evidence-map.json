@@ -1,0 +1,29 @@
+{
+ "task_id": "M5-T190",
+ "material_commits": [
+  "26d1d4bf (builder (cherry-pick of cb226c05): run_identity._FINGERPRINT_EXCLUDE gains option_id and study_id beside results_id and computed_at; the three prose places corrected; three new tests (all four run fields differ, same fingerprint; a document without the two ids, unchanged; the live results route twice, same fingerprint); the producer report)"
+ ],
+ "claim_seam_head": "8d7cf91b",
+ "files_changed": [
+  "project-control/reports/M5-T190-producer-report.md",
+  "services/api/app/drawings/report/run_identity.py",
+  "services/api/tests/drawings/report/test_report_run_identity.py"
+ ],
+ "what_did_not_change": "No value, label, text or drawing on any report page changed except that the document fingerprint is now the same for the same document; no evidence record or review-register entry is touched (neither file is pinned).",
+ "known_limits": [
+  "The exclusion list fits contract 1.5.0 as emitted; a future contract adding another per-run id or timestamp would bring the drift back, and the live two-run test fails the day it happens (G3 F1, G4 advisory 2)."
+ ],
+ "checks_at_material_head": [
+  "producer at cb226c05: ruff exit 0; test_report_run_identity.py 11 passed; tests/drawings/report 225 passed; modularity exit 0; lane coverage exit 0; whole api suite 10084 passed, 8 skipped, exit 0; mutation: the two-field tuple turns S1, S3, S4 red; before the fix two runs gave c25301212bec and 89076e8eb7e1",
+  "G3 code-reviewer PASS (a full leaf diff of two live documents: exactly computed_at, option_id, results_id, study_id differ; nested value changes still move the hash); G4 qa-engineer PASS (report built twice: one fingerprint b68f8a1f049d; floor area 20150 -> 20151 moves it to 2f401a741436)",
+  "CI run 38756933248 at 21c2d3c1 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R028": [
+   "The run identity identifies what generated the report: the document fingerprint in the appendix's run identity column is now the same on every run of the same request (option_id and study_id, minted per run with uuid4 in results_read.py, are left out of the hash beside results_id and computed_at), so two prints of the same results can be matched; the commit, revision and computed date stay beside it (run_identity.py; test_s4 live two-run test)."
+  ],
+  "D-094-R058": [
+   "Each result and diagram can be shown to come from one result document: the fingerprint is stable for one document and still moves on any real value change (G4: floor area 20,150 to 20,151 moved b68f8a1f049d to 2f401a741436; G3: a nested answer change moves it), which it could not prove before when it changed on every print."
+  ]
+ }
+}

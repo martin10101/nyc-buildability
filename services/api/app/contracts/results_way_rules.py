@@ -19,6 +19,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
 __all__ = [
@@ -42,6 +43,12 @@ CONTRACT_VERSIONS_WITH_WAY_LAYER = frozenset({"1.3.0", "1.4.0", "1.5.0"})
 # apartment + other must equal total within the two-decimal display rounding (each figure is shown
 # to two decimals, so their sum can differ from a two-decimal total by at most 0.005 + 0.005).
 _AREA_ROUNDING_TOLERANCE = 0.01 + 1e-9
+
+# The apartment area must equal the share applied to the total within the two-decimal display
+# rounding (backlog DB-248): the stored apartment figure is the one stated share times the total,
+# rounded half up to two decimals, so apartment and the share can never disagree beyond that
+# rounding. A larger gap means a split that is not the stated share - refused here.
+_AREA_SHARE_TOLERANCE = 0.01 + 1e-9
 
 # The three answers that may carry a value_states way-layer (results.schema.json
 # answers: floor_area_allowance, permitted_envelope and the building option).
@@ -114,7 +121,9 @@ def _building_alternative_violations(document: Mapping[str, Any]) -> list[WayRul
     1. ``fitted`` may be true ONLY when that building's ``placement`` is status ``placed`` -
        an allocation zones inside a footprint only when one is placed;
     2. ``apartment_area_sqft`` + ``other_area_sqft`` must equal ``total_sqft`` within the
-       two-decimal display rounding - the split never invents or loses area.
+       two-decimal display rounding - the split never invents or loses area;
+    3. ``apartment_area_sqft`` must equal ``share`` applied to ``total_sqft`` within that same
+       rounding (backlog DB-248) - the split shown is the one stated share, never a different one.
 
     A 1.3.0 / 1.4.0 document carries no ``area_allocation``, so this returns nothing there.
     The shape of each field is already guaranteed by the schema run before this rule.
@@ -147,6 +156,7 @@ def _building_alternative_violations(document: Mapping[str, Any]) -> list[WayRul
         apartment = allocation.get("apartment_area_sqft")
         other = allocation.get("other_area_sqft")
         total = allocation.get("total_sqft")
+        share = allocation.get("share")
         if all(
             isinstance(value, (int, float)) and not isinstance(value, bool)
             for value in (apartment, other, total)
@@ -160,7 +170,28 @@ def _building_alternative_violations(document: Mapping[str, Any]) -> list[WayRul
                     f"does not equal total ({total}) within the display rounding",
                 )
             )
+        # (DB-248) the apartment figure IS the stated share applied to the total: a split that does
+        # not match its own share by more than the display rounding is refused, so the share shown
+        # beside the two-zone illustration always equals the area split drawn.
+        if all(
+            isinstance(value, (int, float)) and not isinstance(value, bool)
+            for value in (apartment, total, share)
+        ) and abs(apartment - _round2(total * share)) > _AREA_SHARE_TOLERANCE:
+            out.append(
+                WayRuleViolation(
+                    "building_alternatives",
+                    key,
+                    "allocation_share_mismatch",
+                    f"building {key!r}: area_allocation apartment ({apartment}) is not the stated "
+                    f"share ({share}) of the total ({total}) within the display rounding",
+                )
+            )
     return out
+
+
+def _round2(value: float) -> float:
+    """Round half up to two decimals (the area allocation's own rounding)."""
+    return float(Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
 
 
 def _shown_keys(answer: Mapping[str, Any]) -> list[str]:
