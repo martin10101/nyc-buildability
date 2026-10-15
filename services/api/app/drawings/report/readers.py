@@ -353,11 +353,50 @@ def open_items(results: Mapping) -> list[dict]:
             category = _not_checked_category(text)
             put(category, str(text), str(text), _CHECK_WORD, labels.PENDING_VERIFICATION)
 
+    # M5-T167 (R136/S23): on a 1.5.0 document the rear-yard open item shows the engine's applied
+    # ZR 23-344 result, not the "not yet checked" open check. A 1.4.0 document carries no rear_yard
+    # block, so this is a no-op and the item stays byte-identical to M5-T165's open-check wording.
+    _apply_rear_yard_open_item(by_category, results)
+
     ordered = [by_category[c] for c in _ORDER if c in by_category]
     ordered += [v for c, v in by_category.items() if c not in _ORDER]
     for number, item in enumerate(ordered, start=1):
         item["number"] = number
     return ordered
+
+
+# The open-item status label for the combined rear-yard row's way (the 1.3.0 vocabulary as a plain
+# word). A conditional reading shows as Conditional (owner's six labels); any other way keeps the
+# item's existing label.
+_REAR_YARD_LABEL_BY_WAY = {"conditional": labels.CONDITIONAL}
+
+
+def _rear_yard_open_effect(combined: Mapping) -> str:
+    """A SHORT applied-result effect for the appendix rear-yard open item, read from the combined
+    row's way and sections (the full draft reading is shown on the design page, not repeated here,
+    so the appendix stays within the report's word cap). Never 'not yet checked', never an
+    unconditional 'no rear yard' (R136/S13); it names ZR 23-344(b) and (c)(3)."""
+    way = combined.get("way")
+    lead = "A conditional reading" if way == "conditional" else "A draft reading"
+    return (
+        f"{lead} of the short-block rule ZR 23-344(b) and the adjoining-side-line rule "
+        "ZR 23-344(c)(3): the rear yard is not settled on this lot."
+    )
+
+
+def _apply_rear_yard_open_item(by_category: dict, results: Mapping) -> None:
+    """Rewrite the rear-yard open item from the document's own 1.5.0 rear_yard block (R136): its
+    effect becomes a short applied-result reading and its label follows the combined way. No-op when
+    the document carries no rear_yard block (every 1.4.0 document), so the item stays byte-identical
+    to the open-check wording."""
+    combined = constraint_text.rear_yard_combined(results)
+    if combined is None or "rear_yard" not in by_category:
+        return
+    item = by_category["rear_yard"]
+    item["effect"] = _rear_yard_open_effect(combined)
+    item["status_label"] = _REAR_YARD_LABEL_BY_WAY.get(
+        combined.get("way"), item["status_label"]
+    )
 
 
 def decision_open_items(results: Mapping) -> list[dict]:

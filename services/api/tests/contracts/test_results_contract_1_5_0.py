@@ -188,16 +188,19 @@ def test_new_valid_fixture_is_journey_plus_only_the_new_blocks(fixture: Path) ->
     journey = _load(JOURNEY)
     doc = _load(fixture)
     assert doc["contract_version"] == "1.5.0"
-    assert journey["contract_version"] == "1.4.0"
+    # M5-T167: the journey now declares 1.5.0 too - its own ZR 23-344 rear_yard block and
+    # input_facts were emitted from the corrected engine, so it is no longer a 1.4.0 baseline.
+    assert journey["contract_version"] == "1.5.0"
     assert any(
         key in doc for key in (*_V1_5_0_TOP_BLOCKS, "building_alternatives")
     ), "the fixture must carry at least one 1.5.0 block"
+    # Strip the 1.5.0 blocks from BOTH and compare the shared 1.4.0 core: the synthetic is the
+    # journey plus only the new blocks, so once both are stripped their 1.4.0 cores are equal.
     stripped = _strip_1_5_0_blocks(doc)
-    # Reset the fixture identity and the version bump; everything else must equal the journey.
-    stripped["contract_version"] = journey["contract_version"]
+    journey_core = _strip_1_5_0_blocks(journey)
     for identity in ("results_id", "study_id", "option_id", "computed_at"):
-        stripped[identity] = journey[identity]
-    assert stripped == journey
+        stripped[identity] = journey_core[identity]
+    assert stripped == journey_core
 
 
 # ---------------------------------------------------------------------------

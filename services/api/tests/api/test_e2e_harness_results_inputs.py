@@ -116,12 +116,15 @@ def _normalized(inputs: StudyInputs) -> StudyInputs:
 
 def test_harness_inputs_equal_the_test_trees_benchmark_provider(monkeypatch) -> None:
     """S3: for the recorded Northern lot the harness provider's study inputs equal the inputs the
-    results-route test's own ``benchmark_provider()`` returns, apart from the wall-clock
+    results-route test's own ``benchmark_provider`` returns, apart from the wall-clock
     ``profile_version.generated_at`` (named in ``_normalized``). Built offline from the recorded
-    pack."""
+    pack. M5-T167 round 4 (R136): the harness now carries the recorded DCM street window (so the
+    preview/e2e route emits the engine's 1.5.0 rear-yard result), so compare against
+    ``benchmark_provider(street_on=True)``, which threads the SAME window - the street_data field is
+    part of the field-by-field equality below."""
     _no_network(monkeypatch)
     harness = fixture_api.harness_results_inputs_provider()(NORTHERN_BBL, "cid-harness")
-    bench = benchmark_provider()(NORTHERN_BBL, "cid-bench")
+    bench = benchmark_provider(street_on=True)(NORTHERN_BBL, "cid-bench")
 
     # The one excluded field is genuinely present on both builds (the exclusion is not vacuous)...
     assert harness.property_profile["profile_version"]["generated_at"]

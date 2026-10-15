@@ -203,6 +203,54 @@
   font-weight: 600;
 }
 
+/* ---- The results lead band (D-094 R151 / M5-T181; presentation contract principle 1, page-1 order) ----
+   The results lead the first screen: a FULL-WIDTH band above the detail grid, holding the identity,
+   then the Floor-area allowance beside the legal ceiling and the apartment estimate (.ta-lead-figures),
+   then the one status strip, in the same order report page 1 leads with. The band shares the Results
+   window's size container with the grid below (container-type is on the window content), so it stacks
+   in the same reading order on a narrow screen. Its children carry their own spacing (the identity and
+   strip their bottom margins, the figures row its own), so the band needs no rhythm of its own. No
+   colour literal lives here — the band carries none. */
+.ta-lead {
+  display: block;
+}
+
+/* ---- The results themselves: the allowance card beside the legal ceiling / apartment estimate ----
+   (M5-T181 round 2) They STACK by default and sit SIDE BY SIDE once the Results window is wide enough,
+   measured on the SAME size container as the detail grid below. Side by side, the legal ceiling and
+   the apartment estimate reach the first screen beside the allowance instead of below its full height
+   (D-094 R151 round 2). minmax(0, 1fr) lets either card shrink to its content, so no label clips and
+   the page never scrolls sideways. No colour literal lives here. */
+.ta-lead-figures {
+  display: block;
+}
+
+@container (min-width: 640px) {
+  .ta-lead-figures {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--pt-space-24);
+    align-items: start;
+  }
+
+  /* Side by side the apartment-figures block aligns with the allowance card's top, so its own
+     stacked top margin (kept when the two cards stack) is removed. */
+  .ta-lead-figures > .af-figures {
+    margin-top: 0;
+  }
+}
+
+/* On a phone-width container the property heading steps down one type size (a type token only, no
+   number literal): the long address then wraps to fewer lines, so the allowance headline and the
+   legal ceiling reach the first screen (D-094 R151 round 2). The borough/block/lot sub-line and the
+   facts are unchanged. */
+@container (max-width: 480px) {
+  .ta-identity-lot {
+    font-size: var(--pt-type-section-title-size);
+    line-height: var(--pt-type-section-title-line);
+  }
+}
+
 /* ---- The two-column layout (presentation contract §3; M5-T149 orchestrator addition) ----
    The window content is a size container (set by Part C's floating window). Below 1000 px the two
    regions stack in the same reading order; at 1000 px and up they sit side by side, the answers in
@@ -210,6 +258,8 @@
 
 .ta-layout {
   display: block;
+  /* M5-T181: the detail grid sits BELOW the full-width results lead band; separate them. */
+  margin-top: var(--space-4);
 }
 
 .ta-left,

@@ -1,0 +1,422 @@
+{
+  "task_id": "M5-T167",
+  "title": "Rear yard on a short block (ZR 23-344(b) and (c)(3)) in the engine: a block-frontage measure between bounding streets on each basis (spatial/site_geometry/block_frontage.py), the (b)/(c)(3) checks combined with (a) in rear_yard_checks.py, 1.5.0 rear-yard + input_facts emission with the conditional version bump, the appendix open-item 1.5.0 text moved to readers.py, the G-5 benchmark + the two synthetic 1.5.0 fixtures regenerated from the corrected engine, the G-6 engine-side zoning-lot isolation, and the DB-245 ONE GIS-wording sweep (gis = 'city map outline', never 'tax map'). NB-01 revision 5; NB-03 revision 3; NB-05 code identity.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add the short-block rear-yard analysis to the scenario engine, behaviour-identical elsewhere on 1.4.0. (1) G-6 engine-side zoning-lot isolation: move _zoning_lot_scope_statement and _apply_zoning_lot_scope_row (three_way_document.py:725,:772) into a new three_way_zoning_lot.py, and the zoning-lot cluster _CITATION_STATE_BY_INDEX/_MONTHS/_human_date/_lot_label/_join_lots/zoning_lot_citation (result_way_bridge.py:107-205, NOT the :206+ dataclasses) into a new result_way_zoning_lot.py, with facades so three_way_document.py and result_way_bridge.py keep importing the names (call site result_way_bridge.py:511 unchanged); the moves must NET-SHRINK result_ways.py (~622 SLOC) and three_way_document.py (~679 SLOC), both already above the 600 WARN line; NB-01 revision 5 records the code identity and the G1 isolation decision. (2) A block-frontage measure on street S between its two bounding streets, on each measurement basis, never mixing bases, in a new spatial/site_geometry/block_frontage.py (sibling of frontage.py/depth.py/adjacency.py/live_streets.py), using a street window of at least 230 ft plus half the widths (coverage checked at G1; benchmark centreline separation ~260 ft), at most one added request (live_streets.py / mappluto_window_arcgis.py scope-note docstring only). (3) The (b) and (c)(3) checks in a new scenario/three_answers/rear_yard_checks.py with three states (applies->Conditional; not applicable; not known), combined with the (a) corner waiver and naming each check. (4) Emit the 1.5.0 rear_yard block, the (b) 100-ft line and input_facts (nine bases); add the conditional version-bump following three_way_document.py:121 so a document carrying any 1.5.0 block declares 1.5.0 and one carrying none keeps its version. (5) Build the appendix open-item 1.5.0 rear-yard text in readers.py (moved here by M5-T175's 2026-10-14 scope correction; readers.py ~475 SLOC, headroom): it reads the document's own rear_yard state/way/text and 23-344(b)/(c)(3) conditions, and stays byte-identical to M5-T165's REAR_YARD_OPEN_CHECK wording on a 1.4.0 document (page 8, R136). (6) Replace the fixed texts at first_option_results.py:121 and :509 from the check. (7) Fix the stale register entry (register.json r6b, interpretation :2587, title :2558 broadened to (a)/(b)/(c)(3)) and the rule file (kept as r6b_rear_yard_corner_waiver.rule.json, scope broadened; no rename); promote NB-03 to rev 3 (the only W25 research_status change, G-13). (8) Regenerate the whole G-5 benchmark set AND the two synthetic 1.5.0 fixtures from the corrected engine (R039): the recorded journey gains rear_yard+input_facts and flips to 1.5.0; the two synthetics are re-derived so their shared 1.4.0 core carries the new DB-245 wording, their DB-262 input_facts corrected (9,800->10,075; 10,120.5->10,387.99), their rear_yard_100ft_line geometry (0->182.5) KEPT so M5-T175's accepted test_constraint_overlay.py clip test stays green and unedited; test_results_contract_1_5_0.py's test_new_valid_fixture_is_journey_plus_only_the_new_blocks is reworked to strip the 1.5.0 blocks from BOTH the synthetic and the journey and compare the shared 1.4.0 cores, with :191 asserting the journey now declares 1.5.0. Plus the DB-245 GIS-wording sweep (ONE sweep): the GIS outline is 'city map outline', never 'tax map'/'tax-map outline', across the engine rendered texts (three_way_scope_lines.py:121/125/141; result_ways.py:177; result_way_bridge.py:355/360/366/372; result_way_conditions.py:187/199/202/212/215/474; options.py:45), and the measurement-RANK DISPLAY LABEL 'Approximate - tax map' renamed consistently at inputs.py:235 (drives geometry.measurement.label and the kit site-plan caption), report/readers.py:505 (_BASIS_NAMES), cad/results_dxf_notes.py:67, web three-answers.ts:592/:608, AND the sync twins profile/measurement.py:65 and drawings/kit/scope.py:88 (both carry the same rank label and are kept in step with the card/drawing); page_site_context.py needs NO code edit (its tax-map hits at :33/:214 are comments; the caption flows from the engine label via site_plan.py:337/kit adapter.py:91 and regenerates with the benchmark); the schema enum CODE 'approximate_tax_map' and the legitimate basis 'printed tax map' are NOT renamed; the provenance sentence three_way_document.py:220 and the exact rename-vs-keep string set (incl. the profile/kit sync and the rank-label wording) are pinned at G0. Expected values come only from the M5-T176 R6B reference case and the law, never program output; the benchmark rear-yard answer is not known/Conditional under both Z1 and Z2 (no unconditional 'no rear yard'; 23-344(b) linked).",
+  "business_reason": "D-094 R036/R037/R079/R136 (reviewer next pass + the owner's forwarded review of 2026-10-14): page 6 omitted the separate short-block-frontage exception ZR 23-344(b) and page 8 still prints 'not yet checked'; it needs an explicit engine applicability check feeding the result and the report, and the report/website/CAD must stop calling the GIS city-map outline a 'tax map' (DB-245).",
+  "inputs": [
+    "docs/reference-cases/R6B/short-block-rear-yard.md",
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "services/api/tests/fixtures/benchmark_215_16_northern_window/dcm_street_centerline_window_4073340070_plus1000ft.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/spatial/site_geometry/block_frontage.py",
+    "services/api/app/scenario/three_answers/rear_yard_checks.py",
+    "services/api/app/scenario/three_answers/three_way_zoning_lot.py",
+    "services/api/app/scenario/three_answers/result_way_zoning_lot.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/profile/measurement.py",
+    "services/api/app/drawings/kit/scope.py",
+    "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "services/api/tests/scenario/three_answers/test_rear_yard_short_block.py",
+    "services/api/tests/spatial/test_block_frontage.py",
+    "services/api/tests/contracts/test_results_contract_1_5_0.py",
+    "project-control/reports/M5-T167-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T163",
+    "M5-T164",
+    "M5-T165",
+    "M5-T166",
+    "M5-T171",
+    "M5-T175",
+    "M5-T176",
+    "M5-T179"
+  ],
+  "allowed_paths": [
+    "services/api/app/spatial/site_geometry/block_frontage.py",
+    "services/api/app/spatial/site_geometry/live_streets.py",
+    "services/api/app/connectors/mappluto_window_arcgis.py",
+    "services/api/app/scenario/three_answers/rear_yard_checks.py",
+    "services/api/app/scenario/three_answers/three_way_zoning_lot.py",
+    "services/api/app/scenario/three_answers/result_way_zoning_lot.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/scenario/three_answers/result_way_conditions.py",
+    "services/api/app/scenario/three_answers/inputs.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md",
+    "docs/zoning-rule-review/evidence/r6b-rear-yard-short-block.txt",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "services/api/tests/scenario/three_answers/test_rear_yard_short_block.py",
+    "services/api/tests/spatial/test_block_frontage.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_benchmark.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_corner_interior.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_facts_area_overlay.py",
+    "services/api/tests/scenario/three_answers/test_first_option_results.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_benchmark.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/contracts/test_results_contract_1_5_0.py",
+    "services/api/tests/api/test_e2e_harness_results_inputs.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_results_read_law_examples.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/cad/test_results_dxf.py",
+    "apps/web/e2e/harness/fixture_api.py",
+    "apps/web/e2e/results.flag-on.spec.ts",
+    "apps/web/e2e/results-layout.flag-on.spec.ts",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "project-control/reports/M5-T167-producer-report.md",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/rules/test_zoning_rule_review_register.py",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+    "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+    "services/api/app/api/v1/results_read.py",
+    "services/api/tests/api/test_study_live_geometry.py",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx"
+  ],
+  "forbidden_paths": [
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "packages/contracts/schemas/",
+    "services/api/app/scenario/three_answers/scope.py",
+    "services/api/app/scenario/three_answers/engine.py",
+    "services/api/app/scenario/three_answers/explanations.py",
+    "docs/reference-cases/",
+    "services/api/tests/rules/reference_cases/",
+    "apps/web/src/components/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/zoning_lot_item.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/tests/drawings/maps/test_constraint_overlay.py",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "services/api/app/profile/measurement.py",
+    "services/api/app/drawings/kit/scope.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/cad/results_dxf_notes.py",
+    "apps/web/src/lib/architect/three-answers.ts",
+    "services/api/tests/profile/test_measurement.py",
+    "services/api/app/scenario/three_answers/three_way_scope_lines.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "a frontage per the reference case",
+      "when": "the block-frontage check runs",
+      "then": "229.99 applies; 230.00 and 230.01 do not ('less than 230 feet', strict, M1/M2/M3); 229.996 is never printed as '230.00'"
+    },
+    {
+      "id": "S2",
+      "given": "measurement bases that straddle 230 ft (M4; real-lot-short-dimension)",
+      "when": "the check runs",
+      "then": "the result is not known; no two bases are mixed in one figure"
+    },
+    {
+      "id": "S3",
+      "given": "b-within-100-feet and b-exact-100-ft are unresolved law",
+      "when": "the reach boundary is built",
+      "then": "the method of 'within 100 feet' and the exactly-100.00-ft edge are not known; the inclusive reading (result_way_conditions.py within) is reused ONLY if the step-P7 reading agrees - it does not, so the exact-100-ft edge is not known and an uncovered strip is not known and is not rounded"
+    },
+    {
+      "id": "S4",
+      "given": "99.97 ft GIS reach and 100 ft tax-map depth (step-P7) and the ~101.06 ft figure (an earlier reading, not step-P7)",
+      "when": "they are compared",
+      "then": "shown as a conflict; the within/beyond-100-ft edge stays not settled and the result is Conditional"
+    },
+    {
+      "id": "S5",
+      "given": "a lot fronting only the long side (c-which-lots, M7/M8, real-lot long ~545 ft)",
+      "when": "the check runs",
+      "then": "not applicable; an uncertain edge is not known"
+    },
+    {
+      "id": "S6",
+      "given": "a corner lot (fit-b-on-corner-lot, M7/M8)",
+      "when": "the short dimension is measured",
+      "then": "it is measured from the short street only"
+    },
+    {
+      "id": "S7",
+      "given": "a two-lot zoning-lot case (M8, real-lot-z2)",
+      "when": "the check runs",
+      "then": "it carries the zoning-lot condition, because (b) names the zoning lot's front lot line"
+    },
+    {
+      "id": "S8",
+      "given": "a block bounded by a park, railroad, paper street or the ALLEY (b-block-boundary, M9, real-lot-alley)",
+      "when": "the boundary is read",
+      "then": "not known; incomplete street data is never 'not applicable'"
+    },
+    {
+      "id": "S9",
+      "given": "an irregular/non-parallel block (M10, b-measurement-basis)",
+      "when": "the dimension is measured",
+      "then": "not known"
+    },
+    {
+      "id": "S10",
+      "given": "the district (c-1-vs-c-3; ZR 11-25 unread by both readings)",
+      "when": "applicability is decided",
+      "then": "the R6B-within-'R6 through R12' applicability is Conditional (reading 2's condition, professional confirmation owed); districts plainly outside are not applicable"
+    },
+    {
+      "id": "S11",
+      "given": "overlapping provisions (fit-multiple-apply, fit-b-c-overlap, c-1-vs-c-3)",
+      "when": "the result is named",
+      "then": "the union of (a) and (b) is named; any remainder names (c)(1) or (c)(3)"
+    },
+    {
+      "id": "S12",
+      "given": "figures on different bases",
+      "when": "a sum is attempted",
+      "then": "mixed-basis sums are refused (no street-width quantity adopted as settled - DB-260)"
+    },
+    {
+      "id": "S13",
+      "given": "the benchmark (real-lot-z1 and real-lot-z2 both not known)",
+      "when": "the result is labelled",
+      "then": "the label is Conditional only; there is no unqualified 'no rear yard'; ZR 23-344(b) is linked"
+    },
+    {
+      "id": "S14",
+      "given": "the register and record checks",
+      "when": "they run",
+      "then": "render_review_register.py --check and tools/research_record_check.py --check both pass; register r6b interpretation (:2587) no longer says the benchmark rear yard is only 'withheld (not known) pending the overlay reading'; the r6b title (:2558) names (a)/(b)/(c)(3); NB-03 at rev 3"
+    },
+    {
+      "id": "S15",
+      "given": "the live street window",
+      "when": "it is queried",
+      "then": "it adds at most one request; a failure or short coverage gives not known, never invented geometry"
+    },
+    {
+      "id": "S16",
+      "given": "the zoning-lot isolation",
+      "when": "the engine runs",
+      "then": "behaviour-identical on 1.4.0; NB-01 rev 5 records the code identity and the G1 decision on the call-site files three_way_document.py and result_way_bridge.py (call site :511 unchanged); the two WARN files net-shrink"
+    },
+    {
+      "id": "S17",
+      "given": "docs/reference-cases/** and tests/rules/reference_cases/**",
+      "when": "the suites run",
+      "then": "the R6B reference-case tests stay green and unedited"
+    },
+    {
+      "id": "S18",
+      "given": "the benchmark regeneration (step 8)",
+      "when": "the G-5 set is rebuilt",
+      "then": "benchmark lines change only where the engine output moved, each cited from the law/reference case; the three flag-on e2e specs, fixture_api.py, the DXF and site-plan SVG snapshots are updated in the same commit and run in CI"
+    },
+    {
+      "id": "S19",
+      "given": "input_facts",
+      "when": "they are emitted",
+      "then": "only the nine bases are used, each with its source title and date; Northern Blvd/215 Street/215 Place widths are administrative_record; the SW end is not known"
+    },
+    {
+      "id": "S20",
+      "given": "result_ways.py (~622 SLOC) and three_way_document.py (~679 SLOC), both above the 600 modularity WARN line",
+      "when": "modularity_check --check runs",
+      "then": "it passes with no new failure; neither grows; the new modules (three_way_zoning_lot.py, result_way_zoning_lot.py) carry the moved logic behind facades"
+    },
+    {
+      "id": "S21",
+      "given": "the regenerated benchmark now carries rear_yard/input_facts 1.5.0 blocks",
+      "when": "both contract validators and the way-layer rules run",
+      "then": "it declares 1.5.0 and passes; test_results_contract_1_5_0.py's test_new_valid_fixture_is_journey_plus_only_the_new_blocks compares the synthetic and the journey after BOTH are stripped of their 1.5.0 blocks (shared 1.4.0 core), and :191 asserts the journey declares 1.5.0; every 1.4.0-pinning benchmark consumer is updated to 1.5.0 only where the engine output moved; the PROFILE/scenario 1.4.0 pins are untouched"
+    },
+    {
+      "id": "S23",
+      "given": "a 1.5.0 document carrying the rear_yard block (the appendix open-item text built in readers.py, moved from M5-T175)",
+      "when": "the appendix open items are built",
+      "then": "the rear-yard open item reads the document's own rear_yard state/way/text and its 23-344(b)/(c)(3) conditions; on a 1.4.0 document it is byte-identical to M5-T165's REAR_YARD_OPEN_CHECK wording; on the regenerated 1.5.0 benchmark page 8 shows the applied result, not the 'not yet checked' wording (R136)"
+    },
+    {
+      "id": "S24",
+      "given": "the regenerated REAL benchmark emission (DB-262)",
+      "when": "the rear_yard + input_facts are emitted",
+      "then": "every emitted input_fact equals the value the calculation uses on that basis (recorded lot area, outline/city-map-outline area, frontages) with no second figure for one basis; every emitted constraint line lies within the zoning lot; a dedicated scenario test asserts both and the literal pre-fix value moves when reverted"
+    },
+    {
+      "id": "S25",
+      "given": "the two synthetic 1.5.0 fixtures",
+      "when": "they are re-derived from the regenerated journey",
+      "then": "their shared 1.4.0 core carries the new 'city map outline' wording and the DB-262 input_facts are corrected (9,800->10,075; 10,120.5->10,387.99); their rear_yard_100ft_line geometry (0->182.5) is KEPT so M5-T175's accepted test_constraint_overlay.py (max(xs)<130 clip test) and test_constraint_rows.py stay green and UNEDITED in CI; the web results-contract-checks.test.ts (schema-only) stays green"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "DB-245 rank-label scope growth: a CONSISTENT rename of the measurement-rank display label requires profile/measurement.py:65 and kit/scope.py:88 (missed by DB-245's enumeration and the refresh) because the kit comment keeps the card, the drawing caption and the evidence page in step; leaving them out leaves 'approximate tax map' on the site-plan caption/scope line against 'city map outline' on the evidence page. The exact rename set, the rank-label wording, and whether to touch profile/kit are pinned at G0.",
+    "test_result_ways_facts_area_overlay.py:142 asserts the engine's 'tax-map outline' rendered wording and was absent from the refresh scope; renaming result_way_conditions.py reddens it. It is now in allowed_paths; sweep all consumers of the renamed strings.",
+    "test_results_contract_1_5_0.py breaks two ways when the journey goes 1.5.0 - structurally (the strip invariant) and by wording (the synthetics bake the same 19 'tax-map' strings). Resolution: regenerate both synthetics AND rework the strip test to compare shared 1.4.0 cores (Decision 3). Keep R039.",
+    "Correcting the synthetic's rear_yard_100ft_line (DB-262) would break M5-T175's accepted test_constraint_overlay.py (which needs the 182.5 over-extension to prove clipping) - so the line geometry is NOT touched here; the within-lot correction is routed to the DB-263 overlay-polish task that owns that test. test_constraint_rows.py and web results-contract-checks.test.ts read the synthetics and run in CI unedited; route any wording red to the orchestrator.",
+    "result_way_bridge.py:206+ dataclasses must NOT move with the zoning-lot cluster (:107-205 only).",
+    "The block-frontage window (>=230 ft + half widths) may not reach the ~260 ft centreline separation of block 7334; coverage is a G1 check and a short window yields not known.",
+    "block_frontage.py placement (spatial/site_geometry/ vs top-level spatial/) is a G3 modularity confirmation; the test lives in the existing tests/spatial/ folder."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-14T19:36:20.882932+00:00",
+  "updated_at": "2026-10-15T03:18:34.394065+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R017",
+        "D-094-R026",
+        "D-094-R036",
+        "D-094-R037",
+        "D-094-R038",
+        "D-094-R039",
+        "D-094-R044",
+        "D-094-R061",
+        "D-094-R079",
+        "D-094-R136"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-14T19:36:20.883215+00:00",
+  "path_notes": "Contract base: main 30762409 after the wave-24 merge, branch task/wave25-rear-yard-short-block (M5-T163/164/165/166/171/175/176/179 all accepted and integrated). There is NO remaining in-flight writable-path collision: M5-T175 is accepted, so page_site_context.py and the benchmark regen have no live collision; M3-T008 is zr-snapshots/_zr_snapshots only (disjoint). At the contract seam the orchestrator must append M5-T167 to the applicability.task_ids of the bound requirements (D-094 R017/R026/R036/R037/R038/R039/R044/R061/R079/R136 - today most list only D-094-BOOTSTRAP, R037/R079 list other tasks), with a directive_registry digest resync + audit_log entry in the SAME commit, and run reg.evaluate_task_refs before claim (applicable must == cited). W25 engine task; NB-01 revision 5 owner (G-6); NB-03 promoted to rev 3 is the ONLY W25 research_status change (G-13). README.md and RESEARCH_REQUESTS.md are edited ONLY for NB-03's status change (name the exact anchors at G0). Builders never start a server and never touch ports 3000/3001/8000; flag-on e2e and width captures run in CI at the task head. page_site_context.py takes no code edit for DB-245 (caption engine-sourced); keep it only for an optional comment refresh or drop it. DB-260 reinforces S2/S12 only (it touches M5-T172). DB-263's overlay-polish task owns the synthetic line-within-lot correction.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers tests/spatial tests/profile/test_measurement.py tests/contracts/test_results_contract_1_5_0.py tests/journey tests/api/test_results_read_api.py tests/api/test_results_read_law_examples.py tests/api/test_e2e_harness_results_inputs.py tests/drawings/report/test_report_pages.py tests/cad tests/drawings/kit",
+    "python3 .github/scripts/validate_contracts.py && python3 -m pytest .github/scripts/tests",
+    "python3 services/api/app/rules/review_register/render_review_register.py --check",
+    "python3 tools/research_record_check.py --check",
+    "python3 tools/modularity_check.py --check",
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/architect src/lib/__tests__/results-contract-checks.test.ts"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-14T19:36:25.419812+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on the wave-25 branch; the builder starts from the claim head"
+    },
+    {
+      "at": "2026-10-14T20:18:45.365192+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 1 (increment A: the G-6 zoning-lot isolation behind facades and the block-frontage measure; the rest follows in round 2); the builder's commit integrated as 474c8ee3 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T00:17:17.511849+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rounds 2 and 3 integrated as 59a1b9bb (cherry-pick of d6bc41e7 = 8fa1714c) and 11cdb085 (cherry-pick of ad9079f4); the whole api pytest 9767 passed exit 0 re-run by an independent read-only check; next: the reviews"
+    },
+    {
+      "at": "2026-10-15T02:18:55.838315+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 4: street data carried on StudyInputs and threaded by the results route (the preview and the browser-test harness now emit the 1.5.0 rear-yard result); page 6's rear-yard line follows whether the engine applied the checks, so pages 6 and 8 agree on every document; the web journey pin to 1.5.0; pre-integration check READY (whole api 9776, whole web vitest 2704); the builder's commit integrated as d0611800 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T02:58:31.605226+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-14T20:18:45+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction after the first build round (the builder's return of 2026-10-14c, which delivered the G-6 isolation and the block-frontage measure and asked to split the rest): the DB-245 wording sweep (the city map outline never called 'tax map'; scenario S22 and its wording-only files: profile/measurement.py, kit/scope.py, report/options.py, cad/results_dxf_notes.py, web three-answers.ts, tests/profile/test_measurement.py, three_way_scope_lines.py) moves to its own planned task M5-T180, contracted after this task is accepted, because both regenerate the one benchmark file and the rear-yard result should be reviewed on its own. M5-T167 keeps steps 1 to 7 and the regeneration (the rear-yard checks, the 1.5.0 emission, the appendix item, the fixed texts, the register and records, the benchmark and the two synthetic examples re-derived, the strip-test rework). The removed files are forbidden to this task. No row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-14T23:26:39+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 2 after build round 2 (session 2026-10-14d; the builder's return asked for it, an independent pre-integration check confirmed the five reds and their cause): regenerating the benchmark to 1.5.0 (R039) and the register's implementation_changed events reach files outside the packet. They join it: four api tests and one web test that pin the old benchmark or a register date (tests/scenario/three_answers/test_wiring_emits_nothing.py S12 version and street data; tests/rules/test_zoning_rule_review_register.py S13 sample history date; tests/drawings/report/test_constraint_rows.py, only its two benchmark cases, which pinned the 1.4.0 fallback - its synthetic cases, the 182.5 line included, stay unedited; tests/drawings/report/test_report_benchmark.py, the page-8 rear-yard case, which now reads the engine's conditional result (R136); apps/web/src/lib/__tests__/results-contract-checks.test.ts, the journey contract-version pin), and the two rendered register pages docs/zoning-rule-review/calculations/calc-first-building-option-complete.md and calc-preliminary-apartment-estimate.md (renderer output of the register change, already in the round-2 commit). test_constraint_rows.py leaves forbidden_paths. Each changed assertion must follow the reference case (docs/reference-cases/R6B/short-block-rear-yard.md and cases/), never the program's output alone; the benchmark rear yard stays not known / Conditional. No row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-15T00:38:51+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 3 (session 2026-10-14d, after the orchestrator printed the owner's report from the branch at dde8a181 and an independent read-only diagnosis, workflow wf_8140d879-ad8): the live results route (results_read.py) never threads street data into the engine and StudyInputs has no field for it, so the owner's report stays a 1.4.0 document: page 8 keeps 'not yet checked ... have not been applied' while page 6 (first_option_results.py) dropped 'The rear yard beyond the corner' unconditionally - the report contradicts itself, and R136 (the result shown in the report, page 8 included) is met only by the test fixture. Round 4 (1) gates page 6's rear-yard line on whether the engine applied the rear-yard checks, so page 6 and page 8 agree on every document; (2) carries street data on StudyInputs (services/api/app/api/v1/study_inputs.py: the live provider behind LIVE_SPATIAL_PROVIDER_ENABLED, default off, already fetches it; the browser-test harness apps/web/e2e/harness/fixture_api.py already builds it) and threads it in results_read.py, so the preview and the browser tests show the engine's own conditional rear-yard result; with no or incomplete street data the result stays not known with its conditions named and both pages agree; (3) moves the web journey test's contract-version pin (journey-215-16-northern.test.tsx) to 1.5.0, a benchmark consumer the round-3 run missed (it ran src/lib only). Added: results_read.py, tests/api/test_study_live_geometry.py and the web journey test (study_inputs.py was already in the packet). No production switch changes; no row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-15T02:48:59+00:00",
+      "actor": "orchestrator",
+      "change": "Scope note 4 (2026-10-15, after the four reviews G1, G3, G4 and G5, all PASS with no required correction): two readings recorded so the packet matches what was built and reviewed. (1) S19: the emitted input_facts are only the values the rear-yard calculation uses (S24: recorded_lot_area 10,075 sq ft, administrative_record; lot_outline_area 10,387.99 sq ft, gis), each with its source and date and within the nine-basis vocabulary; the street widths of Northern Boulevard, 215 Street and 215 Place are not inputs of ZR 23-344 and are not emitted as input facts (no mapped street width is adopted as settled, DB-260); S19's width clause states the basis such a fact would carry, not an obligation to emit it (the G4 reviewer's reading, PASS*). (2) The objective's 'net-shrink result_ways.py' wording: the moved zoning-lot cluster lived in result_way_bridge.py (525 -> 444 lines) and three_way_document.py (904 -> 864); result_ways.py is unchanged (it does not grow; S20 holds; modularity_check passes). The six review advisories are backlog DB-265, queued for M5-T170 (same engine area and register). No path, gate, reviewer, row or scenario changes."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T03:18:34.393896+00:00"
+}

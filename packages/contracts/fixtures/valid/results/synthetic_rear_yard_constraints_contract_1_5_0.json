@@ -921,7 +921,6 @@
         ]
       },
       "not_checked": [
-        "The rear yard beyond the corner",
         "Where the plan sits on the lot",
         "The street wall",
         "Parking, loading and bicycle requirements"
@@ -1137,7 +1136,7 @@
     },
     {
       "key": "recorded_lot_area",
-      "value": 9800.0,
+      "value": 10075.0,
       "unit": "sq_ft",
       "basis": "administrative_record",
       "source_title": "NYC DOF recorded lot area",
@@ -1145,7 +1144,7 @@
     },
     {
       "key": "outline_lot_area",
-      "value": 10120.5,
+      "value": 10387.99,
       "unit": "sq_ft",
       "basis": "gis",
       "source_title": "NYC DCP MapPLUTO 26v2 outline",

@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-01",
  "title": "215-16 Northern Boulevard: the recorded instruments behind the zoning lot",
- "revision": 4,
- "last_changed": "2026-10-11",
+ "revision": 6,
+ "last_changed": "2026-10-15",
  "question": {
   "text": "Which recorded instruments establish the current zoning lot of tax lot 70, and what is known only from index entries?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -267,20 +267,24 @@
    "services/api/app/scenario/three_answers/result_ways.py",
    "services/api/app/scenario/three_answers/three_way_document.py",
    "services/api/app/drawings/report/readers.py",
-   "services/api/app/drawings/report/zoning_lot_item.py"
+   "services/api/app/drawings/report/zoning_lot_item.py",
+   "services/api/app/scenario/three_answers/three_way_zoning_lot.py",
+   "services/api/app/scenario/three_answers/result_way_zoning_lot.py"
   ],
   "code_identity": {
    "services/api/app/profile/hidden_issue_flags/zoning_lot_history.py": "d3f19fc93ec278ab4adf64652878b103535a8b1703e022ff4ed4aa48d852633e",
    "services/api/app/profile/existing_floor_area/scope.py": "46f5a589f1d1bd73425ebfda265cbb9afd1693cedc56afece0e4bfa2a05ca8d6",
    "services/api/app/connectors/acris_index_soda.py": "f5e2805e6d19865ef692bf8f8df518d685b2e205a76c0e1e2c6890340cde206e",
    "services/api/app/profile/zoning_lot_index.py": "2969be42e41bf969cc4e360f6007579dfbece8af00710f04755a41513098b48a",
-   "services/api/app/api/v1/study_inputs.py": "ebc38eeab6b1892d24040ef6e6d39d890bb5db9fb46cd373803a1c59ba5ef733",
+   "services/api/app/api/v1/study_inputs.py": "48eaf75f9ded81b4322126df61d03783206218f87f47e2a2799c3f3cce793030",
    "services/api/app/scenario/three_answers/result_way_conditions.py": "379192f698abff042bbe3ff5731ad9638675f875f148bce121c0214120587e40",
-   "services/api/app/scenario/three_answers/result_way_bridge.py": "485dff13c10228665df4febe12a09a9412b3bd6820ae4926a46d66b06f0fb06f",
+   "services/api/app/scenario/three_answers/result_way_bridge.py": "4e4d209e41b4278a908afa422b7abd63055b203d8393695f7527649b3d76ddea",
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
-   "services/api/app/scenario/three_answers/three_way_document.py": "b813ba029bb19ebed9d416991eb8c9b8c022767a910f9d94ee753fd995d1bd70",
-   "services/api/app/drawings/report/readers.py": "91f607aaca9d99bab66be4b0112ff94d90a945622785df95416846f7bfb783a1",
-   "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52"
+   "services/api/app/scenario/three_answers/three_way_document.py": "9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63",
+   "services/api/app/drawings/report/readers.py": "f7953b884d5013ae28afd9d9ed7a9a8076a9254095691280ca42bb8a598bac53",
+   "services/api/app/drawings/report/zoning_lot_item.py": "88e1916a672564b52917aec595950cf44e1cf4d126b19b26b4f23b729ce45b52",
+   "services/api/app/scenario/three_answers/three_way_zoning_lot.py": "c92745d59682fa24d3f6651a925b0bcd0f6b45da0f7610ce35fce747391a55ef",
+   "services/api/app/scenario/three_answers/result_way_zoning_lot.py": "5ad4efdfd34a18b184e0967f8fd9ef76c7c73729fb8a6cd6af01483a94bfa790"
   },
   "worked_example": {
    "inputs": "Tax lots 1 and 70; three 2022 instruments indexed against both; DOB 421803891's text.",
@@ -305,7 +309,9 @@
    "zoning_lot_history.py is reminder-only and never concludes a zoning lot; existing_floor_area/scope.py already sets aside zoning-lot-scoped DOB figures. Both stay consistent with this record.",
    "Since M5-T158 (DB-232) the program reads the ACRIS index (Legals and Master metadata only) through a fail-closed connector behind a default-off flag (INTERNAL_ZONING_LOT_INDEX_ENABLED); with the flag off the output is unchanged. With a reading, the five-state classifier drives one property-specific zoning-lot condition on every lot-area figure; the benchmark shows it from the recorded replay. Reading the instruments themselves stays owed (access_blocked).",
    "Revision 4 (M5-T165, the G-6 report-side isolation): the report's zoning-lot condition logic moved out of drawings/report/readers.py into a new drawings/report/zoning_lot_item.py (the marker phrase 'register of recorded documents', zoning_lot_basis, zoning_lot_open_item and the page-1 index-entry sentence). readers.py keeps zoning_lot_basis only as a compatibility facade (it re-exports it) and wires the zoning-lot open item into the numbered open-items list. The marker is held in step with services/api/app/scenario/three_answers/result_way_conditions.py by a test. The code_identity here reflects M5-T162's readers.py change and this task's change, and adds zoning_lot_item.py.",
-   "Code-path proposal for the G1 reviewer to decide: readers.py should STAY in code_paths because it still carries NB-01-relevant report behavior (the facade re-export of zoning_lot_basis and the open-items wiring that surfaces the recorded-document condition). The detection and the page-1 sentence now live in zoning_lot_item.py, which is added to code_paths. The producer does not drop readers.py; the reviewer may."
+   "Code-path proposal for the G1 reviewer to decide: readers.py should STAY in code_paths because it still carries NB-01-relevant report behavior (the facade re-export of zoning_lot_basis and the open-items wiring that surfaces the recorded-document condition). The detection and the page-1 sentence now live in zoning_lot_item.py, which is added to code_paths. The producer does not drop readers.py; the reviewer may.",
+   "Revision 5 (M5-T167, the G-6 engine-side zoning-lot isolation): the zoning-lot scope statement and its scope row moved out of scenario/three_answers/three_way_document.py into a new three_way_zoning_lot.py, and the zoning-lot citation cluster (_CITATION_STATE_BY_INDEX/_MONTHS/_human_date/_lot_label/_join_lots/zoning_lot_citation) moved out of result_way_bridge.py into a new result_way_zoning_lot.py, both behind compatibility facades so three_way_document.py and result_way_bridge.py keep importing the names and the call site (result_way_bridge.py gather_result_ways) is unchanged - behaviour-identical on a 1.4.0 document. readers.py also changed (M5-T167 added the 1.5.0 rear-yard appendix open item, a no-op on a 1.4.0 document). three_way_document.py, result_way_bridge.py and readers.py are refreshed to their current LF sha256 and the two new modules are added to code_paths. No zoning-lot reading or warning changed; research_status stays access_blocked (reading the instruments themselves is still owed).",
+   "Revision 6 (M5-T167 round 4, R136): two code_paths changed and are refreshed to their current LF sha256. (a) three_way_document.py threads rear_yard_applied (True when the engine applied ZR 23-344, a 1.5.0 rear_yard block) into first_option_results._not_checked, so the page-6 corner-lot rear-yard not-checked line is kept on a 1.4.0 document and dropped on a 1.5.0 document - page 6 and page 8 now agree on every document (the live/preview report no longer contradicts itself). (b) study_inputs.py gains a street_data carrier on StudyInputs and a live_street_data_provider bound behind LIVE_SPATIAL_PROVIDER_ENABLED (default OFF), so the results route can thread the lot's DCM street window into the engine's ZR 23-344 check; with no window the document stays 1.4.0. No zoning-lot reading, warning or figure changed; research_status stays access_blocked."
   ]
  },
  "review": {

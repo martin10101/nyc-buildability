@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-14T17:50:21+00:00",
+ "updated_at": "2026-10-15T04:20:24+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -164,10 +164,26 @@
   "D-094-R140",
   "D-094-R141",
   "D-094-R142",
-  "D-094-R143"
+  "D-094-R143",
+  "D-094-R144",
+  "D-094-R145",
+  "D-094-R146",
+  "D-094-R147",
+  "D-094-R148",
+  "D-094-R149",
+  "D-094-R150",
+  "D-094-R151",
+  "D-094-R152",
+  "D-094-R153",
+  "D-094-R154",
+  "D-094-R155",
+  "D-094-R156",
+  "D-094-R157",
+  "D-094-R158",
+  "D-094-R159"
  ],
- "requirements_id_digest_sha256": "01a4d8f14582fe62fa887072f5ab64cdd8dcedc874eec52c619d9dab683bf4bd",
- "requirements_content_digest_sha256": "ac5261694f186ca7999d8d373ff9eebb2f4ef702e962e5f20ebc7892111a29d3",
+ "requirements_id_digest_sha256": "39088ed4282a3af54f7e724a64f25232037784bb18f3411807aacf724bbf4172",
+ "requirements_content_digest_sha256": "7c4c6f1ddf464dd5fc5d787b0e79642e773762bd88486922be6dc5ef703a58e4",
  "sources": [
   {
    "file": "source-001.md",
@@ -319,6 +335,38 @@
    "recorded_at": "2026-10-14T17:45:24+00:00",
    "content_digest_sha256": "c51f0ca7b0d341e83d137f85c0280665ffabe7aaae2a0dee1311ff0b05b75529",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-020-amendment.md",
+   "kind": "amendment",
+   "sequence": 20,
+   "recorded_at": "2026-10-14T21:00:04+00:00",
+   "content_digest_sha256": "6b6d5f7549ad7a6318aefc849f4cacf0e3dc2c190291c96bd43cd3480317a5d5",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-021-amendment.md",
+   "kind": "amendment",
+   "sequence": 21,
+   "recorded_at": "2026-10-14T22:02:36+00:00",
+   "content_digest_sha256": "eaf4e54e3be53d24d246aa92b663b834de11186aeb7b3712e9c2341a574cb7f5",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-022-amendment.md",
+   "kind": "amendment",
+   "sequence": 22,
+   "recorded_at": "2026-10-15T03:37:07+00:00",
+   "content_digest_sha256": "274828583d0fc9b124fcd430fd07ac84ff11f5889ac330b24ed087f7bb4a4f54",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-023-amendment.md",
+   "kind": "amendment",
+   "sequence": 23,
+   "recorded_at": "2026-10-15T04:20:24+00:00",
+   "content_digest_sha256": "8f6921d8b71cfba39c8f976f53c8851b62ce7b8182850db1ed0530278cb30eed",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -339,7 +387,11 @@
   "source-016-amendment.md",
   "source-017-amendment.md",
   "source-018-amendment.md",
-  "source-019-amendment.md"
+  "source-019-amendment.md",
+  "source-020-amendment.md",
+  "source-021-amendment.md",
+  "source-022-amendment.md",
+  "source-023-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -364,7 +416,10 @@
   "M5-T177",
   "M5-T175",
   "M3-T008",
-  "M5-T179"
+  "M5-T179",
+  "M5-T167",
+  "M3-T009",
+  "M5-T181"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -631,6 +686,48 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T179 (page 7's scope note says context maps are in the report when the maps are printed) to R083, R137 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T19:36:21+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T167 (rear yard on a short block (ZR 23-344(b)/(c)(3)) engine, 1.5.0 emission + benchmark and synthetic-fixture regen, and the DB-245 GIS-wording sweep) to R017, R026, R036, R037, R038, R039, R044, R061, R079, R136 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T19:41:35+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T009 (capture the community-facility ZR sections (Article II Chapter 4 + 22-13); documents only) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-14T21:00:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-020 (the owner's request for a session handoff) and requirements D-094-R144 to R145, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T22:02:36+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-021 (the resume after handoff seq 169 and the forwarded outside review of the main print and the before/after comparison of 2026-10-14) and requirements D-094-R146 to R154, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-14T22:35:27+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T181 (the Results window's first screen leads with the results; the assumed conditions below them (web only)) to R051, R057, R071, R073, R081, R083, R151 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T03:37:07+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-022 (the owner's session handoff after the two running helpers finish) and requirements D-094-R155 to R156, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T04:20:24+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-023 (the owner's resume with twelve helpers, each a different part of the job) and requirements D-094-R157 to R159, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

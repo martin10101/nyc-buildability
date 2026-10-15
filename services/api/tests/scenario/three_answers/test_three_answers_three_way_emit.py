@@ -29,6 +29,7 @@ from app.api.v1.study_read import get_rate_limiter
 from app.connectors import acris_index_soda as _acris
 from app.contracts.evaluator_inputs import build_evaluator_inputs, build_three_answer_inputs
 from app.contracts.study_setup_bridge import study_from_study_setup
+from app.drawings.report import build_report_html, constraint_text
 from app.profile.builder import build_property_profile
 from app.profile.zoning_lot_index import classify_zoning_lot_index, not_read
 from app.resilience.transport import TransportResponse
@@ -1035,7 +1036,7 @@ def evidence_benchmark():
 
 
 def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None,
-              user_choices=None):
+              user_choices=None, with_street_data=False):
     def _blocked(*_a, **_k):
         raise AssertionError("network I/O attempted in a recorded-data test")
 
@@ -1044,6 +1045,10 @@ def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None,
     mp.setattr(socket, "create_connection", _blocked)
 
     profile, prepared, geometry = _carriers()
+    # M5-T167 round 4: with the recorded DCM window the engine applies ZR 23-344 and emits 1.5.0;
+    # without it (the default) the document stays 1.4.0. The SAME window the journey path threads.
+    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE) if (
+        with_street_data) else None
     setup = _northern_setup(mp, geometry=True)
     setup["property"]["address"] = _benchmark_identity_address()
     study = study_from_study_setup(setup, _TEST_ONLY_OPTION, study_id=_STUDY_ID, revision=_REVISION)
@@ -1055,6 +1060,7 @@ def _evidence(mp, *, special_density_statement=None, geometry_on=True, env=None,
         site_geometry=geometry if geometry_on else None,
         special_density_statement=special_density_statement,
         user_choices=user_choices,
+        street_data=streets,
         env=_LANE_ON if env is None else env,
     )
 
@@ -1089,6 +1095,66 @@ def test_s137_shown_values_and_withheld_set_unchanged_through_evidence(evidence_
     assert _value(fa, "legal_unit_limit_standard")["value"] == 29
     assert doc["answers"]["building_option"]["status"] == "not_available"
     assert doc["unit_estimate"]["status"] == "not_available"
+
+
+def test_round4_1_4_0_corner_report_page_6_and_page_8_agree(evidence_benchmark):
+    """M5-T167 round 4 (R136): the full report rendered from a 1.4.0 corner-lot document (the
+    live/preview output with NO DCM street window: evidence_benchmark threads no street_data, so it
+    stays 1.4.0 with no rear_yard block) must have page 6 and page 8 AGREE on the rear yard:
+
+    * page 6 (the building method's "what was not checked"): building B lists the corner-lot
+      pre-check line "The rear yard beyond the corner" (the 1.4.0 corner state);
+    * page 8 (the appendix open item): the rear yard reads the "not yet checked" open check
+      (constraint_text.REAR_YARD_OPEN_CHECK), naming ZR 23-344(b)/(c)(3).
+
+    Before round 4 the live route dropped the page-6 line unconditionally while page 8 kept the open
+    check - the self-contradiction the owner saw (dde8a181). RED/GREEN: reverting the
+    first_option_results._not_checked gate to the unconditional removal drops the page-6 line and
+    this test fails; the companion 1.5.0 benchmark render (page 6 drops it, page 8 reads the
+    conditional result) is in tests/drawings/report/test_report_benchmark.py."""
+    doc = evidence_benchmark.document
+    assert doc["contract_version"] == "1.4.0"  # no street window threaded -> no ZR 23-344 applied
+    assert "rear_yard" not in doc
+    # page 6: the stored not_checked list (the building method) carries the pre-check line.
+    building_b = doc["building_alternatives"][0]
+    assert "The rear yard beyond the corner" in building_b["not_checked"]
+    html = build_report_html(doc)
+    assert "The rear yard beyond the corner" in visible_text(html)
+    # page 8: the appendix rear-yard open item reads the "not yet checked" open check.
+    appendix = html[
+        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
+    ]
+    assert constraint_text.REAR_YARD_OPEN_CHECK in visible_text(appendix)
+
+
+def visible_text(markup: str) -> str:
+    """Plain visible text of the report markup (styles/scripts/tags stripped), for the round-4
+    page-6/page-8 agreement assertions."""
+    markup = re.sub(r"<style.*?</style>", " ", markup, flags=re.S | re.I)
+    markup = re.sub(r"<script.*?</script>", " ", markup, flags=re.S | re.I)
+    return re.sub(r"<[^>]+>", " ", markup)
+
+
+def test_round4_1_5_0_corner_report_page_6_drops_line_and_page_8_conditional():
+    """M5-T167 round 4 (R136), the 1.5.0 counterpart of test_round4_1_4_0_corner_report_*: a FRESH
+    emit WITH the DCM street window threaded (the engine applies ZR 23-344 -> a 1.5.0 rear_yard
+    block) renders a report where page 6 DROPS the corner-lot rear-yard not-checked line and page 8
+    reads the applied conditional result, not the open check - so the two pages agree. RED/GREEN:
+    reverting the first_option_results._not_checked gate to keep the line for every corner lot makes
+    page 6 carry it again (contradicting page 8) and this test fails."""
+    with pytest.MonkeyPatch.context() as mp:
+        emitted = _evidence(mp, with_street_data=True)
+    doc = emitted.document
+    assert doc["contract_version"] == "1.5.0"  # the engine applied ZR 23-344
+    assert "rear_yard" in doc
+    building_b = doc["building_alternatives"][0]
+    assert "The rear yard beyond the corner" not in building_b["not_checked"]
+    html = build_report_html(doc)
+    assert "The rear yard beyond the corner" not in visible_text(html)
+    appendix = html[
+        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
+    ]
+    assert constraint_text.REAR_YARD_OPEN_CHECK not in visible_text(appendix)
 
 
 def test_s137_scope_lines_say_where_each_condition_comes_from(evidence_benchmark):
@@ -1909,17 +1975,27 @@ def test_w13_outline_not_available_through_emitter_withholds_coverage_and_lists_
 
 
 def test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emitter(benchmark):
-    """W13 (b) / requirement 3: where the two areas DISAGREE (the benchmark) nothing changes. The
-    benchmark fixture now flows through the threaded bridge (run_engine_and_result_ways passes the
-    measured corner-reach areas and the comparison), and its coverage_by_portion and
-    building_alternatives are byte-equal to the committed journey document - proven here beside the
-    journey test's whole-document byte comparison."""
+    """W13 (b) / requirement 3: where the two areas DISAGREE (the benchmark) the W13 wiring is
+    unchanged. The benchmark fixture flows through the threaded bridge (run_engine_and_result_ways
+    passes the measured corner-reach areas and the comparison), and its coverage_by_portion and the
+    worked building B are byte-equal to the committed journey document. The adapter path threads NO
+    DCM street window, so this emit stays 1.4.0 and (M5-T167 round 4, R136) KEEPS the corner-lot
+    rear-yard not-checked line on page 6 - the only building_alternatives difference from the
+    committed 1.5.0 document, which drops it (the reading shows at the lot level). Apart from that
+    line the worked building is byte-equal."""
     doc = benchmark.document
     committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
+    assert doc["contract_version"] == "1.4.0"  # the adapter threads no street window
     assert doc["coverage_by_portion"] == committed["coverage_by_portion"]
-    assert doc["building_alternatives"] == committed["building_alternatives"]
     assert doc["coverage_by_portion"]["status"] == "withheld"
     assert "footprint_sqft" not in doc["coverage_by_portion"]  # no number on a withheld result
+    doc_b = doc["building_alternatives"][0]
+    committed_b = committed["building_alternatives"][0]
+    assert "The rear yard beyond the corner" in doc_b["not_checked"]  # 1.4.0 keeps it (round 4)
+    assert "The rear yard beyond the corner" not in committed_b["not_checked"]  # 1.5.0 drops it
+    assert {k: v for k, v in doc_b.items() if k != "not_checked"} == {
+        k: v for k, v in committed_b.items() if k != "not_checked"
+    }
 
 
 # ====================================================================== W14 (walkthrough F1)

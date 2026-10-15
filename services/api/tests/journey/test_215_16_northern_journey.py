@@ -197,7 +197,7 @@ def _carriers():
     geometry = derive_site_geometry(lot, streets)
     prepared, _reason = prepare_outline(lot)
     profile = build_property_profile(replay_pluto())
-    return profile, prepared, geometry
+    return profile, prepared, geometry, streets
 
 
 def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch) -> None:
@@ -248,7 +248,7 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
     # document with the five scope lines saying where each condition comes from. The property
     # profile, the prepared outline and the site geometry carry the recorded columns and the lot
     # reach; the engine reads none of them.
-    profile, prepared, geometry = _carriers()
+    profile, prepared, geometry, streets = _carriers()
     emitted = run_engine_and_result_ways_from_evidence(
         evaluator_inputs=doc,
         study=study,
@@ -260,15 +260,45 @@ def test_recorded_journey_entry_bbl_to_results_to_exports_to_fixture(monkeypatch
         site_geometry=geometry,
         special_density_statement=None,  # no statement about the special density area was made
         zoning_lot_index=_benchmark_zoning_lot_index(),  # DB-232: OTHER_LOTS_NAMED (lot 1)
+        street_data=streets,  # M5-T167: the DCM window turns on the 1.5.0 rear-yard emission
         env=_LANE_ON,
     )
     document = emitted.document
     validate_results_document(document)
-    # M5-T146: the document now declares 1.4.0 - the first-building-option additive blocks are
-    # attached for this conflicting-area benchmark (building B conditional; the footprint withheld).
-    assert document["contract_version"] == "1.4.0"
+    # M5-T167: the document now declares 1.5.0 - the additive ZR 23-344 rear_yard block and the
+    # input_facts are attached (the first-building-option 1.4.0 blocks are still there too).
+    assert document["contract_version"] == "1.5.0"
     # engine.py is unchanged: its own inner document still declares the pre-three-way version.
     assert emitted.engine_result.document["contract_version"] == "1.2.0"
+
+    # M5-T167 (S13/S24): the additive rear_yard block - (a) applies within 100 ft of the corner,
+    # (b) and (c)(3) not known, the combined row not known / Conditional, never an unconditional
+    # "no rear yard"; ZR 23-344(b) linked. Expected outcomes are from the R6B reference case.
+    rear_yard = document["rear_yard"]
+    states = {c["provision"]: c["state"] for c in rear_yard["checks"]}
+    assert states == {"23-344(a)": "applies", "23-344(b)": "not_known", "23-344(c)(3)": "not_known"}
+    b_check = next(c for c in rear_yard["checks"] if c["provision"] == "23-344(b)")
+    assert "inputs" not in b_check  # a not_known check carries NO number
+    assert rear_yard["combined"]["state"] == "not_known"
+    assert rear_yard["combined"]["way"] == "conditional"
+    assert "ZR 23-344" in rear_yard["combined"]["zr_sections"]
+    blob = json.dumps(rear_yard)
+    assert "no rear yard" not in blob.lower() or "no rear yard is required within 100 feet" in blob
+    assert "ZR 23-344(b)" in blob or "23-344(b)" in json.dumps(states)
+    # S24/DB-262: every input fact equals the value the calculation uses on its basis; the recorded
+    # lot area is the allowance divided by the FAR, the outline area is the measured polygon area.
+    facts = {f["key"]: f for f in document["input_facts"]}
+    assert facts["recorded_lot_area"]["value"] == 10075.0
+    assert facts["recorded_lot_area"]["basis"] == "administrative_record"
+    assert facts["lot_outline_area"]["value"] == 10387.99
+    assert facts["lot_outline_area"]["basis"] == "gis"
+    for fact in facts.values():
+        assert fact["source_title"] and fact["source_date"]  # real provenance, never invented
+    # S24: every emitted constraint line lies within the lot - the 100-ft line is not established
+    # within this lot (the whole lot is within 100 ft of the operative street line), so it carries
+    # no geometry.
+    for line in document["geometry"].get("constraint_lines", []):
+        assert "geometry" not in line  # not established -> no geometry (within-lot invariant holds)
 
     scope = document["scope"]
     assert scope["lot"]["bbl"] == study["property"]["bbl"] == entry_bbl

@@ -55,6 +55,7 @@ from .first_option_results import (
     max_lot_coverage_value_state,
     portions_measurable,
 )
+from .rear_yard_checks import RearYardAnalysis
 from .result_way_inputs import (
     COVERAGE_KEY,
     KIND_CONTRADICTED_RECORD,
@@ -65,10 +66,6 @@ from .result_way_inputs import (
     UNIT_QUALIFYING_SENIOR_KEY,
     UNIT_STANDARD_KEY,
     WORK_OWED,
-    ZONING_LOT_NONE_FOUND,
-    ZONING_LOT_NOT_READ,
-    ZONING_LOT_OTHER_LOTS_NAMED,
-    ZONING_LOT_SINGLE_LOT_ONLY,
     AnswerWays,
     AreaAgreement,
     Conditional,
@@ -87,19 +84,19 @@ from .three_way_scope_lines import (
     USER_SELECTED_HOUSING_PROGRAM_STATEMENT,
     _rewrite_scope_lines,
 )
-
-# The ACRIS zoning-lot scope row (backlog DB-232). Built here (this module already names the
-# decision module and the scope block) rather than in three_way_scope_lines.py, which the import
-# guard keeps free of the decision module. Emitted in every state except not_checked.
-ZONING_LOT_SCOPE_KEY = "zoning_lot"
-ZONING_LOT_SCOPE_VALUE = "Not confirmed"
-_NOT_A_TITLE_SEARCH = "This is not a title search; the app does not verify the zoning lot."
+from .three_way_zoning_lot import (  # noqa: F401  facade: names kept at this path (M5-T167 G-6)
+    ZONING_LOT_SCOPE_KEY,
+    ZONING_LOT_SCOPE_VALUE,
+    _apply_zoning_lot_scope_row,
+    _zoning_lot_scope_statement,
+)
 
 __all__ = [
     "ADDON_GAIN_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "BEST_COMBINATION_FOLLOWS_WITHHELD_BUILDING_OPTION",
     "BUILDING_OPTION_POINTS_TO_ALTERNATIVES",
     "CONTRACT_VERSION_FIRST_OPTION",
+    "CONTRACT_VERSION_REAR_YARD",
     "CONTRACT_VERSION_THREE_WAY",
     "FLOOR_PLATES_FOLLOW_FIRST_OPTION",
     "FLOOR_STACK_FOLLOWS_WITHHELD_BUILDING_OPTION",
@@ -119,6 +116,10 @@ CONTRACT_VERSION_THREE_WAY = "1.3.0"
 # The additive version the document declares once it carries a first-building-option block
 # (building_alternatives and/or coverage_by_portion), M5-T146 task 1.
 CONTRACT_VERSION_FIRST_OPTION = "1.4.0"
+# The additive version the document declares once it carries a 1.5.0 block (rear_yard and/or
+# input_facts; M5-T167 steps 3-4). A document carrying none keeps its version; one carrying any
+# declares 1.5.0 (the schema's reverse version binding).
+CONTRACT_VERSION_REAR_YARD = "1.5.0"
 
 # The single building_option answer, wherever the first option is applied, stays not_available and
 # points to BOTH lists (ruling W3/W14; no number and no substitute, R556/R570). It says this ALSO
@@ -520,6 +521,7 @@ def _apply_first_option(
     doc: dict, ways: ResultWays, document: dict, *,
     corner_areas: CornerPortionAreas | None = None,
     lot_area: LotAreaFigures | None = None,
+    rear_yard_applied: bool = False,
 ) -> None:
     """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks WHENEVER the
     floor-area allowance is shown (the engine ran and the recorded lot area is known).
@@ -527,35 +529,30 @@ def _apply_first_option(
     Building B (the fewest storeys reaching the minimum base height, whose plan fits the lowest
     applicable ratio times the RECORDED area) is worked from the recorded area and the allowance
     alone - never the tax-map outline - so it is listed CONDITIONAL on every path with a shown
-    allowance.
-
-    The by-portion footprint and building A need the outline. When the caller threads the lot-area
-    comparison (``lot_area``, the two area figures and whether they agree) and the measured
-    corner-reach areas (``corner_areas``, gathered on ``GatheredResult`` in ``result_way_bridge``
-    and passed from ``result_way_engine_bridge.run_engine_and_result_ways*``):
+    allowance. The by-portion footprint and building A need the outline, threaded by the caller as
+    ``lot_area`` (the two area figures and whether they agree) and ``corner_areas`` (the measured
+    corner-reach areas from ``result_way_engine_bridge.run_engine_and_result_ways*``):
 
     * the two areas AGREE and the corner split was measured -> the footprint is SHOWN
       (``coverage_by_portion`` available) and building A is listed beside building B;
     * the two areas DISAGREE -> ``coverage_by_portion`` is WITHHELD, a missing fact (the outline's
-      area is a drawing measure, never used in a zoning calculation in its place), and building A is
-      absent; this is the committed benchmark;
-    * the lot's outline is not available (the two areas could not be compared) ->
-      ``coverage_by_portion`` is WITHHELD naming that (a missing fact), never computed from the
-      recorded area, and building A is absent.
+      area is a drawing measure, never used in its place), and building A is absent (the benchmark);
+    * the lot's outline is not available -> ``coverage_by_portion`` is WITHHELD naming that (a
+      missing fact), never computed from the recorded area, and building A is absent.
 
     When no caller threads the comparison (the direct-transform tests), the area agreement is read
-    from the floor-area way's conditions exactly as before: a contradicted-record condition means
-    the areas disagree; otherwise the footprint stays withheld and the block is not emitted, and
-    only building B is listed. Every earlier path, and the committed benchmark document, stays
-    byte-for-byte unchanged apart from the buildings_not_worked list and the building_option pointer
-    (ruling W14).
+    from the floor-area way's conditions as before: a contradicted-record condition means the areas
+    disagree; otherwise the footprint stays withheld and the block is not emitted, and only building
+    B is listed. ``rear_yard_applied`` (round 4, R136) is True when the engine applied ZR 23-344 (a
+    1.5.0 rear_yard block); only then is building B's corner-lot rear-yard not-checked line dropped,
+    so page 6 agrees with the page-8 open item on every document.
 
-    buildings_not_worked (ruling W14, the walkthrough correction F1): every building of the method
-    that is NOT in building_alternatives is listed with the reason it was not worked; a building is
-    in exactly one of the two lists. The single building_option points to BOTH lists and claims
-    nothing else, ALSO when no building is listed, so it never shows the decision module's older
-    (possibly false) reason. The engine numbers come from the engine document; the way conditions
-    are reused from the floor-area answer so nothing is invented."""
+    buildings_not_worked (ruling W14, the walkthrough correction F1): every building NOT in
+    building_alternatives is listed with the reason; a building is in exactly one list. The single
+    building_option points to BOTH lists, claims nothing else, ALSO when no building is listed, so
+    it never shows the decision module's older (possibly false) reason. The engine numbers come from
+    the engine document; the way conditions are reused from the floor-area answer so nothing is
+    invented."""
     conditions = _floor_area_conditions(ways)
     if conditions is None:
         return  # no shown floor-area allowance (e.g. the engine lane is off): no building is worked
@@ -606,6 +603,7 @@ def _apply_first_option(
         corner_areas=measured if show_footprint else None,
         outline_area_sqft=outline_area_sqft if show_footprint else None,
         way_conditions=tuple(c.to_dict() for c in conditions),
+        rear_yard_applied=rear_yard_applied,
     ))
 
     # coverage_by_portion is emitted whenever the area agreement is determinate: a caller-threaded
@@ -722,76 +720,6 @@ def _reconcile_list_dependents(doc: dict) -> None:
 # ---------------------------------------------------------------------------
 # the one public transform
 # ---------------------------------------------------------------------------
-def _zoning_lot_scope_statement(cit: ZoningLotCitation) -> str:
-    """The state-specific plain-words scope statement. The value is always "Not confirmed"; the
-    detail for the conditional states lives in the figure condition, so this stays a concise
-    summary. Uses the bridge-rendered phrases, so no list is joined here."""
-    recorded = f" (recorded {cit.zone_recorded_date})" if cit.zone_recorded_date else ""
-    if cit.state == ZONING_LOT_OTHER_LOTS_NAMED:
-        if cit.other_same_block_phrase:
-            body = (
-                "The city's register of recorded documents lists a zoning lot description filed "
-                f"on this lot together with {cit.other_same_block_phrase} on the same "
-                f"block{recorded}, so the zoning lot may include it; the documents were not read."
-            )
-        else:
-            body = (
-                "The city's register of recorded documents lists a zoning lot description filed on "
-                f"only part of this lot{recorded}, so whether this whole tax lot is the zoning lot "
-                "is not confirmed; the documents were not read."
-            )
-        return f"{body} {_NOT_A_TITLE_SEARCH}"
-    if cit.state == ZONING_LOT_NOT_READ:
-        return (
-            "The city's register of recorded documents could not be read, so whether a recorded "
-            f"zoning lot description names other lots is not known. {_NOT_A_TITLE_SEARCH}"
-        )
-    if cit.state == ZONING_LOT_NONE_FOUND:
-        through = f", up to date through {cit.as_of_date}," if cit.as_of_date else ""
-        return (
-            f"The city's register of recorded documents{through} lists no zoning lot description "
-            f"filed on this lot together with other lots. {_NOT_A_TITLE_SEARCH}"
-        )
-    if cit.state == ZONING_LOT_SINGLE_LOT_ONLY:
-        single = (
-            f" (recorded {cit.single_lot_recorded_date})" if cit.single_lot_recorded_date else ""
-        )
-        body = (
-            "The city's register of recorded documents lists a zoning lot description filed on "
-            f"this lot alone{single}; it was not read."
-        )
-        if cit.other_block_phrase:
-            body += (
-                f" It is also filed on {cit.other_block_phrase}, on another block; check what it "
-                "covers."
-            )
-        return f"{body} {_NOT_A_TITLE_SEARCH}"
-    return _NOT_A_TITLE_SEARCH  # pragma: no cover - not_checked emits no row (guarded by caller)
-
-
-def _apply_zoning_lot_scope_row(doc: dict, zoning_lot: ZoningLotCitation | None) -> None:
-    """Append the ACRIS zoning-lot scope row (backlog DB-232) to the scope block, in every state
-    except not_checked. not_checked (no provider bound - the production default) appends nothing, so
-    the emitted document is byte-identical to the pre-wiring slice. Nothing else in the scope block
-    changes; the row is a schema-valid assumption (key zoning_lot, value 'Not confirmed', unit null,
-    basis city_records, the state statement)."""
-    if zoning_lot is None or not zoning_lot.shows_scope_row:
-        return
-    scope = doc.get("scope")
-    if not isinstance(scope, dict):
-        return
-    assumptions = scope.get("assumptions")
-    if not isinstance(assumptions, list):
-        return
-    assumptions.append({
-        "key": ZONING_LOT_SCOPE_KEY,
-        "value": ZONING_LOT_SCOPE_VALUE,
-        "unit": None,
-        "basis": "city_records",
-        "statement": _zoning_lot_scope_statement(zoning_lot),
-    })
-
-
 def emit_three_way_document(
     document: dict, ways: ResultWays, *,
     condition_sources: dict[str, Derived] | None = None,
@@ -800,10 +728,17 @@ def emit_three_way_document(
     lot_area: LotAreaFigures | None = None,
     lot_outline_available: bool | None = None,
     zoning_lot: ZoningLotCitation | None = None,
+    rear_yard_analysis: RearYardAnalysis | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
     number, and returns a strictly schema-valid document (the way-layer rule runs after the schema).
+
+    ``rear_yard_analysis`` (M5-T167 steps 3-4), when the evidence entry threads it, attaches the
+    additive contract-1.5.0 rear_yard block (the ZR 23-344 (a)/(b)/(c)(3) checks and the combined
+    row), the input_facts, and the rear-yard constraint lines, and bumps the declared version to
+    1.5.0. When None (every other caller and the direct-transform tests) nothing is attached and the
+    document is byte-identical to the 1.3.0/1.4.0 emit - the whole 1.5.0 emission is opt-in.
 
     ``condition_sources`` (M5-T137, reading O36), when the evidence entry hands it, says for each of
     the engine's five lot conditions where it comes from; the transform then rewrites those five
@@ -886,11 +821,36 @@ def emit_three_way_document(
     # The first-building-option blocks (contract 1.4.0 additive; task M5-T146 PART B). Read from the
     # engine document and the decided ways, plus the caller's lot-area comparison and measured
     # by-portion areas when threaded (ruling W1/W13: AGREE shows the footprint and building A).
-    _apply_first_option(doc, ways, document, corner_areas=corner_areas, lot_area=lot_area)
+    # rear_yard_applied (round 4, R136) gates page 6's corner-lot rear-yard not-checked line so it
+    # agrees with page 8: kept on a 1.4.0 document, dropped once ZR 23-344 is applied (1.5.0).
+    _apply_first_option(
+        doc, ways, document, corner_areas=corner_areas, lot_area=lot_area,
+        rear_yard_applied=rear_yard_analysis is not None,
+    )
+
+    # The additive contract-1.5.0 rear-yard emission (M5-T167 steps 3-4). Opt-in: only when the
+    # evidence entry threads an analysis. Absent -> the document keeps its 1.3.0/1.4.0 version.
+    _apply_rear_yard(doc, rear_yard_analysis)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)
     return doc
+
+
+def _apply_rear_yard(doc: dict, analysis: RearYardAnalysis | None) -> None:
+    """Attach the additive 1.5.0 rear_yard block, input_facts and rear-yard constraint lines, and
+    declare 1.5.0 (M5-T167 steps 3-4). Constraint lines go on the geometry block only when drawn;
+    the rear-yard answer is the top-level rear_yard block. None -> no-op (byte-identical)."""
+    if analysis is None:
+        return
+    doc["rear_yard"] = analysis.rear_yard
+    if analysis.input_facts:
+        doc["input_facts"] = list(analysis.input_facts)
+    if analysis.constraint_lines:
+        geometry = doc.get("geometry")
+        if isinstance(geometry, dict) and geometry.get("status") == "available":
+            geometry["constraint_lines"] = list(analysis.constraint_lines)
+    doc["contract_version"] = CONTRACT_VERSION_REAR_YARD
 
 
 def _assert_no_qualifying_unit_value(doc: dict) -> None:

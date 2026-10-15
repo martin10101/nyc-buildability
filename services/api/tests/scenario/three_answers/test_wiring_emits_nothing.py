@@ -72,13 +72,15 @@ def _no_network(monkeypatch):
 
 
 def _carriers():
-    """The recorded benchmark lot's profile, prepared outline and site geometry (offline)."""
+    """The recorded benchmark lot's profile, prepared outline, site geometry and the DCM street
+    window (offline). The street window is threaded into the emit (M5-T167) so the benchmark emits
+    the 1.5.0 rear-yard block, exactly as the journey test builds it."""
     lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
     streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
     geometry = derive_site_geometry(lot, streets)
     prepared, _reason = prepare_outline(lot)
     profile = build_property_profile(replay_pluto())
-    return profile, prepared, geometry
+    return profile, prepared, geometry, streets
 
 
 _ACRIS_PACK = (
@@ -118,7 +120,7 @@ def _emit_from_evidence(monkeypatch):
     """Run the EVIDENCE entry on the recorded benchmark lot (M5-T137): the five engine conditions
     come from the SAME evidence the decision step gathers, built exactly as the journey test builds
     them."""
-    profile, prepared, geometry = _carriers()
+    profile, prepared, geometry, streets = _carriers()
     setup = _northern_setup(monkeypatch, geometry=True)
     setup["property"]["address"] = _benchmark_identity_address()
     study = study_from_study_setup(
@@ -130,6 +132,7 @@ def _emit_from_evidence(monkeypatch):
         housing_program="standard_residence", property_profile=profile, prepared_outline=prepared,
         site_geometry=geometry, special_density_statement=None,
         zoning_lot_index=_benchmark_zoning_lot_index(),  # DB-232: OTHER_LOTS_NAMED (lot 1)
+        street_data=streets,  # M5-T167: the DCM window turns on the 1.5.0 rear-yard emission
         env=_LANE_ON,
     )
 
@@ -141,9 +144,10 @@ def test_s12_entry_emits_the_committed_three_way_fixture(monkeypatch):
     emitted = _emit_from_evidence(monkeypatch)
     document = emitted.document
     validate_results_document(document)
-    # The three-way document now declares 1.4.0: the first-building-option blocks are attached for
-    # the conflicting-area benchmark (M5-T146 PART B/E).
-    assert document["contract_version"] == "1.4.0"
+    # The three-way document now declares 1.5.0: the DCM street window is threaded, so the additive
+    # ZR 23-344 rear_yard block and input_facts are attached on top of the first-building-option
+    # 1.4.0 blocks (M5-T167; the journey test asserts the content, this proves the wiring).
+    assert document["contract_version"] == "1.5.0"
 
     serialized = (json.dumps(document, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     assert _FIXTURE_PATH.exists(), f"no committed fixture {_FIXTURE_PATH.name}"

@@ -118,6 +118,11 @@ _NOT_CHECKED_BASE = (
     "The street wall",
     "Parking, loading and bicycle requirements",
 )
+# The corner-lot rear-yard not-checked line. M5-T167 round 4 (scope correction 3, R136): it is kept
+# only when the engine did NOT apply ZR 23-344 to this document (a 1.4.0 document with no rear_yard
+# block). Page 8 then shows "the rear yard is not yet checked", and page 6 must agree by keeping
+# this pre-check line. When the engine DID apply ZR 23-344 (a 1.5.0 document carrying the rear_yard
+# block) the reading is shown at the lot level, so the line is dropped and the two pages agree.
 _NOT_CHECKED_REAR_YARD = "The rear yard beyond the corner"
 
 # The two buildings of the step-P6 method, named the same in both lists (ruling W14): a building is
@@ -156,7 +161,10 @@ class FirstOptionInputs:
     areas). ``areas_agree`` is True when the recorded and outline areas agree, False when they
     disagree, None when they could not be compared. ``way_conditions`` are the value-state
     conditions to reuse for each alternative's (and the available coverage's) way - the same
-    conditions the floor-area answer already carries."""
+    conditions the floor-area answer already carries. ``rear_yard_applied`` is True when the engine
+    applied ZR 23-344 to this document (it carries a 1.5.0 rear_yard block); False (the default)
+    when it did not (a 1.4.0 document). It gates the corner-lot rear-yard not-checked line so page 6
+    and page 8 agree on every document (M5-T167 round 4, R136)."""
 
     allowance_sqft: float | None
     recorded_lot_area_sqft: float | None
@@ -168,6 +176,7 @@ class FirstOptionInputs:
     corner_areas: CornerPortionAreas | None
     outline_area_sqft: float | None
     way_conditions: tuple[dict, ...] = ()
+    rear_yard_applied: bool = False
 
 
 @dataclass(frozen=True)
@@ -504,8 +513,13 @@ def _fit_note(inp: FirstOptionInputs, fit: tuple[float, float] | None) -> str | 
 
 
 def _not_checked(inp: FirstOptionInputs) -> list[str]:
+    # The rear yard is a not-checked item of this method ONLY when the engine did not apply 23-344
+    # to this document (a 1.4.0 corner lot): page 8 then shows "not yet checked" and page 6 keeps
+    # this pre-check line so the two agree (M5-T167 round 4, R136). When the engine applied 23-344
+    # (a 1.5.0 document with the rear_yard block) the reading is shown at the lot level, so the line
+    # is dropped and the method lists only placement, the street wall and parking.
     rows: list[str] = []
-    if inp.lot_type == "corner":
+    if not inp.rear_yard_applied and inp.lot_type == "corner":
         rows.append(_NOT_CHECKED_REAR_YARD)
     rows.extend(_NOT_CHECKED_BASE)
     return rows

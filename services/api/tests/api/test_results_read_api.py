@@ -91,13 +91,15 @@ def _no_network(monkeypatch) -> None:
 
 
 def _benchmark_carriers():
-    """The recorded benchmark lot's prepared tax-map outline and site geometry, built offline
-    through the real connectors from the recorded pack (no network)."""
+    """The recorded benchmark lot's prepared tax-map outline, site geometry and DCM street window,
+    built offline through the real connectors from the recorded pack (no network). The street window
+    is the SAME window the journey path threads, so a provider that threads it reproduces the
+    committed 1.5.0 rear_yard block (M5-T167 round 4)."""
     lot, _unused = lot_outline_from_mappluto(replay_lot_geometry())
     streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
     geometry = derive_site_geometry(lot, streets)
     prepared, _reason = prepare_outline(lot)
-    return prepared, geometry
+    return prepared, geometry, streets
 
 
 _ACRIS_PACK = (
@@ -135,6 +137,7 @@ def _benchmark_zoning_lot_index():
 
 def benchmark_provider(
     *, profile_on=True, geometry_on=True, outline_on=True, address=True, with_zoning_lot=False,
+    street_on=False,
 ):
     """A results study-inputs provider over the recorded benchmark pack. ``assemble_study_inputs``
     builds the property profile from the recorded PLUTO body and threads the recorded B-03
@@ -144,8 +147,14 @@ def benchmark_provider(
     ``with_zoning_lot`` is OFF by default - this provider mirrors PRODUCTION / the e2e harness,
     where the live ACRIS binding is behind INTERNAL_ZONING_LOT_INDEX_ENABLED (default OFF), so the
     default study inputs read NOT_CHECKED (DB-232). The live-route reproduction test turns it on to
-    thread the recorded zoning-lot index (OTHER_LOTS_NAMED) and reproduce the committed fixture."""
-    prepared, geometry = _benchmark_carriers()
+    thread the recorded zoning-lot index (OTHER_LOTS_NAMED) and reproduce the committed fixture.
+
+    ``street_on`` is OFF by default (mirroring production / the e2e harness default, where the live
+    DCM street-window binding is behind LIVE_SPATIAL_PROVIDER_ENABLED, default OFF): the route then
+    threads no street window and emits a 1.4.0 document (no ZR 23-344 check). Turned on, it threads
+    the recorded DCM window so the route emits the engine's applied 1.5.0 rear_yard result
+    (M5-T167 round 4, R136)."""
+    prepared, geometry, streets = _benchmark_carriers()
     addr = _benchmark_identity_address() if address else None
 
     def provide(bbl, correlation_id, *, selected=None):
@@ -156,6 +165,7 @@ def benchmark_provider(
             site_geometry=geometry if geometry_on else None,
             prepared_outline=prepared if outline_on else None,
             zoning_lot_index=_benchmark_zoning_lot_index() if with_zoning_lot else None,
+            street_data=streets if street_on else None,
         )
         if not profile_on:
             import dataclasses
@@ -348,26 +358,49 @@ _JOURNEY_FIXTURE = (
 def test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks(
     enabled, monkeypatch,
 ) -> None:
-    """M5-T146 (the defect): the SAME benchmark lot and inputs must give the SAME document by the
-    live route and by the journey path. The committed journey document is built with the engine
-    lane on and the recorded carriers threaded (property profile, prepared tax-map OUTLINE and site
-    geometry), housing program 'standard_residence', no entered floor-to-floor height, no density
-    statement. With those same inputs (benchmark_provider threads the outline; the `enabled` fixture
-    turns the lane on) the live route returns contract 1.4.0 with coverage_by_portion WITHHELD (no
-    figure - the two lot areas disagree) and building_alternatives holding building B, conditional,
-    with its preliminary capacity estimate (building A absent). The route's first-building-option
-    blocks are byte-equal to the committed document's."""
+    """M5-T146 / M5-T167 round 4 (R136): the SAME benchmark lot and inputs must give the SAME
+    document by the live route and by the journey path. The committed journey document is built with
+    the engine lane on, the recorded carriers threaded (property profile, prepared tax-map OUTLINE,
+    site geometry AND the DCM street window) and declares 1.5.0. With those same inputs
+    (benchmark_provider(street_on=True) threads the window; the `enabled` fixture turns the lane on)
+    the live route reproduces the committed document: contract 1.5.0 with the SAME rear_yard block
+    and input_facts, and the shared 1.4.0-core coverage_by_portion WITHHELD, building_alternatives
+    holding building B, conditional, with its preliminary capacity estimate (building A absent)."""
     _no_network(monkeypatch)
-    # DB-232: thread the recorded zoning-lot index so the live route reproduces the committed
-    # fixture (OTHER_LOTS_NAMED); production stays NOT_CHECKED behind the default-off flag.
-    response = _post(
+    committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
+    assert committed["contract_version"] == "1.5.0"
+    # With NO DCM street window (the production / e2e default), the route emits a 1.4.0 document
+    # with no ZR 23-344 block - the shared 1.4.0 core still matches the committed document.
+    no_street = _post(
         app_with(benchmark_provider(with_zoning_lot=True)),
+        {"housing_program": "standard_residence"},
+    ).json()
+    assert no_street["contract_version"] == "1.4.0"
+    assert "rear_yard" not in no_street and "input_facts" not in no_street
+    # coverage_by_portion is the shared 1.4.0 core, unaffected by the rear-yard gate.
+    assert no_street["coverage_by_portion"] == committed["coverage_by_portion"]
+    # Round 4 (R136): the 1.4.0 (no-street) document KEEPS the corner-lot rear-yard not-checked line
+    # on page 6 (the engine applied no ZR 23-344), so page 8's "not yet checked" item agrees; it is
+    # dropped on the committed 1.5.0 document. Apart from that line the worked building is equal.
+    no_street_b = no_street["building_alternatives"][0]
+    committed_b = committed["building_alternatives"][0]
+    assert "The rear yard beyond the corner" in no_street_b["not_checked"]
+    assert "The rear yard beyond the corner" not in committed_b["not_checked"]
+    assert {k: v for k, v in no_street_b.items() if k != "not_checked"} == {
+        k: v for k, v in committed_b.items() if k != "not_checked"
+    }
+    # With the recorded DCM window threaded (street_on=True, the journey-path inputs), the route
+    # reproduces the committed 1.5.0 document - the engine applies ZR 23-344 and emits the SAME
+    # rear_yard block and input_facts. DB-232: thread the recorded zoning-lot index too.
+    response = _post(
+        app_with(benchmark_provider(with_zoning_lot=True, street_on=True)),
         {"housing_program": "standard_residence"},
     )
     assert response.status_code == 200
     doc = response.json()
-    committed = json.loads(_JOURNEY_FIXTURE.read_text("utf-8"))
-    assert committed["contract_version"] == doc["contract_version"] == "1.4.0"
+    assert doc["contract_version"] == "1.5.0"
+    assert doc["rear_yard"] == committed["rear_yard"]
+    assert doc["input_facts"] == committed["input_facts"]
     assert doc["building_alternatives"] == committed["building_alternatives"]
     assert doc["coverage_by_portion"] == committed["coverage_by_portion"]
     assert [a["building"] for a in doc["building_alternatives"]] == ["B"]
@@ -401,7 +434,7 @@ def _not_read_benchmark_provider():
     from the PRODUCTION acris_zoning_lot_index_provider reacting to a FAILING ACRIS connector: the
     5xx failure maps to NOT_READ (study_inputs.py), never a 503 and never NONE_FOUND. Everything
     else mirrors benchmark_provider; the index is built once (the retries sleep)."""
-    prepared, geometry = _benchmark_carriers()
+    prepared, geometry, _streets = _benchmark_carriers()
     addr = _benchmark_identity_address()
     index = acris_zoning_lot_index_provider(transport=_failing_503_transport)(NORTHERN_BBL, "c4")
     assert index.state is ZoningLotIndexState.NOT_READ  # the connector failure mapped to NOT_READ
