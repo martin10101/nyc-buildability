@@ -1,0 +1,49 @@
+{
+ "task_id": "M5-T188",
+ "material_commits": [
+  "3c95cae9 (builder round 1 (cherry-pick of 7f4a52c0): the overlay line label off its line (A1), the close frame at its native height and expand_frame_for_overlay removed (A2), page 1's title strip at a word boundary in a new test file (A3), the street-width facts no longer drawn in the other-basis band (S10, DB-275), the producer report)",
+  "8302fc2e (builder round 2 (cherry-pick of 50362fd5): the native-height rule follows an actually drawn constraint (overlay_was_drawn), so a list with nothing established keeps 470 pt (G3 F1); the report's print wording corrected (F2))"
+ ],
+ "claim_seam_head": "593f8c7ace9e807cd9ecd0790c87489e16827965",
+ "files_changed": [
+  "project-control/reports/M5-T188-producer-report.md",
+  "services/api/app/drawings/maps/close_frame_dimensions.py",
+  "services/api/app/drawings/maps/constraint_overlay.py",
+  "services/api/app/drawings/maps/context_scene.py",
+  "services/api/app/drawings/maps/site_context_plan.py",
+  "services/api/app/drawings/report/page_decision_summary.py",
+  "services/api/tests/drawings/maps/test_constraint_overlay.py",
+  "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+  "services/api/tests/drawings/report/test_page_one_title_boundary.py"
+ ],
+ "what_did_not_change": "No fact, figure, rule, result, record or reference case changed; the benchmark report pages other than page 4 are text-identical to main 76745ade's print; page 4 loses only the two duplicate street-width chips and keeps its 470-pt frame.",
+ "known_limits": [
+  "The A1/A2 polish is visible only when a zoning line is established; the benchmark establishes none yet, so its proof is the constructed close frame in the tests.",
+  "A pre-existing advisory (G5): a non-numeric or non-finite fact value would reach the label formatter; reachable only with unvalidated input (backlog at the next seam)."
+ ],
+ "checks_at_material_head": [
+  "round 1: ruff 0; the three task test files 50 passed; tests/drawings/maps and report 401 passed; modularity 0 failures; lanes PASS; whole api 9965 passed; five mutations red; print: only page 4 changed (two chips removed)",
+  "round 2: ruff 0; task tests 52 passed; maps and report 403 passed; whole api 10000 passed, 8 skipped; the mutation back to bool(constraint_lines) reddens the not-established test; print: only page 4 changed, viewBox height 470 kept",
+  "G3 code-reviewer at 3c95cae9: PASS WITH REQUIRED F1 (closed in round 2); G3 delta at the round-2 head: see the review record",
+  "G4 qa-engineer at 3c95cae9: PASS (six mutations red; page diff reproduced)",
+  "G5 security-reviewer at 3c95cae9: PASS (one pre-existing advisory)",
+  "CI run 38729622697 at defba522 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R015": [
+   "The constraints close-up keeps the subject lot dominant with dimensions anchored to its edges; an established line's label now sits off the line so the line stays visible (test_s1_the_line_label_sits_off_the_line_so_the_line_stays_visible) and the frame grows only when a constraint is actually drawn (test_s3_..., test_s4_a_not_established_constraint_list_stays_clamped_at_470)."
+  ],
+  "D-094-R017": [
+   "No yard or setback area is drawn without established geometry: a not-established list draws nothing and does not change the frame (test_s4_a_not_established_constraint_list_stays_clamped_at_470)."
+  ],
+  "D-094-R037": [
+   "No unconditional zero rear yard is drawn or stated: the drawing changes no rear-yard reading; page 1's rear-yard title strip changes only at a word boundary (test_s6_title_as_a_bare_prefix_of_a_longer_word_is_not_stripped) and the benchmark's page-1 text is identical to main's print."
+  ],
+  "D-094-R053": [
+   "Readable labels on source-based geometry: each street width now reads once, on its frontage, as '... ft mapped width' (the duplicate 'map outline' chips are gone: test_s10_street_width_facts_are_not_drawn_in_the_other_basis_band), and the lot's own outline figure keeps its basis tag (test_s10_a_lot_gis_fact_still_reads_map_outline)."
+  ],
+  "D-094-R116": [
+   "The owner's K1 answer is kept: the basis is stated once under the drawing with short tags only where bases mix; every label sits beside its line on a white background; the round adds no label that sits on its line (the existing S14 tests stay green)."
+  ]
+ }
+}

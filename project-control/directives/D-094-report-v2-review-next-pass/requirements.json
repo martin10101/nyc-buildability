@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 166,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T08:05:20+00:00",
+ "updated_at": "2026-10-15T11:21:28+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -76,7 +76,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-094-BOOTSTRAP"
+     "D-094-BOOTSTRAP",
+     "M3-T012"
     ],
     "task_types": [],
     "milestones": [],
@@ -201,7 +202,9 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M5-T184"
+     "M5-T184",
+     "M5-T185",
+     "M5-T186"
     ],
     "task_types": [],
     "milestones": [],
@@ -459,7 +462,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M5-T166",
-     "M5-T175"
+     "M5-T175",
+     "M5-T188"
     ],
     "task_types": [],
     "milestones": [],
@@ -526,7 +530,8 @@
      "M5-T164",
      "M5-T175",
      "M5-T167",
-     "M5-T170"
+     "M5-T170",
+     "M5-T188"
     ],
     "task_types": [],
     "milestones": [],
@@ -558,7 +563,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -590,7 +596,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -622,7 +629,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -716,7 +724,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-094-BOOTSTRAP"
+     "D-094-BOOTSTRAP",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -780,7 +789,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -814,7 +824,8 @@
      "D-094-BOOTSTRAP",
      "M0-T193",
      "M5-T164",
-     "M5-T167"
+     "M5-T167",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -847,7 +858,9 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M5-T159",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -879,7 +892,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1010,7 +1024,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M5-T158"
+     "M5-T158",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1180,7 +1195,8 @@
      "M5-T165",
      "M5-T176",
      "M5-T175",
-     "M5-T167"
+     "M5-T167",
+     "M5-T188"
     ],
     "task_types": [],
     "milestones": [],
@@ -1213,7 +1229,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M5-T175",
-     "M5-T167"
+     "M5-T167",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1573,7 +1590,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1709,7 +1727,8 @@
      "D-094-BOOTSTRAP",
      "M0-T193",
      "M5-T166",
-     "M5-T175"
+     "M5-T175",
+     "M5-T188"
     ],
     "task_types": [],
     "milestones": [],
@@ -1742,7 +1761,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T165"
+     "M5-T165",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1874,7 +1894,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M5-T162",
-     "M5-T164"
+     "M5-T164",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1905,7 +1926,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-094-BOOTSTRAP"
+     "D-094-BOOTSTRAP",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1938,7 +1960,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M5-T165",
-     "M5-T175"
+     "M5-T175",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -1973,7 +1996,8 @@
      "M5-T163",
      "M5-T175",
      "M5-T167",
-     "M5-T170"
+     "M5-T170",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -2325,7 +2349,8 @@
      "D-094-BOOTSTRAP",
      "M0-T194",
      "M0-T193",
-     "M5-T165"
+     "M5-T165",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -2423,7 +2448,10 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M5-T184"
+     "M5-T184",
+     "M5-T169",
+     "M5-T185",
+     "M5-T186"
     ],
     "task_types": [],
     "milestones": [],
@@ -2490,7 +2518,8 @@
      "D-094-BOOTSTRAP",
      "M0-T194",
      "M0-T193",
-     "M5-T166"
+     "M5-T166",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -2736,7 +2765,10 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M5-T184"
+     "M5-T184",
+     "M5-T169",
+     "M5-T185",
+     "M5-T186"
     ],
     "task_types": [],
     "milestones": [],
@@ -2865,7 +2897,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -2901,7 +2934,8 @@
      "D-094-BOOTSTRAP",
      "M0-T193",
      "M5-T165",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -2937,7 +2971,8 @@
      "D-094-BOOTSTRAP",
      "M0-T193",
      "M5-T165",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -2974,7 +3009,8 @@
      "M0-T193",
      "M5-T164",
      "M5-T177",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -3012,7 +3048,8 @@
      "M5-T164",
      "M5-T177",
      "M5-T182",
-     "M5-T183"
+     "M5-T183",
+     "M5-T169"
     ],
     "task_types": [],
     "milestones": [],
@@ -3047,7 +3084,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -3083,7 +3121,8 @@
      "D-094-BOOTSTRAP",
      "M0-T193",
      "M5-T164",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -3118,7 +3157,9 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T183"
+     "M5-T183",
+     "M5-T169",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -3153,7 +3194,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T164"
+     "M5-T164",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -3221,7 +3263,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M5-T183"
+     "M5-T183",
+     "M5-T187"
     ],
     "task_types": [],
     "milestones": [],
@@ -3353,7 +3396,10 @@
      "M3-T008",
      "M3-T009",
      "M3-T010",
-     "M5-T184"
+     "M5-T184",
+     "M5-T185",
+     "M3-T011",
+     "M5-T186"
     ],
     "task_types": [],
     "milestones": [],
@@ -3420,7 +3466,9 @@
      "M3-T007",
      "M3-T008",
      "M3-T009",
-     "M3-T010"
+     "M3-T010",
+     "M3-T011",
+     "M3-T012"
     ],
     "task_types": [],
     "milestones": [],
@@ -3812,7 +3860,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M5-T166"
+     "M5-T166",
+     "M5-T188"
     ],
     "task_types": [],
     "milestones": [],

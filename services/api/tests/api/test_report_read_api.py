@@ -89,7 +89,7 @@ def test_flag_on_returns_html_report(enabled) -> None:
     body = response.text
     assert body.startswith("<!doctype html>")
     for sid in ("decision-summary", "site-and-context", "option-comparison",
-                "scenario-B", "assumptions-open-items", "calculations-evidence"):
+                "scenario-B", "appendix"):
         assert f'id="{sid}"' in body
     assert "Scheduled floor area: 20,150 sq ft; site fit unverified" in body
     assert "X-Correlation-ID" in response.headers

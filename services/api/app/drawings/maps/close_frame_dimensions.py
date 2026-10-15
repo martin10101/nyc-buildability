@@ -277,13 +277,22 @@ def draw_other_basis_dimensions(
     x0 = x if x is not None else rect[0] + 6.0
     top = y if y is not None else rect[1] + 6.0
     drawn: list[DrawnFact] = []
-    for i, fact in enumerate(facts or []):
+    # Street mapped widths (``mapped_street_width:*``, basis gis since M5-T170) are NOT
+    # lot dimensions: each fronting street already carries its "<n> ft mapped width"
+    # label on its frontage (site_context_plan), so drawing it here too would duplicate
+    # the figure with the lot outline's generic basis word "map outline" (DB-275; S10).
+    # They are excluded from the other-basis LOT-dimension band; a lot's own gis fact
+    # (a different key) still reads "map outline" here (S10).
+    lot_facts = [f for f in (facts or [])
+                 if not str(f.get("key")).startswith("mapped_street_width:")]
+    for i, fact in enumerate(lot_facts):
         text = other_basis_label(fact)
         cy = top + i * (size + 4.0)
         # The stacked position first, then nudges down/right so a label finds a
         # clear spot (it fails rather than shrinks, never merges; S5).
         cands = [(x0, cy, 0.0)]
-        cands += [(x0, cy + j * (size + 4.0), 0.0) for j in range(len(facts), len(facts) + 8)]
+        cands += [(x0, cy + j * (size + 4.0), 0.0)
+                  for j in range(len(lot_facts), len(lot_facts) + 8)]
         cands += [(x0 + 90.0, cy + j * (size + 4.0), 0.0) for j in range(0, 8)]
         box = place(sheet, cands, text, size=size,
                     source=f"input_fact:{fact.get('key')}", role="other-basis-dimension",

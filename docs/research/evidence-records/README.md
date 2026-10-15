@@ -25,6 +25,7 @@ prints is a professional verification.
 | [NB-04](NB-04-lot-dimensions-basis.json) | Which lot dimensions come from printed tax-map labels and which from GIS, and what must the named 2017 survey settle? | conflicting_evidence |
 | [NB-05](NB-05-special-density-area.json) | Is the lot in a special density area, and what stays conditional in the dwelling-unit count? | answered_from_primary_source |
 | [NB-06](NB-06-street-wall-setback-side-yard.json) | 215-16 Northern Boulevard: where must the street wall sit along each frontage (and does the C2-2 overlay change it for a residential-only vs a mixed building), does ZR 23-433 require a setback at or below the maximum base height, and is a side yard required in R6B? | interpretation_awaiting_review |
+| [NB-07](NB-07-mih-inclusionary-status.json) | 215-16 Northern Boulevard (BBL 4073340070): is the lot in a Mandatory Inclusionary Housing area or a former Inclusionary Housing designated area, and what does that change for the affordable-housing options? | answered_from_primary_source |
 
 The status column is copied from each record's `conclusion.research_status`; the record wins.
 

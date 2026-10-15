@@ -34,6 +34,7 @@ from app.drawings.maps.close_frame_dimensions import (
     DimensionPlacementError,
     draw_edge_dimensions,
 )
+from app.drawings.maps.constraint_overlay import CONSTRAINT_STYLE_KINDS
 from app.drawings.maps.context_scene import (
     CLOSE_PLAN,
     CLOSE_PLAN_MARGIN,
@@ -41,7 +42,11 @@ from app.drawings.maps.context_scene import (
     fit_view,
     viewport,
 )
-from app.drawings.maps.site_context_plan import close_frame_view, frontage_rotation
+from app.drawings.maps.site_context_plan import (
+    close_frame_view,
+    draw_site_context_plan,
+    frontage_rotation,
+)
 
 from .context_support import (
     label_problems,
@@ -443,3 +448,82 @@ def test_close_frame_fits_the_a4_content_width() -> None:
     d = render_site_context_plan(DOC, frame="close", env=ENV)
     root = ET.fromstring(d.svg)
     assert float(root.get("width")) <= 515.95   # within the A4 content width (182 mm)
+
+
+# ============================================================ S3/S4 (DB-263 A2)
+_ESTABLISHED_LINE = [{"kind": "rear_yard_100ft_line", "state": "established",
+                      "basis": "derived", "zr_sections": ["ZR 23-344"],
+                      "geometry": [[10.0, 20.0], [70.0, 20.0]]}]
+
+# The benchmark's OWN constraint_lines (recorded_215_16_northern_journey): four items,
+# all not_established / not_known, NO geometry. The document CARRIES the block but
+# draws nothing - the DB-263 F1 case that must stay clamped at 470.
+_NOT_ESTABLISHED_LINES = [
+    {"kind": "rear_yard_100ft_line", "state": "not_known", "basis": "derived",
+     "zr_sections": ["ZR 23-344"]},
+    {"kind": "corner_area", "state": "not_known", "basis": "derived",
+     "zr_sections": ["ZR 23-344", "ZR 12-10"]},
+    {"kind": "street_wall_band", "state": "not_established", "basis": "derived",
+     "zr_sections": ["ZR 35-631"]},
+    {"kind": "setback_line", "state": "not_established", "basis": "derived",
+     "zr_sections": ["ZR 23-433", "ZR 35-632"]},
+]
+
+
+def _not_placed_row_bottom(svg: str) -> float | None:
+    """The bottom edge (y + height) of the 'No building placed' legend swatch - the
+    dashed grey rect drawn beside that row - measured on the composed SVG (S3)."""
+    for r in ET.fromstring(svg).iter(f"{_SVG_NS}rect"):
+        if r.get("stroke") == "#9E9E9E" and r.get("stroke-dasharray") == "3 2":
+            return float(r.get("y")) + float(r.get("height"))
+    return None
+
+
+def test_s3_overlay_close_frame_grows_so_the_legend_row_is_not_clipped() -> None:
+    # A2: a constructed established rear-yard line on the close frame adds its own
+    # legend entry, which pushes the 'No building placed' row BELOW the clamped 470 pt
+    # height. overlay_present drops the CLOSE_MAX_H_PT clamp (height = furn_bottom + 8),
+    # so the frame grows and the row's y+height sits WITHIN the frame height, measured
+    # on the SVG (not only the viewBox). expand_frame_for_overlay appears nowhere.
+    # Mutation: re-apply min(CLOSE_MAX_H_PT, ...) on the overlay path -> the frame stays
+    # 470, the row bottom (> 470) is clipped and this fit assertion fails.
+    ctx = load_map_context(DOC)
+    d = draw_site_context_plan(ctx, frame="close", constraint_lines=_ESTABLISHED_LINE)
+    assert isinstance(d, Drawing)
+    height = float(ET.fromstring(d.svg).get("height"))
+    assert height > 470.0                       # overlay_present dropped the clamp
+    bottom = _not_placed_row_bottom(d.svg)
+    assert bottom is not None
+    assert bottom <= height                     # the legend row fits within the frame
+    assert bottom > 470.0                        # and the old 470 clamp WOULD clip it
+    assert "expand_frame_for_overlay" not in d.svg
+
+
+def test_s4_non_overlay_close_frame_stays_clamped_at_470() -> None:
+    # Without an overlay the close frame is unchanged: overlay_present defaults False so
+    # the CLOSE_MAX_H_PT clamp holds and the height stays 470.00 (S4; byte-identity on
+    # the plain frame). Mutation: drop the overlay_present gate (always furn_bottom + 8)
+    # -> the non-overlay height moves off 470 and this test fails.
+    ctx = load_map_context(DOC)
+    d = draw_site_context_plan(ctx, frame="close")
+    assert isinstance(d, Drawing)
+    assert float(ET.fromstring(d.svg).get("height")) == 470.0
+    assert "expand_frame_for_overlay" not in d.svg
+
+
+def test_s4_a_not_established_constraint_list_stays_clamped_at_470() -> None:
+    # DB-263 F1: the benchmark CARRIES a constraint_lines block (four items, all
+    # not_established / not_known, no geometry) but DRAWS no constraint, so the close
+    # frame must keep its clamped 470 pt height - exactly as a frame with no overlay
+    # does. overlay_present follows whether a constraint was ACTUALLY drawn (a drawn
+    # constraint kind on the sheet), never the mere presence of the list.
+    # Mutation: put overlay_present=bool(constraint_lines) back -> this non-empty list is
+    # truthy -> the clamp is dropped and the height becomes 474 != 470, so this test goes
+    # RED while test_s3 (established, grows) and test_s4 (no overlay, 470) stay green.
+    ctx = load_map_context(DOC)
+    d = draw_site_context_plan(ctx, frame="close", constraint_lines=_NOT_ESTABLISHED_LINES)
+    assert isinstance(d, Drawing)
+    assert float(ET.fromstring(d.svg).get("height")) == 470.0
+    assert "expand_frame_for_overlay" not in d.svg
+    # nothing was drawn: no constraint style kind is on the sheet (the predicate's basis).
+    assert not (set(d.kinds_drawn) & CONSTRAINT_STYLE_KINDS)

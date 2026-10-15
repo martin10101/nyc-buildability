@@ -1,0 +1,61 @@
+{
+ "task_id": "M5-T187",
+ "material_commits": [
+  "92fbc15e (builder (cherry-pick of 7fae0157): the website's two-zone area-allocation component (AreaAllocation.tsx), its selector (area-allocation.ts) and tokens (area-allocation-tokens.ts), three test files, the producer report; not mounted on any screen)"
+ ],
+ "claim_seam_head": "fdfd2749261366dfb219710c69e0dc25235f69ab",
+ "files_changed": [
+  "apps/web/src/components/architect/answers/AreaAllocation.tsx",
+  "apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx",
+  "apps/web/src/lib/architect/__tests__/area-allocation.test.ts",
+  "apps/web/src/lib/architect/__tests__/source-links-parity.test.ts",
+  "apps/web/src/lib/architect/area-allocation-tokens.ts",
+  "apps/web/src/lib/architect/area-allocation.ts",
+  "project-control/reports/M5-T187-producer-report.md"
+ ],
+ "what_did_not_change": "No screen mounts the component; no route, results contract, schema, PDF page, benchmark, package or lockfile changed; nothing under services/api or packages/contracts.",
+ "known_limits": [
+  "Not visible yet: part B (M5-T174) mounts it on the website and M5-T173 part B places the fitted zones; the fitted-and-placed state shows an honest placeholder here.",
+  "Advisories carried to part B: the methodology's 'Measure:' prefix versus the PDF's bare words; inline styles versus a stylesheet; magnitude, vertex and zero-area caps must bind where part B draws zones inside a footprint.",
+  "R027 here is the web validator's URL-form parity only: the unmounted component renders no law link."
+ ],
+ "checks_at_material_head": [
+  "builder: npm ci 0; lint 0; typecheck 0; the three test files 53 passed; whole web unit suite 2757 passed; lane coverage PASS; three mutation proofs red",
+  "G3 visual-quality-reviewer at 92fbc15e: PASS (seven states rendered to static markup; two advisories)",
+  "G4 qa-engineer at 92fbc15e: see the review record",
+  "G5 security-reviewer at 92fbc15e: PASS (hostile probes fail closed; two advisories)",
+  "CI run 38722562053 at 5625f420 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R027": [
+   "Web URL-form parity only, as the packet scopes it: apps/web/src/lib/architect/__tests__/source-links-parity.test.ts pins that the website's officialZoningTextUrl accepts exactly the valid Zoning Resolution section forms and rejects every other form (wrong host, credentials, port, http, query, over-length); the rendered law links are part B's."
+  ],
+  "D-094-R088": [
+   "The two-zone illustration exists as a website component (AreaAllocation.tsx with its selector), tested in every input state (apps/web/src/lib/architect/__tests__/area-allocation.test.ts: 'areaAllocationView — the input-state table'); mounting it is part B."
+  ],
+  "D-094-R089": [
+   "The zone labels are byte-equal to the presentation tokens 'Apartment area' and 'Other building area: core, circulation, walls and services' (apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx: 'S2 — the zone labels and caption are byte-equal to presentation-tokens.json'); the same words as the PDF kernel's snapshots (G3)."
+  ],
+  "D-094-R090": [
+   "The caption is byte-equal to the token 'Illustrative area allocation—not a floor plan' and appears once (apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx: S2, S4)."
+  ],
+  "D-094-R091": [
+   "One stated percentage read from the block's share, never hard-coded (apps/web/src/lib/architect/__tests__/area-allocation.test.ts: 'share 0.60 -> bar, percent 60', '0.65', '0.75'), and the bar's proportion equals the share (G3 measured 65/35, 60/40, 75/25); out-of-range or inconsistent splits are unavailable."
+  ],
+  "D-094-R093": [
+   "No rooms, unit walls, apartment counts, stairs or elevators in any state (apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx: 'S4 — no rooms/unit-walls/apartment-counts/stairs/elevators; one caption at most')."
+  ],
+  "D-094-R094": [
+   "Zones are never drawn inside a footprint that is not fitted: not fitted -> a proportional bar; fitted with a placed outline -> a placeholder in this part; fitted without an outline -> unavailable, never a bar (apps/web/src/lib/architect/__tests__/area-allocation.test.ts: 'fitted WITHOUT an outline -> unavailable'; apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx: S3)."
+  ],
+  "D-094-R095": [
+   "One short caption; the method and the exact conversion statement sit in the expandable detail, not in the caption (apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx: 'S5 — the G-14 conversion statement is in the expandable detail, not the caption')."
+  ],
+  "D-094-R096": [
+   "The website uses the same words and the same rules as the PDF kernel (G3 compared the labels, caption and percentage line with the kernel's snapshots; the selector's unavailable reasons equal the kernel's); the same placement on the website and the PDF is part B's."
+  ],
+  "D-094-R098": [
+   "The rendered result was checked for readability and consistency before review: G3 rendered seven states to static markup (proportions, one percentage, labels at the 14 px contract floor, hatch plus text so zones are told apart by more than colour, an honest placeholder and plain unavailable lines); the six-width check on the running website is part B's when the component is mounted."
+  ]
+ }
+}

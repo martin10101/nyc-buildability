@@ -293,19 +293,17 @@ def test_s12_scope_line_on_page_one_and_exclusions_head_the_appendix() -> None:
     text = visible_text(html)
     page = html[html.index('id="decision-summary"'):html.index('id="site-and-context"')]
     assert "The material exclusions are listed at the head of the appendix." in visible_text(page)
-    # the material-exclusions block heads the appendix (type 5).
-    appendix = html[
-        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
-    ]
+    # the material-exclusions block heads the merged evidence appendix.
+    appendix = html[html.index('id="appendix"'):]
     appendix_text = visible_text(appendix)
     exclusions = appendix_text.index("Not yet in this report:")
     shared = appendix_text.index("Shared assumptions")
     assert exclusions < shared  # the exclusions note precedes the assumptions.
     # no feature inventory remains anywhere in the report.
     assert "What this report covers" not in text
-    # all six page types are present.
+    # all five page types are present (pages 5 and 6 merged into one appendix, M5-T169).
     for sid in ("decision-summary", "site-and-context", "option-comparison",
-                "scenario-B", "assumptions-open-items", "calculations-evidence"):
+                "scenario-B", "appendix"):
         assert f'id="{sid}"' in html
 
 

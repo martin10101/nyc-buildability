@@ -969,8 +969,8 @@
         },
         {
           "section_id": "23-63",
-          "captured": false,
-          "reason": "balcony cross-reference; NOT CAPTURED; out of scope; not followed"
+          "captured": true,
+          "reason": "balcony cross-reference; CAPTURED (M3-T011; zr-23-63.snapshot.json); out of scope; not followed"
         }
       ],
       "handled_by": [
@@ -979,7 +979,7 @@
       "coverage_status": "not_evaluated",
       "last_amended": "2024-12-05",
       "scope_status": "followed",
-      "notes": "23-30 yard header / 23-63 NOT CAPTURED / out of scope."
+      "notes": "23-30 yard header / 23-63 CAPTURED (M3-T011) / out of scope."
     },
     {
       "section_id": "23-20",
@@ -1546,13 +1546,13 @@
         },
         {
           "section_id": "74-902",
-          "captured": false,
-          "reason": "Article VII special-permit (CPC) provision; NOT CAPTURED; project-specific, not followed"
+          "captured": true,
+          "reason": "Article VII special-permit (CPC) provision; CAPTURED (M3-T011; zr-74-902.snapshot.json); project-specific, not followed"
         },
         {
           "section_id": "74-903",
-          "captured": false,
-          "reason": "Article VII special-permit (CPC) provision; NOT CAPTURED; project-specific, not followed"
+          "captured": true,
+          "reason": "Article VII special-permit (CPC) provision; CAPTURED (M3-T011; zr-74-903.snapshot.json); project-specific, not followed"
         }
       ],
       "handled_by": [

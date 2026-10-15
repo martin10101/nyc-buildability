@@ -14,7 +14,6 @@ from collections.abc import Mapping
 from . import (
     drawings_embed,
     layout,
-    page_assumptions,
     page_decision_summary,
     page_evidence,
     page_location,
@@ -82,6 +81,8 @@ def build_report_html(
     # Page 1 carries the COMPACT summary-frame site plan beside the answers (not the
     # full-size one); ``None`` falls back to the wave-21 summary site plan.
     summary_plan = surroundings.summary_plan if surroundings.available else None
+    # Page types 5 and 6 are one merged evidence appendix (D-094 R077, M5-T169):
+    # page_evidence renders the whole appendix, reusing page_assumptions' fragments.
     pages = [
         page_decision_summary.render(results, ident, maps_present=maps_present,
                                      site_context_plan=summary_plan, env=env),
@@ -89,8 +90,8 @@ def build_report_html(
                                  surroundings=surroundings, env=env),
         page_option_comparison.render(results, ident, env=env),
         page_scenario_sheet.render(results, ident, env=env),
-        page_assumptions.render(results, ident, maps_present=maps_present, env=env),
-        page_evidence.render(results, ident, map_context=map_context, env=env),
+        page_evidence.render(results, ident, maps_present=maps_present,
+                             map_context=map_context, env=env, commit=ident.get("commit")),
     ]
 
     title = ident.get("address") or ident.get("display") or "Preliminary zoning results"

@@ -15,6 +15,7 @@ __all__ = [
     "format_measure",
     "format_ratio",
     "format_sqft",
+    "whole_percent_shares",
 ]
 
 
@@ -61,6 +62,35 @@ def format_feet(value: object) -> str | None:
     """A length in feet (``30.0`` -> ``"30 ft"``; ``144.6`` -> ``"144.60 ft"``)."""
     grouped = format_int_commas(value)
     return None if grouped is None else f"{grouped} ft"
+
+
+def whole_percent_shares(values: object) -> list[int] | None:
+    """Re-round document-provided shares to whole percents that SUM TO 100 (the
+    largest-remainder method), for the area-illustration display only.
+
+    BOUNDARY (ruling X7; M5-T169): this helper computes NO zoning quantity. It takes
+    shares that the DOCUMENT already carries (for example an apartment-area and
+    other-area split), turns each into its percentage of their own total, and rounds
+    the set so the printed whole percents add to exactly 100 - a display nicety, never
+    a law or geometry calculation. ``None`` when the values are not two-or-more plain
+    non-negative numbers whose total is positive, so a missing split stays missing.
+    (M5-T173 only READS this helper; it owns no arithmetic of its own.)"""
+    if not isinstance(values, (list, tuple)) or len(values) < 2:
+        return None
+    numbers = [_as_float(v) for v in values]
+    if any(n is None or n < 0 for n in numbers):
+        return None
+    total = sum(numbers)  # type: ignore[arg-type]
+    if total <= 0:
+        return None
+    exact = [100.0 * n / total for n in numbers]  # type: ignore[operator]
+    floors = [int(x) for x in exact]
+    remainder = 100 - sum(floors)
+    # hand the leftover whole points to the largest fractional parts first.
+    order = sorted(range(len(exact)), key=lambda i: exact[i] - floors[i], reverse=True)
+    for i in order[:remainder]:
+        floors[i] += 1
+    return floors
 
 
 def format_measure(value: object, unit: object) -> str | None:

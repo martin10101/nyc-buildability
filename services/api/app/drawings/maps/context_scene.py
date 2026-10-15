@@ -557,12 +557,19 @@ def _basis_note_part(text: str) -> str:
 
 def compose_context(drawing: str, title: str, sheet: Sheet, frame: ViewFrame,
                     notes: Sequence[MapNote], *, mode: str = "sheet",
-                    not_placed_legend: bool = False, basis_note: str | None = None) -> Drawing:
+                    not_placed_legend: bool = False, basis_note: str | None = None,
+                    overlay_present: bool = False) -> Drawing:
     """Assemble the scene plus the furniture (north arrow rotated to grid north).
     ``mode`` is 'report', 'sheet', 'summary', 'wide' or 'close' (the large page-3
     constraints close frame, which carries the 'No building placed' legend entry
     when ``not_placed_legend`` is set, and - when ``basis_note`` is given - states
-    its dimensions' shared measurement basis once in a note under the drawing)."""
+    its dimensions' shared measurement basis once in a note under the drawing).
+    ``overlay_present`` (close mode only) says a constraint overlay added its own
+    legend entry: the frame then takes the FULL height its furniture needs
+    (``furn_bottom + 8``, no ``CLOSE_MAX_H_PT`` clamp) so the 'No building placed'
+    legend row is not clipped over the sources caption (DB-263 A2; S3). Every other
+    caller omits it (default ``False``) and the close frame stays clamped at
+    ``CLOSE_MAX_H_PT``, byte-identical (S4)."""
     if mode == "close":
         note_part = [_basis_note_part(basis_note)] if basis_note else []
         panel, north_bottom = _north(REPORT_NORTH_CX, CLOSE_FURN_TOP, frame.north_deg)
@@ -573,7 +580,7 @@ def compose_context(drawing: str, title: str, sheet: Sheet, frame: ViewFrame,
             extra, legend_bottom = _not_placed_legend_row(REPORT_LEGEND_X, legend_bottom + 2.0)
             legend_parts = legend_parts + extra
         furn_bottom = max(north_bottom, legend_bottom, CLOSE_FURN_TOP + 46.0)
-        height = min(CLOSE_MAX_H_PT, furn_bottom + 8.0)
+        height = furn_bottom + 8.0 if overlay_present else min(CLOSE_MAX_H_PT, furn_bottom + 8.0)
         body = sheet.parts + note_part + panel + bar_parts + legend_parts
         svg = svg_document(width=CLOSE_CANVAS_W, height=height, drawing=drawing, title=title,
                            defs=hatch_defs(sheet.kinds), body=body)

@@ -23,6 +23,7 @@ __all__ = [
     "geometry_available",
     "identity",
     "identity_header_line",
+    "input_facts",
     "input_rows",
     "label_meta_statement",
     "lot_area_basis",
@@ -634,6 +635,25 @@ def recorded_lot_area_text(results: Mapping) -> str | None:
 
     match = re.search(r"recorded lot area of ([\d,]+) sq ft", basis)
     return f"{match.group(1)} sq ft" if match else None
+
+
+_INPUT_FACT_KEYS = ("key", "value", "unit", "basis", "source_title", "source_date")
+
+
+def input_facts(results: Mapping) -> list[dict]:
+    """The document's 1.5.0 ``input_facts`` block as plain dicts (M5-T169): one entry
+    per fact with its key, numeric value, unit, quantity basis (the nine closed
+    bases), source title and source date. Defensive: a document with no block (every
+    1.4.0 document) reads as an empty list, so the appendix renders no input-facts
+    rows and the report stays byte-identical on a 1.4.0 document. The plain-word basis
+    labels and the readable rendering live in :mod:`.open_items` (not here), so this
+    module stays a thin document reader (G-10 labelling is a presentation decision)."""
+    facts = results.get("input_facts")
+    rows: list[dict] = []
+    for fact in facts if isinstance(facts, list) else []:
+        if isinstance(fact, Mapping):
+            rows.append({field: fact.get(field) for field in _INPUT_FACT_KEYS})
+    return rows
 
 
 def input_rows(results: Mapping) -> list[dict]:

@@ -1,0 +1,54 @@
+{
+ "task_id": "M5-T185",
+ "material_commits": [
+  "2ab7c148 (producer (cherry-pick of 56b3bca7): the new R6B case benchmark-options-5-8-9-10 (49 rows: 33 values, 16 not settled), its page and README row, provenance 26-31 (two sealed readings per option family, unchanged below truthful headers; comparer 25 reused), the step-P10 module and tests behind three thin check.py lines, the moved cross-case pins, the producer report)"
+ ],
+ "claim_seam_head": "fdfd2749261366dfb219710c69e0dc25235f69ab",
+ "files_changed": [
+  "docs/reference-cases/R6B/README.md",
+  "docs/reference-cases/R6B/benchmark-options-5-8-9-10.md",
+  "docs/reference-cases/R6B/cases/benchmark-options-5-8-9-10.json",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-26.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-27.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-28.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-29.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-30.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-31.md",
+  "project-control/reports/M5-T185-producer-report.md",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p10.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p10.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p9.py"
+ ],
+ "what_did_not_change": "No rule file, engine, result, capture, register entry, law-library page, evidence record, report page or website view changed; no other reference case changed (13 cases byte-identical); the comparer 25 and render.py unchanged; neither meaning of option 8 (N1) nor of option 10 (N2) is decided.",
+ "known_limits": [
+  "Not yet visible in the report: the comparison page and the later option work read these values from the case.",
+  "Sixteen rows stay not known (among them option 5's storey limit, the commercial rear yard, the overlay's mapped line, option 8's meaning and the 23-12 minimum-lot question on a divided lot, the rooming-unit classification and option 10's meaning); every figure rests on lot 70 alone being the zoning lot (NB-01) and the recorded lot area (NB-04).",
+  "The 23-22 and 23-432 captures hold their tables as a placeholder; the numbers rest on the two readings and the table assertion (G3 advisory A1; a capture-completion task is being sized).",
+  "Options 4 and 11 stay owed (their readings are done; their case follows). Agreement of two AI readings is not proof; nothing is Verified."
+ ],
+ "checks_at_material_head": [
+  "producer: ruff 0; tests/rules/reference_cases 212 passed under the lock; render --check 0; modularity 0 (check.py 597 lines); lane coverage PASS; whole api suite 9984 passed, 8 skipped; five mutations red",
+  "G3 data-contract-verifier at 2ab7c148: PASS (33 cited sections captured and digest-matched; arithmetic recomputed; judge correction holds; three advisories)",
+  "G4 qa-engineer at 2ab7c148: PASS (212 passed; six mutation probes red; every scenario pinned; four advisories)",
+  "CI run 38723534585 at fdd0b739 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R007": [
+   "The analysis owed for options 5, 8 and 9-10 is recorded as source-backed worked values for the benchmark lot (docs/reference-cases/R6B/cases/benchmark-options-5-8-9-10.json): option 5 commercial FAR 2.00 and the greatest-single-use cap 20,150 sq ft (24,180 if the residences qualify); option 8 both meanings (one zoning lot: no floor-area or unit gain, 40 ft between unconnected buildings; a divided lot: 10,075 sq ft and 15 units per half); options 9-10 rooming units outside the 680 factor and no parking for rooming units in the Outer Transit Zone. No option or section is removed; options 4 and 11 stay owed."
+  ],
+  "D-094-R075": [
+   "These are the meaningful worked results the comparison page needs, each recorded only where two sealed readings agree on value and basis and the section is captured (test_step_p10_rows_name_their_readings, test_every_step_p10_citation_matches_the_capture); the page reorder itself is M5-T169."
+  ],
+  "D-094-R084": [
+   "All eleven options stay in scope: options 4 and 11 are named as owed in a dedicated options-out-of-scope row; option 8's and option 10's meanings stay open owner questions (N1, N2), each kept not known with a 'decides neither meaning' caveat."
+  ],
+  "D-094-R102": [
+   "The worked values and each cited section's capture state feed the law library's option pages (options 5, 8, 9-10); the case cites only captured sections (test_uncaptured_sections_are_never_a_formal_citation) and edits no library page."
+  ]
+ }
+}

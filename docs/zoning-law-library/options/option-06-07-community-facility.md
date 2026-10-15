@@ -15,11 +15,13 @@ producer's own checks (two official pages: 24-11 and 24-162) and the settled R6B
 
 Capture state read from a listing of `docs/research/zr-snapshots/v1/`; handled from
 `services/api/app/rules/rulesets/`. Every Article II Chapter 4 section listed below is now CAPTURED (M3-T009; verified against a
-listing of `docs/research/zr-snapshots/v1/`).
+listing of `docs/research/zr-snapshots/v1/`). The CF rear-yard-modification sections 24-37, 24-38 and 24-39
+(named in the CF-yards reading below as "subject to 24-37/38/39") are now also CAPTURED (M3-T011;
+capture-state bookkeeping only, not a reading).
 
 | id | title | official URL | last amended (page) | capture | handled |
 |---|---|---|---|---|---|
-| 22-13 / 22-131…22-135 | Use Group III — community facilities (use permission) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-2/22-13 | 12/5/2024 (22-13) | zr-22-13.snapshot.json (parent); 22-131…22-135 NOT CAPTURED | NOT HANDLED |
+| 22-13 / 22-131…22-135 | Use Group III — community facilities (use permission) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-2/22-13 | 12/5/2024 (22-13) | zr-22-13.snapshot.json (parent); 22-131…22-135 CAPTURED (M3-T011) | NOT HANDLED |
 | 32-131 | Use Group III — general use allowances (CF use in the C2-2 overlay) | https://zoningresolution.planning.nyc.gov/article-iii/chapter-2/32-131 | 12/5/2024 | zr-32-131.snapshot.json | NOT HANDLED |
 | 24-11 | Maximum Floor Area Ratio and Percentage of Lot Coverage (CF) | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-11 | 12/5/2024 | zr-24-11.snapshot.json | NOT HANDLED |
 | 24-111 | Maximum floor area ratio for certain community facility uses | https://zoningresolution.planning.nyc.gov/article-ii/chapter-4/24-111 | 12/5/2024 | zr-24-111.snapshot.json | NOT HANDLED |
@@ -58,7 +60,7 @@ The catalogue add-on `community_facility_floor_area` has `rule_ids=()` → NOT H
 
 ## Reading (unreviewed draft)
 
-**CF use permission.** Community-facility uses are Use Group III (22-13 captured; 22-131…22-135 not captured).
+**CF use permission.** Community-facility uses are Use Group III (22-13 captured; 22-131…22-135 captured (M3-T011)).
 In the C2-2 overlay, CF use permission is 32-131 (Use Group III, captured). Which specific Group
 III uses are as-of-right vs size-limited (22-132) vs special-permit (22-134) in R6B was not read
 item by item — **not sure** (next step: read 22-131…22-134).

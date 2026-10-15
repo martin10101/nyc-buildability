@@ -1,0 +1,309 @@
+{
+  "task_id": "M5-T169",
+  "title": "Option comparison, evidence appendix and run identity (P-3b/c): page type 3 reordered (table first, 'Limitation N.' paragraphs removed, options 1-3 figures and 4-11 'Not evaluated in this report', the chart distinguishing allowance/scheduled/placed-on-site), page types 5-6 merged into one clearly-named evidence appendix (five-field issue records, worked arithmetic with bases from input_facts, each result mapped to its register entry and review state, the area-illustration method when an area_allocation block is present, run identity = fingerprint + code commit, the status-label key once). Renders from the 1.5.0 document only; no engine/schema/fixture change. readers.py in NB-01 code_paths -> the NB-01 contingency fires.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "A report-RENDERING task on the 1.5.0 document (no engine, schema, maps, kit or fixture change). (A) PAGE TYPE 3 (page_option_comparison.py, options.py, drawings_embed.py): the 11-row table comes FIRST; the '<p><strong>Limitation N.</strong>' paragraphs are removed from the section (the material limitations are preserved as appendix issue records, R025, not deleted); options 1-3 carry figures and options 4-11 are compact 'Not evaluated in this report' rows in the owner-approved order (never readable as infeasibility or achieved-on-site, R059/R084); the bar chart distinguishes floor-area allowance / scheduled area / placed-on-site ('Not demonstrated', no bar) on one zero-based scale, never two equal bars and never a zero-height bar for an unknown (R018/R020). (B) PAGE TYPES 5 AND 6 AS ONE CLEARLY-NAMED EVIDENCE APPENDIX (page_assumptions.py, page_evidence.py merged via builder.py + layout.py; the section-id list, page-type question list and page count in test_report_pages.py reworked, 6 sections -> 5): five-field issue records (issue / consequence / next action / responsible role / evidence reference) with site documents kept apart from program work and the honest 'not yet' sentence at most once (R025/R054); worked arithmetic 10,075 x 2.0 = 20,150 and 20,150 / 680 = 29.63 -> 29 with each input NAMING ITS BASIS read from the 1.5.0 input_facts block using ONLY the nine closed bases' plain-word labels (gis -> 'city map outline (GIS)', administrative_record -> 'recorded lot area') with source title and date, never a GIS outline called 'tax map'/'tax-map outline' (G-10), no single figure mixing two bases (R023/R026/G-10) - the current input_rows reader does not read input_facts, so this is new reading in readers.py with a new nine-bases label map; each result mapped to its EXISTING review-register entry and review state (R027; the register itself is out of scope, G-11/M5-T172); run identity = a fingerprint stable for the same document excluding results_id and computed_at (changing when any value changes) plus the deployed code commit (new run_identity.py; commit read from the build_info env source, 'unknown' when unset), with every diagram/result citing the same revision/scenario (R028/R038/R058); the area-illustration METHOD (R095/R092) - the stated share, the measure, the G-14 statement 'plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked', the bar-or-zones rule and its register entry - rendered from the document's area_allocation block when present (tests use M5-T164's example fixtures; absent on the benchmark until M5-T172); the status-label key once (the only place 'Verified' appears). (C) The largest-remainder display helper in formatting.py (M5-T173 only reads it) with an explicit boundary justification: it re-rounds document-provided shares to sum to 100 and computes no zoning quantity. (D) report_read.py carries the run identity to the live route. readers.py is in NB-01 code_paths -> NB-01 gets a revision with recomputed LF-normalized code identity and a G1 agent delta review; behaviour byte-identical on a 1.4.0 document.",
+  "business_reason": "D-094 R075/R077/R028/R095 and the owner's outside reviewer (2026-10-14, source-021): page 3 still leads with the limitation paragraphs before the comparison; pages 5/6 are an input/output listing with repeated explanations rather than a worked, clearly-organized appendix; the area-illustration method and run identity are absent. The next milestone (R143) is a scenario placed on the actual site with reconciled calculations and clearly identified remaining constraints; M5-T169 is the report-rendering step after M5-T170 lands the envelope constraints and regenerates the benchmark, and before M5-T172/M5-T173 add the area-allocation and placement.",
+  "inputs": [
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-02-proposed-zfa-scope.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "project-control/tasks/M5-T167.json",
+    "project-control/tasks/M5-T170.json",
+    "project-control/directives/D-094-report-v2-review-next-pass/requirements.json"
+  ],
+  "outputs": [
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/open_items.py",
+    "services/api/app/drawings/report/run_identity.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/sources.py",
+    "services/api/app/drawings/report/formatting.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/api/v1/report_read.py",
+    "services/api/tests/drawings/report/test_report_comparison.py",
+    "services/api/tests/drawings/report/test_report_appendix.py",
+    "services/api/tests/drawings/report/test_report_run_identity.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "services/api/tests/api/test_report_read_api.py",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "project-control/reports/M5-T169-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T165",
+    "M5-T170",
+    "M5-T175"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/report/page_option_comparison.py",
+    "services/api/app/drawings/report/options.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_assumptions.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "services/api/app/drawings/report/open_items.py",
+    "services/api/app/drawings/report/run_identity.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/drawings/report/sources.py",
+    "services/api/app/drawings/report/formatting.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/api/v1/report_read.py",
+    "services/api/tests/drawings/report/test_report_comparison.py",
+    "services/api/tests/drawings/report/test_report_appendix.py",
+    "services/api/tests/drawings/report/test_report_run_identity.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "services/api/tests/api/test_report_read_api.py",
+    "apps/web/e2e/report-print.flag-on.spec.ts",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "project-control/reports/M5-T169-producer-report.md",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/report/test_report_scope_note_maps.py",
+    "services/api/tests/drawings/report/test_report_page_one.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_report_law_links.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/schemas/",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "packages/contracts/fixtures/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/kit/",
+    "services/api/app/rules/review_register/register.json",
+    "services/api/app/drawings/report/zoning_lot_item.py",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/coverage.py",
+    "services/api/app/drawings/report/page_scenario_sheet.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/page_location.py",
+    "apps/web/src/",
+    "docs/reference-cases/",
+    "docs/research/evidence-records/README.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the regenerated post-M5-T170 benchmark document",
+      "when": "page type 3 renders",
+      "then": "the 11-row table appears before any limitation text; no '<p><strong>Limitation' paragraph remains in the option-comparison section; all eleven options render in the owner-approved order and names; options 1-3 carry figures and options 4-11 read 'Not evaluated in this report', never readable as infeasible or achieved-on-site (R075/R059/R084)"
+    },
+    {
+      "id": "S2",
+      "given": "input states {allowance present + scheduled present} / {allowance present, no scheduled} / {neither}",
+      "when": "the bar chart renders",
+      "then": "it distinguishes floor-area allowance, scheduled area, and placed-on-site ('Not demonstrated', no bar) on one zero-based scale; an unknown is never a zero-height bar; nothing implies the scheduled area is achieved on site (R018/R020)"
+    },
+    {
+      "id": "S3",
+      "given": "the evidence appendix open items",
+      "when": "they render",
+      "then": "each issue carries exactly issue / consequence / next action / responsible role / evidence reference, with missing site documents kept apart from program work; the honest 'not yet'/'A check not yet made' sentence appears at most once (R025/R054)"
+    },
+    {
+      "id": "S4",
+      "given": "the regenerated benchmark's 1.5.0 input_facts block (value, unit, basis, source_title, source_date)",
+      "when": "the appendix inputs render",
+      "then": "each input names its basis using ONLY the nine closed bases' plain-word labels (gis -> 'city map outline (GIS)'; administrative_record -> 'recorded lot area') with its source title and date; the GIS outline value is never labelled 'tax map'/'tax-map outline' (G-10); no single figure mixes two bases; the exact value->basis pairs are READ from the document at the contract head and asserted from there, never hard-coded from the work order's '103.88' example (which the fixture contradicts - 103.88 is approximate_tax_map; the gis basis is the 10,387.99 outline) The benchmark carries four input_facts (recorded_lot_area administrative_record; lot_outline_area gis; mapped_street_width:215 Place and :Northern Boulevard gis from 'DCP Digital City Map street center lines'): the plain word for the gis basis fits both kinds (for example 'city map / GIS measurement', the source title telling them apart); a street-width row is never labelled 'city map outline'; no gis outline is called a 'tax map' (G-10); every pair is read from the 4-entry block, never hard-coded."
+    },
+    {
+      "id": "S5",
+      "given": "the document",
+      "when": "the appendix shows the derivation",
+      "then": "10,075 x 2.0 = 20,150 and 20,150 / 680 = 29.63 -> 29 render, each input naming its basis; displayed rounding and totals reconcile with full internal precision; a mutation that mixes two bases in one figure fails (R023/R026)"
+    },
+    {
+      "id": "S6",
+      "given": "rule_versions and the existing review register",
+      "when": "results render",
+      "then": "every rule_versions entry maps to an existing register entry with its review state; statutory links still resolve to the exact captured section (M5-T159, no regression, no homepage); each internal 'item N'/anchor reference resolves to a precise destination (R027/R060)"
+    },
+    {
+      "id": "S7",
+      "given": "the document and the build_info commit source",
+      "when": "run identity renders in the appendix",
+      "then": "the fingerprint is stable for the same document excluding results_id and computed_at and changes when any value changes; the code commit renders (the test injects or tolerates 'unknown' when the env var is unset); every diagram and result cites the same result revision and scenario; the status-label key appears once (the only 'Verified') (R028/R038/R058)"
+    },
+    {
+      "id": "S8",
+      "given": "M5-T164's fitted and unfitted area_allocation example fixtures, then the benchmark (no block)",
+      "when": "the appendix renders",
+      "then": "with a block the area-illustration method appears once in the appendix naming the stated share, the measure, the G-14 conversion statement, the bar-or-zones rule and its register entry; without a block it is absent; the estimate and illustration use compatible area measures and zoning floor area is never treated as physical floorplate (R095/R092)"
+    },
+    {
+      "id": "S9",
+      "given": "the benchmark",
+      "when": "the report renders",
+      "then": "page types 5 and 6 are one clearly-named evidence appendix; repeated explanations are removed; the material-exclusions scope note sits at the head of the appendix; the section-id list, the page-type question list and the page count in test_report_pages.py are reworked (6 sections -> 5), not deleted (R028/R077)"
+    },
+    {
+      "id": "S10",
+      "given": "the regenerated benchmark",
+      "when": "the report renders",
+      "then": "total HTML visible words <= the TOTAL_WORD_CAP = 2448 (set at main b4704161) in test_report_benchmark.py recorded in test_report_benchmark.py (standing, G-9); no repeated sentence of 8+ words is added; the option-comparison page is changed from the prior version (R072); H2 confirms the PDF total <= 2,993 (hard) and <= 2,713 (target)"
+    },
+    {
+      "id": "S11",
+      "given": "the report",
+      "when": "any remaining-capacity statement could arise",
+      "then": "lot 1 is never subtracted from the 39,934 sq ft DOB field (absent from the benchmark; the report emits no auto-subtracted remaining-capacity figure); NB-02 is read, not revised (R032)"
+    },
+    {
+      "id": "S12",
+      "given": "the document",
+      "when": "the comparison renders",
+      "then": "all eleven options stay in scope and finishing one scenario does not narrow it; unavailable options cannot be mistaken for evaluated alternatives (R059/R084)"
+    },
+    {
+      "id": "S13",
+      "given": "the regenerated benchmark via the live route",
+      "when": "the report is produced via TestClient POST /report (benchmark_provider with_zoning_lot=True + recorded_pack_provider window pack) then apps/web/scripts/print-report-pdf.mjs",
+      "then": "the printed HTML shows page 3 leading with the table and no limitation paragraphs, and the merged appendix showing the five-field records, the worked arithmetic with bases, and the run identity - verified on the real print, not fixture-only (wave-25 lesson ii)"
+    },
+    {
+      "id": "S14",
+      "given": "readers.py is in NB-01's code_paths",
+      "when": "it is edited",
+      "then": "NB-01 gets a revision with the recomputed LF-normalized sha256 code identity and a G1 agent delta review; behaviour is byte-identical on a 1.4.0 document; research_record_check.py --check passes"
+    },
+    {
+      "id": "S15",
+      "given": "a 1.4.0 document and the modularity census",
+      "when": "the report renders and the checks run",
+      "then": "the report is byte-identical to today on a 1.4.0 document (the new blocks render only from 1.5.0 fields); modularity_check --check passes with no new failure; the appendix open-item and input_facts logic prefers the new open_items.py so readers.py does not cross a modularity threshold; the formatting.py largest-remainder helper carries its boundary justification and computes no zoning quantity"
+    },
+    {
+      "id": "S16",
+      "given": "the merged evidence appendix (DB-270)",
+      "when": "the owner's report is printed through the real-print path",
+      "then": "the printed report has no more pages than main 2bcdb05a's print (10; M5-T170 made it 11), the open items no longer spill onto a second page, and the page count is pinned by a test or by the recorded print diff"
+    },
+    {
+      "id": "S17",
+      "given": "NB-01 (DB-274, its half)",
+      "when": "M5-T169 writes NB-01 revision 9 for readers.py",
+      "then": "the new dependency_assessment entry names revision 9 correctly, the stale '(revision 7)' parenthesis of the revision-8 entry is clarified, and research_record_check --check passes; NB-05's half of DB-274 is routed to the records task, not this one"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier",
+    "security-reviewer"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "RISK 1 (top, correction 1): the work order's '103.88 = city map outline (GIS)' example is FALSE at bb5c02b9 (103.88/lot_front_ft is approximate_tax_map; the gis basis is the 10,387.99 lot_outline_area). Do NOT assert it. Read value->basis pairs from the regenerated input_facts and assert the nine-bases labels + G-10. Preserve the work-order-vs-fixture conflict (D-093), do not reconcile silently.",
+    "RISK 2 (serial, dispositive): readers.py is shared with M5-T170 AND both are in NB-01 code_paths; spec-M5-T170 RISK 6 says M5-T169 reads readers.py after M5-T170 lands; work order line 912 declares M5-T170 a dependency. No split is possible. Contract base = the wave-25/26 head AFTER M5-T170 is accepted and integrated.",
+    "RISK 3 (consumer fan-out, wave-25 lesson i): the three shared M5-T170 files are readers.py, test_report_pages.py, test_report_benchmark.py. The page-3 rework breaks test_s5 (:175) and test_f7 (:188); the 5/6 merge breaks test_s1_benchmark_has_six_pages (==6), test_s1_two_worked_buildings (==7), test_s1_six_page_types_in_order and test_s10 (section-id/question lists) - all in test_report_pages.py. Enumerate and rework these up front; test_report_unit_limit_text.py reads open_items category and must track the five-field change.",
+    "RISK 4 (NB-01/G-6): editing readers.py fires the NB-01 contingency (revision + recomputed code identity + a G1 agent delta review). Must land after M5-T170's NB-01 revision in a separate wave (G-6: one NB-01 code-path editor per wave).",
+    "RISK 5 (modularity): readers.py is 612 lines/25 KB. Put appendix open-item + input_facts reading in the new open_items.py (compatibility facade if a public import moves); the largest-remainder helper in formatting.py conflicts with its no-arithmetic docstring (X7) - add a line-scoped justification and keep it to re-rounding document-provided shares. Run modularity_check --check.",
+    "RISK 6 (run identity): the code commit is 'unknown' unless RENDER_GIT_COMMIT/GIT_COMMIT_SHA is set (and the Render var name is unconfirmed); tests must inject or tolerate it. Avoid importing the API router module app.api.v1.build_info into drawings/report - use a small shared commit helper or pass the commit through report_read.py.",
+    "RISK 7 (R027 scope): links-to-exact-section are already done (M5-T159); M5-T169 adds only register-entry linkage + review state + internal anchor resolution and must link to EXISTING register entries (register.json is out of scope, G-11/M5-T172)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T10:02:18.105725+00:00",
+  "updated_at": "2026-10-15T13:10:16.068640+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R018",
+        "D-094-R019",
+        "D-094-R020",
+        "D-094-R023",
+        "D-094-R025",
+        "D-094-R026",
+        "D-094-R027",
+        "D-094-R028",
+        "D-094-R032",
+        "D-094-R038",
+        "D-094-R049",
+        "D-094-R054",
+        "D-094-R058",
+        "D-094-R059",
+        "D-094-R060",
+        "D-094-R061",
+        "D-094-R072",
+        "D-094-R075",
+        "D-094-R077",
+        "D-094-R084",
+        "D-094-R092",
+        "D-094-R095"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T10:02:18.105960+00:00",
+  "path_notes": "Contract base: the branch head AFTER M5-T170 is accepted and integrated (it regenerates the G-5 benchmark and emits the richer input_facts, incl. frontage widths as administrative_record/gis per spec-M5-T170 S14; M5-T169 renders from that head). Files shared with M5-T170 (one owner at a time): services/api/app/drawings/report/readers.py, services/api/tests/drawings/report/test_report_pages.py, services/api/tests/drawings/report/test_report_benchmark.py - M5-T169 takes them only after M5-T170 lands. The benchmark fixture recorded_215_16_northern_journey.json and the schema stay M5-T170/M5-T164-owned and are forbidden here (read-only inputs). At the contract seam the orchestrator appends M5-T169 to applicability.task_ids of all 22 bound D-094 rows (today none name it) with a directive_registry digest resync + audit_log entry in the SAME commit, runs reg.evaluate_task_refs before claim (applicable must == cited), appends M5-T169 to manifest.affected_tasks with a PROVISIONAL task_verifications row, and seeds committed placeholders for every new allowed_paths file (open_items.py, run_identity.py, the three new test files, the producer report) before the G0 report. The work order (session-2026-10-11c M5-T169 section) is authoritative for scope; corrections here: input_facts is currently UNREAD by input_rows (new reading + nine-bases label map); the chart fn is drawings_embed.py:212-248 (not :185-234); the 5/6 merge drops the section count 6->5 (rework the section-id/question/count assertions, don't delete); R027 links already done; docs/research/evidence-records/README.md is touched only if the NB-01 revision moves a code_current/revision cell. Settled readings in docs/reference-cases/R6B/cases/ are read-only, never re-researched. The builder prints the owner's report from the real preview (TestClient POST /report + print-report-pdf.mjs) before review; run heavy suites one at a time. D-093 dispatch clause: the builder reads docs/RESEARCH_AND_VERIFICATION.md and the affected evidence records (NB-01, NB-02, NB-04, NB-06), opens the primary sources those cite, and keeps every unresolved input unresolved; no verification status changes without an independent worked-example check. PRE-CONTRACT CHECK of session 2026-10-15b (return-precheck-M5-T169.md): READY WITH REQUIRED CHANGES, applied: six more tests that count report pages or slice between the two appendix section ids join the allowed paths (test_location_sheet.py, test_report_scope_note_maps.py, and, once M5-T170 is accepted, test_report_page_one.py, test_constraints_page.py, test_report_law_links.py, test_three_answers_three_way_emit.py); DB-263 no longer touches test_report_page_one.py (its boundary test moved to a new file); the contract base is the head after M5-T170 round 2 is accepted and merged; NB-01 is at revision 8 now and readers.py fires its contingency, so this task writes the NEXT revision with the recomputed LF sha256 and a G1 delta review. Re-check after round 2 (a short delta pre-check): readers.py body and line numbers, the NB-01 revision, the benchmark input_facts entries (round 2 regenerates them with the street-centerline width source), TOTAL_WORD_CAP/_SECTION_IDS and the S10 baseline sha, the moved line numbers of the six breakers, the side-yard 'see item' cross-reference that page 3 gains, and drawings_embed.allowance_bar_chart_svg. Keep the id='issue-N' anchors and the page-3 'see item' cross-references stable (R060). DELTA PRE-CHECK at b531be9d (return-precheck-M5-T169-delta.md): docs/research/evidence-records/README.md removed (the NB-01 revision moves no README cell; the NB-07 records task edits it); scenarios added for the page count (DB-270) and NB-01's half of DB-274; S4 made safe for the two kinds of gis facts; test_report_read_api.py (already in scope) also iterates the six section ids. The page-3 'see item N' links and the id='issue-N' anchors (page_assumptions.py:65; consumers page_site_context.py and page_decision_summary.py are forbidden here) stay byte-stable.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings/report tests/api/test_report_read_api.py",
+    "python3 tools/modularity_check.py --check",
+    "python3 tools/research_record_check.py --check",
+    "REAL PRINT: from services/api, TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs on the HTML; confirm page 3 leads with the table (no limitation paragraphs) and the merged appendix shows the five-field records, worked arithmetic, input_facts bases and run identity (no server, no ports)",
+    "cd apps/web && npm run lint && npm run typecheck",
+    "cd apps/web && (lanes venv first on PATH, PYTHONPATH=<checkout>/services/api) npx playwright test e2e/report-print.flag-on.spec.ts"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T10:02:22.518410+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted; G0 PASS at its contract head (pre-checks: return-precheck-M5-T169.md and its delta at b531be9d)"
+    },
+    {
+      "at": "2026-10-15T11:31:17.452323+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "builder round 1 (comparison first, one evidence appendix, run identity; 10 pages); the builder's commit integrated as 6e0262a6 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T12:22:52.410322+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T13:10:16.068409+00:00"
+}

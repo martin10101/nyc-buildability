@@ -53,7 +53,7 @@ def _benchmark_map_context() -> dict:
 def _scope_note_names(html: str) -> list[str]:
     """The ordered names listed under 'Not yet in this report:' in the appendix
     scope note (page 7), read straight from the rendered report HTML."""
-    section = html[html.index('id="assumptions-open-items"'):]
+    section = html[html.index('id="appendix"'):]
     section = section[: section.index("</section>")]
     marker = "<strong>Not yet in this report:</strong> "
     start = section.index(marker) + len(marker)

@@ -46,7 +46,8 @@ def test_each_case_has_a_data_file_and_a_page():
         "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
         "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
         "step-p6-worked", "short-block-rear-yard", "placement-building-b",
-        "benchmark-options-2-3-6-7"
+        "benchmark-options-2-3-6-7", "benchmark-options-5-8-9-10",
+        "benchmark-options-4-11"
     )
     for case_id in lib.CASE_IDS:
         assert lib.case_path(case_id).is_file(), f"missing data file for {case_id}"

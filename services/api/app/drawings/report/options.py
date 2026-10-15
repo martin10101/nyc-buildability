@@ -46,7 +46,10 @@ _LOT_AREA_LIMITATION = (
 )
 _NO_RULE = "The program does not have a reviewed rule for this option yet."
 _NO_OPTION = "The program does not work out this option yet."
-_NOT_PRODUCED = "Not produced yet"
+# Options 4-11 carry no figures: the table row reads "Not evaluated in this report"
+# (R075/R059/R084) - a compact, honest state that cannot be read as infeasibility or
+# as a result achieved on site. It replaces the former "Not produced yet".
+_NOT_PRODUCED = "Not evaluated in this report"
 
 # A reason that carries any of these is developer wording and is not shown (X6).
 _DEV = re.compile(r"[a-z]+_[a-z]+|Lane [A-Z]|\btask\b|this slice|\bA-\d|\bR\d{3}\b")

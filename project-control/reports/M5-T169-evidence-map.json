@@ -1,0 +1,118 @@
+{
+ "task_id": "M5-T169",
+ "material_commits": [
+  "6e0262a6 (builder (cherry-pick of f9de266c): page 5 reordered (the eleven-option table first, the limitation paragraphs removed, options 4-11 'Not evaluated in this report', the chart's allowance / scheduled / 'Placed on site: Not demonstrated'); the two appendix pages merged into one appendix (five report sections); open_items.py (five-field issue records, input facts with their bases, worked arithmetic, rules with their review state) and run_identity.py (document fingerprint and build commit); NB-01 revision 9; the six consumer tests reworked; the producer report)"
+ ],
+ "claim_seam_head": "fdfd2749261366dfb219710c69e0dc25235f69ab",
+ "files_changed": [
+  "apps/web/e2e/report-print.flag-on.spec.ts",
+  "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+  "project-control/reports/M5-T169-producer-report.md",
+  "services/api/app/api/v1/report_read.py",
+  "services/api/app/drawings/report/builder.py",
+  "services/api/app/drawings/report/drawings_embed.py",
+  "services/api/app/drawings/report/formatting.py",
+  "services/api/app/drawings/report/layout.py",
+  "services/api/app/drawings/report/open_items.py",
+  "services/api/app/drawings/report/options.py",
+  "services/api/app/drawings/report/page_assumptions.py",
+  "services/api/app/drawings/report/page_evidence.py",
+  "services/api/app/drawings/report/page_option_comparison.py",
+  "services/api/app/drawings/report/readers.py",
+  "services/api/app/drawings/report/run_identity.py",
+  "services/api/tests/api/test_report_read_api.py",
+  "services/api/tests/drawings/report/test_constraints_page.py",
+  "services/api/tests/drawings/report/test_location_sheet.py",
+  "services/api/tests/drawings/report/test_report_appendix.py",
+  "services/api/tests/drawings/report/test_report_benchmark.py",
+  "services/api/tests/drawings/report/test_report_comparison.py",
+  "services/api/tests/drawings/report/test_report_law_links.py",
+  "services/api/tests/drawings/report/test_report_page_one.py",
+  "services/api/tests/drawings/report/test_report_pages.py",
+  "services/api/tests/drawings/report/test_report_run_identity.py",
+  "services/api/tests/drawings/report/test_report_scope_note_maps.py",
+  "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+  "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py"
+ ],
+ "what_did_not_change": "No engine, result, schema, benchmark fixture, rule or register entry changed; page 3's rows and links, the id='issue-N' anchors and the page-3 'see item' links are unchanged; pages 1, 2, 3 and 6 of the benchmark print are text-identical to main.",
+ "known_limits": [
+  "The open items still span two printed pages (down from three); the report is 10 pages (from 11). A single page would need fewer shared assumptions (owner content) or a reorder against the design contract; carried with DB-270.",
+  "The build commit prints 'unknown' until the deploy sets its commit variable.",
+  "Advisories carried: the largest-remainder helper (for M5-T173) has no caller or test yet; one open item says 'see the item above' where 'see item 5' is meant; the 10-page count is pinned by the recorded print diff, not by a test; the outline area is named 'city map' in the new table while older prose says 'tax-map outline' (DB-245, M5-T180).",
+  "Every legal reading stays an unreviewed draft with its law link (ADR-007); nothing is labelled Verified."
+ ],
+ "checks_at_material_head": [
+  "builder: ruff 0; report suite 224 passed; three-answers emit 60 passed; whole api 9982 passed, 8 skipped; modularity 0 failures; research_record_check PASS; lanes PASS; web typecheck and lint 0; four mutations red; print: 10 pages",
+  "orchestrator's real-preview print print-fcd953e1 (session 2026-10-15b) diffed against main 76745ade page by page: pages 1-3 and 6 identical; 5 and 7-10 changed as intended; page 11 removed (page 4's change is M5-T188's)",
+  "G1 data-contract-verifier PASS; G3 visual-quality-reviewer PASS (type scale, anchors, word count 2217 <= 2448; three advisories); G4 qa-engineer PASS (229 passed; five mutations; the six breakers reworked, not weakened); G5 security-reviewer PASS (two pre-existing advisories: DB-277, DB-278)",
+  "CI run 38732460088 at c20ba45e (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R018": [
+   "Page 5 opens with the eleven-option table in the owner's order: options 1-3 with their figures, options 4-11 as the concise state 'Not evaluated in this report' (test_s1_eleven_options_in_order_figures_then_not_evaluated)."
+  ],
+  "D-094-R019": [
+   "The comparison page no longer carries the missing-work inventory (the limitation paragraphs are removed: test_s1_table_comes_before_the_chart_and_no_limitation_paragraphs); the owed work is reported in the owner updates (PDF #3 and the session bullets) and the backlog."
+  ],
+  "D-094-R020": [
+   "The chart shows the allowance, the scheduled area and the site fit as three distinct items, the site fit as a status 'Placed on site: Not demonstrated', never a bar (test_s2_chart_placed_on_site_shows_a_status_not_a_bar)."
+  ],
+  "D-094-R023": [
+   "Displayed figures keep full internal precision and reconcile: the worked arithmetic prints 10,075 x 2.0 = 20,150 and 20,150 / 680 = 29.63 -> 29 from the document's own values (test_s5_worked_arithmetic_reads_from_the_document_with_bases)."
+  ],
+  "D-094-R025": [
+   "Each open item is one five-field record (issue, consequence, next action, responsible role, evidence reference) with site documents separated from software work (test_s3_five_field_issue_records)."
+  ],
+  "D-094-R026": [
+   "The appendix names actual sources and dates per input fact (MapPLUTO 26v2 as of 2026-09-30; the DCP street center lines), the input basis in plain words, and real worked calculations (test_s4_input_facts_bases_read_from_the_four_entry_block, test_s5_worked_arithmetic_reads_from_the_document_with_bases)."
+  ],
+  "D-094-R027": [
+   "Law links resolve to their exact sections through the official-URL validator (test_report_law_links, G1 checked 14 sections against the captures) and each rule maps to its review-register entry with its review state (test_s6_every_rule_maps_to_a_register_entry_with_review_state); the exported-PDF link check was made on the real-preview print."
+  ],
+  "D-094-R028": [
+   "One clearly named appendix holds the status-label key once and a run identity (document fingerprint, build commit, results revision, computed date) that identifies what generated the report (test_s7_run_identity_renders_in_the_appendix, test_s7_status_label_key_is_the_only_verified); no repeated headings (test_s9_one_merged_appendix_section)."
+  ],
+  "D-094-R032": [
+   "No remaining-capacity figure is computed from the 39,934 sq ft DOB field; the figure appears nowhere in the report (G4 verified its absence)."
+  ],
+  "D-094-R038": [
+   "The data path is fixed, not only the wording: the input-facts rows and the worked arithmetic are read from the document's own 1.5.0 input_facts block of the same result revision (readers.input_facts), never a hard-coded value (test_s4_input_facts_bases_read_from_the_four_entry_block)."
+  ],
+  "D-094-R049": [
+   "Tables carry units in their column headings and short headings; numbers right-aligned; no caption repeating its section title (G3 checked the printed pages against the type scale)."
+  ],
+  "D-094-R054": [
+   "Unfinished work reads once and plainly ('Not evaluated in this report'; 'Placed on site: Not demonstrated'); the repeated 'not yet' paragraphs of the old page 5 are gone; repeated next-action sentences are de-duplicated (G3 advisory on one wording carried)."
+  ],
+  "D-094-R058": [
+   "Every figure and diagram comes from one result revision (revision 1, computed 2026-10-15 in every footer and the run identity); allowance, scheduled area, site fit, the preliminary estimate (17-22) and the legal limit (29) stay distinct (G1)."
+  ],
+  "D-094-R059": [
+   "All eleven options are listed; options 4-11 are marked 'Not evaluated in this report' and cannot be read as evaluated alternatives (test_s12_unavailable_options_are_not_evaluated_alternatives)."
+  ],
+  "D-094-R060": [
+   "The evidence links were opened in the real-preview print; every 'see item N' resolves to its id='issue-N' anchor, unchanged (G4 checked all seven; G3 checked them against main)."
+  ],
+  "D-094-R061": [
+   "No legal source fact is marked unknown because software is unfinished: the appendix states the law and the worked figures; genuinely unresolved site facts (the zoning lot, the lot-area basis) stay named as conditions."
+  ],
+  "D-094-R072": [
+   "The comparison page changed and the text did not grow: 2,217 visible words against the cap of 2,448 (test_report_benchmark word cap); the report shrank from 11 to 10 pages."
+  ],
+  "D-094-R075": [
+   "The comparison comes before any limitation text and carries worked results (options 1-3 with figures) (test_s1_table_comes_before_the_chart_and_no_limitation_paragraphs)."
+  ],
+  "D-094-R077": [
+   "The repeated explanations of the old pages are removed and the supporting material is in one organized evidence appendix with headed parts (test_s9_one_merged_appendix_section, test_s9_scope_note_heads_the_appendix)."
+  ],
+  "D-094-R084": [
+   "All eleven options stay in the report: the table lists every option (test_s1_eleven_options_in_order_figures_then_not_evaluated)."
+  ],
+  "D-094-R092": [
+   "The appendix keeps the area measures apart: the worked figures use the recorded lot area (administrative record), the GIS outline area is a separate input row with its own basis, and no figure mixes the two (test_s5_mutation_no_single_figure_mixes_two_bases); the area illustration's method appears only with an area_allocation block (absent on the benchmark)."
+  ],
+  "D-094-R095": [
+   "The area illustration's method text sits in the appendix, not beside the drawing, and renders only when the document carries an area_allocation block (test_s8_area_illustration_method_present_with_a_block, test_s8_area_illustration_absent_on_the_benchmark)."
+  ]
+ }
+}

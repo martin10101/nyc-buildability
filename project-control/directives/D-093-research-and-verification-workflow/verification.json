@@ -1076,6 +1076,59 @@
     }
    ],
    "verified_at": "2026-10-11T10:33:52+00:00"
+  },
+  {
+   "directive_id": "D-093",
+   "task_id": "M3-T012",
+   "applicable_requirement_ids": [
+    "D-093-R038",
+    "D-093-R050",
+    "D-093-R052"
+   ],
+   "producer": "official-source-researcher",
+   "verifier": "directive-compliance-verifier",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484",
+   "reviewed_manifest_sha256": "8b8f676b6a8366e154f5a7553b7fa26c0c04ee31229b3495c44cd7655ce91b92",
+   "requirements": [
+    {
+     "id": "D-093-R038",
+     "state": "PASS",
+     "evidence": [
+      "Source re-derived: D-093 source-001.md lines 108-111 and the mapping table line 222 carry the owner's verbatim \"one concise record ... Question and scope ... Primary evidence (authority, title, URL, ID, page, document/effective date, retrieval date, excerpt/field) ... save permitted source material\"; the registry row reproduces it faithfully (not weakened/invented).",
+      "This task's share is met: docs/research/evidence-records/NB-07-mih-inclusionary-status.json is one concise record with question+scope (BBL 4073340070; lot_scope zoning_lot_unconfirmed; whole_site; current_law) and primary evidence E1-E5 each carrying authority, title, URL, reference/ID, document_date, retrieved and excerpt.",
+      "Permitted source material is saved: E4 carries saved_copy docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json with LF-sha256 0a7952bd...40008, which I recomputed on the frozen-head blob and it matches exactly; the live GIS layers keep saved_copy null with the query excerpt recorded.",
+      "Stays open: only the un-transcribed nycmih/nycihda metadata PDFs and the Appendix F CD 11 map image, correctly kept as recorded searches/conditions; the broader row also applies to M0-T190/M5-T158/M5-T160, whose records are other tasks' shares.",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 4269c757 (content identity 8b8f676b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (96 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T012-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
+    },
+    {
+     "id": "D-093-R050",
+     "state": "PASS",
+     "evidence": [
+      "Source re-derived: D-093 source-001.md line 133 / table line 234 states the reviewer must open the decisive sources, consider exception+counterexample, work the result before the code, and report pending if review is unavailable; the row reproduces it.",
+      "Independent review is present and reproducible: NB-07 review.agent_reviews has two entries (official-source-researcher, data-contract-verifier), both verdict \"agrees\", reviewed_revision 1; the two sealed returns return-research-MIH.md and return-check-MIH-independent.md were worked independently (the check states \"sealed (I did not see any other researcher's answer)\").",
+      "The existing review workflow's G1 gate (data-contract-verifier) independently re-opened MapPLUTO, nycmih, nyih and Appendix F (\"I did not trust the packet summary or the two returns\"), considered the UAP exception and the qualifying-residential-site R1-R5 counterexample, and reproduced OUT/OUT with distances 5,925 ft and 17,618 ft; there is no code to check (code_paths []), so \"before the code\" is met in substance.",
+      "Stays open: the downstream UAP/23-22/23-432 affordable-pathway reading is intentionally carried as an unreviewed draft (ADR-007), i.e. reported pending as R050 permits; only the membership interpretation is reviewed.",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 4269c757 (content identity 8b8f676b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (96 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T012-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
+    },
+    {
+     "id": "D-093-R052",
+     "state": "PASS",
+     "evidence": [
+      "Source re-derived: D-093 source-001.md line 137 / table line 236 requires the smallest check so a result cannot be marked verified when its evidence record is absent/stale/unresolved, validating structure only and certifying nothing, with no verified:true treated as proof; the row (classification harness) reproduces it.",
+      "I ran `python3 tools/research_record_check.py --check` -> EXIT 0, PASS, 7 records; NB-07 reported status=answered_from_primary_source, code_current=True, review_state=current, requested_label=Provisional.",
+      "The checker prints \"structural check only; not a professional verification\" and \"no record claims the Verified label without meeting every condition\" \u2014 nothing is labelled Verified and there is no verified:true field; NB-04 is reported (not failed) code_current False and NB-05 reported stale, confirming the check surfaces staleness without certifying.",
+      "Stays open: nothing for this task; the check itself was authored under M0-T190 and is reused here.",
+      "Verifier's carry-forward condition met at c8b0e434: the task's allowed-path files are identical to those verified at 4269c757 (content identity 8b8f676b), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (96 files). Gates G0 and G1, G2 PASS at that content identity (G1 data-contract-verifier; G2 orchestrator self-check). DCV report: project-control/reports/M3-T012-DCV.md."
+     ],
+     "reviewed_sha": "c8b0e434dcdcb528e2a9aedd294f8ed8097ef484"
+    }
+   ],
+   "verified_at": "2026-10-15T12:08:28+00:00"
   }
  ]
 }

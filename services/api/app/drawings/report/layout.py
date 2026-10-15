@@ -175,9 +175,10 @@ a {{ color: {action}; }}
 .scenario-figure figure {{ margin: 0; }}
 .scenario-side {{ flex: 1 1 0; min-width: 0; }}
 .scenario-side h3 {{ margin-top: 0; }}
-/* Provenance and the drawing notes share a row in two columns so the evidence page
-   stays compact and the status-label key is not orphaned (corrections T156-C1). */
-.evidence-columns {{ display: flex; gap: 8mm; align-items: flex-start; break-inside: avoid; }}
+/* The rules/review, drawing notes and run identity share a row in columns so the
+   appendix stays compact (corrections T156-C1; M5-T169 DB-270). The row may break across
+   a page so the status-label key is not pushed onto a near-empty last page. */
+.evidence-columns {{ display: flex; gap: 8mm; align-items: flex-start; }}
 .evidence-column {{ flex: 1 1 0; min-width: 0; }}
 .evidence-column h3 {{ margin-top: 0; }}
 .evidence-column ul {{ margin: 0; }}
@@ -187,5 +188,5 @@ a {{ color: {action}; }}
    note row never starts a page), and at least three rows stay on each side. */
 .reason-row {{ break-before: avoid; }}
 .open-items-block table {{ orphans: 3; widows: 3; }}
-.open-items-block table td {{ padding-top: 2mm; padding-bottom: 2mm; }}
+.open-items-block table td {{ padding-top: 1mm; padding-bottom: 1mm; }}
 """.strip()

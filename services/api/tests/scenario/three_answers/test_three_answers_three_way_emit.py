@@ -1121,9 +1121,7 @@ def test_round4_1_4_0_corner_report_page_6_and_page_8_agree(evidence_benchmark):
     html = build_report_html(doc)
     assert "The rear yard beyond the corner" in visible_text(html)
     # page 8: the appendix rear-yard open item reads the "not yet checked" open check.
-    appendix = html[
-        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
-    ]
+    appendix = html[html.index('id="appendix"'):]
     assert constraint_text.REAR_YARD_OPEN_CHECK in visible_text(appendix)
 
 
@@ -1151,9 +1149,7 @@ def test_round4_1_5_0_corner_report_page_6_drops_line_and_page_8_conditional():
     assert "The rear yard beyond the corner" not in building_b["not_checked"]
     html = build_report_html(doc)
     assert "The rear yard beyond the corner" not in visible_text(html)
-    appendix = html[
-        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
-    ]
+    appendix = html[html.index('id="appendix"'):]
     assert constraint_text.REAR_YARD_OPEN_CHECK not in visible_text(appendix)
 
 
