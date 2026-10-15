@@ -82,22 +82,22 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "rules-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Red until E0-S: test_zoning_rule_review_register.py (rule_file_sha256) and NB-05 code identity. Commit HELD.",
     "Never integrate while M5-T173B or M5-T180 is in flight: inputs.py line 218 passes the study program, so qualifying-affordable studies would change engine output."
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:55.389036+00:00",
-  "updated_at": "2026-10-15T23:40:55.841868+00:00",
+  "updated_at": "2026-10-15T23:40:59.007642+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -115,5 +115,14 @@
     "cd services/api && python -m ruff check .",
     "cd services/api && python -m pytest -q tests/rules/test_r6b_coverage_yard_units.py tests/rules/test_r6b_qualifying_dwelling_units.py tests/rules/test_r6b_a02b_golden.py tests/rules/test_r6b_other_districts_unchanged.py"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:40:59.007498+00:00",
+      "agent": "rules-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed at the wave-29 base; builder dispatched (commit held until the serial part)"
+    }
+  ]
 }
