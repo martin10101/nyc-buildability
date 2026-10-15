@@ -230,8 +230,8 @@
     "directive-compliance-verifier",
     "visual-quality-reviewer"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK B1 (mirror of M5-T170 RISK 1): readers.building_not_placed keys on geometry.floor_plates and the kit adapter draws from it (both confirmed at bb5c02b9), so the not-placed sentence clears WITHOUT editing readers.py (forbidden, M5-T169's file). G0 must re-confirm both at the W28 head; if a readers.py edit is in fact required it is a sequencing decision before build, not a gate surprise.",
     "RISK B2 (benchmark fan-out): the enumerated consumer tests, the DXF/SVG snapshots and the two web pins must all be in allowed_paths up front (a missed pin costs a scope correction - M5-T167/M5-T170 lesson). The work order's blanket 'web forbidden' is overridden for exactly the two web benchmark-consumer tests here (recorded at G0); any other web red routes out.",
@@ -242,7 +242,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:43:50.232561+00:00",
-  "updated_at": "2026-10-15T17:54:55.150237+00:00",
+  "updated_at": "2026-10-15T18:13:48.239901+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -301,5 +301,7 @@
       "actor": "orchestrator",
       "change": "Scope correction 3 (session 2026-10-15b, after the round-2 reviews at e79ddbc6): the G3 visual review found two required contradictions on the real print (session-2026-10-15b/return-T172-G3v.md): page 5's comparison says 'Shown on the site plan' while page 4's site plan is byte-identical to before and still carries 'No building placed'; the appendix's area-illustration method says the zones 'are shown' although no illustration is drawn. Both sentences come from drawings_embed.py and page_evidence.py, which join the allowed paths (S14). The G3 code review found that 'placed' is decided by two predicates (the four measures vs the drawn plates), which disagree on a single-frontage lot; the orchestrator takes it as required (S15). No row, gate, reviewer or dependency changes; the drawing of the footprint and the illustration stays M5-T173 part B's."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T18:13:48.239707+00:00"
 }
