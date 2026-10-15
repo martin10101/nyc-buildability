@@ -3,7 +3,7 @@
   "title": "ZR snapshot table-payload tamper-evidence (DB-276, Option A): additive table_digest_sha256 over the canonical JSON of each capture's table payload, verified by the loader snapshots.py; the three payload shapes (table.rows, tables, table.row_groups) documented in RULES_ENGINE_ARCHITECTURE.md; 37 canonical table-bearing snapshots gain the field (glob-derived, incl. the sweep-missed zr-22-131) and the 37 bundled copies are re-synced byte-identical; no existing content_digest or citation digest moves.",
   "task_type": "backend",
   "milestone_id": "M3",
-  "objective": "Behaviour-identical for every consumer that reads the payload today; the numbers do NOT change (the sweep confirmed zr-23-22/zr-23-432 already carry the full R6B numbers). (1) services/api/app/rules/snapshots.py load_snapshot_file: after the UNCHANGED content_digest_sha256==sha256(verbatim_excerpt) check, detect a table payload \u2014 a 'table' dict with 'rows' or 'row_groups', XOR a 'tables' list (fail closed if both). When a payload exists, require a 'table_digest_sha256' field and verify it equals sha256 of the canonical JSON of the payload (json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(',',':')).encode('utf-8')), computed over the PARSED object so re-indentation never breaks it; raise SnapshotError on mismatch, on payload-without-digest, and on digest-without-payload. Snapshots with no payload are unaffected. (2) Add table_digest_sha256 to each of the 37 table-bearing canonical files under docs/research/zr-snapshots/v1/ (set derived by glob over 'table'/'tables', NEVER hard-coded 36 \u2014 the sweep omitted zr-22-131) and re-sync the 37 bundled copies under services/api/app/_zr_snapshots/v1/ with sync_zr_snapshots.py; content_digest_sha256 is unchanged on every file so no rule/reference/register citation digest (943b65f9.../9fab7be8...) moves. (3) Document the three payload shapes and the new field in docs/RULES_ENGINE_ARCHITECTURE.md section 5 (there is no separate snapshot JSON-schema file). row_groups normalisation in the reference-case checker is NOT needed (no table_assertion targets zr-24-522 today) and is deferred. This task changes no property fact, rule applicability, calculation, result or certainty label, so no NB evidence-record revision and no zoning-rule-review register entry are required (D-093-R037 / principle 20 not triggered).",
+  "objective": "Behaviour-identical for every consumer that reads the payload today; the numbers do NOT change (the sweep confirmed zr-23-22/zr-23-432 already carry the full R6B numbers). (1) services/api/app/rules/snapshots.py load_snapshot_file: after the UNCHANGED content_digest_sha256==sha256(verbatim_excerpt) check, detect a table payload — a 'table' dict with 'rows' or 'row_groups', XOR a 'tables' list (fail closed if both). When a payload exists, require a 'table_digest_sha256' field and verify it equals sha256 of the canonical JSON of the payload (json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(',',':')).encode('utf-8')), computed over the PARSED object so re-indentation never breaks it; raise SnapshotError on mismatch, on payload-without-digest, and on digest-without-payload. Snapshots with no payload are unaffected. (2) Add table_digest_sha256 to each of the 37 table-bearing canonical files under docs/research/zr-snapshots/v1/ (set derived by glob over 'table'/'tables', NEVER hard-coded 36 — the sweep omitted zr-22-131) and re-sync the 37 bundled copies under services/api/app/_zr_snapshots/v1/ with sync_zr_snapshots.py; content_digest_sha256 is unchanged on every file so no rule/reference/register citation digest (943b65f9.../9fab7be8...) moves. (3) Document the three payload shapes and the new field in docs/RULES_ENGINE_ARCHITECTURE.md section 5 (there is no separate snapshot JSON-schema file). row_groups normalisation in the reference-case checker is NOT needed (no table_assertion targets zr-24-522 today) and is deferred. This task changes no property fact, rule applicability, calculation, result or certainty label, so no NB evidence-record revision and no zoning-rule-review register entry are required (D-093-R037 / principle 20 not triggered).",
   "business_reason": "return-sweep-capture-tables.md (sizing the M5-T185 G3 finding): the governing R6B FARs/heights live in a sibling table/tables/row_groups field that no digest signs, while the digest-pinned verbatim_excerpt holds only a '[table - see structured table field]' placeholder. A silent edit to a table value breaks no content_digest and is caught only if a reference case happens to assert that exact field. This closes the tamper-evidence gap additively, with one shape documented and a mutation test.",
   "inputs": [
     "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-sweep-capture-tables.md",
@@ -27,7 +27,8 @@
     "the 37 table-bearing snapshot files under docs/research/zr-snapshots/v1/ and their bundled copies"
   ],
   "dependencies": [
-    "M5-T185"
+    "M5-T185",
+    "M5-T172"
   ],
   "allowed_paths": [
     "services/api/app/rules/snapshots.py",
@@ -108,17 +109,24 @@
     "services/api/app/_zr_snapshots/v1/zr-36-711.snapshot.json",
     "docs/RULES_ENGINE_ARCHITECTURE.md",
     "services/api/tests/rules/test_zr_snapshot_table_digest.py",
-    "project-control/reports/M3-T013-producer-report.md"
+    "project-control/reports/M3-T013-producer-report.md",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/README.md"
   ],
   "forbidden_paths": [
     "services/api/tests/rules/reference_cases/",
     "docs/reference-cases/",
-    "docs/research/evidence-records/",
     "docs/zoning-rule-review/",
     "services/api/app/rules/review_register/register.json",
     "services/api/app/rules/rulesets/",
     "packages/contracts/",
-    "docs/RESEARCH_REQUESTS.md"
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-02-proposed-zfa-scope.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-07-mih-inclusionary-status.json"
   ],
   "acceptance_scenarios": [
     {
@@ -155,7 +163,7 @@
       "id": "S6",
       "given": "the re-synced bundle",
       "when": "sync_zr_snapshots.py --check and test_zr_snapshot_bundle.py run",
-      "then": "both pass \u2014 the 37 bundled copies are byte-identical to canonical and membership matches"
+      "then": "both pass — the 37 bundled copies are byte-identical to canonical and membership matches"
     },
     {
       "id": "S7",
@@ -174,6 +182,12 @@
       "given": "research_record_check and modularity_check",
       "when": "--check runs",
       "then": "both pass; no NB record changes (no fact/label change) and snapshots.py crosses no modularity threshold"
+    },
+    {
+      "id": "S10",
+      "given": "the evidence record NB-06, whose evidence E10 pins zr-23-432.snapshot.json by its whole-file LF sha256 (37c1414c... before this task)",
+      "when": "the signed snapshot (ae06010e... after this task) is in place",
+      "then": "NB-06 takes its next revision with E10's saved-copy hash re-pinned to the signed file's LF sha256 and a dependency assessment saying the file gained only its table digest (no captured text, value or reading changed); its code identity and every reading stay as they are; nothing is labelled Verified; research_record_check.py --check passes; the README's index cell for NB-06 follows only if its format requires the revision number"
     }
   ],
   "required_gates": [
@@ -196,7 +210,7 @@
     "RISK B1 (count): the sweep/brief say 36; the true table-bearing count at 0463ec78 is 37 (zr-22-131, a 'tables' payload, was omitted). The builder MUST derive the set by glob over 'table'/'tables' and let S1 pin the set; a hard-coded 36 silently leaves zr-22-131 unsigned.",
     "RISK B2 (no digest moves): the new field is a sibling to verbatim_excerpt; content_digest_sha256 is computed over the excerpt only and must stay byte-identical on every file, so the ~40 rule/reference-case/register pins do not move. A test asserts content_digest_sha256 is unchanged for zr-23-22/zr-23-432.",
     "RISK B3 (canonicalization): the digest is over the PARSED payload with sort_keys+compact separators, not raw file bytes, so re-indenting a snapshot JSON never breaks it; mutual-exclusivity of table vs tables is enforced (none has both today).",
-    "RISK B4 (scope boundary): no NB evidence-record, no zoning-rule-review register, no reference_cases edit, no rule/fixture change \u2014 the task adds integrity metadata only. Keeping those forbidden also keeps zero file overlap with spec-M5-T172 (which owns NB-04/NB-06/NB-01, the register, reference cases and the benchmark).",
+    "RISK B4 (scope boundary): no NB evidence-record, no zoning-rule-review register, no reference_cases edit, no rule/fixture change — the task adds integrity metadata only. Keeping those forbidden also keeps zero file overlap with spec-M5-T172 (which owns NB-04/NB-06/NB-01, the register, reference cases and the benchmark).",
     "RISK B5 (ownership): new test lives directly under the owned tests/rules folder (no new test subfolder, per the placeholder-ownership rule) and builds fixtures in tmp_path at runtime."
   ],
   "blockers": [],
@@ -230,6 +244,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "M3-T013 claimed: each captured law table carries its own fingerprint, checked on load (builder dispatched next)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T18:14:06+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15b, after M5-T172 was accepted): the builder's commit 06651e8d signs the 37 table captures, and the evidence record NB-06 pins zr-23-432.snapshot.json by its whole-file sha256 (evidence E10, 37c1414c... -> ae06010e...), so research_record_check fails until NB-06 is re-pinned (G4 F1, REQUIRED; G1 and the builder found the same; it is the only such pin). NB-06 was M5-T172's while that task was in flight; it is accepted now, so NB-06 (and the records README for its index cell) join the allowed paths and scenario S10 is added; M5-T172 joins the dependencies. No row, gate or reviewer changes."
     }
   ]
 }
