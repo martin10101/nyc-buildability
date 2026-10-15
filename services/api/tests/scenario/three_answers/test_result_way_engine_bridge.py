@@ -24,11 +24,13 @@ from app.contracts.study_setup_bridge import study_from_study_setup
 from app.profile.builder import build_property_profile
 from app.scenario.three_answers.engine import ThreeAnswersResult
 from app.scenario.three_answers.inputs import ThreeAnswerInputs
-from app.scenario.three_answers.result_way_bridge import GatheredResult
+from app.scenario.three_answers.placement import build_placement, compute_placement_geometry
+from app.scenario.three_answers.result_way_bridge import GatheredResult, gather_result_ways
 from app.scenario.three_answers.result_way_bridge_overlay import OVERLAY_SUPPORT_ROWS
 from app.scenario.three_answers.result_way_engine_bridge import (
     EngineResultWays,
     _envelope_analysis_for,
+    _placement_inputs_for,
     run_engine_and_result_ways,
 )
 from app.scenario.three_answers.result_way_inputs import (
@@ -482,3 +484,80 @@ def test_adapter_imports_only_the_decision_entry_and_the_engine():
     # it DOES import the decision entry and the engine's result type
     assert ".result_way_bridge" in targets
     assert ".engine" in targets
+
+
+# --------------------------------------------------------------------------- S11 (placement inputs)
+# Scope correction 1 (M5-T172): the bridge assembles the FOUR lot measures an illustrative placement
+# rests on, each on its own basis, from the carried objects - the printed-tax-map pair from the PLUTO
+# lot facts, the city-map (GIS) frontage from the prepared outline edge and the GIS depth from the
+# lot-reach measure - never the scope's lot_front_ft (a GIS figure under the approximate_tax_map
+# code). build_placement then gives the reference-case figures; a missing measure holds its basis
+# back. Expected values are the settled reading placement-building-b.json, never a program run.
+def _gathered_for(profile, prepared, geometry):
+    return gather_result_ways(
+        evaluator_inputs=_eval_doc(), profile=profile, outline=prepared, geometry=geometry,
+        housing_kind="standard_residence", special_density_statement=None, zoning_lot_index=None,
+    )
+
+
+def test_s11_bridge_assembles_the_four_measures_each_on_its_basis(benchmark_geom):
+    profile, prepared, geometry = benchmark_geom
+    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
+    gathered = _gathered_for(profile, prepared, geometry)
+    pi = _placement_inputs_for(
+        gathered, street_data=streets, outline=prepared, geometry=geometry, profile=profile,
+    )
+    assert pi is not None
+    assert pi.frontage_street_name == "Northern Boulevard"  # the wide street (longest frontage)
+    assert pi.tax_frontage_ft == 100.76 and pi.tax_depth_ft == 100  # PLUTO, printed_tax_map
+    assert round(pi.gis_frontage_ft, 2) == 103.88  # the prepared outline's NB edge, gis
+    assert round(pi.gis_depth_ft, 2) == 99.97  # the NB perpendicular lot-reach measure, gis
+    # the scope's lot_front_ft is the GIS frontage mislabelled approximate_tax_map; the tax frontage
+    # is NOT taken from it (DB-260): 100.76 != 103.88.
+    assert pi.tax_frontage_ft != round(pi.gis_frontage_ft, 2)
+    # build_placement on those four measures gives the settled reference-case figures.
+    geom = compute_placement_geometry(
+        zoning_floor_area_sqft=20150, storeys=3, frontage_ft=pi.tax_frontage_ft,
+        lot_depth_ft=pi.tax_depth_ft, gis_frontage_ft=pi.gis_frontage_ft,
+        gis_depth_ft=pi.gis_depth_ft,
+    )
+    assert geom.footprint_sqft == 6716.66  # tax basis, equal to the reference case
+    assert geom.tax_back_clearance_ft == 33.34
+    assert geom.gis_back_clearance_ft == 35.31  # NOT 33.32 (DB-260)
+    assert geom.frontage_conflict_ft == 3.12
+
+
+def test_s11_input_states_a_missing_measure_holds_its_basis_back():
+    base = dict(zoning_floor_area_sqft=20150, storeys=3, frontage_ft=100.76, lot_depth_ft=100,
+                gis_frontage_ft=103.88, gis_depth_ft=99.97)
+    # all four given -> placed, with the GIS conflict shown.
+    placed = build_placement(placed=True, **base)
+    assert placed["status"] == "placed"
+    assert any(c.get("kind") == "contradicted_record" for c in placed["conditions"])
+    # the tax pair missing -> withheld (the building is not placed on the printed-tax-map basis).
+    no_tax = build_placement(placed=True, **{**base, "frontage_ft": None})
+    assert no_tax["status"] == "withheld" and "outline" not in no_tax
+    no_tax_depth = build_placement(placed=True, **{**base, "lot_depth_ft": None})
+    assert no_tax_depth["status"] == "withheld"
+    # the GIS pair missing -> placed on the tax basis, but no GIS conflict (that basis not known).
+    no_gis = build_placement(placed=True, **{**base, "gis_frontage_ft": None, "gis_depth_ft": None})
+    assert no_gis["status"] == "placed"
+    assert not any(c.get("kind") == "contradicted_record" for c in no_gis["conditions"])
+    # neither pair -> withheld (no default stands for a missing measure).
+    neither = build_placement(placed=True, zoning_floor_area_sqft=20150, storeys=3,
+                              frontage_ft=None, lot_depth_ft=None)
+    assert neither["status"] == "withheld"
+
+
+def test_s11_mutation_feeding_the_scope_frontage_collapses_the_conflict():
+    # MUTATION (S11): feeding the scope lot_front_ft (the GIS frontage 103.88) as the tax frontage
+    # instead of PLUTO's 100.76 collapses the two-basis conflict - the frontage difference goes to 0
+    # - so the reference-case figures (3.12 / 33.34 / 35.31) no longer hold. This is why the bridge
+    # must read the tax frontage from PLUTO, not the mislabelled scope.
+    good = compute_placement_geometry(zoning_floor_area_sqft=20150, storeys=3, frontage_ft=100.76,
+                                      lot_depth_ft=100, gis_frontage_ft=103.88, gis_depth_ft=99.97)
+    assert good.frontage_conflict_ft == 3.12
+    mutated = compute_placement_geometry(zoning_floor_area_sqft=20150, storeys=3, frontage_ft=103.88,
+                                         lot_depth_ft=100, gis_frontage_ft=103.88, gis_depth_ft=99.97)
+    assert mutated.frontage_conflict_ft == 0.0  # the conflict collapses; the 3.12 assertion fails
+    assert mutated.footprint_sqft != good.footprint_sqft

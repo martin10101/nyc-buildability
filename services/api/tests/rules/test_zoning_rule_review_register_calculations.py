@@ -60,6 +60,7 @@ def test_committed_calculations_validate_clean():
 
 
 def test_the_six_calculation_entries_are_present():
+    # M5-T172 adds the illustrative-placement and area-allocation calculation entries (eight now).
     assert [c["entry_id"] for c in CALCS] == [
         "calc-floor-area-allowance",
         "calc-lot-coverage-by-portion",
@@ -67,10 +68,14 @@ def test_the_six_calculation_entries_are_present():
         "calc-legal-dwelling-unit-limit",
         "calc-preliminary-apartment-estimate",
         "calc-first-building-option-complete",
+        "calc-first-placement",
+        "calc-area-allocation",
     ]
     kinds = {c["entry_id"]: c["entry_kind"] for c in CALCS}
     assert kinds["calc-first-building-option-complete"] == "calculation_comparison"
     assert kinds["calc-floor-area-allowance"] == "calculation"
+    assert kinds["calc-first-placement"] == "calculation"
+    assert kinds["calc-area-allocation"] == "calculation"
 
 
 def test_schema_version_bumped_additively():

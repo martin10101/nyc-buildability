@@ -186,9 +186,9 @@ def test_s8_area_illustration_bar_or_zones_follows_fitted() -> None:
     assert "proportional bar" in unfitted
 
 
-def test_s8_area_illustration_absent_on_the_benchmark() -> None:
-    # the benchmark carries no area_allocation block (until M5-T172), so the method is absent.
-    assert "Area-illustration method" not in visible_text(_appendix(build_report_html(benchmark())))
+def test_s8_area_illustration_method_on_the_benchmark() -> None:
+    # the benchmark now carries an area_allocation block (M5-T172), so the method appears.
+    assert "Area-illustration method" in visible_text(_appendix(build_report_html(benchmark())))
 
 
 # =========================================================================== S15 1.4.0

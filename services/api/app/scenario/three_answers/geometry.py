@@ -43,6 +43,140 @@ _FLOOR_PLATES_NO_PLACEMENT = (
     "No floor plate is drawn: no placement on the lot is worked for any building."
 )
 
+# A corner of one street line this close to a corner of another (local feet) is the shared corner
+# where the two frontages meet; the footprint is anchored there (M5-T172).
+_CORNER_TOL_FT = 0.05
+
+
+def _footprint_outline(
+    frontage_line: Sequence[Sequence[float]],
+    side_line: Sequence[Sequence[float]] | None,
+    plate_gross_sqft: float,
+) -> list[list[float]] | None:
+    """The illustrative footprint ring (local feet), as wide as the full frontage and as deep as
+    the plate needs, anchored at the corner where the frontage and the side street meet and run
+    back along the side street (so both drawn edges are parallel to a street line). Every vertex is
+    DERIVED from the frontage and side lines the site plan already carries - none is typed in. The
+    depth is the plate divided by the frontage length, so the ring's area reconciles with the plate;
+    returns None when the two lines share no corner or the frontage has no length."""
+    if side_line is None or len(frontage_line) < 2 or len(side_line) < 2:
+        return None
+    f_ends = (frontage_line[0], frontage_line[-1])
+    s_ends = (side_line[0], side_line[-1])
+    corner = far = side_far = None
+    for fe in f_ends:
+        for se in s_ends:
+            if math.dist(fe, se) <= _CORNER_TOL_FT:
+                corner = fe
+                far = f_ends[1] if fe is f_ends[0] else f_ends[0]
+                side_far = s_ends[1] if se is s_ends[0] else s_ends[0]
+    if corner is None or far is None or side_far is None:
+        return None
+    frontage_len = math.dist(corner, far)
+    side_len = math.dist(corner, side_far)
+    if frontage_len <= 0 or side_len <= 0:
+        return None
+    depth = plate_gross_sqft / frontage_len
+    sx = (side_far[0] - corner[0]) / side_len
+    sy = (side_far[1] - corner[1]) / side_len
+    c = [float(corner[0]), float(corner[1])]
+    f = [float(far[0]), float(far[1])]
+    f_back = [f[0] + sx * depth, f[1] + sy * depth]
+    c_back = [c[0] + sx * depth, c[1] + sy * depth]
+    return [c, f, f_back, c_back, c]
+
+
+def build_placed_floor_plates(
+    *,
+    frontage_line: Sequence[Sequence[float]],
+    side_line: Sequence[Sequence[float]] | None,
+    plate_gross_sqft: float,
+    storeys: int,
+) -> dict | None:
+    """The ``floor_plates`` geometry layer once a building is placed (task M5-T172): one plate per
+    storey, each the same illustrative footprint (:func:`_footprint_outline`) placed in the corner
+    on the full frontage within the drawn lot outline, carrying the plate's gross area and the
+    residential use. The drawn ring's area reconciles with the plate within the readers' half a
+    square foot (check C-4). Returns None when the footprint cannot be positioned, so the caller
+    keeps the honest not-available layer rather than invent a shape."""
+    if storeys <= 0:
+        return None
+    ring = _footprint_outline(frontage_line, side_line, plate_gross_sqft)
+    if ring is None:
+        return None
+    outline = [ring]
+    return {
+        "status": "available",
+        "entries": [
+            {
+                "floor": storey,
+                "outline": outline,
+                "gross_sf": plate_gross_sqft,
+                "use": _RESIDENTIAL,
+            }
+            for storey in range(1, storeys + 1)
+        ],
+    }
+
+
+def _frontage_lines(geometry: dict, frontage_street_name: str) -> tuple[list | None, list | None]:
+    """The placement frontage line (the street the building sits along) and ONE adjacent street
+    line (the corner) from the drawn geometry's streets. None when the frontage street is not
+    drawn, so the caller keeps the honest not-available layer."""
+    streets = geometry.get("streets") or []
+    frontage_line = side_line = None
+    for street in streets:
+        if isinstance(street, dict) and street.get("street") == frontage_street_name:
+            frontage_line = street.get("frontage_line")
+    for street in streets:
+        if (
+            isinstance(street, dict)
+            and street.get("street") != frontage_street_name
+            and street.get("frontage_line")
+        ):
+            side_line = street.get("frontage_line")
+            break
+    return frontage_line, side_line
+
+
+def place_building_on_geometry(
+    geometry: dict,
+    *,
+    frontage_street_name: str,
+    plate_gross_sqft: float,
+    storeys: int,
+    floor_to_floor_ft: float,
+) -> list[dict] | None:
+    """Draw the placed building into an AVAILABLE geometry block (task M5-T172): set
+    ``geometry.floor_plates`` to the footprint on the placement frontage (:func:`build_placed_
+    floor_plates`) and return the floor-by-floor rows the drawings pair with those plates (check
+    C-4), one per storey. The plate rows and the table are produced together, so they never
+    disagree. Returns None when the footprint cannot be positioned (the geometry is left unchanged
+    and the caller keeps the honest not-available layer); the storey gross area carries no
+    building-code deduction in this phase (zoning_floor_area_sf = gross_sf)."""
+    frontage_line, side_line = _frontage_lines(geometry, frontage_street_name)
+    if frontage_line is None:
+        return None
+    plates = build_placed_floor_plates(
+        frontage_line=frontage_line, side_line=side_line,
+        plate_gross_sqft=plate_gross_sqft, storeys=storeys,
+    )
+    if plates is None:
+        return None
+    geometry["floor_plates"] = plates
+    return [
+        {
+            "floor": storey,
+            "floor_label": f"Floor {storey}",
+            "gross_sf": plate_gross_sqft,
+            "deductions_sf": 0.0,
+            "zoning_floor_area_sf": plate_gross_sqft,
+            "height_ft": floor_to_floor_ft,
+            "use": _RESIDENTIAL,
+        }
+        for storey in range(1, storeys + 1)
+    ]
+
 
 def _rectangle(width: float, depth: float) -> list[list[float]]:
     """A closed axis-aligned ring anchored at the origin (a lot corner), feet."""

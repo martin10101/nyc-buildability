@@ -169,22 +169,34 @@ def _strip_1_5_0_blocks(doc: dict) -> dict:
     d = copy.deepcopy(doc)
     for key in _V1_5_0_TOP_BLOCKS:
         d.pop(key, None)
+    # M5-T172: the placement emission populates the floor-by-floor table with the drawn plates (it
+    # is empty on a 1.4.0 / unplaced document), so strip it for the shared-1.4.0-core comparison.
+    d["floor_by_floor"] = []
     if isinstance(d.get("geometry"), dict):
         d["geometry"].pop("constraint_lines", None)
-        plates = d["geometry"].get("floor_plates")
-        if isinstance(plates, dict):
-            for entry in plates.get("entries", []) or []:
-                if isinstance(entry, dict):
-                    entry.pop("building", None)
+        # M5-T172: the placement emission draws the floor_plates layer (not_available before); the
+        # drawn layer is a 1.5.0 effect, so drop the whole layer for the 1.4.0-core comparison.
+        d["geometry"].pop("floor_plates", None)
     for alt in d.get("building_alternatives", []) or []:
         if isinstance(alt, dict):
             alt.pop("placement", None)
             alt.pop("area_allocation", None)
             # M5-T170: the 1.5.0 envelope emission gates the "The street wall" not-checked line out
-            # (page 6 then agrees with the applied street-wall reading on pages 3 and 8), so it is a
-            # 1.5.0 effect - normalize it for the shared-1.4.0-core comparison.
+            # (page 6 then agrees with the applied street-wall reading on pages 3 and 8); M5-T172:
+            # the placement emission drops "Where the plan sits on the lot" (the footprint now
+            # sits on the lot). Both are 1.5.0 effects - normalize for the 1.4.0-core compare.
             if isinstance(alt.get("not_checked"), list):
-                alt["not_checked"] = [x for x in alt["not_checked"] if x != "The street wall"]
+                alt["not_checked"] = [
+                    x for x in alt["not_checked"]
+                    if x not in ("The street wall", "Where the plan sits on the lot")
+                ]
+            # M5-T172: the placement emission drops the fit note's "where the building sits on
+            # the lot" clause (the footprint now sits on the lot); normalize for the 1.4.0 compare.
+            if isinstance(alt.get("fit_note"), str):
+                alt["fit_note"] = alt["fit_note"].replace(
+                    "where the building sits on the lot and the other items",
+                    "the other items",
+                )
     # M5-T170: the 1.5.0 envelope emission reconciles the setback value state to the applied
     # envelope reading (the two setback emitters must agree); strip it for the 1.4.0-core compare.
     states = (d.get("answers", {}).get("permitted_envelope", {}) or {}).get("value_states")
@@ -254,9 +266,11 @@ def _fitted_without_placed_doc() -> dict:
 
 def _total_mismatch_doc() -> dict:
     """The placed fixture with apartment + other no longer equal to total: schema-valid, but
-    the sum way rule is broken."""
+    the sum way rule is broken. ``other`` is moved (not ``apartment`` or ``total``) so the
+    apartment still equals the share applied to the total - only the sum rule breaks, never the
+    share rule (DB-248), so this isolates ``allocation_total_mismatch``."""
     doc = _load(PLACED)
-    doc["building_alternatives"][0]["area_allocation"]["total_sqft"] += 1000.0
+    doc["building_alternatives"][0]["area_allocation"]["other_area_sqft"] += 1000.0
     return doc
 
 

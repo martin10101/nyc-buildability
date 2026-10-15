@@ -1989,9 +1989,18 @@ def test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emit
     committed_b = committed["building_alternatives"][0]
     assert "The rear yard beyond the corner" in doc_b["not_checked"]  # 1.4.0 keeps it (round 4)
     assert "The rear yard beyond the corner" not in committed_b["not_checked"]  # 1.5.0 drops it
-    assert {k: v for k, v in doc_b.items() if k != "not_checked"} == {
-        k: v for k, v in committed_b.items() if k != "not_checked"
+    # The adapter path threads no street window AND no placement, so its building B carries neither
+    # the placement nor the area allocation, keeps the "Where the plan sits on the lot" not-checked
+    # line, and keeps the fit note's "where the building sits on the lot" clause. The committed
+    # 1.5.0 document is placed (M5-T172), so it drops those not-checked lines, carries placement and
+    # area_allocation, and reworded the fit note. Apart from those placement-driven fields the
+    # worked building is byte-equal.
+    _placement_driven = {"not_checked", "fit_note", "placement", "area_allocation"}
+    assert {k: v for k, v in doc_b.items() if k not in _placement_driven} == {
+        k: v for k, v in committed_b.items() if k not in _placement_driven
     }
+    assert "placement" not in doc_b and "area_allocation" not in doc_b  # the 1.4.0 adapter path
+    assert "placement" in committed_b and "area_allocation" in committed_b  # the placed 1.5.0 doc
 
 
 # ====================================================================== W14 (walkthrough F1)

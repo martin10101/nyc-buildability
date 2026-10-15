@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: lot_coverage
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 10 (last changed 2026-10-15)
+- Revision: 11 (last changed 2026-10-15)
 - Combines rule entries: `r6b-lot-coverage`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713`
+- Combined code identity: `ec68a62dc2f5671123535ef62d1c45da3c5f505bf7d91aede0e228e31c92df13`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3`)
-  - `services/api/app/scenario/three_answers/geometry.py` (`9f43f9f30019194f8d83d473b7fed328fdaad316bf70877cd68c668964a60d13`)
+  - `services/api/app/scenario/three_answers/geometry.py` (`d85e1aed33efc9a11ee5f64441d6e2bbfb2e551083c4120dd9b9c49a9e8c9988`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
 

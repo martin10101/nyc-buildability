@@ -578,7 +578,35 @@
     }
   ],
   "notices_count": 1,
-  "floor_by_floor": [],
+  "floor_by_floor": [
+    {
+      "floor": 1,
+      "floor_label": "Floor 1",
+      "gross_sf": 6716.666666666667,
+      "deductions_sf": 0.0,
+      "zoning_floor_area_sf": 6716.666666666667,
+      "height_ft": 10.0,
+      "use": "residential"
+    },
+    {
+      "floor": 2,
+      "floor_label": "Floor 2",
+      "gross_sf": 6716.666666666667,
+      "deductions_sf": 0.0,
+      "zoning_floor_area_sf": 6716.666666666667,
+      "height_ft": 10.0,
+      "use": "residential"
+    },
+    {
+      "floor": 3,
+      "floor_label": "Floor 3",
+      "gross_sf": 6716.666666666667,
+      "deductions_sf": 0.0,
+      "zoning_floor_area_sf": 6716.666666666667,
+      "height_ft": 10.0,
+      "use": "residential"
+    }
+  ],
   "floor_stack": {
     "status": "not_available",
     "reason": "Not shown here. Each worked building's floor schedule is given in building_alternatives.",
@@ -676,9 +704,96 @@
       "reason_kind": "missing_input"
     },
     "floor_plates": {
-      "status": "not_available",
-      "reason": "No floor plate is drawn: no placement on the lot is worked for any building. The first-building alternatives worked for this lot are listed in building_alternatives, and any building of the method that was not worked is listed, with the reason, in buildings_not_worked.",
-      "reason_kind": "rule_not_implemented"
+      "status": "available",
+      "entries": [
+        {
+          "floor": 1,
+          "outline": [
+            [
+              [
+                101.28981446987018,
+                120.66345930099487
+              ],
+              [
+                0.0,
+                97.61428499201429
+              ],
+              [
+                14.006507330674813,
+                34.491150514346934
+              ],
+              [
+                115.29632180054499,
+                57.540324823327516
+              ],
+              [
+                101.28981446987018,
+                120.66345930099487
+              ]
+            ]
+          ],
+          "gross_sf": 6716.666666666667,
+          "use": "residential"
+        },
+        {
+          "floor": 2,
+          "outline": [
+            [
+              [
+                101.28981446987018,
+                120.66345930099487
+              ],
+              [
+                0.0,
+                97.61428499201429
+              ],
+              [
+                14.006507330674813,
+                34.491150514346934
+              ],
+              [
+                115.29632180054499,
+                57.540324823327516
+              ],
+              [
+                101.28981446987018,
+                120.66345930099487
+              ]
+            ]
+          ],
+          "gross_sf": 6716.666666666667,
+          "use": "residential"
+        },
+        {
+          "floor": 3,
+          "outline": [
+            [
+              [
+                101.28981446987018,
+                120.66345930099487
+              ],
+              [
+                0.0,
+                97.61428499201429
+              ],
+              [
+                14.006507330674813,
+                34.491150514346934
+              ],
+              [
+                115.29632180054499,
+                57.540324823327516
+              ],
+              [
+                101.28981446987018,
+                120.66345930099487
+              ]
+            ]
+          ],
+          "gross_sf": 6716.666666666667,
+          "use": "residential"
+        }
+      ]
     },
     "constraint_lines": [
       {
@@ -929,7 +1044,6 @@
         ]
       },
       "not_checked": [
-        "Where the plan sits on the lot",
         "Parking, loading and bicycle requirements"
       ],
       "capacity_estimate": {
@@ -947,7 +1061,79 @@
         "whole_below_high": 21,
         "whole_above_high": 22
       },
-      "fit_note": "The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan. This checks the plan against coverage only; where the building sits on the lot and the other items listed as not checked are not worked."
+      "fit_note": "The plan of 6,716.67 sq ft fits the lot coverage even at the lowest applicable ratio: 80 percent of the recorded lot area (10,075 sq ft) is 8,060 sq ft, at least the plan. This checks the plan against coverage only; the other items listed as not checked are not worked.",
+      "placement": {
+        "status": "placed",
+        "label": "Illustrative",
+        "outline": [
+          [
+            [
+              0.0,
+              0.0
+            ],
+            [
+              100.76,
+              0.0
+            ],
+            [
+              100.76,
+              66.66
+            ],
+            [
+              0.0,
+              66.66
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        ],
+        "method": "The footprint is a rectangle as wide as the full street frontage and as deep as the floor area per storey needs; it is placed with one wall on the street line for the full frontage, a corner where the two street lines meet, and one wall along the side street. This is an illustrative placement, not a design, a dwelling layout or a finding that the building complies, is buildable or is feasible.",
+        "basis": "printed_tax_map",
+        "measure": "residential_floor_area",
+        "conversion_statement": "plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked",
+        "checks": [
+          "On the printed tax map the footprint clears the lot line opposite the frontage by 33.34 feet (the 100-foot tax-map depth less the 66.66-foot plan depth), leaving a back strip wider than the five feet any open area along a side lot line must keep (ZR 23-335(b)).",
+          "The footprint stands on the street lines for the full frontage, which the front-yard rule for these districts permits (ZR 23-322, no front yard required); it touches the two street lines and the shared side lot line at 0 feet.",
+          "The footprint is about 66.66 percent of the 10076-square-foot tax rectangle; the maximum residential lot coverage is read by portion - 100 percent for the corner portion and 80 percent for any interior or through portion (ZR 23-362 with the ZR 12-10 corner definition)."
+        ],
+        "conditions": [
+          {
+            "kind": "contradicted_record",
+            "assumption": "If the printed tax map governs over the city-map outline: the two disagree - the clearance to the back lot line reads 33.34 feet on the tax map and 35.31 feet on the city-map outline, and the street frontage differs by about 3.12 feet.",
+            "settled_by": "A survey or deed to resolve the conflicting lot outlines."
+          },
+          {
+            "kind": "unchecked_condition",
+            "assumption": "If this lot alone is the zoning lot (whether it and the adjoining lot are one zoning lot is not known).",
+            "settled_by": "Reading the recorded zoning-lot description."
+          },
+          {
+            "kind": "unchecked_condition",
+            "assumption": "If no rear yard constrains the 66.66-foot depth (the rear-yard rule ZR 23-344 is not resolved for this lot).",
+            "settled_by": "An express measurement basis in the Zoning Resolution and the adjoining lots' recorded lot-line kinds."
+          }
+        ],
+        "not_checked": [
+          "the physical floor plate (gross-up, exclusions, wall thickness)",
+          "where the walls, rooms, core, stairs and elevators sit",
+          "parking, loading and bicycle requirements",
+          "the whole-lot coverage as one figure (the recorded, tax-map and city-map areas conflict)",
+          "the street wall and any required setback above the base height",
+          "a survey or deed to settle the lot dimensions and the zoning lot"
+        ]
+      },
+      "area_allocation": {
+        "label": "Illustrative",
+        "share": 0.6,
+        "measure": "residential_floor_area",
+        "conversion_statement": "plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked",
+        "apartment_area_sqft": 12090.0,
+        "other_area_sqft": 8060.0,
+        "total_sqft": 20150.0,
+        "fitted": true
+      }
     }
   ],
   "buildings_not_worked": [
