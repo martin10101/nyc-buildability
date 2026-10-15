@@ -64,20 +64,20 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "Do not seed the record (a placeholder fails research_record_check in CI); seed only the report."
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:41:13.230646+00:00",
-  "updated_at": "2026-10-15T23:41:13.703014+00:00",
+  "updated_at": "2026-10-15T23:41:17.124834+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -93,5 +93,14 @@
   "documented_test_commands": [
     "python3 tools/research_record_check.py --check --records-dir SCRATCH_DIR_WITH_ONLY_NB-09"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:41:17.124675+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed at the wave-29 base; builder dispatched (commit held until the serial part)"
+    }
+  ]
 }
