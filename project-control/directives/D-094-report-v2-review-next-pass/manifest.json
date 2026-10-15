@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T23:31:37+00:00",
+ "updated_at": "2026-10-15T23:31:47+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -330,7 +330,7 @@
   "D-094-R306"
  ],
  "requirements_id_digest_sha256": "f912cf76c47f7903bef5c9cca3e20e0a4df86f75992ad35f7cd71f6851f079ca",
- "requirements_content_digest_sha256": "bd724e80b3986ebc35fe4537caab9f7294fba772921896bf3ed13ad907217da7",
+ "requirements_content_digest_sha256": "122490481fad1751a92573863a62db018ddcd339415446e2af1264e01eedb9ea",
  "sources": [
   {
    "file": "source-001.md",
@@ -628,7 +628,8 @@
   "M5-T189",
   "M5-T190",
   "M3-T014",
-  "M3-T015"
+  "M3-T015",
+  "M0-T197"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -1069,6 +1070,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M3-T015 (capture the owed ZR sections the open readings rest on (BSA CF special-permit categories 73-11/73-13/73-18 carved out by 24-111(a); the Article VII Ch 7 district-boundary family 77-00/01/10/11/12/20/21/211/22/24/25/26/27/28), attempt the browser-UA fallback for 23-154, and reconcile the library's capture-state flags: documents only) to R102, R258 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T23:31:47+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M0-T197 (Report export check tool: output-level claims-against-drawings and PDF mechanics, red on the audited contradictions) to R058, R060, R098, R150, R265, R285 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }

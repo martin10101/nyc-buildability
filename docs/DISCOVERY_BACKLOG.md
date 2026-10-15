@@ -729,3 +729,5 @@ Sweep 2026-10-15 (M5-T172 reviews, session 2026-10-15b): DB-283 and DB-284 added
 Sweep 2026-10-15 (handoff seam of session 2026-10-15b, after the acceptance of M5-T172 and M3-T013): DB-276 RESOLVED(M3-T013); DB-277, DB-278, DB-280 RESOLVED(M5-T189); DB-282 RESOLVED(M5-T190); DB-252 and DB-272 RESOLVED(M3-T014); DB-248 and DB-260 RESOLVED(M5-T172); DB-227, DB-283 and DB-284 QUEUED(M5-T173); DB-245 QUEUED(M5-T180); DB-279 WATCH; other rows unchanged.
 
 Sweep 2026-10-15 (M3-T015 contract, session 2026-10-15c): DB-285 to DB-291 added from the batch-1 checks of the owner's audit (source-028); DB-243 and DB-253 stay OPEN (M3-T015 captures part of what they name; the rest stays owed); other rows unchanged.
+
+Sweep 2026-10-15 (M0-T197 contract, session 2026-10-15c): DB-285 is reported by the new export check (its fix stays OPEN for the report layout); other rows unchanged.

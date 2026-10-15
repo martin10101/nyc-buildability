@@ -1,0 +1,142 @@
+{
+  "task_id": "M0-T197",
+  "title": "Report export check tool (part A of M0-T195): one new standard-library Python file, tools/report_export_check.py, and its self-test, tools/test_report_export_check.py, that check a printed report bundle for claims against drawings, cross-page consistency, schedule and allocation reconciliation, separate measurement bases, missing versus zero, page numbering, bookmarks, links, repeated table headers, clipping, global shrink and website/PDF agreement; red on the audited contradictions and on the shrunk print, green on a consistent case. No product code, record or CI file changed.",
+  "task_type": "backend",
+  "milestone_id": "M0",
+  "objective": "Implement the rules of the design (A1-A5, B1-B10, C1-C7, D1-D9, E1-E4) in one new file under 600 lines of code (modularity WARN; split behind a facade if it grows past), Python 3.12 standard library only, calling only pdfinfo, pdftotext, pdftohtml and pdftoppm (poppler 24.02 on the build server) and, for A2, node apps/web/scripts/print-report-pdf.mjs; no package added, no network unless --fetch-links, no port, writes only under --out. Each rule returns PASS, FAIL, REVIEW or OWED with page, data-role and quoted text (at most 120 characters); a missing tool, file or unparseable input exits 2. The output never says verified or compliant and opens with: automated consistency check built by an AI agent; not professional verification. Expected labels come from docs/design/presentation-tokens.json, wording rules from the contract at the tested head, benchmark values from docs/reference-cases/R6B/cases/, the footprint and section roles from --roles; nothing from the product\u2019s own constants.",
+  "business_reason": "Passing tests did not catch the audited contradictions (outside audit 2026-10-15 section 10); the final export (M0-T195) and every later print need a repeatable output-level check that is shown to catch them.",
+  "inputs": [
+    "apps/web/scripts/print-report-pdf.mjs",
+    "services/api/app/drawings/report/run_identity.py",
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_evidence.py",
+    "docs/design/presentation-tokens.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "services/api/tests/api/test_results_read_api.py",
+    "tools/test_research_record_check.py",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/print-main-86a450d4/"
+  ],
+  "outputs": [
+    "tools/report_export_check.py",
+    "tools/test_report_export_check.py",
+    "project-control/reports/M0-T197-producer-report.md"
+  ],
+  "dependencies": [],
+  "allowed_paths": [
+    "tools/report_export_check.py",
+    "tools/test_report_export_check.py",
+    "project-control/reports/M0-T197-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/",
+    "apps/",
+    "packages/",
+    "docs/",
+    ".github/",
+    ".claude/",
+    "CLAUDE.md",
+    "project-control/tasks/",
+    "project-control/directives/",
+    "tools/project_control.py",
+    "tools/directive_registry.py",
+    "tools/validate_directive_compliance.py",
+    "tools/modularity_baseline.json",
+    "tools/modularity_exceptions.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "a synthetic consistent bundle (footprint drawn and claimed, zones in proportion, schedule reconciled, bases labelled, one fingerprint)",
+      "when": "the check runs",
+      "then": "every rule PASS, exit 0"
+    },
+    {
+      "id": "S2",
+      "given": "report.html and report.pdf of 8fbf701b (the audited head) made with TestClient POST /api/v1/properties/4073340070/report, benchmark_provider(with_zoning_lot=True, street_on=True) and recorded_pack_provider(benchmark_215_16_northern_window), printed by print-report-pdf.mjs, no port, under the heavy lock",
+      "when": "the check runs",
+      "then": "B1 FAIL (\u2018Shown on the site plan\u2019, no footprint drawn) and B5 FAIL (zones claimed, none drawn); the same made at e026a391 gives no B1 or B5 FAIL and reports B3 and B7 OWED"
+    },
+    {
+      "id": "S3",
+      "given": "main 86a450d4\u2019s prints (outside git, sha256 pinned in the test)",
+      "when": "the check runs",
+      "then": "report-with-commit-8-pages.pdf fails D7 (headline 25, title 19 against 30 and 22); report.pdf fails A1 (\u2018Code commit: unknown\u2019) and D2 lists the four run-together bookmarks and page 4\u2019s missing title bookmark"
+    },
+    {
+      "id": "S4",
+      "given": "one-change mutations of the S1 bundle",
+      "when": "the check runs",
+      "then": "a zone width changed fails B5/C2; \u201835.31 ft, city map outline\u2019 changed to \u2018printed tax map\u2019 fails C4; an inserted 34.33 fails C4; a null value rendered \u20180\u2019 fails C5; \u2018NaN\u2019 in text fails C5; the legitimate zero passes"
+    },
+    {
+      "id": "S5",
+      "given": "the benchmark results fixture",
+      "when": "the fingerprint is recomputed",
+      "then": "it equals run_identity.document_fingerprint (the one test importing app, PYTHONPATH=services/api); the exclusion list is read from run_identity.py text at the tested head; a mismatch fails A4"
+    },
+    {
+      "id": "S6",
+      "given": "a missing poppler tool, a missing bundle file, or a PDF with compressed object streams",
+      "when": "the check runs",
+      "then": "exit 2, or REVIEW for the unreadable link annotations; never PASS"
+    },
+    {
+      "id": "S7",
+      "given": "web dumps with horizontal scroll at 320 px, or no area illustration while the PDF draws zones, and before/after pictures",
+      "when": "E1-E4 run",
+      "then": "E1 FAIL; E3 FAIL or OWED; \u2018unchanged\u2019 only on equal digests"
+    },
+    {
+      "id": "S8",
+      "given": "the finished files",
+      "when": "self-checks run",
+      "then": "python3 tools/test_report_export_check.py passes; python -m ruff check on both files; python tools/modularity_check.py --check passes; no other path changed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Real fixtures live outside git: the test reads them from REPORT_CHECK_FIXTURES and FAILS (never skips) when one is missing or its sha256 differs; the orchestrator keeps them in N12/check-fixtures/.",
+    "CI does not run tools tests unless ci.yml names them; G4 evidence is the qa-engineer\u2019s own run at the frozen head (CI wiring is a later choice, not this task).",
+    "Builders never use ports 3000, 3001 or 8000; old-head prints come from git archive into /tmp and TestClient only."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:31:46.909592+00:00",
+  "updated_at": "2026-10-15T23:31:47.376575+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R058",
+        "D-094-R060",
+        "D-094-R098",
+        "D-094-R150",
+        "D-094-R265",
+        "D-094-R285"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:31:46.910038+00:00",
+  "path_notes": "tools/** is lane C in docs/lanes/OWNERSHIP.yaml (no orphan); tools/report_export_check.py is not a governance path (project-control/config.json governance_paths), so task type backend. Test style follows tools/test_research_record_check.py (unittest, run as a script).",
+  "documented_test_commands": [
+    "python3 tools/test_report_export_check.py",
+    "python -m ruff check tools/report_export_check.py tools/test_report_export_check.py",
+    "python tools/modularity_check.py --check",
+    "flock /root/project/lanes-runtime/heavy-run.lock <fixture prints of 8fbf701b and e026a391>"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
