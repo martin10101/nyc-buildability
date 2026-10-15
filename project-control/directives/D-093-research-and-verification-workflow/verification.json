@@ -1076,6 +1076,40 @@
     }
    ],
    "verified_at": "2026-10-11T10:33:52+00:00"
+  },
+  {
+   "directive_id": "D-093",
+   "task_id": "M3-T012",
+   "applicable_requirement_ids": [
+    "D-093-R038",
+    "D-093-R050",
+    "D-093-R052"
+   ],
+   "producer": "official-source-researcher",
+   "verifier": "",
+   "schema_version": "directive_verification/v2",
+   "reviewed_sha": null,
+   "reviewed_manifest_sha256": null,
+   "requirements": [
+    {
+     "id": "D-093-R038",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R050",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    },
+    {
+     "id": "D-093-R052",
+     "state": "pending",
+     "evidence": [],
+     "reviewed_sha": null
+    }
+   ]
   }
  ]
 }

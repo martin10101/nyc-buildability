@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T01:35:36+00:00",
  "created_at": "2026-10-11T01:35:36+00:00",
- "updated_at": "2026-10-11T09:31:14+00:00",
+ "updated_at": "2026-10-15T10:13:14+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "c8f060296942bb7658849ea2c9ec8a06077b06ca",
  "capture_head_sha": null,
@@ -99,7 +99,7 @@
   "D-093-R075"
  ],
  "requirements_id_digest_sha256": "a9156a61278a20fde68a0efd42cbf434e58d2d56f502ea1a540cfdf2352133ed",
- "requirements_content_digest_sha256": "49bb8596ea8fa7bd08e6f3140c7b9390e92382f5b820910d08430eec935ce6a9",
+ "requirements_content_digest_sha256": "afca00f00b8e2688a82626855eac23f5b6061d23a8a24eb0e036bb9a0b447dd4",
  "sources": [
   {
    "file": "source-001.md",
@@ -139,7 +139,8 @@
   "M5-T160",
   "M0-T192",
   "M5-T161",
-  "M5-T162"
+  "M5-T162",
+  "M3-T012"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -220,6 +221,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T162 (report wording follows the shown legal unit limit (after M5-T157)) to R007 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session 01TpXJN7, claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T10:13:14+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T012 (record NB-07: the benchmark lot is outside every MIH area and every former IH designated area; documents only) to R038, R050, R052 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }

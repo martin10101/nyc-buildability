@@ -683,3 +683,5 @@ Sweep 2026-10-15 (M5-T188 contract seam on task/wave27-comparison-appendix, sess
 Sweep 2026-10-15 (M5-T188 scope correction 1, session 2026-10-15b): DB-275 added QUEUED(M5-T188); DB-263 QUEUED(M5-T188); other rows unchanged.
 
 Sweep 2026-10-15 (M3-T011 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): DB-272 QUEUED(M3-T011) (the option-11 page is outside its paths: stays OPEN unless the producer's sweep reaches it); other rows unchanged.
+
+Sweep 2026-10-15 (M3-T012 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): DB-271 QUEUED(M3-T012); DB-274 NB-05 half QUEUED(M3-T012); other rows unchanged.

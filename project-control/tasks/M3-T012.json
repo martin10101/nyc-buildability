@@ -1,0 +1,151 @@
+{
+  "task_id": "M3-T012",
+  "title": "Record NB-07: the benchmark lot (215-16 Northern Boulevard, BBL 4073340070) is outside every Mandatory Inclusionary Housing area and every former Inclusionary Housing designated area; documents only (one evidence record + its two index lines), plus the NB-05 parenthesis of DB-274.",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "From the official DCP sources already determined by two independent sealed researchers (session 2026-10-15b), record NB-07 for the benchmark lot's MIH / former-IH status: the whole lot outline (MapPLUTO 26v2, EPSG:2263) intersects no nycmih polygon (nearest 'Douglaston Parkway Rezoning', CD 11, ~5,925 ft) and no nyih polygon (nearest 'Jamaica', CD 12, ~17,618 ft); ZR Appendix F lists two CD 11 MIH maps, both portions; the only ZAP project on block 7334 is a withdrawn 1999 sidewalk cafe. Write ONLY: the NB-07 evidence record (research_record/v1, exact README shape, mirroring NB-05); one index line in docs/RESEARCH_REQUESTS.md and one row in the evidence-records README; the producer report. No reading for a lot beyond the record's own unreviewed-draft interpretation, no computed figure, no rule, no eligibility determination, nothing Verified. E4 cites the existing zr-appendix-f snapshot (read-only); its LF-sha256 is recomputed at the task head.",
+  "business_reason": "DB-271 (OPEN): two independent researchers found the benchmark lot outside every MIH and former IH area; option 2's affordable-housing case rows need a provenance-bearing record to cite (CLAUDE.md principles 2, 3; D-093). The headline membership fact is answered from the primary DCP layers; the 27-131/23-22/23-432/UAP reading stays an unreviewed draft (ADR-007).",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-research-MIH.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-check-MIH-independent.md",
+    "docs/DISCOVERY_BACKLOG.md",
+    "docs/research/evidence-records/README.md",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json",
+    "services/api/tests/fixtures/benchmark_215_16_northern/mappluto_lot_4073340070_epsg2263.json",
+    "tools/research_record_check.py",
+    "docs/RESEARCH_AND_VERIFICATION.md"
+  ],
+  "outputs": [
+    "docs/research/evidence-records/NB-07-mih-inclusionary-status.json",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/research/evidence-records/README.md",
+    "project-control/reports/M3-T012-producer-report.md",
+    "docs/research/evidence-records/NB-05-special-density-area.json"
+  ],
+  "dependencies": [
+    "M5-T170"
+  ],
+  "allowed_paths": [
+    "docs/research/evidence-records/NB-07-mih-inclusionary-status.json",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/research/evidence-records/README.md",
+    "project-control/reports/M3-T012-producer-report.md",
+    "docs/research/evidence-records/NB-05-special-density-area.json"
+  ],
+  "forbidden_paths": [
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-02-proposed-zfa-scope.json",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/zr-snapshots/",
+    "services/api/",
+    "apps/",
+    "packages/",
+    "tools/",
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/zoning-law-library/",
+    "docs/design/",
+    "project-control/master_plan.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the NB-07 record",
+      "when": "python3 tools/research_record_check.py --check runs over docs/research/evidence-records",
+      "then": "it exits 0 (PASS); NB-07 is structurally valid, status answered_from_primary_source, code_current True, review_state current, requested_label Provisional; no other record's line changes"
+    },
+    {
+      "id": "S2",
+      "given": "evidence E4",
+      "when": "the checker validates saved_copy",
+      "then": "docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json exists at head and its LF-normalized whole-file sha256 equals E4.sha256 (recomputed at the task head); no other evidence item carries a saved_copy"
+    },
+    {
+      "id": "S3",
+      "given": "the two index edits",
+      "when": "RESEARCH_REQUESTS.md and the README are compared with the record",
+      "then": "exactly one NB-07 index line is added to the evidence-records paragraph and exactly one NB-07 row to the README table; the README status cell equals conclusion.research_status (answered_from_primary_source); no existing row changes and no value/reading elsewhere changes"
+    },
+    {
+      "id": "S4",
+      "given": "the task diff",
+      "when": "it is listed",
+      "then": "it touches only the four allowed paths; no rule, scenario, test, snapshot, connector, reference case or other evidence record changes; implementation.code_paths is [] and code_identity is {}"
+    },
+    {
+      "id": "S5",
+      "given": "the record and the two edits",
+      "when": "searched for status words",
+      "then": "nothing is labelled Verified; the record states it is an AI determination, not a professional review (professional_review null); the UAP/23-22/23-432 pathway is carried as interpretation/conditions (unreviewed draft, ADR-007)"
+    },
+    {
+      "id": "S6",
+      "given": "review.agent_reviews",
+      "when": "checked",
+      "then": "two entries reproduce the two sealed returns' verdicts (both agrees), reviewer != producer (producer orchestrator; reviewers official-source-researcher and data-contract-verifier), reviewed_revision == 1, reviewed_code_identity == {}"
+    },
+    {
+      "id": "S7",
+      "given": "the directive binding",
+      "when": "reg.evaluate_task_refs(M3-T012) runs before claim",
+      "then": "applicable == cited (D-093 R038, R050, R052 + D-094 R003, R104); the applicability.task_ids append + directive_registry digest resync + audit_log entry land in the SAME commit"
+    },
+    {
+      "id": "S8",
+      "given": "NB-05 (DB-274, its half)",
+      "when": "the record is revised",
+      "then": "NB-05 gains a revision whose only change is clarifying the revision-6 dependency_assessment entry's '(revision 5)' parenthesis (it names the previous identity); no reading, value, code identity or status changes; research_record_check --check passes"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (sequencing, critical): M5-T170 (status claimed, in-flight) holds docs/RESEARCH_REQUESTS.md AND docs/research/evidence-records/README.md in its allowed_paths. NB-07 edits both. Per CLAUDE.md principle 10 (no overlapping parallel writes), NB-07 must run AFTER M5-T170 is accepted and merged \u2014 hence the M5-T170 dependency. Do not dispatch NB-07 concurrently with M5-T170.",
+    "RISK 2: the DCP nycmih/nyih layers carry a 'not for tax-lot-level eligibility' disclaimer and the Appendix F CD 11 map image (the legal instrument) is not transcribed. The membership fact is robust (5,925 ft / 17,618 ft margins, ~300x map tolerance) so research_status answered_from_primary_source stands, but requested_label is Provisional with non-empty conditions; nothing Verified.",
+    "RISK 3: MapPLUTO release not stamped in live metadata (independent check read 26v2). E1 document_date carries the caveat and freshness.limitation records it; the OUT margins make the conclusion release-robust.",
+    "RISK 4: the downstream reading (UAP route; 23-22/23-432 columns not gated by MIH) is interpretation, not a settled fact; it stays unreviewed draft and conditional; option 2 case rows may cite NB-07 but this task computes no value and wires no connector.",
+    "RISK 5: E4's saved_copy sha256 must be recomputed LF-normalized at the task head; a stale pin fails the checker closed."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T10:13:14.102468+00:00",
+  "updated_at": "2026-10-15T10:13:14.539559+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-093",
+      "requirement_ids": [
+        "D-093-R038",
+        "D-093-R050",
+        "D-093-R052"
+      ]
+    },
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R003",
+        "D-094-R104"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T10:13:14.102690+00:00",
+  "path_notes": "Documents only. allowed_paths = the NB-07 record + the two index files + the producer report. E4 references docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json read-only (not written, so it is not in allowed_paths; the checker resolves it from the repo root derived from the records-dir). COLLISION: M5-T170 holds docs/RESEARCH_REQUESTS.md and the evidence-records README in its allowed_paths \u2014 M3-T012 depends on M5-T170 and must not run beside it. No overlap with M3-T010 (zr-snapshots + law-library files; disjoint). CONTRACT SEAM: append M3-T012 to applicability.task_ids of D-093 R038/R050/R052 and D-094 R003/R104 with a directive_registry digest resync + audit_log entry in the SAME commit; run reg.evaluate_task_refs before claim. SEEDS: seed only the producer report placeholder; the producer writes the NB-07 record whole in the capture commit. Run on a task/ branch. Orchestrator (session 2026-10-15b): the producer copies the validated draft record /root/project/lanes-runtime/owner-docs/session-2026-10-15b/draft-NB-07-mih-inclusionary-status.json into place and re-verifies every field (E4's LF sha256 at the task head); M5-T170 is accepted and M5-T169 no longer lists the records README, so this task runs beside M5-T169 with no shared file; it also takes NB-05's half of DB-274 (a text clarification with a revision bump).",
+  "documented_test_commands": [
+    "python3 tools/research_record_check.py --check",
+    "python3 -c \"import hashlib;p='docs/research/zr-snapshots/v1/zr-appendix-f.snapshot.json';print(hashlib.sha256(open(p,'rb').read().replace(b'\\r\\n',b'\\n').replace(b'\\r',b'\\n')).hexdigest())\"",
+    "git diff --name-only"
+  ],
+  "worktree": "/root/project/w-wave20"
+}
