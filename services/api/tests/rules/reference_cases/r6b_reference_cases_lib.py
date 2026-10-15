@@ -47,6 +47,7 @@ CASE_IDS = (
     "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
     "step-p6-worked", "short-block-rear-yard", "placement-building-b",
     "benchmark-options-2-3-6-7", "benchmark-options-5-8-9-10",
+    "benchmark-options-4-11",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -192,6 +193,33 @@ REQUIRED_BASE_IDS = {
         "opt910-bicycle-parking", "opt910-loading", "opt910-heights", "opt910-conversion",
         "opt910-rooming-vs-dwelling-classification", "opt10-distinct-meaning",
         "opt910-shared-housing-framework", "opt910-vs-option-1",
+        "both-readers-did-not-have", "real-lot-missing-facts", "options-out-of-scope",
+    ],
+    # The step-P11 case (benchmark-options-4-11): the agreed worked values of option 4
+    # (more, smaller apartments; opt4-*) and option 11 (all programs combined; opt11-*)
+    # for the benchmark lot, from two independent readings per option (option 4: -32/-33;
+    # option 11: -35/-36) plus an independent comparer per option (option 4: -34; option
+    # 11: -37); plus the shared rows (what both readers did not have, the real-lot missing
+    # facts, and the eleven-option set now complete). Each row id below must be present
+    # under its id (S1). With options 4 and 11 recorded the eleven-option set is complete.
+    "benchmark-options-4-11": [
+        "opt4-recorded-lot-area", "opt4-residential-far-standard", "opt4-max-residential-fa",
+        "opt4-du-factor", "opt4-max-dwelling-units", "opt4-smaller-cannot-exceed-29",
+        "opt4-nofactor-special-density", "opt4-nofactor-senior", "opt4-nofactor-conversions",
+        "opt4-min-unit-size", "opt4-affordable-2.40-not-opt4", "opt4-vs-option-1",
+        "opt11-single-use-far-res", "opt11-single-use-far-commercial",
+        "opt11-single-use-far-cf", "opt11-combination-ceiling-standard",
+        "opt11-combination-ceiling-qualifying", "opt11-max-total-fa-standard",
+        "opt11-max-total-fa-qualifying", "opt11-shared-fa-attribution",
+        "opt11-shops-cf-add-no-fa", "opt11-du-standard", "opt11-du-qualifying-affordable",
+        "opt11-du-qualifying-senior", "opt11-height-standard", "opt11-height-qualifying",
+        "opt11-setback", "opt11-combine-shops", "opt11-combine-cf",
+        "opt11-combine-two-buildings", "opt11-combine-parking",
+        "opt11-carveouts-dont-tighten-R6B", "opt11-vs-option-1",
+        "opt11-street-wall-line", "opt11-affordable-senior-together", "opt11-shared-housing",
+        "opt11-split-lot-meaning", "opt11-overlay-extent", "opt11-uap-text",
+        "opt11-35-31-full-carveout-sweep", "opt11-senior-nofactor-cap",
+        "opt11-rear-yard-beyond-100ft",
         "both-readers-did-not-have", "real-lot-missing-facts", "options-out-of-scope",
     ],
 }

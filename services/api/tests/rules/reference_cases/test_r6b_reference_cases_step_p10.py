@@ -57,7 +57,10 @@ CID = "benchmark-options-5-8-9-10"
 
 # Every case except the new one, pinned at the claim head: this task adds a case and
 # must not touch any existing one. The digest proves byte-stability without git.
-OTHER_CASES_DIGEST = "0699424e0a7b8e48818845800185b5e1f0bb6908e28b763afb182146a1df79a9"
+# Moved by M5-T186 (adding the step-P11 case benchmark-options-4-11): that new case joins
+# this "other" set, so the blob grew by its rows and the digest changed; no existing case's
+# rows changed (every pre-existing case stays byte-identical to the M5-T185 base).
+OTHER_CASES_DIGEST = "042c62bdef6ad1935072cfed8a1bb1b7f7c0d9b54972f88675aea666df286c84"
 
 # The sections the readers did not have among the captures: they must never be a value
 # basis or a formal citation (they are named in prose only). "33-30" is omitted here on
