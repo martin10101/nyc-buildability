@@ -122,7 +122,7 @@
     "G4",
     "G5"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "code-reviewer",
     "visual-quality-reviewer",
@@ -130,8 +130,8 @@
     "directive-compliance-verifier",
     "security-reviewer"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (benchmark has NO established line): the recorded benchmark carries constraint_lines in state not_known even after M5-T167 (accepted) and M5-T170 keeps street_wall_band/setback_line not_established, so the A1/A2 improvement cannot be demonstrated on the benchmark's own page 3. The real print (S8) proves byte-identity (no regression); the beside-line/legend-fit proof (S1/S3/S9) MUST use a constructed established-line case or the synthetic_rear_yard fixture. Do not claim a benchmark before/after.",
     "RISK 2 (latent plain-frame clip, out of scope): the non-overlay close frame is ALREADY clamped at 470 (furn_bottom+8 > 470 verified), so a latent clip may exist there. DB-263 must NOT widen the plain frame; overlay_present=False preserves 470 exactly. S4 is the red/green guard.",
@@ -144,7 +144,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:02:47.531321+00:00",
-  "updated_at": "2026-10-15T10:02:47.961772+00:00",
+  "updated_at": "2026-10-15T10:02:51.339435+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -170,5 +170,14 @@
     "REAL PRINT (no server, no ports): from services/api, TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs on the HTML -> confirm pages 1 and 3 are BYTE-IDENTICAL to bb5c02b9 (the benchmark establishes no constraint line)",
     "VISUAL ARTIFACT: render draw_site_context_plan(ctx, frame='close', constraint_lines=<established rear_yard_100ft_line>) (or the synthetic_rear_yard fixture) to SVG before and after -> the beside-the-line / legend-fit before/after for visual-quality-reviewer (G3)"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T10:02:51.339311+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted; G0 PASS (DB-263; pre-check: the page-1 test in a new file)"
+    }
+  ]
 }
