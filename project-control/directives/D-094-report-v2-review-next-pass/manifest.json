@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T05:53:28+00:00",
+ "updated_at": "2026-10-15T07:36:22+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -180,10 +180,14 @@
   "D-094-R156",
   "D-094-R157",
   "D-094-R158",
-  "D-094-R159"
+  "D-094-R159",
+  "D-094-R160",
+  "D-094-R161",
+  "D-094-R162",
+  "D-094-R163"
  ],
- "requirements_id_digest_sha256": "39088ed4282a3af54f7e724a64f25232037784bb18f3411807aacf724bbf4172",
- "requirements_content_digest_sha256": "c6ea97fcce7c7f5539277e68ecd2c7c486f3d517c6ee0dff7d6c8ee602230301",
+ "requirements_id_digest_sha256": "b646f13752116084afec98cc55e5cfbfa7c527d172732f779c909c08065aae64",
+ "requirements_content_digest_sha256": "b44a69542ddd441899ddecaaa2089ff8d44c6477128508a833d6b7a930975b64",
  "sources": [
   {
    "file": "source-001.md",
@@ -367,6 +371,14 @@
    "recorded_at": "2026-10-15T04:20:24+00:00",
    "content_digest_sha256": "8f6921d8b71cfba39c8f976f53c8851b62ce7b8182850db1ed0530278cb30eed",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-024-amendment.md",
+   "kind": "amendment",
+   "sequence": 24,
+   "recorded_at": "2026-10-15T07:36:22+00:00",
+   "content_digest_sha256": "8e013025aca7b467b477cf0297aee304344256fb65c868bad4806545ae3013f9",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -391,7 +403,8 @@
   "source-020-amendment.md",
   "source-021-amendment.md",
   "source-022-amendment.md",
-  "source-023-amendment.md"
+  "source-023-amendment.md",
+  "source-024-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -763,6 +776,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T184 (the R6B reference case benchmark-options-2-3-6-7 (worked values of options 2, 3, 6, 7 for the benchmark lot; two agreeing sealed readings per option; captured-section citations only; options 5/8/9-10 named as owed); no rule file, engine, result, capture, register entry, law-library edit or human verdict) to R007, R075, R084, R102 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T07:36:22+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-024 (the owner's session handoff at a clean seam, with twelve helpers for the next session) and requirements D-094-R160 to R163, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

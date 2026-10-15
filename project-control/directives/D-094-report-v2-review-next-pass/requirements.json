@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 159,
+ "requirement_count": 163,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T05:53:28+00:00",
+ "updated_at": "2026-10-15T07:36:22+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -5207,6 +5207,135 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the start of session 2026-10-15a before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R160",
+   "text": "'/session-handoff at a clean seam let the running tesk finish and also tell the next session to spin up 12 more agents to takle this and make massive progress': 'at a clean seam let the running tesk finish': the session dispatches no new helper and starts no new task; the helpers running when the message arrived (round 2 of M5-T183 and M5-T184 with their pre-integration checks; the four M5-T170 reviews with skeptics) and the orchestrator's lock-waiting commit of the M3-T010 correction finish their bounded work; each return is saved in the session folder and recorded; the branch is left committed and pushed at a clean seam; nothing keeps running when the handoff is printed.",
+   "source_ref": "source-024-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show no dispatch after the message, each running helper's return saved, and a closing checkpoint with the branch head pushed and nothing running.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-15a/SESSION_NOTES.md` and the return files in that folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff of session 2026-10-15a before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R161",
+   "text": "'/session-handoff at a clean seam let the running tesk finish and also tell the next session to spin up 12 more agents to takle this and make massive progress': the session writes the handoff (docs/SESSION_HANDOFF.md and the session brief) and gives the owner the copy-in prompt for the next session.",
+   "source_ref": "source-024-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff file and the brief exist with the exact next action; the prompt is printed in the reply.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md` (main checkout) and `NEXT-SESSION-BRIEF.md` in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff of session 2026-10-15a before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R162",
+   "text": "'/session-handoff at a clean seam let the running tesk finish and also tell the next session to spin up 12 more agents to takle this and make massive progress': 'tell the next session to spin up 12 more agents': the copy-in prompt tells the next session to run up to twelve helpers at once, each on a different part of the job (as R158, R159); every other limit stands: at most three building at once (question M1 open), no shared files, heavy runs and merges one at a time, builders never touch ports 3000/3001/8000, no model override, no timers, no unattended merges, the gates unchanged.",
+   "source_ref": "source-024-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R158",
+    "D-094-R159"
+   ],
+   "required_harness": "The copy-in prompt and the brief carry the instruction and the limits; the next session's notes show at most twelve helpers at once.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md`, the session brief, and the next session's notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff of session 2026-10-15a before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R163",
+   "text": "'/session-handoff at a clean seam let the running tesk finish and also tell the next session to spin up 12 more agents to takle this and make massive progress': 'to takle this and make massive progress': the next session uses those helpers on the planned, independent parts of the work so the report advances as far as the plan allows (wave 26's remaining reviews, rule checks and acceptances, its pull request and merge, the next PDF from main with real before/after pictures, then the serial lane M5-T169, M5-T172, M5-T173 and the parallel parts that share no file), without repeating completed work and without lowering any check.",
+   "source_ref": "source-024-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R162"
+   ],
+   "required_harness": "The handoff's next action lists the parts in order and which can run side by side; the next session's notes show them dispatched on separate files.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md` section 4 and the session brief.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff of session 2026-10-15a before acting; no work done on it yet.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
