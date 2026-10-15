@@ -94,8 +94,8 @@
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "R1: this is a documents-only correction that restates the already-captured folder state and verbatim text; any statement that would change a computed reading or result is OUT OF SCOPE and must be named for a research task, not edited here.",
     "R2 (data contract): the library's capture-claim check currently FAILS at the pinned head (24-11/24-111 marked NOT CAPTURED while zr-24-11/zr-24-111 exist); the G1 data-contract-verifier must re-run it green on the frozen head as the acceptance evidence.",
@@ -104,7 +104,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T16:00:36.580054+00:00",
-  "updated_at": "2026-10-15T16:39:37.883361+00:00",
+  "updated_at": "2026-10-15T17:00:14.433200+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -138,5 +138,7 @@
       "status": "claimed",
       "message": "built and reviewed; review record and evidence map written"
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T17:00:14.432997+00:00"
 }
