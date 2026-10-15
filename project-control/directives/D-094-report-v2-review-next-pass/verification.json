@@ -3678,24 +3678,37 @@
     "D-094-R058"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "206fc8c55921db3141786800f2de78490112fb95",
+   "reviewed_manifest_sha256": "714f63c786073166e77a4c70ce52b54491a1fa27575c935cca6c50645afd5a0a",
    "requirements": [
     {
      "id": "D-094-R028",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source matches verbatim: source-001.md line 103, Provenance row 9, \"Provide enough run/source/revision information to identify what actually generated this report\"; the requirement text is unchanged by this task (text sha256 7cb1fb76 identical at contract parent and frozen head).",
+      "This task's share is the run-identity fingerprint that identifies what generated the report: run_identity._FINGERPRINT_EXCLUDE now also excludes option_id and study_id, so re-running the same request reproduces the fingerprint; I reproduced in-process on the recorded fixture (doc vs a copy differing only in the four run fields -> equal a43b9aa2c61a), and the in-process mutation to the old two-field tuple made them differ (c813b01a2619 vs 1d183b40626f).",
+      "The appendix placement, \"clearly named appendix\" and \"no repeated headings\" clauses of R028 are NOT this task's share and are untouched (no page text/label changes); they are held by M5-T169 (accepted), which built the appendix and run-identity column.",
+      "Stays open for later work: the appendix-structure / no-repeated-heading portion of R028 is M5-T169's share, not this task's; nothing of this task's fingerprint share stays open.",
+      "Verifier's carry-forward condition met at 206fc8c5: the task's allowed-path files are identical to those verified at b9412f35 (content identity 714f63c7), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T190-DCV.md."
+     ],
+     "reviewed_sha": "206fc8c55921db3141786800f2de78490112fb95"
     },
     {
      "id": "D-094-R058",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source matches verbatim: source-001.md line 175, \"Verify that each result and diagram comes from the same result revision and scenario. Distinguish allowance, scheduled area, demonstrated site fit, preliminary apartment estimate, and legal unit limit\"; text unchanged by this task (text sha256 7b2360ec identical at parent and frozen head).",
+      "This task's share is the harness tying every rendered figure to one document: I ran tests/drawings/report/test_report_run_identity.py under the lanes venv (11 passed, exit 0), including S4's live two-run TestClient test which is non-vacuous (option_id/study_id/results_id differ per run yet the two fingerprints are equal); a real value change (floor_area_allowance 20150->20151) moves the fingerprint (a43b9aa2c61a -> 231d8ce95ee2), so sensitivity is preserved.",
+      "The four excluded fields are genuinely per-run metadata, not values: results_read.py mints option_id (line 343), study_id (351), results_id (388) as uuid4().hex and computed_at (344) via _now_iso(); the read-only return-check and both reviewers found exactly four top-level differing leaves between runs and no nested per-run leak, consistent with S3 (dropping option_id/study_id leaves the hash unchanged, reproduced True).",
+      "Stays open for later work: the \"distinguish allowance / scheduled area / demonstrated site fit / preliminary apartment estimate / legal unit limit\" clause is a page-content concern unchanged by this metadata-only task and is held by M5-T162, M5-T164, M5-T169, M5-T172; this task's harness share leaves nothing open.",
+      "Verifier's carry-forward condition met at 206fc8c5: the task's allowed-path files are identical to those verified at b9412f35 (content identity 714f63c7), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G2, G3, G4 PASS at that content identity (G2 orchestrator self-check; G3 code-reviewer; G4 qa-engineer). DCV report: project-control/reports/M5-T190-DCV.md."
+     ],
+     "reviewed_sha": "206fc8c55921db3141786800f2de78490112fb95"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T15:30:57+00:00"
   }
  ]
 }
