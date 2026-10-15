@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 306,
+ "requirement_count": 315,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T23:41:13+00:00",
+ "updated_at": "2026-10-15T23:47:04+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -10097,6 +10097,285 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the start of session 2026-10-15c before acting on it; no work done on these rows yet (only the read-only helpers of batch 1 were running).",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R307",
+   "text": "'@\"/root/.claude/uploads/fd88f9b3-8cb7-4d76-83a4-1e93a47e69cf/993b30a0-Claude-Code-Full-Picture-Skill-Builder-Prompt.txt\" Can u implemented this skill to use yourself when u have a question to ask a agent that u asked him.in short in a similar fashion to get your answer answer much better tell me the approach that we should use because this is normal a skill for me but what I want is for you to promote the agent similar to this': the orchestrator may build, for its own use, a way to brief helpers in the style of the attached prompt (orchestrator's reading in the bullets); this authorises the approach the owner then chose (R309-R311), not the father-facing skill.",
+   "source_ref": "source-029-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The briefing skill and the helper standard exist in the repository and are used for dispatches after they land.",
+   "required_evidence": "The skill folder under .claude/skills/, the always-loaded rule, later dispatch briefs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted; the approach was recommended in chat and added to the questionnaire as K1.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R308",
+   "text": "'@\"/root/.claude/uploads/fd88f9b3-8cb7-4d76-83a4-1e93a47e69cf/993b30a0-Claude-Code-Full-Picture-Skill-Builder-Prompt.txt\" Can u implemented this skill to use yourself when u have a question to ask a agent that u asked him.in short in a similar fashion to get your answer answer much better tell me the approach that we should use because this is normal a skill for me but what I want is for you to promote the agent similar to this': the orchestrator states its recommended approach (with alternatives) in chat and adds it to the questionnaire.",
+   "source_ref": "source-029-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The chat answer and questionnaire entry K1 exist.",
+   "required_evidence": "/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md (K1); session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted; the approach was recommended in chat and added to the questionnaire as K1.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R309",
+   "text": "'A short skill I run before sending any helper a question.' 'It turns my question into a proper brief: the exact answer I need, the exact files and version, what evidence could change the answer, what is still unknown, and how deep to dig.': a project skill (committed under .claude/skills/) that the orchestrator runs before every helper dispatch; it turns the orchestrator's question into a brief naming the exact answer needed, the exact files and commit, the evidence that could change the answer, what is still unknown, and how deep to go.",
+   "source_ref": "source-030-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The skill file exists on main; a dispatch brief made with it carries the five named parts.",
+   "required_evidence": "The skill file; one brief produced with it.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R310",
+   "text": "'The helper's half, added to the instructions every helper already gets.' 'Go to the original source, tie each finding to its evidence and to what it changes, and keep facts, claims, guesses and unknowns apart.' 'Start the reply with the answer, then the support.': the helper answer standard (go to the original source; tie each finding to its evidence and to what it changes; keep facts, claims, guesses and unknowns apart; lead with the answer, then the support) is added to the instructions every helper loads.",
+   "source_ref": "source-030-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Every helper's start-time instructions contain the standard.",
+   "required_evidence": "The always-loaded rule file and the common brief parts.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R311",
+   "text": "'Yes lets do that how do you make sure that it carries over to the other conversations Other sessions': the owner chose the recommended two-piece approach (questionnaire K1 answered).",
+   "source_ref": "source-030-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "K1 marked answered in the questionnaire.",
+   "required_evidence": "/root/project/lanes-runtime/owner-docs/OWNER_QUESTIONS.md",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R312",
+   "text": "'Yes lets do that how do you make sure that it carries over to the other conversations Other sessions': the orchestrator explains how the method carries over to other sessions (refined by R314).",
+   "source_ref": "source-030-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The chat answer.",
+   "required_evidence": "Session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R313",
+   "text": "'Before we continue, let me know.' 'Are we making major progress? And also, what I meant was carry over didn't mean like my things.': a plain answer on progress before continuing.",
+   "source_ref": "source-031-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The chat answer.",
+   "required_evidence": "Session notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R314",
+   "text": "'I meant carry over the fact that the program itself will use the style of the skill to ask.' 'The agents questions in another sessions, and I don't need to tell you again about it.' 'It will just happen naturally': later sessions apply the briefing method to helper questions automatically, without the owner restating it: an always-loaded rule naming the skill and the helper standard, merged to main; nothing depends on chat history or one session's memory.",
+   "source_ref": "source-031-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "A fresh session's start-time instructions contain the rule; the rule and skill are on main.",
+   "required_evidence": "The rule file and skill on main; the next session's dispatch briefs.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c before the skill task is contracted.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R315",
+   "text": "'Yes': start the eight builders (M5-T191 to M5-T198) now and build the briefing skill beside them, under the standing limits.",
+   "source_ref": "source-032-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The eight dispatches and the skill task appear in the session notes.",
+   "required_evidence": "Session notes; the skill task packet.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured in session 2026-10-15c; the eight builders were dispatched at once.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

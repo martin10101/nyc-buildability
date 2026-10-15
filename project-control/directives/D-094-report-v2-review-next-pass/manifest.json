@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T23:41:13+00:00",
+ "updated_at": "2026-10-15T23:47:04+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -327,10 +327,19 @@
   "D-094-R303",
   "D-094-R304",
   "D-094-R305",
-  "D-094-R306"
+  "D-094-R306",
+  "D-094-R307",
+  "D-094-R308",
+  "D-094-R309",
+  "D-094-R310",
+  "D-094-R311",
+  "D-094-R312",
+  "D-094-R313",
+  "D-094-R314",
+  "D-094-R315"
  ],
- "requirements_id_digest_sha256": "f912cf76c47f7903bef5c9cca3e20e0a4df86f75992ad35f7cd71f6851f079ca",
- "requirements_content_digest_sha256": "5db61aeacd83c746af341a72aaf0958b8cd90b525ecd5ea038d491e034a73fd5",
+ "requirements_id_digest_sha256": "36f3b1e3902340b3f230249e0c47cc996d39a20424b4aab97a3147f1c1602ada",
+ "requirements_content_digest_sha256": "6c678b8916ac5163ad9e3cb4b16d0e1725359c2bd7928214744bc496554dfb99",
  "sources": [
   {
    "file": "source-001.md",
@@ -554,6 +563,38 @@
    "recorded_at": "2026-10-15T23:28:17+00:00",
    "content_digest_sha256": "c9e6f0417d899ff0f4c0b9197224700b731431772d91b288d7dd1b651c76ed04",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-029-amendment.md",
+   "kind": "amendment",
+   "sequence": 29,
+   "recorded_at": "2026-10-15T23:47:03+00:00",
+   "content_digest_sha256": "ed2c1f2c7345f43f77a4d1af34882018431254a88623afc3223e9d5b61d8c1ad",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-030-amendment.md",
+   "kind": "amendment",
+   "sequence": 30,
+   "recorded_at": "2026-10-15T23:47:03+00:00",
+   "content_digest_sha256": "9d522a785ec1fa64a376185614ecbe10e1540fcba361f5511dc23d1adf090725",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-031-amendment.md",
+   "kind": "amendment",
+   "sequence": 31,
+   "recorded_at": "2026-10-15T23:47:04+00:00",
+   "content_digest_sha256": "0ac6b75702610126409d2f1c0e1fb648162317e2ad53090e1f8ec37efa487bee",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-032-amendment.md",
+   "kind": "amendment",
+   "sequence": 32,
+   "recorded_at": "2026-10-15T23:47:04+00:00",
+   "content_digest_sha256": "173498070d0fcb34a81ae1fdff3021ac07cc8a03ca01a55fd2a0da6f12517b96",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -583,7 +624,11 @@
   "source-025-amendment.md",
   "source-026-amendment.md",
   "source-027-amendment.md",
-  "source-028-amendment.md"
+  "source-028-amendment.md",
+  "source-029-amendment.md",
+  "source-030-amendment.md",
+  "source-031-amendment.md",
+  "source-032-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -1132,6 +1177,30 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T198 (E0 part 4: NB-09 qualifying-housing pathway record) to R258, R262 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T23:47:03+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-029 (the owner's request for a helper-briefing method in the style of the attached full-picture prompt) and requirements D-094-R307 to R308, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T23:47:03+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-030 (the owner's approval of the briefing skill and the helper answer standard) and requirements D-094-R309 to R312, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T23:47:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-031 (the owner's progress question and the carry-over clarification) and requirements D-094-R313 to R314, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T23:47:04+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-032 (the owner's go-ahead for the eight builders and the skill) and requirements D-094-R315 to R315, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
