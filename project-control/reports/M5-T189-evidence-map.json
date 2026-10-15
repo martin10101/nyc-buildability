@@ -1,0 +1,32 @@
+{
+ "task_id": "M5-T189",
+ "material_commits": [
+  "23aeeff5 (builder (cherry-pick of 032c64d5): layout._css_string escapes '<' and '>' (DB-277); formatting._as_float treats inf/nan as missing (DB-278); kit/labels.format_number refuses non-numeric and non-finite values (DB-278); the S10 print-stylesheet rule '.evidence-column li { overflow-wrap: anywhere; }' (DB-280); three new test files; the producer report)"
+ ],
+ "claim_seam_head": "9f5fc962",
+ "files_changed": [
+  "project-control/reports/M5-T189-producer-report.md",
+  "services/api/app/drawings/kit/labels.py",
+  "services/api/app/drawings/report/formatting.py",
+  "services/api/app/drawings/report/layout.py",
+  "services/api/tests/drawings/kit/test_labels_format_number.py",
+  "services/api/tests/drawings/report/test_report_css_escaping.py",
+  "services/api/tests/drawings/report/test_report_formatting_hardening.py"
+ ],
+ "what_did_not_change": "No fact, reading, calculation, label, result, evidence record or review-register entry changed; close_frame_dimensions.py (pinned by NB-04) not edited; no snapshot or benchmark file edited; the benchmark report HTML differs from its parent only by the one S10 CSS rule (G4).",
+ "known_limits": [
+  "The report's document fingerprint changes between runs of the same request (two per-run ids in the hash); it is not caused by this task and is fixed by M5-T190 (DB-282).",
+  "Advisories carried: extreme but finite values (e.g. 1e308) print long digit strings, unreachable with validated input (G5 A1); the kit formatter now raises on inf/nan, so a drawing caller should surface it as a handled error (G3); the producer report's guard-1 mutation count predates the S10 test (4 failed, 1 passed then; 4 failed, 2 passed at the final content) (G4 F1)."
+ ],
+ "checks_at_material_head": [
+  "producer at 032c64d5: ruff exit 0; the three new test files 15 passed; test_report_benchmark + tests/drawings/kit + maps + cad 1341 passed, 4 skipped with no snapshot edited; modularity exit 0; lane coverage exit 0; whole api suite 10077 passed with 4 failures that were the contract's placeholder pages (removed at dc8449d1)",
+  "orchestrator real-preview prints: main 86a450d4 with the commit set 8 pages (the defect, print-main-86a450d4/report-with-commit-8-pages.pdf); 23aeeff5 with the commit set 10 pages, pages 1 to 9 text-identical to main, page 10 only the run identity (print-23aeeff5)",
+  "G3 code-reviewer PASS; G4 qa-engineer PASS (whole api suite 10081 passed, 8 skipped, exit 0 at 23aeeff5; four mutations; HTML byte-identity apart from the S10 rule); G5 security-reviewer PASS (F1, F2 and the T188 advisory closed)",
+  "CI run 38752408406 at 8d7cf91b (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R054": [
+   "Missing data stays honest without repeated 'not yet' prose: a non-finite figure in a results document is now shown as missing on every report page (formatting._as_float returns None for inf and nan, so format_int_commas, format_ratio, format_sqft, format_feet and whole_percent_shares give no figure instead of crashing or printing 'inf.0'), and the drawing kit refuses such a value instead of drawing 'inf sq ft' (kit/labels.format_number); no new prose was added and every valid page is unchanged (G4 byte-identity; real-preview print print-23aeeff5)."
+  ]
+ }
+}

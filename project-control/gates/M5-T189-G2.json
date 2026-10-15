@@ -1,0 +1,12 @@
+{
+  "task_id": "M5-T189",
+  "gate_id": "G2",
+  "reviewer": "orchestrator",
+  "role": "self_check",
+  "result": "PASS",
+  "report_file": "project-control/reports/M5-T189-reviews.md",
+  "reviewed_at": "2026-10-15T14:41:56.332404+00:00",
+  "content_manifest_sha256": "646694339b2c576df997df64ef3794e370a9fd18e8507fac069b3e8aeecf9155",
+  "reviewed_sha": "8d7cf91b1f754562b7383d54897d80031546c22e",
+  "updated_at": "2026-10-15T14:41:56.510537+00:00"
+}
