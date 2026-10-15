@@ -1,0 +1,140 @@
+{
+  "task_id": "M5-T202",
+  "title": "Fitted two-zone illustration on the website (M5-T174 part B2a; edits M5-T187's unmounted component only): zones inside the placed footprint split at the share, as kit/area_allocation.py draws them, with its refusal reasons and the accepted PDF's measure words",
+  "task_type": "frontend",
+  "milestone_id": "M5",
+  "objective": "Replace the fitted_deferred stub with a web-native port of the kernel's _poly_area, _clip_x and _division_x (bisection), the outline caps (1000 points; |coord| at most 1e9 and finite; non-zero area) and their four reason strings byte-equal; keep the bar; adopt the accepted M5-T173 measure words.",
+  "business_reason": "Audit \u00a76: the illustration component exists but shows nothing on the benchmark.",
+  "inputs": [
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "apps/web/src/components/architect/answers/AreaAllocation.tsx",
+    "apps/web/src/lib/architect/area-allocation.ts"
+  ],
+  "outputs": [
+    "apps/web/src/components/architect/answers/AreaAllocation.tsx",
+    "apps/web/src/lib/architect/area-allocation.ts",
+    "apps/web/src/lib/architect/area-allocation-tokens.ts",
+    "apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx",
+    "apps/web/src/lib/architect/__tests__/area-allocation.test.ts",
+    "apps/web/src/test-support/report-parity-area-zones.json",
+    "services/api/tests/drawings/kit/test_web_parity_area_zones.py",
+    "project-control/reports/M5-T202-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T187",
+    "M5-T183"
+  ],
+  "allowed_paths": [
+    "apps/web/src/components/architect/answers/AreaAllocation.tsx",
+    "apps/web/src/lib/architect/area-allocation.ts",
+    "apps/web/src/lib/architect/area-allocation-tokens.ts",
+    "apps/web/src/components/architect/answers/__tests__/area-allocation.test.tsx",
+    "apps/web/src/lib/architect/__tests__/area-allocation.test.ts",
+    "apps/web/src/test-support/report-parity-area-zones.json",
+    "services/api/tests/drawings/kit/test_web_parity_area_zones.py",
+    "project-control/reports/M5-T202-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/**",
+    "packages/contracts/**",
+    "docs/design/presentation-tokens.json",
+    "apps/web/src/components/architect/answers/ThreeAnswersPanel.tsx",
+    "apps/web/src/components/architect/answers/FirstBuildingOptions.tsx",
+    "apps/web/e2e/**"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the benchmark (0.6; 100.76 x 66.66)",
+      "when": "rendered",
+      "then": "one division; apartment/footprint area 0.6 within 1e-6; division x and fraction equal the kernel's (golden from kit code)"
+    },
+    {
+      "id": "S2",
+      "given": "fitted with no placed outline, and each degenerate outline",
+      "when": "rendered",
+      "then": "the kernel's reason byte-equal, one test per input state; nothing drawn"
+    },
+    {
+      "id": "S3",
+      "given": "fitted false",
+      "when": "rendered",
+      "then": "the existing bar unchanged"
+    },
+    {
+      "id": "S4",
+      "given": "the labels, caption, percentage and measure",
+      "when": "compared",
+      "then": "tokens byte-equal; measure words equal the accepted PDF sheet's"
+    },
+    {
+      "id": "S5",
+      "given": "the drawing",
+      "when": "inspected",
+      "then": "hatch not colour; only the division line inside; no room/wall/unit/stair/elevator"
+    },
+    {
+      "id": "S6",
+      "given": "the accepted PDF sheet",
+      "when": "compared",
+      "then": "sq ft split shown only if the PDF shows it, same numbers; otherwise neither surface, and the gap is reported"
+    },
+    {
+      "id": "S7",
+      "given": "the finished diff",
+      "when": "listed",
+      "then": "only allowed paths; still mounted nowhere"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "code-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "May be built beside M5-T173B (disjoint files) but takes its measure words before submit",
+    "Web worktree needs npm ci once (heavy: run under the lock)"
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:52:41.655388+00:00",
+  "updated_at": "2026-10-15T23:52:42.065957+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R088",
+        "D-094-R091",
+        "D-094-R092",
+        "D-094-R093",
+        "D-094-R094",
+        "D-094-R095",
+        "D-094-R096",
+        "D-094-R247"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:52:41.655664+00:00",
+  "path_notes": "Built beside M5-T173 part B on disjoint files; stays unmounted (M5-T174 mounts it). The measure words follow the accepted M5-T173 scenario sheet: if M5-T173 is not accepted when this part is ready, keep the kernel's bare 'Residential floor area' (kit/area_allocation.py line 49) and report it. Golden parity file generated from the kit code by the new api test, never hand-written.",
+  "documented_test_commands": [
+    "cd apps/web && npx --yes npm@11.18.0 ci --no-audit --no-fund",
+    "cd apps/web && npm run lint && npm run typecheck",
+    "cd apps/web && npx vitest run src/lib/architect/__tests__/area-allocation.test.ts src/components/architect/answers/__tests__/area-allocation.test.tsx",
+    "cd services/api && python -m ruff check . && python -m pytest -q tests/drawings/kit/test_web_parity_area_zones.py",
+    "No server, no e2e, no width capture; never ports 3000/3001/8000"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
