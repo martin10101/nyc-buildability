@@ -676,3 +676,5 @@ Sweep 2026-10-15 (wave-27 contract seam, session 2026-10-15b): DB-263 QUEUED(M5-
 Sweep 2026-10-15 (M5-T185 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): no row added; open and watch rows as at the wave-27 contract seam.
 
 Sweep 2026-10-15 (M5-T187 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): no row added; open and watch rows as at the wave-27 contract seam.
+
+Sweep 2026-10-15 (M5-T188 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): no row added; open and watch rows as at the wave-27 contract seam.

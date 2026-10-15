@@ -1,0 +1,174 @@
+{
+  "task_id": "M5-T188",
+  "title": "Constraint-overlay polish (DB-263): offset the overlay LINE label off its own line (keep the fail-rather-than-shrink guarantee), replace the fragile expand_frame_for_overlay SVG string-rewrite with a native overlay_present height in compose_context (close branch), give the page-1 rear-yard title strip a word boundary, and add geometric legend-fit + real-geometry label-collision tests. No feasibility fact, rule, calculation or label changes; non-overlay frames byte-identical; the benchmark page 1/3 stays byte-identical because no constraint line is established on it today.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Close the four non-blocking advisories left by the M5-T175 constraint-overlay reviews (backlog DB-263), behaviour-identical on every non-overlay drawing and on the current benchmark (which establishes NO constraint line). (A1 visual) In constraint_overlay.py the established LINE label is anchored on the line (screen_points[mid] with the first _label_candidates offset (0,0)), so the white-halo box sits over the drawn line and hides it. Make the FIRST label candidate a perpendicular offset off the line (within the rect), keeping the full grid fallback and the ConstraintOverlayError fit/collision guarantee, so a measurable part of the drawn line stays visible. (A2 code) Delete the fragile post-hoc SVG string rewrite expand_frame_for_overlay (regex on the first two height attrs + magic _FURNITURE_TOP_PT=400.0) and its __all__ entry; compute the real height natively in context_scene.compose_context. Its close branch already derives furn_bottom = max(north_bottom, legend_bottom, CLOSE_FURN_TOP+46.0) where legend_bottom includes the overlay constraint entry (legend_flow(sheet.kinds)) and the not_placed row, then clamps height = min(CLOSE_MAX_H_PT=470.0, furn_bottom+8.0). Add a keyword-only overlay_present: bool = False parameter; when True, drop the clamp (height = furn_bottom+8.0). All other callers (neighbourhood_map.py, block_map.py, and every non-close site_context_plan branch) omit it -> default False -> byte-identical. In site_context_plan.py close branch pass overlay_present=bool(constraint_lines) to the close compose_context and remove the expand_frame_for_overlay import and its line-734 call. (A3 code) page_decision_summary.py:312 strips the row title with text.startswith(row['title']) and no word boundary; strip only when the char after the title is ':' , whitespace, or end-of-string, preserving the existing 'Rear yard Rear yard' outcome (the char after the title there is a space -> boundary -> still stripped). (A4 QA) Add a geometric legend-fit assertion (the 'No building placed' legend row bottom sits within the composed SVG frame height, measured on an overlay close frame) and a REAL-geometry label-beside-line/collision assertion (not a monkeypatch) using an established-line case. Evidence: see commands (real print proves byte-identity on the benchmark; a constructed established-line close frame is the visual-G3 artifact).",
+  "business_reason": "Backlog DB-263: four non-blocking advisories from the M5-T175 constraint-overlay reviews. Close them before M5-T173 later takes ownership of constraint_overlay.py and before any document establishes a constraint line that would be drawn with the label hidden / legend clipped (e.g. M5-T170's constructed street-wall case, S6). A2 also removes a fragile string-rewrite the backlog flagged. No legal reading changes.",
+  "inputs": [
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "docs/DISCOVERY_BACKLOG.md",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "project-control/tasks/M5-T175.json"
+  ],
+  "outputs": [
+    "services/api/app/drawings/maps/constraint_overlay.py",
+    "services/api/app/drawings/maps/context_scene.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/tests/drawings/maps/test_constraint_overlay.py",
+    "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+    "services/api/tests/drawings/report/test_page_one_title_boundary.py",
+    "project-control/reports/M5-T188-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T175"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/maps/constraint_overlay.py",
+    "services/api/app/drawings/maps/context_scene.py",
+    "services/api/app/drawings/maps/site_context_plan.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/tests/drawings/maps/test_constraint_overlay.py",
+    "services/api/tests/drawings/maps/test_site_context_close_frame.py",
+    "services/api/tests/drawings/report/test_page_one_title_boundary.py",
+    "project-control/reports/M5-T188-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/maps/close_frame_dimensions.py",
+    "services/api/app/drawings/maps/neighbourhood_map.py",
+    "services/api/app/drawings/maps/block_map.py",
+    "services/api/app/drawings/maps/__init__.py",
+    "services/api/app/drawings/kit/",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "packages/contracts/fixtures/",
+    "packages/contracts/schemas/",
+    "docs/reference-cases/",
+    "docs/research/evidence-records/",
+    "services/api/tests/drawings/report/test_report_page_one.py",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "an overlay close frame with an established rear_yard_100ft_line (the synthetic_rear_yard_constraints_contract_1_5_0 fixture, or an inline established line passed to draw_site_context_plan frame='close')",
+      "when": "the overlay is drawn",
+      "then": "a measurable portion of the drawn polyline lies OUTSIDE every placed label box (the line is visible). Mutation: revert the perpendicular first candidate to (0,0) -> the label box covers the line anchor and the test fails"
+    },
+    {
+      "id": "S2",
+      "given": "a cramped rect where no label fits at >= 8.5 pt",
+      "when": "the overlay runs with the new first candidate",
+      "then": "ConstraintOverlayError is still raised and no two label boxes overlap; the fit/collision guarantee (S6 of M5-T175) is intact because the full _label_candidates grid fallback is unchanged"
+    },
+    {
+      "id": "S3",
+      "given": "the close frame rendered WITH an established overlay line (overlay_present True)",
+      "when": "compose_context composes it",
+      "then": "the viewBox height is furn_bottom+8.0, > 470.0, and the 'No building placed' legend row's y+height <= the frame height (geometric fit, measured on the SVG, not only the viewBox); expand_frame_for_overlay appears nowhere. Mutation: re-apply the min(CLOSE_MAX_H_PT, ...) clamp on the overlay path -> the legend row is clipped and the fit assertion fails"
+    },
+    {
+      "id": "S4",
+      "given": "the close frame rendered WITHOUT an overlay (overlay_present default False) and every other frame (summary, wide, report, sheet, summary_close, neighbourhood_map, block_map)",
+      "when": "rendered",
+      "then": "the non-overlay close viewBox height == 470.00 (verified clamped at bb5c02b9) and every frame is byte-identical to bb5c02b9. Mutation: drop the overlay_present gate (always use furn_bottom+8) -> the non-overlay close height moves off 470 and the byte-identity test fails"
+    },
+    {
+      "id": "S5",
+      "given": "the whole services/api tree after the change",
+      "when": "grepping for expand_frame_for_overlay",
+      "then": "it is defined, exported, imported and called NOWHERE (0 hits)"
+    },
+    {
+      "id": "S6",
+      "given": "a page-1 rear-yard combined text whose body begins with the row title",
+      "when": "the title is a bare prefix of a LONGER word (boundary probe) vs followed by ':' / whitespace / end",
+      "then": "the bare-prefix case is NOT stripped; the ':' / space / end case IS stripped. Mutation: revert to plain startswith -> the bare-prefix probe is mis-stripped and the test fails"
+    },
+    {
+      "id": "S7",
+      "given": "the benchmark 1.5.0 document on page 1 (existing S16 behaviour)",
+      "when": "page 1 renders",
+      "then": "'Rear yard Rear yard' is absent and the conditional no-rear-yard reading (ZR 23-344) still shows; this preserved behaviour is asserted in test_report_page_one.py (DB-263's own file), NOT by editing test_constraint_rows.py"
+    },
+    {
+      "id": "S8",
+      "given": "the recorded benchmark (TestClient POST /report, benchmark_provider(with_zoning_lot=True) + recorded_pack_provider window pack)",
+      "when": "the report prints and is rendered to PDF with apps/web/scripts/print-report-pdf.mjs",
+      "then": "pages 1 and 3 are BYTE-IDENTICAL to bb5c02b9 because the benchmark establishes no constraint line (both lines not_known), so the overlay draws nothing and the height clamp is unchanged; this is the no-regression proof, NOT a before/after"
+    },
+    {
+      "id": "S9",
+      "given": "a CONSTRUCTED established-line close frame (draw_site_context_plan frame='close' with an established rear_yard_100ft_line, or the synthetic fixture)",
+      "when": "it is rendered to SVG and saved as the visual artifact",
+      "then": "the before image (bb5c02b9) shows the line hidden under its label and the legend row clipped; the after image shows part of the line visible and the legend row fully within the frame; visual-quality-reviewer (G3) inspects these two SVGs"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier",
+    "security-reviewer"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (benchmark has NO established line): the recorded benchmark carries constraint_lines in state not_known even after M5-T167 (accepted) and M5-T170 keeps street_wall_band/setback_line not_established, so the A1/A2 improvement cannot be demonstrated on the benchmark's own page 3. The real print (S8) proves byte-identity (no regression); the beside-line/legend-fit proof (S1/S3/S9) MUST use a constructed established-line case or the synthetic_rear_yard fixture. Do not claim a benchmark before/after.",
+    "RISK 2 (latent plain-frame clip, out of scope): the non-overlay close frame is ALREADY clamped at 470 (furn_bottom+8 > 470 verified), so a latent clip may exist there. DB-263 must NOT widen the plain frame; overlay_present=False preserves 470 exactly. S4 is the red/green guard.",
+    "RISK 3 (A3 consumer not in scope): the existing S16 'Rear yard Rear yard' assertion lives in test_constraint_rows.py (M5-T170's file), which DB-263 cannot edit. A3 is behaviour-identical on the existing data, so that test stays green; DB-263 MUST run test_constraint_rows.py and test_report_pages.py as read-only consumer checks and route any needed change to the orchestrator, never edit them.",
+    "RISK 4 (public symbol removal): expand_frame_for_overlay is in constraint_overlay.py __all__ (public) with exactly one consumer (site_context_plan.py) and no test. Removal is safe; the producer runs a code-graph impact sweep and records the public-symbol removal in the report.",
+    "RISK 5 (signature change): compose_context is also imported by neighbourhood_map.py and block_map.py; a keyword-only overlay_present default keeps both byte-identical (they never pass it and never use the close/overlay path) and they need no edit and stay forbidden.",
+    "RISK 6 (modularity): at bb5c02b9 modularity_check --check passes (failures 0). context_scene.py (630 lines) is NOT flagged; its ~3-line growth is safe. site_context_plan.py (745) is at WARN but DB-263 shrinks it. constraint_overlay.py shrinks. Run modularity_check --check to confirm no new warning.",
+    "RISK 7 (sequencing): DB-263 must land BEFORE M5-T173 (which later owns constraint_overlay.py). It shares NO file with M5-T170 (maps/ and page_decision_summary.py are in M5-T170's forbidden_paths; none of DB-263's files are in M5-T170's allowed_paths), so parallel is file-safe; both exercise page_decision_summary behind test_constraint_rows.py, so the full api pytest must pass in CI at the merged head (R639).",
+    "RISK 8 (D-093 light): the task reads docs/research/evidence-records/NB-04-lot-dimensions-basis.json and the settled readings docs/reference-cases/R6B/cases/{short-block-rear-yard,overlay-reading}.json; none is re-researched or edited; every unresolved input stays unresolved; the research-and-verification dispatch clause still goes in the builder brief."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T10:02:47.531321+00:00",
+  "updated_at": "2026-10-15T10:02:47.961772+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R015",
+        "D-094-R017",
+        "D-094-R037",
+        "D-094-R053",
+        "D-094-R116"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T10:02:47.531562+00:00",
+  "path_notes": "All production and test files in allowed_paths ALREADY EXIST at bb5c02b9 (constraint_overlay.py 333 lines; context_scene.py 630; site_context_plan.py 745; page_decision_summary.py 360; test_constraint_overlay.py; test_site_context_close_frame.py; test_report_page_one.py) -> allow_new is empty and the ONLY new file is the producer report, so the contract seam seeds only that placeholder. M5-T188 is the orchestrator-assigned ledger id (DB-263 is the backlog driver, not a ledger id). At the seam the orchestrator appends M5-T188 to applicability.task_ids of each cited D-094 requirement with a directive_registry digest resync + audit_log in the SAME commit, runs reg.evaluate_task_refs before claim (applicable == cited), and appends M5-T188 to manifest.affected_tasks with a PROVISIONAL task_verifications row. Overlap with M5-T170 is NONE (verified against spec-M5-T170.json allowed_paths AND forbidden_paths). The backlog DB-263 'WHERE' names only maps/constraint_overlay.py + report/page_decision_summary.py + their tests; A2's native-height fix legitimately also edits context_scene.py and site_context_plan.py (the backlog advisory itself says 'derive the furniture top from the composition') -- a justified file-set expansion flagged for the orchestrator. The builder runs heavy checks one at a time (flock on the Linux dev server); the real print uses TestClient (no server, no ports 3000/3001/8000). Pre-contract check of session 2026-10-15b (return-precheck-side-T174A-DB263.md): the page-1 boundary assertion moves to the NEW file test_page_one_title_boundary.py because test_report_page_one.py belongs to M5-T170 (and later M5-T169); it stays a read-only consumer check here. The established-line test uses a constructed inline line passed to draw_site_context_plan(frame='close'), never the shared synthetic_rear_yard fixture (M5-T170 regenerates it). No near-term task establishes a constraint line on the benchmark, so the visual proof is from the constructed/fixture case; the benchmark pages stay byte-identical. G5 security-reviewer added (the G5 gate needs its reviewer).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/drawings/maps/test_constraint_overlay.py tests/drawings/maps/test_site_context_close_frame.py tests/drawings/report/test_report_page_one.py",
+    "cd services/api && python -m pytest -q tests/drawings/report/test_constraint_rows.py tests/drawings/report/test_report_pages.py  # READ-ONLY consumer check of page_decision_summary; must stay green; do NOT edit these files",
+    "grep -rn expand_frame_for_overlay services/api  # expect 0 hits after the change",
+    "python3 tools/code_graph/query.py --no-regen impact services/api/app/drawings/maps/constraint_overlay.py  # advisory impact sweep; verify in source",
+    "python3 tools/modularity_check.py --check",
+    "REAL PRINT (no server, no ports): from services/api, TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs on the HTML -> confirm pages 1 and 3 are BYTE-IDENTICAL to bb5c02b9 (the benchmark establishes no constraint line)",
+    "VISUAL ARTIFACT: render draw_site_context_plan(ctx, frame='close', constraint_lines=<established rear_yard_100ft_line>) (or the synthetic_rear_yard fixture) to SVG before and after -> the beside-the-line / legend-fit before/after for visual-quality-reviewer (G3)"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

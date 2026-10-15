@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T10:02:40+00:00",
+ "updated_at": "2026-10-15T10:02:48+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -190,7 +190,7 @@
   "D-094-R166"
  ],
  "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
- "requirements_content_digest_sha256": "7890e4b207f0ee7582a1ba8bd0d50c1317d949023311af2b19a62e9a7a3602f4",
+ "requirements_content_digest_sha256": "ada78ecf2b4bf35bf2ebec024c79eaf4fc4607c97eefe522dfa12b462d051469",
  "sources": [
   {
    "file": "source-001.md",
@@ -452,7 +452,8 @@
   "M5-T184",
   "M5-T169",
   "M5-T185",
-  "M5-T187"
+  "M5-T187",
+  "M5-T188"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -821,6 +822,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T187 (the two-zone area-allocation web component (unfitted bar, byte-equal wording, carried G-14 conversion statement), not mounted, plus a source-links URL-form parity test) to R027, R088, R089, R090, R091, R093, R094, R095, R096, R098 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T10:02:48+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T188 (constraint-overlay polish (DB-263): label beside the line, native overlay frame height, word-boundary page-1 title strip, geometric overlay tests) to R015, R017, R037, R053, R116 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }
