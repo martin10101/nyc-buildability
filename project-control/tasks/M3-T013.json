@@ -204,8 +204,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "awaiting_gate",
-  "progress_percent": 95,
+  "status": "accepted",
+  "progress_percent": 100,
   "risks": [
     "RISK B1 (count): the sweep/brief say 36; the true table-bearing count at 0463ec78 is 37 (zr-22-131, a 'tables' payload, was omitted). The builder MUST derive the set by glob over 'table'/'tables' and let S1 pin the set; a hard-coded 36 silently leaves zr-22-131 unsigned.",
     "RISK B2 (no digest moves): the new field is a sibling to verbatim_excerpt; content_digest_sha256 is computed over the excerpt only and must stay byte-identical on every file, so the ~40 rule/reference-case/register pins do not move. A test asserts content_digest_sha256 is unchanged for zr-23-22/zr-23-432.",
@@ -215,7 +215,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:44:12.773544+00:00",
-  "updated_at": "2026-10-15T18:36:54.928904+00:00",
+  "updated_at": "2026-10-15T18:57:51.553013+00:00",
   "directive_refs": [
     {
       "directive_id": "D-093",
@@ -259,5 +259,7 @@
       "actor": "orchestrator",
       "change": "Scope correction 1 (session 2026-10-15b, after M5-T172 was accepted): the builder's commit 06651e8d signs the 37 table captures, and the evidence record NB-06 pins zr-23-432.snapshot.json by its whole-file sha256 (evidence E10, 37c1414c... -> ae06010e...), so research_record_check fails until NB-06 is re-pinned (G4 F1, REQUIRED; G1 and the builder found the same; it is the only such pin). NB-06 was M5-T172's while that task was in flight; it is accepted now, so NB-06 (and the records README for its index cell) join the allowed paths and scenario S10 is added; M5-T172 joins the dependencies. No row, gate or reviewer changes."
     }
-  ]
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T18:57:51.552834+00:00"
 }

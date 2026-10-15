@@ -1139,30 +1139,50 @@
     "D-093-R052"
    ],
    "producer": "backend-engineer",
-   "verifier": "",
+   "verifier": "directive-compliance-verifier",
    "schema_version": "directive_verification/v2",
-   "reviewed_sha": null,
-   "reviewed_manifest_sha256": null,
+   "reviewed_sha": "84735f88ca450f40cf84aa2e1dc9976c23595e77",
+   "reviewed_manifest_sha256": "6b79dd6972278e3c5fb211f78e0f151f910afba752c69b36a233a12a074e671e",
    "requirements": [
     {
      "id": "D-093-R043",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim at source-001.md line 117 (\"Reuse existing fields and status terms where possible. Do not build a second evidence platform or expand every record into an essay.\"); the requirements.json row text reproduces it unchanged and lists M3-T013 in applicability.task_ids.",
+      "The task adds exactly ONE additive sibling field, table_digest_sha256, to each of the 37 table-bearing captures and verifies it in the EXISTING loader snapshots.py; per-file diffs (zr-22-131, zr-23-432, zr-24-522 against claim head 1cbc8ccf) add one line and change/remove nothing \u2014 no second evidence platform, no new status vocabulary.",
+      "NB-06 gained only a concise single dependency_assessment entry (list 7->8) plus the E10 re-pin; research_status stays interpretation_awaiting_review and promotion.requested_label stays null \u2014 the record was not grown into an essay and reuses existing status terms.",
+      "Nothing stays open: this task's share of the prohibition is met; R043 continues to bind D-093-BOOTSTRAP and M0-T190 independently.",
+      "Verifier's carry-forward condition met at 84735f88: the task's allowed-path files are identical to those verified at da17857a (content identity 6b79dd69), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its delta); G2 orchestrator self-check; G3 code-reviewer (and its delta); G4 qa-engineer (and its delta)). DCV report: project-control/reports/M3-T013-DCV.md."
+     ],
+     "reviewed_sha": "84735f88ca450f40cf84aa2e1dc9976c23595e77"
     },
     {
      "id": "D-093-R051",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim at source-001.md line 135 (\"For changed logic, test meaningful boundaries... Avoid tests that merely copy the implementation's formula. A synthetic fixture must never be relabeled as a professionally verified real-site result.\"); the row text reproduces it and lists M3-T013 in task_ids.",
+      "The changed logic (the loader's table-digest check) is tested at meaningful boundaries by services/api/tests/rules/test_zr_snapshot_table_digest.py; I ran it at the frozen head with the lanes venv: 13 passed, exit 0 (tampered value, both fail-closed directions, all three shapes, non-table pass, canonicalization stability, glob==digest set incl. zr-22-131).",
+      "The tests do not copy the formula: the test's _canonical_table_json is defined independently (production helper NOT imported), so stored-vs-recomputed assertions are non-tautological; the mutation and blind-direction proofs (test_pre_change_excerpt_digest_is_blind_to_the_table_edit) drive the real loader behaviorally. I reproduced in-memory on the real zr-23-432 payload that a flipped value raises \"table_digest_sha256 mismatch\", payload-without-digest, digest-without-payload, and both-table+tables all raise, and a non-table dict loads.",
+      "No synthetic fixture is relabeled verified: fixtures are built in tmp_path and nothing is labelled Verified. Nothing of this task's share stays open; R051 still binds M5-T157/T158/T161, M0-T190 and BOOTSTRAP separately.",
+      "Verifier's carry-forward condition met at 84735f88: the task's allowed-path files are identical to those verified at da17857a (content identity 6b79dd69), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its delta); G2 orchestrator self-check; G3 code-reviewer (and its delta); G4 qa-engineer (and its delta)). DCV report: project-control/reports/M3-T013-DCV.md."
+     ],
+     "reviewed_sha": "84735f88ca450f40cf84aa2e1dc9976c23595e77"
     },
     {
      "id": "D-093-R052",
-     "state": "pending",
-     "evidence": [],
-     "reviewed_sha": null
+     "state": "PASS",
+     "evidence": [
+      "Source verbatim at source-001.md line 137 (\"Add the smallest appropriate check to the existing validation/review process... Automated checks can validate references, required fields, dependency status and test coverage. They cannot certify that a zoning interpretation is legally correct. Do not invent a `verified: true` field and treat its presence as proof.\"); the row text reproduces it and lists M3-T013 in task_ids.",
+      "This task's share adds the smallest additive integrity check to the EXISTING validation process (snapshots.py load_snapshot_file, after the unchanged content_digest check) so a result resting on a silently edited FAR/height table value fails to load; I reproduced the load-time refusal of a tampered value on the real zr-23-432 table.",
+      "It validates structure only and certifies nothing: the check is a sha256 fingerprint; `tools/research_record_check.py --check` run at the frozen head returned exit 0 and printed \"structural check only; not a professional verification\" and \"no record claims the Verified label without meeting every condition\"; no verified:true field is invented or trusted (NB-07 carries requested_label=Provisional, none Verified).",
+      "The one evidence record that pinned a changed capture by its whole file (NB-06 E10) is re-pinned to the signed file's LF sha256 ae06010e91a8fae0017f7a33a671c8ce5750c8ddb4f25a647a92ca79c1280898 (I recomputed `git show da17857a:...zr-23-432.snapshot.json | tr -d '\\r' | sha256sum` = that value, canonical and bundled identical), so the existing staleness check stays green (NB-06 code_current=True) \u2014 no stale evidence can back a current result.",
+      "What stays open for later work: the broader R052 obligation \u2014 the structural promotion check itself (research_record_check) refusing to mark a result verified when its record is absent/stale/unresolved \u2014 is owned by M0-T190 and M3-T012 (both also carry R052); this task extends the capture-integrity guard and keeps that check green, and the remainder of R052 is verified under those tasks, not here.",
+      "Verifier's carry-forward condition met at 84735f88: the task's allowed-path files are identical to those verified at da17857a (content identity 6b79dd69), the pinned files are unchanged, the text of the rows and their binding are unchanged, and every later commit touches only paths the verifier tolerates (4 files). Gates G0 and G1, G2, G3, G4 PASS at that content identity (G1 data-contract-verifier (and its delta); G2 orchestrator self-check; G3 code-reviewer (and its delta); G4 qa-engineer (and its delta)). DCV report: project-control/reports/M3-T013-DCV.md."
+     ],
+     "reviewed_sha": "84735f88ca450f40cf84aa2e1dc9976c23595e77"
     }
-   ]
+   ],
+   "verified_at": "2026-10-15T18:57:49+00:00"
   }
  ]
 }
