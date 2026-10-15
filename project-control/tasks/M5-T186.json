@@ -1,0 +1,227 @@
+{
+  "task_id": "M5-T186",
+  "title": "R6B reference case benchmark-options-4-11: the worked values of option 4 (more, smaller apartments) and option 11 (all programs combined) for the benchmark lot (215-16 Northern Boulevard, lot 70 of block 7334, R6B + C2-2, corner), built from two sealed readings per option plus an independent comparer per option; a value recorded ONLY where both readings agree on the same value and the same basis AND every cited section is captured in docs/research/zr-snapshots/v1; every disagreement, unresolved basis, eligibility, the owner's open meaning questions N1 (option 8) and N2 (shared housing) that option 11 touches, and every missing fact stays NOT KNOWN; with options 4 and 11 recorded the eleven-option set is complete across the reference cases; NO rule file, engine, result, capture, register entry, law-library edit or human verdict",
+  "task_type": "research",
+  "milestone_id": "M5",
+  "objective": "Add one new R6B reference case, benchmark-options-4-11, built from six sealed readings (option 4 = provenance -32/-33 with comparer -34; option 11 = -35/-36 with comparer -37), each file saved unchanged below a short truthful header. Record a value on the benchmark lot (recorded lot area 10,075 sq ft, administrative_record; GIS 10,387.99 display-only, never mixed) ONLY where (a) both readings of that option give it on the same value and the same basis, confirmed by that option's comparer, AND (b) every cited section is captured in docs/research/zr-snapshots/v1. Rows grouped by prefix (opt4-*, opt11-*) plus shared rows (both-readers-did-not-have, real-lot-missing-facts, options-out-of-scope). Option 11's rows that duplicate figures already recorded by M5-T184 (combination ceiling 2.40 -> 24,180 and 35 units = opt2; 2.00 -> 20,150 and 29 units = option 1) cross-cite the prior case+row in source_reference/why_applies and record ONLY option 11's distinctive content (the 35-31/23-20 greatest-single-use combination mechanic, shared-FA attribution, +4,030 bonus, 'shops/CF add no total FA', which programs may combine); no new floor-area pool is opened. Settled RECORD rows: opt4 residential FAR 2.00 (23-22, singular table), max residential FA 20,150 (2.00x10,075, 23-22 + 23-52 opening), DU factor 680 (23-52(b)), max 29 units (20,150/680=29.63->29, 23-52(b)), finding 'smaller apartments do not exceed 29' (23-52 opening+(b)), no-factor special-density not_applicable (23-52(a)(1)+12-10 special-density-areas, NB-05); opt11 single-use FARs residential 2.00 (23-22), commercial 2.00 (33-121 PLURAL tables -> quote-only + verbatim quote), CF 2.00 (24-11 PLURAL tables -> quote-only), combination ceiling standard 2.00 and qualifying 2.40 (35-31/23-20), max total FA 20,150 / 24,180 (35-31) + bonus +4,030, shared-FA pro-rata on total-less-shared (35-31/23-20), finding 'all single-use FARs 2.00 so shops/CF add no total FA' (35-31), DU 29 standard / 35 qualifying affordable (23-52(b)), 'no 680 factor for qualifying senior' (23-52(a)(2)), heights 30/45/55 std and 30/45/65 qualifying (23-432 via 35-63/35-631/35-632), setback 10 wide/15 narrow (23-433), may-combine shops(5)/CF(6)/two-buildings-one-ZL(8, 35-01)/parking(10), carve-outs 35-32/35-33/24-162 do not tighten R6B. Rows that stay NOT KNOWN: opt4 senior-eligibility (23-52(a)(2), applicant fact), opt4 conversions (A not_applicable / B not_known label divergence - comparer favors not_applicable but the two readings do not state the same label), opt4 min-dwelling-unit-size (MDL/HMC/Building Code, uncaptured), opt4 affordable-2.40/35 (not an option-4 value - option 2's path, cross-noted); opt11 final street-wall line (Reader A '8 ft wide/10 ft narrow' is partly wrong - 35-631(b) is 70% within 8 ft for BOTH classes, 10/15 are recess depths; only one reader numeric -> not jointly settled; comparer correction noted in prose not recorded), opt11 affordable+senior together (no ZR text read), opt11 shared housing (owner N2, framework pending 2027), opt11 split-lot meaning (owner N1, 77-00 uncaptured), opt11 overlay extent (76-131 uncaptured), opt11 UAP text (23-154 uncaptured, HTTP 403), opt11 full 35-31 carve-out sweep (35-34+ not swept), opt11 senior no-factor unit cap (not found), opt11 rear yard beyond 100 ft / CF 60%-interior coverage (geometry, 23-344(c) NB-03 draft); plus the shared real-lot-missing-facts. The mixed-building street-wall/height derivation path is recorded as an NB-06 draft reading (a condition on the opt11 height rows). Every quantity names exactly one of the nine measurement bases; no figure mixes bases; the recorded 10,075 (administrative_record) and the GIS 10,387.99 (gis) never appear combined; no value comes from a program run; nothing is labelled complies/buildable/optimal/feasible; agreement of two AI readings is not proof. Wire the case in with a new step-P11 module behind ONE thin entry into check.py and recompute the FOUR cross-case digests a new case moves (p7 PRIOR_ROWS_DIGEST, p8 OTHER_CASES_DIGEST, p9 PRIOR_CASES_DIGEST, and the step_p10 OTHER_CASES_DIGEST that the 5/8/9-10 case introduced) plus the literal CASE_IDS tuple, CASE_IDS/REQUIRED_BASE_IDS in lib and the README; step_p11 carries its own 'other cases byte-stable' digest.",
+  "business_reason": "D-094 R007/R075/R084: the full feasibility report owes worked results for all eleven options; this records the last two (options 4 and 11), source-backed and independently agreed, as the single source the report/comparison and any later engine take their expected values from (never from program output), completing the per-option set. R102: the worked values and their per-section capture state feed the zoning-law-library option-04/option-11 pages. The sections options 4/11 rest on were captured by M3-T010 and earlier; this task is the sibling of M5-T184 (options 2/3/6/7) and the 5/8/9-10 case.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-sealed-option4-A.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-sealed-option4-B.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-compare-option4.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-sealed-option11-A.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-sealed-option11-B.md",
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15b/return-compare-option11.md",
+    "docs/reference-cases/R6B/README.md",
+    "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json",
+    "docs/reference-cases/R6B/cases/benchmark-options-5-8-9-10.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/step-p4-worked.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p9.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p10.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p10.py",
+    "docs/research/zr-snapshots/v1/",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/NB-02-proposed-zfa-scope.json",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "docs/reference-cases/R6B/cases/benchmark-options-4-11.json",
+    "docs/reference-cases/R6B/benchmark-options-4-11.md",
+    "docs/reference-cases/R6B/README.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-32.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-33.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-34.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-35.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-36.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-37.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p11.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p11.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p9.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p10.py",
+    "project-control/reports/M5-T186-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T185",
+    "M5-T184",
+    "M3-T010"
+  ],
+  "allowed_paths": [
+    "docs/reference-cases/R6B/cases/benchmark-options-4-11.json",
+    "docs/reference-cases/R6B/benchmark-options-4-11.md",
+    "docs/reference-cases/R6B/README.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-32.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-33.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-34.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-35.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-36.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-37.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p11.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p11.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_cases.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_render.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p9.py",
+    "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p10.py",
+    "project-control/reports/M5-T186-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/",
+    "apps/",
+    "packages/",
+    "docs/research/",
+    "docs/zoning-rule-review/",
+    "docs/zoning-law-library/",
+    ".github/",
+    "tools/",
+    ".claude/",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/interior-lots.json",
+    "docs/reference-cases/R6B/cases/corner-reach.json",
+    "docs/reference-cases/R6B/cases/suffix.json",
+    "docs/reference-cases/R6B/cases/step-p1-worked.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "docs/reference-cases/R6B/cases/step-p3-worked.json",
+    "docs/reference-cases/R6B/cases/step-p4-worked.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json",
+    "docs/reference-cases/R6B/cases/short-block-rear-yard.json",
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json",
+    "docs/reference-cases/R6B/cases/benchmark-options-5-8-9-10.json",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-25.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-26.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-27.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-28.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-29.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-30.md",
+    "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-31.md",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p7.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p8.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p9.py",
+    "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p10.py"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the six new provenance files -32..-37 (option 4 A/B + comparer -34; option 11 A/B + comparer -37), each saved unchanged below a short truthful header",
+      "when": "the step-P11 reading check runs",
+      "then": "every new file carries a distinctive marker, contains the literal phrase 'sealed folder', truthfully states its method (worked from the sealed folder of captures; where a reader cross-checked an official page it says so) and must NOT claim 'no outside access' where a file does not support it (option-4-A read only snapshots/NB/cases/library; option-4-B 'no ZR website fetch required'; option-11-A 'No program run was read'; comparers reopened the v1 snapshots), and ends END-OF-REPORT; each new file's sha256 is pinned in step_p11; a single changed byte is caught"
+    },
+    {
+      "id": "S2",
+      "given": "every value/not-known row, grouped by option prefix",
+      "when": "the per-option two-reading guard runs",
+      "then": "an opt4 row names BOTH -32 and -33 and its comparer -34; an opt11 row names -35 and -36 and its comparer -37; a shared row names the comparer appropriate to its content; a row that names only one reading of its pair, the wrong pair, or the wrong comparer is refused (negative test required - the case is deliberately NOT in check.py CASE_READINGS because it has two reading pairs AND two comparers)"
+    },
+    {
+      "id": "S3",
+      "given": "every formal citation on every row",
+      "when": "the citation check runs",
+      "then": "each cites a section whose snapshot exists in docs/research/zr-snapshots/v1, the content_digest matches the live capture and the quoted words are found in the verbatim_excerpt; uncaptured sections (76-131, 23-154, 77-00/Art VII Ch 7, 35-34+ neighbours, MDL/HMC/Building Code) are NEVER a value basis and NEVER a formal citation - named only in the prose of a not-known / both-readers-did-not-have row; a changed quote is caught"
+    },
+    {
+      "id": "S4",
+      "given": "the rows the two readings do not jointly settle (opt4 senior-eligibility, opt4 conversions label-divergence, opt4 min-unit-size, opt4 affordable-2.40/35-not-opt4; opt11 final street-wall line, affordable+senior-together, shared-housing N2, split-lot N1, overlay extent, UAP text, full 35-31 carve-out sweep, senior no-factor cap, rear-yard-beyond-100ft/CF-60-interior) and the shared real-lot-missing-facts",
+      "when": "the must-stay-not-known guard runs",
+      "then": "each carries kind not_known, no number, and a reason stating the kind of gap; giving any of them a value is refused; the opt11 street-wall row must NOT record the comparer's 8-ft correction (adjudicator not a value source)"
+    },
+    {
+      "id": "S5",
+      "given": "the eligibility/use-permission rows (opt11 shops UG VI, opt4/opt11 qualifying affordable/senior) and the open-meaning rows (opt11 option-8 N1, shared-housing N2)",
+      "when": "the eligibility and wording guards run",
+      "then": "each carries a does_not_establish caveat that the case decides no eligibility, no use permission and neither owner question N1 nor N2; no present-tense 'not captured'/'uncaptured'/'does not hold' string appears outside change_log"
+    },
+    {
+      "id": "S6",
+      "given": "every quantity on a row",
+      "when": "the quantity-basis guard runs",
+      "then": "each names exactly one of the nine measurement bases; no figure mixes bases; the recorded 10,075 (administrative_record) and the GIS 10,387.99 (gis) never appear combined in one quantity or arithmetic step (the GIS 30-unit figure is never recorded)"
+    },
+    {
+      "id": "S7",
+      "given": "every arithmetic row",
+      "when": "lib.recompute_row_errors runs",
+      "then": "each step recomputes exactly: 2.00 x 10,075 = 20,150; 2.40 x 10,075 = 24,180; 24,180 - 20,150 = 4,030; 20,150 / 680 = 29.63 -> 29; 24,180 / 680 = 35.56 -> 35; rounding boundaries 20,230/680 = 29.75 -> 30 and 20,229/680 -> 29; a changed operand is caught and names its row; 33-121 (commercial FAR 2.00) and 24-11 (CF FAR 2.00) carry table_assertion:null (plural 'tables' key) and are recorded as arithmetic operands / quote-only plus a verbatim quote; 23-22 and 23-432 use table_assertion; 35-31, 23-20, 23-52, 35-01, 32-161, 23-433, 23-51, 54-311 are prose-only -> quote-only"
+    },
+    {
+      "id": "S8",
+      "given": "the opt11 height rows and the carve-out row",
+      "when": "the rows are written",
+      "then": "the mixed-building street-wall/height derivation path (35-63 -> 35-631/35-632 -> 23-432/23-433) is recorded as an NB-06 draft reading (a condition on the height rows), not as a settled applicability; the carve-out row records only that 35-32/35-33/24-162 (checked) do not tighten R6B and keeps the full 35-31 sweep not_known; option 11's duplicate figures (20,150/29, 24,180/35) cross-cite benchmark-options-2-3-6-7 (opt2) and the option-1 settled cases and open no new floor-area pool"
+    },
+    {
+      "id": "S9",
+      "given": "the reference-case suite, the renderer and the modularity checks",
+      "when": "they run",
+      "then": "benchmark-options-4-11 is in CASE_IDS (lib and the literal tuple at test_r6b_reference_cases.py, appended as the 15th element after benchmark-options-5-8-9-10), REQUIRED_BASE_IDS has its entry, README lists it, render_page is byte-identical to the written .md, program_result_errors is empty, the other fourteen cases stay byte-stable (test_step_p7 PRIOR_ROWS_DIGEST, test_step_p8 OTHER_CASES_DIGEST, test_step_p9 PRIOR_CASES_DIGEST and test_step_p10 OTHER_CASES_DIGEST all recomputed; step_p6 REACH_ROWS_DIGEST unchanged), step_p11 carries its own other-cases digest, r6b_reference_cases_render.py byte-identical, and EVERY support .py is < 600 lines (r6b_reference_cases_check.py MUST stay < 600 after the step-P11 wiring - see RISK 1; the new r6b_reference_cases_step_p11.py < 600)"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "RISK 1 (600-line split REQUIRED - the brief's explicit question): r6b_reference_cases_check.py is 594 lines at read HEAD 48d6587b; the 5/8/9-10 case's step-P10 wiring adds ~3 lines (1 import + step_p10.case_errors in validate_case + step_p10.reading_digest_errors in provenance_errors) -> ~597. That leaves only 3 lines of headroom (the guard FAILS any .py >= 600). Plain step-P11 thin wiring is again ~3 lines (1 import + 1 case_errors + 1 reading_digest_errors) -> 600 -> FAILS. So a split/refactor IS needed for THIS task. Minimal behavior-identical fix inside check.py: introduce one registry `CASE_MODULES = (step_p9, step_p10, step_p11)` near the step imports and replace the hard-coded per-module calls with two loops (`for _m in CASE_MODULES: errs += _m.case_errors(case_id, data)` in validate_case; `for _m in CASE_MODULES: errs += _m.reading_digest_errors()` in provenance_errors). Net: +1 import +1 tuple, loops replace the existing hard lines -> check.py ~599, < 600 but TIGHT (1 line). Because options 4/11 complete the option set, no further case is expected, so 599 is an acceptable terminal state - BUT the producer MUST confirm the real count with `python tools/modularity_check.py --check`; if it lands >= 600, extract the case-module dispatch + reading-digest aggregation into the new module r6b_reference_cases_cases.py (already in allowed_paths as a contingency; preserve public imports per CLAUDE.md principle 16) so check.py gets durable headroom, NEVER weaken the 600 guard. step_p11 itself must be < 600.",
+    "RISK 2 (plural 'tables' key): 33-121 (commercial FAR 2.00) and 24-11 (CF FAR 2.00) carry their numbers under the plural 'tables' key; the checker's table_assertion reads singular 'table' (None) and would fail 'has no table'. Record 33-121 = 2.00 and 24-11 = 2.00 as arithmetic operands / quote-only + a verbatim quote, table_assertion:null; a reviewer eyeballs the numbers against each snapshot's 'tables'. 23-22 (residential 2.00/2.40) and 23-432 (heights) carry singular 'table' -> table_assertion works. 35-31, 23-20, 23-52, 35-01, 35-63, 35-631, 35-632, 35-32, 35-33, 32-161, 23-433, 23-51, 54-311, 22-12/22-121 are prose-only -> quote-only.",
+    "RISK 3 (one case, TWO reading pairs AND TWO comparers): unlike the 5/8/9-10 case (three pairs + one shared comparer -25), this case has option 4 = -32/-33 + comparer -34 and option 11 = -35/-36 + comparer -37. The generic CASE_READINGS forces one tuple per row, so the case is NOT registered there; check.py both_readings_errors no-ops for it and step_p11 enforces the pair+comparer per row prefix (opt4 -32/-33/-34, opt11 -35/-36/-37). A negative test MUST prove a one-reading / wrong-pair / wrong-comparer row is refused.",
+    "RISK 4 (comparer is an adjudicator, not a value source): record only where both readings of an option agree on the same value and basis; the comparer only confirms agreement and resolves reader-vs-reader disputes. Keep opt4 conversions (A not_applicable / B not_known) and opt11 final street-wall line NOT KNOWN; C11 found Reader A's '8 ft wide / 10 ft narrow' partly wrong (35-631(b) = 70% within 8 ft for BOTH classes; 10/15 are recess depths) and Reader B gave no numeric row, so the two readings do not jointly settle it - the comparer's 8-ft correction is noted in prose, NEVER recorded as a value.",
+    "RISK 5 (certainty-label divergence on opt11 height applicability): Reader A 'applies' vs Reader B 'not_known (draft, NB-06)'; the comparer confirms the VALUES (30/45/55, 30/45/65) are settled and that the divergence is only the review-status. Record the height VALUES (both agree) WITH a condition that the mixed-building street-wall/height derivation path is an NB-06 draft reading awaiting review - do not record the applicability as fully settled, and do not drop the values.",
+    "RISK 6 (provenance header honesty): the six reading files end END-OF-REPORT but lack 'sealed folder' and a hard-rule marker. The producer prepends a truthful header to -32..-37 supplying the literal phrase 'sealed folder' and a distinct marker; the readers worked from the captures (option-4-A read only snapshots/NB/cases/library; option-4-B 'no ZR website fetch required'; option-11-A 'No program run was read'; both comparers reopened the v1 snapshots), so the header states each file's actual method and must NOT over-claim 'no outside access' beyond what the file supports. Digests are computed on the saved file AFTER the header.",
+    "RISK 7 (uncaptured sections convention): zero not_captured citations; 76-131, 23-154, 77-00/Art VII Ch 7, 35-34+ neighbours and MDL/HMC/Building Code are named only in the prose of not-known / both-readers-did-not-have rows, never as a value basis or a formal citation.",
+    "RISK 8 (capture-dependency + shared-file ordering): the case cites the earlier captures by content_digest and shares README.md, lib.py, check.py, render.py, test_r6b_reference_cases.py and the p7/p8/p9/p10 tests with M5-T184 and the 5/8/9-10 case. M5-T185 (5/8/9-10), M5-T184 and M3-T010 must ALL be accepted first (frozen digests / stable base). See the order note.",
+    "RISK 9 (sole reference-case task in flight): must be the ONLY open reference-case task while open; it integrates after M5-T185, M5-T184 and M3-T010 and is the last of the eleven-option cases.",
+    "RISK 10 (cross-case citation without double-recording): option 11's 20,150/29 and 24,180/35 are the SAME figures M5-T184 recorded (opt2) and option 1 settled. These rows must cross-cite the prior case+row in source_reference/why_applies and record ONLY option 11's distinctive combination mechanic; they must not open a second independent floor-area pool or contradict the prior cases (reviewer checks the numbers reproduce)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T11:21:27.660054+00:00",
+  "updated_at": "2026-10-15T11:21:28.141430+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R007",
+        "D-094-R075",
+        "D-094-R084",
+        "D-094-R102"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T11:21:27.660329+00:00",
+  "path_notes": "Engine-free: the support code imports nothing from app (pure stdlib). The producer receives the six readings as files and copies them unchanged into provenance -32..-37 below a truthful header (RISK 6). Author the case with existing render constructs (facts, citations, arithmetic steps, quantities, not_known); do NOT use the render.py reading1/reading2 differ-figure and do NOT add a numbers_block; keep r6b_reference_cases_render.py byte-identical (in allowed_paths only as safety). Consumer-pin sweep complete: test_r6b_reference_cases.py pins the literal CASE_IDS tuple (append the new id as the 15th element after benchmark-options-5-8-9-10); test_r6b_reference_cases_step_p7.py PRIOR_ROWS_DIGEST (blob over all cases except short-block-rear-yard), test_r6b_reference_cases_step_p8.py OTHER_CASES_DIGEST (all except placement-building-b), test_r6b_reference_cases_step_p9.py PRIOR_CASES_DIGEST (all except benchmark-options-2-3-6-7) and the 5/8/9-10 case's test_r6b_reference_cases_step_p10.py OTHER_CASES_DIGEST (all except benchmark-options-5-8-9-10) are cross-case blobs that a new case MOVES - RECOMPUTE all four; step_p6 REACH_ROWS_DIGEST covers only corner-reach rows and does NOT move; no len(CASE_IDS)==N count pin exists. check.py stays < 600 via the CASE_MODULES registry loop (RISK 1); r6b_reference_cases_cases.py is a contingency extraction module. Contract seam (orchestrator): new-task -> patch packet JSON -> append the new task id to applicability.task_ids of D-094 R007/R075/R084/R102 with a directive_registry digest resync + audit_log entry in the SAME commit -> run reg.evaluate_task_refs before claim (applicable must == cited) -> append the task to manifest.affected_tasks of D-094 with a PROVISIONAL task_verifications row (verifier \"\", pending) -> carry directive_regime_version -> seed committed placeholders for every new allowed_paths file before the G0 report. JUDGE (return-judge-case-4-11.md, session 2026-10-15b): ADOPT, no required correction. Advisories for the producer: A1 the opt11 height rows record the settled values 30/45/55 and 30/45/65 (23-432 capture; option-1 and option-2/3 cases) and attach the NB-06 draft caveat only to the mixed-building derivation PATH; A2 prefer extracting the case-module dispatch and the reading-digest aggregation into r6b_reference_cases_cases.py (already in allowed_paths) with a compatibility facade for durable headroom under 600 lines, confirmed by modularity_check; never weaken the 600 guard; A3 all per-row pair-and-comparer enforcement and the must-stay-not-known guards live in step_p11 (the case is not in CASE_READINGS), with negative tests for a one-reading, wrong-pair and wrong-comparer row and for the street-wall 8-ft comparer value never being recorded; A4 each citation's content_digest pulled from the live snapshot at the claim head. M5-T185 (options 5/8/9-10) is accepted: its step_p10 OTHER_CASES_DIGEST is one of the four cross-case digests this case moves.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/reference_cases",
+    "cd services/api && python tests/rules/reference_cases/r6b_reference_cases_render.py --check",
+    "python3 tools/modularity_check.py --check",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

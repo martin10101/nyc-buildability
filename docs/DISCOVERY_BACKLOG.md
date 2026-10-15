@@ -688,3 +688,5 @@ Sweep 2026-10-15 (M3-T011 contract seam on task/wave27-comparison-appendix, sess
 Sweep 2026-10-15 (M3-T012 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): DB-271 QUEUED(M3-T012); DB-274 NB-05 half QUEUED(M3-T012); other rows unchanged.
 
 Sweep 2026-10-15 (wave-27, session 2026-10-15b): DB-276 added OPEN (capture tables outside the content digest); other rows unchanged.
+
+Sweep 2026-10-15 (M5-T186 contract seam on task/wave27-comparison-appendix, session 2026-10-15b): no row added; DB-276 OPEN (capture tables outside the digest; this case's 23-22/23-432 table assertions read the present payloads); other rows unchanged.
