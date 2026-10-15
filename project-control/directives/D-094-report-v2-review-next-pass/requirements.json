@@ -4,7 +4,7 @@
  "version": 1,
  "requirement_count": 159,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T04:49:51+00:00",
+ "updated_at": "2026-10-15T04:50:01+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -746,7 +746,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-094-BOOTSTRAP"
+     "D-094-BOOTSTRAP",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -2827,7 +2828,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -2859,7 +2861,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -2894,7 +2897,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T165"
+     "M5-T165",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -2929,7 +2933,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T165"
+     "M5-T165",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -2965,7 +2970,8 @@
      "D-094-BOOTSTRAP",
      "M0-T193",
      "M5-T164",
-     "M5-T177"
+     "M5-T177",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -3002,7 +3008,8 @@
      "M0-T193",
      "M5-T164",
      "M5-T177",
-     "M5-T182"
+     "M5-T182",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -3036,7 +3043,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -3071,7 +3079,8 @@
     "task_ids": [
      "D-094-BOOTSTRAP",
      "M0-T193",
-     "M5-T164"
+     "M5-T164",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -3105,7 +3114,8 @@
    "applicability": {
     "task_ids": [
      "D-094-BOOTSTRAP",
-     "M0-T193"
+     "M0-T193",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
@@ -3207,7 +3217,8 @@
    "binding": true,
    "applicability": {
     "task_ids": [
-     "D-094-BOOTSTRAP"
+     "D-094-BOOTSTRAP",
+     "M5-T183"
     ],
     "task_types": [],
     "milestones": [],
