@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T07:36:22+00:00",
+ "updated_at": "2026-10-15T08:05:20+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -184,10 +184,13 @@
   "D-094-R160",
   "D-094-R161",
   "D-094-R162",
-  "D-094-R163"
+  "D-094-R163",
+  "D-094-R164",
+  "D-094-R165",
+  "D-094-R166"
  ],
- "requirements_id_digest_sha256": "b646f13752116084afec98cc55e5cfbfa7c527d172732f779c909c08065aae64",
- "requirements_content_digest_sha256": "b44a69542ddd441899ddecaaa2089ff8d44c6477128508a833d6b7a930975b64",
+ "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
+ "requirements_content_digest_sha256": "ee63ca8f516de341209eee44eabb7d99c4143fc3d86ab65050b9206a5d39f7b7",
  "sources": [
   {
    "file": "source-001.md",
@@ -379,6 +382,14 @@
    "recorded_at": "2026-10-15T07:36:22+00:00",
    "content_digest_sha256": "8e013025aca7b467b477cf0297aee304344256fb65c868bad4806545ae3013f9",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-025-amendment.md",
+   "kind": "amendment",
+   "sequence": 25,
+   "recorded_at": "2026-10-15T08:05:20+00:00",
+   "content_digest_sha256": "641cfd027fdcf0b4c924063a224d53e00e2fba036a6b36fce40fa77ea9958b59",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -404,7 +415,8 @@
   "source-021-amendment.md",
   "source-022-amendment.md",
   "source-023-amendment.md",
-  "source-024-amendment.md"
+  "source-024-amendment.md",
+  "source-025-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -782,6 +794,12 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-024 (the owner's session handoff at a clean seam, with twelve helpers for the next session) and requirements D-094-R160 to R163, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T08:05:20+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-025 (the owner's resume of handoff seq 171 with twelve helpers at once) and requirements D-094-R164 to R166, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

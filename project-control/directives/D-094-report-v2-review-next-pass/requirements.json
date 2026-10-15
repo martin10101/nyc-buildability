@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 163,
+ "requirement_count": 166,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T07:36:22+00:00",
+ "updated_at": "2026-10-15T08:05:20+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -5336,6 +5336,104 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the handoff of session 2026-10-15a before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R164",
+   "text": "'Next action: handoff section 4 (close wave 26:' 'M5-T170 round 2 for its two required review findings, the delta checks of M5-T183 and M3-T010, the M5-T184 reviews, then submit, rule check and accept each at a green head; the wave-26 PR, pre-merge audit, fail-closed merge; PDF #3 from main with every page diffed against 2bcdb05a and real website pictures; then contract M5-T169 and its builder, with M5-T174 part A, DB-263 and the options 5/8/9-10 reference case beside it).' 'Research and verification (D-093) applies; put its dispatch clause in every brief and name the reference cases.' 'Every helper brief says: all parts in ONE hand-back.' 'Do not repeat completed work.': resume at handoff seq 171 section 4 in order: M5-T170 round 2 for G1 F1 and G4 S17 (with the advisories), its delta checks; the delta checks of M5-T183 (G5) and M3-T010 (G1 F1); the M5-T184 reviews; submit, directive check and accept each at a head whose CI was read green; then the wave-26 PR, pre-merge audit and fail-closed merge; PDF #3 from main with every page diffed against 2bcdb05a and real website pictures; then contract M5-T169 and its builder, with M5-T174 part A, DB-263 and the options 5/8/9-10 reference case beside it on separate files. Every brief carries the D-093 dispatch clause, names docs/reference-cases/R6B/cases/ and says all parts in ONE hand-back; completed work is not repeated.",
+   "source_ref": "source-025-amendment.md#owner-message-verbatim",
+   "classification": "sequencing",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R162",
+    "D-094-R163"
+   ],
+   "required_harness": "The session notes record each step in this order with its head, CI run and return; the ledger shows the wave-26 acceptances before the merge, and M5-T169 contracted after it.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-15b/SESSION_NOTES.md`, the ledger on the wave-26 branch, the merged PR.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15b before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R165",
+   "text": "'Spin up 12 sub agents at once (owner, D-094 R162-R163), each on a different part of the job, to make massive progress: at most three building at once, never sharing a file, heavy test runs one at a time under the shared lock; the rest review, check, plan and research.': the owner approves up to twelve helpers running at once in this session, each on a different part of the job; at most three building at once (question M1 open), never sharing a file, heavy test runs one at a time under the shared lock; the rest review, check, plan and research. Every other limit stands (handoff section 5): no model override, no timers, no unattended merges, builders never touch ports 3000/3001/8000, the gates unchanged.",
+   "source_ref": "source-025-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R162"
+   ],
+   "required_harness": "The session notes name each helper, its part and its role (building or not) at dispatch; at no time more than twelve helpers or more than three builders.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-15b/SESSION_NOTES.md` dispatch lines and saved returns.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15b before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R166",
+   "text": "'Standing restrictions: handoff section 5.' 'Updates to the owner: four short plain bullets with links, no time estimates unless asked; answer questions at once and to the point.': the standing restrictions of handoff seq 171 section 5 apply for the whole session; updates to the owner are four short plain bullets with links, with no time estimates unless asked; the owner's questions are answered at once and to the point.",
+   "source_ref": "source-025-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "Every owner update in the session is four short plain bullets with links and no time estimate; no Tier D action, PR 241 merge or production switch occurs.",
+   "required_evidence": "The session transcript and `SESSION_NOTES.md`.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the start of session 2026-10-15b before acting; no work done on it yet.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {
