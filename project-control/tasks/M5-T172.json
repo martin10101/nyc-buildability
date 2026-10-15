@@ -95,7 +95,12 @@
     "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
     "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
     "services/api/tests/scenario/three_answers/test_geometry_lot_outline.py",
-    "services/api/tests/scenario/three_answers/test_geometry_streets.py"
+    "services/api/tests/scenario/three_answers/test_geometry_streets.py",
+    "services/api/tests/cad/test_results_dxf.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_location_sheet.py",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.massing.svg",
+    "services/api/app/scenario/three_answers/placement_wiring.py"
   ],
   "forbidden_paths": [
     "packages/contracts/schemas/",
@@ -182,6 +187,18 @@
       "given": "the benchmark route (results_read.py through run_engine_and_result_ways_from_evidence in result_way_engine_bridge.py) and the settled placement worked example (docs/reference-cases/R6B/cases/placement-building-b.json)",
       "when": "the bridge passes the placement's lot measures to emit_three_way_document (one new optional keyword argument; byte-identical output when it is absent, like rear_yard_analysis and envelope_analysis)",
       "then": "the four measures carry their own bases: the printed tax-map frontage 100.76 ft and depth 100 ft from the PLUTO lot facts in property_profile, the city-map (GIS) frontage 103.88 ft from the prepared outline's Northern Boulevard edge, and the city-map depth 99.97 ft from the existing Northern Boulevard perpendicular reach (app.spatial.lot_reach, already carried as gathered.inputs.reach.street_lines); never the scope assumption lot_front_ft (a GIS figure carrying the approximate_tax_map code); the placement then gives back clearance 33.34 ft on the printed tax map and 35.31 ft on the city map, frontage difference 3.12 ft, footprint 6,716.66 sq ft on the tax basis, equal to the reference case; one test per input state (all four given; the tax pair missing; the GIS pair missing; neither) where a missing measure leaves its basis not known and the building not placed on that basis, never a default; mutation: feeding the scope lot_front_ft instead of PLUTO's frontage collapses the frontage difference to 0 and the test fails"
+    },
+    {
+      "id": "S12",
+      "given": "round 1b left three_way_document.py at 790 SLOC, above the 750 justify line that S9 forbids crossing",
+      "when": "the placement wiring (PlacementInputs, _apply_placement, _apply_area_allocation) moves into the new focused module services/api/app/scenario/three_answers/placement_wiring.py, with three_way_document.py importing it and keeping every public name importable at its old path",
+      "then": "three_way_document.py is at or under 750 SLOC and modularity_check --check passes with no justify warning for it; the output is byte-identical (the regenerated benchmark, the DXF and SVG snapshots unchanged by the move); the review register's calculation entries for the placement and the area allocation cite the new module with its pinned hash (an implementation_changed event, pages re-rendered by the renderer); the evidence records whose code paths include three_way_document.py carry its new hash in the same revision they already take in this task (NB-01 revision 10, NB-06 revision 5)"
+    },
+    {
+      "id": "S13",
+      "given": "the placed benchmark (placement placed, floor plates drawn)",
+      "when": "the consumer tests that asserted the not-placed state run (test_results_dxf.py, test_constraints_page.py, test_location_sheet.py) and the kit snapshots regenerate",
+      "then": "each changes only to follow the placed state (the benchmark's honest floor-plate measurement note in the DXF; the not-placed sentence and legend gone on the placed benchmark while a not-placed fixture still shows them), each edit listed with before and after; the new massing snapshot recorded_215_16_northern_journey.massing.svg is committed from UPDATE_DRAWING_SNAPSHOTS=1; any other red consumer is stop-and-report"
     }
   ],
   "required_gates": [
@@ -196,7 +213,8 @@
     "data-contract-verifier",
     "code-reviewer",
     "qa-engineer",
-    "directive-compliance-verifier"
+    "directive-compliance-verifier",
+    "visual-quality-reviewer"
   ],
   "status": "claimed",
   "progress_percent": 20,
@@ -251,6 +269,11 @@
       "at": "2026-10-15T14:11:40+00:00",
       "actor": "orchestrator",
       "change": "Scope correction 1 (session 2026-10-15b): the builder's first round stopped with nothing edited (session-2026-10-15b/return-M5-T172-builder-r1-blocked.md) because the packet's claim that placement and area allocation 'emit purely through three_way_document.py' is false: build_placement needs the printed tax-map frontage and depth (PLUTO 100.76, 100) and the city-map frontage and depth (103.88, 99.97), but the document reaching the emitter carries only a GIS frontage 103.88 under the approximate_tax_map code and a depth of 100; with those the two-basis conflict collapses (back clearance 35.34 and 35.32, frontage difference 0) against the settled reading. A read-only check (return-check-T172-depth.md) confirmed that the only live callers of emit_three_way_document are in result_way_engine_bridge.py, that the bridge already holds the four measures with their bases (property_profile PLUTO lot facts; the prepared outline's Northern Boulevard edge 103.8792; the existing lot-reach measure 99.9747 for Northern Boulevard), and that the live 99.97 equals the reference case. result_way_engine_bridge.py moves into the allowed paths with NB-05 (forbidden before; the bridge is in its code paths) and four consumer tests of the bridge (they change only to follow the regenerated output, each listed with before and after; any other red consumer is stop-and-report). Scenario S11 added; S6 extended for NB-05 and the bridge hash in NB-06. No row, gate, reviewer or dependency changes."
+    },
+    {
+      "at": "2026-10-15T15:50:19+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 2 (session 2026-10-15b, after round 1b at builder commit b843f9b6): the whole api suite has three failures outside the allowed paths, all following the placed benchmark (test_results_dxf.py: the drawn plates add an honest measurement note; test_constraints_page.py and test_location_sheet.py: the not-placed sentence and legend are gone), and the kit now draws a massing snapshot for the benchmark (a new file). Round 1b also left three_way_document.py at 790 SLOC, above the justify line S9 forbids crossing; the placement wiring moves into the new module placement_wiring.py (S12). The four files and the new module join the allowed paths; S12 and S13 are added; visual-quality-reviewer joins the reviewers for G3 because pages 3, 5, 6 and the appendix change on the print. No row, gate or dependency changes."
     }
   ]
 }
