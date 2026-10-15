@@ -112,7 +112,7 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
@@ -120,8 +120,8 @@
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1 (bases): floor_plates is the plate fitted on the city-map (GIS) outline, 103.88 x 64.66 (scenario geometry.py:51-118); placement.outline is the printed-tax-map rectangle 100.76 x 66.66 in its own frame. Drawing placement.outline on the GIS map would mix bases: forbidden.",
     "RISK 2: the literal kind 'illustrative_footprint' is the contract with part B4's manifest; do not rename.",
@@ -129,7 +129,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T23:40:19.457228+00:00",
-  "updated_at": "2026-10-15T23:40:19.928873+00:00",
+  "updated_at": "2026-10-15T23:40:23.340204+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -155,5 +155,14 @@
     "python tools/modularity_check.py --check",
     "pictures of the close frame and the kit report frame for the benchmark, in scratch, for the visual review"
   ],
-  "worktree": "/root/project/w-wave29"
+  "worktree": "/root/project/w-wave29",
+  "progress_log": [
+    {
+      "at": "2026-10-15T23:40:23.340110+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted and claimed at the wave-29 base; builder dispatched"
+    }
+  ]
 }
