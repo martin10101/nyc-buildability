@@ -34,6 +34,11 @@ _ON = {"LANE_A_ENABLED": "1"}
 #: The three rules A-02b adds (all lane A).
 A02B_RULE_IDS = ("r6b-dwelling-units", "r6b-lot-coverage", "r6b-rear-yard-corner-waiver")
 
+#: The three draft envelope rule files added as lane-A extractions by M5-T170 (street wall,
+#: setback, side yard). Their law reading lives in the engine's envelope analysis; the rule files
+#: are registered draft extractions and are indexed under lane A like the other R6B drafts.
+ENVELOPE_RULE_IDS = ("r6b-street-wall", "r6b-setback", "r6b-side-yard")
+
 #: Every rule id indexed with lane A on before A-02b (18 pre-D-090 rules + A-02a's two).
 PRE_A02B_RULE_IDS_LANE_A_ON = (
     "r1-r2-bare-pitched-height", "r1-r2-qrs-height", "r1-r2-r3-residential-far",
@@ -113,7 +118,9 @@ def test_golden_is_independent_of_the_snapshot_copy() -> None:
 
 def test_flag_on_adds_exactly_the_a02b_rules_to_the_pre_a02b_registry() -> None:
     on = RuleRegistry(env=_ON).load()
-    assert set(on.rule_ids()) - set(PRE_A02B_RULE_IDS_LANE_A_ON) == set(A02B_RULE_IDS)
+    assert set(on.rule_ids()) - set(PRE_A02B_RULE_IDS_LANE_A_ON) == (
+        set(A02B_RULE_IDS) | set(ENVELOPE_RULE_IDS)
+    )
     assert set(PRE_A02B_RULE_IDS_LANE_A_ON) <= set(on.rule_ids())
 
 

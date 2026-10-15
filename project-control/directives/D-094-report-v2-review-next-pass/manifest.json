@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T04:20:24+00:00",
+ "updated_at": "2026-10-15T08:05:20+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -180,10 +180,17 @@
   "D-094-R156",
   "D-094-R157",
   "D-094-R158",
-  "D-094-R159"
+  "D-094-R159",
+  "D-094-R160",
+  "D-094-R161",
+  "D-094-R162",
+  "D-094-R163",
+  "D-094-R164",
+  "D-094-R165",
+  "D-094-R166"
  ],
- "requirements_id_digest_sha256": "39088ed4282a3af54f7e724a64f25232037784bb18f3411807aacf724bbf4172",
- "requirements_content_digest_sha256": "7c4c6f1ddf464dd5fc5d787b0e79642e773762bd88486922be6dc5ef703a58e4",
+ "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
+ "requirements_content_digest_sha256": "ee63ca8f516de341209eee44eabb7d99c4143fc3d86ab65050b9206a5d39f7b7",
  "sources": [
   {
    "file": "source-001.md",
@@ -367,6 +374,22 @@
    "recorded_at": "2026-10-15T04:20:24+00:00",
    "content_digest_sha256": "8f6921d8b71cfba39c8f976f53c8851b62ce7b8182850db1ed0530278cb30eed",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-024-amendment.md",
+   "kind": "amendment",
+   "sequence": 24,
+   "recorded_at": "2026-10-15T07:36:22+00:00",
+   "content_digest_sha256": "8e013025aca7b467b477cf0297aee304344256fb65c868bad4806545ae3013f9",
+   "amends": "source-001.md"
+  },
+  {
+   "file": "source-025-amendment.md",
+   "kind": "amendment",
+   "sequence": 25,
+   "recorded_at": "2026-10-15T08:05:20+00:00",
+   "content_digest_sha256": "641cfd027fdcf0b4c924063a224d53e00e2fba036a6b36fce40fa77ea9958b59",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -391,7 +414,9 @@
   "source-020-amendment.md",
   "source-021-amendment.md",
   "source-022-amendment.md",
-  "source-023-amendment.md"
+  "source-023-amendment.md",
+  "source-024-amendment.md",
+  "source-025-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -419,7 +444,12 @@
   "M5-T179",
   "M5-T167",
   "M3-T009",
-  "M5-T181"
+  "M5-T181",
+  "M5-T170",
+  "M5-T182",
+  "M5-T183",
+  "M3-T010",
+  "M5-T184"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -728,6 +758,48 @@
    "actor": "orchestrator",
    "action": "amended",
    "note": "Appended source-023 (the owner's resume with twelve helpers, each a different part of the job) and requirements D-094-R157 to R159, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T04:48:15+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T170 (envelope constraints from NB-06 in the engine: street wall, setback above the base, side yard; the benchmark regenerated) to R017, R043, R061, R082 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T04:49:51+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T182 (the illustrative placement and area-allocation computation modules (placement.py, area_allocation.py) with unit tests; no wiring, no document change) to R044, R092 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T04:50:01+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T183 (area-illustration drawing kernel, both states, from the two committed synthetic 1.5.0 fixtures; no report, website, section or benchmark edit) to R024, R087, R088, R089, R090, R091, R092, R093, R094, R095, R098 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T05:53:20+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T010 (capture the 20 ZR sections the worked readings of options 5, 8 and 9-10 rest on, and correct the library's stale capture states: documents only) to R102, R104 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T05:53:28+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M5-T184 (the R6B reference case benchmark-options-2-3-6-7 (worked values of options 2, 3, 6, 7 for the benchmark lot; two agreeing sealed readings per option; captured-section citations only; options 5/8/9-10 named as owed); no rule file, engine, result, capture, register entry, law-library edit or human verdict) to R007, R075, R084, R102 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T07:36:22+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-024 (the owner's session handoff at a clean seam, with twelve helpers for the next session) and requirements D-094-R160 to R163, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
+  },
+  {
+   "at": "2026-10-15T08:05:20+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-025 (the owner's resume of handoff seq 171 with twelve helpers at once) and requirements D-094-R164 to R166, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }

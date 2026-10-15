@@ -180,6 +180,16 @@ def _strip_1_5_0_blocks(doc: dict) -> dict:
         if isinstance(alt, dict):
             alt.pop("placement", None)
             alt.pop("area_allocation", None)
+            # M5-T170: the 1.5.0 envelope emission gates the "The street wall" not-checked line out
+            # (page 6 then agrees with the applied street-wall reading on pages 3 and 8), so it is a
+            # 1.5.0 effect - normalize it for the shared-1.4.0-core comparison.
+            if isinstance(alt.get("not_checked"), list):
+                alt["not_checked"] = [x for x in alt["not_checked"] if x != "The street wall"]
+    # M5-T170: the 1.5.0 envelope emission reconciles the setback value state to the applied
+    # envelope reading (the two setback emitters must agree); strip it for the 1.4.0-core compare.
+    states = (d.get("answers", {}).get("permitted_envelope", {}) or {}).get("value_states")
+    if isinstance(states, dict):
+        states.pop("setback_above_base", None)
     return d
 
 

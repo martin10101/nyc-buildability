@@ -28,6 +28,7 @@ from app.scenario.three_answers.result_way_bridge import GatheredResult
 from app.scenario.three_answers.result_way_bridge_overlay import OVERLAY_SUPPORT_ROWS
 from app.scenario.three_answers.result_way_engine_bridge import (
     EngineResultWays,
+    _envelope_analysis_for,
     run_engine_and_result_ways,
 )
 from app.scenario.three_answers.result_way_inputs import (
@@ -417,6 +418,33 @@ def test_s14_no_default_stands_for_a_fact(benchmark_geom):
         evaluator_inputs=_eval_doc(), env=_LANE_OFF,
     )
     assert r_profile.gathered.recorded.flood_zone.state is Recorded.NOT_READ
+
+
+# ----------------------------------------------------------- F1 (G1): width-fact provenance
+def test_envelope_width_facts_cite_the_dcm_street_centerline_not_mappluto(benchmark_geom):
+    """G1 F1: the mapped-street-width input facts carry the DCM Street Center Line window's
+    provenance (the dataset the widths were MEASURED from) - its source title and the window's
+    retrieval date - never the MapPLUTO lot facts (MapPLUTO carries no street-width field). A
+    mutation that sourced them from `_mappluto_source(profile)` turns this red."""
+    profile, prepared, geometry = benchmark_geom
+    streets = street_data_from_pages([replay_dcm_page()], envelope=DCM_ENVELOPE)
+    res = run_engine_and_result_ways(
+        _inputs(profile=profile, outline=prepared, geometry=geometry, overlay_present=True),
+        evaluator_inputs=_eval_doc(), env=_LANE_OFF,
+    )
+    analysis = _envelope_analysis_for(
+        res.gathered, res.engine_result.document,
+        street_data=streets, geometry=geometry, profile=profile,
+    )
+    assert analysis is not None
+    width_facts = [f for f in analysis.input_facts if f["key"].startswith("mapped_street_width:")]
+    assert width_facts  # both frontages classified, so both widths are emitted
+    expected_date = str(streets.provenance["retrieved_at"][0])[:10]
+    for fact in width_facts:
+        assert fact["source_title"] == streets.source  # DCM Street Center Line, not MapPLUTO
+        assert "MapPLUTO" not in fact["source_title"]
+        assert fact["source_date"] == expected_date
+        assert fact["basis"] == "gis"
 
 
 # --------------------------------------------------------------------------- the adapter's imports

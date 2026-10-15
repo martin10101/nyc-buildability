@@ -35,6 +35,7 @@ import app.api.v1.properties as properties
 import app.api.v1.study_inputs as study_inputs
 import app.api.v1.study_live_geometry as study_live_geometry
 from app.api.v1.study_inputs import (
+    StudyInputsUnavailableError,
     assemble_study_inputs,
     default_study_inputs_provider,
     live_street_data_provider,
@@ -361,3 +362,18 @@ def test_live_street_data_provider_failing_fetch_yields_none() -> None:
 
     provider = live_street_data_provider(fetch_lot=_raising_lot, fetch_streets=_recorded_streets)
     assert provider(NORTHERN_BBL, _CID) is None
+
+
+def test_unexpected_street_data_provider_exception_becomes_a_503() -> None:
+    """DB-265 (6): an UNEXPECTED street-window provider failure is coerced to the route's fail-safe
+    503 (StudyInputsUnavailableError), never surfacing as a 500. Typed connector errors already
+    fail closed to None inside the provider; this guards anything else the provider might raise."""
+    def _boom(canonical_bbl: str, correlation_id: str):
+        raise RuntimeError("unexpected street-window failure (test)")
+
+    provider = pluto_study_inputs_provider(
+        _northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON, street_data_provider=_boom,
+    )
+    with pytest.raises(StudyInputsUnavailableError) as exc:
+        provider(NORTHERN_BBL, _CID)
+    assert exc.value.reason == "street_data_unavailable"

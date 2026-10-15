@@ -46,6 +46,7 @@ CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
     "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
     "step-p6-worked", "short-block-rear-yard", "placement-building-b",
+    "benchmark-options-2-3-6-7",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -143,6 +144,29 @@ REQUIRED_BASE_IDS = {
         "plate", "physical-plate-not-checked", "footprint-tax-map", "placement-tax-map",
         "gis-conflict-check", "lot-coverage-max", "lot-coverage-whole-lot", "rear-yard",
         "area-allocation", "both-readers-did-not-have", "real-lot-missing-facts",
+    ],
+    # The step-P9 case (benchmark-options-2-3-6-7): the agreed worked values of options
+    # 2 (opt2-*), 3 (opt3-*), 6 and 7 (opt6-*/opt7-*/opt67-*) for the benchmark lot, from
+    # two independent readings per option plus the independent comparer; plus the shared
+    # rows (what both readers did not have, the real-lot missing facts, the options out
+    # of scope). Each row id below must be present under its id (S1).
+    "benchmark-options-2-3-6-7": [
+        "opt2-max-residential-fa", "opt2-uap-affordable-fa", "opt2-heights",
+        "opt2-max-dwelling-units", "opt2-setback-above-base", "opt2-rear-yard",
+        "opt2-lot-coverage", "opt2-affordable-share", "opt2-mih-area-membership",
+        "opt2-vs-option-1",
+        "opt3-max-residential-fa", "opt3-heights", "opt3-dwelling-unit-factor",
+        "opt3-max-dwelling-units", "opt3-airs-accessory-space", "opt3-senior-definitions",
+        "opt3-setback-above-base", "opt3-side-yard", "opt3-vs-option-1",
+        "opt6-cf-far", "opt6-cf-max-fa", "opt6-combined-cap", "opt6-combined-max-fa",
+        "opt6-dwelling-units", "opt7-dwelling-units", "opt67-cf-lot-coverage",
+        "opt67-cf-max-footprint", "opt67-mixed-level-coverage", "opt67-heights",
+        "opt67-setback-above-base", "opt67-cf-front-yard", "opt67-cf-side-yard",
+        "opt67-cf-rear-yard", "opt67-corner-rear-yard-waiver",
+        "opt67-cf-rear-yard-obstruction", "opt67-no-fa-gain",
+        "opt67-24-162-not-applicable", "opt67-35-33-not-applicable",
+        "opt67-use-group-iii", "opt67-which-uses-not-known", "opt67-street-wall",
+        "both-readers-did-not-have", "real-lot-missing-facts", "options-out-of-scope",
     ],
 }
 

@@ -1,0 +1,164 @@
+{
+  "rule_id": "r6b-setback",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_setback_above_base",
+  "title": "R6B district - a setback above the maximum base height (ZR 23-433; reached by 23-432 and, under a commercial overlay, 35-632(a)): at least 10 feet from a wide-street wall and 15 feet from a narrow-street wall",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "lane_flag": "A",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the setback-above-the-base rule for R6B. A setback is required only for the portion of a building street wall that EXCEEDS the maximum base height (45 feet for R6B standard residences, ZR 23-432); ZR 23-433 then requires at least 10 feet from a wide-street wall and 15 feet from a narrow-street wall. Under a commercial overlay the same depths are reached through ZR 35-632(a). The per-frontage wide/narrow depth and the trigger against the building height are read as a labelled draft in envelope_constraints.py; this rule records the wide-street depth. ZR 23-433(a) to (d) may reduce the depths.",
+  "citations": [
+    {
+      "snapshot_id": "zr-23-433",
+      "section": "23-433",
+      "quote": "a setback with a depth of at least 10 feet shall be provided from any street wall fronting on a wide street, and a setback with a depth of at least 15 feet shall be provided from any street wall fronting on a narrow street.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "4fecf4d26719a00ed0eaeb1e0e7e714f891e7fff154ded306b04e29167ef1afe"
+    },
+    {
+      "snapshot_id": "zr-23-432",
+      "section": "23-432",
+      "quote": "For portions of a building street wall that exceed the maximum base height, a setback shall be provided ... in accordance with Section 23-433.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+    },
+    {
+      "snapshot_id": "zr-35-632",
+      "section": "35-632(a)",
+      "quote": "For portions of a building street wall that exceed the maximum base height, a setback shall be provided ... in accordance with Section 23-433.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "8105cc331eee4ed882e04466814928f6047618f5ba66a260f5c415a29630ad10"
+    },
+    {
+      "snapshot_id": "zr-11-25",
+      "section": "11-25",
+      "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "zoning_district",
+      "type": "string",
+      "required": true,
+      "description": "Residence district governing the lot (scope enforced by applicability in_set R6B)."
+    },
+    {
+      "name": "overlay_present",
+      "type": "boolean",
+      "required": true,
+      "description": "True iff a commercial overlay is mapped on the lot (profile zoning.commercial_overlays[] non-empty)."
+    },
+    {
+      "name": "special_district_present",
+      "type": "boolean",
+      "required": false,
+      "description": "True iff a special purpose district is mapped; when true the result escalates to professional review."
+    },
+    {
+      "name": "street_wall_exceeds_max_base_height",
+      "type": "boolean",
+      "required": true,
+      "description": "True iff part of the building street wall rises above the maximum base height (45 feet for R6B standard residences); a geometric/design fact supplied by the caller. Not supplied -> no setback result."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "setback_depth_from_wide_street_wall_ft",
+      "type": "integer",
+      "unit": null,
+      "description": "10 = at least 10 feet of setback from a wide-street wall above the maximum base height (ZR 23-433). The 15-foot narrow-street depth and the per-frontage wide/narrow choice are read in envelope_constraints.py."
+    }
+  ],
+  "parameters": [
+    {
+      "name": "setback_depth_wide_ft",
+      "value": 10,
+      "citation_ref": "zr-23-433",
+      "note": "ZR 23-433: at least 10 feet from a wide-street wall."
+    }
+  ],
+  "applicability": {
+    "all": [
+      {
+        "op": "in_set",
+        "input": "zoning_district",
+        "values": [
+          "R6B"
+        ]
+      },
+      {
+        "op": "equals",
+        "input": "street_wall_exceeds_max_base_height",
+        "value": true
+      }
+    ]
+  },
+  "computation": {
+    "steps": [
+      {
+        "id": "depth",
+        "op": "identity",
+        "args": [
+          {
+            "param": "setback_depth_wide_ft"
+          }
+        ],
+        "note": "ZR 23-433: a setback of at least 10 feet from a wide-street wall is required above the maximum base height."
+      }
+    ],
+    "outputs": {
+      "setback_depth_from_wide_street_wall_ft": {
+        "step": "depth"
+      }
+    }
+  },
+  "exceptions": [
+    {
+      "id": "not_triggered_at_or_below_max_base_height",
+      "description": "No setback is required at or below the maximum base height; the benchmark three-storey 30-foot option (equal to the minimum base height) triggers none.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-23-432"
+    },
+    {
+      "id": "modifications_23_433_a_to_d",
+      "description": "ZR 23-433(a) to (d) may reduce or adjust the depths (a one-foot-for-one-foot reduction with a seven-foot floor; optional beyond 50 feet of a street line or at a 65-degree orientation); not encoded here.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-23-433"
+    },
+    {
+      "id": "suffix_inheritance_zr_11_25",
+      "description": "ZR 23 and 35 list R6 through R12 and do not name R6B; the rule reaches R6B through ZR 11-25 (suffix inheritance), flagged for the reviewer.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-11-25"
+    },
+    {
+      "id": "special_district_modification",
+      "description": "A special purpose district is mapped on this lot and may modify residence-district bulk; its provisions are not captured here, so the result is not emitted as final. Professional review required.",
+      "condition": {
+        "op": "equals",
+        "input": "special_district_present",
+        "value": true
+      },
+      "effect": "professional_review_required",
+      "citation_ref": null
+    }
+  ],
+  "limitations": [
+    "Draft extraction pending independent review and G6 qualified-human legal approval; not a Verified determination.",
+    "Only the wide-street 10-foot depth is recorded here; the 15-foot narrow-street depth, the per-frontage wide/narrow class (D-052) and the trigger against the building height are read in envelope_constraints.py.",
+    "The depth runs from the operative street line; This rule never measures geometry; the site facts are supplied by the caller."
+  ]
+}

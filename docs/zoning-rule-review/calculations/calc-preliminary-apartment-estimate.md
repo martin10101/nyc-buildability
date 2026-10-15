@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: apartment_estimate
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 12 (last changed 2026-10-15)
+- Revision: 13 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `1658abb8e1cda8b901657c15afe1c4756cdd4bb58c8f8ddca3e271ca9de67009`
+- Combined code identity: `f3a9eeae39fe114560a6655985e2230c3ffefd84238a7fd67d4f2e9e26b7e60a`
 - Modules:
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c`)
   - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law
@@ -79,14 +79,14 @@ Planned, not built:
 ## Automated test result
 
 - Status: Not run
-- Code identity tested: `151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4`
+- Code identity tested: `f3a9eeae39fe114560a6655985e2230c3ffefd84238a7fd67d4f2e9e26b7e60a`
 - Commit tested: `10e5c55d1a02f6f18a5c6a2bdc16f01b05751312`
 - Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-preliminary-apartment-estimate.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

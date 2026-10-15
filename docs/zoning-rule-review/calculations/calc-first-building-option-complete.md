@@ -8,17 +8,17 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation_comparison (a combined/arithmetic calculation; no rule file)
 - Family: building_option
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 13 (last changed 2026-10-15)
+- Revision: 14 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-height`, `r6b-dwelling-units`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `8985d57f72b3cc65dda7a429a855fc35e4853d0ae6f66481c181a81e280497e0`
+- Combined code identity: `61b79b2dcc2446fcdc38ba374b4fd74644d9d1dd151f9dd8355068d28a37c1a4`
 - Modules:
   - `services/api/app/scenario/three_answers/result_ways.py` (`ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c`)
   - `services/api/app/spatial/corner_reach_area.py` (`bf6435aeb90b989465be940fbf65d9620c52675347d0b50685812cd0e0aebbcd`)
   - `services/api/app/scenario/three_answers/lot_coverage_by_portion.py` (`8b603fbe53263ba1c70575331ce42287f7acb2dfa73de6aa00f71860d81d9c83`)
   - `services/api/app/scenario/three_answers/first_building_options.py` (`f286eaf3c0f4b4aa726e3eb3922340645e6971bb45cf3ea0143999d4ca394e62`)
@@ -135,14 +135,14 @@ Planned, not built:
 ## Automated test result
 
 - Status: Not run
-- Code identity tested: `88d99e2bd064275baa0b05f42ffebb7cd42590cf66b3fca5b7aa9edd34a12680`
+- Code identity tested: `61b79b2dcc2446fcdc38ba374b4fd74644d9d1dd151f9dd8355068d28a37c1a4`
 - Commit tested: `10e5c55d1a02f6f18a5c6a2bdc16f01b05751312`
 - Date tested: 2026-10-11
 - Command: `python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py`
 - Counts: 53 passed
 - Evidence: [run log](../evidence/calc-first-building-option-complete.txt)
 - Test files tested:
-  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e`)
+  - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (`7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f`)
 - These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)

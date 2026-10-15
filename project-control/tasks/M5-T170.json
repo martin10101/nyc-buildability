@@ -1,0 +1,396 @@
+{
+  "task_id": "M5-T170",
+  "title": "Envelope constraints from NB-06 in the engine: the street-wall (ZR 35-631(b)/23-431(b)), setback-above-base (23-432/23-433, 35-632(a)) and side-yard (23-335(b)/34-232) checks in a new scenario/three_answers/envelope_constraints.py with three states (applies->Conditional; not_applicable; not_known), per-frontage wide/narrow via the accepted D-052 classifier, 1.5.0 envelope_rows + constraint_lines (street_wall_band/setback_line not_established on the benchmark) + input_facts emission threaded through the live route, page-6 and page-8 made to agree with page-3 on every document version, the G-5 benchmark regenerated, three new rule files + the review register, and NB-06 rev 3 (closing condition 3 with the now-present 12-10 captures). NB-05 code identity; NB-01 contingency.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Carry NB-06 into the scenario engine and the report as labelled Conditional drafts, behaviour-identical on 1.4.0. (1) New scenario/three_answers/envelope_constraints.py (mirror rear_yard_checks.py): build_envelope_analysis(...) -> EnvelopeAnalysis(envelope_rows, constraint_lines, input_facts) holding the three checks, each with state applies/not_applicable/not_known and its conditions, text and zr_sections. STREET WALL (ZR 35-631(b) via 34-11->34-24(b)(1)->35-63 for residential-only and 35-01->35-63 for mixed; 23-431(b) when no overlay): applies, 8 ft of the street line on each frontage, Conditional on the prevailing-frontage test and the operative street line; plain R6B without the overlay is 8 ft wide / 10 ft narrow (the D-051 asymmetry, never collapsed). SETBACK (23-432 table R6B 30/45/55 -> 23-433; 35-632(a)): keyed on building street-wall height vs the 45 ft maximum base height; <=45 not triggered, >45 ft 10 ft (wide)/15 ft (narrow); unknown width withholds (D-051, never narrow by default); 23-433(a)-(d) modifications carried. SIDE YARD (23-335(b); 34-232 in the overlay): none required, 5 ft minimum for an open area if provided; single/two-family detached is 23-335(a) two 5-ft yards without the overlay, removed by 34-232 with it. (2) Per-frontage wide/narrow by REUSING app.spatial.frontage_street_width.derive_frontage_street_widths + app.connectors.dcm_street_width_policy (D-052; never reinvented), from StreetData threaded by M5-T167. (3) Emit the 1.5.0 envelope_rows, the constraint_lines (both street_wall_band and setback_line not_established on the benchmark: the operative street line is not fixed by a mapped width - D-094-R017, NB-06 condition, DB-260) and the input_facts, via a thin _apply_envelope in three_way_document.py and the existing conditional version-bump; a new _envelope_analysis_for in result_way_engine_bridge.py threaded into the evidence/route emit only (mirror _rear_yard_analysis_for, never the legacy adapter). (4) result_ways.py _setback_way moves from Withheld to agree, byte-for-meaning, with envelope_rows[setback] (lesson iii); result_way_inputs.py gains any needed input state. (5) first_option_results.py gates 'The street wall' out of _NOT_CHECKED_BASE ONLY when the engine applied the check, so pages 3, 6 and 8 agree on every document (1.4.0 byte-identical). (6) readers.py (page-8 appendix) shows the applied conditional street-wall/setback/side-yard result from the document's own 1.5.0 blocks (new _apply_street_wall_open_item / _apply_setback_open_item mirroring M5-T167's _apply_rear_yard_open_item), byte-identical to today on a 1.4.0 document - SEE RISK 1. (7) Three new rule files r6b_street_wall / r6b_setback / r6b_side_yard (names/families fixed at G0; mirror r6b_rear_yard_corner_waiver.rule.json) and the review register (G-11, no human verdict). (8) Regenerate the whole G-5 benchmark set from the corrected engine (never hand-edited): the recorded journey gains envelope_rows/constraint_lines/input_facts; update every pinning consumer only where the engine output moved. (9) NB-06 rev 3 adds the 23-433(a)-(d) modifications and, with an independent reading of the now-present 12-10 street-wide/street-narrow captures, closes condition 3; NB-05 code-identity revision and the NB-01 contingency both fire (result_way_bridge.py/result_ways.py/three_way_document.py are in their code_paths). Expected values come ONLY from NB-06, overlay-reading.json/real-lot.json and the law, never a program run; the benchmark results stay Conditional, never an unconditional 'complies'.",
+  "business_reason": "D-094 R017/R043/R061/R082 and the owner's 2026-10-14 review: page 5/6 still omit the street-wall, setback and side-yard envelope constraints; the next milestone (R143) is a scenario placed on the actual site with reconciled calculations and clearly identified remaining constraints. The law is known for these three checks - they must not read 'not checked' only because the feature was unfinished (R061) - while the genuinely unresolved site facts (operative street line, prevailing frontage, building type) stay unresolved.",
+  "inputs": [
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/reference-cases/R6B/cases/overlay-reading.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/research/zr-snapshots/v1/zr-23-431.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-433.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-335.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-34-11.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-34-24.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-34-232.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-35-01.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-35-63.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-35-631.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-35-632.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-35-633.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-wide.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-street-narrow.snapshot.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "project-control/tasks/M5-T167.json",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/envelope_constraints.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/rules/rulesets/r6b_street_wall.rule.json",
+    "services/api/app/rules/rulesets/r6b_setback.rule.json",
+    "services/api/app/rules/rulesets/r6b_side_yard.rule.json",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+    "project-control/reports/M5-T170-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T167",
+    "M5-T175"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/envelope_constraints.py",
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/result_way_conditions.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/drawings/report/readers.py",
+    "services/api/app/rules/rulesets/r6b_street_wall.rule.json",
+    "services/api/app/rules/rulesets/r6b_setback.rule.json",
+    "services/api/app/rules/rulesets/r6b_side_yard.rule.json",
+    "services/api/app/rules/review_register/register.json",
+    "docs/zoning-rule-review/REGISTER.md",
+    "docs/zoning-rule-review/HISTORY.md",
+    "docs/zoning-rule-review/rules/r6b-street-wall.md",
+    "docs/zoning-rule-review/rules/r6b-setback.md",
+    "docs/zoning-rule-review/rules/r6b-side-yard.md",
+    "docs/zoning-rule-review/evidence/r6b-street-wall.txt",
+    "docs/zoning-rule-review/evidence/r6b-setback.txt",
+    "docs/zoning-rule-review/evidence/r6b-side-yard.txt",
+    "docs/zoning-rule-review/calculations/calc-first-building-option-complete.md",
+    "docs/zoning-rule-review/calculations/calc-preliminary-apartment-estimate.md",
+    "docs/research/evidence-records/NB-06-street-wall-setback-side-yard.json",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "docs/research/evidence-records/NB-01-zoning-lot-instruments.json",
+    "docs/research/evidence-records/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+    "services/api/tests/scenario/three_answers/test_result_ways.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_benchmark.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_first_option_results.py",
+    "services/api/tests/scenario/three_answers/test_result_way_bridge.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_three_way_emit.py",
+    "services/api/tests/scenario/three_answers/test_wiring_emits_nothing.py",
+    "services/api/tests/contracts/test_results_contract_1_5_0.py",
+    "services/api/tests/journey/test_215_16_northern_journey.py",
+    "services/api/tests/drawings/report/test_constraint_rows.py",
+    "services/api/tests/drawings/report/test_report_benchmark.py",
+    "services/api/tests/drawings/report/test_report_pages.py",
+    "services/api/tests/rules/test_zoning_rule_review_register.py",
+    "services/api/tests/api/test_results_read_api.py",
+    "services/api/tests/api/test_study_live_geometry.py",
+    "services/api/tests/cad/snapshots/results_dxf/recorded_215_16_northern_journey.dxf",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "apps/web/src/lib/__tests__/results-contract-checks.test.ts",
+    "apps/web/src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "project-control/reports/M5-T170-producer-report.md",
+    "services/api/app/scenario/three_answers/rear_yard_checks.py",
+    "services/api/app/api/v1/study_inputs.py",
+    "services/api/tests/scenario/three_answers/test_rear_yard_short_block.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_truth_table.py",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+    "services/api/tests/drawings/report/test_constraints_page.py",
+    "services/api/tests/drawings/report/test_report_law_links.py",
+    "services/api/tests/drawings/report/test_report_unit_limit_text.py",
+    "services/api/tests/drawings/report/test_report_page_one.py",
+    "services/api/tests/drawings/kit/test_report_frame.py",
+    "services/api/tests/drawings/kit/test_report_frame_rework1.py",
+    "services/api/tests/drawings/kit/test_report_frame_rework3.py",
+    "services/api/tests/drawings/maps/test_northern_fixture.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_benchmark.py",
+    "services/api/tests/rules/test_zoning_rule_review_register_calculations.py",
+    "apps/web/src/lib/architect/__tests__/three-answers.test.ts",
+    "apps/web/src/components/architect/answers/__tests__/three-answers-panel.test.tsx",
+    "apps/web/src/components/architect/__tests__/results-panel.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/apartment-figures.test.tsx",
+    "apps/web/src/components/architect/answers/__tests__/building-options-comparison.test.tsx",
+    "apps/web/src/lib/architect/__tests__/presented-results.test.ts",
+    "apps/web/src/lib/__tests__/results-api.test.ts",
+    "apps/web/src/lib/__tests__/results-contract-checks-1-4-0.test.ts",
+    "apps/web/src/lib/architect/__tests__/result-identity.test.ts",
+    "apps/web/src/test-support/results-two-buildings.ts",
+    "services/api/app/drawings/report/page_site_context.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_heights.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_c6_c11.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_addons.py",
+    "services/api/tests/scenario/three_answers/test_three_answers_notes_emit.py",
+    "services/api/tests/rules/test_r6b_a02b_golden.py",
+    "services/api/tests/rules/test_r6b_other_districts_unchanged.py",
+    "docs/zoning-rule-review/calculations/calc-floor-area-allowance.md",
+    "docs/zoning-rule-review/calculations/calc-lot-coverage-by-portion.md",
+    "docs/zoning-rule-review/calculations/calc-building-option-floor-stack.md",
+    "docs/zoning-rule-review/calculations/calc-legal-dwelling-unit-limit.md",
+    "docs/research/evidence-records/NB-03-rear-yard-short-block.json",
+    "docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md",
+    "docs/zoning-rule-review/evidence/r6b-rear-yard-corner-waiver.txt"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/schemas/",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "services/api/app/drawings/report/constraint_text.py",
+    "services/api/app/drawings/report/page_decision_summary.py",
+    "services/api/app/drawings/report/page_location.py",
+    "services/api/app/drawings/report/drawings_embed.py",
+    "services/api/app/drawings/report/builder.py",
+    "services/api/app/drawings/report/layout.py",
+    "services/api/app/drawings/maps/",
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/app/scenario/three_answers/engine.py",
+    "services/api/app/scenario/three_answers/scope.py",
+    "services/api/app/scenario/three_answers/explanations.py",
+    "services/api/app/connectors/dcm_street_width_policy.py",
+    "services/api/app/connectors/dcm_street_width_classifier.py",
+    "services/api/app/spatial/frontage_street_width/",
+    "docs/reference-cases/",
+    "services/api/tests/rules/reference_cases/",
+    "docs/research/evidence-records/NB-04-lot-dimensions-basis.json",
+    "apps/web/src/components/architect/answers/AnswerCard.tsx"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "R6B+C2-2, a street-wall height of 50 ft, Northern Blvd wide and 215 Place narrow",
+      "when": "the setback check runs",
+      "then": "the setback applies at 10 ft (wide) and 15 ft (narrow), each cited to overlay-reading/23-433; no basis is mixed"
+    },
+    {
+      "id": "S2",
+      "given": "street-wall heights 30, 44.99, 45.00, 45.01, 50 ft",
+      "when": "the setback trigger is decided (one test per row)",
+      "then": "30/44.99/45.00 -> not triggered (not strictly above the 45 ft maximum base height); 45.01/50 -> triggered; 45.00 is never printed as triggered"
+    },
+    {
+      "id": "S3",
+      "given": "overlay present (residential-only, then mixed) vs no overlay (plain R6B)",
+      "when": "the street-wall rule is chosen (table on overlay-presence and building type)",
+      "then": "overlay -> 35-631(b) 8 ft on each frontage for both building types; no overlay -> 23-431(b) 8 ft wide / 10 ft narrow (the D-051 counterexample, never collapsed)"
+    },
+    {
+      "id": "S4",
+      "given": "building type multi-family, mixed, single/two-family detached, and 'open area provided'",
+      "when": "the side-yard check runs (table)",
+      "then": "multi-family and mixed -> none required (23-335(b)/34-232); detached in the overlay -> none required (34-232); detached without the overlay -> two 5-ft yards (23-335(a)); open area provided -> 5 ft minimum"
+    },
+    {
+      "id": "S5",
+      "given": "frontage widths 100, 60, 75.00, 74.99, '60-75', '<=75', and missing/garbled",
+      "when": "the per-frontage class drives the setback depth",
+      "then": "100/75.00 -> wide (10 ft); 60/74.99 -> narrow (15 ft); one-sided bounds -> UNRESOLVED -> depth withheld; missing/garbled -> UNKNOWN -> withheld; never narrow by default (D-051), via the reused D-052 classifier"
+    },
+    {
+      "id": "S6",
+      "given": "a constructed case with an operative street line given, and the benchmark with none",
+      "when": "the constraint lines are built",
+      "then": "given a street line -> street_wall_band established = an 8-ft offset inside the lot frontage, lying within the lot, carrying its basis and the street-line condition; benchmark -> street_wall_band and setback_line both not_established, carrying basis + zr_sections and NO geometry (schema oneOf; D-094-R017)"
+    },
+    {
+      "id": "S7",
+      "given": "the benchmark (R6B+C2-2, all-residential, three-storey 30 ft option)",
+      "when": "envelope_rows are emitted",
+      "then": "street_wall applies (8 ft, Conditional on prevailing frontage + operative street line); setback is the G1-settled state (recommended not_applicable for the 30 ft option, carrying the 10/15 ft depths as values and a condition naming the above-45-ft trigger); side_yard not_applicable (none required, 5-ft optional note); each value cited from overlay-reading/real-lot/NB-06, never a program run; no unconditional 'complies'"
+    },
+    {
+      "id": "S8",
+      "given": "R061 (legal facts not unknown because a feature is unfinished)",
+      "when": "the three rows are stated",
+      "then": "none is state not_known; the genuinely unresolved site facts (operative street line, prevailing frontage, building type, 11-25 suffix) are carried as named conditions, not as not_known"
+    },
+    {
+      "id": "S9",
+      "given": "the two setback emitters",
+      "when": "the document is built",
+      "then": "result_ways.py setback_above_base and envelope_rows[setback] agree byte-for-meaning; a mutation to one that disagrees with the other fails a dedicated test"
+    },
+    {
+      "id": "S10",
+      "given": "a 1.4.0 document and the regenerated 1.5.0 benchmark",
+      "when": "pages 3, 6 and 8 are rendered from a REAL print",
+      "then": "1.4.0 is byte-identical to today on all three pages; 1.5.0 shows the applied conditional envelope reading on page 3, drops/replaces 'The street wall' on page 6 (gated on the applied check), and the page-8 appendix items agree with page 3 (no 'not checked' where page 3 shows an applied result) - verified via TestClient POST /report + apps/web/scripts/print-report-pdf.mjs, not a fixture-only pass"
+    },
+    {
+      "id": "S11",
+      "given": "the register and record checks",
+      "when": "they run",
+      "then": "render_review_register.py --check and research_record_check.py --check both pass; the three new rule entries exist with source linkage and no human verdict; NB-06 at rev 3"
+    },
+    {
+      "id": "S12",
+      "given": "NB-06 condition 3 and the now-present 12-10 street-wide/street-narrow captures",
+      "when": "NB-06 is revised",
+      "then": "an independent G1 reading confirms the captured definitions agree with D-052 (narrow <75, wide >=75) before condition 3 is closed; the 23-433(a)-(d) modifications are added; every ZR link resolves to a snapshot"
+    },
+    {
+      "id": "S13",
+      "given": "the regenerated G-5 benchmark set",
+      "when": "it is rebuilt from the corrected engine",
+      "then": "benchmark lines change ONLY where the engine output moved, each cited from the law/reference case; every pinning consumer (test_constraint_rows, test_report_benchmark, test_results_contract_1_5_0 strip set, the journey test, the web contract/journey pins, the DXF/SVG snapshots if they move) is updated in the same commit and passes in CI"
+    },
+    {
+      "id": "S14",
+      "given": "input_facts",
+      "when": "they are emitted",
+      "then": "each uses one of the nine closed bases with its source title and date; the frontage widths are administrative_record/gis as recorded; no second figure for one basis; no GIS outline called a tax map (G-10)"
+    },
+    {
+      "id": "S15",
+      "given": "the rule goldens and the modularity census",
+      "when": "the suites run",
+      "then": "the three new rule goldens are computed independently and trace-diff to text-only; modularity_check --check passes with no new failure and three_way_document.py / result_ways.py do not cross JUSTIFY (750)"
+    },
+    {
+      "id": "S16",
+      "given": "result_way_bridge.py / result_ways.py / three_way_document.py are in NB-05 and NB-01 code_paths",
+      "when": "they are edited",
+      "then": "NB-05 gets a code-identity revision and the NB-01 contingency fires (revision + a G1 agent delta review); behaviour is identical on a 1.4.0 document"
+    },
+    {
+      "id": "S17",
+      "given": "the six review advisories of M5-T167 (backlog DB-265)",
+      "when": "M5-T170 touches the same engine area and register",
+      "then": "each is resolved or carried with a reason in the producer report: (1) the (c)(1) alternative named in the rear-yard texts (state unchanged); (2) rear_yard_checks.py in the register entry's code links; (3) the doubled street-window fetch with the live flag on removed or recorded; (4) the unused operative-reach argument used or removed; (5) the (b) not_applicable text no longer attaches the waiver's consequence; (6) an unexpected street-data provider exception coerced to the route's 503"
+    },
+    {
+      "id": "S18",
+      "given": "a 1.5.0 document that carries the rear_yard block but no envelope row for setback or street_wall (main 2bcdb05a's benchmark today; any 1.5.0 document whose envelope analysis did not run), and the benchmark after this task",
+      "when": "report page 3's constraints table is rendered (page_site_context._constraint_rows / _constraint_rows_from_results)",
+      "then": "every constraint the 1.4.0 table lists is still listed: a kind without an envelope row falls back to its 1.4.0 row and wording ('Setback above the base' Not worked out yet (see item N), Pending verification; 'Street wall' Not checked (see item N), Pending verification), never silently omitted (DB-266: main 2bcdb05a's print drops both rows while page 8 still lists them as open items 7 and 8); with this task's envelope rows the table shows the applied readings; pages 3, 6 and 8 name the same constraints. Mutation: restore the 'continue' on a missing row -> the test fails."
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "RISK 1 (top, neither candidate plan caught it): readers.py builds page-8 appendix open items with 'setback' and 'street_wall' categories. When the engine applies the checks they will DROP from page 8 (the Withheld way and the not-checked line both clear) while page 3 shows the applied reading - unless readers.py gains _apply_street_wall_open_item / _apply_setback_open_item mirroring M5-T167's _apply_rear_yard_open_item. The work order forbids readers.py; this packet OVERRIDES that forbid (readers.py in allowed_paths) for page-3/6/8 parity (R136 class). If G0 instead decides the items may simply drop, readers.py stays forbidden but the real-print check (S10) must prove page 8 does not contradict page 3 and the conditions still appear. Resolve at G0 before the build; do not discover it at the gate as M5-T167 did.",
+    "RISK 2: result_ways.py _setback_way is a second setback emitter; it must agree byte-for-meaning with envelope_rows[setback] (lesson iii). Plan B omitted result_ways.py - do not drop it from scope.",
+    "RISK 3: setback row STATE for the 30 ft option (not_applicable vs applies+conditions) is a G1 legal-reading decision, not a code choice; worked from NB-06 Q2 + overlay-reading first. Tests cover both <=45 and >45 behaviour regardless of the label.",
+    "RISK 4: three_way_document.py (warn band) and result_ways.py must not cross JUSTIFY (750); keep _apply_envelope thin or carry it in envelope_constraints.py. NB-05 (rev 4) and NB-01 (rev 5) list these files in code_paths - the code-identity revisions and the NB-01 contingency delta review are in scope.",
+    "RISK 5: benchmark fan-out (M5-T167 lesson i) - the enumerated consumer tests, the DXF/SVG snapshots and the web pins must all be in allowed_paths up front; a missed pin costs a scope correction.",
+    "RISK 6 (sequencing): M5-T180 (the DB-245 wording sweep split off from M5-T167) also regenerates the one benchmark and touches result_way_bridge.py/result_ways.py. M5-T170 and M5-T180 must run serially (one owner of the benchmark at a time), never in parallel. M5-T169 (next) reads readers.py after M5-T170 lands.",
+    "RISK 7: thread the envelope analysis ONLY into the evidence/route emit (run_engine_and_result_ways_from_evidence), never the legacy adapter at :247; the live route carries street_data only after M5-T167 is accepted.",
+    "RISK 8 (pre-check A-1): results.schema.json envelope_value.value is a number: emit the setback depths as two numeric values (10 wide, 15 narrow, unit ft) with their frontage, never NB-06's basis string '10 (wide) / 15 (narrow)'.",
+    "RISK 9 (DB-266, found by the orchestrator in the print of main 2bcdb05a on 2026-10-15): M5-T175's _constraint_rows_from_results skips a kind with no envelope row, so the first 1.5.0 document with a rear_yard block (M5-T167) lost the setback and street-wall rows on page 3 while page 8 kept them; the reviews of M5-T167 compared pages 6 and 8 only. Fixed here (scenario on page 3 fallback) and checked on the real print.",
+    "RISK 10 (side yard of a mixed building): two sealed readers disagreed; a research helper read the official text (session-2026-10-15a/return-research-mixed-side-yard.md): not required, Conditional on the 5-ft open-area minimum, via ZR 35-01 -> 35-21 -> 35-22 -> 23-335(b); 34-232 by its words reaches a 'residential building' only; 35-24 is not captured and is not cited. G1 compares the engine with the two sealed readings (kept from the builder) and that research."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T04:48:14.731487+00:00",
+  "updated_at": "2026-10-15T09:46:33.770120+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R017",
+        "D-094-R043",
+        "D-094-R061",
+        "D-094-R082"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T04:48:14.731710+00:00",
+  "path_notes": "Contract base: the wave-25 branch head AFTER M5-T167 is accepted and integrated (M5-T167 threads street_data and sets the page-6/page-8 agreement pattern M5-T170 extends). At the contract seam the orchestrator appends M5-T170 to the applicability.task_ids of D-094 R017/R043/R061/R082 (today none name it), with a directive_registry digest resync + audit_log entry in the SAME commit, runs reg.evaluate_task_refs before claim (applicable must == cited), appends M5-T170 to manifest.affected_tasks with a PROVISIONAL task_verifications row, and seeds committed placeholders for every new allowed_paths file (the three rule files, their register pages/evidence, envelope_constraints.py, test_envelope_constraints.py, the producer report) before the G0 report. The work-order sketch (session-2026-10-11c line ~848) under-enumerates: it omits result_ways.py/result_way_inputs.py (the _setback_way second emitter), result_way_engine_bridge.py (the live threading), readers.py (the page-8 parity - RISK 1) and the full benchmark fan-out, and it forbids web/drawings/readers.py; this packet adds exactly the consumer TEST files and readers.py that the benchmark regeneration and page parity require, keeping the production report code (constraint_text.py, page_* ), the schema, maps, kit/site_plan.py and the web components forbidden. NB-03/NB-04 are read-only. reference-cases are read-only (expected values come from them, never edited). Session 2026-10-15 additions: rear_yard_checks.py, study_inputs.py, test_rear_yard_short_block.py and test_study_live_geometry.py join for backlog DB-265 (the M5-T167 review advisories, last scenario). Plan: session-2026-10-14d/return-plan-T170-{A,B,spec}.md (workflow wf_f4ea6f22-581). The builder must run the WHOLE web unit suite (a components test pinned the benchmark in M5-T167) and the orchestrator prints the owner's report from the real preview before review. Session 2026-10-15a: the packet pre-check (return-precheck-T170.md) added test_result_ways_truth_table.py and test_result_way_engine_bridge.py (both pin the setback way) and the benchmark consumers it found (api render and engine tests; web tests that read permitted_envelope.value_states); the CONSUMER files may change ONLY to follow the regenerated benchmark or the applied setback/street-wall/side-yard readings, each edit listed in the producer report with its before and after and its reason; any other consumer that turns red is a STOP-and-report (scope correction), never an edit. page_site_context.py joins for DB-266 (page 3 fallback) only. A parallel task in this wave must not list any of these files. The pre-check's skeptic (return-precheck-T170-skeptic.md) upheld R-1..R-3 and added the four tests under tests/scenario/three_answers that import the benchmark helpers (heights, c6_c11, addons, notes_emit); they joined under the same consumer rule.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers tests/contracts/test_results_contract_1_5_0.py tests/journey tests/api/test_results_read_api.py tests/api/test_study_live_geometry.py tests/drawings/report/test_constraint_rows.py tests/drawings/report/test_report_benchmark.py tests/drawings/report/test_report_pages.py tests/rules/test_zoning_rule_review_register.py tests/cad tests/drawings/kit tests/drawings/report/test_constraints_page.py tests/drawings/report/test_report_law_links.py tests/drawings/report/test_report_unit_limit_text.py tests/drawings/report/test_report_page_one.py tests/drawings/maps/test_northern_fixture.py tests/rules/test_zoning_rule_review_register_calculations.py",
+    "python3 .github/scripts/validate_contracts.py && python3 -m pytest .github/scripts/tests",
+    "python3 services/api/app/rules/review_register/render_review_register.py --check",
+    "python3 tools/research_record_check.py --check",
+    "python3 tools/modularity_check.py --check",
+    "REAL PRINT: from services/api, TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs on the HTML; confirm pages 3/6/8 agree (no server, no ports)",
+    "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/architect src/lib/__tests__/results-contract-checks.test.ts src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx",
+    "cd apps/web && npx vitest run (the whole web unit suite once)"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T04:48:18.747680+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints at main 2bcdb05a plus the contract; the builder starts from the claim head; packet pre-checked (return-precheck-T170.md + skeptic)"
+    },
+    {
+      "at": "2026-10-15T07:18:24.297328+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "envelope constraints built (street wall, setback above the base, side yard; pages 3, 6 and 8 agree on 1.4.0, the 1.5.0 document without envelope rows and the regenerated benchmark; DB-266 fixed); independent precheck: whole api 9814 passed, whole web 2704 passed on a rerun (one pre-existing timeout flake in engine.test.ts under load), scope corrected (six rule-file fan-out files); the builder's commit integrated as 281e23b7 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T09:01:17.861423+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 2 (G1 F1 width provenance, S17 = DB-265, F2, F3, G4 advisories 3 and 4); the builder's commit integrated as bec421b3 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T09:13:36.563237+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 3 (NB-03 code identity; DB-265 item 2, the register code link); the builder's commit integrated as 0dbe27b2 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T09:28:03.345080+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T07:18:12+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15a, after the builder's return e85ace52 and the independent read-only precheck return-M5-T170-precheck.json, which found exactly these six files outside the packet and nothing in forbidden paths): the three new lane-A rule files (r6b_street_wall, r6b_setback, r6b_side_yard; objective S11) move two tests that pin the exact R6B rule set (tests/rules/test_r6b_a02b_golden.py and test_r6b_other_districts_unchanged.py: the three new ids added) and the register's calculation pages, because every calculation entry binds the shared register-calculation test file whose rule-count assertion moves from 23 to 26 (calc-floor-area-allowance, calc-lot-coverage-by-portion, calc-building-option-floor-stack, calc-legal-dwelling-unit-limit re-rendered; their content changes only in the rendered review state lines). The packet pre-check enumerated the benchmark fan-out but not this rule-file fan-out. The builder committed them and reported needs_split instead of stopping; the orchestrator accepts the content, adds the six files here, and records the lesson (a new rule file moves the rule-set pins and the calc pages: list them at the contract seam). No row, gate, reviewer or dependency changes; no production switch changes."
+    },
+    {
+      "at": "2026-10-15T09:01:58+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 2 (session 2026-10-15b, after the round-2 builder return 5b30c0e8, integrated as bec421b3): round 2 closed DB-265 items 1, 4 and 5 in services/api/app/scenario/three_answers/rear_yard_checks.py (inside the packet), which is a code path of evidence record NB-03; NB-03 was forbidden here, so its code identity is now stale (research_record_check reports code_current False, not a failure). The project's rule is that the task that edits a record's code path revises the record (D-093; as M5-T170 did for NB-01, NB-05 and NB-06). DB-265 item 2 (the review register's r6b-rear-yard-corner-waiver entry gains rear_yard_checks.py in its code_links) re-renders that entry's rule page and evidence file, outside the packet; the builder carried it with that reason. This correction moves NB-03 from forbidden to allowed and adds the entry's rule page and evidence file, so a bounded round 3 revises NB-03's code identity and closes item 2. DB-265 item 3 (a double fetch in study_live_geometry.py, flag off by default) stays carried. No row, gate, reviewer or dependency changes; no production switch changes."
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T09:46:33.769985+00:00"
+}

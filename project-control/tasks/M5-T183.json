@@ -1,0 +1,214 @@
+{
+  "task_id": "M5-T183",
+  "title": "Area-illustration drawing kernel, both states (M5-T173 Part A): a new services/api/app/drawings/kit/area_allocation.py that renders the two-zone illustration from a 1.5.0 area_allocation block - a proportional bar beside the building diagram when the placement is not fitted, and two zones inside the placed footprint when it is fitted - with the exact token zone labels and caption, the one stated percentage read from the block's share, no plan detail, and every label at least 8.5 pt; rendered and snapshot-pinned from M5-T164's two committed synthetic 1.5.0 fixtures. No report or website embedding, no section legal lines, no benchmark edit (those are Part B and M5-T174).",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add a single focused drawing kernel services/api/app/drawings/kit/area_allocation.py exposing draw_area_allocation(allocation, *, placement=None, caption=True) -> Drawing | Unavailable, built from the 1.5.0 area_allocation block (results.schema.json: required label/share/measure/conversion_statement/apartment_area_sqft/other_area_sqft/total_sqft/fitted; additionalProperties false; share 0.60-0.75; NO zone geometry, count, room, core, stair or elevator in the contract - the kernel DERIVES the drawn geometry). TWO states: (1) UNFITTED (area_allocation.fitted is false, e.g. synthetic_rear_yard share 0.65) -> a proportional horizontal bar beside the building diagram, split by share, with no zone drawn inside any outline; (2) FITTED (fitted is true AND placement.status is placed AND placement.outline present, e.g. synthetic_placed share 0.70, outline the closed 82x82 ring at outline[0]) -> two zones inside that outline, split by a single deterministic division (fixed direction) at the share ratio, no bar. Labels/caption come verbatim from kit/presentation_tokens.py WORDING (area_zone_apartment, area_zone_other, area_illustration_caption); exactly one caption; one stated percentage = round(share*100) printed beside the illustration. All text at least 8.5 pt; the two zones are distinguished by hatching, not colour alone (kit hatches module). The kernel imports NOTHING from drawings/report or drawings/maps (layering). A missing/garbled block, a non-finite share, apartment+other inconsistent with total beyond the display tolerance, or fitted-without-outline -> Unavailable, never a drawn guess. A dedicated test tests/drawings/kit/test_area_allocation_drawing.py renders the two committed synthetic fixtures, pins two byte-stable snapshots (named to the full fixture stems), and asserts the state switch, the token strings, the share-driven proportion, the single percentage, the no-plan-detail invariant, determinism, and the Unavailable paths. No report wiring, no website, no benchmark edit, no section legal lines.",
+  "business_reason": "D-094 R088/R089/R090/R091/R092/R093/R094/R095 and the owner's H1 answer: the next milestone (R143) needs the two-zone area illustration actually drawn on the worked scenario. The illustration is drawn ONCE by this kernel and the same drawing later goes to the PDF scenario sheet (Part B) and the website (M5-T174) through the kit route; building the kernel first, from M5-T164's committed fixtures, lets it land in wave 26 beside M5-T170 without touching the engine, the benchmark or the report.",
+  "inputs": [
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "services/api/app/drawings/kit/hatches.py",
+    "services/api/app/drawings/kit/svg.py",
+    "services/api/app/drawings/kit/errors.py",
+    "services/api/app/drawings/kit/section.py",
+    "services/api/app/contracts/results_way_rules.py",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "services/api/tests/drawings/kit/kit_support.py",
+    "services/api/tests/drawings/kit/test_snapshots.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md",
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/cases/step-p5-worked.json",
+    "docs/research/evidence-records/NB-02-proposed-zfa-scope.json",
+    "project-control/tasks/M5-T164.json",
+    "project-control/directives/D-094-report-v2-review-next-pass/requirements.json"
+  ],
+  "outputs": [
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/tests/drawings/kit/test_area_allocation_drawing.py",
+    "services/api/tests/drawings/kit/snapshots/synthetic_placed_building_contract_1_5_0.area_allocation.svg",
+    "services/api/tests/drawings/kit/snapshots/synthetic_rear_yard_constraints_contract_1_5_0.area_allocation.svg",
+    "project-control/reports/M5-T183-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T164",
+    "M5-T165"
+  ],
+  "allowed_paths": [
+    "services/api/app/drawings/kit/area_allocation.py",
+    "services/api/tests/drawings/kit/test_area_allocation_drawing.py",
+    "services/api/tests/drawings/kit/snapshots/synthetic_placed_building_contract_1_5_0.area_allocation.svg",
+    "services/api/tests/drawings/kit/snapshots/synthetic_rear_yard_constraints_contract_1_5_0.area_allocation.svg",
+    "project-control/reports/M5-T183-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "packages/contracts/fixtures/valid/results/synthetic_placed_building_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/synthetic_rear_yard_constraints_contract_1_5_0.json",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "services/api/app/drawings/kit/__init__.py",
+    "services/api/app/drawings/kit/presentation_tokens.py",
+    "services/api/app/drawings/kit/section.py",
+    "services/api/app/drawings/kit/site_plan.py",
+    "services/api/app/drawings/kit/adapter.py",
+    "services/api/tests/drawings/kit/test_snapshots.py",
+    "services/api/tests/drawings/kit/kit_support.py",
+    "services/api/tests/drawings/kit/snapshots/recorded_215_16_northern_journey.site_plan.svg",
+    "services/api/app/drawings/report/",
+    "services/api/app/drawings/maps/",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "packages/contracts/schemas/",
+    "services/api/app/rules/review_register/",
+    "docs/zoning-rule-review/",
+    "docs/research/evidence-records/",
+    "docs/reference-cases/",
+    "services/api/app/scenario/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the two committed synthetic fixtures (synthetic_rear_yard fitted=false share 0.65; synthetic_placed fitted=true share 0.70, placement.outline the 82x82 ring)",
+      "when": "draw_area_allocation runs",
+      "then": "fitted=false -> a proportional bar beside the diagram, no zone inside any outline; fitted=true with outline -> two zones inside outline[0], no bar. Table: {fitted:false,outline absent}->bar; {fitted:true,outline present}->zones; {fitted:true,outline absent/empty}->Unavailable (never a bar mislabelled fitted)"
+    },
+    {
+      "id": "S2",
+      "given": "the rendered SVG",
+      "when": "its text is read",
+      "then": "the two zone labels and the caption are byte-equal to kit/presentation_tokens.py WORDING ('Apartment area'; 'Other building area: core, circulation, walls and services'; 'Illustrative area allocation-not a floor plan'), em dash, no trailing period; exactly one caption element"
+    },
+    {
+      "id": "S3",
+      "given": "a block whose share and apartment/total agree (0.65, 0.70) and a mutated block whose share disagrees with apartment/total",
+      "when": "the proportion is drawn",
+      "then": "the drawn apartment ratio is taken from share and equals it within 0.5%, and on the committed fixtures also equals apartment_area_sqft/total_sqft; a mutation changing only share moves the drawn ratio; a block whose apartment+other!=total (beyond the display tolerance) or whose apartment/total disagrees with share renders Unavailable. NOTE: this is a defensive check; DB-248's closure (the apartment/total=share way rule) stays owned by M5-T172"
+    },
+    {
+      "id": "S4",
+      "given": "shares 0.60, 0.65, 0.70",
+      "when": "the single stated percentage is printed",
+      "then": "it equals round(share*100) -> '60%','65%','70%'; it is not hardcoded and not imported from drawings/report/formatting.py; the real-report 60% is the engine emitting share_low=0.60 upstream, outside this kernel"
+    },
+    {
+      "id": "S5",
+      "given": "either state",
+      "when": "the illustration group is inspected",
+      "then": "it contains no rooms, no unit walls, no apartment counts, no stair or elevator marks, and no line inside a zone other than the single proportional division; the division direction is fixed, so the snapshot is byte-stable and carries no positional meaning"
+    },
+    {
+      "id": "S6",
+      "given": "the block's measure and conversion_statement",
+      "when": "the drawing is built",
+      "then": "the drawing carries the measure and the exact statement 'plate = zoning floor area per storey; no gross-up, exclusions or wall-thickness conversion worked'; gross/zoning/apartment areas are never equated (R024/G-14)"
+    },
+    {
+      "id": "S7",
+      "given": "the two rendered SVGs at the printed size",
+      "when": "readability is checked",
+      "then": "every label is at least 8.5 pt (not TYPOGRAPHY.label_pt 8.0 nor the 7.5 scale-bar size DB-246 flags); the two zones are distinguishable by hatching not colour alone; the two SVGs are rasterised to PNG for the visual-quality-reviewer with no server and no ports. The website+PDF same-state check (R096) is Part B + M5-T174 + M0-T195 and is NOT asserted here"
+    },
+    {
+      "id": "S8",
+      "given": "a missing block, a non-finite share, a share outside 0.60-0.75, or fitted-without-outline",
+      "when": "draw_area_allocation runs",
+      "then": "it returns Unavailable with a plain reason, never a drawn guess, mirroring section.py's Unavailable pattern"
+    },
+    {
+      "id": "S9",
+      "given": "the same fixture rendered twice and with its JSON keys reordered",
+      "when": "both render",
+      "then": "the SVG bytes are identical (determinism), matching the kit snapshot harness contract"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "visual-quality-reviewer",
+    "qa-engineer",
+    "security-reviewer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "RISK 1 (parallel safety with M5-T170): the two synthetic 1.5.0 fixtures Part A renders from are in M5-T170's allowed_paths. Part A only READS them, so there is no write-write collision, but if M5-T170 changed their area_allocation/placement blocks or re-serialised them, Part A's snapshots would go stale. M5-T170's edits to these fixtures are ADDITIVE (envelope_rows/constraint_lines) and do not touch area_allocation/placement; G0 must confirm this. If M5-T170 cannot guarantee it, sequence Part A AFTER M5-T170 instead of beside it.",
+    "RISK 2 (R091 contradiction): the design contract fixes the real report at 60% while the fixtures carry 0.65/0.70. The kernel is data-driven (round(share*100)); the 60% is enforced upstream. G0 records this responsibility split so a reviewer does not flag a token mismatch.",
+    "RISK 3 (DB-248 scope): S3 is a defensive consistency check, NOT closure of DB-248 (the apartment/total=share way rule, owned by M5-T172). Do not record DB-248 as resolved by this task.",
+    "RISK 4 (layering/modularity): the kernel must not import drawings/report or drawings/maps; it is a leaf kit module. Keep it a single focused file; modularity_check must pass with no new failure.",
+    "RISK 5 (snapshot naming): snapshots MUST use the full fixture stems ('synthetic_placed_building_contract_1_5_0.area_allocation.svg', 'synthetic_rear_yard_constraints_contract_1_5_0.area_allocation.svg'); the kit harness keys on path.stem. Do not edit test_snapshots.py or kit_support.py."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T04:50:00.366986+00:00",
+  "updated_at": "2026-10-15T08:43:56.172222+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R024",
+        "D-094-R087",
+        "D-094-R088",
+        "D-094-R089",
+        "D-094-R090",
+        "D-094-R091",
+        "D-094-R092",
+        "D-094-R093",
+        "D-094-R094",
+        "D-094-R095",
+        "D-094-R098"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T04:50:00.367293+00:00",
+  "path_notes": "New leaf kernel in the drawing kit, mirroring section.py's shape (draw_* returning Drawing | Unavailable, caption kwarg). It reads the two committed M5-T164 synthetic 1.5.0 fixtures (verified present at bb5c02b9 with area_allocation share 0.65/0.70 and, for synthetic_placed, placement.status=placed + outline=[[[0,0],[82,0],[82,82],[0,82],[0,0]]]); recorded_215_16_northern_journey.json carries NO area_allocation yet (it arrives with M5-T172), so Part A never renders the benchmark. Imports from kit/presentation_tokens.py (tokens, read-only), kit/hatches.py, kit/svg.py, kit/errors.py only. The test imports draw_area_allocation via the module path (app.drawings.kit.area_allocation); the public kit/__init__.py export and the report/website wiring are Part B and M5-T174. No review-register entry (the kernel adds no zoning-rule behaviour; principle 20 does not apply). D-093: reads the SETTLED readings placement-building-b.json (60% apartment share) and step-p5-worked.json plus NB-02 (the ZFA measure); revises no record. The contract seam appends this task to the applicability.task_ids of D-094 R087,R088,R089,R090,R091,R092,R093,R094,R095,R098,R024 (none name it today - confirmed in requirements.json), with a directive_registry digest resync + audit_log entry and a provisional task_verifications row in the SAME commit, runs reg.evaluate_task_refs before claim, and seeds committed placeholders for area_allocation.py, the test and the producer report (the two .svg snapshots are allow_new, generated by the producer).",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check app/drawings/kit/area_allocation.py tests/drawings/kit/test_area_allocation_drawing.py",
+    "cd services/api && flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/kit/test_area_allocation_drawing.py",
+    "cd services/api && UPDATE_DRAWING_SNAPSHOTS=1 flock /root/project/lanes-runtime/heavy-run.lock python -m pytest -q tests/drawings/kit/test_area_allocation_drawing.py  # regenerate the two snapshots, then review the SVG diff like code",
+    "rasterise the two standalone SVGs to PNG for the visual-quality-reviewer with the repo's SVG rasteriser (no server, no ports)",
+    "python tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T04:50:04.664561+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints beside M5-T170 and M5-T182 (no shared file); the builder starts from the claim head"
+    },
+    {
+      "at": "2026-10-15T06:01:44.999922+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "area-illustration drawing kernel built (both states; 28 tests; four mutations); independent precheck READY (whole api 9804 passed under the lock); the builder's commit integrated as dec38ebf (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T07:39:15.589712+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "round 2: the three G5 robustness findings closed in the kernel (finite coordinates, zero-area outline, vertex cap -> Unavailable); snapshots unchanged; independent precheck READY (whole api 9868 passed); the builder's commit integrated as bed48258 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T08:15:34.842900+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T08:43:56.172084+00:00"
+}

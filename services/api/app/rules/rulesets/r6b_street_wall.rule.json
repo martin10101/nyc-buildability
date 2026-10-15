@@ -1,0 +1,144 @@
+{
+  "rule_id": "r6b-street-wall",
+  "rule_version": "0.1.0-draft",
+  "family": "residential_street_wall",
+  "title": "R6B district with a commercial overlay - the street wall sits within 8 feet of the street line (ZR 35-631(b), reached by 35-63)",
+  "jurisdiction": "nyc",
+  "status": "needs_review",
+  "lane_flag": "A",
+  "effective_from": "2024-12-05",
+  "effective_to": null,
+  "release": {
+    "deterministic_tests": "declared",
+    "test_suite_ref": "services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+    "independent_review": "pending",
+    "qualified_human_approval": "pending"
+  },
+  "description": "DRAFT extraction (needs_review) of the street-wall location rule for an R6B lot with a commercial overlay. ZR 35-63 sends the street-wall location to ZR 35-631; paragraph (a) is limited to R8-R12 districts in the Manhattan Core, so for this R6B lot paragraph (b) governs: at least 70 percent of the aggregate width of street walls within 8 feet of the street line. The engine reads this as a labelled draft in envelope_constraints.py (the plain-R6B 23-431 rule and the per-frontage distances live there); this rule records the overlay 8-foot distance. Conditional on the block's prevailing street-wall frontage and the operative street line, which the rule never fixes.",
+  "citations": [
+    {
+      "snapshot_id": "zr-35-631",
+      "section": "35-631(b)",
+      "quote": "At least 70 percent of the aggregate width of street walls shall be located within eight feet of the street line and shall extend to at least the minimum base height specified in Sections 23-432, or the height of the building, whichever is less.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "816bc74770e48596144479c24adf382082d0ebf3392dabd0ef5745f844a928f9"
+    },
+    {
+      "snapshot_id": "zr-23-431",
+      "section": "23-431",
+      "quote": "In R6B, R7B, and R8B Districts, the street wall of a building shall be located no closer to the street line than the closest street wall ... However, where ... do not have a prevailing street wall frontage, the applicable street wall regulations of paragraph (b) may be applied.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "fb2d094dd06ce10b406485932357a39384a357db92a0a1670b56091c36698c69"
+    },
+    {
+      "snapshot_id": "zr-11-25",
+      "section": "11-25",
+      "quote": "All regulations applicable to a district designation shall be applicable to such district designation appended with a suffix, except as otherwise set forth in express provisions of this Resolution.",
+      "last_amended": "2024-12-05",
+      "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "zoning_district",
+      "type": "string",
+      "required": true,
+      "description": "Residence district governing the lot (scope enforced by applicability in_set R6B)."
+    },
+    {
+      "name": "overlay_present",
+      "type": "boolean",
+      "required": true,
+      "description": "True iff a commercial overlay is mapped on the lot (profile zoning.commercial_overlays[] non-empty)."
+    },
+    {
+      "name": "special_district_present",
+      "type": "boolean",
+      "required": false,
+      "description": "True iff a special purpose district is mapped; when true the result escalates to professional review."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "street_wall_max_distance_from_street_line_ft",
+      "type": "integer",
+      "unit": null,
+      "description": "8 = at least 70 percent of the aggregate street-wall width must sit within 8 feet of the street line (ZR 35-631(b))."
+    }
+  ],
+  "parameters": [
+    {
+      "name": "street_wall_within_ft",
+      "value": 8,
+      "citation_ref": "zr-35-631",
+      "note": "ZR 35-631(b): within eight feet of the street line."
+    }
+  ],
+  "applicability": {
+    "all": [
+      {
+        "op": "in_set",
+        "input": "zoning_district",
+        "values": [
+          "R6B"
+        ]
+      },
+      {
+        "op": "equals",
+        "input": "overlay_present",
+        "value": true
+      }
+    ]
+  },
+  "computation": {
+    "steps": [
+      {
+        "id": "within_ft",
+        "op": "identity",
+        "args": [
+          {
+            "param": "street_wall_within_ft"
+          }
+        ],
+        "note": "ZR 35-631(b): the street wall sits within eight feet of the street line."
+      }
+    ],
+    "outputs": {
+      "street_wall_max_distance_from_street_line_ft": {
+        "step": "within_ft"
+      }
+    }
+  },
+  "exceptions": [
+    {
+      "id": "prevailing_frontage_may_switch_paragraph",
+      "description": "Where the block has a prevailing street-wall frontage further from the street line than eight feet, the line-up rules of ZR 23-431(a) may be applied instead; whether such a frontage exists is an unresearched adjacency fact.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-23-431"
+    },
+    {
+      "id": "suffix_inheritance_zr_11_25",
+      "description": "ZR 23 and 35 list R6 through R12 and do not name R6B; the rule reaches R6B through ZR 11-25 (suffix inheritance), flagged for the reviewer.",
+      "condition": null,
+      "effect": "documented_limitation",
+      "citation_ref": "zr-11-25"
+    },
+    {
+      "id": "special_district_modification",
+      "description": "A special purpose district is mapped on this lot and may modify residence-district bulk; its provisions are not captured here, so the result is not emitted as final. Professional review required.",
+      "condition": {
+        "op": "equals",
+        "input": "special_district_present",
+        "value": true
+      },
+      "effect": "professional_review_required",
+      "citation_ref": null
+    }
+  ],
+  "limitations": [
+    "Draft extraction pending independent review and G6 qualified-human legal approval; not a Verified determination.",
+    "Without a commercial overlay the plain-R6B rule ZR 23-431(b) applies 8 feet on a wide-street frontage and 10 feet on a narrow-street frontage (the D-051 asymmetry); that per-frontage reading is in envelope_constraints.py, not this rule.",
+    "The 8-foot distance runs from the operative street line, which a mapped street width does not fix; This rule never measures geometry; the site facts are supplied by the caller."
+  ]
+}

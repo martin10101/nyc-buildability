@@ -2612,6 +2612,7 @@
       },
       "code_links": [
         "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json",
+        "services/api/app/scenario/three_answers/rear_yard_checks.py",
         "services/api/app/rules/evaluator.py",
         "services/api/app/rules/registry.py"
       ],
@@ -2646,8 +2647,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed; the status is the recorded result at the commit shown, bound to the rule-file and test-file digests. If the rule file or any linked test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 3,
-      "last_changed": "2026-10-14",
+      "revision": 4,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -2665,6 +2666,392 @@
         "The waiver only covers the area within 100 feet of the corner; the ordinary rear-yard depth beyond that (ZR 23-342) is not computed here.",
         "Commercial overlays are not captured; special districts send the result for professional review.",
         "This is a draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-street-wall",
+      "rule_id": "r6b-street-wall",
+      "rule_file": "services/api/app/rules/rulesets/r6b_street_wall.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "2caa1c1e4b7c960126b95b26c750f57782f1fbfd9c292a42cc5bffeaba2af242",
+      "title": "R6B with a commercial overlay - the street wall sits within 8 feet of the street line (ZR 35-631(b), via ZR 35-63)",
+      "family": "residential_street_wall",
+      "law": [
+        {
+          "section": "35-631(b)",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-631",
+          "snapshot_id": "zr-35-631",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-35-631.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-07T00:00:00Z",
+          "content_digest_sha256": "816bc74770e48596144479c24adf382082d0ebf3392dabd0ef5745f844a928f9"
+        },
+        {
+          "section": "35-63",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-63",
+          "snapshot_id": "zr-35-63",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-35-63.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-07T00:00:00Z",
+          "content_digest_sha256": "77ff1923e3d3607202964541eb29e714b7cbaa9ab6dde7ddd9ccfbbd032ebe72"
+        },
+        {
+          "section": "23-431",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-431",
+          "snapshot_id": "zr-23-431",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-431.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-04T00:00:00Z",
+          "content_digest_sha256": "fb2d094dd06ce10b406485932357a39384a357db92a0a1670b56091c36698c69"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts with a commercial overlay: ZR 35-63 sends the street-wall location to ZR 35-631, whose paragraph (a) is limited to R8-R12 districts in the Manhattan Core, so for this R6B lot paragraph (b) governs - at least 70 percent of the aggregate street-wall width within 8 feet of each street line. Without the overlay the plain-R6B rule ZR 23-431(b) applies (8 feet on a wide-street frontage, 10 feet on a narrow one); that per-frontage reading is in the engine, not this draft rule.",
+      "exceptions": [
+        "Only the overlay 8-foot distance is recorded here; the plain-R6B 8-wide / 10-narrow asymmetry (D-051) is read in the engine.",
+        "A commercial overlay is assumed; a special district sends the result for professional review."
+      ],
+      "interpretation": "The engine reads the street-wall location as a labelled draft (M5-T170): under a commercial overlay the street wall sits within 8 feet of each street line (ZR 35-631(b), reached by 35-63 for a mixed building via 35-01 and for an all-residential one via 34-11 and 34-24(b)(1)); without the overlay ZR 23-431(b) applies 8 feet on a wide-street frontage and 10 feet on a narrow one (the D-051 asymmetry, never collapsed). R6B inherits ZR 23 and 35 through the suffix provision ZR 11-25. The reading is conditional on the block's prevailing street-wall frontage and the operative street line, which a mapped width does not fix, so the constraint line (street_wall_band) is not_established on the benchmark. The expected outcomes are the R6B reference case (overlay-reading.json row street-wall-location), not a program run.",
+      "example": {
+        "description": "A made-up R6B corner lot with a C2-2 overlay, both frontages fronting a street (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "overlay_present": true,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "street_wall_max_distance_from_street_line_ft": 8
+          },
+          "basis_kind": "reference_case",
+          "basis": "Independent reference case overlay-reading.json row street-wall-location (two AI readings of the sealed step-P2 captures): the overlay changes the street-wall rule to ZR 35-631(b), at least 70 percent of the aggregate street-wall width within 8 feet of the street line. The final street-wall line is not fixed (prevailing frontage and the operative street line unrecorded).",
+          "prepared_by": "worked independently by sealed-folder AI readers; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "street_wall_max_distance_from_street_line_ft": 8
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_street_wall.rule.json",
+        "services/api/app/scenario/three_answers/envelope_constraints.py"
+      ],
+      "test_links": [
+        "services/api/tests/scenario/three_answers/test_envelope_constraints.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "The street wall always applies and is a conditional reading (prevailing frontage, operative street line) (test: test_street_wall_always_applies_and_is_conditional).",
+          "Under a commercial overlay the street wall sits within 8 feet of each frontage for a residential-only and a mixed building (test: test_street_wall_overlay_is_eight_feet_each_frontage_for_both_building_types).",
+          "Without the overlay it is 8 feet on a wide frontage and 10 feet on a narrow one, never collapsed (test: test_street_wall_no_overlay_is_eight_wide_ten_narrow_never_collapsed).",
+          "An unknown-width frontage without the overlay shows no distance, never narrow by default (test: test_street_wall_no_overlay_unknown_width_shows_no_distance_never_narrow).",
+          "When the overlay was not read the distance is withheld with the dependency named (test: test_street_wall_overlay_not_read_withholds_the_distance)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The prevailing-street-wall-frontage adjacency test (ZR 35-631 closing clause / 23-431(a)) is not computed.",
+          "The operative street-line position is not fixed from a mapped width."
+        ]
+      },
+      "automated_tests": {
+        "status": "Not run",
+        "tested_commit": "",
+        "tested_on": "2026-10-15",
+        "command": "python -m pytest -q services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+        "counts": "",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-street-wall.txt",
+        "tested_rule_file_sha256": "2caa1c1e4b7c960126b95b26c750f57782f1fbfd9c292a42cc5bffeaba2af242",
+        "tested_test_file_sha256s": {
+          "services/api/tests/scenario/three_answers/test_envelope_constraints.py": "92e99bc79848429a72e9417a963feea9476a451d490c4ff33bc139304ed66c86"
+        },
+        "note": "A draft extraction: its deterministic DSL suite is not yet written, so the status reads 'Not run'. The law reading it records is exercised in the engine's envelope analysis by the linked tests; a passing result there is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-15",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "The exact street-wall position within paragraph (b) is conditional on the prevailing street-wall frontage and the operative street line.",
+        "A draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-setback",
+      "rule_id": "r6b-setback",
+      "rule_file": "services/api/app/rules/rulesets/r6b_setback.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "1f7df4f0b10e024b9ced6928e54467e31d8543ce20c349fb552ab37a17a0d185",
+      "title": "R6B - a setback above the maximum base height (ZR 23-433; 35-632(a) under a commercial overlay): at least 10 feet from a wide-street wall and 15 feet from a narrow-street wall",
+      "family": "residential_setback_above_base",
+      "law": [
+        {
+          "section": "23-433",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-433",
+          "snapshot_id": "zr-23-433",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-433.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-04T00:00:00Z",
+          "content_digest_sha256": "4fecf4d26719a00ed0eaeb1e0e7e714f891e7fff154ded306b04e29167ef1afe"
+        },
+        {
+          "section": "23-432",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-432",
+          "snapshot_id": "zr-23-432",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-432.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-09-30T00:00:00Z",
+          "content_digest_sha256": "9fab7be8940498b076f7a88dfdd170d9003907e69cefae62305daf807037c68c"
+        },
+        {
+          "section": "35-632(a)",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-5/35-632",
+          "snapshot_id": "zr-35-632",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-35-632.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-07T00:00:00Z",
+          "content_digest_sha256": "8105cc331eee4ed882e04466814928f6047618f5ba66a260f5c415a29630ad10"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts: a setback is required only for the part of a building street wall that exceeds the maximum base height (45 feet for R6B standard residences, ZR 23-432); ZR 23-433 then requires at least 10 feet from a wide-street wall and 15 feet from a narrow-street wall. Under a commercial overlay the same depths are reached through ZR 35-632(a). ZR 23-433(a) to (d) may reduce the depths.",
+      "exceptions": [
+        "No setback is required at or below the maximum base height; the benchmark 30-foot option triggers none.",
+        "ZR 23-433(a) to (d) modifications and the per-frontage wide/narrow depth are read in the engine; a special district sends the result for professional review."
+      ],
+      "interpretation": "The engine reads the setback above the base as a labelled draft (M5-T170): it is triggered only where the building street wall rises strictly above the 45-foot maximum base height (ZR 23-432); where triggered, ZR 23-433 requires at least 10 feet from a wide-street wall and 15 feet from a narrow-street wall (35-632(a) under the overlay). The per-frontage wide/narrow class comes from the accepted D-052 classifier; a frontage whose width is unresolved or unknown withholds its depth (never narrow by default, D-051). The benchmark three-storey 30-foot option equals the minimum base height and triggers no setback, so the row is not_applicable and carries the 10/15-foot depths as values with a condition naming the above-45-foot trigger. ZR 23-433(a) to (d) may reduce the depths. R6B inherits through ZR 11-25. The expected outcomes are overlay-reading.json row setback-above-base, not a program run.",
+      "example": {
+        "description": "A made-up R6B lot with a C2-2 overlay and a building street wall that rises above the 45-foot maximum base height (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "overlay_present": true,
+          "street_wall_exceeds_max_base_height": true,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "setback_depth_from_wide_street_wall_ft": 10
+          },
+          "basis_kind": "reference_case",
+          "basis": "Independent reference case overlay-reading.json row setback-above-base: at least 10 feet above the maximum base height on the wide street and 15 feet on the narrow street, via ZR 35-632(a) to ZR 23-433; the overlay does not change the depths.",
+          "prepared_by": "worked independently by sealed-folder AI readers; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "setback_depth_from_wide_street_wall_ft": 10
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_setback.rule.json",
+        "services/api/app/scenario/three_answers/envelope_constraints.py"
+      ],
+      "test_links": [
+        "services/api/tests/scenario/three_answers/test_envelope_constraints.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "The setback is triggered only strictly above the 45-foot maximum base height; 30, 44.99 and 45.00 feet trigger none and 45.01 and 50 feet trigger it (test: test_setback_trigger_table_strict_above_the_maximum_base_height).",
+          "Where triggered the depths are 10 feet on a wide-street frontage and 15 feet on a narrow one (test: test_setback_depths_are_ten_wide_fifteen_narrow_cited).",
+          "At or below the maximum base height the row is not_applicable and carries the depths as values with the above-base condition (test: test_setback_not_applicable_carries_the_depths_and_the_above_base_condition).",
+          "The per-frontage wide/narrow class drives the depth through the accepted D-052 classifier; an unresolved or unknown width withholds the depth, never narrow by default (test: test_per_frontage_width_class_drives_the_setback_depth)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The ZR 23-433(a) to (d) depth modifications are not computed.",
+          "The setback geometry on the lot is not drawn (the line is not_established)."
+        ]
+      },
+      "automated_tests": {
+        "status": "Not run",
+        "tested_commit": "",
+        "tested_on": "2026-10-15",
+        "command": "python -m pytest -q services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+        "counts": "",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-setback.txt",
+        "tested_rule_file_sha256": "1f7df4f0b10e024b9ced6928e54467e31d8543ce20c349fb552ab37a17a0d185",
+        "tested_test_file_sha256s": {
+          "services/api/tests/scenario/three_answers/test_envelope_constraints.py": "92e99bc79848429a72e9417a963feea9476a451d490c4ff33bc139304ed66c86"
+        },
+        "note": "A draft extraction: its deterministic DSL suite is not yet written, so the status reads 'Not run'. The law reading it records is exercised in the engine's envelope analysis by the linked tests; a passing result there is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-15",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "ZR 23-433(a) to (d) may reduce the depths; not computed here.",
+        "A draft extraction awaiting raw-source verification and a qualified-human legal check."
+      ],
+      "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
+    },
+    {
+      "entry_id": "r6b-side-yard",
+      "rule_id": "r6b-side-yard",
+      "rule_file": "services/api/app/rules/rulesets/r6b_side_yard.rule.json",
+      "rule_version": "0.1.0-draft",
+      "rule_file_sha256": "0676ae01704abdff07ec0991f4998f5a9a76766672ac43a2a17f027a26f5ca42",
+      "title": "R6B - no side yard is required for a residence other than a single- or two-family detached one (ZR 23-335(b)); a commercial overlay removes it for any residential building (ZR 34-232)",
+      "family": "residential_side_yard",
+      "law": [
+        {
+          "section": "23-335(b)",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-335",
+          "snapshot_id": "zr-23-335",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-23-335.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-07T00:00:00Z",
+          "content_digest_sha256": "31b67b9d47eca82cb93e1b06db908b20f1ad7f159c2b4306d78248e5fb02fcf2"
+        },
+        {
+          "section": "34-232",
+          "official_url": "https://zoningresolution.planning.nyc.gov/article-iii/chapter-4/34-232",
+          "snapshot_id": "zr-34-232",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-34-232.snapshot.json",
+          "last_amended": "2024-12-05",
+          "captured_on": "2026-10-07T00:00:00Z",
+          "content_digest_sha256": "9cf83f8d9c3fa6f594fa3be1e1d65651713c1809254fd08e60e527daa09c61b2"
+        },
+        {
+          "section": "11-25",
+          "official_url": "https://zr.planning.nyc.gov/entityprint/pdf/node/18433",
+          "snapshot_id": "zr-11-25",
+          "snapshot_file": "docs/research/zr-snapshots/v1/zr-11-25.snapshot.json",
+          "last_amended": "1994-06-29",
+          "captured_on": "2026-09-13T02:45:00Z",
+          "content_digest_sha256": "6843ad22d57d4f59cf422c80b820d1797955c1cecfecf3ee459b68bf139b2b2b"
+        }
+      ],
+      "applicable_from": "2024-12-05",
+      "applicable_to": null,
+      "applies_where": "R6B districts: ZR 23-335(b) requires no side yard for a residence other than a single- or two-family detached one (any open area along a side lot line must be at least 5 feet wide); under a commercial overlay ZR 34-232 removes the requirement for any residential building. A single- or two-family detached residence needs two 5-foot side yards under ZR 23-335(a) without the overlay.",
+      "exceptions": [
+        "The detached one- or two-family case (two 5-foot side yards, ZR 23-335(a)) and the 5-foot open-area minimum are read in the engine.",
+        "A special district sends the result for professional review."
+      ],
+      "interpretation": "The engine reads the side yard as a labelled draft (M5-T170): no side yard is required for a residence other than a single- or two-family detached one (ZR 23-335(b)), and a commercial overlay removes the requirement for any residential building (ZR 34-232). A single- or two-family detached residence needs two 5-foot side yards under ZR 23-335(a) without the overlay. Any open area along a side lot line, if provided, must be at least 5 feet wide. A building type that is not stated is never taken as residential-only (the detached case stays a named condition). R6B inherits through ZR 11-25. The expected outcomes are the law text in E13/E14 of record NB-06, not a program run.",
+      "example": {
+        "description": "A made-up R6B multi-family residence with a C2-2 overlay (not a real address).",
+        "inputs": {
+          "zoning_district": "R6B",
+          "overlay_present": true,
+          "single_or_two_family_detached": false,
+          "special_district_present": false
+        },
+        "expected": {
+          "values": {
+            "side_yard_required": 0
+          },
+          "basis_kind": "reference_case",
+          "basis": "Record NB-06 reading of ZR 23-335(b) and ZR 34-232: no side yard is required for a residence other than a single- or two-family detached one, and the overlay removes it for any residential building; any open area along a side lot line must be at least 5 feet wide.",
+          "prepared_by": "worked independently from the captured law text; not checked by a professional"
+        },
+        "actual": {
+          "values": {
+            "side_yard_required": 0
+          },
+          "coverage_status": "conditional"
+        },
+        "agrees": true
+      },
+      "code_links": [
+        "services/api/app/rules/rulesets/r6b_side_yard.rule.json",
+        "services/api/app/scenario/three_answers/envelope_constraints.py"
+      ],
+      "test_links": [
+        "services/api/tests/scenario/three_answers/test_envelope_constraints.py"
+      ],
+      "behaviour": {
+        "tested": [
+          "No side yard is required for a multi-family residence (test: test_side_yard_multi_family_none_required).",
+          "A single- or two-family detached residence without the overlay needs two 5-foot side yards (test: test_side_yard_detached_without_overlay_two_five_foot_yards).",
+          "A detached residence in the overlay needs none (ZR 34-232) (test: test_side_yard_detached_in_overlay_none_required).",
+          "Any open area along a side lot line carries a 5-foot minimum (test: test_side_yard_open_area_minimum_is_five_feet)."
+        ],
+        "committed_untested": [],
+        "planned": [
+          "The 5-foot open-area minimum and the detached-residence case are read in the engine, not this draft rule."
+        ]
+      },
+      "automated_tests": {
+        "status": "Not run",
+        "tested_commit": "",
+        "tested_on": "2026-10-15",
+        "command": "python -m pytest -q services/api/tests/scenario/three_answers/test_envelope_constraints.py",
+        "counts": "",
+        "evidence": "docs/zoning-rule-review/evidence/r6b-side-yard.txt",
+        "tested_rule_file_sha256": "0676ae01704abdff07ec0991f4998f5a9a76766672ac43a2a17f027a26f5ca42",
+        "tested_test_file_sha256s": {
+          "services/api/tests/scenario/three_answers/test_envelope_constraints.py": "92e99bc79848429a72e9417a963feea9476a451d490c4ff33bc139304ed66c86"
+        },
+        "note": "A draft extraction: its deterministic DSL suite is not yet written, so the status reads 'Not run'. The law reading it records is exercised in the engine's envelope analysis by the linked tests; a passing result there is a code check, not a human or professional review of the law."
+      },
+      "revision": 1,
+      "last_changed": "2026-10-15",
+      "human_review": {
+        "decision": null,
+        "reviewer_name": "",
+        "reviewer_role": "",
+        "review_date": "",
+        "comments": "",
+        "reviewed_revision": null,
+        "reviewed_conditions": "",
+        "reviewed_rule_file_sha256": null,
+        "reviewed_law_digests": {},
+        "applies_to_current": null,
+        "verdict": "Not reviewed"
+      },
+      "gaps": [
+        "A side yard is not prohibited; it is optional with a 5-foot open-area minimum.",
+        "A draft extraction awaiting raw-source verification and a qualified-human legal check."
       ],
       "draft_note": "This is the program's own draft reading of the law. It has not been reviewed by a qualified architect or zoning examiner and is not legal advice."
     }
@@ -2912,6 +3299,42 @@
       "event": "interpretation_changed",
       "summary": "interpretation_changed (M5-T167): the title and interpretation are broadened to the whole ZR 23-344 rear-yard reading the engine now makes - paragraph (a) the corner waiver (the draft DSL rule), paragraph (b) the short dimension of a block and paragraph (c)(3) the adjoining zoning lot's side lot line. The stale 'withheld (not known) pending the overlay reading' text is replaced: on the benchmark the combined rear-yard row is not known and shown as a conditional reading (never an unconditional 'no rear yard'), because the measurement basis for (b) is unresolved law and the neighbours' side lot lines are not captured; ZR 23-344(b) and (c)(3) are named and linked besides (a). No rule-file change - the (a) draft DSL rule and its digest are unchanged; (b)/(c)(3) are read in the engine's rear_yard_checks.py.",
       "by": "M5-T167 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 28,
+      "date": "2026-10-15",
+      "entry_id": "r6b-street-wall",
+      "revision": 1,
+      "event": "created",
+      "summary": "Created the draft register entry for r6b-street-wall (M5-T170): the ZR envelope reading carried into the engine's envelope analysis (envelope_constraints.py) as a labelled draft, with its law captures and the R6B reference case; no human verdict is entered.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 29,
+      "date": "2026-10-15",
+      "entry_id": "r6b-setback",
+      "revision": 1,
+      "event": "created",
+      "summary": "Created the draft register entry for r6b-setback (M5-T170): the ZR envelope reading carried into the engine's envelope analysis (envelope_constraints.py) as a labelled draft, with its law captures and the R6B reference case; no human verdict is entered.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 30,
+      "date": "2026-10-15",
+      "entry_id": "r6b-side-yard",
+      "revision": 1,
+      "event": "created",
+      "summary": "Created the draft register entry for r6b-side-yard (M5-T170): the ZR envelope reading carried into the engine's envelope analysis (envelope_constraints.py) as a labelled draft, with its law captures and the R6B reference case; no human verdict is entered.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 31,
+      "date": "2026-10-15",
+      "entry_id": "r6b-rear-yard-corner-waiver",
+      "revision": 4,
+      "event": "implementation_changed",
+      "summary": "implementation_changed (M5-T170, backlog DB-265 item 2): the scenario engine module that reads ZR 23-344 paragraphs (b) and (c)(3), services/api/app/scenario/three_answers/rear_yard_checks.py, is added to the entry's code_links (its digest had been tracked only through evidence record NB-03). The module was edited in M5-T170 for three review-advisory text and dead-argument clean-ups - the (c)(3) and combined texts also name the ZR 23-344(c)(1) alternative, an unused operative-reach argument was dropped, and the (b) not_applicable text no longer appends the (b) waiver consequence - and its content is pinned in NB-03's code_identity at LF-sha256 24b7f2c8283baa460e6b58d4bccbf7df3b5f0da8ef2ebce56c6465c41d62182c. No rule-file change (the (a) draft DSL rule and its digest are unchanged), no interpretation, applicability, example or automated-test change, and no change to any reading of the law.",
+      "by": "backend-engineer (M5-T170)"
     }
   ],
   "calculations": [
@@ -2992,7 +3415,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3000,12 +3423,12 @@
         "evidence": "docs/zoning-rule-review/evidence/calc-floor-area-allowance.txt",
         "tested_code_identity_sha256": "abb6374448b76566c4691b516ff2218f2aa8e1388ea2a56b761e3d38fcc34a91",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 5,
-      "last_changed": "2026-10-11",
+      "revision": 6,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3160,7 +3583,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3168,12 +3591,12 @@
         "evidence": "docs/zoning-rule-review/evidence/calc-lot-coverage-by-portion.txt",
         "tested_code_identity_sha256": "51e21ea26270e9e4edffba59554b866946b6b893ca063b0a5072489876d56713",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 9,
-      "last_changed": "2026-10-11",
+      "revision": 10,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3351,7 +3774,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3359,12 +3782,12 @@
         "evidence": "docs/zoning-rule-review/evidence/calc-building-option-floor-stack.txt",
         "tested_code_identity_sha256": "43a29dab2591d088fa513dcf34afdc031a3916e47e55ad5957ad4070c37b1eac",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 9,
-      "last_changed": "2026-10-11",
+      "revision": 10,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3548,7 +3971,7 @@
         "services/api/tests/rules/test_zoning_rule_review_register_calculations.py"
       ],
       "automated_tests": {
-        "status": "Passed",
+        "status": "Not run",
         "tested_commit": "10e5c55d1a02f6f18a5c6a2bdc16f01b05751312",
         "tested_on": "2026-10-11",
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
@@ -3556,12 +3979,12 @@
         "evidence": "docs/zoning-rule-review/evidence/calc-legal-dwelling-unit-limit.txt",
         "tested_code_identity_sha256": "2cf335d7c8bdf9e921925f11fa490834ca0ed4d68d18142351fb569fe281561c",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 5,
-      "last_changed": "2026-10-11",
+      "revision": 6,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3652,14 +4075,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63"
+          "sha256": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "1658abb8e1cda8b901657c15afe1c4756cdd4bb58c8f8ddca3e271ca9de67009",
+      "code_identity_sha256": "f3a9eeae39fe114560a6655985e2230c3ffefd84238a7fd67d4f2e9e26b7e60a",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -3719,13 +4142,13 @@
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-preliminary-apartment-estimate.txt",
-        "tested_code_identity_sha256": "151dc5d38bb4a9305b60709c295b56439382d7b99b03024da1ffdbb5e2806fb4",
+        "tested_code_identity_sha256": "f3a9eeae39fe114560a6655985e2230c3ffefd84238a7fd67d4f2e9e26b7e60a",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 12,
+      "revision": 13,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -3852,7 +4275,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63"
+          "sha256": "064fb6cdf10ef350b0706b952c250f4a2d359a0e5165ae4724377b6f0f1b169c"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3871,7 +4294,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "8985d57f72b3cc65dda7a429a855fc35e4853d0ae6f66481c181a81e280497e0",
+      "code_identity_sha256": "61b79b2dcc2446fcdc38ba374b4fd74644d9d1dd151f9dd8355068d28a37c1a4",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3968,13 +4391,13 @@
         "command": "python -m pytest -q -p no:cacheprovider rules/test_zoning_rule_review_register_calculations.py",
         "counts": "53 passed",
         "evidence": "docs/zoning-rule-review/evidence/calc-first-building-option-complete.txt",
-        "tested_code_identity_sha256": "88d99e2bd064275baa0b05f42ffebb7cd42590cf66b3fca5b7aa9edd34a12680",
+        "tested_code_identity_sha256": "61b79b2dcc2446fcdc38ba374b4fd74644d9d1dd151f9dd8355068d28a37c1a4",
         "tested_test_file_sha256s": {
-          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "a793a9c6ca9b119fbf866c071885d17b3f8b9dc2126f4eeb597af6f518491d7e"
+          "services/api/tests/rules/test_zoning_rule_review_register_calculations.py": "7cd2f3e7e1648bdc666369761d3df9283b1e0a3756b01b6e6916cbb6878f085f"
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 13,
+      "revision": 14,
       "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
@@ -4674,6 +5097,60 @@
       "event": "implementation_changed",
       "summary": "implementation_changed: three_way_document.py changed (M5-T167 round 4, R136: emit_three_way_document threads rear_yard_applied into first_option_results._not_checked so page 6 agrees with page 8 - the corner-lot rear-yard not-checked line is kept on a 1.4.0 document and dropped once the engine applies ZR 23-344 on a 1.5.0 one), so its code module and the combined code identity are resynced; the recorded automated-test run reads 'Not run' until it is run again at the new identity. The six-step actual sides come from the committed 1.5.0 benchmark document, whose building B not-checked list already dropped the line, so no step verdict moves.",
       "by": "M5-T167 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 54,
+      "date": "2026-10-15",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 13,
+      "event": "implementation_changed",
+      "summary": "three_way_document.py changed (M5-T170 attaches the 1.5.0 envelope_rows, the envelope constraint lines and the street-width input_facts, and reconciles the setback value state to the applied envelope reading); the module sha256 and code_identity are refreshed. The apartment-estimate and first-building-option arithmetic are unchanged; automated tests read 'Not run' until re-run.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 55,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 14,
+      "event": "implementation_changed",
+      "summary": "three_way_document.py changed (M5-T170 attaches the 1.5.0 envelope_rows, the envelope constraint lines and the street-width input_facts, and reconciles the setback value state to the applied envelope reading); the module sha256 and code_identity are refreshed. The apartment-estimate and first-building-option arithmetic are unchanged; automated tests read 'Not run' until re-run.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 56,
+      "date": "2026-10-15",
+      "entry_id": "calc-floor-area-allowance",
+      "revision": 6,
+      "event": "implementation_changed",
+      "summary": "The register-calculations test file bound to this entry changed (M5-T170 updated the rule-entry count to 26 after adding the three draft envelope rule entries); the recorded run is no longer current for the stored identity, so automated tests read 'Not run' until re-run. The calculation's code and arithmetic are unchanged.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 57,
+      "date": "2026-10-15",
+      "entry_id": "calc-lot-coverage-by-portion",
+      "revision": 10,
+      "event": "implementation_changed",
+      "summary": "The register-calculations test file bound to this entry changed (M5-T170 updated the rule-entry count to 26 after adding the three draft envelope rule entries); the recorded run is no longer current for the stored identity, so automated tests read 'Not run' until re-run. The calculation's code and arithmetic are unchanged.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 58,
+      "date": "2026-10-15",
+      "entry_id": "calc-building-option-floor-stack",
+      "revision": 10,
+      "event": "implementation_changed",
+      "summary": "The register-calculations test file bound to this entry changed (M5-T170 updated the rule-entry count to 26 after adding the three draft envelope rule entries); the recorded run is no longer current for the stored identity, so automated tests read 'Not run' until re-run. The calculation's code and arithmetic are unchanged.",
+      "by": "backend-engineer (M5-T170)"
+    },
+    {
+      "seq": 59,
+      "date": "2026-10-15",
+      "entry_id": "calc-legal-dwelling-unit-limit",
+      "revision": 6,
+      "event": "implementation_changed",
+      "summary": "The register-calculations test file bound to this entry changed (M5-T170 updated the rule-entry count to 26 after adding the three draft envelope rule entries); the recorded run is no longer current for the stored identity, so automated tests read 'Not run' until re-run. The calculation's code and arithmetic are unchanged.",
+      "by": "backend-engineer (M5-T170)"
     }
   ],
   "coverage_gaps": [

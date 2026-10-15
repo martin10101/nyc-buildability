@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-05",
  "title": "215-16 Northern Boulevard: special density area resolved; the dwelling-unit limit stays conditional",
- "revision": 4,
- "last_changed": "2026-10-14",
+ "revision": 6,
+ "last_changed": "2026-10-15",
  "question": {
   "text": "Is lot 70 in a special density area (ZR 23-52(a)(1)), and which inputs to the dwelling-unit limit stay conditional?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -167,7 +167,7 @@
    "services/api/app/scenario/three_answers/result_way_facts.py": "8e440578e5c38ed11488f64bf1d172716301b264e814926887feee9c3bff560c",
    "services/api/app/scenario/three_answers/result_way_bridge.py": "4e4d209e41b4278a908afa422b7abd63055b203d8393695f7527649b3d76ddea",
    "services/api/app/scenario/three_answers/result_ways.py": "ac0747a37bb4c462483041cd8f4b0fffce6ff450af492ff61aee5ca76e7b2af3",
-   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "a3ce8e64db5c7b5b7cd48f888bd16c2604323df45846d5f2b262a2a3ac21d471",
+   "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "267ac3906a0f3031a63ef38a5a12227f166c5339a8547665797d7582c90316df",
    "services/api/app/scenario/three_answers/three_way_scope_lines.py": "8cece25b78227d8c63840826173220d8b06c2d805cc1a2b59ea0f5fd19abd0ee"
   },
   "worked_example": {
@@ -189,7 +189,8 @@
   "dependency_assessment": [
    "Since M5-T157 (DB-231) the program reads the community district, borough code and special-district columns of the city's record (special_density_geography.decide_special_density) and drives both the engine condition and the shown result from one decision. Outside Manhattan Community Districts 1 to 8 and with every special-district column read and none 'DB': not in one, and the standard unit limit shows as a Conditional ceiling with an always-present zoning-lot condition. Special district not read or a contradiction: withheld. A user's statement never overrides the record. No address-specific exception.",
    "Since M5-T158 (DB-232) the standard unit limit's zoning-lot condition is the property-specific one (naming the recorded zoning lot description and the other lot) when the ACRIS index names another lot on the same block or cannot be read; otherwise the generic always-present condition stays. Exactly one zoning-lot condition either way. The special-density decision and the 680 arithmetic are unchanged (result_way_bridge.py, result_ways.py and result_way_engine_bridge.py changed for the zoning-lot condition only).",
-   "Revision 4 (M5-T167): result_way_bridge.py changed (the G-6 engine-side zoning-lot isolation, which moved the zoning-lot citation cluster out behind a facade) and result_way_engine_bridge.py changed (it threads the additive contract-1.5.0 rear-yard analysis when a DCM street window is supplied). The code_identity is refreshed to the current LF sha256 of every code_path. The special-density decision and the 680 dwelling-unit arithmetic are unchanged by both changes."
+   "Revision 4 (M5-T167): result_way_bridge.py changed (the G-6 engine-side zoning-lot isolation, which moved the zoning-lot citation cluster out behind a facade) and result_way_engine_bridge.py changed (it threads the additive contract-1.5.0 rear-yard analysis when a DCM street window is supplied). The code_identity is refreshed to the current LF sha256 of every code_path. The special-density decision and the 680 dwelling-unit arithmetic are unchanged by both changes.",
+   "M5-T170 (envelope constraints) edits result_way_engine_bridge.py (the envelope analysis, including the per-frontage D-052 wide/narrow derivation, threaded into the route emit); its code-identity is refreshed here (revision 5). The special-density decision and the 680 dwelling-unit arithmetic are unchanged - a code-identity resync only; behaviour is identical on a 1.4.0 document."
   ]
  },
  "review": {

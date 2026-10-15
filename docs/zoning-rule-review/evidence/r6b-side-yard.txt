@@ -1,0 +1,30 @@
+EVIDENCE - r6b-side-yard (ZR 23-335 / 34-232) - a labelled unreviewed DRAFT (ADR-007)
+
+LAW (captured, pinned by content digest):
+- ZR 23-335 (zr-23-335): "(a) Detached buildings ... for zoning lots containing only
+  single-family or two-family detached residences, two side yards, each with a minimum width of
+  five feet, shall be provided. (b) All other buildings ... for zoning lots containing all other
+  types of residences, no side yards shall be required. However, if any open area extending along
+  a side lot line is provided at any level, it shall have a minimum width of five feet, measured
+  perpendicular to the side lot line."
+- ZR 34-232 (zr-34-232): "In the districts indicated, no side yard shall be required for any
+  residential building. However, if any open area extending along a side lot line is provided at
+  any level, it shall have a minimum width of five feet ..."
+- ZR 11-25 (zr-11-25): R6B inherits ZR 23 through the suffix provision.
+
+READING (record NB-06, and session-2026-10-15a/return-research-mixed-side-yard.md for the mixed
+building; both independent):
+- For a residence other than a single- or two-family detached one (a multiple-dwelling or a mixed
+  building), no side yard is required under ZR 23-335(b). Under the C2-2 overlay, ZR 34-232
+  removes the requirement for any residential building. A mixed building reaches the same result
+  through ZR 35-01 -> 35-21 -> 35-22 -> 23-335(b). (ZR 34-232 by its words reaches a "residential
+  building"; ZR 35-24 is not captured and is not cited.)
+- A single- or two-family detached residence needs two five-foot side yards under ZR 23-335(a)
+  without the overlay; even that is removed by ZR 34-232 in the overlay.
+- A side yard is not prohibited; it is optional with a five-foot open-area minimum if provided.
+- A building type that is not stated is never taken as residential-only (the detached case stays
+  a named condition, never a silent default).
+
+This is the program's own draft reading of the law. It has not been reviewed by a qualified
+architect or zoning examiner and is not legal advice. Not a determination by the Department of
+Buildings.

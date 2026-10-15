@@ -267,7 +267,7 @@ def _coverage_block(results: Mapping) -> Mapping:
 # :mod:`.zoning_lot_item` (the zoning-lot condition); this module only wires them
 # into the numbered list (the G-6 report-side isolation, M5-T165).
 _ORDER = ["zoning_lot", "lot_area", "coverage", "rear_yard", "placement", "legal_unit_limit",
-          "setback", "street_wall", "parking"]
+          "setback", "street_wall", "side_yard", "parking"]
 _CHECK_WORD = "A check not yet made against an independently worked example."
 
 
@@ -357,6 +357,12 @@ def open_items(results: Mapping) -> list[dict]:
     # ZR 23-344 result, not the "not yet checked" open check. A 1.4.0 document carries no rear_yard
     # block, so this is a no-op and the item stays byte-identical to M5-T165's open-check wording.
     _apply_rear_yard_open_item(by_category, results)
+    # M5-T170: on a 1.5.0 document the setback / street-wall / side-yard appendix items show the
+    # engine's applied envelope readings (the setback item is rewritten from the withheld value;
+    # the street-wall and side-yard items are added from the envelope rows, since the page-6
+    # not-checked line and any withheld value have cleared). A 1.4.0 document carries no envelope
+    # rows, so this is a no-op and page 8 stays byte-identical.
+    _apply_envelope_open_items(by_category, results)
 
     ordered = [by_category[c] for c in _ORDER if c in by_category]
     ordered += [v for c, v in by_category.items() if c not in _ORDER]
@@ -397,6 +403,68 @@ def _apply_rear_yard_open_item(by_category: dict, results: Mapping) -> None:
     item["status_label"] = _REAR_YARD_LABEL_BY_WAY.get(
         combined.get("way"), item["status_label"]
     )
+
+
+# The page-8 envelope appendix items (M5-T170). Title, a SHORT applied-result effect, and a short
+# "what would resolve it", per kind; the setback and street-wall effects vary with the row state so
+# they match page 3. Plain user texts: no internal name, never "not yet checked" where page 3 shows
+# an applied reading, never an unconditional claim.
+_ENVELOPE_TITLES = {"setback": "Setback above the base", "street_wall": "Street wall",
+                    "side_yard": "Side yard"}
+_ENVELOPE_RESOLVES = {
+    "setback": "The building's street-wall height against the maximum base height.",
+    "street_wall": "A survey of the adjacent street walls and the operative street line.",
+    "side_yard": "The building type and whether an open area runs along a side lot line.",
+}
+
+
+def _envelope_open_label(row: Mapping) -> str:
+    """The appendix label for a 1.5.0 envelope row: a not_known row is Pending verification; a row
+    resting on named assumptions is Conditional; a plain applies / not_applicable reading is
+    Provisional. Mirrors the page-3 chip so pages 3 and 8 agree."""
+    if row.get("state") == "not_known":
+        return labels.PENDING_VERIFICATION
+    if row.get("conditions"):
+        return labels.CONDITIONAL
+    return labels.PROVISIONAL
+
+
+def _envelope_open_effect(kind: str, row: Mapping) -> str:
+    """A short applied-result effect that matches the row's own state (so page 8 agrees with page
+    3). The setback and street-wall effects name whether the check applies here; the side yard is
+    'none required'."""
+    if kind == "setback":
+        if row.get("state") == "not_applicable":
+            return "No setback above the base is required for this building (ZR 23-433)."
+        return "A setback above the base applies for this building (ZR 23-433)."
+    if kind == "street_wall":
+        return "The street wall sits close to the street line; the exact position is conditional."
+    # side yard: the effect follows the row state, like the setback branch, so page 8 never
+    # contradicts page 3 (a detached building without the overlay needs two 5-ft yards).
+    if row.get("state") == "applies":
+        return "Two side yards, each at least 5 feet wide, are required (ZR 23-335(a))."
+    return "No side yard is required (ZR 23-335; ZR 34-232 under a commercial overlay)."
+
+
+def _apply_envelope_open_items(by_category: dict, results: Mapping) -> None:
+    """Show the applied envelope readings on page 8 from the document's own 1.5.0 envelope_rows
+    (M5-T170). The setback item (still present as a withheld value, reconciled to the envelope row)
+    is rewritten; the street-wall and side-yard items are added (their page-6 not-checked line and
+    any withheld value have cleared), so page 8 agrees with page 3. The item's detail reason is set
+    to its effect, so the appendix prints the short effect once (no duplicate reason row). No-op
+    when the document carries no envelope row (every 1.4.0 document), so page 8 stays
+    byte-identical."""
+    for kind in ("setback", "street_wall", "side_yard"):
+        row = constraint_text.envelope_row(results, kind)
+        if row is None:
+            continue
+        effect = _envelope_open_effect(kind, row)
+        item = by_category.get(kind) or {"category": kind, "title": _ENVELOPE_TITLES[kind]}
+        item["effect"] = effect
+        item["reason"] = effect  # detail line omitted (reason == effect) so it prints once
+        item["resolves"] = _ENVELOPE_RESOLVES[kind]
+        item["status_label"] = _envelope_open_label(row)
+        by_category[kind] = item
 
 
 def decision_open_items(results: Mapping) -> list[dict]:

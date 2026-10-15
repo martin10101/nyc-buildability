@@ -48,7 +48,14 @@ CID = "placement-building-b"
 # The other cases' rows, pinned at the claim head: this task adds a case and must not
 # touch any existing one. The digest proves byte-stability of all cases except the new
 # one, without git.
-OTHER_CASES_DIGEST = "9a77545ad3ff53d0049a6c0679935b974ee7f1b70a06ac79b19af0bc999e6f9c"
+# Moved by M5-T184: adding the step-P9 case benchmark-options-2-3-6-7 puts it into this
+# "other" set (CASE_IDS minus placement-building-b), so the blob grew by that case's rows
+# and the digest changed; no existing case's rows changed.
+# Moved again by M5-T184 round 2: the round-2 correction changed two rows of that same
+# benchmark case (opt67-cf-lot-coverage records only the agreed corner 80 percent; the
+# whole-lot opt67-cf-max-footprint becomes not known), so this "other" blob - which includes
+# the benchmark case - changed again; no existing case's rows changed.
+OTHER_CASES_DIGEST = "8af6b2d408d532bccb77b98adc46ed5ffcac9c1e70601d6280cc2300bfd7dc4d"
 
 
 def _row(rid):

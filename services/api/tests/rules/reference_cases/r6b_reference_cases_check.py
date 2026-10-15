@@ -44,6 +44,7 @@ import r6b_reference_cases_step_p5 as step_p5  # noqa: E402
 import r6b_reference_cases_step_p6 as step_p6  # noqa: E402
 import r6b_reference_cases_step_p7 as step_p7  # noqa: E402
 import r6b_reference_cases_step_p8 as step_p8  # noqa: E402
+import r6b_reference_cases_step_p9 as step_p9  # noqa: E402
 
 # A field name (key) that would smuggle a program result into a case file.
 FORBIDDEN_KEY_SUBSTRINGS = ("program", "actual", "first_screen", "firstscreen")
@@ -440,6 +441,7 @@ def provenance_errors() -> list[str]:
     errs += step_p6_reading_errors()
     errs += step_p7_reading_errors()
     errs += step_p8_reading_errors()
+    errs += step_p9.reading_digest_errors()
     return errs
 
 
@@ -559,6 +561,7 @@ def validate_case(case_id: str, data: dict) -> list[str]:
     errs += step_p8.must_stay_not_known_errors(case_id, data)
     errs += step_p8.placement_basis_errors(case_id, data)
     errs += step_p8.plate_label_errors(case_id, data)
+    errs += step_p9.case_errors(case_id, data)
     for row in data["rows"]:
         missing = lib.ROW_KEYS - set(row)
         extra = set(row) - lib.ROW_KEYS - lib.OPTIONAL_ROW_KEYS

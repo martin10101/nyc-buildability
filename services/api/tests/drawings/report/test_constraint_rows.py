@@ -190,6 +190,18 @@ def test_s9_page_three_rear_yard_links_its_numbered_open_item() -> None:
     assert f'id="issue-{number}"' in html
 
 
+def test_s9_page_three_side_yard_links_its_numbered_open_item() -> None:
+    # G4 advisory 4: page 3's side-yard row now carries the same "see item N" link the setback
+    # and street-wall rows have (_ENVELOPE_CATEGORY maps side_yard to its own numbered open item).
+    doc = rear_yard_1_5_0()
+    number = _item_number(doc)["side_yard"]
+    row = _row_by_title(doc, "Side yard")
+    assert row is not None
+    assert f'href="#issue-{number}"' in row[1]
+    html = build_report_html(doc)
+    assert f'id="issue-{number}"' in html
+
+
 # =============================================================== fall-back home
 # The 1.4.0 State strings have one home in constraint_text (the hard-coded dict
 # left page_site_context), so the fall-back and its wording cannot drift apart.

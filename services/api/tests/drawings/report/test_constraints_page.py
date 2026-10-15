@@ -124,11 +124,35 @@ def test_s8_no_building_placed_legend_on_site_sentence_on_scenario() -> None:
     assert readers.NOT_PLACED_LINE in scenario          # the sentence stays on the sheet
 
 
+# =========================================================================== M5-T170 S18 (DB-266)
+def test_m5t170_s18_page3_lists_setback_and_street_wall_with_no_envelope_row() -> None:
+    # A 1.5.0 document that carries a rear_yard block but NO envelope row for setback or street
+    # wall (DB-266: main 2bcdb05a's benchmark dropped both page-3 rows while page 8 kept them). The
+    # page-3 table must still LIST both, falling back to the 1.4.0 wording, never silently omitted.
+    import copy
+
+    doc = copy.deepcopy(benchmark())
+    doc.pop("envelope_rows", None)  # rear-yard-only 1.5.0 document
+    text = visible_text(_site_section(build_report_html(doc)))
+    assert "Setback above the base" in text
+    assert "Not worked out yet" in text  # the 1.4.0 fall-back state, not an omission
+    assert "Street wall" in text
+    assert "Not checked" in text
+    # the side yard has no 1.4.0 row, so with no envelope row it is not listed (no invented row).
+    assert "Side yard" not in text
+
+
 # =========================================================================== S10
 def test_s10_site_section_words_within_the_baseline() -> None:
     off = build_report_html(benchmark())
     site = off[off.index('id="site-and-context"'):off.index('id="option-comparison"')]
-    assert len(visible_text(site).split()) <= 199  # the G0 baseline
+    # M5-T170: page 3 now shows the three NB-06 envelope readings (setback, street wall, side
+    # yard) as short conditional readings, replacing the 1.4.0 "Not worked out yet" / "Not checked"
+    # fall-backs and adding the side-yard row (D-094 R037/R043). The G0 baseline was 199; the three
+    # applied readings add ~16 words. M5-T170 round 2 (G4 advisory 4): the side-yard row now carries
+    # the same "(see item N)" cross-reference the setback and street-wall rows have, adding 4 words
+    # (216 -> 220); each reading is still one short sentence.
+    assert len(visible_text(site).split()) <= 220
 
 
 # =========================================================================== S12

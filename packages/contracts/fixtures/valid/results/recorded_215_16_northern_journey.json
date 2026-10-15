@@ -432,11 +432,12 @@
         "setback_above_base": {
           "way": "withheld",
           "label": "Setback above the base",
-          "reason": "The program does not work out the setback above the base (ZR 23-433) yet, so it is not covered; the envelope drawing and any floor above the base height wait for it.",
-          "gap_kind": "work_owed",
-          "resolved_by": "Working out the ZR 23-433 setback rule and checking it against an independently worked example.",
+          "reason": "A conditional reading: no setback above the base is required.",
+          "gap_kind": "missing_information",
+          "resolved_by": "Confirming the building's street-wall height against the maximum base height and the operative street line, then checking the setback against an independently worked example.",
           "zr_sections": [
-            "ZR 23-433"
+            "ZR 23-433",
+            "ZR 35-632"
           ]
         }
       }
@@ -696,6 +697,23 @@
           "ZR 23-344",
           "ZR 12-10"
         ]
+      },
+      {
+        "kind": "street_wall_band",
+        "state": "not_established",
+        "basis": "derived",
+        "zr_sections": [
+          "ZR 35-631"
+        ]
+      },
+      {
+        "kind": "setback_line",
+        "state": "not_established",
+        "basis": "derived",
+        "zr_sections": [
+          "ZR 23-433",
+          "ZR 35-632"
+        ]
       }
     ]
   },
@@ -912,7 +930,6 @@
       },
       "not_checked": [
         "Where the plan sits on the lot",
-        "The street wall",
         "Parking, loading and bicycle requirements"
       ],
       "capacity_estimate": {
@@ -982,7 +999,7 @@
           "ZR 12-10"
         ],
         "state": "not_known",
-        "text": "A labelled draft reading: in R6 through R12 districts, beyond 100 feet of a street line, whether a rear yard is required under ZR 23-344(c)(3) turns on whether the deemed rear lot line coincides with a side lot line of an adjoining zoning lot. The neighbouring zoning lots' lot-line kinds are not recorded for this lot, so this is not known. No number is shown. Not a determination by the Department of Buildings."
+        "text": "A labelled draft reading: in R6 through R12 districts, beyond 100 feet of a street line, whether a rear yard is required turns on the kind of the adjoining zoning lot's lot line that the deemed rear lot line meets: meeting a side lot line calls for none under ZR 23-344(c)(3), while meeting a rear lot line requires one under ZR 23-344(c)(1). The neighbouring zoning lots' lot-line kinds are not recorded for this lot, so this is not known. No number is shown. Not a determination by the Department of Buildings."
       }
     ],
     "combined": {
@@ -996,7 +1013,7 @@
         },
         {
           "kind": "unchecked_condition",
-          "assumption": "If the neighbours' side lot lines are confirmed for ZR 23-344(c)(3) beyond 100 feet of a street line",
+          "assumption": "If the adjoining zoning lots' lot-line kinds are confirmed beyond 100 feet of a street line - a neighbour's side lot line calls for none (ZR 23-344(c)(3)), a neighbour's rear lot line requires one (ZR 23-344(c)(1))",
           "settled_by": "Reading the adjoining zoning lots' recorded lot-line kinds"
         },
         {
@@ -1028,6 +1045,101 @@
       "basis": "gis",
       "source_title": "NYC Department of City Planning MapPLUTO, version 26v2",
       "source_date": "2026-09-30"
+    },
+    {
+      "key": "mapped_street_width:215 Place",
+      "value": 60.0,
+      "unit": "ft",
+      "basis": "gis",
+      "source_title": "DCP Digital City Map street center lines",
+      "source_date": "2026-09-30"
+    },
+    {
+      "key": "mapped_street_width:Northern Boulevard",
+      "value": 100.0,
+      "unit": "ft",
+      "basis": "gis",
+      "source_title": "DCP Digital City Map street center lines",
+      "source_date": "2026-09-30"
+    }
+  ],
+  "envelope_rows": [
+    {
+      "kind": "street_wall",
+      "state": "applies",
+      "text": "A conditional reading of the street-wall location.",
+      "zr_sections": [
+        "ZR 35-631",
+        "ZR 34-24"
+      ],
+      "values": [
+        {
+          "name": "Street wall within this distance of the 215 Place street line",
+          "value": 8.0,
+          "unit": "ft"
+        },
+        {
+          "name": "Street wall within this distance of the Northern Boulevard street line",
+          "value": 8.0,
+          "unit": "ft"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If no block frontage has a prevailing street wall further from the street line than the rule's own eight feet (which could instead line the street wall up with the existing adjacent buildings)",
+          "settled_by": "A survey of the existing street walls on each block frontage within 150 feet of the building"
+        },
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If the operative street line is confirmed: the eight feet are measured from the street line, and a mapped street width does not by itself fix where that line sits",
+          "settled_by": "A survey or the approved plan that fixes the street line"
+        }
+      ]
+    },
+    {
+      "kind": "setback",
+      "state": "not_applicable",
+      "text": "A conditional reading: no setback above the base is required.",
+      "zr_sections": [
+        "ZR 23-433",
+        "ZR 35-632"
+      ],
+      "values": [
+        {
+          "name": "Setback depth above the maximum base height on the 215 Place frontage",
+          "value": 15.0,
+          "unit": "ft"
+        },
+        {
+          "name": "Setback depth above the maximum base height on the Northern Boulevard frontage",
+          "value": 10.0,
+          "unit": "ft"
+        }
+      ],
+      "conditions": [
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If any part of the building street wall rises above the 45 ft maximum base height",
+          "settled_by": "The building's street-wall height against the maximum base height"
+        }
+      ]
+    },
+    {
+      "kind": "side_yard",
+      "state": "not_applicable",
+      "text": "A draft reading: no side yard is required under ZR 34-232.",
+      "zr_sections": [
+        "ZR 23-335",
+        "ZR 34-232"
+      ],
+      "conditions": [
+        {
+          "kind": "unchecked_condition",
+          "assumption": "If any open area is provided along a side lot line it must be at least 5 feet wide (measured perpendicular to the side lot line)",
+          "settled_by": "The building design: whether an open area along a side lot line is provided"
+        }
+      ]
     }
   ]
 }

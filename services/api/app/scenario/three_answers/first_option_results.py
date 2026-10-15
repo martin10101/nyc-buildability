@@ -115,9 +115,14 @@ _SINGLE_FIGURE_NOT_GIVEN_RESOLVED = "Reading coverage by portion in coverage_by_
 
 _NOT_CHECKED_BASE = (
     "Where the plan sits on the lot",
-    "The street wall",
     "Parking, loading and bicycle requirements",
 )
+# The street-wall not-checked line (M5-T170). It is kept only when the engine did NOT apply the
+# street-wall check to this document (a 1.4.0 document with no envelope_rows). Page 8 then shows
+# "The street wall is not checked", and page 6 keeps this line so the two agree. When the engine
+# DID apply the check (a 1.5.0 document carrying the street_wall envelope row) the reading is shown
+# at the lot level, so the line is dropped and page 6 agrees with pages 3 and 8.
+_NOT_CHECKED_STREET_WALL = "The street wall"
 # The corner-lot rear-yard not-checked line. M5-T167 round 4 (scope correction 3, R136): it is kept
 # only when the engine did NOT apply ZR 23-344 to this document (a 1.4.0 document with no rear_yard
 # block). Page 8 then shows "the rear yard is not yet checked", and page 6 must agree by keeping
@@ -177,6 +182,7 @@ class FirstOptionInputs:
     outline_area_sqft: float | None
     way_conditions: tuple[dict, ...] = ()
     rear_yard_applied: bool = False
+    street_wall_applied: bool = False
 
 
 @dataclass(frozen=True)
@@ -521,7 +527,10 @@ def _not_checked(inp: FirstOptionInputs) -> list[str]:
     rows: list[str] = []
     if not inp.rear_yard_applied and inp.lot_type == "corner":
         rows.append(_NOT_CHECKED_REAR_YARD)
-    rows.extend(_NOT_CHECKED_BASE)
+    rows.append(_NOT_CHECKED_BASE[0])  # "Where the plan sits on the lot"
+    if not inp.street_wall_applied:
+        rows.append(_NOT_CHECKED_STREET_WALL)
+    rows.append(_NOT_CHECKED_BASE[1])  # "Parking, loading and bicycle requirements"
     return rows
 
 

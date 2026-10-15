@@ -1,0 +1,268 @@
+{
+  "task_id": "M3-T010",
+  "title": "Capture the 20 Zoning Resolution sections the worked readings of options 5, 8 (two buildings on one lot; a divided lot) and 9-10 rest on that are not yet captured (23-51, 22-12, 22-121, 22-122, 32-121, 54-311, 25-24, 25-241, 12-10-transit-zone-inner, 23-12, 23-371, 23-372, 23-35, 23-351, 23-352, 23-353, 32-421, 33-26, 33-301, 12-10-select-commercial-overlay), and correct the law library's stale capture states for options 2-3 and 6-7. Documents only: source-text snapshots in the existing zr_section_snapshot/v1 shape with byte-identical bundled copies; no rule, no reading of the text for any lot, no computed figure, no choice of what option 8 or option 10 means.",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "Capture, from the official NYC DCP Zoning Resolution portal, the 20 sections that two independent sealed readings of options 5, 8 and 9-10 for the benchmark lot rest on and that are NOT in docs/research/zr-snapshots/v1/ (comparer return session-2026-10-15a/return-compare-options.md part 3): 23-51 (option 9-10: rooming units outside the density rules; under article-ii/chapter-3); 22-12 (option 9: Use Group II; under article-ii/chapter-2); 22-121 (option 9; under article-ii/chapter-2); 22-122 (option 9: districts barring rooming units; under article-ii/chapter-2); 32-121 (option 9: Use Group II in C districts; under article-iii/chapter-2); 54-311 (option 9: rooming-unit conversion; under article-v/chapter-4); 25-24 (option 10: parking general rule; under article-ii/chapter-5); 25-241 (option 10; under article-ii/chapter-5); 12-10-transit-zone-inner (option 10: the defined term; under article-i/chapter-2); 23-12 (option 8 meaning B: minimum lot area and width; under article-ii/chapter-3); 23-371 (option 8 meaning A: distance between buildings; under article-ii/chapter-3); 23-372 (option 8 meaning A: windows to lot lines; under article-ii/chapter-3); 23-35 (option 8 meaning A: courts; under article-ii/chapter-3); 23-351 (option 8 meaning A; under article-ii/chapter-3); 23-352 (option 8 meaning A: inner court; under article-ii/chapter-3); 23-353 (option 8 meaning A: outer court; under article-ii/chapter-3); 32-421 (option 5: storeys for shops; under article-iii/chapter-2); 33-26 (option 5: commercial rear yard; under article-iii/chapter-3); 33-301 (option 5: corner rear-yard waiver; under article-iii/chapter-3); 12-10-select-commercial-overlay (option 5: the defined term; under article-i/chapter-2). Each capture is one JSON in the existing zr_section_snapshot/v1 shape (templates: docs/research/zr-snapshots/v1/zr-24-33.snapshot.json and zr-23-344.snapshot.json; a 12-10 term: zr-12-10-transit-zone-outer.snapshot.json): official HTML node request plus the print/PDF entityprint cross-check, both channels sha256-pinned (or the documented 504/403 fallback, disclosed), the page's own Last Amended stamp, verbatim_excerpt with #term# markers and list letters taken from the official PRINT (the HTML <ol> can restart a list - M3-T008 G1 F1), any table carried cell-by-cell in the structured tables field with a placeholder token in the excerpt (the M3-T009 pattern), content_digest_sha256 = sha256(verbatim_excerpt), extraction_status extracted_draft, raw_html_verified false, the ADR-007 not-professionally-reviewed label. Each lands in docs/research/zr-snapshots/v1/ AND as a byte-identical copy in services/api/app/_zr_snapshots/v1/ produced by RUNNING services/api/scripts/sync_zr_snapshots.py (never edited). Every section number, title, URL and Last Amended date is taken from the page read for this pass. A listed node that does not exist (e.g. 'select commercial overlay' may not be a 12-10 defined term) or was renumbered is reported in the producer report, never invented. THEN correct the law library's capture states exactly as the comparer listed (part 4): option-02-03-affordable-and-senior-housing.md (the senior sub-terms, 27-111/131/133/14/151 and Appendix F are captured; 23-154 stays not captured; the singular term 'affordable independent residence for seniors'), option-06-07-community-facility.md (every zr-24-* section is captured; 24-161 supplies the R6B combination ceiling), options-sections.md line ~155 (66-11 defines 'mass transit station', not the transit zone) and the new captures' states; capture-state corrections only, no new reading. Documents only: no rule, no reading for a lot, no computed number, no eligibility determination; option 8's meaning (N1) and option 10's distinct meaning (N2) stay open owner questions. ALSO correct the library index docs/zoning-law-library/benchmark-r6b-sections.json: the 32-131 entry (Use Group III, community facilities) is marked 'followed: option 5/11 (C2-2 retail use permission)'; the retail permission for option 5 is 32-161 (Use Group VI); re-point 32-131 to the community-facility options (6, 7) and add capture-status entries for the 20 new sections where the index lists them.",
+  "business_reason": "Two independent sealed readings per option (session 2026-10-15a) agree on the headline values of options 2-10 for the benchmark lot, but the values of options 5, 8 and 9-10 rest on sections that are read only live (23-51, 23-12, 23-371, 32-421, 33-26, 33-301 verified live by the comparer) or not at all; a rule or a reference case may cite a section only once it is captured with provenance (CLAUDE.md principles 2, 3, 12). The library notes for options 2-3 and 6-7 still say sections are not captured that M3-T008/M3-T009 captured, which misled two readers. This batch replaces the earlier option-8 Article VII Chapter 7 plan: the comparer found the district-boundary meaning is not this lot's situation (77-xx deferred). Remaining owed captures (community-facility use permission 22-131..22-135, 74-902/74-903, 23-63, 35-23, 35-24, 12-10 residential building / side lot line, 23-154 pre-2024) follow in a later task, one capture run at a time.",
+  "inputs": [
+    "/root/project/lanes-runtime/owner-docs/session-2026-10-15a/return-compare-options.md",
+    "docs/zoning-law-library/options/option-05-shops-with-residences.md",
+    "docs/zoning-law-library/options/option-08-split-lot.md",
+    "docs/zoning-law-library/options/option-09-shared-housing.md",
+    "docs/zoning-law-library/options/option-10-parking-and-transit-zone.md",
+    "docs/zoning-law-library/options-sections.md",
+    "docs/DISCOVERY_BACKLOG.md",
+    "docs/research/zr-snapshots/v1/zr-24-33.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-344.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-transit-zone-outer.snapshot.json",
+    "services/api/app/rules/snapshots.py",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "docs/RESEARCH_AND_VERIFICATION.md"
+  ],
+  "outputs": [
+    "docs/research/zr-snapshots/v1/zr-23-51.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-22-12.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-22-121.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-22-122.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-32-121.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-54-311.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-25-24.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-25-241.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-transit-zone-inner.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-12.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-371.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-372.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-35.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-351.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-352.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-353.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-32-421.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-33-26.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-33-301.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-select-commercial-overlay.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-51.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-12.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-121.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-122.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-32-121.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-54-311.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-25-24.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-25-241.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-transit-zone-inner.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-12.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-371.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-372.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-35.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-351.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-352.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-353.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-32-421.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-33-26.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-33-301.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-select-commercial-overlay.snapshot.json",
+    "docs/zoning-law-library/options/option-02-03-affordable-and-senior-housing.md",
+    "docs/zoning-law-library/options/option-06-07-community-facility.md",
+    "docs/zoning-law-library/options-sections.md",
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "project-control/reports/M3-T010-producer-report.md"
+  ],
+  "dependencies": [
+    "M3-T006",
+    "M3-T007",
+    "M3-T009"
+  ],
+  "allowed_paths": [
+    "docs/research/zr-snapshots/v1/zr-23-51.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-22-12.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-22-121.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-22-122.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-32-121.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-54-311.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-25-24.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-25-241.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-transit-zone-inner.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-12.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-371.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-372.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-35.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-351.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-352.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-23-353.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-32-421.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-33-26.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-33-301.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-12-10-select-commercial-overlay.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-51.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-12.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-121.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-22-122.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-32-121.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-54-311.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-25-24.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-25-241.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-transit-zone-inner.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-12.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-371.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-372.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-35.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-351.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-352.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-23-353.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-32-421.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-33-26.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-33-301.snapshot.json",
+    "services/api/app/_zr_snapshots/v1/zr-12-10-select-commercial-overlay.snapshot.json",
+    "docs/zoning-law-library/options/option-02-03-affordable-and-senior-housing.md",
+    "docs/zoning-law-library/options/option-06-07-community-facility.md",
+    "docs/zoning-law-library/options-sections.md",
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "project-control/reports/M3-T010-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/",
+    "services/api/app/scenario/",
+    "services/api/app/drawings/",
+    "services/api/tests/",
+    "services/api/scripts/sync_zr_snapshots.py",
+    "apps/",
+    "packages/",
+    "docs/reference-cases/",
+    "docs/zoning-rule-review/",
+    "docs/research/evidence-records/",
+    "docs/design/",
+    "docs/zoning-law-library/options/option-05-shops-with-residences.md",
+    "docs/zoning-law-library/options/option-08-split-lot.md",
+    "docs/zoning-law-library/options/option-09-shared-housing.md",
+    "docs/zoning-law-library/options/option-10-parking-and-transit-zone.md"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "each captured section",
+      "when": "the snapshot checks run",
+      "then": "the file is in the zr_section_snapshot/v1 shape; content_digest_sha256 == sha256(verbatim_excerpt); it names its channel and is sha256-pinned on both the HTML and the print/PDF channel (or records the documented 504/403 fallback); and SnapshotStore().load() / app.rules.snapshots.load_snapshot_file loads it without error (unique snapshot_id matching the filename)"
+    },
+    {
+      "id": "S2",
+      "given": "the new captures",
+      "when": "python services/api/scripts/sync_zr_snapshots.py --check and tests/rules/test_zr_snapshot_bundle.py run unedited",
+      "then": "--check exits 0; the bundle test's bundled==canonical membership assertion still holds (20 canonical and 20 bundled added together), each bundled copy is byte-identical to its canonical source, and test_default_store_resolves_to_packaged_location's store.load() validates every new file's digest"
+    },
+    {
+      "id": "S3",
+      "given": "the new captures",
+      "when": "tests/drawings/report/test_report_law_links.py runs unedited",
+      "then": "it stays green; the benchmark fixture cites none of the 20 new sections, so no rendered href changes; each new capture's request_url is the official article/chapter/section page"
+    },
+    {
+      "id": "S4",
+      "given": "a listed section whose node does not exist under the current (12/5/2024 City of Yes) text, or whose official title/number differs from the library's summary",
+      "when": "it is looked up on the official site",
+      "then": "it is reported in the producer report with the URL, the time and what the site shows; no file is written for a missing node and no text, title or number is invented (e.g. a 12-10 term that is not defined)"
+    },
+    {
+      "id": "S5",
+      "given": "every captured file",
+      "when": "it is searched for status words",
+      "then": "extraction_status is extracted_draft, raw_html_verified is false, nothing is labelled Verified, and no rule / reading for a lot / derived or computed number / eligibility determination appears; section id, title, official URL and Last Amended date are taken from the official page read for this pass"
+    },
+    {
+      "id": "S6",
+      "given": "the task diff",
+      "when": "it is listed",
+      "then": "it touches only the allowed paths; no evidence record, rule, scenario, drawing, test or script changes; the three library files change only in capture-state cells and the named corrections; each cited passage is the section's own verbatim source text"
+    },
+    {
+      "id": "S7",
+      "given": "a captured section with lettered/numbered lists or a table (e.g. 23-371 distances, 25-24 tables, 32-421)",
+      "when": "its excerpt is compared with the official print/PDF",
+      "then": "the list letters/numbers are the print's (one continuous list where the print runs one), every word verbatim; a table is carried cell-by-cell in a structured table field with a placeholder token in the excerpt (the M3-T009 pattern); where the print is unavailable the markup positions are disclosed with \"cite by words\""
+    },
+    {
+      "id": "S8",
+      "given": "a parent section with children (the 23-35 court subtree; 22-12/22-121/22-122; 25-24/25-241) and the open owner questions on options 8 and 10",
+      "when": "the subtree is captured",
+      "then": "the enumerated sections are captured and any adjacent child/parent node found but not in this batch is listed in the producer report for a later capture, never silently omitted; neither meaning of option 8 nor option 10's distinct meaning is asserted"
+    },
+    {
+      "id": "S9",
+      "given": "a 504 on a large Chapter-7 body page or a per-node 403 (DB-167)",
+      "when": "it occurs",
+      "then": "the documented fallback (direct HTML GET, browser UA, sha256-pinned) is used and disclosed in cross_check/notes; requests are paced with pauses; the capture run stops on repeated refusals; the request is never evaded or faked"
+    },
+    {
+      "id": "S10",
+      "given": "the law library files option-02-03-affordable-and-senior-housing.md, option-06-07-community-facility.md and options-sections.md and the index docs/zoning-law-library/benchmark-r6b-sections.json",
+      "when": "they are compared with docs/research/zr-snapshots/v1/ after this task",
+      "then": "every capture-state mark ([C]/[NC] or 'NOT CAPTURED') in them matches the folder listing (the comparer's part-4 corrections applied: senior sub-terms, 27-111/131/133/14/151, Appendix F (a pointer capture: the Queens maps are images, not transcribed), every zr-24-* section, the 66-11 wording); the 20 new captures are marked captured where those files name them; no reading or value in them changes; the index's 32-131 entry no longer names the C2-2 retail permission (32-161 does) and its JSON stays valid"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": "official-source-researcher",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "RISK 1: Options 8 and 10 carry open owner questions (N1, N2/DB-255). Capture is meaning-neutral; the producer report states that no meaning is chosen and capture alone unblocks nothing downstream.",
+    "RISK 2: 12/5/2024 City of Yes renumbering - Article VII Chapter 7 and the 23-35x court group may have moved, merged or been retitled. Take every number, title and Last Amended date from the page read this pass; report, never invent, a missing or renumbered node (S4). The library's parenthetical titles are a summary, not a confirmed per-node title.",
+    "RISK 3: Big-page 504 / per-node 403 (DB-167) - Chapter-7 bodies were read live during M3-T007 and are large. Use the disclosed direct-GET browser-UA fallback, sha256-pinned; pause between requests; stop on repeated refusals (S9).",
+    "RISK 4: One capture run at a time against the official site - M3-T010 must not fetch concurrently with the C2 capture task or any other live capture run. 23-154 (HTTP 403, option 2) and the C2 set (rooming units, shops, parking) are out of scope, deferred to their own task.",
+    "RISK 5: Capture-claim drift - run the producer capture-claim check so the folder listing equals the claimed set; pdftotext drops hyphens in section numbers and wraps table cells, so keep the HTML form canonical and make the cross-check hyphen/wrap-tolerant (M3-T009 lesson).",
+    "RISK 6: a 12-10 defined term may not exist ('select commercial overlay'); report it with what the site shows, never write a file for it."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T05:53:20.164625+00:00",
+  "updated_at": "2026-10-15T08:43:58.511673+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R102",
+        "D-094-R104"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T05:53:20.164993+00:00",
+  "path_notes": "Lane A (engine snapshots): docs/research/zr-snapshots/** and services/api/app/_zr_snapshots/** are Lane A; the producer report is Lane C. Run on a task/ branch so the lane-branch path check is skipped (a lane-a/ branch would reject the Lane-C report). Snapshot filenames are disjoint from any sibling capture task. sync_zr_snapshots.py is RUN, never edited (it is in forbidden_paths). DISJOINTNESS FROM M5-T170 (verified at bb5c02b9): M5-T170's allowed_paths contain no path under docs/research/zr-snapshots/ or services/api/app/_zr_snapshots/; the 16 zr-* snapshots M5-T170 names are in its inputs (read-only) with distinct basenames (23-431, 23-432, 23-433, 23-335, 34-11, 34-24, 34-232, 35-01, 35-63, 35-631/632/633, 12-10-street-wide/narrow) and share no basename with the 20 new files; M5-T170's report is M5-T170-producer-report.md; M5-T170 holds docs/RESEARCH_REQUESTS.md and docs/research/evidence-records/{NB-01,05,06}.json which M3-T010 does not list and forbids - intersection is empty, including test pins and the benchmark fixture (M3-T010 touches no test or fixture). No overlap with M5-T175 (drawings/overlay). CONTRACT SEAM: append M3-T010 to the applicability.task_ids of D-094 R102 and R104 (today they stop at M3-T009) with a directive_registry digest resync + audit_log entry in the SAME commit, and run reg.evaluate_task_refs before claim (applicable must == cited). SEEDS: seed ONLY the producer report placeholder; the producer writes all 40 snapshot files WHOLE in the capture commit (see correction A) - the proven M3-T009 arc (commit ccf8e24b) created its snapshots whole and seeded no snapshot placeholder, because empty/invalid snapshot placeholders would redden the existing api CI job (test_zr_snapshot_bundle.py membership/byte-identity/store.load() and sync --check). Session 2026-10-15a: the batch was re-chosen from the comparer's part 3 (the sections the agreed option values rest on) and the library capture-state corrections (part 4) were added; the three library files are in no other task's paths (the law-library lane, documents only, D-094 R102).",
+  "documented_test_commands": [
+    "python services/api/scripts/sync_zr_snapshots.py --check",
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py",
+    "python3 scripts/lanes/check_lane_paths.py --coverage"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T05:53:24.183849+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints beside M5-T170 (no shared file); the capture run starts from the claim head; one capture run against the official site at a time"
+    },
+    {
+      "at": "2026-10-15T07:08:27.251147+00:00",
+      "agent": "official-source-researcher",
+      "percent": 60,
+      "status": "claimed",
+      "message": "twenty official law texts captured word for word with byte-identical bundled copies, and the law library's capture states corrected; independent precheck READY (whole api suite under the lock); the builder's commit integrated as fd48fbc0 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T08:22:44.844296+00:00",
+      "agent": "official-source-researcher",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T08:43:58.511534+00:00"
+}

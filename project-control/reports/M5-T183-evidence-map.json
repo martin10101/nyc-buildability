@@ -1,0 +1,63 @@
+{
+ "task_id": "M5-T183",
+ "material_commits": [
+  "dec38ebf (builder round 1 (cherry-pick of 8276bb48): services/api/app/drawings/kit/area_allocation.py (the two-zone illustration kernel, both states), its test, the two snapshot SVGs, the producer report)",
+  "bed48258 (builder round 2 (cherry-pick of eca07305): G5 F1-F3 closed in the kernel (finite, plausible coordinates; zero-area outline or empty clipped zone; 1,000-vertex cap -> Unavailable), nine tests, snapshots unchanged, the producer report's Round 2 section)"
+ ],
+ "claim_seam_head": "dc3a2276",
+ "files_changed": [
+  "project-control/reports/M5-T183-producer-report.md",
+  "services/api/app/drawings/kit/area_allocation.py",
+  "services/api/tests/drawings/kit/snapshots/synthetic_placed_building_contract_1_5_0.area_allocation.svg",
+  "services/api/tests/drawings/kit/snapshots/synthetic_rear_yard_constraints_contract_1_5_0.area_allocation.svg",
+  "services/api/tests/drawings/kit/test_area_allocation_drawing.py"
+ ],
+ "what_did_not_change": "Not wired: no report page, website view, benchmark, results document, schema, rule, register entry or evidence record changed; the kernel draws only from a 1.5.0 document's area_allocation and placement blocks and is placed on the scenario sheet later (M5-T173 part B) and on the website by M5-T174.",
+ "known_limits": [
+  "Not yet visible to the owner: the drawing reaches the report and website only through M5-T173 part B and M5-T174.",
+  "Rendered only from the two committed synthetic 1.5.0 fixtures; the benchmark carries no area_allocation block until M5-T172 emits it.",
+  "G3 visual advisories for the placing task: labels stay at least 8.5 pt only at 1:1 or above about 0.89x scale; the bar-beside-the-building-diagram pairing (R094) is composed on the scenario sheet."
+ ],
+ "checks_at_material_head": [
+  "builder round 1: ruff exit 0; test file 28 passed; snapshots regenerated and reviewed; modularity exit 0; lane coverage PASS; four mutation proofs fail as expected",
+  "builder round 2: ruff exit 0; test file 37 passed; tests/drawings/kit 474 passed under the lock; modularity exit 0; lane coverage PASS; three guard mutations fail as expected; both snapshots byte-identical",
+  "pre-integration checks: whole api suite green at each builder commit (round 2: 9868 passed)",
+  "G1 data-contract-verifier PASS; G3 code-reviewer PASS; G3 visual-quality-reviewer PASS (three advisories for M5-T173); G4 qa-engineer PASS; G5 security-reviewer PASS with F1-F3 (closed in round 2); G5 delta check at bed48258: see the review record",
+  "CI run 38703438698 at 48d6587b (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R024": [
+   "The kernel never equates zoning floor area with apartment or plate area: it draws the block's own share and prints the block's measure and exact conversion statement beside it (test_s6_carries_measure_and_exact_conversion_statement); an inconsistent split is Unavailable (test_s3_inconsistent_split_is_unavailable)."
+  ],
+  "D-094-R087": [
+   "The second zone is never called 'core and corridors': its label is the token 'Other building area: core, circulation, walls and services.' (test_s2_labels_and_caption_are_the_tokens_verbatim)."
+  ],
+  "D-094-R088": [
+   "The two-zone illustration exists as a drawing kernel in both states (services/api/app/drawings/kit/area_allocation.py; tests S1-S9; snapshots of both synthetic fixtures); placing it on the worked scenario is M5-T173 part B."
+  ],
+  "D-094-R089": [
+   "The zones are labelled exactly 'Apartment area' and 'Other building area: core, circulation, walls and services.' from the presentation tokens (test_s2_labels_and_caption_are_the_tokens_verbatim)."
+  ],
+  "D-094-R090": [
+   "The caption is exactly 'Illustrative area allocation—not a floor plan.' from the tokens (test_s2_labels_and_caption_are_the_tokens_verbatim); the report frame may omit it where the page prints it once (test_s2_caption_can_be_omitted_for_the_report_frame)."
+  ],
+  "D-094-R091": [
+   "ONE stated percentage, read from the block's share (round(share x 100), never hardcoded: test_s4_percentage_is_round_share_times_100_not_hardcoded), and the drawn proportion equals that share within half a percent in both states (test_s3_bar_proportion_equals_share_within_half_percent, test_s3_zone_proportion_equals_share_within_half_percent)."
+  ],
+  "D-094-R092": [
+   "The measure and the exact conversion statement of the block are printed beside the drawing; zoning floor area is never taken as the plate area without that statement (test_s6_carries_measure_and_exact_conversion_statement)."
+  ],
+  "D-094-R093": [
+   "No rooms, unit walls, apartment counts, stairs or elevators: only the expected texts and one number are drawn (test_s5_only_the_expected_texts_and_one_number) and the fitted state has exactly one dividing line inside the footprint (test_s5_fitted_has_exactly_one_line_inside_the_footprint)."
+  ],
+  "D-094-R094": [
+   "Zones inside the footprint only when the placement is fitted with an outline; otherwise a proportional bar (test_s1_unfitted_draws_a_bar_no_zone, test_s1_fitted_with_outline_draws_zones_no_bar); fitted without an outline is Unavailable, never a bar (test_s1_fitted_without_outline_is_unavailable_never_a_bar)."
+  ],
+  "D-094-R095": [
+   "One short caption only; no methodology text in the drawing (test_s5_only_the_expected_texts_and_one_number); the method goes to the appendix when placed (M5-T173 part B)."
+  ],
+  "D-094-R098": [
+   "The rendered SVGs of both states were checked for readability and consistency before review (snapshot review in the producer report; G3 visual-quality-reviewer PASS: every label 9.5 pt at 1:1, zones told apart by hatch, not colour: test_s7_every_label_is_at_least_8_5_pt, test_s7_zones_told_apart_by_hatch_not_colour); the placed result is checked again by M5-T173 part B."
+  ]
+ }
+}

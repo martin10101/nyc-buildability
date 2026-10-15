@@ -80,8 +80,10 @@ _ENVELOPE_TITLES = {
     "side_yard": "Side yard",
 }
 # The envelope-row kind -> the open-item category whose numbered record the row
-# links to (`#issue-<n>`); a kind with no open-item category carries no link.
-_ENVELOPE_CATEGORY = {"setback": "setback", "street_wall": "street_wall"}
+# links to (`#issue-<n>`); a kind with no open-item category carries no link. Side yard
+# links to its own numbered open item too, so page 3 cross-references it like the setback
+# and street-wall rows (page 8 numbers side_yard as an open item).
+_ENVELOPE_CATEGORY = {"setback": "setback", "street_wall": "street_wall", "side_yard": "side_yard"}
 
 
 def _issue_link(category: str | None, item_number: dict) -> raw:
@@ -130,6 +132,26 @@ def _envelope_label(row: Mapping) -> str:
     return labels.PROVISIONAL
 
 
+# The 1.4.0 fall-back State text for an envelope kind that the 1.5.0 document carries no row for
+# (DB-266): the exact 1.4.0 wording, so the constraint is still listed. Side yard has no 1.4.0 row.
+_ENVELOPE_FALLBACK_STATE = {"setback": "Not worked out yet", "street_wall": "Not checked"}
+
+
+def _envelope_fallback_row(kind: str, item_number: dict) -> list[object] | None:
+    """The 1.4.0 row for an envelope ``kind`` the 1.5.0 document carries no envelope row for
+    (DB-266 / S18): the constraint is still named, with its 1.4.0 State text, its numbered open
+    item linked, and the Pending verification label - never silently omitted. ``None`` for a kind
+    the 1.4.0 table never listed (side yard)."""
+    state = _ENVELOPE_FALLBACK_STATE.get(kind)
+    if state is None:
+        return None
+    return [
+        _ENVELOPE_TITLES[kind],
+        el("span", state, _issue_link(_ENVELOPE_CATEGORY.get(kind), item_number)),
+        label_chip(labels.PENDING_VERIFICATION),
+    ]
+
+
 def _constraint_rows_from_results(results: Mapping, item_number: dict) -> list[list[object]]:
     """The page-3 constraint rows read from the results contract 1.5.0 blocks
     (D-094 R037/R038/R079): the rear-yard combined row and the envelope rows show
@@ -149,6 +171,13 @@ def _constraint_rows_from_results(results: Mapping, item_number: dict) -> list[l
     for kind in ("setback", "street_wall", "side_yard"):
         row = constraint_text.envelope_row(results, kind)
         if row is None:
+            # DB-266 (S18): a 1.5.0 document whose envelope analysis did not emit this row (for
+            # example a rear-yard-only 1.5.0 document) must still LIST the constraint - it falls
+            # back to its 1.4.0 wording, never silently omitted. Side yard has no 1.4.0 row, so it
+            # is listed only when the engine emits one.
+            fallback = _envelope_fallback_row(kind, item_number)
+            if fallback is not None:
+                rows.append(fallback)
             continue
         rows.append([
             _ENVELOPE_TITLES[kind],

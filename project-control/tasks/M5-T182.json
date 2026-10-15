@@ -1,0 +1,178 @@
+{
+  "task_id": "M5-T182",
+  "title": "Illustrative placement and area allocation of Building B - the pure computation modules (scenario/three_answers/placement.py and area_allocation.py) with their unit tests (P-6.2 part A). Self-contained dataclasses mirroring rear_yard_checks.py; no wiring, no document change, no benchmark, no records.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Add two pure, self-contained scenario-layer modules (mirror rear_yard_checks.py; frozen dataclasses, no I/O, no document assembly). (1) placement.py: build_placement(...) -> a building_placement dict conforming to contract 1.5.0 $defs.building_placement. It computes, from the settled step-P8 reading placement-building-b.json ONLY: the plate = zoning floor area per storey (20,150/3 = 6,716.67); the footprint on the printed-tax-map basis (depth 6716.6667/100.76 = 66.66; 100.76 x 66.66 = 6,716.66, reconciled to the plate within +/-0.5); for a placed placement, the footprint outline polygon (schema $defs.polygon) built from the computed depth/frontage/offsets with every vertex derived (never a typed value); the offsets each naming its basis (back clearance 33.34 derived-from-printed_tax_map vs 35.31 derived-from-gis; frontage touch 0 vs the 3.12 ft gis conflict); the method, basis (printed_tax_map, the stated A1 basis), measure const, conversion_statement const; the checks/conditions/not_checked arrays stated from the reference case (coverage lower bound, rear-yard band not known, street-wall/setback/side-area conditions, physical floor plate not checked). For the unplaced state it returns a withheld placement (status withheld, no outline). (2) area_allocation.py: build_area_allocation(...) -> an area_allocation dict conforming to $defs.area_allocation. It applies ONE stated share (0.60) to the residential floor area (20,150): apartment 12,090.00 total / 4,030.00 per storey; other 8,060.00 total / 2,686.67 per storey; total 20,150.00; apartment+other=total; fitted follows the placement status. Emitted for every alternative with a floor area, placed or not. Every number comes ONLY from placement-building-b.json and the arithmetic, never a program run; nothing is labelled complies/buildable/optimal/feasible; agreement of two AI readings is not proof. The modules MUST NOT import three_way_document.py, geometry.py, first_option_results.py, envelope_constraints.py or any report/drawing/route module; the outline is built as plain schema dicts.",
+  "business_reason": "D-094 R044/R092 and the owner's 2026-10-14 review: the worked scenario (R143) needs a placement and an area allocation computed from source-based geometry on compatible measures. These two pure modules are the collision-free, dependency-free computation core; wiring them into the document, the benchmark, the register and the records is M5-T172b, which waits for M5-T169 and M5-T170 (shared engine/benchmark/register files). Building the core early is optional parallelism beside M5-T170 and produces no visible result on its own (supporting work).",
+  "inputs": [
+    "docs/reference-cases/R6B/cases/placement-building-b.json",
+    "docs/reference-cases/R6B/cases/step-p6-worked.json",
+    "docs/reference-cases/R6B/cases/real-lot.json",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "services/api/app/contracts/results_way_rules.py",
+    "services/api/app/scenario/three_answers/rear_yard_checks.py",
+    "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
+    "docs/design/ARCHITECT_PRESENTATION_CONTRACT.md"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/placement.py",
+    "services/api/app/scenario/three_answers/area_allocation.py",
+    "services/api/tests/scenario/three_answers/test_placement.py",
+    "services/api/tests/scenario/three_answers/test_area_allocation.py",
+    "project-control/reports/M5-T182-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T164",
+    "M5-T177"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/placement.py",
+    "services/api/app/scenario/three_answers/area_allocation.py",
+    "services/api/tests/scenario/three_answers/test_placement.py",
+    "services/api/tests/scenario/three_answers/test_area_allocation.py",
+    "project-control/reports/M5-T182-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/scenario/three_answers/three_way_document.py",
+    "services/api/app/scenario/three_answers/first_option_results.py",
+    "services/api/app/scenario/three_answers/geometry.py",
+    "services/api/app/scenario/three_answers/envelope_constraints.py",
+    "services/api/app/scenario/three_answers/result_ways.py",
+    "services/api/app/scenario/three_answers/result_way_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "services/api/app/scenario/three_answers/result_way_inputs.py",
+    "services/api/app/scenario/three_answers/__init__.py",
+    "services/api/app/drawings/",
+    "services/api/app/api/v1/results_read.py",
+    "packages/contracts/schemas/",
+    "services/api/app/_contract_schemas/v1/results.schema.json",
+    "services/api/app/rules/review_register/",
+    "docs/zoning-rule-review/",
+    "docs/research/evidence-records/",
+    "docs/research/README.md",
+    "docs/RESEARCH_REQUESTS.md",
+    "docs/reference-cases/",
+    "packages/contracts/fixtures/valid/results/recorded_215_16_northern_journey.json",
+    "apps/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "Building B: 20,150 sq ft zoning floor area, 3 storeys, tax-map frontage 100.76 ft (placement-building-b.json rows plate, footprint-tax-map)",
+      "when": "the plate and footprint are computed",
+      "then": "plate = 6,716.67; depth = 6716.6667/100.76 = 66.66; footprint = 100.76 x 66.66 = 6,716.66 (derived from a printed_tax_map frontage); reconciles to the plate within +/-0.5 (0.01 apart), never forced into one figure"
+    },
+    {
+      "id": "S2",
+      "given": "a placed placement with the stated A1 placement rule and the settled lot lines",
+      "when": "the footprint outline is built",
+      "then": "a $defs.polygon outline with every vertex derived from the computed depth/frontage/offsets (R044, never a typed value); the outline area reconciles to the plate within +/-0.5; status placed carries outline, method, basis printed_tax_map, measure, conversion_statement"
+    },
+    {
+      "id": "S3",
+      "given": "the unplaced state (benchmark; no threaded placement)",
+      "when": "the placement is built",
+      "then": "status withheld, carrying method/basis/measure/conversion_statement and NO outline (schema oneOf withheld branch; additionalProperties:false rejects an outline key)"
+    },
+    {
+      "id": "S4",
+      "given": "share 0.60 on the residential floor area 20,150",
+      "when": "the allocation split is computed",
+      "then": "apartment 12,090.00 total / 4,030.00 per storey; other 8,060.00 total / 2,686.67 per storey; total 20,150.00; apartment+other=total; the per-storey figures x3 equal the plate 6,716.67 (4,030.00+2,686.67=6,716.67)"
+    },
+    {
+      "id": "S5",
+      "given": "the allocation other total 8,060.00 (0.40 x 20,150, derived) and the coverage lower bound 0.80 x 10,075 = 8,060 (administrative_record; the corner-lot by-portion rule, ref lot-coverage-max, makes 80% a conservative lower bound not the cap)",
+      "when": "both are produced",
+      "then": "equal numerals but different quantities on different bases; a dedicated test asserts they are never summed, equated or carried as one figure (G-10)"
+    },
+    {
+      "id": "S6",
+      "given": "the offsets",
+      "when": "they are stated",
+      "then": "each names its basis: back clearance 33.34 (derived from printed_tax_map) vs 35.31 (derived from gis) per placement-building-b.json gis-conflict-check [NOT 33.32 from the superseded work order]; frontage touch 0 vs the 3.12 ft gis frontage conflict; the two-basis difference is carried as a conflict, never silently resolved"
+    },
+    {
+      "id": "S7",
+      "given": "the produced placement and area_allocation dicts",
+      "when": "each is validated against contract 1.5.0",
+      "then": "both conform to $defs.building_placement / $defs.area_allocation; additionalProperties:false rejects any unit count, room, wall, core, stair or elevator key (R093); label const 'Illustrative'; measure const 'residential_floor_area'; conversion_statement const the exact G-14 text; share within 0.60-0.75; a fitted:true with a withheld placement is refused by results_way_rules.py"
+    },
+    {
+      "id": "S8",
+      "given": "the fixed measure (G-14)",
+      "when": "the dicts are built",
+      "then": "the conversion_statement const is carried and 'physical floor plate (gross-up, exclusions, wall thickness)' is in not_checked; the plate is never called or returned as the physical floor plate"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": "backend-engineer",
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "accepted",
+  "progress_percent": 100,
+  "risks": [
+    "RISK A1 (the split's safety hinge): the modules MUST be import-isolated from three_way_document.py/geometry.py/first_option_results.py/envelope_constraints.py (mirror rear_yard_checks.py, which imports only block_frontage), so M5-T170's concurrent geometry.py edits cannot touch them and __init__.py stays unedited. A G3 check confirms the import set.",
+    "RISK A2 (interface churn): the module signatures are designed before M5-T172b wires them; if Part B needs a different shape it must re-open these now-accepted files (a scope correction). Keep the signatures minimal and driven by the contract $defs. This risk is the main argument for building M5-T172 as one task instead.",
+    "RISK A3: expected values come ONLY from placement-building-b.json and the arithmetic; the G1 reviewer re-derives each against the case, never a program run.",
+    "RISK A4: the GIS south offset is 35.31 (not the stale 33.32); G1 confirms against the reference case before the value is pinned."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T04:49:51.192108+00:00",
+  "updated_at": "2026-10-15T06:55:12.478070+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R044",
+        "D-094-R092"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T04:49:51.192383+00:00",
+  "path_notes": "Contract base: the wave-25 head (M5-T164 and M5-T177 accepted and integrated). Shares ZERO files with the M5-T170 spec's allowed_paths, so it is buildable in W26 beside M5-T170 (G-4). Needs no M5-T170 or M5-T169 output. At the contract seam the orchestrator appends M5-T182 to the applicability.task_ids of D-094 R044 and R092 (today neither names it), with a directive_registry digest resync + audit_log entry in the SAME commit, runs reg.evaluate_task_refs before claim (applicable must == cited), appends M5-T182 to manifest.affected_tasks with a PROVISIONAL task_verifications row, and seeds committed placeholders for the two modules, the two test files and the producer report before the G0 report. Tests import the modules directly (from app.scenario.three_answers.placement import ...). NO benchmark, NO register, NO records, NO reference-case edits (read-only). If the orchestrator declines the split, fold these allowed_paths, bind rows (R044/R092), seeds and scenarios into Spec B and drop the M5-T182 dependency.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers/test_placement.py tests/scenario/three_answers/test_area_allocation.py",
+    "python3 .github/scripts/validate_contracts.py && python3 -m pytest .github/scripts/tests",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T04:49:54.232881+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints beside M5-T170 (no shared file); the builder starts from the claim head"
+    },
+    {
+      "at": "2026-10-15T06:07:47.198982+00:00",
+      "agent": "backend-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "placement and area-allocation computation modules built (27+27 tests; three mutations); independent precheck green on every item except the whole-api run its lock blocked; the orchestrator's whole-api run at 9b902d20 then passed (9830 passed, 8 skipped; wholeapi-M5-T182-9b902d20.log); the builder's commit integrated as db590413 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T06:32:55.451545+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
+    }
+  ],
+  "accepted_by": "orchestrator",
+  "accepted_at": "2026-10-15T06:55:12.477929+00:00"
+}

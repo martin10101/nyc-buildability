@@ -8,7 +8,7 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Family: residential_rear_yard_corner_waiver
 - Rule version: 0.1.0-draft
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 3 (last changed 2026-10-14)
+- Revision: 4 (last changed 2026-10-15)
 
 ## Law
 
@@ -45,6 +45,7 @@ A made-up R6B corner lot where two street lines meet at about 89.7 degrees, a po
 ## Code
 
 - `services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json`
+- `services/api/app/scenario/three_answers/rear_yard_checks.py`
 - `services/api/app/rules/evaluator.py`
 - `services/api/app/rules/registry.py`
 

@@ -1447,7 +1447,7 @@
         {
           "section_id": "32-10",
           "captured": false,
-          "reason": "Use Group use-allowances header; NOT CAPTURED; option-5/11 use-permission closure not yet followed"
+          "reason": "Use Group use-allowances header; NOT CAPTURED; option-6/7 community-facility use-permission closure not yet followed"
         }
       ],
       "handled_by": [
@@ -1455,7 +1455,7 @@
       ],
       "coverage_status": "not_evaluated",
       "last_amended": "2024-12-05",
-      "scope_status": "followed: option 5/11 (C2-2 retail use permission)",
+      "scope_status": "followed: option 6/7 (Use Group III = community-facility use permission; the C2-2 retail permission for option 5/11 is 32-161 / Use Group VI)",
       "notes": "Use Group III general use allowances."
     },
     {

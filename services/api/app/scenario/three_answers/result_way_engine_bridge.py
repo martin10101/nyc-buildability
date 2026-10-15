@@ -37,11 +37,31 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from app.contracts.evaluator_inputs import build_three_answer_inputs
+from app.spatial.frontage_street_width import (
+    CLASS_NARROW,
+    CLASS_WIDE,
+    derive_frontage_street_widths,
+)
+from app.spatial.frontage_street_width.inputs import (
+    LotZoningContext,
+    MappedStreetSegment,
+    SegmentSource,
+)
 from app.spatial.site_geometry.block_frontage import measure_block_frontage
 
 from . import engine_conditions
 from .engine import ThreeAnswersResult, generate_results
 from .engine_conditions import DensityDecision, Presence
+from .envelope_constraints import (
+    BUILDING_MIXED,
+    BUILDING_RESIDENTIAL_ONLY,
+    WIDTH_NARROW,
+    WIDTH_UNKNOWN,
+    WIDTH_WIDE,
+    EnvelopeAnalysis,
+    Frontage,
+    build_envelope_analysis,
+)
 from .inputs import BuildingDefaults, ThreeAnswerInputs
 from .rear_yard_checks import RearYardAnalysis, build_rear_yard_analysis
 from .result_way_bridge import GatheredResult, gather_result_ways
@@ -68,6 +88,11 @@ __all__ = [
     "run_engine_and_result_ways",
     "run_engine_and_result_ways_from_evidence",
 ]
+
+# The per-frontage width class the street-width step issues (wide / narrow) mapped to the envelope
+# module's class; anything else (needs_street_width: unresolved or unknown, the D-052 refusal /
+# data-ambiguity states) is unknown here - withheld, never narrow by default (D-051).
+_WIDTH_BY_CLASS = {CLASS_WIDE: WIDTH_WIDE, CLASS_NARROW: WIDTH_NARROW}
 
 # The recorded three-state (the decision step's own ``Recorded``) mapped to the plain presence the
 # derivation module takes. Kept here, in a file the import guard already permits to name the
@@ -149,6 +174,21 @@ def _mappluto_source(profile: Mapping[str, Any] | None) -> tuple[str, str]:
     return title, str(retrieved)[:10]
 
 
+def _street_width_source(street_data: StreetData) -> tuple[str, str]:
+    """The source title and date for the mapped street-width input facts, read from the DCM Street
+    Center Line window the widths were measured from - the SAME provenance :func:`_street_segments`
+    stamps on each ``SegmentSource`` (``street_data.source`` and the window's retrieval). The
+    widths are not a MapPLUTO field (MapPLUTO carries no street width), so the MapPLUTO lot-fact
+    provenance is never borrowed for them. Returns ``('<title>', '')`` when no retrieval date is
+    present; the width facts are then emitted without a borrowed source (none at all)."""
+    prov = dict(street_data.provenance)
+    retrieved = prov.get("retrieved_at")
+    if isinstance(retrieved, list) and retrieved:
+        retrieved = retrieved[0]
+    date = str(retrieved)[:10] if isinstance(retrieved, str) and retrieved else ""
+    return street_data.source, date
+
+
 def _lot_point(outline: PreparedOutline | None) -> tuple[float, float] | None:
     if outline is None:
         return None
@@ -185,10 +225,6 @@ def _rear_yard_analysis_for(
     corner = reach.corner if reach is not None else None
     corner_reach = corner.reach.value if corner is not None and corner.reach.known else None
     corner_angle = corner.angle.value if corner is not None and corner.angle.known else None
-    street_reaches = (
-        [line.reach.value for line in reach.street_lines if line.reach.known]
-        if reach is not None else []
-    )
     block_frontage = measure_block_frontage(
         _frontage_key(geometry) or "", street_data, lot_point=_lot_point(outline),
     )
@@ -197,7 +233,6 @@ def _rear_yard_analysis_for(
     return build_rear_yard_analysis(
         corner_reach_ft=corner_reach,
         corner_angle_deg=corner_angle,
-        operative_street_reach_ft=min(street_reaches) if street_reaches else None,
         district=gathered.inputs.district,
         block_frontage=block_frontage,
         recorded_area_sqft=area.recorded_sq_ft if area is not None else None,
@@ -205,6 +240,149 @@ def _rear_yard_analysis_for(
         source_title=title,
         source_date=date,
     )
+
+
+def _lot_borough(profile: Mapping[str, Any] | None) -> str | None:
+    """The lot's borough name (Queens, Brooklyn, ...), read from the property profile identity.
+    The street-width step needs it to check the ZR 12-10 named-street exceptions (a street with no
+    borough fails that check closed, so no class issues). None when no profile was read."""
+    if not isinstance(profile, Mapping):
+        return None
+    identity = profile.get("identity")
+    address = identity.get("address") if isinstance(identity, Mapping) else None
+    borough = address.get("borough") if isinstance(address, Mapping) else None
+    return str(borough) if borough else None
+
+
+def _street_segments(street_data: StreetData, borough: str | None) -> list[MappedStreetSegment]:
+    """The DCM centre-line features of the threaded street window as the street-width step needs
+    them: one MappedStreetSegment per centre line, carrying the window's documented retrieval as
+    its source (so the D-052 source attestation holds) and the lot's borough (so the ZR 12-10
+    named-street check can run)."""
+    prov = dict(street_data.provenance)
+
+    def _first(key: str) -> str | None:
+        value = prov.get(key)
+        if isinstance(value, list) and value:
+            return str(value[0])
+        return str(value) if isinstance(value, str) and value else None
+
+    source = SegmentSource(
+        source=street_data.source,
+        source_id=prov.get("source_id") if isinstance(prov.get("source_id"), str) else None,
+        dataset=street_data.source,
+        dataset_version=None,
+        request_url=_first("request_urls"),
+        retrieved_at=_first("retrieved_at"),
+        raw_digest=_first("raw_digests"),
+    )
+    return [
+        MappedStreetSegment(
+            object_id=cl.object_id,
+            street_name=cl.street_name,
+            borough=borough,
+            mapped_width_raw=cl.mapped_width_raw,
+            plain_mapped_street=cl.status_ok,
+            status_note=cl.status_note,
+            source=source,
+        )
+        for cl in street_data.centerlines
+    ]
+
+
+def _frontage_widths(
+    street_data: StreetData | None,
+    geometry: SiteGeometry | None,
+    gathered: GatheredResult,
+    profile: Mapping[str, Any] | None,
+) -> list[Frontage]:
+    """The per-frontage wide / narrow class by REUSING the accepted D-052 classifier through
+    :func:`derive_frontage_street_widths` (never re-derived here, D-052). A frontage the step
+    cannot classify (needs_street_width) is carried as unknown, withheld - never narrow by default
+    (D-051). None street data or geometry -> no frontages."""
+    if street_data is None or geometry is None:
+        return []
+    districts = tuple(
+        d for d in (gathered.inputs.district, gathered.inputs.commercial_overlay_code) if d
+    )
+    zoning = LotZoningContext(districts, None, "city record", {})
+    widths = derive_frontage_street_widths(
+        geometry, _street_segments(street_data, _lot_borough(profile)), zoning,
+    )
+    out: list[Frontage] = []
+    for f in widths.frontages:
+        out.append(Frontage(
+            name=f.street_name,
+            width_class=_WIDTH_BY_CLASS.get(f.street_class, WIDTH_UNKNOWN),
+            mapped_width_ft=f.mapped_width.value if f.mapped_width.value is not None else None,
+        ))
+    return out
+
+
+def _height_value(document: Mapping[str, Any], key: str) -> float | None:
+    """One permitted-envelope height value from the engine's own document, or None."""
+    answer = document.get("answers", {}).get("permitted_envelope")
+    if not isinstance(answer, Mapping):
+        return None
+    for value in answer.get("values", []) or []:
+        if isinstance(value, Mapping) and value.get("key") == key:
+            v = value.get("value")
+            return float(v) if isinstance(v, (int, float)) else None
+    return None
+
+
+def _building_type(housing_kind: str | None) -> str | None:
+    """The building type the envelope checks read. A residential housing program is a new
+    all-residential building (the reference-case subject); a mixed program is a mixed building; an
+    unstated program is not stated (never defaulted to residential-only, RULE 1)."""
+    if not housing_kind:
+        return None
+    kind = str(housing_kind).lower()
+    if "mixed" in kind or "commercial" in kind:
+        return BUILDING_MIXED
+    return BUILDING_RESIDENTIAL_ONLY
+
+
+def _envelope_analysis_for(
+    gathered: GatheredResult,
+    engine_document: Mapping[str, Any],
+    *,
+    street_data: StreetData | None,
+    geometry: SiteGeometry | None,
+    profile: Mapping[str, Any] | None,
+) -> EnvelopeAnalysis | None:
+    """Build the additive contract-1.5.0 envelope analysis (M5-T170). OPT-IN on a DCM street window
+    being supplied (the same gate as the rear-yard emission): the journey/benchmark path threads
+    it, the live route threads it only behind the geometry flag. The street-wall height is the
+    engine's minimum base height (the benchmark three-storey option equals it, NB-06); the maximum
+    base height is the engine's own value; the per-frontage wide / narrow class comes from the
+    reused D-052 classifier."""
+    if street_data is None:
+        return None
+    # The widths come from the DCM Street Center Line window, so its provenance travels with them
+    # (G1 F1) - never the MapPLUTO lot facts, which carry no street-width field.
+    title, date = _street_width_source(street_data)
+    return build_envelope_analysis(
+        overlay_present=_overlay_present(gathered),
+        building_type=_building_type(gathered.inputs.housing_kind),
+        frontages=tuple(_frontage_widths(street_data, geometry, gathered, profile)),
+        street_wall_height_ft=_height_value(engine_document, "min_base_height"),
+        max_base_height_ft=_height_value(engine_document, "max_base_height"),
+        source_title=title,
+        source_date=date,
+    )
+
+
+def _overlay_present(gathered: GatheredResult) -> bool | None:
+    """Whether a commercial overlay is mapped, read from the gathered recorded fact: True when
+    recorded present, False when recorded absent, None when the column was not read (never
+    defaulted, RULE 1)."""
+    state = gathered.recorded.commercial_overlay.state
+    if state is Recorded.PRESENT:
+        return True
+    if state is Recorded.ABSENT:
+        return False
+    return None
 
 
 def run_engine_and_result_ways(
@@ -352,6 +530,10 @@ def run_engine_and_result_ways_from_evidence(
         gathered, street_data=street_data, outline=prepared_outline,
         geometry=site_geometry, profile=property_profile,
     )
+    envelope_analysis = _envelope_analysis_for(
+        gathered, engine_result.document, street_data=street_data,
+        geometry=site_geometry, profile=property_profile,
+    )
     document = emit_three_way_document(
         engine_result.document, gathered.ways,
         condition_sources=conditions, user_choices=user_choices,
@@ -359,5 +541,6 @@ def run_engine_and_result_ways_from_evidence(
         lot_outline_available=outline_ring is not None,
         zoning_lot=gathered.inputs.zoning_lot,
         rear_yard_analysis=rear_yard_analysis,
+        envelope_analysis=envelope_analysis,
     )
     return EngineResultWays(engine_result=engine_result, gathered=gathered, document=document)

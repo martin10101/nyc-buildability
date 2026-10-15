@@ -2,8 +2,8 @@
  "schema": "research_record/v1",
  "record_id": "NB-03",
  "title": "215-16 Northern Boulevard: rear yard along the short dimension of the block (ZR 23-344(b), (c)(3))",
- "revision": 3,
- "last_changed": "2026-10-14",
+ "revision": 4,
+ "last_changed": "2026-10-15",
  "question": {
   "text": "Is a rear yard required on lot 70 (or on a zoning lot of lots 1 and 70) beyond the corner area, given ZR 23-344(b) and how the neighbouring lot lines are classified for 23-344(c)(3)?",
   "property": "215-16 Northern Boulevard, Queens (borough 4, block 7334, lot 70; BBL 4073340070)",
@@ -392,7 +392,7 @@
   ],
   "code_identity": {
    "services/api/app/rules/rulesets/r6b_rear_yard_corner_waiver.rule.json": "ee909d7e0074490cbd59b2f965fbcda823182c9b57fa2fa94bf26b5d85260da4",
-   "services/api/app/scenario/three_answers/rear_yard_checks.py": "fd80694139af1c1fe91ead76ee197b511f472da4883111a920a41294bdce6eaf"
+   "services/api/app/scenario/three_answers/rear_yard_checks.py": "24b7f2c8283baa460e6b58d4bccbf7df3b5f0da8ef2ebce56c6465c41d62182c"
   },
   "worked_example": {
    "inputs": "R6B; front lot line on Northern Boulevard; block frontage 200.01 ft (printed_tax_map) / 203.13 ft (gis); lot depth 100 ft (printed_tax_map) / 99.97 ft (gis) / ~101.06 ft (derived).",
@@ -412,7 +412,8 @@
    "r6b_rear_yard_corner_waiver encodes 23-344(a) only and records (b) to (d) as not encoded, so every lot whose front lot line lies on a short block frontage currently shows an open rear-yard item it may not have. 23-344 lists R1 to R12, so the gap is not R6B-only. The fix is a deterministic block-frontage measure and a neighbouring-line classification with labelled drafts (backlog DB-230), never an address-specific exception. Lots not on a short block frontage are unaffected.",
    "gap (b): the same 'short dimension of a block' determination feeds 23-344(b) (rear yard) and 23-363(c) (100% lot coverage); a future engine must compute it once and reuse it across both outputs, never per street name.",
    "gap (f) recorded, not fixed: the review-register entry (docs/zoning-rule-review/rules/r6b-rear-yard-corner-waiver.md, revision 2, 2026-10-08) and the rule's 'limitations' field both reflect only 23-344(a); they do not yet reflect (b)/(c)(3)/(d)(3). Updating them is owed to M5-T167 / DB-230 and is outside this task's allowed paths. RESOLVED 2026-10-14 by M5-T167: the register entry (revision 3) and the rule page now reflect (a)/(b)/(c)(3); the engine reading lives in rear_yard_checks.py.",
-   "Revision 3 (M5-T167): the (b) short-dimension and (c)(3) adjoining-side-line reading is now encoded in the scenario engine (scenario/three_answers/rear_yard_checks.py, added to code_paths), combined with the (a) corner waiver into the contract-1.5.0 rear_yard block. On the benchmark the combined row is not known / Conditional (never an unconditional 'no rear yard'): (b) is not known because the measurement basis is unresolved law and (c)(3) is not known because the neighbours' lot-line classification is not captured. The expected outcomes are the R6B reference case, not a program run; research_status stays interpretation_awaiting_review (the reading is still a conditional, unreviewed draft)."
+   "Revision 3 (M5-T167): the (b) short-dimension and (c)(3) adjoining-side-line reading is now encoded in the scenario engine (scenario/three_answers/rear_yard_checks.py, added to code_paths), combined with the (a) corner waiver into the contract-1.5.0 rear_yard block. On the benchmark the combined row is not known / Conditional (never an unconditional 'no rear yard'): (b) is not known because the measurement basis is unresolved law and (c)(3) is not known because the neighbours' lot-line classification is not captured. The expected outcomes are the R6B reference case, not a program run; research_status stays interpretation_awaiting_review (the reading is still a conditional, unreviewed draft).",
+   "Revision 4 (M5-T170, backlog DB-265 items 1, 4 and 5): the code path scenario/three_answers/rear_yard_checks.py was edited for three review-advisory clean-ups - the (c)(3) and combined texts now also name the ZR 23-344(c)(1) alternative (a rear yard IS required where the subject's rear lot line coincides with an adjoining zoning lot's REAR lot line), an unused operative-reach argument was dropped from the constraint-line builder, and the (b) not_applicable text no longer appends the (b) waiver consequence to a case where (b) does not apply. These are plain-text and dead-argument changes only: no check state, no measured value, no quantity, no interpretation and no conclusion changed (the combined rear-yard row stays not known / Conditional, never an unconditional 'no rear yard'; research_status stays interpretation_awaiting_review). The code_identity for rear_yard_checks.py is refreshed to the new LF-sha256 (the r6b_rear_yard_corner_waiver.rule.json digest is unchanged). The review register's r6b-rear-yard-corner-waiver entry adds rear_yard_checks.py to its code_links in the same wave (DB-265 item 2)."
   ]
  },
  "review": {

@@ -45,6 +45,7 @@ import copy
 
 from .contract import validate_results_document
 from .engine_conditions import Derived
+from .envelope_constraints import EnvelopeAnalysis, setback_value_state_from_row
 from .first_option_results import (
     # CornerPortionAreas is re-exported by the assembly module; this module reads it from there so
     # it never names the spatial by-portion measurement module directly (that module's one import
@@ -62,6 +63,7 @@ from .result_way_inputs import (
     LABELS,
     MISSING_INFORMATION,
     REASON_KIND_BY_GAP,
+    SETBACK_KEY,
     UNIT_QUALIFYING_AFFORDABLE_KEY,
     UNIT_QUALIFYING_SENIOR_KEY,
     UNIT_STANDARD_KEY,
@@ -522,6 +524,7 @@ def _apply_first_option(
     corner_areas: CornerPortionAreas | None = None,
     lot_area: LotAreaFigures | None = None,
     rear_yard_applied: bool = False,
+    street_wall_applied: bool = False,
 ) -> None:
     """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks WHENEVER the
     floor-area allowance is shown (the engine ran and the recorded lot area is known).
@@ -604,6 +607,7 @@ def _apply_first_option(
         outline_area_sqft=outline_area_sqft if show_footprint else None,
         way_conditions=tuple(c.to_dict() for c in conditions),
         rear_yard_applied=rear_yard_applied,
+        street_wall_applied=street_wall_applied,
     ))
 
     # coverage_by_portion is emitted whenever the area agreement is determinate: a caller-threaded
@@ -729,6 +733,7 @@ def emit_three_way_document(
     lot_outline_available: bool | None = None,
     zoning_lot: ZoningLotCitation | None = None,
     rear_yard_analysis: RearYardAnalysis | None = None,
+    envelope_analysis: EnvelopeAnalysis | None = None,
 ) -> dict:
     """Transform the engine's assembled results ``document`` into the contract-1.3.0 three-way
     document, given the decision-module ``ways``. Pure: it mutates a deep copy, computes no zoning
@@ -826,11 +831,15 @@ def emit_three_way_document(
     _apply_first_option(
         doc, ways, document, corner_areas=corner_areas, lot_area=lot_area,
         rear_yard_applied=rear_yard_analysis is not None,
+        street_wall_applied=_street_wall_applied(envelope_analysis),
     )
 
     # The additive contract-1.5.0 rear-yard emission (M5-T167 steps 3-4). Opt-in: only when the
     # evidence entry threads an analysis. Absent -> the document keeps its 1.3.0/1.4.0 version.
     _apply_rear_yard(doc, rear_yard_analysis)
+    # The additive contract-1.5.0 envelope emission (M5-T170): the street-wall, setback and
+    # side-yard rows, the envelope constraint lines and the street-width input_facts. Opt-in.
+    _apply_envelope(doc, envelope_analysis)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)
@@ -851,6 +860,53 @@ def _apply_rear_yard(doc: dict, analysis: RearYardAnalysis | None) -> None:
         if isinstance(geometry, dict) and geometry.get("status") == "available":
             geometry["constraint_lines"] = list(analysis.constraint_lines)
     doc["contract_version"] = CONTRACT_VERSION_REAR_YARD
+
+
+def _street_wall_applied(analysis: EnvelopeAnalysis | None) -> bool:
+    """True when the engine applied the street-wall check (a 1.5.0 envelope row of kind
+    street_wall in state applies). Gates page 6's "The street wall" not-checked line so page 6
+    agrees with page 3 and the page-8 open item on every document (M5-T170)."""
+    if analysis is None:
+        return False
+    return any(r.get("kind") == "street_wall" and r.get("state") == "applies"
+               for r in analysis.envelope_rows)
+
+
+def _apply_envelope(doc: dict, analysis: EnvelopeAnalysis | None) -> None:
+    """Attach the additive 1.5.0 envelope_rows, the envelope constraint lines and the street-width
+    input_facts, and declare 1.5.0 (M5-T170). The input_facts and the geometry constraint_lines
+    EXTEND any the rear-yard emission already added (never replace them). None -> no-op."""
+    if analysis is None:
+        return
+    doc["envelope_rows"] = list(analysis.envelope_rows)
+    if analysis.input_facts:
+        doc["input_facts"] = list(doc.get("input_facts") or []) + list(analysis.input_facts)
+    if analysis.constraint_lines:
+        geometry = doc.get("geometry")
+        if isinstance(geometry, dict) and geometry.get("status") == "available":
+            geometry["constraint_lines"] = (
+                list(geometry.get("constraint_lines") or []) + list(analysis.constraint_lines)
+            )
+    _reconcile_setback_value_state(doc, analysis)
+    doc["contract_version"] = CONTRACT_VERSION_REAR_YARD
+
+
+def _reconcile_setback_value_state(doc: dict, analysis: EnvelopeAnalysis) -> None:
+    """The ``setback_above_base`` value state of permitted_envelope must AGREE with the applied
+    envelope setback row (lesson iii / RISK 2): two setback statements about one thing must never
+    contradict. Only when the value state is present and withheld (the decision module's
+    'not covered' reading, which a 1.4.0 document keeps). Byte-identical on a 1.4.0 document (no
+    envelope row, so this is never reached)."""
+    row = next((r for r in analysis.envelope_rows if r.get("kind") == "setback"), None)
+    if row is None:
+        return
+    envelope = doc["answers"].get("permitted_envelope")
+    states = envelope.get("value_states") if isinstance(envelope, dict) else None
+    if not isinstance(states, dict):
+        return
+    current = states.get(SETBACK_KEY)
+    if isinstance(current, dict) and current.get("way") == "withheld":
+        states[SETBACK_KEY] = setback_value_state_from_row(row)
 
 
 def _assert_no_qualifying_unit_value(doc: dict) -> None:

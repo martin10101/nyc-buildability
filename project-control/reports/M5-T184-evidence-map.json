@@ -1,0 +1,57 @@
+{
+ "task_id": "M5-T184",
+ "material_commits": [
+  "0f62e39f (producer round 1 (cherry-pick of bbfb189f): the new R6B case benchmark-options-2-3-6-7 (JSON, rendered page, README row), provenance 19-25 (two sealed readings per option and the comparer, unchanged below truthful headers), the step-P9 module and tests behind one thin check.py entry, the moved cross-case pins, the producer report)",
+  "f566724a (producer round 2 (cherry-pick of a4b81e74): the community-facility lot-coverage rows corrected (only the corner 80 percent settled; the interior/through rate and the whole-lot footprint not settled))",
+  "307c8af2 ([ORCH-CORRECTED per G3 F1]: the case summary names only the agreed corner 80 percent; a change-log entry; the page re-rendered; no row, value, citation or arithmetic changed)"
+ ],
+ "claim_seam_head": "b2bb6991e7c14a022eeb1e52f47130674cd992f6",
+ "files_changed": [
+  "docs/reference-cases/R6B/README.md",
+  "docs/reference-cases/R6B/benchmark-options-2-3-6-7.md",
+  "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-19.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-20.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-21.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-22.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-23.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-24.md",
+  "docs/reference-cases/R6B/provenance/return-independent-hand-calculation-25.md",
+  "project-control/reports/M5-T184-producer-report.md",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_check.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_lib.py",
+  "services/api/tests/rules/reference_cases/r6b_reference_cases_step_p9.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p7.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p8.py",
+  "services/api/tests/rules/reference_cases/test_r6b_reference_cases_step_p9.py"
+ ],
+ "what_did_not_change": "No rule file, engine, result, capture, register entry, law-library page, evidence record, report page or website view changed; no other reference case changed (the step-P9 prior-cases digest pins all twelve byte-stable); no eligibility and no meaning of option 8 or 10 is decided.",
+ "known_limits": [
+  "Not yet visible in the report: the comparison page (M5-T169) and the later option work read these values from the case.",
+  "Options 5, 8, 9-10, 4 and 11 stay owed (options 5, 8 and 9-10 now have their sections captured by M3-T010; their case is the next reference-case task).",
+  "Nine rows stay not known (among them the interior/through community-facility coverage, the whole-lot footprint, option 3's dwelling-unit limit and the street wall's citation split); every figure rests on lot 70 alone being the zoning lot (NB-01) and the recorded lot area (NB-04).",
+  "Agreement of two AI readings is not proof; nothing is labelled Verified."
+ ],
+ "checks_at_material_head": [
+  "producer round 1: ruff exit 0; tests/rules/reference_cases 195 passed under the lock; render --check exit 0; modularity exit 0; lane coverage PASS; five mutations caught",
+  "producer round 2 and the pre-integration checks (return-M5-T184-precheck.json, -precheck-r2.json): whole api suite 9893 passed, 8 skipped at a4b81e74",
+  "G3 data-contract-verifier at b8eba3a0: PASS with one REQUIRED (F1, the summary wording), applied as 307c8af2; after it tests/rules/reference_cases 179 passed and render --check PASSED under the lock; G3 delta check at 307c8af2: see the review record",
+  "G4 qa-engineer at b8eba3a0: PASS; 179 passed; six mutation probes all red; every scenario pinned",
+  "CI run 38705347006 at 307c8af2 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R007": [
+   "The analysis owed for options 2, 3, 6 and 7 is recorded as source-backed worked values for the benchmark lot (docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json and its page): option 2 24,180 sq ft at 2.40 FAR, the 4,030 sq ft affordable floor area, heights 30/45/65 ft and 35 units; option 3's 24,180 sq ft and the removal of the 680 factor; options 6-7's community-facility FAR 2.00 / 20,150 sq ft, the agreed corner coverage of 80 percent, heights 30/45/55 ft and the yard and combination rules. No option or section is removed; options 5, 8, 9-10, 4 and 11 stay owed."
+  ],
+  "D-094-R075": [
+   "These are the meaningful worked results the comparison page needs, each recorded only where two sealed readings agree on value and basis and the section is captured (test_step_p9_rows_name_their_readings, test_every_step_p9_citation_matches_the_capture, test_step_p9_arithmetic_recomputes); the page reorder itself is M5-T169."
+  ],
+  "D-094-R084": [
+   "All eleven options stay in scope: the case records four and names options 5, 8, 9-10 (and 4, 11) as owed in its work-order table, summary, what-it-does-not-establish and a dedicated options-out-of-scope row; option 8's and option 10's meanings stay open owner questions."
+  ],
+  "D-094-R102": [
+   "The worked values and each cited section's capture state feed the law library's option pages (options 2-3 and 6-7); the case cites only captured sections (43 citations, all captured; test_uncaptured_sections_are_never_a_formal_citation) and edits no library page."
+  ]
+ }
+}

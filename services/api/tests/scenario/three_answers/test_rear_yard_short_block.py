@@ -50,7 +50,6 @@ def _analysis(**over) -> RearYardAnalysis:
     kwargs = dict(
         corner_reach_ft=144.60,
         corner_angle_deg=89.7,
-        operative_street_reach_ft=99.97,
         district="R6B",
         block_frontage=_bf("gis", 203.13),
         recorded_area_sqft=10075.0,
@@ -117,6 +116,25 @@ def test_real_lot_short_dimension_is_not_known_whatever_the_measure():
         assert state == "not_known"
 
 
+def test_check_b_not_applicable_text_omits_the_waiver_consequence():
+    # DB-265 (5): a not_applicable (b) reading no longer appends the (b) waiver consequence
+    # ("within 100 feet of that street line no rear yard would be required"), which only follows
+    # where (b) actually applies. Reachable only with a stated basis (basis_fixed_by_law=True).
+    not_applicable = _analysis(basis_fixed_by_law=True, block_frontage=_bf("survey", 260.0))
+    b = _check(not_applicable, "23-344(b)")
+    assert b["state"] == "not_applicable"
+    assert "no rear yard would be required" not in b["text"]
+    assert "not less than 230 feet" in b["text"]  # the not-applicable reason itself stays
+
+
+def test_check_b_applies_text_keeps_the_waiver_consequence():
+    # Where (b) applies, the waiver consequence is still stated (qualified by "within 100 feet").
+    applies = _analysis(basis_fixed_by_law=True, block_frontage=_bf("survey", 229.99))
+    b = _check(applies, "23-344(b)")
+    assert b["state"] == "applies"
+    assert "within 100 feet of that street line no rear yard would be required" in b["text"]
+
+
 # --------------------------------------------------------------------------
 # RULE 2 - (a) the corner-area waiver: the state table
 # --------------------------------------------------------------------------
@@ -164,6 +182,19 @@ C3_DISTRICT_TABLE = [
 def test_c3_district_state_table(district, state):
     check = _check(_analysis(district=district), "23-344(c)(3)")
     assert check["state"] == state
+
+
+def test_c3_and_combined_texts_name_the_c1_alternative_besides_c3():
+    # DB-265 (1): the (c)(3) check text and the combined row's conditions name the ZR 23-344(c)(1)
+    # alternative - a rear yard IS required where the deemed rear lot line meets a neighbour's
+    # rear lot line - besides the (c)(3) side-lot-line branch. State unchanged (not_known).
+    analysis = _analysis(district="R6B")
+    c3 = _check(analysis, "23-344(c)(3)")
+    assert c3["state"] == "not_known"
+    assert "23-344(c)(1)" in c3["text"] and "23-344(c)(3)" in c3["text"]
+    assert "rear lot line" in c3["text"]
+    conds = " ".join(c["assumption"] for c in analysis.rear_yard["combined"]["conditions"])
+    assert "23-344(c)(1)" in conds and "23-344(c)(3)" in conds
 
 
 # --------------------------------------------------------------------------

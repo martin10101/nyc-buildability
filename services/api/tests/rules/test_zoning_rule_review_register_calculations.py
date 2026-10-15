@@ -79,9 +79,9 @@ def test_schema_version_bumped_additively():
 
 
 def test_the_23_rule_entries_are_untouched():
-    # The rule collection keeps exactly 23 entries, each with the rule-entry key set (no calc field
-    # was back-filled onto a rule entry).
-    assert len(REGISTER["entries"]) == 23
+    # The rule collection carries the rule-entry key set only (no calc field back-filled onto a
+    # rule entry). M5-T170 added the three draft envelope rule entries, so the count is now 26.
+    assert len(REGISTER["entries"]) == 26
     for e in REGISTER["entries"]:
         assert set(e) == checker.ENTRY_KEYS
         assert "entry_kind" not in e
@@ -283,6 +283,11 @@ def test_code_identity_mismatch_is_caught():
 
 def test_changed_code_module_demands_automated_tests_not_run():
     c = copy.deepcopy(BY_ID["calc-floor-area-allowance"])
+    # M5-T170 set every calc entry to 'Not run' (their bound register-calc test file changed when
+    # the rule-entry count moved to 26); construct a recorded 'Passed' here so the mutation shows
+    # the checker demands 'Not run' once a module changes.
+    c["automated_tests"]["status"] = "Passed"
+    c["automated_tests"]["tested_code_identity_sha256"] = c["code_identity_sha256"]
     c["code_identity_sha256"] = "0" * 64  # a module "changed" since the recorded run
     errs = calc.automated_tests_errors(c)
     assert any("Not run" in m for m in errs)
