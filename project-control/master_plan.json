@@ -36,7 +36,7 @@
    "depends_on": [
     "M1"
    ],
-   "summary": "Versioned legal corpus: 4/9 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). Accepted: M3-T001 (source hierarchy, coverage matrix, manifest) and M3-T006 (zoning-law library, first pass, 2026-10-11: the R6B section catalogue with every cross-reference, 6 sections handled / 67 not, the eleven options' sections, pitfalls, research log). Open: M3-T002 backlog; M3-T003 backlog; M3-T004 backlog; M3-T005 backlog (immutable capture, document-evidence engine, cross-reference closure graph, construction-code overlay; capture/storage tasks wait on B-001). The library's capture list (5 sections, 8 terms) is DB-243. M3-T007 accepted (zoning-law library, second pass, contracted 2026-10-14: the law the remaining options 2-3, 5, 6-7, 8, 9, 10 and 11 need, read from the official text by read-only research helpers and written up by one builder; documents only; the captures it lists are DB-253). M3-T008 accepted (contracted 2026-10-14: captures of the law the affordable- and senior-housing options need - Article II Chapter 7, Appendix F and two 12-10 terms; the other capture sets of DB-253 follow one at a time)."
+   "summary": "Versioned legal corpus: 5/9 tasks accepted on task/wave25-rear-yard-short-block (main holds the wave-24 merge). Accepted: M3-T001 (source hierarchy, coverage matrix, manifest) and M3-T006 (zoning-law library, first pass, 2026-10-11: the R6B section catalogue with every cross-reference, 6 sections handled / 67 not, the eleven options' sections, pitfalls, research log). Open: M3-T002 backlog; M3-T003 backlog; M3-T004 backlog; M3-T005 backlog (immutable capture, document-evidence engine, cross-reference closure graph, construction-code overlay; capture/storage tasks wait on B-001). The library's capture list (5 sections, 8 terms) is DB-243. M3-T007 accepted (zoning-law library, second pass, contracted 2026-10-14: the law the remaining options 2-3, 5, 6-7, 8, 9, 10 and 11 need, read from the official text by read-only research helpers and written up by one builder; documents only; the captures it lists are DB-253). M3-T008 accepted (contracted 2026-10-14: captures of the law the affordable- and senior-housing options need - Article II Chapter 7, Appendix F and two 12-10 terms; the other capture sets of DB-253 follow one at a time). M3-T009 accepted (2026-10-15: captures of the law the community-facility options need - Article II Chapter 4 and 22-13; documents only)."
   },
   {
    "id": "M4",
@@ -55,7 +55,7 @@
     "M2",
     "M4"
    ],
-   "summary": "Scenario engine, results and the feasibility report: 168/172 tasks accepted on task/wave24-report-v3 (main holds the wave-23 merge). THE ACTIVE FRONTIER. Delivered: the three-answer results (allowance, envelope, building option), the first building option (Building B, R6B benchmark), the results contract to 1.5.0, the report generator in six page types (D-090 wave 21) and its redesign pass for the owner's reviewer (D-094, wave 24 in progress). Open: M5-T001 awaiting_gate; M5-T110 claimed; M5-T125 claimed; M5-T167 claimed (M5-T001 is the July scenario foundation, awaiting gate; M5-T110 and M5-T125 are claims of September with no recent progress). The report work toward the owner's sample-comparable PDF is listed in report_programme."
+   "summary": "Scenario engine, results and the feasibility report: 169/173 tasks accepted on task/wave25-rear-yard-short-block (main holds the wave-24 merge). THE ACTIVE FRONTIER. Delivered: the three-answer results (allowance, envelope, building option), the first building option (Building B, R6B benchmark), the results contract to 1.5.0, the report generator in six page types (D-090 wave 21) and its redesign pass for the owner's reviewer (D-094, wave 24 merged, wave 25 in progress; the website first screen M5-T181 accepted 2026-10-15). Open: M5-T001 awaiting_gate; M5-T110 claimed; M5-T125 claimed; M5-T167 claimed (M5-T001 is the July scenario foundation, awaiting gate; M5-T110 and M5-T125 are claims of September with no recent progress). The report work toward the owner's sample-comparable PDF is listed in report_programme."
   },
   {
    "id": "M6",
@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-14T22:35:28+00:00",
+ "updated_at": "2026-10-15T02:43:47+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -100,7 +100,9 @@
     "M5-T179 page 7: the appendix scope note says the context maps are in the report when they are printed (D-094 R137) | code: https://github.com/martin10101/nyc-buildability/commit/d36341bc94704cc377c8bdaf57840f11c21be440 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38618729703 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/4c1075d8d59329790aecd9e6959009d4a5eef7ac) | visible: page 7 no longer lists the context maps as missing when the report prints them",
     "M3-T008 captures of the law the affordable- and senior-housing options need (documents and data only; beside the report lane; the other capture sets follow one at a time) | code: https://github.com/martin10101/nyc-buildability/commit/05e4ccb4ddbbc70346b8297b5e4020194b0cca6a, https://github.com/martin10101/nyc-buildability/commit/7a794e610eb2ef2d3fe01f39173f665c53b7122b | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38612986462 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/9310fa235f1f71d94e5113b5e190035cfe766467) | supporting work, no change in the report: eleven official law texts the affordable- and senior-housing options need, captured word for word (Appendix F as a pointer to its official maps)",
     "M5-T175 the report reads the 1.5.0 constraint rows, input facts and lines | code: https://github.com/martin10101/nyc-buildability/commit/f66e82129c620174be04aa595cb7611b4a00214c, https://github.com/martin10101/nyc-buildability/commit/c11b4e03d721594100f8b06bbfc313aab2eb0ecf, https://github.com/martin10101/nyc-buildability/commit/046c717d4e209f072fae074ad25fe380c971a481 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38618729703 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/4c1075d8d59329790aecd9e6959009d4a5eef7ac) | visible when a zoning line is established: the close-up draws it inside the lot with its own legend entry, and the other measured lot sizes beside the map outline; the benchmark pages do not change yet (its results carry no such line until M5-T167)",
-    "wave 24 merged to main and PDF #1 printed from main with before/after pictures (R083) | code: https://github.com/martin10101/nyc-buildability/pull/489 (merge https://github.com/martin10101/nyc-buildability/commit/30762409f40457fdc4902642618670e060f4b261) | tests: all 47 checks on the final head ba0d05d6 success (pull-request CI run https://github.com/martin10101/nyc-buildability/actions/runs/38621589866, 21 jobs) and an independent pre-merge audit MERGE-READY | visible: the report from main (10 pages: page 1 rebuilt, the locator, the constraints, the new dimensioned close-up, page 7 corrected) and a before/after of the changed pages, sent to the owner on 2026-10-14"
+    "wave 24 merged to main and PDF #1 printed from main with before/after pictures (R083) | code: https://github.com/martin10101/nyc-buildability/pull/489 (merge https://github.com/martin10101/nyc-buildability/commit/30762409f40457fdc4902642618670e060f4b261) | tests: all 47 checks on the final head ba0d05d6 success (pull-request CI run https://github.com/martin10101/nyc-buildability/actions/runs/38621589866, 21 jobs) and an independent pre-merge audit MERGE-READY | visible: the report from main (10 pages: page 1 rebuilt, the locator, the constraints, the new dimensioned close-up, page 7 corrected) and a before/after of the changed pages, sent to the owner on 2026-10-14",
+    "M3-T009 captures of the law the community-facility options need (documents only; beside the report lane) | code: https://github.com/martin10101/nyc-buildability/commit/ccf8e24be7870e1e0c02ef97eaa15d2485a2ba85 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38671986931 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8eb12777402a25d7f83112534a566d92f2d4bcf2) | supporting work, no change in the report: fifteen official law texts the community-facility options need (Article II Chapter 4 and 22-13), captured word for word",
+    "M5-T181 website first screen: the results lead the Results window, the assumed conditions below them (the owner's forwarded review, D-094 R151) | code: https://github.com/martin10101/nyc-buildability/commit/3edf9ae0ca7ec68fc94d78a8a9eb46f1b34395a1, https://github.com/martin10101/nyc-buildability/commit/965de3d517f8aede673ae1be928e7de9b47f67ca | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38671986931 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/8eb12777402a25d7f83112534a566d92f2d4bcf2) | visible: the website's Results window now opens with the results - the floor-area allowance beside the legal ceiling and the apartment estimate inside the first screen at 768 to 1,920 px wide, the assumed conditions below them (on phones the ceiling is one short scroll away)"
    ],
    "steps": [
     {
@@ -122,24 +124,6 @@
      "waits_for": [
       "M5-T167"
      ]
-    },
-    {
-     "wave": 25,
-     "item": "captures of the law the community-facility options need (documents only; beside the report lane; one capture task at a time)",
-     "ids": [
-      "M3-T009"
-     ],
-     "state": "in_progress",
-     "note": "contracted and claimed 2026-10-14 after M3-T008 was accepted"
-    },
-    {
-     "wave": 25,
-     "item": "website first screen: the results lead the Results window, the assumed conditions below them (the owner's forwarded review, D-094 R151); runs before M5-T174",
-     "ids": [
-      "M5-T181"
-     ],
-     "state": "in_progress",
-     "note": "contracted and claimed 2026-10-14 beside M5-T167 (web files only, no shared file)"
     },
     {
      "wave": 26,
