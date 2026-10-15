@@ -393,6 +393,11 @@ async def post_results(
             site_geometry=inputs.site_geometry,
             special_density_statement=req.special_density_statement,
             zoning_lot_index=inputs.zoning_lot_index,
+            # M5-T167 round 4 (R136): thread the lot's DCM street window when a provider fetched one
+            # (the live binding behind LIVE_SPATIAL_PROVIDER_ENABLED, and the e2e/preview harness).
+            # With none (the production default) the engine applies no ZR 23-344 rear-yard check and
+            # the document stays 1.4.0, so page 6 and page 8 agree on "not yet checked".
+            street_data=inputs.street_data,
             building_defaults=building_defaults,
             user_choices=frozenset(user_choices),
             env=None,

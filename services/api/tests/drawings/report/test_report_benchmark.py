@@ -142,6 +142,29 @@ def test_benchmark_rear_yard_reads_as_the_applied_conditional_result() -> None:
     assert 'href="https://zoningresolution.planning.nyc.gov/article-ii/chapter-3/23-344"' in html
 
 
+# ===================================== M5-T167 round 4 (R136): page 6 agrees with page 8 (1.5.0)
+def test_round4_benchmark_page_6_drops_the_rear_yard_pre_check_line() -> None:
+    """Round 4 (R136): on the 1.5.0 benchmark (the engine applied ZR 23-344) the building method's
+    "what was not checked" list on page 6 no longer carries the corner-lot pre-check line "The rear
+    yard beyond the corner" - the reading is shown at the lot level (page 8 reads the conditional
+    result, test_benchmark_rear_yard_reads_as_the_applied_conditional_result). So page 6 and page 8
+    agree. The companion 1.4.0 render (page 6 KEEPS the line, page 8 shows the open check) is in
+    tests/scenario/three_answers/test_three_answers_three_way_emit.py."""
+    doc = benchmark()
+    assert doc["contract_version"] == "1.5.0"  # the regenerated benchmark applied ZR 23-344
+    html = build_report_html(doc)
+    # page 6 (the building option / "scenario-B" section) drops the pre-check line everywhere.
+    assert "The rear yard beyond the corner" not in visible_text(html)
+    # the building alternatives' stored not_checked lists carry only the three base items.
+    for alt in doc.get("building_alternatives", []):
+        assert "The rear yard beyond the corner" not in alt["not_checked"]
+    # page 8 is NOT the "not yet checked" open check (it reads the applied conditional result).
+    appendix = html[
+        html.index('id="assumptions-open-items"'):html.index('id="calculations-evidence"')
+    ]
+    assert constraint_text.REAR_YARD_OPEN_CHECK not in visible_text(appendix)
+
+
 # =========================================================================== S13
 def test_s13_moved_effect_texts_keep_their_1_4_0_output_except_the_rear_yard() -> None:
     # The constraint effect texts moved from readers.py to constraint_text.py keep their

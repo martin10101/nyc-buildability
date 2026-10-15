@@ -314,3 +314,141 @@ known / Conditional, ZR 23-344(b) linked, never an unconditional "no rear yard".
 - Nothing under `.claude/**` was written; no server/ports/Playwright. Scratch only under `/tmp/claude-0/M5-T167/`.
 
 END-OF-REPORT
+
+---
+
+# Round 4 (M5-T167, backend-engineer) — the live path and page 6 / page 8 agree (scope correction 3, R136)
+
+Base: the branch head after scope correction 3, `199eb59075052a1d5c037a3c0d0771b2e60c5463`.
+
+## The cause (verified against the owner's real print)
+
+On the owner's live/preview print at `dde8a181` page 8 item 4 still said "Whether a rear yard is
+required is not yet checked ... ZR 23-344(b) ... (c)(3) have not been applied to this lot." while
+page 6's "What was not checked" had dropped "The rear yard beyond the corner" — the report
+contradicted itself and the rear-yard result reached only the test fixture, not the deliverable. Two
+root causes, closed together:
+
+1. The live results route emitted a **1.4.0** document: `results_read.py` called
+   `run_engine_and_result_ways_from_evidence(...)` with **no `street_data=`**, and `StudyInputs` had
+   no field to carry a DCM window, so `_rear_yard_analysis_for` returned None and no 1.5.0 block was
+   emitted (page 8 then keeps the "not yet checked" open check).
+2. `first_option_results._not_checked` (round 3) dropped the page-6 corner-lot rear-yard line
+   **unconditionally**, while `readers._apply_rear_yard_open_item` only rewrites page 8 when a 1.5.0
+   `rear_yard` block exists — so on every 1.4.0 document page 6 and page 8 disagreed.
+
+## Changes (per step)
+
+1. **Page 6 and page 8 agree on every document.** `first_option_results.py`: restored
+   `_NOT_CHECKED_REAR_YARD`; added `rear_yard_applied: bool = False` to `FirstOptionInputs`; gated
+   `_not_checked` so the corner-lot line is kept when `not rear_yard_applied and lot_type ==
+   "corner"` and dropped otherwise. `three_way_document.py`: `_apply_first_option` takes
+   `rear_yard_applied`, and `emit_three_way_document` passes `rear_yard_applied=rear_yard_analysis is
+   not None` (the analysis is already in hand before page 6 is built). three_way_document.py held at
+   **637 source_lines** (net-zero: the added parameter/call lines offset by tightened docstrings;
+   `modularity_check --check` exit 0).
+2. **Street data on the live path.** `study_inputs.py`: added `street_data` to `StudyInputs`
+   (default None = "none supplied"), a `StreetDataProvider` seam + `street_data` param on
+   `assemble_study_inputs`/`pluto_study_inputs_provider`, and a `live_street_data_provider` factory
+   (composes the accepted MapPLUTO lot fetch + `lot_outline_from_mappluto` + `street_data_for_lot`;
+   local imports, mirroring `acris_zoning_lot_index_provider`), bound in `_live_study_inputs_provider`
+   behind `LIVE_SPATIAL_PROVIDER_ENABLED` (default OFF, no switch changed). `results_read.py` threads
+   `street_data=inputs.street_data`. `apps/web/e2e/harness/fixture_api.py` passes the recorded
+   `streets` (built and formerly discarded) to `assemble_study_inputs`. With no/incomplete window the
+   result stays not known with its condition named and both pages agree.
+3. **Web journey pin.** `journey-215-16-northern.test.tsx`: `contract_version` pin `1.4.0 -> 1.5.0`
+   (and the title), read against the regenerated 1.5.0 fixture; the envelope `rear_yard` value-state
+   is still withheld, so no other assertion changed. (CI run 38659165455 at dde8a181 failed exactly
+   here.)
+4. **Tests that would have caught it** — one per input state (table below); the full-report red/green
+   pair below.
+
+## Input-state table (round 4)
+
+| input | state | outcome | test that pins it |
+|---|---|---|---|
+| rear_yard_applied + lot_type | False + corner (1.4.0) | page 6 lists "The rear yard beyond the corner" FIRST; page 8 "not yet checked" | test_round4_corner_lot_without_rear_yard_applied_keeps_the_pre_check_line; test_round4_1_4_0_corner_report_page_6_and_page_8_agree |
+| rear_yard_applied + lot_type | True + corner (1.5.0) | page 6 drops the line; page 8 reads the conditional result | test_round4_corner_lot_with_rear_yard_applied_drops_the_pre_check_line; test_round4_1_5_0_corner_report_page_6_drops_line_and_page_8_conditional; test_round4_benchmark_page_6_drops_the_rear_yard_pre_check_line |
+| rear_yard_applied + lot_type | any + interior | line never listed (corner-only) | test_round4_interior_lot_never_lists_the_corner_rear_yard_line |
+| results route | provider supplies street data (street_on=True) | 1.5.0 doc; rear_yard + input_facts byte-equal to the committed journey | test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks |
+| results route | provider supplies none | 1.4.0 doc, no rear_yard; page 6 keeps the line (shared 1.4.0 core else equal) | test_m5t146_live_route_benchmark_matches_the_committed_first_option_blocks |
+| live street-data provider | composes the recorded DCM window | yields the recorded StreetData | test_live_street_data_provider_composes_the_recorded_window |
+| live street-data provider | typed connector failure | None (not known, nothing fabricated) | test_live_street_data_provider_failing_fetch_yields_none |
+| study-inputs provider | a street_data provider is bound | StudyInputs.street_data carries the window; None when unbound | test_study_inputs_provider_carries_street_data_when_fetched |
+| `_live_study_inputs_provider` | LIVE_SPATIAL_PROVIDER_ENABLED off / on | off -> street_data None (route 1.4.0); on -> bound (route 1.5.0) | test_live_default_flag_gates_the_geometry_binding |
+
+Two consequence tests updated (the fix made them diverge by design, not a regression):
+`test_harness_inputs_equal_the_test_trees_benchmark_provider` now compares against
+`benchmark_provider(street_on=True)` (the harness carries the same recorded window — windows proven
+equal); `test_w13_areas_disagree_benchmark_blocks_unchanged_through_the_threaded_emitter` compares
+building B apart from `not_checked` (the 1.4.0 adapter emit keeps the line, the committed 1.5.0 drops
+it; everything else byte-equal).
+
+## Red/green proofs (gate reverted, then restored)
+
+- **(a) 1.4.0 page-6 line kept.** Reverting `_not_checked` to the round-3 unconditional drop: both
+  `test_round4_1_4_0_corner_report_page_6_and_page_8_agree` and
+  `test_round4_corner_lot_without_rear_yard_applied_keeps_the_pre_check_line` **FAIL** (2 failed).
+  Restored -> pass.
+- **(b) 1.5.0 page-6 line dropped.** Reverting `_not_checked` to keep the line for every corner lot
+  (ignoring `rear_yard_applied`): the FRESH 1.5.0 emit
+  `test_round4_1_5_0_corner_report_page_6_drops_line_and_page_8_conditional` and
+  `test_round4_corner_lot_with_rear_yard_applied_drops_the_pre_check_line` **FAIL** (2 failed).
+  Restored -> pass. (`test_round4_benchmark_page_6_drops...` reads the static 1.5.0 fixture, a
+  renderer/consistency guard, so it does not flip on a gate revert.)
+
+## Checks (direct exit codes)
+
+- `python -m ruff check .` (services/api): **exit 0**.
+- `tests/rules`: **1159 passed**, exit 0.
+- whole `python -m pytest -q -p no:cacheprovider` (services/api): **9776 passed, 8 skipped**, exit 0
+  (`/tmp/claude-0/M5-T167/round4-api-pytest-2.log`).
+- `.github/scripts/validate_contracts.py`: 23 schema files, **0 failures**, exit 0; `pytest
+  .github/scripts/tests`: **24 passed**, exit 0.
+- `render_review_register.py --check`: **PASSED**, exit 0 (re-rendered after the register resync).
+- `tools/research_record_check.py --check`: **PASS**, NB-01 code_current=True, exit 0.
+- `tools/modularity_check.py --check`: failures 0 (warnings only; three_way_document.py 637), exit 0.
+- `scripts/lanes/check_lane_paths.py --coverage`: **PASS** (10483 files), exit 0.
+- `apps/web`: `npm ci` exit 0; `npm run lint` exit 0 (2 pre-existing warnings, 0 errors); `npm run
+  typecheck` exit 0; whole `npx vitest run`: **129 files, 2704 passed**, exit 0
+  (`/tmp/claude-0/M5-T167/round4-web-vitest.log`).
+
+## Records / register
+
+- NB-01 -> **revision 6**: code_identity refreshed for `study_inputs.py`
+  (`48eaf75f...`) and `three_way_document.py` (`9d4a1d19...`); a revision-6 note records the gate +
+  the street-data carrier. No zoning-lot reading, warning or figure changed (access_blocked).
+- register.json: `three_way_document.py` sha256 -> `9d4a1d19...` in both calc entries;
+  code_identity_sha256 -> `1658abb8...` (apartment-estimate) and `8985d57f...`
+  (first-building-option); two `implementation_changed` events (seq 52/53, revisions 12/13); the four
+  rendered pages (REGISTER.md, HISTORY.md, calc-first-building-option-complete.md,
+  calc-preliminary-apartment-estimate.md) re-rendered. The recorded automated-test runs read
+  'Not run' at the new identity (CI re-runs them).
+
+## What the owner's benchmark preview should now print (quoted from the regenerated 1.5.0 render)
+
+- **Page 8, item 4 (Rear yard), label Conditional:** "A conditional reading of the short-block rule
+  ZR 23-344(b) and the adjoining-side-line rule ZR 23-344(c)(3): the rear yard is not settled on this
+  lot. A survey or deed that shows this lot's lot lines, and the adjoining lots' lot lines where they
+  meet this lot." (No longer "Whether a rear yard is required is not yet checked ... have not been
+  applied to this lot.")
+- **Page 6, "What was not checked":** "Where the plan sits on the lot", "The street wall", "Parking,
+  loading and bicycle requirements" — "The rear yard beyond the corner" is dropped (the rear yard is
+  shown at the lot level). Page 6 and page 8 now agree.
+
+## Assumptions / limitations
+
+- `study_live_geometry.py` is not in this packet's allowed paths, so `live_street_data_provider`
+  lives in `study_inputs.py` (the live-provider/Lane-C layer, matching `acris_zoning_lot_index_
+  provider`). With `LIVE_SPATIAL_PROVIDER_ENABLED` ON the geometry provider and the street-data
+  provider each fetch the lot + street window, so the window is fetched twice; a no-refetch design
+  that surfaces the window `live_geometry_provider` already fetches would need `study_live_geometry.py`
+  (out of scope). The flag is default-OFF, so production and the offline tests are unaffected
+  (the harness/tests thread a recorded window directly).
+- No production switch changed; `report_read.py` delegates to `post_results`, so the report route is
+  fixed by the `results_read.py` change with no edit. The flag-on e2e specs read their expected
+  values from the regenerated 1.5.0 fixture (building B not_checked[0], the envelope rear_yard
+  withheld), so they stay green; CI runs Playwright.
+- Nothing under `.claude/**`; no server/ports/Playwright. Scratch only under `/tmp/claude-0/M5-T167/`.
+
+END-OF-REPORT

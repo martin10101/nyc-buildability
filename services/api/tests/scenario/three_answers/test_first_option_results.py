@@ -14,6 +14,7 @@ the measured corner-reach areas are not needed where the footprint is withheld. 
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import math
 import pathlib
@@ -75,7 +76,9 @@ def _num(value, reading: str | None = None) -> float:
 
 def _benchmark_inputs() -> FirstOptionInputs:
     """The benchmark lot, as the emit transform passes it: recorded 10,075 and outline disagree, a
-    corner lot, no corner-reach measurement needed (the footprint is withheld)."""
+    corner lot, no corner-reach measurement needed (the footprint is withheld). The engine applied
+    ZR 23-344 (the 1.5.0 benchmark carries the rear_yard block), so rear_yard_applied is True and
+    the corner-lot rear-yard not-checked line is dropped (M5-T167 round 4)."""
     return FirstOptionInputs(
         allowance_sqft=20150.0,
         recorded_lot_area_sqft=10075.0,
@@ -87,6 +90,7 @@ def _benchmark_inputs() -> FirstOptionInputs:
         corner_areas=None,
         outline_area_sqft=None,
         way_conditions=(_CONTRADICTED, _UNCHECKED),
+        rear_yard_applied=True,
     )
 
 
@@ -146,8 +150,9 @@ def test_s9_benchmark_building_b_conditional() -> None:
     assert "8,060 sq ft" in b["fit_note"]
     assert "8,060" not in b["label"]
     assert math.isclose(b["footprint_area_sqft"], 8060.0, abs_tol=0.5) is False
-    # M5-T167 step 6: the rear yard is no longer a not-checked item of this method (the engine
-    # applies ZR 23-344 at the lot level); the method lists only placement, street wall, parking.
+    # M5-T167 round 4: the benchmark applied ZR 23-344 (rear_yard_applied=True), so the rear yard is
+    # shown at the lot level and is NOT a not-checked item; the method lists only placement, the
+    # street wall and parking. (On a 1.4.0 corner lot the line is kept - test_round4_* below.)
     assert b["not_checked"] == [
         "Where the plan sits on the lot",
         "The street wall",
@@ -155,6 +160,50 @@ def test_s9_benchmark_building_b_conditional() -> None:
     ]
     assert "The rear yard beyond the corner" not in b["not_checked"]
     _no_feasibility_language(b)
+
+
+# ------------------------------------------- M5-T167 round 4: the page-6 rear-yard gate (R136)
+def test_round4_corner_lot_without_rear_yard_applied_keeps_the_pre_check_line() -> None:
+    """Round 4 (R136): on a 1.4.0 corner lot (the engine did NOT apply ZR 23-344, so
+    rear_yard_applied is False) building B's not-checked list keeps the corner-lot rear-yard line
+    FIRST - so page 6 agrees with page 8's "not yet checked" open item. This is the state the live
+    route emits with no DCM street window (the production default)."""
+    inp = dataclasses.replace(_benchmark_inputs(), rear_yard_applied=False)
+    b = assemble_first_option(inp).building_alternatives[0]
+    assert b["not_checked"] == [
+        "The rear yard beyond the corner",
+        "Where the plan sits on the lot",
+        "The street wall",
+        "Parking, loading and bicycle requirements",
+    ]
+
+
+def test_round4_corner_lot_with_rear_yard_applied_drops_the_pre_check_line() -> None:
+    """Round 4 (R136): on a 1.5.0 corner lot (the engine applied ZR 23-344, rear_yard_applied is
+    True) the rear-yard line is dropped - the reading is shown at the lot level and page 6 agrees
+    with page 8's conditional result. The red/green companion of the test above: flipping
+    rear_yard_applied flips whether the line is present."""
+    b = assemble_first_option(_benchmark_inputs()).building_alternatives[0]  # applied=True
+    assert "The rear yard beyond the corner" not in b["not_checked"]
+    assert b["not_checked"][0] == "Where the plan sits on the lot"
+
+
+def test_round4_interior_lot_never_lists_the_corner_rear_yard_line() -> None:
+    """Round 4: the rear-yard not-checked line is corner-lot only. An interior lot never lists it,
+    whether or not the engine applied ZR 23-344."""
+    one_street = CornerPortionAreas(
+        unknown_value("sq ft", "one"), unknown_value("sq ft", "one"),
+        STATE_ONE_CONFIRMED_STREET, (),
+    )
+    for applied in (False, True):
+        blocks = assemble_first_option(FirstOptionInputs(
+            allowance_sqft=20000.0, recorded_lot_area_sqft=10000.0, min_base_ft=_MIN_BASE,
+            max_base_ft=_MAX_BASE, floor_to_floor_ft=_F2F, lot_type="interior", areas_agree=True,
+            corner_areas=one_street, outline_area_sqft=10000.0, way_conditions=(_UNCHECKED,),
+            rear_yard_applied=applied,
+        ))
+        for alt in blocks.building_alternatives:
+            assert "The rear yard beyond the corner" not in alt["not_checked"], applied
 
 
 def test_s10_benchmark_building_a_is_absent() -> None:
@@ -245,7 +294,7 @@ def test_s13_interior_lot_areas_agree_shows_footprint_and_building_a() -> None:
         a["unused_floor_area_sqft"], _num(block_a["unused_floor_area_sqft"]), abs_tol=_TOL
     )
     assert a["below_min_base"] is True  # 20 ft < 30 ft
-    assert "The rear yard beyond the corner" not in a["not_checked"]  # removed everywhere (M5-T167)
+    assert "The rear yard beyond the corner" not in a["not_checked"]  # interior lot: never listed
     assert "fit_note" not in a  # building A's footprint is the coverage footprint; no bound
     assert a["label"] == "Building A: the widest footprint"
     _no_feasibility_language(blocks.building_alternatives[0])

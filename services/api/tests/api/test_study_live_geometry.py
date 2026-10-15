@@ -37,6 +37,7 @@ import app.api.v1.study_live_geometry as study_live_geometry
 from app.api.v1.study_inputs import (
     assemble_study_inputs,
     default_study_inputs_provider,
+    live_street_data_provider,
     pluto_study_inputs_provider,
 )
 from app.api.v1.study_live_geometry import live_geometry_provider
@@ -207,6 +208,15 @@ def test_live_default_flag_gates_the_geometry_binding(monkeypatch) -> None:
         return real_factory(fetch_lot=_fake_lot, fetch_streets=_recorded_streets)
 
     monkeypatch.setattr(study_live_geometry, "live_geometry_provider", spy)
+    # The DCM street-window seam (M5-T167 round 4) is bound behind the SAME flag, so spy it too with
+    # the recorded fakes, keeping the flag-on path offline; the flag-off path must not build it.
+    street_calls: list[dict] = []
+
+    def street_spy(**kwargs):
+        street_calls.append(kwargs)
+        return live_street_data_provider(fetch_lot=_fake_lot, fetch_streets=_recorded_streets)
+
+    monkeypatch.setattr(study_inputs, "live_street_data_provider", street_spy)
 
     # Flag OFF (production default): the binding is None, geometry is never built.
     monkeypatch.delenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, raising=False)
@@ -216,12 +226,14 @@ def test_live_default_flag_gates_the_geometry_binding(monkeypatch) -> None:
     finally:
         study_inputs._live_study_inputs_provider.cache_clear()
     assert calls == []
+    assert street_calls == []  # the street-window seam is unbound with the flag off
+    assert off.street_data is None  # no window threaded -> the route would stay 1.4.0
     off_facts = _facts_by_key(off.site_facts)
     assert off_facts["lot_type"]["value"] is None
     assert off_facts["lot_type"]["measurement"]["rank"] == "unknown"
     assert all(fact["key"] != "lot_frontage" for fact in off.site_facts)
 
-    # Flag ON: the live geometry provider is bound and geometry is threaded.
+    # Flag ON: the live geometry AND street-window providers are bound and threaded.
     monkeypatch.setenv(LIVE_SPATIAL_PROVIDER_ENABLED_ENV_VAR, "1")
     study_inputs._live_study_inputs_provider.cache_clear()
     try:
@@ -229,6 +241,8 @@ def test_live_default_flag_gates_the_geometry_binding(monkeypatch) -> None:
     finally:
         study_inputs._live_study_inputs_provider.cache_clear()
     assert calls  # the flag-on path built the live geometry provider
+    assert street_calls  # the flag-on path built the live street-window provider
+    assert on.street_data is not None  # the window is carried -> the route would emit 1.5.0
     on_facts = _facts_by_key(on.site_facts)
     assert on_facts["lot_type"]["value"] == LOT_TYPE_CORNER
     assert any(fact["key"] == "lot_frontage" for fact in on.site_facts)
@@ -302,4 +316,48 @@ def test_adapter_refused_outline_yields_none(monkeypatch) -> None:
         lambda result: (None, "the MapPLUTO outline is not measured here (test)"),
     )
     provider = live_geometry_provider(fetch_lot=_fake_lot, fetch_streets=_recorded_streets)
+    assert provider(NORTHERN_BBL, _CID) is None
+
+
+# ---------------------------------------------------------------------------
+# (M5-T167 round 4, R136) The DCM street-window seam: the live provider composes
+# the recorded window, and the study-inputs provider carries it onto StudyInputs.
+# ---------------------------------------------------------------------------
+def _reference_street_data():
+    """The StreetData the recorded pack yields through the accepted composition -- the SAME window
+    the geometry reference and the journey path build."""
+    lot, refusal = lot_outline_from_mappluto(replay_lot_geometry())
+    assert lot is not None, refusal
+    return street_data_for_lot(lot, correlation_id=_CID, fetch=_recorded_streets)
+
+
+def test_live_street_data_provider_composes_the_recorded_window() -> None:
+    provider = live_street_data_provider(fetch_lot=_fake_lot, fetch_streets=_recorded_streets)
+    assert provider(NORTHERN_BBL, _CID) == _reference_street_data()
+
+
+def test_study_inputs_provider_carries_street_data_when_fetched() -> None:
+    """The study-inputs provider carries the fetched DCM window onto StudyInputs.street_data (so the
+    results route can thread it into ZR 23-344); with no provider bound it stays None (the
+    production default -> a 1.4.0 document)."""
+    street_provider = live_street_data_provider(
+        fetch_lot=_fake_lot, fetch_streets=_recorded_streets)
+    carried = pluto_study_inputs_provider(
+        _northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON, street_data_provider=street_provider,
+    )(NORTHERN_BBL, _CID)
+    assert carried.street_data == _reference_street_data()
+    none_bound = pluto_study_inputs_provider(
+        _northern_fetcher, clock=FIXED_CLOCK, env=LANE_B_ON,
+    )(NORTHERN_BBL, _CID)
+    assert none_bound.street_data is None
+
+
+def test_live_street_data_provider_failing_fetch_yields_none() -> None:
+    """A typed connector failure yields None (no usable window -> the rear yard stays not known with
+    its condition named), never a fabricated window."""
+    def _raising_lot(canonical_bbl: str, correlation_id: str):
+        raise UpstreamError("official MapPLUTO source unreachable (test)",
+                            correlation_id=correlation_id)
+
+    provider = live_street_data_provider(fetch_lot=_raising_lot, fetch_streets=_recorded_streets)
     assert provider(NORTHERN_BBL, _CID) is None

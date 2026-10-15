@@ -85,9 +85,12 @@ describe("journey cards leg: 215-16 Northern recorded-data (D-090-R137)", () => 
     expect(screen.getByTestId("three-answers-scope").textContent ?? "").not.toMatch(SNAKE_CASE);
   });
 
-  it("is a contract 1.4.0 document with the three-way layer (so the states below are real)", () => {
+  it("is a contract 1.5.0 document with the three-way layer (so the states below are real)", () => {
     const { doc } = journey();
-    expect(doc.contract_version).toBe("1.4.0");
+    // M5-T167: the regenerated journey fixture threads the DCM street window, so the additive
+    // ZR 23-344 rear_yard block and input_facts bump it to 1.5.0. The envelope's rear_yard
+    // value-state stays withheld (the top-level rear_yard block carries the applied reading).
+    expect(doc.contract_version).toBe("1.5.0");
     expect(doc.building_alternatives?.length ?? 0).toBeGreaterThan(0);
     expect(doc.answers.building_option.status).toBe("not_available");
     const env = doc.answers.permitted_envelope;

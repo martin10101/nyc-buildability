@@ -100,13 +100,17 @@ from app.spatial.site_geometry import SiteGeometry
 from app.spatial.site_geometry.outline import PreparedOutline
 
 if TYPE_CHECKING:
+    from app.connectors.dcm_street_centerline_arcgis import DcmTransport
+    from app.connectors.mappluto_geometry_arcgis import LotGeometryResult
     from app.resilience.transport import Transport
+    from app.spatial.site_geometry.inputs import StreetData
 
 __all__ = [
     "ExistingFloorAreaProvider",
     "GeometryProvider",
     "OutlineProvider",
     "PlutoFetcher",
+    "StreetDataProvider",
     "StudyInputs",
     "StudyInputsProvider",
     "StudyInputsUnavailableError",
@@ -114,6 +118,7 @@ __all__ = [
     "acris_zoning_lot_index_provider",
     "assemble_study_inputs",
     "default_study_inputs_provider",
+    "live_street_data_provider",
     "pluto_study_inputs_provider",
 ]
 
@@ -150,6 +155,12 @@ class StudyInputs:
     # default), so the study_setup the route emits is byte-identical to the pre-wiring slice;
     # part B wires it into the result ways. It never concludes the zoning lot.
     zoning_lot_index: ZoningLotIndex = field(default_factory=not_checked)
+    # Additive carrier (M5-T167 round 4, R136): the lot's DCM street window, when a provider fetched
+    # one, so the results route can thread it into the engine's ZR 23-344 rear-yard check. Defaults
+    # to None ("none supplied"): with no provider bound (the production default, LIVE_SPATIAL_
+    # PROVIDER_ENABLED off) it stays None, the engine applies no rear-yard check and the document
+    # stays 1.4.0. No default stands for a fact: incomplete coverage stays visible in StreetData.
+    street_data: StreetData | None = None
 
 
 class StudyInputsUnavailableError(Exception):
@@ -235,6 +246,15 @@ ExistingFloorAreaProvider = Callable[[str, str], "ExistingFloorAreaEvidence | No
 # own I/O, never the route's or assembly's.
 ZoningLotIndexProvider = Callable[[str, str], "ZoningLotIndex | None"]
 
+# (canonical_bbl, correlation_id) -> the lot's StreetData, or None when no provider is bound (the
+# live default) or no usable window is produced. The INJECTED street-data seam (M5-T167 round 4,
+# R136), shaped like the geometry/outline seams. The LIVE default binds
+# :func:`live_street_data_provider` ONLY behind LIVE_SPATIAL_PROVIDER_ENABLED (default OFF), so the
+# street_data stays None in production and the results route emits a 1.4.0 document (no rear-yard
+# check applied). Tests and the e2e harness bind a fixture-backed provider. The fetch is the
+# provider's own I/O, never the route's or assembly's.
+StreetDataProvider = Callable[[str, str], "StreetData | None"]
+
 
 def _existing_evidence(
     provider: ExistingFloorAreaProvider | None,
@@ -283,8 +303,15 @@ def assemble_study_inputs(
     prepared_outline: PreparedOutline | None = None,
     existing_floor_area: ExistingFloorAreaEvidence | None = None,
     zoning_lot_index: ZoningLotIndex | None = None,
+    street_data: StreetData | None = None,
 ) -> StudyInputs:
     """Build :class:`StudyInputs` from a successful PLUTO fetch result.
+
+    ``street_data`` is the lot's DCM street window when a provider fetched one (M5-T167 round 4),
+    passed in as pure DATA (the fetch happens in the provider) and carried onto :class:`StudyInputs`
+    so the results route can thread it into the engine's ZR 23-344 rear-yard check. None (the
+    default, and the live default while ``LIVE_SPATIAL_PROVIDER_ENABLED`` is off) carries no window,
+    so the engine applies no rear-yard check and the emitted document stays 1.4.0.
 
     ``selected`` is the lot selection; None is the default "use all". ``env``
     supplies the LANE_B_ENABLED gate (defaults to the process environment).
@@ -385,6 +412,7 @@ def assemble_study_inputs(
         site_geometry=site_geometry,
         prepared_outline=prepared_outline,
         zoning_lot_index=zoning_lot_index,
+        street_data=street_data,
     )
 
 
@@ -398,6 +426,7 @@ def pluto_study_inputs_provider(
     outline_provider: OutlineProvider | None = None,
     existing_floor_area_provider: ExistingFloorAreaProvider | None = None,
     zoning_lot_index_provider: ZoningLotIndexProvider | None = None,
+    street_data_provider: StreetDataProvider | None = None,
 ) -> StudyInputsProvider:
     """A :data:`StudyInputsProvider` over a PLUTO ``fetcher``.
 
@@ -434,6 +463,13 @@ def pluto_study_inputs_provider(
     None (the default, and the live default) means no evidence is threaded and the
     ``existing_zoning_floor_area`` fact is byte-identical to the pre-wiring slice. The
     evidence fetch is the provider's I/O, never the route's or assembly's.
+
+    ``street_data_provider`` is the INJECTED DCM street-window seam (M5-T167 round 4, R136): when
+    given it is called ``(canonical_bbl, correlation_id) -> StreetData | None`` and its result is
+    carried onto :class:`StudyInputs` as ``street_data`` so the results route can thread it into the
+    engine's ZR 23-344 rear-yard check. None (the default, and the live default while
+    ``LIVE_SPATIAL_PROVIDER_ENABLED`` is off) means the window stays absent and the emitted document
+    is byte-identical to the pre-wiring 1.4.0 slice. The fetch is the provider's I/O.
     """
 
     def provider(
@@ -468,6 +504,11 @@ def pluto_study_inputs_provider(
             if zoning_lot_index_provider is not None
             else None
         )
+        street_data = (
+            street_data_provider(canonical_bbl, correlation_id)
+            if street_data_provider is not None
+            else None
+        )
         return assemble_study_inputs(
             result,
             selected=selected,
@@ -479,6 +520,7 @@ def pluto_study_inputs_provider(
             prepared_outline=prepared_outline,
             existing_floor_area=existing_floor_area,
             zoning_lot_index=zoning_lot_index,
+            street_data=street_data,
         )
 
     return provider
@@ -517,6 +559,75 @@ def acris_zoning_lot_index_provider(
         except AcrisIndexConnectorError as exc:
             return not_read(canonical_bbl, reason=exc.error_type)
         return classify_zoning_lot_index(result)
+
+    return provide
+
+
+def live_street_data_provider(
+    *,
+    fetch_lot: Callable[[str, str], LotGeometryResult] | None = None,
+    fetch_streets: Callable[[str, str], DcmTransport] | None = None,
+) -> StreetDataProvider:
+    """Build a :data:`StreetDataProvider` over Lane B's accepted envelope-intersects City Map street
+    fetch (D-090-R124), the live binding the ``live_streets`` module's docstring describes (M5-T167
+    round 4, R136).
+
+    It composes ALREADY-ACCEPTED pieces and introduces NO new connector: the live MapPLUTO
+    lot-geometry fetch (:func:`app.connectors.mappluto_geometry_arcgis.fetch_lot_geometry`), the
+    accepted outline adapter (:func:`app.spatial.site_geometry.lot_outline_from_mappluto`), and
+    :func:`app.spatial.site_geometry.street_data_for_lot` (which reuses the accepted
+    paging/CRS/coverage gates). It returns the :class:`~app.spatial.site_geometry.inputs.StreetData`
+    so :func:`pluto_study_inputs_provider` can carry it onto :class:`StudyInputs`.
+
+    Fail safe (D-051 honest absence): any typed connector or outline error -- a MapPLUTO/DCM
+    connector failure, the live-streets outline gate, a non-EPSG:2263 page, or a malformed BBL --
+    yields ``None`` (no usable street window, so the rear yard stays not known with its condition
+    named), never a fabricated window and never a 500; the failure CLASS is logged, never the
+    payload. Incomplete coverage stays visible inside the returned ``StreetData``.
+
+    ``fetch_lot`` / ``fetch_streets`` are injection seams: the production defaults are the live
+    connector fetches (bound here, local imports, so importing this module reads no connector and
+    makes no network call); tests and the e2e harness inject fixture-backed doubles so the whole
+    seam runs offline on the recorded 215-16 Northern pack.
+    """
+    import logging
+
+    from app.connectors.bbl import BBLValidationError
+    from app.connectors.dcm_street_centerline_arcgis import DCMConnectorError, default_fetch
+    from app.connectors.mappluto_geometry_arcgis import (
+        MapPlutoGeometryConnectorError,
+        fetch_lot_geometry,
+    )
+    from app.spatial.site_geometry import (
+        UnusableLotOutlineError,
+        lot_outline_from_mappluto,
+        street_data_for_lot,
+    )
+
+    log = logging.getLogger("app.api.v1.study_inputs")
+    streets_fetch = default_fetch if fetch_streets is None else fetch_streets
+
+    def _default_lot(canonical_bbl: str, correlation_id: str):
+        return fetch_lot_geometry(canonical_bbl, correlation_id=correlation_id)
+
+    lot_fetch = _default_lot if fetch_lot is None else fetch_lot
+    unavailable = (
+        MapPlutoGeometryConnectorError, DCMConnectorError, UnusableLotOutlineError,
+        BBLValidationError,
+    )
+
+    def provide(canonical_bbl: str, correlation_id: str) -> StreetData | None:
+        try:
+            lot, _refusal = lot_outline_from_mappluto(lot_fetch(canonical_bbl, correlation_id))
+            if lot is None:
+                log.info("study_live_street_data unavailable reason=lot_outline_refused "
+                         "correlation_id=%s", correlation_id)
+                return None
+            return street_data_for_lot(lot, correlation_id=correlation_id, fetch=streets_fetch)
+        except unavailable as exc:
+            log.info("study_live_street_data unavailable error_type=%s correlation_id=%s",
+                     type(exc).__name__, correlation_id)
+            return None
 
     return provide
 
@@ -583,12 +694,18 @@ def _live_study_inputs_provider() -> StudyInputsProvider:
     zoning_lot_index_provider = (
         acris_zoning_lot_index_provider() if internal_zoning_lot_index_enabled() else None
     )
+    # The DCM street-window seam (M5-T167 round 4, R136) is bound behind the SAME LIVE_SPATIAL_
+    # PROVIDER_ENABLED flag as geometry/outline: OFF in production, so street_data stays None; the
+    # results route emits a 1.4.0 document (no rear-yard check applied). ON, the live window is
+    # fetched and carried, so the route emits the engine's conditional ZR 23-344 rear-yard result.
+    street_data_provider = live_street_data_provider() if live_spatial else None
     return pluto_study_inputs_provider(
         get_pluto_fetcher(),
         version_probe=cached_default_version_probe(),
         geometry_provider=geometry_provider,
         outline_provider=outline_provider,
         zoning_lot_index_provider=zoning_lot_index_provider,
+        street_data_provider=street_data_provider,
     )
 
 

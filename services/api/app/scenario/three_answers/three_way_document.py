@@ -521,6 +521,7 @@ def _apply_first_option(
     doc: dict, ways: ResultWays, document: dict, *,
     corner_areas: CornerPortionAreas | None = None,
     lot_area: LotAreaFigures | None = None,
+    rear_yard_applied: bool = False,
 ) -> None:
     """Attach the contract-1.4.0 building_alternatives and coverage_by_portion blocks WHENEVER the
     floor-area allowance is shown (the engine ran and the recorded lot area is known).
@@ -528,35 +529,30 @@ def _apply_first_option(
     Building B (the fewest storeys reaching the minimum base height, whose plan fits the lowest
     applicable ratio times the RECORDED area) is worked from the recorded area and the allowance
     alone - never the tax-map outline - so it is listed CONDITIONAL on every path with a shown
-    allowance.
-
-    The by-portion footprint and building A need the outline. When the caller threads the lot-area
-    comparison (``lot_area``, the two area figures and whether they agree) and the measured
-    corner-reach areas (``corner_areas``, gathered on ``GatheredResult`` in ``result_way_bridge``
-    and passed from ``result_way_engine_bridge.run_engine_and_result_ways*``):
+    allowance. The by-portion footprint and building A need the outline, threaded by the caller as
+    ``lot_area`` (the two area figures and whether they agree) and ``corner_areas`` (the measured
+    corner-reach areas from ``result_way_engine_bridge.run_engine_and_result_ways*``):
 
     * the two areas AGREE and the corner split was measured -> the footprint is SHOWN
       (``coverage_by_portion`` available) and building A is listed beside building B;
     * the two areas DISAGREE -> ``coverage_by_portion`` is WITHHELD, a missing fact (the outline's
-      area is a drawing measure, never used in a zoning calculation in its place), and building A is
-      absent; this is the committed benchmark;
-    * the lot's outline is not available (the two areas could not be compared) ->
-      ``coverage_by_portion`` is WITHHELD naming that (a missing fact), never computed from the
-      recorded area, and building A is absent.
+      area is a drawing measure, never used in its place), and building A is absent (the benchmark);
+    * the lot's outline is not available -> ``coverage_by_portion`` is WITHHELD naming that (a
+      missing fact), never computed from the recorded area, and building A is absent.
 
     When no caller threads the comparison (the direct-transform tests), the area agreement is read
-    from the floor-area way's conditions exactly as before: a contradicted-record condition means
-    the areas disagree; otherwise the footprint stays withheld and the block is not emitted, and
-    only building B is listed. Every earlier path, and the committed benchmark document, stays
-    byte-for-byte unchanged apart from the buildings_not_worked list and the building_option pointer
-    (ruling W14).
+    from the floor-area way's conditions as before: a contradicted-record condition means the areas
+    disagree; otherwise the footprint stays withheld and the block is not emitted, and only building
+    B is listed. ``rear_yard_applied`` (round 4, R136) is True when the engine applied ZR 23-344 (a
+    1.5.0 rear_yard block); only then is building B's corner-lot rear-yard not-checked line dropped,
+    so page 6 agrees with the page-8 open item on every document.
 
-    buildings_not_worked (ruling W14, the walkthrough correction F1): every building of the method
-    that is NOT in building_alternatives is listed with the reason it was not worked; a building is
-    in exactly one of the two lists. The single building_option points to BOTH lists and claims
-    nothing else, ALSO when no building is listed, so it never shows the decision module's older
-    (possibly false) reason. The engine numbers come from the engine document; the way conditions
-    are reused from the floor-area answer so nothing is invented."""
+    buildings_not_worked (ruling W14, the walkthrough correction F1): every building NOT in
+    building_alternatives is listed with the reason; a building is in exactly one list. The single
+    building_option points to BOTH lists, claims nothing else, ALSO when no building is listed, so
+    it never shows the decision module's older (possibly false) reason. The engine numbers come from
+    the engine document; the way conditions are reused from the floor-area answer so nothing is
+    invented."""
     conditions = _floor_area_conditions(ways)
     if conditions is None:
         return  # no shown floor-area allowance (e.g. the engine lane is off): no building is worked
@@ -607,6 +603,7 @@ def _apply_first_option(
         corner_areas=measured if show_footprint else None,
         outline_area_sqft=outline_area_sqft if show_footprint else None,
         way_conditions=tuple(c.to_dict() for c in conditions),
+        rear_yard_applied=rear_yard_applied,
     ))
 
     # coverage_by_portion is emitted whenever the area agreement is determinate: a caller-threaded
@@ -824,7 +821,12 @@ def emit_three_way_document(
     # The first-building-option blocks (contract 1.4.0 additive; task M5-T146 PART B). Read from the
     # engine document and the decided ways, plus the caller's lot-area comparison and measured
     # by-portion areas when threaded (ruling W1/W13: AGREE shows the footprint and building A).
-    _apply_first_option(doc, ways, document, corner_areas=corner_areas, lot_area=lot_area)
+    # rear_yard_applied (round 4, R136) gates page 6's corner-lot rear-yard not-checked line so it
+    # agrees with page 8: kept on a 1.4.0 document, dropped once ZR 23-344 is applied (1.5.0).
+    _apply_first_option(
+        doc, ways, document, corner_areas=corner_areas, lot_area=lot_area,
+        rear_yard_applied=rear_yard_analysis is not None,
+    )
 
     # The additive contract-1.5.0 rear-yard emission (M5-T167 steps 3-4). Opt-in: only when the
     # evidence entry threads an analysis. Absent -> the document keeps its 1.3.0/1.4.0 version.
@@ -837,9 +839,8 @@ def emit_three_way_document(
 
 def _apply_rear_yard(doc: dict, analysis: RearYardAnalysis | None) -> None:
     """Attach the additive 1.5.0 rear_yard block, input_facts and rear-yard constraint lines, and
-    declare 1.5.0 (M5-T167 steps 3-4). The constraint lines go on the geometry block only when it is
-    drawn (available); the rear-yard answer itself is the top-level rear_yard block. None -> no-op,
-    so every pre-1.5.0 emit stays byte-identical."""
+    declare 1.5.0 (M5-T167 steps 3-4). Constraint lines go on the geometry block only when drawn;
+    the rear-yard answer is the top-level rear_yard block. None -> no-op (byte-identical)."""
     if analysis is None:
         return
     doc["rear_yard"] = analysis.rear_yard

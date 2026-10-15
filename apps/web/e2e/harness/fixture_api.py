@@ -737,6 +737,11 @@ def harness_results_inputs_provider():
             address=address,
             site_geometry=geometry,
             prepared_outline=prepared,
+            # M5-T167 round 4 (R136): carry the recorded DCM street window (built above and formerly
+            # discarded) so the results route threads it into the engine's ZR 23-344 rear-yard
+            # check. The owner's preview and the flag-on e2e render then show the engine's applied
+            # conditional rear-yard result (1.5.0), page 6 and page 8 agreeing.
+            street_data=streets,
         )
 
     return provide

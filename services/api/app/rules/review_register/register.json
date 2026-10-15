@@ -3652,14 +3652,14 @@
       "code_modules": [
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "2caaebaa2815bf145eabfbd115588e77c3eb05971d30fb7685886a7674765f77"
+          "sha256": "9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63"
         },
         {
           "path": "services/api/app/scenario/three_answers/preliminary_apartment_estimate.py",
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "1af34fa428b23d27a2dbc5b9dea2abcaf2905c1c7e2e609af888b82a93d34556",
+      "code_identity_sha256": "1658abb8e1cda8b901657c15afe1c4756cdd4bb58c8f8ddca3e271ca9de67009",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "A practical, preliminary estimate of how many apartments might fit: the floor area times a chosen efficiency share, divided by a chosen apartment size. The floor area is the legal maximum (ZR 23-22); the 0.60-0.75 efficiency share and the 700 sq ft apartment size are each a preliminary assumption chosen by the owner, not law. The estimate is reported for each worked building in building_alternatives: building B where a building is worked (17.27 to 21.59 on the benchmark), building A where the two lot areas agree. Where no building is worked, no estimate is given and the single unit_estimate block points to the lists.",
@@ -3725,8 +3725,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 11,
-      "last_changed": "2026-10-14",
+      "revision": 12,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -3852,7 +3852,7 @@
         },
         {
           "path": "services/api/app/scenario/three_answers/three_way_document.py",
-          "sha256": "2caaebaa2815bf145eabfbd115588e77c3eb05971d30fb7685886a7674765f77"
+          "sha256": "9d4a1d192c1652a7909c07787c56e6abc6e86ae0d09e8be4908fc2ba7e4adc63"
         },
         {
           "path": "services/api/app/spatial/corner_reach_area.py",
@@ -3871,7 +3871,7 @@
           "sha256": "a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1"
         }
       ],
-      "code_identity_sha256": "4f05b238cd9938510c6d9e48776bb6f97264b97f9dba2aa6e72dd74412c5c74a",
+      "code_identity_sha256": "8985d57f72b3cc65dda7a429a855fc35e4853d0ae6f66481c181a81e280497e0",
       "applicable_from": "2024-12-05",
       "applicable_to": null,
       "applies_where": "The whole first-building-option calculation for the benchmark lot, set step by step beside an independently worked example: property inputs, footprint, each floor's area and height, total floor area, the applicable legal unit limit (a separate step), and the separate preliminary apartment estimate. Each step links its component calculation entry; the page ends in every disagreement and missing fact.",
@@ -3974,8 +3974,8 @@
         },
         "note": "These deterministic tests ran in the build and all passed, bound to the code identity and the test-file digest shown. If a code module or the test file changes, the checker shows 'Not run' until the tests are run again. A passing result is a code check, not a human or professional review of the law."
       },
-      "revision": 12,
-      "last_changed": "2026-10-14",
+      "revision": 13,
+      "last_changed": "2026-10-15",
       "human_review": {
         "decision": null,
         "reviewer_name": "",
@@ -4655,6 +4655,24 @@
       "revision": 12,
       "event": "implementation_changed",
       "summary": "implementation_changed: three_way_document.py changed (M5-T167: the engine-side zoning-lot isolation behind a facade and the additive contract-1.5.0 ZR 23-344 rear_yard block and input_facts threaded through emit_three_way_document), so its code module and the combined code identity are resynced; the recorded automated-test run reads 'Not run' until it is run again at the new identity. The six-step actual sides come from the committed benchmark document; the first-building-option steps (building B's floor schedule, total floor area and estimate; building A withheld) are unchanged, so no step verdict moves.",
+      "by": "M5-T167 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 52,
+      "date": "2026-10-15",
+      "entry_id": "calc-preliminary-apartment-estimate",
+      "revision": 12,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T167 round 4, R136: emit_three_way_document now threads rear_yard_applied into first_option_results._not_checked so page 6 and page 8 agree - the page-6 corner-lot rear-yard not-checked line is kept on a 1.4.0 document and dropped on a 1.5.0 one), so its code module and the combined code identity are resynced; the recorded automated-test run reads 'Not run' until it is run again at the new identity. The preliminary apartment estimate (17.27 to 21.59) is unchanged - the gate touches only the not-checked list, not the estimate.",
+      "by": "M5-T167 (backend-engineer, an AI agent)"
+    },
+    {
+      "seq": 53,
+      "date": "2026-10-15",
+      "entry_id": "calc-first-building-option-complete",
+      "revision": 13,
+      "event": "implementation_changed",
+      "summary": "implementation_changed: three_way_document.py changed (M5-T167 round 4, R136: emit_three_way_document threads rear_yard_applied into first_option_results._not_checked so page 6 agrees with page 8 - the corner-lot rear-yard not-checked line is kept on a 1.4.0 document and dropped once the engine applies ZR 23-344 on a 1.5.0 one), so its code module and the combined code identity are resynced; the recorded automated-test run reads 'Not run' until it is run again at the new identity. The six-step actual sides come from the committed 1.5.0 benchmark document, whose building B not-checked list already dropped the line, so no step verdict moves.",
       "by": "M5-T167 (backend-engineer, an AI agent)"
     }
   ],
