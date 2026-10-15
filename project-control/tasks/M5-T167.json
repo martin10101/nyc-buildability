@@ -314,8 +314,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "DB-245 rank-label scope growth: a CONSISTENT rename of the measurement-rank display label requires profile/measurement.py:65 and kit/scope.py:88 (missed by DB-245's enumeration and the refresh) because the kit comment keeps the card, the drawing caption and the evidence page in step; leaving them out leaves 'approximate tax map' on the site-plan caption/scope line against 'city map outline' on the evidence page. The exact rename set, the rank-label wording, and whether to touch profile/kit are pinned at G0.",
     "test_result_ways_facts_area_overlay.py:142 asserts the engine's 'tax-map outline' rendered wording and was absent from the refresh scope; renaming result_way_conditions.py reddens it. It is now in allowed_paths; sweep all consumers of the renamed strings.",
@@ -327,7 +327,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-14T19:36:20.882932+00:00",
-  "updated_at": "2026-10-15T02:49:01.800493+00:00",
+  "updated_at": "2026-10-15T02:58:40.968921+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -386,6 +386,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "builder round 4: street data carried on StudyInputs and threaded by the results route (the preview and the browser-test harness now emit the 1.5.0 rear-yard result); page 6's rear-yard line follows whether the engine applied the checks, so pages 6 and 8 agree on every document; the web journey pin to 1.5.0; pre-integration check READY (whole api 9776, whole web vitest 2704); the builder's commit integrated as d0611800 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T02:58:31.605226+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [
