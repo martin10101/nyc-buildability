@@ -299,8 +299,8 @@
     "security-reviewer",
     "directive-compliance-verifier"
   ],
-  "status": "claimed",
-  "progress_percent": 60,
+  "status": "awaiting_gate",
+  "progress_percent": 95,
   "risks": [
     "RISK 1 (top, neither candidate plan caught it): readers.py builds page-8 appendix open items with 'setback' and 'street_wall' categories. When the engine applies the checks they will DROP from page 8 (the Withheld way and the not-checked line both clear) while page 3 shows the applied reading - unless readers.py gains _apply_street_wall_open_item / _apply_setback_open_item mirroring M5-T167's _apply_rear_yard_open_item. The work order forbids readers.py; this packet OVERRIDES that forbid (readers.py in allowed_paths) for page-3/6/8 parity (R136 class). If G0 instead decides the items may simply drop, readers.py stays forbidden but the real-print check (S10) must prove page 8 does not contradict page 3 and the conditions still appear. Resolve at G0 before the build; do not discover it at the gate as M5-T167 did.",
     "RISK 2: result_ways.py _setback_way is a second setback emitter; it must agree byte-for-meaning with envelope_rows[setback] (lesson iii). Plan B omitted result_ways.py - do not drop it from scope.",
@@ -315,7 +315,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:48:14.731487+00:00",
-  "updated_at": "2026-10-15T09:13:36.563338+00:00",
+  "updated_at": "2026-10-15T09:28:15.747900+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -370,6 +370,13 @@
       "percent": 60,
       "status": "claimed",
       "message": "round 3 (NB-03 code identity; DB-265 item 2, the register code link); the builder's commit integrated as 0dbe27b2 (LF sha256 equal to its return); next: the independent reviews"
+    },
+    {
+      "at": "2026-10-15T09:28:03.345080+00:00",
+      "agent": "backend-engineer",
+      "percent": 90,
+      "status": "claimed",
+      "message": "built and reviewed; review record and evidence map written"
     }
   ],
   "scope_corrections": [
