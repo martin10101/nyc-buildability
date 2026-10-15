@@ -1,0 +1,126 @@
+{
+  "task_id": "M3-T014",
+  "title": "Finish the zoning-law library capture-state and label corrections (DB-252, DB-272): mark 24-11/24-111 captured in benchmark-r6b-sections.json (snapshot id+digest, counts), correct coverage.md/cross-reference-closure.md/options/README.md/option-11-combinations.md stale '24-11/24-111 NOT CAPTURED' flags, and fix the 36-64 ('loading-berth pointer into Article VII Ch 7, not a general C-district counterpart') and 66-11 ('Article VI Ch 6 Definitions; mass transit station, not the transit-zone definitions') labels where they still stand uncorrected; documents only, no reading or result changes.",
+  "task_type": "research",
+  "milestone_id": "M3",
+  "objective": "Documents-only. Bring every capture-state flag and section label in the five named library files into agreement with the authoritative snapshot folder listing and the already-captured verbatim text. (1) In benchmark-r6b-sections.json set the 24-11 and 24-111 entries to capture_status.state 'captured' with snapshot_id zr-24-11 / zr-24-111 and content_digest_sha256 copied verbatim from each snapshot, coverage_status 'not_evaluated'; update counts (captured 68->70, not_captured 5->3) and the 77-00 entry note that calls 36-64 'the C-district counterpart'. (2) In coverage.md correct the 24-11/24-111 NOT CAPTURED flags and the Article II Ch 4 'numbers unresolved' phrase, the 66-11 'transit-zone definitions' label (line 53), and the 36-64 'C-district counterpart' phrase (lines 63-64); optionally tidy the 32-131/32-161 'commercial use permission' label. (3) In cross-reference-closure.md (lines 30, 109), options/README.md (line 52) and option-11-combinations.md (lines 27, 35, 119) correct the stale 24-11/24-111 NOT CAPTURED flags. No result, number, rule, label vocabulary or reading changes; genuinely NOT CAPTURED sections (23-154, 77-00, shared-housing) stay NOT CAPTURED; open reading questions stay unresolved and are named for a future research task. Nothing is called complies/buildable/optimal/feasible/Verified.",
+  "business_reason": "DB-252 (OPEN in part) and DB-272 (OPEN): M3-T009 captured 24-11/24-111 and M3-T010 corrected part of the library, but the capture-state flags for 24-11/24-111 and the 36-64/66-11 labels still stand uncorrected in these files, so the library's own capture-claim check (verify_captures.py) fails at the current head and the catalogue of what is captured is wrong. This closes the remaining DB-252/DB-272 surface with no code or reading change.",
+  "inputs": [
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "docs/zoning-law-library/coverage.md",
+    "docs/zoning-law-library/cross-reference-closure.md",
+    "docs/zoning-law-library/options/README.md",
+    "docs/zoning-law-library/options/option-11-combinations.md",
+    "docs/research/zr-snapshots/v1/",
+    "docs/research/zr-snapshots/v1/zr-24-11.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-24-111.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-36-64.snapshot.json",
+    "docs/research/zr-snapshots/v1/zr-66-11.snapshot.json",
+    "docs/DISCOVERY_BACKLOG.md"
+  ],
+  "outputs": [
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "docs/zoning-law-library/coverage.md",
+    "docs/zoning-law-library/cross-reference-closure.md",
+    "docs/zoning-law-library/options/README.md",
+    "docs/zoning-law-library/options/option-11-combinations.md",
+    "project-control/reports/M3-T014-producer-report.md"
+  ],
+  "dependencies": [
+    "M3-T009",
+    "M3-T010",
+    "M3-T011"
+  ],
+  "allowed_paths": [
+    "docs/zoning-law-library/benchmark-r6b-sections.json",
+    "docs/zoning-law-library/coverage.md",
+    "docs/zoning-law-library/cross-reference-closure.md",
+    "docs/zoning-law-library/options/README.md",
+    "docs/zoning-law-library/options/option-11-combinations.md",
+    "project-control/reports/M3-T014-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "docs/research/zr-snapshots/v1/",
+    "services/api/app/_zr_snapshots/v1/",
+    "docs/reference-cases/",
+    "services/api/tests/rules/reference_cases/",
+    "docs/research/evidence-records/",
+    "docs/zoning-rule-review/",
+    "services/api/",
+    "apps/web/",
+    "packages/",
+    "tools/",
+    ".github/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "the snapshot folder listing is authoritative on capture",
+      "when": "every capture-state flag in the five library files is compared to the folder",
+      "then": "24-11 and 24-111 read captured with the snapshot id and the digest copied from zr-24-11/zr-24-111; no library file still flags them NOT CAPTURED; the only sections marked NOT CAPTURED/missing are 23-154, 77-00 and the shared-housing sections"
+    },
+    {
+      "id": "S2",
+      "given": "the corrected benchmark-r6b-sections.json",
+      "when": "the capture-claim check (verify_captures.py) and the cross-reference audit run",
+      "then": "both PASS at this head (they currently FAIL because 24-11/24-111 are NOT CAPTURED entries whose snapshot files exist); counts read captured 70 / not_captured 3 and reconcile with the folder"
+    },
+    {
+      "id": "S3",
+      "given": "zr-36-64's captured verbatim (loading-berth pointer into Article VII Ch 7)",
+      "when": "the library is searched for 36-64",
+      "then": "coverage.md and the benchmark 77-00 note describe 36-64 only as a narrow loading-berth pointer, not a general C-district counterpart; 77-00 stays NOT CAPTURED"
+    },
+    {
+      "id": "S4",
+      "given": "zr-66-11's captured verbatim (Article VI Ch 6 'Definitions'; 'mass transit station')",
+      "when": "the library is searched for 66-11",
+      "then": "coverage.md describes 66-11 as the mass-transit-station definitions and names the 12-10 terms + Appendix I as the transit-zone definitions; no file calls 66-11 'the transit-zone definitions'"
+    },
+    {
+      "id": "S5",
+      "given": "the documents-only scope",
+      "when": "the diff is reviewed",
+      "then": "no number, result, rule, coverage-status vocabulary or legal reading changes; nothing is newly called complies/buildable/optimal/feasible/Verified; the open reading questions (24-111 FAR effect, split-lot meaning, overlay-edge-as-district-boundary, 35-31 carve-out) remain unresolved and are named for a research task, not silently resolved; no capture folder, reference case, evidence record or code path is touched"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G1",
+    "G2"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "data-contract-verifier",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "R1: this is a documents-only correction that restates the already-captured folder state and verbatim text; any statement that would change a computed reading or result is OUT OF SCOPE and must be named for a research task, not edited here.",
+    "R2 (data contract): the library's capture-claim check currently FAILS at the pinned head (24-11/24-111 marked NOT CAPTURED while zr-24-11/zr-24-111 exist); the G1 data-contract-verifier must re-run it green on the frozen head as the acceptance evidence.",
+    "R3 (no overlap): the allowed paths are all under docs/zoning-law-library/ (plus the producer report); M5-T172 (claimed) edits services/api + docs/zoning-rule-review + docs/research/evidence-records + packages/contracts, and M3-T013 (claimed) edits snapshot files + services/api code \u2014 no shared file with either. Verified at 6ef70159.",
+    "R4 (preserve genuine unknowns): 23-154, 77-00 and the shared-housing sections stay NOT CAPTURED; the producer must not invent captures or edit the snapshot folder (forbidden)."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T16:00:36.580054+00:00",
+  "updated_at": "2026-10-15T16:00:37.054898+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R102"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T16:00:36.580424+00:00",
+  "path_notes": "Contract base: @@BASE@@. Documents-only library-correction task closing the remaining DB-252/DB-272 surface. options-sections.md is intentionally NOT in allowed_paths: its 66-11 (lines 156/169-170) and 36-64 (lines 121-122) corrections are already present; the residual literal phrase at line 114 is an ADVISORY consistency tidy only and does not require this task. The researcher must list the snapshot folder (authoritative on capture) and read the 24-11/24-111/36-64/66-11 verbatim, never re-capture. At the contract seam the orchestrator appends the new task id to D-094-R102's applicability.task_ids with a directive_registry digest resync + audit_log entry in the same commit, runs reg.evaluate_task_refs before claim, appends the task to manifest.affected_tasks with a PROVISIONAL task_verifications row, and seeds the committed placeholder for the producer report. G1 reviewer data-contract-verifier re-runs the capture-claim + cross-reference audit at the frozen head; the directive-compliance-verifier runs the in-regime DCV for D-094-R102.",
+  "documented_test_commands": [
+    "git -C . ls-tree --name-only HEAD docs/research/zr-snapshots/v1/ | sort  # authoritative capture state",
+    "python3 -c \"import json;d=json.load(open('docs/zoning-law-library/benchmark-r6b-sections.json'));print(d['counts']);[print(s['section_id'],s['capture_status']) for s in d['sections'] if s['capture_status'].get('state')!='captured']\"",
+    "the library capture-claim check (verify_captures.py / the producer command in docs/zoning-law-library/research-log.md) PASSES at the frozen head",
+    "grep -rnEi 'NOT CAPTURED|not captured|transit-zone definition|C-district counterpart' docs/zoning-law-library/  # no stale 24-11/24-111/36-64/66-11 hit remains"
+  ],
+  "worktree": "/root/project/w-wave20"
+}

@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T14:32:58+00:00",
+ "updated_at": "2026-10-15T16:00:37+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -190,7 +190,7 @@
   "D-094-R166"
  ],
  "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
- "requirements_content_digest_sha256": "ef48f6d3a550e50d7f303184f75db945f9ba3427ca609192ccdd213268141af0",
+ "requirements_content_digest_sha256": "902af88b1abb61e901390a315323c5a724cb36e099688c21c3c3a7687b1d57b8",
  "sources": [
   {
    "file": "source-001.md",
@@ -459,7 +459,8 @@
   "M5-T186",
   "M5-T172",
   "M5-T189",
-  "M5-T190"
+  "M5-T190",
+  "M3-T014"
  ],
  "affected_prs": [],
  "affected_branches": [
@@ -870,6 +871,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M5-T190 (the report's document fingerprint stable for the same document: the two per-run ids left out of its hash) to R028, R058 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T16:00:37+00:00",
+   "actor": "orchestrator",
+   "action": "applicability_bound",
+   "note": "Bound task M3-T014 (finish the zoning-law library capture-state and label corrections (DB-252, DB-272): 24-11/24-111 captured; 36-64 loading-berth-only; 66-11 mass-transit-station Definitions) to R102 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
   }
  ]
 }

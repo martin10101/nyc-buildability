@@ -712,3 +712,5 @@ Sweep 2026-10-15 (M5-T189 scope correction 1, session 2026-10-15b): DB-280 added
 Sweep 2026-10-15 (M5-T190 contract, session 2026-10-15b): DB-282 added QUEUED(M5-T190); other rows unchanged.
 
 Sweep 2026-10-15 (wave-28 integration seam, session 2026-10-15b; read-only backlog check return-check-backlog-w28.md, spot-checked at 1cbc8ccf): DB-223, DB-230, DB-241, DB-242 RESOLVED; DB-227 QUEUED(M5-T172); DB-252 and DB-262 OPEN with the done part named; DB-281 added WATCH; DB-150 left QUEUED(M0-T184) until its Windows evidence is read; other rows unchanged.
+
+Sweep 2026-10-15 (M3-T014 contract, session 2026-10-15b): DB-252 and DB-272 QUEUED(M3-T014) (the planner found DB-252's 'not evaluated' flags already right at this head; the live remnant is the 24-11/24-111 capture state and the 36-64 and 66-11 labels); other rows unchanged.
