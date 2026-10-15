@@ -1,0 +1,73 @@
+{
+ "task_id": "M3-T011",
+ "material_commits": [
+  "cebcf14c (researcher (cherry-pick of 6f49be5b): 20 ZR section snapshots (22-131..22-135, 74-902, 74-903, 23-63, 24-37, 24-38, 24-39, 24-392, 24-393, 33-27, 33-28, 33-30, 33-302, 33-303, 35-23, 35-24) with byte-identical bundled copies, the law library's existing capture-state marks corrected (and option-05's stale 32-421/33-26/33-301 marks), the producer report)"
+ ],
+ "claim_seam_head": "593f8c7ace9e807cd9ecd0790c87489e16827965",
+ "files_changed": [
+  "docs/research/zr-snapshots/v1/zr-22-131.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-22-132.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-22-133.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-22-134.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-22-135.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-23-63.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-37.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-38.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-39.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-392.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-24-393.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-33-27.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-33-28.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-33-30.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-33-302.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-33-303.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-35-23.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-35-24.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-74-902.snapshot.json",
+  "docs/research/zr-snapshots/v1/zr-74-903.snapshot.json",
+  "docs/zoning-law-library/benchmark-r6b-sections.json",
+  "docs/zoning-law-library/options-sections.md",
+  "docs/zoning-law-library/options/option-05-shops-with-residences.md",
+  "docs/zoning-law-library/options/option-06-07-community-facility.md",
+  "project-control/reports/M3-T011-producer-report.md",
+  "services/api/app/_zr_snapshots/v1/zr-22-131.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-22-132.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-22-133.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-22-134.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-22-135.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-23-63.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-37.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-38.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-39.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-392.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-24-393.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-33-27.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-33-28.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-33-30.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-33-302.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-33-303.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-35-23.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-35-24.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-74-902.snapshot.json",
+  "services/api/app/_zr_snapshots/v1/zr-74-903.snapshot.json"
+ ],
+ "what_did_not_change": "No rule file, engine, result, reference case, evidence record, register entry or report page changed; no reading of any captured text for a lot was made; no figure was computed; no new library row was added for a section a file does not name.",
+ "known_limits": [
+  "Every capture is extraction_status extracted_draft with raw_html_verified false.",
+  "Table cells are HTML-canonical (glyphs do not survive the PDF text layer); diagrams of 24-393 and 33-303 are pointer-only; a capture's table sits outside its content digest (DB-276).",
+  "Left for a later pass: option-05's reading prose at line 62 still says 32-421 'not captured'; the index's 24-111 and 32-10 marks; the deferred sections 23-154 (403), 25-31..25-37, 77-xx, 23-38, 23-72 and the 12-10 'residential building' term."
+ ],
+ "checks_at_material_head": [
+  "producer: sync_zr_snapshots --check exit 0 (255 byte-identical); ruff 0; bundle and law-links tests 28 passed under the lock; lane coverage PASS; index JSON valid; own per-file self-check all pass",
+  "G1 data-contract-verifier at cebcf14c: PASS (10 of 20 re-fetched live and matching; digests, copies, loader and sync green; the 22-131 legend verbatim; two advisories)",
+  "CI run 38727929261 at fcd953e1 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R102": [
+   "The law library's second line of work continues: the next 20 sections the readings of options 5, 6 and 7 rest on are captured as source-text snapshots with byte-identical bundled copies and official provenance (URL, node, Last Amended, both channels' digests), and the library's existing capture-state marks for them are corrected; sections still owed are listed in the producer report."
+  ],
+  "D-094-R104": [
+   "One documents-only producer (official-source-researcher) inside the helper limits (at most three building at once; its 45 files are in no other packet in flight); read-only helpers (the owed-captures planner and its judge) chose and checked the batch."
+  ]
+ }
+}
