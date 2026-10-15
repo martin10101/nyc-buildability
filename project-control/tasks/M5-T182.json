@@ -113,15 +113,15 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK A1 (the split's safety hinge): the modules MUST be import-isolated from three_way_document.py/geometry.py/first_option_results.py/envelope_constraints.py (mirror rear_yard_checks.py, which imports only block_frontage), so M5-T170's concurrent geometry.py edits cannot touch them and __init__.py stays unedited. A G3 check confirms the import set.",
     "RISK A2 (interface churn): the module signatures are designed before M5-T172b wires them; if Part B needs a different shape it must re-open these now-accepted files (a scope correction). Keep the signatures minimal and driven by the contract $defs. This risk is the main argument for building M5-T172 as one task instead.",
@@ -130,7 +130,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T04:49:51.192108+00:00",
-  "updated_at": "2026-10-15T04:49:51.615436+00:00",
+  "updated_at": "2026-10-15T04:49:54.232998+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -149,5 +149,14 @@
     "python3 .github/scripts/validate_contracts.py && python3 -m pytest .github/scripts/tests",
     "python3 tools/modularity_check.py --check"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T04:49:54.232881+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints beside M5-T170 (no shared file); the builder starts from the claim head"
+    }
+  ]
 }
