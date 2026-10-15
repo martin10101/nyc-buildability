@@ -166,7 +166,7 @@
     "directive-compliance-verifier"
   ],
   "status": "claimed",
-  "progress_percent": 20,
+  "progress_percent": 60,
   "risks": [
     "RISK 1 (MANDATORY thin wiring, not optional): r6b_reference_cases_check.py is at 591 lines and test_support_files_stay_under_600_lines fails any .py at >= 600. The established step_p7/p8 multi-touchpoint pattern (CASE_READINGS + _READINGS_LABEL + a reading-errors wrapper + must_stay_not_known + quantity_basis + specialised guards) adds ~10 lines and would push check.py to ~601 -> FAIL. step_p9 MUST consolidate all per-row and per-case guards behind ONE entry (e.g. case_errors(case_id,data)) and all reading-digest guards behind ONE entry so check.py grows ~3 lines (1 import + 1 call in validate_case + 1 call in provenance_errors). Do NOT name the step_p9 entry provenance_errors (check.py already defines a top-level provenance_errors) - use a distinct name such as reading_digest_errors wrapped by a step_p9_reading_errors() in check.py. r6b_reference_cases_step_p9.py itself must stay < 600 lines.",
     "RISK 2 (plural 'tables' key): 24-11 and 33-121 carry their FAR/coverage numbers under the plural 'tables' key; the checker's table_assertion reads the singular 'table' (None here) and would fail 'has no table'. Verified: 24-11 R6B contextual row = FAR 2.00, corner 80, interior 60; the prose excerpt only holds the enabling sentence, not the numbers. Record CF FAR 2.00 / coverage 80/60 as arithmetic operands + a verbatim quote of the enabling sentence (present in the excerpt), table_assertion:null; a reviewer eyeballs 2.00/80/60 against the snapshot's R6B contextual 'tables' row. 23-22 and 23-432 (options 2/3) carry singular 'table' -> table_assertion works. 24-161 has no table at all -> quote-only.",
@@ -179,7 +179,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T05:53:27.682101+00:00",
-  "updated_at": "2026-10-15T05:53:31.523814+00:00",
+  "updated_at": "2026-10-15T07:41:49.847419+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -209,6 +209,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "claimed on task/wave26-envelope-constraints beside M5-T170 (no shared file); the producer starts from the claim head"
+    },
+    {
+      "at": "2026-10-15T07:41:49.847264+00:00",
+      "agent": "rules-engineer",
+      "percent": 60,
+      "status": "claimed",
+      "message": "rounds 1 and 2 integrated (f566724a): the reference case benchmark-options-2-3-6-7 with the community-facility coverage rows corrected under the rule of agreement; independent precheck READY (whole api suite under the lock)"
     }
   ]
 }
