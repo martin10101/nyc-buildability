@@ -8,16 +8,16 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: apartment_estimate
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 14 (last changed 2026-10-15)
+- Revision: 15 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `d075bb1fcef0bede489312331f521ae9af85c9b4db569bf52e35e4744d1437b8`
+- Combined code identity: `84988fab671a64cca7a362eac73ff223f803344f1d1d0a47a1f361dc13fd8272`
 - Modules:
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`e880d078ba06e5836fa9ba069cec324178ad73486722cce9627ed03fb9f10e51`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c`)
   - `services/api/app/scenario/three_answers/preliminary_apartment_estimate.py` (`a0ea51bdfec9b0ad537617ab4e33e63967a8a2c701935a308e0ad899c840bdb1`)
 
 ## Law

@@ -488,7 +488,7 @@ def test_adapter_imports_only_the_decision_entry_and_the_engine():
 
 # --------------------------------------------------------------------------- S11 (placement inputs)
 # Scope correction 1 (M5-T172): the bridge assembles the FOUR lot measures an illustrative placement
-# rests on, each on its own basis, from the carried objects - the printed-tax-map pair from the PLUTO
+# rests on, each on its own basis, from the carried objects - the printed-tax-map pair from PLUTO
 # lot facts, the city-map (GIS) frontage from the prepared outline edge and the GIS depth from the
 # lot-reach measure - never the scope's lot_front_ft (a GIS figure under the approximate_tax_map
 # code). build_placement then gives the reference-case figures; a missing measure holds its basis
@@ -557,7 +557,8 @@ def test_s11_mutation_feeding_the_scope_frontage_collapses_the_conflict():
     good = compute_placement_geometry(zoning_floor_area_sqft=20150, storeys=3, frontage_ft=100.76,
                                       lot_depth_ft=100, gis_frontage_ft=103.88, gis_depth_ft=99.97)
     assert good.frontage_conflict_ft == 3.12
-    mutated = compute_placement_geometry(zoning_floor_area_sqft=20150, storeys=3, frontage_ft=103.88,
-                                         lot_depth_ft=100, gis_frontage_ft=103.88, gis_depth_ft=99.97)
+    mutated = compute_placement_geometry(
+        zoning_floor_area_sqft=20150, storeys=3, frontage_ft=103.88,
+        lot_depth_ft=100, gis_frontage_ft=103.88, gis_depth_ft=99.97)
     assert mutated.frontage_conflict_ft == 0.0  # the conflict collapses; the 3.12 assertion fails
     assert mutated.footprint_sqft != good.footprint_sqft

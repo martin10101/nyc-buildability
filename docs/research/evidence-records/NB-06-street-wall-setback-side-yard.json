@@ -450,7 +450,7 @@
   "code_identity": {
    "services/api/app/scenario/three_answers/envelope_constraints.py": "2f7d6146926ad102e64e63a05a2d4db70eb4b2eedd604531e1b67404b1aded91",
    "services/api/app/scenario/three_answers/result_way_engine_bridge.py": "be72b9ceb8b6fa5c167e54824695c519d6d4ebc315f8bf733ce68726dbf6d725",
-   "services/api/app/scenario/three_answers/three_way_document.py": "e880d078ba06e5836fa9ba069cec324178ad73486722cce9627ed03fb9f10e51"
+   "services/api/app/scenario/three_answers/three_way_document.py": "3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c"
   },
   "worked_example": {
    "inputs": "R6B with a C2-2 overlay, corner lot at Northern Boulevard (mapped width 100 ft = wide) and 215 Place (mapped width 60 ft = narrow); benchmark three-storey 30 ft building.",
@@ -470,7 +470,8 @@
    "Shares street lines and the wide/narrow classification with NB-03 (rear yard) and NB-04 (lot dimensions): the street-line-position condition must stay consistent across NB-03/NB-04/NB-06; the same DCM widths feed the wide/narrow class.",
    "A future street-wall or placement rule must encode the overlay pathway and the 35-631(a)-vs-(b) prevailing-frontage test as labelled drafts, with a deterministic wide/narrow classification per frontage, never an address-specific exception.",
    "M5-T170 carries this record into the scenario engine and the report: envelope_constraints.py holds the street-wall, setback and side-yard checks as labelled draft readings; result_way_engine_bridge.py derives the per-frontage wide/narrow class through the accepted D-052 classifier and threads the analysis into the route emit; three_way_document.py attaches the 1.5.0 envelope_rows, constraint_lines (both bands not_established on the benchmark) and input_facts. The reading stays an unreviewed draft (interpretation_awaiting_review); the independent G1 confirmation of the 34-11 -> 34-24(b)(1) -> 35-63 -> 35-631(b) chain and the now-captured 12-10 definitions is the reviewer's.",
-   "M5-T172 edits three_way_document.py (it now emits the placement and the area allocation) and result_way_engine_bridge.py (it now assembles the placement's four lot measures); both code identities are refreshed here, superseding the revision 4 identities. The street-wall, setback-above-base and side-yard readings are unchanged - the placement's checks name the same ZR 23-335 side-yard five-foot minimum this record reads, and the setback-above-base reading is untouched. A code-identity resync only; no reading, value or status changed."
+   "M5-T172 edits three_way_document.py (it now emits the placement and the area allocation) and result_way_engine_bridge.py (it now assembles the placement's four lot measures); both code identities are refreshed here, superseding the revision 4 identities. The street-wall, setback-above-base and side-yard readings are unchanged - the placement's checks name the same ZR 23-335 side-yard five-foot minimum this record reads, and the setback-above-base reading is untouched. A code-identity resync only; no reading, value or status changed.",
+   "M5-T172 round 2 (S12): the illustrative placement and area-allocation wiring (PlacementInputs, _apply_placement, _apply_area_allocation) moved out of three_way_document.py into the new thin module placement_wiring.py so three_way_document.py stays at or under the 750-SLOC justification line; three_way_document.py's code identity is resynced here within the same revision 5. The street-wall, setback-above-base and side-yard readings are untouched (the placement's ZR 23-335 side-yard five-foot minimum is unchanged). A code-identity resync only; no reading, value or status changed."
   ]
  },
  "review": {

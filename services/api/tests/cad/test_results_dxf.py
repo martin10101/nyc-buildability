@@ -218,8 +218,18 @@ def test_the_note_is_on_the_drawing_when_not_surveyed(path):
 @pytest.mark.parametrize("path", PATHS, ids=IDS)
 def test_no_note_when_everything_drawn_is_surveyed(path):
     result = render(_surveyed(load(path)))
+    notes = [n for n in result.notes if n.role == "measurement_note"]
+    if path.stem == "recorded_215_16_northern_journey":
+        # The placed benchmark (M5-T172) draws floor plates read from the building_option answer,
+        # which is not_available (it points to building_alternatives). So even when every available
+        # answer is marked surveyed, the drawn plates cannot claim a survey and carry one honest
+        # "measurement status not stated" note instead. Asserted, not hidden (S13).
+        assert [n.text for n in notes] == [
+            "Measurement status not stated in the results, not known to be a survey (floor plates)"]
+        assert notes[0].sources == ("/answers/building_option/status",)
+        return
     assert not any(NOT_A_SURVEY in t for t in _texts(result))
-    assert not [n for n in result.notes if n.role == "measurement_note"]
+    assert not notes
 
 
 def test_the_note_names_each_label_and_what_it_applies_to():

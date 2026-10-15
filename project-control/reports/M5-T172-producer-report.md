@@ -156,3 +156,80 @@ delta (header + fingerprint ignored):
 - The register calc entries' automated_tests read "Not run" (the code identity changed this task; CI re-runs the
   deterministic register tests) — consistent with calc-preliminary-apartment-estimate.
 </content>
+
+## Round 2 (S12 + S13) — on top of the round-1b builder commit `b843f9b6`
+
+One bounded follow-up round. No round-1b result changed; the emitted document is byte-identical.
+
+### What changed and why
+
+- **S12 — the placement wiring moved to a new focused module.** Round 1b left `three_way_document.py`
+  at 790 SLOC, above the 750 justification line S9 forbids crossing. `PlacementInputs`,
+  `_placement_applied`, `_apply_placement`, `_placed_floor_to_floor` and `_apply_area_allocation`
+  moved VERBATIM into the new thin module
+  `services/api/app/scenario/three_answers/placement_wiring.py` (116 SLOC). `three_way_document.py`
+  imports the four names, keeps `PlacementInputs` importable at its old path (re-exported; the bridge's
+  `from .three_way_document import PlacementInputs` still resolves — verified `PlacementInputs is` the
+  bridge's object), and now sits at **704 SLOC** — at/under 750 with **no justify warning**
+  (`modularity_check --check` reports only the lesser warn-band "consider the module boundary" signal,
+  not "above the justification threshold"). No import cycle: `placement.py`/`area_allocation.py`/
+  `geometry.py` import nothing back, and the contract-version string is passed in
+  (`contract_version=CONTRACT_VERSION_REAR_YARD`) so `placement_wiring.py` never imports
+  `three_way_document.py`. The new module contains no `result_way` text (test_result_ways.py scan clean).
+- **Byte-identity proof.** Regenerated the benchmark JSON (`UPDATE_JOURNEY_FIXTURE=1`, 2 passed), the
+  DXF snapshot (`UPDATE_DXF_SNAPSHOTS=1`, 25 passed) and the kit snapshots (`UPDATE_DRAWING_SNAPSHOTS=1`,
+  481 passed) from the moved code: `git status` shows ZERO diff on
+  `recorded_215_16_northern_journey.json`, `recorded_215_16_northern_journey.dxf` and
+  `recorded_215_16_northern_journey.site_plan.svg`. The only new file is the massing snapshot (below).
+- **S12 — register.** Four calculation entries that pin `three_way_document.py` were resynced to its new
+  LF sha256 `3376f7b8…`, each with an `implementation_changed` event (`calculations_history` seq 65–68):
+  `calc-first-placement` (rev 1→2) and `calc-area-allocation` (rev 1→2) ALSO now cite
+  `placement_wiring.py` with its pinned hash `8a600b04…` (recomputed combined `code_identity_sha256`);
+  `calc-preliminary-apartment-estimate` (rev 14→15) and `calc-first-building-option-complete` (rev
+  15→16) resync `three_way_document.py` only. `calc-lot-coverage-by-portion` pins `geometry.py` (not
+  changed in round 2) and is untouched. Markdown pages re-rendered by
+  `render_review_register.py --write` (36 files rendered; only the 2 placement pages, the 2 resync
+  pages, `REGISTER.md` and `HISTORY.md` changed); `--check` PASSED. automated_tests stay "Not run" for
+  every resynced entry (stale code identity; CI re-runs the deterministic register tests).
+- **S12 — evidence records.** `NB-01` (revision 10, unchanged) and `NB-06` (revision 5, unchanged) carry
+  `three_way_document.py`'s new hash `3376f7b8…` in the SAME revision; a `dependency_assessment` line in
+  each records that the wiring moved out to `placement_wiring.py` with no behaviour change (NB-01: the
+  moved wiring is placement, not zoning-lot, logic — the ACRIS zoning-lot scope row is byte-identical;
+  NB-06: the street-wall/setback/side-yard readings are untouched). No reading changed. The records'
+  `review_state` stays `stale` for the independent G1 delta review (producer ≠ verifier).
+  `research_record_check --check` PASSES.
+- **S13 — the three placed-benchmark consumer tests (now in allowed paths).**
+  - `test_results_dxf.py::test_no_note_when_everything_drawn_is_surveyed` — the placed benchmark draws
+    floor plates read from the not_available `building_option` answer, so even when every available answer
+    is surveyed the plates carry one honest note `"Measurement status not stated in the results, not known
+    to be a survey (floor plates)"` sourced `/answers/building_option/status`. The test now ASSERTS that
+    note for the benchmark (not hidden) and keeps "no note" for every other fixture.
+  - `test_constraints_page.py::test_s8` — the not-placed sentence is GONE from the scenario sheet once
+    placed (`NOT_PLACED_LINE not in scenario`); the site close-frame context MAP keeps its `No building
+    placed` legend (that forbidden `drawings/maps` drawing draws no building massing — unchanged). Added
+    explicit not-placed coverage: a floor_plates-withheld copy still carries the sentence on the scenario
+    sheet only.
+  - `test_location_sheet.py::test_s3` — `building_not_placed(benchmark)` is now `False`, sentence gone
+    from the scenario sheet, legend still on site; a not-placed copy still shows the sentence on the
+    scenario sheet only and never splices the document's reason text.
+  - **Massing snapshot** `recorded_215_16_northern_journey.massing.svg` committed from
+    `UPDATE_DRAWING_SNAPSHOTS=1`; it draws **three** plates (`data-plate …/entries/0,1,2`; Floor 1/2/3),
+    checked, not guessed.
+- **Pre-existing E501 fixed (in-scope file).** The full `ruff check .` (the api CI first step) surfaced
+  three `E501` lines round 1b left in `test_result_way_engine_bridge.py` (an allowed-paths file; lines
+  491, 560–561). Fixed behaviour-identically (one word dropped from a comment; one call wrapped) so the
+  required `ruff check .` and CI pass. No logic changed.
+
+### Checks (lanes venv, PYTHONDONTWRITEBYTECODE=1, pytest -p no:cacheprovider; heavy runs under `flock`)
+
+| check | exit | result |
+|---|---|---|
+| `cd services/api && python -m ruff check .` | 0 | All checks passed |
+| `python tools/modularity_check.py --check` | 0 | failures 0; three_way_document.py 704 SLOC (warn band, NO justify warning); placement_wiring.py 116 SLOC |
+| register renderer `--check` | 0 | register check PASSED (no issues) |
+| `python3 tools/research_record_check.py --check` | 0 | PASS; NB-01/NB-06 code_current True |
+| `python3 scripts/lanes/check_lane_paths.py --coverage` | 0 | LANE COVERAGE PASS: 10812 files |
+| the three S13 tests (`-k` the three) | 0 | 14 passed |
+| WHOLE api `pytest -q` (one run, under flock) | 0 | **10081 passed, 8 skipped, 0 failed** in 517.55s |
+
+The round-1b 3 failures are now green; the whole api suite is fully green (zero failures).

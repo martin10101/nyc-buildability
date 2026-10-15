@@ -8,17 +8,18 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: area_allocation
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-15)
+- Revision: 2 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `e6ceb2b7bab7f979058a42aaa3700029d6260d28ee28950dc2fb104c0c44d0fc`
+- Combined code identity: `5cc1f5217930825cbe765d4886c52dd568fb24f93881a9afa4a7fe83001ec7fc`
 - Modules:
   - `services/api/app/scenario/three_answers/area_allocation.py` (`c644ec2f243fb95c0e1ca7ced643546039dab21988104e4e63e8f62176c768a4`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`e880d078ba06e5836fa9ba069cec324178ad73486722cce9627ed03fb9f10e51`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c`)
+  - `services/api/app/scenario/three_answers/placement_wiring.py` (`8a600b04bd7cfa3ed0d00242b7a9434b3f86c299a848195d5e2cb86ead63c6c9`)
 
 ## Law
 
@@ -38,7 +39,7 @@ An illustrative split of a worked building's residential floor area into apartme
 
 ## How the program reads it
 
-apartment area = residential floor area x share; other area = total - apartment. For Building B (20,150 sq ft) at the one stated 0.60 share (a preliminary assumption): apartment 20,150 x 0.60 = 12,090.00 sq ft (4,030.00 per storey), other 20,150 - 12,090 = 8,060.00 sq ft (2,686.67 per storey), total 20,150.00; apartment plus other equals the total and the per-storey figures sum to the plate 6,716.67. The split is built in area_allocation.py and emitted on every alternative through three_way_document.py; its fitted flag is true only when that building's placement is placed (the way-layer rule in results_way_rules.py enforces the same thing).
+apartment area = residential floor area x share; other area = total - apartment. For Building B (20,150 sq ft) at the one stated 0.60 share (a preliminary assumption): apartment 20,150 x 0.60 = 12,090.00 sq ft (4,030.00 per storey), other 20,150 - 12,090 = 8,060.00 sq ft (2,686.67 per storey), total 20,150.00; apartment plus other equals the total and the per-storey figures sum to the plate 6,716.67. The split is built in area_allocation.py and emitted on every alternative through three_way_document.py (the thin wiring in placement_wiring.py); its fitted flag is true only when that building's placement is placed (the way-layer rule in results_way_rules.py enforces the same thing).
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -85,7 +86,7 @@ Planned, not built:
 - Evidence: [run log](../evidence/calc-area-allocation.txt)
 - Test files tested:
   - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (``)
-- This entry is new in M5-T172; its code identity is area_allocation.py and the emitter. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review.
+- Its code identity is area_allocation.py, the emitter (three_way_document.py) and the thin placement_wiring.py. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review.
 
 ## Linked records (linked, not copied)
 
@@ -96,6 +97,7 @@ Planned, not built:
 
 - `services/api/app/scenario/three_answers/area_allocation.py`
 - `services/api/app/scenario/three_answers/three_way_document.py`
+- `services/api/app/scenario/three_answers/placement_wiring.py`
 - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py`
 
 ## Legal requirements and chosen design assumptions

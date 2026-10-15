@@ -8,17 +8,18 @@ GENERATED FILE - do not edit by hand. Produced by `services/api/app/rules/review
 - Entry kind: calculation (a combined/arithmetic calculation; no rule file)
 - Family: placement
 - Applies from: 2024-12-05 (to: no end date)
-- Revision: 1 (last changed 2026-10-15)
+- Revision: 2 (last changed 2026-10-15)
 - Combines rule entries: `r6-r12-residential-far`, `r6b-lot-coverage`, `r6b-side-yard`
 
 ## Code identity
 
 An entry with no rule file is fingerprinted by the LF-normalized sha256 of its code module(s). If a module changes and the entry is not revised, the check fails - as a changed rule file is caught for a rule entry.
 
-- Combined code identity: `9e39899f7e411c30ecb19cc0bd51ae918bb8280e0175b2512e2f240953e5afb5`
+- Combined code identity: `cc9626ac951b4c95ba914be5b459b39b3c98a9295fedba793dd0a91b0814bf8d`
 - Modules:
   - `services/api/app/scenario/three_answers/placement.py` (`faf552ef10482709ee0fe40221c03ee1cd1d1e1b67f75f4c979d3894b93c8e65`)
-  - `services/api/app/scenario/three_answers/three_way_document.py` (`e880d078ba06e5836fa9ba069cec324178ad73486722cce9627ed03fb9f10e51`)
+  - `services/api/app/scenario/three_answers/three_way_document.py` (`3376f7b819ab58d298ff228eaa94f331056f0a024d5e4407d11375e8b4a36b2c`)
+  - `services/api/app/scenario/three_answers/placement_wiring.py` (`8a600b04bd7cfa3ed0d00242b7a9434b3f86c299a848195d5e2cb86ead63c6c9`)
   - `services/api/app/scenario/three_answers/geometry.py` (`d85e1aed33efc9a11ee5f64441d6e2bbfb2e551083c4120dd9b9c49a9e8c9988`)
 
 ## Law
@@ -41,7 +42,7 @@ An illustrative placement of the worked first building on the lot: a footprint a
 
 ## How the program reads it
 
-The footprint is a rectangle as wide as the full Northern Boulevard frontage and as deep as the plate needs: the plan depth is the plate (20,150 / 3 = 6,716.67) divided by the frontage, so on the printed-tax-map basis the depth is 6,716.67 / 100.76 = 66.66 ft and the footprint is 100.76 x 66.66 = 6,716.66 sq ft (reconciled with the plate within half a square foot). On that basis the footprint clears the lot line opposite the frontage by 100 - 66.66 = 33.34 ft and stands on the street lines (ZR 23-322 requires no front yard), leaving a back strip wider than the five feet any open area along a side lot line must keep (ZR 23-335(b)); the footprint is about 66.66 percent of the tax rectangle and the maximum residential lot coverage is read by portion (ZR 23-362: 100 percent corner / 80 percent interior). The city-map outline gives a 103.88 ft frontage, a 64.66 ft plan depth and a 35.31 ft back clearance - carried beside the tax-map figures as a conflict, never mixed. The footprint and offsets are computed in placement.py; three_way_document.py emits the placement on the first alternative and geometry.py draws the floor plates within the measured lot outline.
+The footprint is a rectangle as wide as the full Northern Boulevard frontage and as deep as the plate needs: the plan depth is the plate (20,150 / 3 = 6,716.67) divided by the frontage, so on the printed-tax-map basis the depth is 6,716.67 / 100.76 = 66.66 ft and the footprint is 100.76 x 66.66 = 6,716.66 sq ft (reconciled with the plate within half a square foot). On that basis the footprint clears the lot line opposite the frontage by 100 - 66.66 = 33.34 ft and stands on the street lines (ZR 23-322 requires no front yard), leaving a back strip wider than the five feet any open area along a side lot line must keep (ZR 23-335(b)); the footprint is about 66.66 percent of the tax rectangle and the maximum residential lot coverage is read by portion (ZR 23-362: 100 percent corner / 80 percent interior). The city-map outline gives a 103.88 ft frontage, a 64.66 ft plan depth and a 35.31 ft back clearance - carried beside the tax-map figures as a conflict, never mixed. The footprint and offsets are computed in placement.py; three_way_document.py, through the thin placement_wiring.py, emits the placement on the first alternative and geometry.py draws the floor plates within the measured lot outline.
 
 ## Inputs, units, measurement basis, formula and rounding
 
@@ -92,7 +93,7 @@ Planned, not built:
 - Evidence: [run log](../evidence/calc-first-placement.txt)
 - Test files tested:
   - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py` (``)
-- This entry is new in M5-T172; its code identity is the three modules that compute, emit and draw the placement. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review of the law.
+- Its code identity is the four modules that compute (placement.py), emit (three_way_document.py through the thin placement_wiring.py) and draw (geometry.py) the placement. The deterministic register tests run in CI; the result is recorded as 'Not run' until a run is bound to this code identity and the test-file digest. A passing result is a code check, not a human or professional review of the law.
 
 ## Linked records (linked, not copied)
 
@@ -104,6 +105,7 @@ Planned, not built:
 
 - `services/api/app/scenario/three_answers/placement.py`
 - `services/api/app/scenario/three_answers/three_way_document.py`
+- `services/api/app/scenario/three_answers/placement_wiring.py`
 - `services/api/app/scenario/three_answers/geometry.py`
 - `services/api/tests/rules/test_zoning_rule_review_register_calculations.py`
 

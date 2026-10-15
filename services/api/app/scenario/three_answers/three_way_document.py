@@ -42,9 +42,7 @@ adapter and every schema stay read-only; this module is the only new logic.
 from __future__ import annotations
 
 import copy
-from dataclasses import dataclass
 
-from .area_allocation import build_area_allocation
 from .contract import validate_results_document
 from .engine_conditions import Derived
 from .envelope_constraints import EnvelopeAnalysis, setback_value_state_from_row
@@ -58,8 +56,12 @@ from .first_option_results import (
     max_lot_coverage_value_state,
     portions_measurable,
 )
-from .geometry import place_building_on_geometry
-from .placement import build_placement
+from .placement_wiring import (
+    PlacementInputs,
+    _apply_area_allocation,
+    _apply_placement,
+    _placement_applied,
+)
 from .rear_yard_checks import RearYardAnalysis
 from .result_way_inputs import (
     COVERAGE_KEY,
@@ -119,21 +121,6 @@ __all__ = [
     "emit_three_way_document",
 ]
 
-
-@dataclass(frozen=True)
-class PlacementInputs:
-    """The lot measures an illustrative placement rests on, each on its own basis (M5-T172): the
-    printed-tax-map frontage/depth drive the footprint; the city-map (GIS) frontage/depth are a
-    conflict check only, never mixed in. ``frontage_street_name`` is the street the building sits
-    along. The engine bridge reads each on its own basis (the tax pair from PLUTO, the GIS frontage
-    from the prepared outline edge, the GIS depth from the lot-reach measure); absent -> no
-    placement or allocation and the document is byte-identical, like the rear-yard/envelope ones."""
-
-    tax_frontage_ft: float | None
-    tax_depth_ft: float | None
-    gis_frontage_ft: float | None
-    gis_depth_ft: float | None
-    frontage_street_name: str
 
 CONTRACT_VERSION_THREE_WAY = "1.3.0"
 # The additive version the document declares once it carries a first-building-option block
@@ -872,10 +859,12 @@ def emit_three_way_document(
     # side-yard rows, the envelope constraint lines and the street-width input_facts. Opt-in.
     _apply_envelope(doc, envelope_analysis)
     # The additive contract-1.5.0 placement and area allocation (M5-T172): the first alternative's
-    # footprint on the lot, the drawn floor plates, and every alternative's area split. Opt-in.
+    # footprint on the lot, the drawn floor plates, and every alternative's area split. The thin
+    # wiring lives in placement_wiring.py (round 2 / S12); the emitted document is byte-identical.
+    # Opt-in.
     if placement_inputs is not None:
-        _apply_placement(doc, placement_inputs)
-        _apply_area_allocation(doc)
+        _apply_placement(doc, placement_inputs, contract_version=CONTRACT_VERSION_REAR_YARD)
+        _apply_area_allocation(doc, contract_version=CONTRACT_VERSION_REAR_YARD)
 
     _assert_no_qualifying_unit_value(doc)
     validate_results_document(doc)
@@ -943,92 +932,6 @@ def _reconcile_setback_value_state(doc: dict, analysis: EnvelopeAnalysis) -> Non
     current = states.get(SETBACK_KEY)
     if isinstance(current, dict) and current.get("way") == "withheld":
         states[SETBACK_KEY] = setback_value_state_from_row(row)
-
-
-# ---------------------------------------------------------------------------
-# the illustrative placement and area allocation (contract 1.5.0 additive; task M5-T172)
-# ---------------------------------------------------------------------------
-def _placement_applied(placement_inputs: PlacementInputs | None) -> bool:
-    """Whether a placement will be PLACED on the first alternative (so first_option_results drops
-    the 'Where the plan sits on the lot' not-checked line and pages agree). True only when the
-    caller threaded the placement inputs AND all four lot measures are present - a missing measure
-    holds the placement back (withheld), so the line stays. Byte-identical when None."""
-    if placement_inputs is None:
-        return False
-    return all(
-        value is not None
-        for value in (
-            placement_inputs.tax_frontage_ft,
-            placement_inputs.tax_depth_ft,
-            placement_inputs.gis_frontage_ft,
-            placement_inputs.gis_depth_ft,
-        )
-    )
-
-
-def _apply_placement(doc: dict, placement_inputs: PlacementInputs) -> None:
-    """Place the FIRST building alternative on the lot (M5-T172): build_placement (Part A) makes the
-    placement; when placed, geometry.py draws the plates and returns the floor-by-floor table they
-    pair with, so the not-placed sentence clears and the kit draws plates. 1.5.0 is declared."""
-    alternatives = doc.get("building_alternatives")
-    if not alternatives:
-        return
-    first = alternatives[0]
-    zfa = first.get("total_floor_area_sqft")
-    storeys = first.get("storey_count")
-    placement = build_placement(
-        placed=True,
-        zoning_floor_area_sqft=zfa,
-        storeys=storeys,
-        frontage_ft=placement_inputs.tax_frontage_ft,
-        lot_depth_ft=placement_inputs.tax_depth_ft,
-        gis_frontage_ft=placement_inputs.gis_frontage_ft,
-        gis_depth_ft=placement_inputs.gis_depth_ft,
-    )
-    first["placement"] = placement
-    floor_to_floor = _placed_floor_to_floor(first)
-    geometry = doc.get("geometry")
-    if (
-        placement.get("status") == "placed" and isinstance(zfa, (int, float)) and storeys
-        and floor_to_floor is not None
-        and isinstance(geometry, dict) and geometry.get("status") == "available"
-    ):
-        rows = place_building_on_geometry(
-            geometry, frontage_street_name=placement_inputs.frontage_street_name,
-            plate_gross_sqft=zfa / storeys, storeys=storeys, floor_to_floor_ft=floor_to_floor,
-        )
-        if rows is not None:
-            doc["floor_by_floor"] = rows  # the plates and the table are set together (check C-4)
-    doc["contract_version"] = CONTRACT_VERSION_REAR_YARD
-
-
-def _placed_floor_to_floor(alternative: dict) -> float | None:
-    """The alternative's floor-to-floor height, read from its own floor schedule (never typed)."""
-    schedule = alternative.get("floor_schedule")
-    if isinstance(schedule, list) and schedule and isinstance(schedule[0], dict):
-        value = schedule[0].get("floor_to_floor_ft")
-        if isinstance(value, (int, float)) and not isinstance(value, bool):
-            return float(value)
-    return None
-
-
-def _apply_area_allocation(doc: dict) -> None:
-    """Split every alternative's residential floor area at the one stated share (M5-T172): emitted
-    for every alternative with a floor area, placed or not; fitted is True only when that
-    alternative is placed (the Part-A module carries the arithmetic; the way-layer rule enforces
-    the same cross-key check)."""
-    for alternative in doc.get("building_alternatives") or []:
-        if not isinstance(alternative, dict):
-            continue
-        placement = alternative.get("placement")
-        status = placement.get("status") if isinstance(placement, dict) else None
-        allocation = build_area_allocation(
-            residential_floor_area_sqft=alternative.get("total_floor_area_sqft"),
-            placement_status=status,
-        )
-        if allocation is not None:
-            alternative["area_allocation"] = allocation
-            doc["contract_version"] = CONTRACT_VERSION_REAR_YARD
 
 
 def _assert_no_qualifying_unit_value(doc: dict) -> None:
