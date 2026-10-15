@@ -1,0 +1,30 @@
+{
+ "task_id": "M3-T014",
+ "material_commits": [
+  "63ab5d19 (researcher (cherry-pick of 501daa48): 24-11 and 24-111 marked captured in benchmark-r6b-sections.json with their snapshot ids and digests copied from the snapshots, counts 70 captured / 3 not captured; the stale '24-11/24-111 NOT CAPTURED' flags corrected in coverage.md, cross-reference-closure.md, options/README.md and option-11-combinations.md; 36-64 described as a loading-berth pointer only; 66-11 described as the mass-transit-station definitions; 24-111's six cross references recorded)"
+ ],
+ "claim_seam_head": "91a60805",
+ "files_changed": [
+  "docs/zoning-law-library/benchmark-r6b-sections.json",
+  "docs/zoning-law-library/coverage.md",
+  "docs/zoning-law-library/cross-reference-closure.md",
+  "docs/zoning-law-library/options/README.md",
+  "docs/zoning-law-library/options/option-11-combinations.md",
+  "project-control/reports/M3-T014-producer-report.md"
+ ],
+ "what_did_not_change": "No captured text, reading, number, result, rule, evidence record or code changed; the genuinely uncaptured sections (23-154, the 77-00 family, shared housing) stay NOT CAPTURED; the open reading questions (24-111's effect on the R6B community-facility FAR, the split-lot meaning, an overlay edge as a district boundary, the full 35-31 carve-out sweep) stay open.",
+ "known_limits": [
+  "The library's own capture-claim check and cross-reference audit are described in research-log.md but their scripts are not in the repository; the researcher and G1 each rebuilt them from the description (both: the capture claims fail at the parent for exactly 24-11 and 24-111 and pass at the head; zero dropped references).",
+  "Advisory G1 F1: the producer report cites a 'section_last_amended' field for 24-111's date; the date comes from the snapshot's notes."
+ ],
+ "checks_at_material_head": [
+  "researcher at 501daa48: JSON loads; counts 70/3; capture-claim check PASS (FAIL at the parent for exactly 24-11 and 24-111); cross-reference audit 0 dropped; lane coverage PASS; only the allowed files changed",
+  "G1 data-contract-verifier PASS: digests byte-exact; counts recomputed (70 captured, 3 not captured, 168 cross references, 105 followed, 63 not followed); 36-64 and 66-11 relabels faithful to the verbatim; no reading changed",
+  "CI run 38769376547 at e79ddbc6 (a descendant of the reviewed head; the task's files unchanged since): 21 of 21 jobs success"
+ ],
+ "requirements": {
+  "D-094-R102": [
+   "The zoning-law library, the second line of work beside the report, now matches the capture folder and the captured text: 24-11 and 24-111 read captured with their snapshot ids and digests (docs/zoning-law-library/benchmark-r6b-sections.json; counts 70 captured, 3 not captured), every stale 'not captured' flag for them is corrected in coverage.md, cross-reference-closure.md, options/README.md and options/option-11-combinations.md, and 36-64 and 66-11 are described as their verbatim text says (G1 PASS)."
+  ]
+ }
+}
