@@ -55,7 +55,7 @@ CID = "short-block-rear-yard"
 # benchmark case (opt67-cf-lot-coverage records only the agreed corner 80 percent; the
 # whole-lot opt67-cf-max-footprint becomes not known), so this "prior" blob - which includes
 # the benchmark case - changed again; no other case's rows changed.
-PRIOR_ROWS_DIGEST = "bc45ce90903588fffa97b6fd8ef279a7337456914187a56cb8f09e6592bc90bd"
+PRIOR_ROWS_DIGEST = "74a7b99d7324521d7c8fea5bf3910292f1174a1eee7caea5c6ad5c4199ea23d2"
 
 
 def _row(rid):

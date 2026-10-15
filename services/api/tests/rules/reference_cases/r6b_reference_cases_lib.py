@@ -46,7 +46,7 @@ CASE_IDS = (
     "real-lot", "interior-lots", "corner-reach", "suffix", "step-p1-worked",
     "overlay-reading", "step-p3-worked", "step-p4-worked", "step-p5-worked",
     "step-p6-worked", "short-block-rear-yard", "placement-building-b",
-    "benchmark-options-2-3-6-7",
+    "benchmark-options-2-3-6-7", "benchmark-options-5-8-9-10",
 )
 
 # The base ids every one of the work order's table rows must appear under (S1).
@@ -166,6 +166,32 @@ REQUIRED_BASE_IDS = {
         "opt67-cf-rear-yard-obstruction", "opt67-no-fa-gain",
         "opt67-24-162-not-applicable", "opt67-35-33-not-applicable",
         "opt67-use-group-iii", "opt67-which-uses-not-known", "opt67-street-wall",
+        "both-readers-did-not-have", "real-lot-missing-facts", "options-out-of-scope",
+    ],
+    # The step-P10 case (benchmark-options-5-8-9-10): the agreed worked values of option
+    # 5 (opt5-*), option 8 both meanings (opt8-*/opt8a-*/opt8b-*) and options 9-10
+    # (opt910-*/opt9-*/opt10-*) for the benchmark lot, from two independent readings per
+    # option family plus the same independent comparer as M5-T184; plus the shared rows
+    # (what both readers did not have, the real-lot missing facts, the options out of
+    # scope - options 4 and 11 owed). Each row id below must be present under its id (S1).
+    "benchmark-options-5-8-9-10": [
+        "opt5-retail-use-grade", "opt5-commercial-far", "opt5-residential-far",
+        "opt5-combined-cap", "opt5-max-total-floor-area", "opt5-dwelling-units-baseline",
+        "opt5-heights", "opt5-setback-above-base", "opt5-front-and-side-yard",
+        "opt5-storey-limit", "opt5-commercial-rear-yard", "opt5-lot-coverage-whole-lot",
+        "opt5-overlay-mapped-line", "opt5-select-commercial-overlay-status",
+        "opt5-street-wall-final-line", "opt5-vs-option-1",
+        "opt8-option1-baseline", "opt8a-fa-shared", "opt8a-units-shared",
+        "opt8a-min-distance", "opt8a-windows-courts", "opt8-subdivision",
+        "opt8b-fa-per-half", "opt8b-units-per-half", "opt8b-aggregate-dwelling-units",
+        "opt8b-heights", "opt8b-coverage-by-half", "opt8b-interior-half-rear-yard",
+        "opt8b-min-lot-area", "opt8-which-meaning",
+        "opt910-rooming-unit-residential", "opt910-use-permission", "opt910-residential-far",
+        "opt910-no-680-factor", "opt910-room-size-minimum", "opt910-transit-zone",
+        "opt10-parking-rooming-units", "opt910-standard-du-parking-crosscheck",
+        "opt910-bicycle-parking", "opt910-loading", "opt910-heights", "opt910-conversion",
+        "opt910-rooming-vs-dwelling-classification", "opt10-distinct-meaning",
+        "opt910-shared-housing-framework", "opt910-vs-option-1",
         "both-readers-did-not-have", "real-lot-missing-facts", "options-out-of-scope",
     ],
 }

@@ -58,7 +58,7 @@ CID = "benchmark-options-2-3-6-7"
 
 # Every case except the new one, pinned at the claim head: this task adds a case and
 # must not touch any existing one. The digest proves byte-stability without git.
-PRIOR_CASES_DIGEST = "f5e61b1a99a0bf6d0da5fb918090635318802ed5c8675afcaefd3b4ac3fed15a"
+PRIOR_CASES_DIGEST = "41e004d2fe0421e3034b2aa98bbf165cbeaa47d35b6b96a8cdfcf710faf356a7"
 
 # The sections the readers did not have among the captures: they must never be a value
 # basis or a formal citation (they are named in prose only).
