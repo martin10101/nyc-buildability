@@ -2,9 +2,9 @@
  "schema": "directive_requirements/v1",
  "directive_id": "D-094",
  "version": 1,
- "requirement_count": 166,
+ "requirement_count": 173,
  "producer": "orchestrator",
- "updated_at": "2026-10-15T16:00:37+00:00",
+ "updated_at": "2026-10-15T17:08:38+00:00",
  "requirements": [
   {
    "id": "D-094-R001",
@@ -5492,6 +5492,234 @@
    "independent_verifier": "directive-compliance-verifier",
    "status": "pending",
    "status_reason": "Captured at the start of session 2026-10-15b before acting; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R167",
+   "text": "'I want to do a session handoff for the next session, but only after the current tasks are finished.' 'Now, and you have a clean seam to do it.': the handoff waits until the tasks in flight finish: M5-T172 part B (round 3, the delta checks of its visual and code reviews, submit, rule check, accept at a head whose CI was read green) and M3-T013 (its second round for the NB-06 whole-file re-pin, its delta checks, submit, rule check, accept); no new task is contracted and no new piece of work starts meanwhile; the branch is left committed and pushed at a clean seam with nothing running when the handoff is printed.",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "hold",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The session notes show both tasks accepted (or a recorded reason one could not finish), no contract after the message, and a closing checkpoint with the branch pushed and nothing running.",
+   "required_evidence": "`/root/project/lanes-runtime/owner-docs/session-2026-10-15b/SESSION_NOTES.md`; the ledger status of M5-T172 and M3-T013.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R168",
+   "text": "'/session-handoff Okay, here's what we need to do.': the session writes the handoff (docs/SESSION_HANDOFF.md in the main checkout and NEXT-SESSION-BRIEF.md in the session folder) with the exact next action, and gives the owner the copy-in prompt for the next session.",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "return",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [],
+   "required_harness": "The handoff file and the brief exist with the exact next action; the prompt is printed in the reply.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md` (main checkout) and `NEXT-SESSION-BRIEF.md` in the session folder.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R169",
+   "text": "'Also, put in the instructions that the next session should spin up at least 15 sub-agents to get a lot of work done.': the copy-in prompt and the brief tell the next session to run at least fifteen helpers at once to get a lot of work done; builders may be more than three when the conditions of R170 hold (question M1 answered for the next session under them); every other standing limit stays: heavy runs one at a time under the lock, builders never touch ports 3000/3001/8000, no model override, no timers, no unattended merges, the gates unchanged.",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "authorization",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R162"
+   ],
+   "required_harness": "The copy-in prompt and the brief carry the instruction and its conditions; the next session's notes show fifteen or more helpers dispatched.",
+   "required_evidence": "`docs/SESSION_HANDOFF.md`, the session brief, and the next session's notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R170",
+   "text": "'Each one shouldn't interfere with the other in terms of what files they touch or how they push.': no two helpers touch the same file, hold the same shared set (the benchmark set, the review register, the evidence records) at the same time, or push: helpers commit only in their own worktrees and the main session integrates and pushes (ADR-005).",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "prohibition",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R169"
+   ],
+   "required_harness": "Every packet's allowed paths are disjoint from every other packet in flight; no helper commit appears on a pushed branch except through the main session's integration.",
+   "required_evidence": "The next session's packets (allowed_paths), its notes and git log.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R171",
+   "text": "'They need to communicate all to the main agent.' 'The main agent will, like you, will basically divide the work tasks and review.' 'So, or he can spin up other reviewers.': every helper reports to the main session (one hand-back each); the main session divides the work into tasks, reviews and integrates it, and may dispatch further independent reviewers; producers never review their own work.",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R169"
+   ],
+   "required_harness": "The next session's notes show each helper's return saved and every task reviewed by agents other than its producer.",
+   "required_evidence": "The next session's notes and the review records in project-control/reports/.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R172",
+   "text": "'But the main thing is that a lot of sub-agents, everybody does a little part, so this way we can bring it together.': the work is cut into many small, independent parts, each owned by one helper, so they can be brought together by the main session; a part too large to stay small is split before it is dispatched.",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "obligation",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R169"
+   ],
+   "required_harness": "The next session's packets are small and each has one producer; the notes show the parts integrated by the main session.",
+   "required_evidence": "The next session's packets and notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
+   "evidence_paths": [],
+   "reviewed_sha": null,
+   "maps_to": {
+    "files": [],
+    "tests": [],
+    "tasks": []
+   }
+  },
+  {
+   "id": "D-094-R173",
+   "text": "'But if there comes to issues between the sub-agent, then he can lower the amount of sub-agents so he can handle it better if the sub-agents make problems between files.': when helpers cause problems between files (or pushes, shared sets or the heavy-run lock), the main session lowers the number of helpers until it can handle the work cleanly, and records the reduction and the reason in its notes.",
+   "source_ref": "source-026-amendment.md#owner-message-verbatim",
+   "classification": "decision",
+   "binding": true,
+   "applicability": {
+    "task_ids": [
+     "D-094-BOOTSTRAP"
+    ],
+    "task_types": [],
+    "milestones": [],
+    "lifecycle_events": [],
+    "paths": [],
+    "effective_date": "2026-10-15"
+   },
+   "dependencies": [
+    "D-094-R169",
+    "D-094-R170"
+   ],
+   "required_harness": "Any reduction is recorded in the next session's notes with its reason.",
+   "required_evidence": "The next session's notes.",
+   "producer": "orchestrator",
+   "independent_verifier": "directive-compliance-verifier",
+   "status": "pending",
+   "status_reason": "Captured at the handoff request of session 2026-10-15b before acting on it; no work done on it yet.",
    "evidence_paths": [],
    "reviewed_sha": null,
    "maps_to": {

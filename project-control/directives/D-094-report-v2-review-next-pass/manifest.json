@@ -10,7 +10,7 @@
  "issued_at": "2026-10-11",
  "captured_at": "2026-10-11T04:50:28+00:00",
  "created_at": "2026-10-11T04:50:28+00:00",
- "updated_at": "2026-10-15T16:00:37+00:00",
+ "updated_at": "2026-10-15T17:08:38+00:00",
  "channel": "interactive_chat",
  "frozen_baseline_sha": "67a4b8447c7e7111c87cf83e5af27ee84e7de822",
  "capture_head_sha": null,
@@ -187,10 +187,17 @@
   "D-094-R163",
   "D-094-R164",
   "D-094-R165",
-  "D-094-R166"
+  "D-094-R166",
+  "D-094-R167",
+  "D-094-R168",
+  "D-094-R169",
+  "D-094-R170",
+  "D-094-R171",
+  "D-094-R172",
+  "D-094-R173"
  ],
- "requirements_id_digest_sha256": "f56cd5d6e63ef8071817ba8189bd1693b9d5575b6ed7eb70f0bbf057fa44dd6d",
- "requirements_content_digest_sha256": "902af88b1abb61e901390a315323c5a724cb36e099688c21c3c3a7687b1d57b8",
+ "requirements_id_digest_sha256": "4b7db4ca6f933c0b2bf2057a110a928e2d30246f37190735a9639f62a313d17f",
+ "requirements_content_digest_sha256": "8eacb8d01467ade8f2fe7067ba8dd82713705e541517ba0f372e0c5d0367d292",
  "sources": [
   {
    "file": "source-001.md",
@@ -390,6 +397,14 @@
    "recorded_at": "2026-10-15T08:05:20+00:00",
    "content_digest_sha256": "641cfd027fdcf0b4c924063a224d53e00e2fba036a6b36fce40fa77ea9958b59",
    "amends": "source-001.md"
+  },
+  {
+   "file": "source-026-amendment.md",
+   "kind": "amendment",
+   "sequence": 26,
+   "recorded_at": "2026-10-15T17:08:38+00:00",
+   "content_digest_sha256": "94439547ecde62fa6ae88b99cded601e6e000ea41511a74471fe03318f10db83",
+   "amends": "source-001.md"
   }
  ],
  "amendments": [
@@ -416,7 +431,8 @@
   "source-022-amendment.md",
   "source-023-amendment.md",
   "source-024-amendment.md",
-  "source-025-amendment.md"
+  "source-025-amendment.md",
+  "source-026-amendment.md"
  ],
  "supersedes": [],
  "superseded_by": null,
@@ -877,6 +893,12 @@
    "actor": "orchestrator",
    "action": "applicability_bound",
    "note": "Bound task M3-T014 (finish the zoning-law library capture-state and label corrections (DB-252, DB-272): 24-11/24-111 captured; 36-64 loading-berth-only; 66-11 mass-transit-station Definitions) to R102 via applicability.task_ids; requirements content digest resynced in the same commit; a provisional verification row (pending, verifier unset) added; no requirement text edited. Session bed7b2fb (remote control 01TDUgg4Guyvvt3G2i5Bk1fN), claude-opus-5-5."
+  },
+  {
+   "at": "2026-10-15T17:08:38+00:00",
+   "actor": "orchestrator",
+   "action": "amended",
+   "note": "Appended source-026 (the owner's session handoff once the current tasks finish, with at least fifteen helpers for the next session) and requirements D-094-R167 to R173, all pending. Text extracted by script from the transcript; nothing retyped; no existing row edited."
   }
  ]
 }
