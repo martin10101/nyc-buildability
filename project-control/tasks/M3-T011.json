@@ -206,13 +206,13 @@
     "G1",
     "G2"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1: 22-131 carries two symbol tables (A and B) keyed by Residence District with a legend (0, *, S, P, E, G, B ...). Carry the tables cell-by-cell in the structured tables field with a placeholder token in the excerpt and quote the section's OWN legend verbatim (the M3-T010 F1 lesson). Do not read any cell as an R6B permission for any use -- that is a reading, out of scope.",
     "RISK 2: 33-303 carries two diagrams (33-303a, 33-303c) that are images. Record them as an image/pointer note the way Appendix F is captured (pointer only); never transcribe, redraw, or state a dimension from a figure.",
@@ -223,7 +223,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T10:13:04.430728+00:00",
-  "updated_at": "2026-10-15T10:13:04.913385+00:00",
+  "updated_at": "2026-10-15T10:13:09.124338+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -242,5 +242,14 @@
     "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T10:13:09.124215+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "contracted; G0 PASS (plan return-plan-captures-owed.md; judge corrections applied)"
+    }
+  ]
 }
