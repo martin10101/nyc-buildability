@@ -89,7 +89,13 @@
     "services/api/tests/drawings/report/test_report_comparison.py",
     "services/api/tests/drawings/kit/test_report_frame.py",
     "services/api/app/contracts/results_way_rules.py",
-    "services/api/tests/contracts/test_results_way_rules.py"
+    "services/api/tests/contracts/test_results_way_rules.py",
+    "services/api/app/scenario/three_answers/result_way_engine_bridge.py",
+    "docs/research/evidence-records/NB-05-special-density-area.json",
+    "services/api/tests/scenario/three_answers/test_result_way_engine_bridge.py",
+    "services/api/tests/scenario/three_answers/test_result_ways_input_states.py",
+    "services/api/tests/scenario/three_answers/test_geometry_lot_outline.py",
+    "services/api/tests/scenario/three_answers/test_geometry_streets.py"
   ],
   "forbidden_paths": [
     "packages/contracts/schemas/",
@@ -107,7 +113,6 @@
     "services/api/app/cad/",
     "docs/reference-cases/",
     "services/api/tests/rules/reference_cases/",
-    "docs/research/evidence-records/NB-05-special-density-area.json",
     "apps/web/src/components/architect/answers/AnswerCard.tsx",
     "docs/research/evidence-records/NB-03-rear-yard-short-block.json"
   ],
@@ -146,7 +151,7 @@
       "id": "S6",
       "given": "NB-01 and NB-06 (three_way_document.py is in both records' code paths) and NB-04 (the placement's measurement basis)",
       "when": "the records are revised",
-      "then": "NB-01 moves to revision 10 and NB-06 to revision 5 with the recomputed LF sha256 code identity and a dependency assessment saying what changed (no reading changed); NB-04 moves to revision 4 only if its measurement-basis reading is touched; NB-03 is not revised (rear_yard_checks.py is not edited); an independent agent delta review of each revised record before acceptance; nothing is labelled Verified; any research_status change updates the README cell and the RESEARCH_REQUESTS.md index (G-13)"
+      "then": "NB-01 moves to revision 10 and NB-06 to revision 5 with the recomputed LF sha256 code identity and a dependency assessment saying what changed (no reading changed); NB-04 moves to revision 4 only if its measurement-basis reading is touched; NB-03 is not revised (rear_yard_checks.py is not edited); an independent agent delta review of each revised record before acceptance; nothing is labelled Verified; any research_status change updates the README cell and the RESEARCH_REQUESTS.md index (G-13) SCOPE CORRECTION 1: result_way_engine_bridge.py is in NB-05's and NB-06's code paths, so NB-05 moves to revision 8 (code identity resynced; a dependency assessment saying the special-density reasoning is unchanged) and NB-06's revision 5 also carries the bridge's new hash; each with an independent agent delta review."
     },
     {
       "id": "S7",
@@ -171,6 +176,12 @@
       "given": "a 1.5.0 document whose area_allocation has apartment_area_sqft / total_sqft different from its share beyond the two-decimal display rounding (backlog DB-248)",
       "when": "the results way rules run",
       "then": "a new way rule reports the mismatch (the share must equal the split); the regenerated benchmark and every 1.3.0/1.4.0 document pass unchanged; one test per input state (equal, within rounding, beyond rounding, no allocation) and a mutation proof (remove the rule: the beyond-rounding case passes)"
+    },
+    {
+      "id": "S11",
+      "given": "the benchmark route (results_read.py through run_engine_and_result_ways_from_evidence in result_way_engine_bridge.py) and the settled placement worked example (docs/reference-cases/R6B/cases/placement-building-b.json)",
+      "when": "the bridge passes the placement's lot measures to emit_three_way_document (one new optional keyword argument; byte-identical output when it is absent, like rear_yard_analysis and envelope_analysis)",
+      "then": "the four measures carry their own bases: the printed tax-map frontage 100.76 ft and depth 100 ft from the PLUTO lot facts in property_profile, the city-map (GIS) frontage 103.88 ft from the prepared outline's Northern Boulevard edge, and the city-map depth 99.97 ft from the existing Northern Boulevard perpendicular reach (app.spatial.lot_reach, already carried as gathered.inputs.reach.street_lines); never the scope assumption lot_front_ft (a GIS figure carrying the approximate_tax_map code); the placement then gives back clearance 33.34 ft on the printed tax map and 35.31 ft on the city map, frontage difference 3.12 ft, footprint 6,716.66 sq ft on the tax basis, equal to the reference case; one test per input state (all four given; the tax pair missing; the GIS pair missing; neither) where a missing measure leaves its basis not known and the building not placed on that basis, never a default; mutation: feeding the scope lot_front_ft instead of PLUTO's frontage collapses the frontage difference to 0 and the test fails"
     }
   ],
   "required_gates": [
@@ -233,6 +244,13 @@
       "percent": 20,
       "status": "claimed",
       "message": "M5-T172 part B claimed: the engine places the first building option and writes the placement and area split into the results (builder dispatched next)"
+    }
+  ],
+  "scope_corrections": [
+    {
+      "at": "2026-10-15T14:11:40+00:00",
+      "actor": "orchestrator",
+      "change": "Scope correction 1 (session 2026-10-15b): the builder's first round stopped with nothing edited (session-2026-10-15b/return-M5-T172-builder-r1-blocked.md) because the packet's claim that placement and area allocation 'emit purely through three_way_document.py' is false: build_placement needs the printed tax-map frontage and depth (PLUTO 100.76, 100) and the city-map frontage and depth (103.88, 99.97), but the document reaching the emitter carries only a GIS frontage 103.88 under the approximate_tax_map code and a depth of 100; with those the two-basis conflict collapses (back clearance 35.34 and 35.32, frontage difference 0) against the settled reading. A read-only check (return-check-T172-depth.md) confirmed that the only live callers of emit_three_way_document are in result_way_engine_bridge.py, that the bridge already holds the four measures with their bases (property_profile PLUTO lot facts; the prepared outline's Northern Boulevard edge 103.8792; the existing lot-reach measure 99.9747 for Northern Boulevard), and that the live 99.97 equals the reference case. result_way_engine_bridge.py moves into the allowed paths with NB-05 (forbidden before; the bridge is in its code paths) and four consumer tests of the bridge (they change only to follow the regenerated output, each listed with before and after; any other red consumer is stop-and-report). Scenario S11 added; S6 extended for NB-05 and the bridge hash in NB-06. No row, gate, reviewer or dependency changes."
     }
   ]
 }
