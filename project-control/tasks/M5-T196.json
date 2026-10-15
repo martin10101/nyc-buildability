@@ -1,0 +1,117 @@
+{
+  "task_id": "M5-T196",
+  "title": "E0 part 2 (M5-T196) (engine, new files): qualifying_figures.py (qualifying-affordable unit block with the program forced to qualifying_affordable_housing and dividend = the qualifying allowance, as answers.py line 127 does; UAP affordable floor area = qualifying minus standard allowance, ZR 27-111; answer_value shapers) and qualifying_pathway_text.py (two condition texts); unit tests. No senior estimator. Commit HELD; wired by E0-S.",
+  "task_type": "backend",
+  "milestone_id": "M5",
+  "objective": "Pure modules. qualifying_affordable_unit_estimate(inputs, registry, qualifying_floor_area_sq_ft): block shape of dwelling_units.build_unit_estimate (value, formula 24,180 \u00f7 680 = 35.56 style, factor via rule_parameter, rounding_rule, zr_sections) or not_available; always evaluates with qualifying_affordable_housing whatever the study program. uap_affordable_floor_area(standard, qualifying): difference with formula and ZR 27-111, or not_available when either is missing or not positive. Shapers: answer_value objects for legal_unit_limit_qualifying_affordable (existing key) and uap_affordable_floor_area (new key; contains neither qualifying nor legal_unit_limit - options.py line 78). Texts: QUALIFYING_ALLOWANCE (affordable or senior; ZR 12-10: a UAP development or a building under an affordable housing regulatory agreement; an affordable independent residence for seniors or a long-term care facility; settled by the HPD permit notice or regulatory agreement, or State Department of Health licensure) and AFFORDABLE (affordable only; a UAP development outside any MIH area providing the affordable floor area ZR 27-111 requires, or a building under a regulatory agreement). No text result_way (test_result_ways.py guard); no literal 680, 2.40, 2.00; texts carry no digits except ZR section numbers.",
+  "business_reason": "New pieces off the shared files; three_way_document.py (949 lines, not baselined) only gets wiring.",
+  "inputs": [
+    "services/api/app/scenario/three_answers/dwelling_units.py",
+    "services/api/app/scenario/three_answers/answers.py",
+    "services/api/app/scenario/three_answers/rule_access.py",
+    "packages/contracts/schemas/v1/results.schema.json",
+    "docs/reference-cases/R6B/cases/benchmark-options-2-3-6-7.json"
+  ],
+  "outputs": [
+    "services/api/app/scenario/three_answers/qualifying_figures.py",
+    "services/api/app/scenario/three_answers/qualifying_pathway_text.py",
+    "services/api/tests/scenario/three_answers/test_qualifying_figures.py",
+    "services/api/tests/scenario/three_answers/test_qualifying_pathway_text.py",
+    "project-control/reports/M5-T196-producer-report.md"
+  ],
+  "dependencies": [
+    "M5-T172"
+  ],
+  "allowed_paths": [
+    "services/api/app/scenario/three_answers/qualifying_figures.py",
+    "services/api/app/scenario/three_answers/qualifying_pathway_text.py",
+    "services/api/tests/scenario/three_answers/test_qualifying_figures.py",
+    "services/api/tests/scenario/three_answers/test_qualifying_pathway_text.py",
+    "project-control/reports/M5-T196-producer-report.md"
+  ],
+  "forbidden_paths": [
+    "services/api/app/rules/",
+    "services/api/app/drawings/",
+    "packages/contracts/",
+    "docs/",
+    "apps/web/"
+  ],
+  "acceptance_scenarios": [
+    {
+      "id": "S1",
+      "given": "fake registry returning 35.558 and 35; study programs standard, affordable, senior",
+      "when": "unit estimate with 24,180",
+      "then": "35 with formula and factor; captured rule inputs carry qualifying_affordable_housing in all three"
+    },
+    {
+      "id": "S2",
+      "given": "RuleGap or no qualifying allowance",
+      "when": "run",
+      "then": "not_available with the gap reason and kind, or missing_input"
+    },
+    {
+      "id": "S3",
+      "given": "20,150 and 24,180 (opt2-uap-affordable-fa); then missing or non-positive",
+      "when": "affordable floor area",
+      "then": "4,030 with ZR 27-111; else not_available"
+    },
+    {
+      "id": "S4",
+      "given": "module text",
+      "when": "scanned",
+      "then": "no senior estimator, no result_way text, no 680/2.40/2.00 literal"
+    },
+    {
+      "id": "S5",
+      "given": "pathway texts",
+      "when": "scanned",
+      "then": "no digits but ZR sections; no internal names; none of complies, buildable, optimal, feasible; no tax map wording; settler named"
+    },
+    {
+      "id": "S6",
+      "given": "shapers",
+      "when": "validated against answer_value",
+      "then": "valid; labels begin Legal dwelling-unit limit, qualifying affordable housing / Affordable floor area needed"
+    }
+  ],
+  "required_gates": [
+    "G0",
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "producer_agent": null,
+  "reviewer_agents": [
+    "code-reviewer",
+    "qa-engineer",
+    "directive-compliance-verifier"
+  ],
+  "status": "backlog",
+  "progress_percent": 0,
+  "risks": [
+    "Real-engine 35 proven only in E0-S.",
+    "Key names shared with P3 and S: fix at G0."
+  ],
+  "blockers": [],
+  "created_at": "2026-10-15T23:41:01.451879+00:00",
+  "updated_at": "2026-10-15T23:41:02.016370+00:00",
+  "directive_refs": [
+    {
+      "directive_id": "D-094",
+      "requirement_ids": [
+        "D-094-R075",
+        "D-094-R261",
+        "D-094-R262"
+      ]
+    }
+  ],
+  "directive_regime_version": "1.0",
+  "directive_regime_entered_at": "2026-10-15T23:41:01.452176+00:00",
+  "path_notes": "New files only; edit no existing file. Build now; hold.",
+  "documented_test_commands": [
+    "cd services/api && python -m ruff check .",
+    "cd services/api && python -m pytest -q tests/scenario/three_answers/test_qualifying_figures.py tests/scenario/three_answers/test_qualifying_pathway_text.py tests/scenario/three_answers/test_result_ways.py",
+    "python3 tools/modularity_check.py --check"
+  ],
+  "worktree": "/root/project/w-wave29"
+}
