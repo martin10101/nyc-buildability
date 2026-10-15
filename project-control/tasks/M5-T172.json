@@ -180,15 +180,15 @@
     "G3",
     "G4"
   ],
-  "producer_agent": null,
+  "producer_agent": "backend-engineer",
   "reviewer_agents": [
     "data-contract-verifier",
     "code-reviewer",
     "qa-engineer",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK B1 (mirror of M5-T170 RISK 1): readers.building_not_placed keys on geometry.floor_plates and the kit adapter draws from it (both confirmed at bb5c02b9), so the not-placed sentence clears WITHOUT editing readers.py (forbidden, M5-T169's file). G0 must re-confirm both at the W28 head; if a readers.py edit is in fact required it is a sequencing decision before build, not a gate surprise.",
     "RISK B2 (benchmark fan-out): the enumerated consumer tests, the DXF/SVG snapshots and the two web pins must all be in allowed_paths up front (a missed pin costs a scope correction - M5-T167/M5-T170 lesson). The work order's blanket 'web forbidden' is overridden for exactly the two web benchmark-consumer tests here (recorded at G0); any other web red routes out.",
@@ -199,7 +199,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T13:43:50.232561+00:00",
-  "updated_at": "2026-10-15T13:43:50.663128+00:00",
+  "updated_at": "2026-10-15T13:43:54.043283+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -225,5 +225,14 @@
     "REAL PRINT: from services/api, TestClient POST /report with benchmark_provider(with_zoning_lot=True) + recorded_pack_provider(window pack), then node apps/web/scripts/print-report-pdf.mjs on the HTML; confirm pages 5/6 show the placed footprint and the allocation and the not-placed sentence is gone (no server, no ports)",
     "cd apps/web && npm run lint && npm run typecheck && npx vitest run src/lib/__tests__/results-contract-checks.test.ts src/components/architect/answers/__tests__/journey-215-16-northern.test.tsx"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T13:43:54.043164+00:00",
+      "agent": "backend-engineer",
+      "percent": 20,
+      "status": "claimed",
+      "message": "M5-T172 part B claimed: the engine places the first building option and writes the placement and area split into the results (builder dispatched next)"
+    }
+  ]
 }
