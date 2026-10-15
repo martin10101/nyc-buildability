@@ -76,7 +76,7 @@
    "summary": "Advanced production capabilities and Revit integration: no tasks yet. The owner's D-087 release (3D massing, CAD/DXF export, PDF blueprint reading and writing) is built under tasks that so far carry M0 and M5 ids (for example M5-T080, M5-T084); native DWG remains an owner licensing decision."
   }
  ],
- "updated_at": "2026-10-15T11:21:28+00:00",
+ "updated_at": "2026-10-15T12:08:35+00:00",
  "current_milestone_note": "Updated 2026-10-12 per D-094-R114 (owner: 'So,can u bring it up to date'). M5 is the active frontier: the scenario engine, results and the feasibility report, with the D-094 redesign pass in wave 24. Statuses and counts are read from the ledger on task/wave24-report-v3; the ledger wins over this file. state.json's current_milestone is set by checkpoints and is not edited here. This update contracts, accepts or reorders no task, lifts no hold and decides no owner question.",
  "report_programme": {
   "goal": "The owner's full feasibility report comparable to the 88-page sample (property facts, applicable zoning, development options, floors, simple building shapes, legal unit limits, realistic apartment estimates, option comparison, downloadable PDF), with reliable numbers; legal limits kept apart from estimates; no detailed apartment layouts or permit-ready plans (owner 2026-10-06, D-090 R248-R265; CLAUDE.md owner guidance). A finished piece is a milestone, not completion.",
@@ -110,7 +110,9 @@
     "M5-T184 reference case: the agreed worked values of options 2, 3, 6 and 7 for the benchmark lot (documents only) | code: https://github.com/martin10101/nyc-buildability/commit/0f62e39ff67c93af38e6199bb0058a13396a28a7, https://github.com/martin10101/nyc-buildability/commit/f566724a126e2eeeeac2bdeafae2fdca8c00ca1b, https://github.com/martin10101/nyc-buildability/commit/307c8af2619eaba9e60eb93aecbb290476f64907 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38707913835 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/46f724349fc6069da5b0fcc20ea4e03e1e390cf9) | supporting work, no visible change yet: the agreed worked values of options 2, 3, 6 and 7 for the benchmark lot recorded as reference cases (two independent readings each)",
     "M5-T170 street wall, setback above the base and side yard from NB-06 in the engine, shown on report pages 3, 6 and 8 | code: https://github.com/martin10101/nyc-buildability/commit/281e23b78749545c3eedeaee60d2850f534266ed, https://github.com/martin10101/nyc-buildability/commit/bec421b3840c8671aecc2628f8519dadc362539b, https://github.com/martin10101/nyc-buildability/commit/0dbe27b2acb0372aac4ed3622152cd3f3d0c892c | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38714365170 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/3ce4edac1e23ff9aa70f11cecfd8070746d4fda3) | visible: report page 3 now shows the setback above the base, the street wall and the side yard as the engine's conditional readings with their law links (main dropped two of them, DB-266), page 6 no longer lists the street wall as unchecked, and page 8's items 7 to 9 show the same results; the street widths cite the City Planning street-centerline map; no zoning line is drawn (the street line and prevailing frontage are not recorded)",
     "M5-T187 the website's two-zone area-illustration component (first part of M5-T174; not yet shown) | code: https://github.com/martin10101/nyc-buildability/commit/92fbc15eea7e261be031ccd17678bcb63596792a | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38725876905 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/056e4733585d8c607bc0e9a30dee4b6639379189) | supporting work, no visible change yet: the website's two-zone area illustration (a proportional bar with one stated percentage, the same words as the PDF), tested in every input state but not yet shown on any screen (M5-T174 mounts it)",
-    "M5-T185 reference case: the agreed worked values of options 5, 8 and 9-10 for the benchmark lot (documents only) | code: https://github.com/martin10101/nyc-buildability/commit/2ab7c14806f1ded2408e68c612d50d5cfcce1526 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38725876905 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/056e4733585d8c607bc0e9a30dee4b6639379189) | supporting work, no visible change yet: the agreed worked values of options 5, 8 (both meanings) and 9-10 for the benchmark lot recorded as a reference case (two independent readings each)"
+    "M5-T185 reference case: the agreed worked values of options 5, 8 and 9-10 for the benchmark lot (documents only) | code: https://github.com/martin10101/nyc-buildability/commit/2ab7c14806f1ded2408e68c612d50d5cfcce1526 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38725876905 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/056e4733585d8c607bc0e9a30dee4b6639379189) | supporting work, no visible change yet: the agreed worked values of options 5, 8 (both meanings) and 9-10 for the benchmark lot recorded as a reference case (two independent readings each)",
+    "M3-T011 the next twenty law captures for options 5, 6 and 7 and the library's capture-state corrections (documents only) | code: https://github.com/martin10101/nyc-buildability/commit/cebcf14cdd0c93d75fc9e639018924bd270fca80 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38730740892 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/6bfe548f992a334ec504669d18dded9a96f11fa4) | supporting work, no change in the report: twenty more official law texts the community-facility, shops and mixed-building options rest on, captured word for word, and the library's capture notes corrected",
+    "M3-T012 evidence record NB-07: outside every mandatory and former inclusionary housing area (documents only) | code: https://github.com/martin10101/nyc-buildability/commit/8891fb996a3346436ed7f72bd8940086e917a781 | tests: CI run https://github.com/martin10101/nyc-buildability/actions/runs/38730740892 read green at the accept head (https://github.com/martin10101/nyc-buildability/commit/6bfe548f992a334ec504669d18dded9a96f11fa4) | supporting work, no change in the report: evidence record NB-07 (the lot is outside every mandatory and former inclusionary housing area; two independent readings agree)"
    ],
    "steps": [
     {
@@ -144,24 +146,6 @@
      ],
      "state": "in_progress",
      "note": "contracted and claimed 2026-10-15 beside M5-T169 (maps files and a new page-1 test file; no shared file); no change on the benchmark pages (no established line on the benchmark)"
-    },
-    {
-     "wave": 27,
-     "item": "the next 20 law captures the readings of options 5, 6 and 7 rest on (community-facility use permission and special permits, recreation space, the rear-yard modifications, mixed-building bulk; law-library lane, documents only)",
-     "ids": [
-      "M3-T011"
-     ],
-     "state": "in_progress",
-     "note": "contracted 2026-10-15 on task/wave27-comparison-appendix beside M5-T169 (no shared file); supporting work, no visible change"
-    },
-    {
-     "wave": 27,
-     "item": "evidence record NB-07: the benchmark lot is outside every mandatory and former inclusionary housing area (two independent readings agree); documents only",
-     "ids": [
-      "M3-T012"
-     ],
-     "state": "in_progress",
-     "note": "contracted 2026-10-15 on task/wave27-comparison-appendix (records lane; no shared file); supporting work, no visible change"
     },
     {
      "wave": 27,
