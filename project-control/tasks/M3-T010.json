@@ -203,13 +203,13 @@
     "G1",
     "G2"
   ],
-  "producer_agent": null,
+  "producer_agent": "official-source-researcher",
   "reviewer_agents": [
     "data-contract-verifier",
     "directive-compliance-verifier"
   ],
-  "status": "backlog",
-  "progress_percent": 0,
+  "status": "claimed",
+  "progress_percent": 20,
   "risks": [
     "RISK 1: Options 8 and 10 carry open owner questions (N1, N2/DB-255). Capture is meaning-neutral; the producer report states that no meaning is chosen and capture alone unblocks nothing downstream.",
     "RISK 2: 12/5/2024 City of Yes renumbering - Article VII Chapter 7 and the 23-35x court group may have moved, merged or been retitled. Take every number, title and Last Amended date from the page read this pass; report, never invent, a missing or renumbered node (S4). The library's parenthetical titles are a summary, not a confirmed per-node title.",
@@ -220,7 +220,7 @@
   ],
   "blockers": [],
   "created_at": "2026-10-15T05:53:20.164625+00:00",
-  "updated_at": "2026-10-15T05:53:20.631679+00:00",
+  "updated_at": "2026-10-15T05:53:24.183971+00:00",
   "directive_refs": [
     {
       "directive_id": "D-094",
@@ -239,5 +239,14 @@
     "cd services/api && python -m pytest -q tests/rules/test_zr_snapshot_bundle.py tests/drawings/report/test_report_law_links.py",
     "python3 scripts/lanes/check_lane_paths.py --coverage"
   ],
-  "worktree": "/root/project/w-wave20"
+  "worktree": "/root/project/w-wave20",
+  "progress_log": [
+    {
+      "at": "2026-10-15T05:53:24.183849+00:00",
+      "agent": "official-source-researcher",
+      "percent": 20,
+      "status": "claimed",
+      "message": "claimed on task/wave26-envelope-constraints beside M5-T170 (no shared file); the capture run starts from the claim head; one capture run against the official site at a time"
+    }
+  ]
 }
